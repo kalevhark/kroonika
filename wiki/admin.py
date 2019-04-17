@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django.db.models import Count
-from django.forms import ModelForm
+# from django.db.models import Count
+# from django.forms import ModelForm
 import datetime
 
 from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Objekt, Pilt
@@ -27,9 +27,11 @@ class ArtikkelAdmin(admin.ModelAdmin):
     )
     list_filter = ['hist_year']
     search_fields = ['body_text']
-    filter_horizontal = ('isikud',
-                         'organisatsioonid',
-                         'objektid')
+    filter_horizontal = (
+        'isikud',
+        'organisatsioonid',
+        'objektid'
+    )
     form = ArtikkelForm
     fieldsets = [
         (None, {
@@ -44,7 +46,11 @@ class ArtikkelAdmin(admin.ModelAdmin):
             'fields': [('isikud', 'organisatsioonid', 'objektid')]
             }
          ),
-        ('Allikas', {
+        ('Viited', {
+            'fields': [('viited')]
+            }
+         ),
+        ('Kroonika', {
             'fields': [('kroonika', 'lehekylg')]
             }
          ),
@@ -133,6 +139,10 @@ class IsikAdmin(admin.ModelAdmin):
         ('Seotud', {
             'fields': [('organisatsioonid', 'objektid')]
             }
+         ),
+        ('Viited', {
+            'fields': [('viited')]
+        }
          ),
         (None, {
             'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
@@ -256,9 +266,13 @@ class ObjektAdmin(admin.ModelAdmin):
             'fields': ['hist_enddate', 'hist_endyear']
             }
          ),
-        (None, {
+        ('Seotud', {
             'fields': ['objektid']
             }
+         ),
+        ('Viited', {
+            'fields': [('viited')]
+        }
          ),
         (None, {
             'fields': ['hist_searchdate']
@@ -308,6 +322,28 @@ class ObjektAdmin(admin.ModelAdmin):
     def seotud_pilte(self, obj):
         return obj.pilt_set.count()
     seotud_pilte.short_description = 'Pilte'
+
+
+class AllikasAdmin(admin.ModelAdmin):
+    readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
+    fieldsets = [
+        (None, {
+            'fields': ['nimi', 'kirjeldus', 'url']}),
+        (None, {
+            'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]}),
+    ]
+
+    # Admin moodulis lisamise/muutmise automaatsed väljatäited
+    def save_model(self, request, obj, form, change):
+        objekt = form.save(commit=False)
+        # Lisaja/muutja andmed
+        if not objekt.id:
+            objekt.created_by = request.user
+        else:
+            objekt.updated_by = request.user
+        objekt.save()
+        form.save_m2m()
+        return objekt
 
 
 class KroonikaAdmin(admin.ModelAdmin):
@@ -417,6 +453,7 @@ class PiltAdmin(admin.ModelAdmin):
     #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+admin.site.register(Allikas, AllikasAdmin)
 admin.site.register(Kroonika, KroonikaAdmin)
 admin.site.register(Artikkel, ArtikkelAdmin)
 admin.site.register(Isik, IsikAdmin)

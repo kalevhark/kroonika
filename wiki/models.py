@@ -691,11 +691,11 @@ class Pilt(models.Model):
         help_text=MITMIK_VALIK,
         verbose_name='Seotud objektid'
     )
-    allikad = models.ManyToManyField(
-        Allikas,
+    viited = models.ManyToManyField(
+        Viide,
         blank=True,
         help_text=MITMIK_VALIK,
-        verbose_name='Seotud allikad'
+        verbose_name='Viited'
     )
     # Kas näidatakse objekti (artikkel, isik, organisatsioon, objekt, kroonika) profiilipildina
     profiilipilt_allikas = models.BooleanField(
