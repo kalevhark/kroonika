@@ -21,6 +21,102 @@ KUUD = (
 MITMIK_VALIK = "Mitme valimiseks hoia all <Ctrl> klahvi"
 
 
+class Allikas(models.Model):
+    """
+    Raamatu, ajakirja, ajalehe, andmebaasi või fondi andmed
+    """
+    nimi = models.CharField(
+        'Allikas',
+        max_length=100
+    )
+    kirjeldus = models.TextField(
+        'Kirjeldus',
+        null=True,
+        blank=True
+    )
+    url = models.URLField(
+        'Internet',
+        blank=True,
+    ) # Allika internetiaadress
+
+    # Tehnilised väljad
+    inp_date = models.DateTimeField(
+        'Lisatud',
+        auto_now_add=True
+    )
+    mod_date = models.DateTimeField(
+        'Muudetud',
+        auto_now=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name='Lisaja'
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='+',
+        verbose_name='Muutja'
+    )
+
+    def __str__(self):
+        return self.nimi
+
+    def profiilipilt(self):
+        return Pilt.objects.filter(allikad=self.id, profiilipilt_allikas=True).first()
+
+    class Meta:
+        verbose_name = "Allikas"
+        verbose_name_plural = "Allikad"
+
+
+class Viide(models.Model):
+    """
+    Viide artikli, isiku, organisatsiooni, objekti tekstis kasutatud allikatele
+    """
+    allikas = models.ForeignKey(
+        Allikas,
+        on_delete=models.SET_NULL,
+        verbose_name='Allikas',
+        help_text="Allikas",
+        null=True,
+        blank=True
+    )
+    marker = models.CharField( # Tekstis sisalduvad viite markerid
+        'Marker',
+        blank=True
+    )
+    hist_date = models.DateField(
+        'Avaldatud',
+        null=True,
+        blank=True,
+        help_text='Avaldatud'
+    )
+    hist_year = models.IntegerField( # juhuks kui on teada ainult aasta
+        'Avaldatud',
+        null=True,
+        blank=True,
+        help_text='Avaldamise aasta'
+    )
+    kohaviit = models.CharField( # fonditähis, aastakäigu/väljaande nr, lehekülje nr,
+        'Viit',
+        max_length=50,
+        null=True,
+        blank=True
+    )
+    url = models.URLField( # Allika internetiaadress
+        'Internet',
+        blank=True,
+    )
+    mod_date = models.DateTimeField( # Millal viidet kasutatud
+        'Kasutatud',
+        auto_now=True
+    )
+
+
 class Objekt(models.Model):
     OBJEKTITYYP = (
         ('H', 'Hoone'),
@@ -191,11 +287,34 @@ class Organisatsioon(models.Model):
     )
 
     # Tehnilised väljad
-    inp_date = models.DateTimeField('Lisatud', auto_now_add=True)
-    mod_date = models.DateTimeField('Muudetud', auto_now=True)
-    hist_searchdate = models.DateField('Tuletatud kuupäev', null=True, blank=True) # Kuupäevaotsinguteks, kui täpset kuupäeva pole teada
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Lisaja')
-    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='+', verbose_name='Muutja')
+    inp_date = models.DateTimeField(
+        'Lisatud',
+        auto_now_add=True
+    )
+    mod_date = models.DateTimeField(
+        'Muudetud',
+        auto_now=True
+    )
+    hist_searchdate = models.DateField( # Kuupäevaotsinguteks, kui täpset kuupäeva pole teada
+        'Tuletatud kuupäev',
+        null=True,
+        blank=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Lisaja'
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+',
+        verbose_name='Muutja'
+    )
 
     def __str__(self):
         return self.nimi
@@ -220,19 +339,56 @@ class Organisatsioon(models.Model):
 
 
 class Isik(models.Model):
-    perenimi = models.CharField(max_length=100, help_text="Perekonnanimi")
-    eesnimi = models.CharField(max_length=100, blank=True, help_text="Eesnimi/nimed/initsiaal(id)")
+    perenimi = models.CharField(
+        max_length=100,
+        help_text="Perekonnanimi"
+    )
+    eesnimi = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Eesnimi/nimed/initsiaal(id)"
+    )
     # Eludaatumid
-    hist_date = models.DateField(null=True, blank=True, help_text="Sündinud")
-    synd_koht = models.CharField(max_length=100, blank=True, help_text="Sünnikoht")
-    hist_enddate = models.DateField(null=True, blank=True, help_text="Surnud")
-    surm_koht = models.CharField(max_length=100, blank=True, help_text="Surmakoht")
-    maetud = models.CharField(max_length=200, blank=True, help_text="Maetud")
+    hist_date = models.DateField(
+        null=True,
+        blank=True,
+        help_text="Sündinud"
+    )
+    synd_koht = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Sünnikoht"
+    )
+    hist_enddate = models.DateField(
+        null=True,
+        blank=True,
+        help_text="Surnud"
+    )
+    surm_koht = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Surmakoht"
+    )
+    maetud = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Maetud"
+    )
     # Kirjeldus
-    kirjeldus = models.TextField(blank=True)
+    kirjeldus = models.TextField(
+        blank=True
+    )
     # Seotud
-    objektid = models.ManyToManyField(Objekt, blank=True, help_text=MITMIK_VALIK)
-    organisatsioonid = models.ManyToManyField(Organisatsioon, blank=True, help_text=MITMIK_VALIK)
+    objektid = models.ManyToManyField(
+        Objekt,
+        blank=True,
+        help_text=MITMIK_VALIK
+    )
+    organisatsioonid = models.ManyToManyField(
+        Organisatsioon,
+        blank=True,
+        help_text=MITMIK_VALIK
+    )
     viited = models.ManyToManyField(
         Viide,
         blank=True,
@@ -240,10 +396,29 @@ class Isik(models.Model):
         verbose_name='Viited',
     )
     # Tehnilised väljad
-    inp_date = models.DateTimeField('Lisatud', auto_now_add=True)
-    mod_date = models.DateTimeField('Muudetud', auto_now=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Lisaja')
-    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='+', verbose_name='Muutja')
+    inp_date = models.DateTimeField(
+        'Lisatud',
+        auto_now_add=True
+    )
+    mod_date = models.DateTimeField(
+        'Muudetud',
+        auto_now=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Lisaja'
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+',
+        verbose_name='Muutja'
+    )
 
     def __str__(self):
         return ' '.join([self.eesnimi, self.perenimi])
@@ -273,7 +448,9 @@ class Kroonika(models.Model):
         'Kroonika',
         max_length=100
     )
-    # autorid = models.ManyToManyField(Isik)
+    autorid = models.ManyToManyField(
+        Isik
+    )
     kirjeldus = models.TextField()
 
     # Tehnilised väljad
@@ -305,131 +482,9 @@ class Kroonika(models.Model):
     def profiilipilt(self):
         return Pilt.objects.filter(kroonikad=self.id, profiilipilt_kroonika=True).first()
 
-    # Lisamise/muutmise andmete salvestamine
-    def save_model(self, request, obj, form, change):
-        obj.user = request.user
-        if not obj.id:
-            obj.created_by = obj.user
-        else:
-            obj.updated_by = obj.user
-        obj.save()
-        return obj
-
-
     class Meta:
         verbose_name = "Kroonika"
         verbose_name_plural = "Kroonikad"
-
-
-class Allikas(models.Model):
-    """
-    Raamatu, ajakirja, ajalehe, andmebaasi või fondi andmed
-    """
-    nimi = models.CharField(
-        'Allikas',
-        max_length=100
-    )
-    autorid = models.ManyToManyField( # Kui autor andmebaasis, võtame sealt, muidu kirjelduses
-        Isik,
-        blank=True
-    )
-    kirjeldus = models.TextField(
-        'Kirjeldus',
-        null=True,
-        blank=True
-    )
-    url = models.URLField(
-        'Internet',
-        blank=True,
-    ) # Allika internetiaadress
-
-    # Tehnilised väljad
-    inp_date = models.DateTimeField(
-        'Lisatud',
-        auto_now_add=True
-    )
-    mod_date = models.DateTimeField(
-        'Muudetud',
-        auto_now=True
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name='Lisaja'
-    )
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='+',
-        verbose_name='Muutja'
-    )
-
-    def __str__(self):
-        return self.nimi
-
-    def profiilipilt(self):
-        # return Pilt.objects.filter(kroonikad=self.id, profiilipilt_kroonika=True).first()
-        pass #TODO: lisada allika profiilipildi toetus
-
-    # Lisamise/muutmise andmete salvestamine
-    def save_model(self, request, obj, form, change):
-        obj.user = request.user
-        if not obj.id:
-            obj.created_by = obj.user
-        else:
-            obj.updated_by = obj.user
-        obj.save()
-        return obj
-
-    class Meta:
-        verbose_name = "Allikas"
-        verbose_name_plural = "Allikad"
-
-
-class Viide(models.Model):
-    """
-    Viide artikli, isiku, organisatsiooni, objekti tekstis kasutatud allikatele
-    """
-    allikas = models.ForeignKey(
-        Allikas,
-        on_delete=models.SET_NULL,
-        verbose_name='Allikas',
-        help_text="Allikas",
-        null=True,
-        blank=True
-    )
-    marker = models.CharField( # Tekstis sisalduvate viite markerite jaoks
-        'Marker',
-        blank=True
-    )
-    hist_date = models.DateField(
-        'Avaldatud',
-        null=True,
-        blank=True,
-        help_text='Avaldatud'
-    )
-    hist_year = models.IntegerField( # juhuks kui on teada ainult aasta
-        'Avaldatud',
-        null=True,
-        blank=True,
-        help_text='Avaldamise aasta'
-    )
-    kohaviit = models.CharField( # fonditähis, aastakäigu/väljaande nr, lehekülje nr,
-        'Viit',
-        max_length=50,
-        null=True,
-        blank=True
-    )
-    mod_date = models.DateTimeField( # Millal viidet kasutatud
-        'Kasutatud',
-        auto_now=True
-    )
-    url = models.URLField(
-        'Internet',
-        blank=True,
-    )  # Allika internetiaadress
 
 
 class Artikkel(models.Model):
