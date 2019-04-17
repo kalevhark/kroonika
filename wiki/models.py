@@ -18,8 +18,6 @@ KUUD = (
         (12, 'detsember'),
         )
 
-MITMIK_VALIK = "Mitme valimiseks hoia all <Ctrl> klahvi"
-
 
 class Allikas(models.Model):
     """
@@ -176,12 +174,10 @@ class Objekt(models.Model):
     objektid = models.ManyToManyField(
         "self",
         blank=True,
-        help_text=MITMIK_VALIK
     )
     viited = models.ManyToManyField(
         Viide,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Viited',
     )
     # Tehnilised väljad
@@ -278,12 +274,10 @@ class Organisatsioon(models.Model):
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
-        help_text=MITMIK_VALIK
     )
     viited = models.ManyToManyField(
         Viide,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Viited',
     )
 
@@ -383,17 +377,14 @@ class Isik(models.Model):
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
-        help_text=MITMIK_VALIK
     )
     organisatsioonid = models.ManyToManyField(
         Organisatsioon,
         blank=True,
-        help_text=MITMIK_VALIK
     )
     viited = models.ManyToManyField(
         Viide,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Viited',
     )
     # Tehnilised väljad
@@ -524,25 +515,21 @@ class Artikkel(models.Model):
     isikud = models.ManyToManyField(
         Isik,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Seotud isikud'
     )
     organisatsioonid = models.ManyToManyField(
         Organisatsioon,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Seotud organisatsioonid'
     )
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Seotud objektid'
     )
     viited = models.ManyToManyField(
         Viide,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Viited',
     )
     # Tehnilised väljad
@@ -660,41 +647,29 @@ class Pilt(models.Model):
         choices=KUUD,
         help_text="ja/või kuu"
     )
-    # Seotud:
-    # kroonikad = models.ManyToManyField(
-    #     Kroonika,
-    #     blank=True,
-    #     help_text=MITMIK_VALIK,
-    #     verbose_name='Seotud allikad'
-    # )
     artiklid = models.ManyToManyField(
         Artikkel,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Seotud artiklid'
     )
     isikud = models.ManyToManyField(
         Isik,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Seotud isikud'
     )
     organisatsioonid = models.ManyToManyField(
         Organisatsioon,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Seotud organisatsioonid'
     )
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Seotud objektid'
     )
     viited = models.ManyToManyField(
         Viide,
         blank=True,
-        help_text=MITMIK_VALIK,
         verbose_name='Viited'
     )
     # Kas näidatakse objekti (artikkel, isik, organisatsioon, objekt, kroonika) profiilipildina

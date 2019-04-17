@@ -142,7 +142,7 @@ class IsikAdmin(admin.ModelAdmin):
          ),
         ('Viited', {
             'fields': [('viited')]
-        }
+            }
          ),
         (None, {
             'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
