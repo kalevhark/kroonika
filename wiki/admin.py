@@ -7,6 +7,46 @@ from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Ob
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
     
+class AllikasAdmin(admin.ModelAdmin):
+    readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
+    fieldsets = [
+        (None, {
+            'fields': ['nimi', 'kirjeldus', 'url']}),
+        (None, {
+            'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]}),
+    ]
+
+    # Admin moodulis lisamise/muutmise automaatsed väljatäited
+    def save_model(self, request, obj, form, change):
+        objekt = form.save(commit=False)
+        # Lisaja/muutja andmed
+        if not objekt.id:
+            objekt.created_by = request.user
+        else:
+            objekt.updated_by = request.user
+        objekt.save()
+        form.save_m2m()
+        return objekt
+
+
+class ViideAdmin(admin.ModelAdmin):
+    readonly_fields = ['mod_date']
+    fieldsets = [
+        (None, {
+            'fields': [
+                'allikas',
+                'hist_date',
+                'hist_year',
+                'kohaviit',
+                'marker',
+                'url'
+            ]
+        }),
+        (None, {
+            'fields': [('mod_date')]}),
+    ]
+
+    
 class ArtikkelAdmin(admin.ModelAdmin):
     readonly_fields = [
         'hist_searchdate',
@@ -68,12 +108,12 @@ class ArtikkelAdmin(admin.ModelAdmin):
     def seotud_organeid(self, obj):
         return obj.organisatsioonid.count()
     seotud_organeid.short_description = 'Ühendusi'
-    
+
     # Kui palju on artikliga seotud isikuid
     def seotud_isikuid(self, obj):
         return obj.isikud.count()
     seotud_isikuid.short_description = 'Isikuid'
-    
+
     # Kui palju on artikliga seotud objekte
     def seotud_objekte(self, obj):
         return obj.objektid.count()
@@ -85,7 +125,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
     seotud_pilte.short_description = 'Pilte'
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
-    def save_model(self, request, obj, form, change): 
+    def save_model(self, request, obj, form, change):
         objekt = form.save(commit=False)
         # Lisaja/muutja andmed
         if not objekt.id:
@@ -111,7 +151,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
         form.save_m2m()
         return objekt
 
-
+    
 class IsikAdmin(admin.ModelAdmin):
     list_display = (
         'perenimi',
@@ -149,9 +189,9 @@ class IsikAdmin(admin.ModelAdmin):
             }
          ),
     ]
-    
+
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
-    def save_model(self, request, obj, form, change): 
+    def save_model(self, request, obj, form, change):
         objekt = form.save(commit=False)
         # Lisaja/muutja andmed
         if not objekt.id:
@@ -172,7 +212,7 @@ class IsikAdmin(admin.ModelAdmin):
         else:
             su = ''
         return sy + '-' + su
-    
+
     def hist_date_view(self, obj):
         return obj.hist_date
     hist_date_view.empty_value_display = '?'
@@ -187,9 +227,9 @@ class IsikAdmin(admin.ModelAdmin):
         return obj.pilt_set.count()
     seotud_pilte.short_description = 'Pilte'
 
-    
+
 class OrganisatsioonAdmin(admin.ModelAdmin):
-    readonly_fields = ['inp_date', 'mod_date', 'hist_searchdate', 'created_by', 'updated_by']    
+    readonly_fields = ['inp_date', 'mod_date', 'hist_searchdate', 'created_by', 'updated_by']
     list_display = [
         'nimi',
         'hist_date',
@@ -200,7 +240,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
     ]
     search_fields = ['nimi']
     form = OrganisatsioonForm
-    
+
     # Kui palju on organisatsiooniga seotud artikleid
     def seotud_artikleid(self, obj):
         return obj.artikkel_set.count()
@@ -212,7 +252,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
     seotud_pilte.short_description = 'Pilte'
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
-    def save_model(self, request, obj, form, change): 
+    def save_model(self, request, obj, form, change):
         objekt = form.save(commit=False)
         # Lisaja/muutja andmed
         if not objekt.id:
@@ -240,7 +280,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         form.save_m2m()
         return objekt
 
-    
+
 class ObjektAdmin(admin.ModelAdmin):
     readonly_fields = ['hist_searchdate','inp_date', 'created_by', 'mod_date', 'updated_by',]
     list_display = [
@@ -285,7 +325,7 @@ class ObjektAdmin(admin.ModelAdmin):
     ]
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
-    def save_model(self, request, obj, form, change): 
+    def save_model(self, request, obj, form, change):
         objekt = form.save(commit=False)
         # Lisaja/muutja andmed
         if not objekt.id:
@@ -322,28 +362,6 @@ class ObjektAdmin(admin.ModelAdmin):
     def seotud_pilte(self, obj):
         return obj.pilt_set.count()
     seotud_pilte.short_description = 'Pilte'
-
-
-class AllikasAdmin(admin.ModelAdmin):
-    readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
-    fieldsets = [
-        (None, {
-            'fields': ['nimi', 'kirjeldus', 'url']}),
-        (None, {
-            'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]}),
-    ]
-
-    # Admin moodulis lisamise/muutmise automaatsed väljatäited
-    def save_model(self, request, obj, form, change):
-        objekt = form.save(commit=False)
-        # Lisaja/muutja andmed
-        if not objekt.id:
-            objekt.created_by = request.user
-        else:
-            objekt.updated_by = request.user
-        objekt.save()
-        form.save_m2m()
-        return objekt
 
 
 class KroonikaAdmin(admin.ModelAdmin):
@@ -454,6 +472,7 @@ class PiltAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Allikas, AllikasAdmin)
+admin.site.register(Viide, ViideAdmin)
 admin.site.register(Kroonika, KroonikaAdmin)
 admin.site.register(Artikkel, ArtikkelAdmin)
 admin.site.register(Isik, IsikAdmin)
