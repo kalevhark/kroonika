@@ -87,6 +87,7 @@ class Viide(models.Model):
     )
     marker = models.CharField( # Tekstis sisalduvad viite markerid
         'Marker',
+        max_length=10,
         blank=True
     )
     hist_date = models.DateField(
@@ -691,10 +692,10 @@ class Pilt(models.Model):
         verbose_name='Seotud objektid'
     )
     allikad = models.ManyToManyField(
-        Objekt,
+        Allikas,
         blank=True,
         help_text=MITMIK_VALIK,
-        verbose_name='Seotud objektid'
+        verbose_name='Seotud allikad'
     )
     # Kas näidatakse objekti (artikkel, isik, organisatsioon, objekt, kroonika) profiilipildina
     profiilipilt_allikas = models.BooleanField(
