@@ -1,0 +1,7 @@
+[client]
+database = kroonika
+user = kalev
+# password = kr00nika
+default-character-set = utf8
+port		= 3306
+socket		= /var/run/mysqld/mysqld.sock

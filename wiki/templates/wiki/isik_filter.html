@@ -1,0 +1,54 @@
+{% extends "wiki/wiki_base.html" %}
+
+{% block title %}
+  {{ block.super }} - isikud
+{% endblock %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block content %}
+{% load widget_tweaks %}
+
+<div class="w3-cell-row w3-container background-isik w3-text-white w3-padding-16">
+  <div class="w3-container w3-cell w3-cell-middle w3-mobile  w3-large">
+     <i class="fa fa-address-card-o"></i><b> Isikud (valitud {{ kirjeid }})
+	 {% if object_list.paginator.num_pages > 1 %}
+	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
+	 {% endif %}
+	 </b>
+  </div>
+  <form action="" method="get">
+  <div class="w3-container w3-cell w3-cell-middle w3-mobile">
+	{% render_field filter.form.eesnimi__icontains class+="w3-input w3-border-0" placeholder=filter.form.eesnimi__icontains.label %}
+  </div>
+  <div class="w3-container w3-cell w3-cell-middle w3-mobile">
+	{% render_field filter.form.perenimi__icontains class+="w3-input w3-border-0" placeholder=filter.form.perenimi__icontains.label %}
+  </div>
+  <div class="w3-container w3-cell w3-cell-middle w3-mobile">
+  	<button class="w3-button w3-block background-isik w3-text-white w3-hover-white" type="submit" value="Otsi"><i class="fa fa-search"></i></button>
+  </div>
+  </form>
+</div>
+
+{% if object_list %}
+  {% include 'wiki/includes/pagination.html' with teema="isik" %}
+  {% include 'wiki/includes/object_list_isikud.html'%}
+{% else %}
+  <div class="w3-container w3-padding">
+	  {% if filter.form.perenimi__icontains.value or filter.form.eesnimi__icontains.value %}
+	    Otsinguga (isiku 
+		{% if filter.form.perenimi__icontains.value %}
+		  perenimi sisaldab fraasi &#x0022;{{filter.form.perenimi__icontains.value }}&#x0022;&nbsp;
+		{% endif %}
+		{% if filter.form.eesnimi__icontains.value %}
+		  eesnimi sisaldab fraasi&#x0022;{{filter.form.eesnimi__icontains.value }}&#x0022;&nbsp;
+		{% endif %}
+		) ei leitud midagi
+	  {% else %}
+	    Valikut pole tehtud
+	  {% endif %}
+	</div>
+{% endif %}
+
+{% endblock %}

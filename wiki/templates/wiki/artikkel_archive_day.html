@@ -1,0 +1,99 @@
+{% extends "wiki/wiki_base.html" %}
+
+{% block title %}{{ block.super }} - {{ day|date:"d.m.Y" }}{% endblock %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block content %}
+<div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
+  <div class="w3-container w3-large">
+     <i class="fa fa-comment"></i><b> Artiklid {{ day|date:"j." }}{% include "wiki/includes/kuu.html" with kuu=day|date:"m" %}{{ day|date:"Y" }} {{ month|date:"Y" }} kohta</b>
+  </div>
+</div>
+
+<!-- Lingid ajaliselt eelnevatele või järgnevatele perioodidele -->
+<div class="w3-cell-row w3-margin-top">
+  <div class="w3-quarter">
+    <a style="text-decoration: none;" href={% url 'wiki:artikkel_month_archive' month=previous_month|date:"n" year=previous_month|date:"Y" %}>
+	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
+        <b><i class="fa fa-angle-double-left w3-large"></i>
+        &nbsp;{% include "wiki/includes/kuu.html" with kuu=previous_month|date:"m" %} {{ previous_month|date:"Y" }}</b>
+      </div>
+	</a>
+  </div>	
+  <div class="w3-quarter">
+    <a style="text-decoration: none;" href={% url 'wiki:artikkel_day_archive' month=previous_day|date:"n" year=previous_day|date:"Y" day=previous_day|date:"d" %}>
+	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
+        <b><i class="fa fa-angle-left w3-large"></i>
+        &nbsp;{{ previous_day|date:"d.m.Y" }}</b>
+      </div>
+	</a>
+  </div>
+  <div class="w3-quarter">
+    <a style="text-decoration: none;" href={% url 'wiki:artikkel_day_archive' month=next_day|date:"n" year=next_day|date:"Y" day=next_day|date:"d" %}>
+	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
+        <b>{{ next_day|date:"d.m.Y" }}
+		&nbsp;<i class="fa fa-angle-right w3-large"></i></b>
+      </div>
+	</a>
+  </div>
+  <div class="w3-quarter">
+    <a style="text-decoration: none;" href={% url 'wiki:artikkel_month_archive' month=next_month|date:"n" year=next_month|date:"Y" %}>
+	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
+        <b>{% include "wiki/includes/kuu.html" with kuu=next_month|date:"m" %} {{ next_month|date:"Y" }}
+        &nbsp;<i class="fa fa-angle-double-right w3-large"></i></b>
+      </div>
+	</a>
+  </div>
+</div>
+
+<!-- Loend valitud kuupäeva artiklitest -->
+{% if object_list %}
+  {% include 'wiki/includes/object_list.html' %}
+{% else %}
+  <div class="w3-container w3-padding-16">
+	  Valitud kuupäeva kohta andmed puuduvad! Proovige <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_filter' %}> uuesti</a>.
+  </div>
+{% endif %}
+	
+<!-- Loend valitud kuu ja päeva teiste aastate artiklitest -->
+{% if sel_p2eval %}
+  <div class="w3-cell-row w3-container background-artikkel w3-text-white">
+	<div class="w3-cell w3-cell-middle">
+  	  <h5><i class="fa fa-comment w3-large"></i>&nbsp;{{ day|date:"j." }}{% include "wiki/includes/kuu.html" with kuu=day|date:"m" %} teistel aastatel:</h5>
+	</div>
+  </div>
+  {% include 'wiki/includes/object_list.html' with object_list=sel_p2eval %}
+{% endif %}
+
+<!-- Loend samal päeval sündinud isikutest -->
+{% if syndinud_isikud %}
+  {% with object_list=syndinud_isikud %}
+	{% include 'wiki/includes/object_list_isikud.html' with periood=day pealkiri=syndinud_isikud_pealkiri %}
+  {% endwith %}
+{% endif%}
+
+<!-- Loend samal päeval surnud isikutest -->
+{% if surnud_isikud %}
+  {% with object_list=surnud_isikud %}
+	{% include 'wiki/includes/object_list_isikud.html' with periood=day pealkiri=surnud_isikud_pealkiri %}
+  {% endwith %}
+{% endif%}
+
+<!-- Samal päeval loodud organisatsioonid -->
+{% if loodud_organisatsioonid %}
+  {% with object_list=loodud_organisatsioonid %}
+    {% include 'wiki/includes/object_list_organisatsioonid.html' with periood=day pealkiri=loodud_organisatsioonid_pealkiri %}
+  {% endwith %}
+{% endif%}
+
+<!-- Samal päeval valminud objektid -->
+{% if valminud_objektid %}
+  {% with object_list=valminud_objektid %}
+    {% include 'wiki/includes/object_list_objektid.html' with periood=year pealkiri=valminud_objektid_pealkiri %}
+  {% endwith %}
+{% endif%}
+
+{% endblock %}
+

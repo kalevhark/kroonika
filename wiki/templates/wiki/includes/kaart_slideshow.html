@@ -1,0 +1,77 @@
+{% load staticfiles %}
+
+<style>
+.mySlides {display:none;}
+</style>
+
+<div class="w3-content w3-display-container">
+
+<div class="w3-display-container mySlides">
+  <a href="{% static 'wiki/img/kaart/1682.jpg' %}" target="_blank">
+    <img src="{% static 'wiki/img/kaart/1682_cr.jpg' %}" style="width:100%">
+  </a>
+  <div class="w3-display-topmiddle w3-large w3-container w3-padding-16 background-objekt">
+    <i class="fa fa-map w3-large"></i>&nbsp;1682
+  </div>
+</div>
+
+<div class="w3-display-container mySlides">
+  <a href="{% static 'wiki/img/kaart/1795.jpg' %}" target="_blank">
+    <img src="{% static 'wiki/img/kaart/1795_cr.jpg' %}" style="width:100%">
+  </a>
+  <div class="w3-display-topmiddle w3-large w3-container w3-padding-16 background-objekt">
+    <i class="fa fa-map w3-large"></i>&nbsp;1795
+  </div>
+</div>
+
+<div class="w3-display-container mySlides">
+  <a href="{% static 'wiki/img/kaart/1870.jpg' %}" target="_blank">
+    <img src="{% static 'wiki/img/kaart/1870_cr.jpg' %}" style="width:100%">
+  </a>
+  <div class="w3-display-topmiddle w3-large w3-container w3-padding-16 background-objekt">
+    <i class="fa fa-map w3-large"></i>&nbsp;1870
+  </div>
+</div>
+
+<div class="w3-display-container mySlides">
+  <a href="{% static 'wiki/img/kaart/1905.jpg' %}" target="_blank">
+    <img src="{% static 'wiki/img/kaart/1905_cr.jpg' %}" style="width:100%">
+  </a>
+  <div class="w3-display-topmiddle w3-large w3-container w3-padding-16 background-objekt">
+    <i class="fa fa-map w3-large"></i>&nbsp;1905
+  </div>
+</div>
+
+<div class="w3-display-container mySlides">
+  <a href="{% static 'wiki/img/kaart/1932.jpg' %}" target="_blank">
+    <img src="{% static 'wiki/img/kaart/1932_cr.jpg' %}" style="width:100%">
+  </a>
+  <div class="w3-display-topmiddle w3-large w3-container w3-padding-16 background-objekt">
+    <i class="fa fa-map w3-large"></i>&nbsp;1932
+  </div>
+</div>
+
+<button class="w3-button w3-display-topleft w3-container background-objekt" onclick="plusDivs(-1)">&#10094;</button>
+<button class="w3-button w3-display-topright w3-container background-objekt" onclick="plusDivs(1)">&#10095;</button>
+
+</div>
+
+<script>
+var slideIndex = 1;
+showDivs(slideIndex);
+
+function plusDivs(n) {
+  showDivs(slideIndex += n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  if (n > x.length) {slideIndex = 1}    
+  if (n < 1) {slideIndex = x.length}
+  for (i = 0; i < x.length; i++) {
+     x[i].style.display = "none";  
+  }
+  x[slideIndex-1].style.display = "block";  
+}
+</script>

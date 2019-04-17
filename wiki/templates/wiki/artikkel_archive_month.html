@@ -1,0 +1,84 @@
+{% extends "wiki/wiki_base.html" %}
+
+{% block title %}{{ block.super }} - {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:"Y" }}{% endblock %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+
+{% block content %}
+<div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
+  <div class="w3-container w3-large">
+     <i class="fa fa-comment"></i><b> Artiklid {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:"Y" }} kohta</b>
+  </div>
+</div>
+
+<!-- Lingid eelnevale ja järgnevale kuule -->
+<div class="w3-cell-row w3-margin-top">
+  <div class="w3-half">
+    <a style="text-decoration: none;" href={% url 'wiki:artikkel_month_archive' month=previous_month|date:"n" year=previous_month|date:"Y" %}>
+	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
+        <b><i class="fa fa-angle-double-left w3-large"></i>
+        &nbsp;{% include "wiki/includes/kuu.html" with kuu=previous_month|date:"m" %} {{ previous_month|date:"Y" }}</b>
+      </div>
+	</a>
+  </div>	
+  <div class="w3-half">
+    <a style="text-decoration: none;" href={% url 'wiki:artikkel_month_archive' month=next_month|date:"n" year=next_month|date:"Y" %}>
+	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
+        <b>{% include "wiki/includes/kuu.html" with kuu=next_month|date:"m" %} {{ next_month|date:"Y" }}
+        &nbsp;<i class="fa fa-angle-double-right w3-large"></i></b>
+      </div>
+	</a>
+  </div>
+</div>
+
+<!-- Loend valitud aasta ja kuu artiklitest -->
+{% if object_list %}
+ {% include 'wiki/includes/object_list.html' %}
+{% else %}
+  <div class="w3-container w3-padding-16">
+    Valitud kuu ja aasta ({% include "wiki/includes/kuu.html" with kuu=month|date:"m" %}{{ month|date:'Y' }}) kohta andmed puuduvad! Proovige <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_filter' %}> uuesti</a>.
+  </div>
+{% endif %}
+
+<!-- Loend valitud kuu teiste aastate artiklitest -->
+{% if sel_kuul %}
+  <div class="w3-cell-row w3-container background-artikkel w3-text-white w3">
+	<div class="w3-cell w3-cell-middle">
+	  <h5><i class="fa fa-comment w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} teistel aastatel:</h5>
+	</div>
+  </div>
+  {% include 'wiki/includes/object_list.html' with object_list=sel_kuul %}
+{% endif %}
+
+
+<!-- Loend samal kuul sündinud isikutest -->
+{% if syndinud_isikud %}
+  {% with object_list=syndinud_isikud %}
+	{% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=syndinud_isikud_pealkiri %}
+  {% endwith %}
+{% endif%}
+
+<!-- Loend samal kuul surnud isikutest -->
+{% if surnud_isikud %}
+  {% with object_list=surnud_isikud %}
+	{% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=surnud_isikud_pealkiri %}
+  {% endwith %}
+{% endif%}
+
+<!-- Loend samal kuul loodud organisatsioonidest -->
+{% if loodud_organisatsioonid %}
+  {% with object_list=loodud_organisatsioonid %}
+    {% include 'wiki/includes/object_list_organisatsioonid.html' with periood=month pealkiri=loodud_organisatsioonid_pealkiri %}
+  {% endwith %}
+{% endif%}
+
+<!-- Samal päeval valminud objektid -->
+{% if valminud_objektid %}
+  {% with object_list=valminud_objektid %}
+    {% include 'wiki/includes/object_list_objektid.html' with periood=month pealkiri=valminud_objektid_pealkiri %}
+  {% endwith %}
+{% endif%}
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% if pealkiri %}
+<div class="w3-cell-row w3-container background-organisatsioon w3-text-white">
+  <div class="w3-cell w3-cell-middle">
+	<h5><i class="fa fa-group w3-large"></i>&nbsp;{{ pealkiri }}</h5>
+  </div>
+</div>
+{% endif %}
+
+{% for obj in object_list %}
+  <div class="w3-cell-row w3-hover-white w3-padding-small">
+	<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}> {{ obj }}</a>
+	{% if obj.hist_year %}
+	  {% if obj.hist_date %}
+	    {{ obj.hist_date|date:"d.m.Y" }}
+	  {% else %}
+	    {{ obj.hist_year }}
+	  {% endif %}
+	  {% if obj.hist_endyear %}
+	    -
+		{% if obj.hist_enddate %}
+		  {{ obj.hist_enddate|date:"d.m.Y" }}
+		{% else %}
+		  {{ obj.hist_endyear }}
+		{% endif %}
+	  {% endif %}
+	  &nbsp;{% now 'Y' %}:
+	  {% if not obj.nulliga %}
+	    <b class="text-organisatsioon">{{ obj.vanus }}</b>
+	  {% else	%}
+	    {{ obj.vanus }}
+	  {% endif %}
+	  {% if obj.vanus != obj.vanus_gen %}
+	    {% if obj.vanus_gen > 0 %}
+	      ; {{ month|date:'Y' }}:{{ obj.vanus_gen }})
+		{% endif %}
+	  {% endif %}
+	{% endif %}
+	<!-- Loetelu seotud artiklinumbritest -->
+	{% for artikkel in obj.artikkel_set.all %} 
+	  &nbsp;
+	  <a class="hover-artikkel tooltip" href={% url 'wiki:wiki_artikkel_detail' pk=artikkel.id %}>{{ artikkel.id }}
+	  <span class="tooltiptext">{{ artikkel.hist_year }}: {{ artikkel }}</span>
+	  </a>
+	{% endfor %}
+  </div>
+{% endfor %}

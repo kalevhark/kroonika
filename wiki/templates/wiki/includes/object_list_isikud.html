@@ -1,0 +1,44 @@
+{% if pealkiri %}
+<div class="w3-cell-row w3-container background-isik w3-text-white">
+  <div class="w3-cell w3-cell-middle">
+	<h5><i class="fa fa-address-card-o w3-large"></i>&nbsp;{{ pealkiri }}</h5>
+  </div>
+</div>
+{% endif %}
+
+{% for obj in object_list %}
+  <div class="w3-cell-row w3-hover-white w3-padding-small">
+	<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>{{ obj }}</a>
+	&nbsp;{{ obj.hist_date|date:"d.m.Y" }} 
+	{% if obj.vanus %}
+	  {% now 'Y' %}:
+	  {% if not obj.nulliga %}
+		<b class="text-isik">{{ obj.vanus }}</b>
+	  {% else	%}
+		{{ obj.vanus }}
+	  {% endif %}
+	{% endif %}
+	{% if obj.vanus != obj.vanus_gen %}
+	  {% if obj.vanus_gen > 0 %}
+	    ;{{ periood|date:'Y' }}:{{ obj.vanus_gen }}
+	  {% endif %}
+	{% endif %}
+	<!-- Surmaaeg -->
+	{% if obj.hist_enddate %}
+	  &nbsp;-&nbsp;
+	  {{ obj.hist_enddate|date:"d.m.Y" }}
+	{% endif %}
+	<!-- Loetelu seotud artiklinumbritest -->
+	{% for artikkel in obj.artikkel_set.all %}
+	  &nbsp;
+	  <a class="hover-artikkel tooltip" href={% url 'wiki:wiki_artikkel_detail' pk=artikkel.id %}>{{ artikkel.id }}
+	  <span class="tooltiptext">{{ artikkel.hist_year }}: {{ artikkel }}</span>
+	  </a>
+	{% endfor %}
+	<!-- Loetelu seotud organisatsioonidest -->
+	<!-- {% for org in obj.organisatsioonid.all %} -->
+	  <!-- &nbsp; -->
+	  <!-- <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=org.id %}>{{ org }}</a> -->
+    <!-- {% endfor %} -->
+</div>
+{% endfor %}

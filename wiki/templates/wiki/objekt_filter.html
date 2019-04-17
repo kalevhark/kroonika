@@ -1,0 +1,43 @@
+{% extends "wiki/wiki_base.html" %}
+
+{% block title %}
+  {{ block.super }} - Objektid
+{% endblock %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block content %}
+{% load widget_tweaks %}
+<div class="w3-cell-row w3-container background-objekt w3-text-white w3-padding-16">
+  <div class="w3-container w3-cell w3-cell-middle w3-large  w3-mobile">
+     <i class="fa fa-address-card-o"></i><b> Objektid ({{ kirjeid }})
+	 {% if object_list.paginator.num_pages > 1 %}
+	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
+	 {% endif %}
+	 </b>
+  </div>
+  <form action="" method="get">
+  <div class="w3-container w3-cell w3-cell-middle w3-mobile">
+	{% render_field filter.form.nimi__icontains class+="w3-input w3-border-0" placeholder=filter.form.nimi__icontains.label %}
+  </div>
+  <div class="w3-container w3-cell w3-cell-middle w3-mobile">
+  	<button class="w3-button w3-block background-objekt w3-text-white w3-hover-white" type="submit" value="Otsi"><i class="fa fa-search"></i></button>
+  </div>
+  </form>
+</div>
+	
+{% if object_list %}
+  {% include 'wiki/includes/pagination.html' with teema="objekt" %}
+  {% include 'wiki/includes/object_list_objektid.html' with periood=day %}
+{% else %}
+	<div class="w3-container w3-padding">
+	  {% if filter.form.nimi__icontains.value %}
+	    Otsinguga (objekti nimi sisaldab fraasi &#x0022;{{filter.form.nimi__icontains.value }}&#x0022;) ei leitud midagi
+	  {% else %}
+	    Valikut pole tehtud
+	  {% endif %}
+	</div>
+{% endif %}
+
+{% endblock %}

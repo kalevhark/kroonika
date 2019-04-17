@@ -1,0 +1,21 @@
+<!-- Loend seotud organisatsioonidest -->
+{% if object.organisatsioonid.all %}
+<p><i class="fa fa-group w3-xlarge text-organisatsioon"></i>
+{% for obj in object.organisatsioonid.all %}
+  {% if forloop.counter > 1 %}
+	&ensp;
+  {% endif %}
+  <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>{{ obj }}</a>
+{% endfor %}
+</p>
+{% endif %}
+{% if object.organisatsioon_set.all %}
+<p><i class="fa fa-group w3-xlarge text-organisatsioon"></i>
+{% for obj in object.organisatsioon_set.all %}
+  {% if forloop.counter > 1 %}
+	&ensp;
+  {% endif %}
+  <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>{{ obj }}</a>
+{% endfor %}
+</p>
+{% endif %}

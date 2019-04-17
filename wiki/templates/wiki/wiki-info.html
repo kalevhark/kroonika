@@ -1,0 +1,93 @@
+{% extends "wiki/wiki_base.html" %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block content %}
+{% load staticfiles %}
+{% load wiki_extras %}
+<div>
+<p>
+Valga linna süstematiseeritud ja veel süstematiseerimata kroonika 
+seotuna isikute, organisatsioonide ja objektidega.
+</p>
+<p>
+Loodud kasutamiseks informatsioonilistel ja hariduslikel eesmärkidel. 
+<br>
+Kogutud ja esitatud materjalid võivad olla ebatäpsed, mistõttu nende kasutamine on iga kasutaja enda riskil. 
+</p>
+<p>
+Viidatud materjalid võivad olla nende autorite omand ja nende kasutamisel tuleb viidata algallikale.
+</p>
+{% if andmed.id__count > 0 %}
+Andmebaasis on {{ andmed.id__count }} artiklit {{ andmed.hist_searchdate__min|date:"d.m.Y" }} kuni {{ andmed.hist_searchdate__max|date:"d.m.Y" }}.
+{% endif %}  
+</div>
+
+<div>
+Andmed pärinevad:
+<ul>
+<li>Valga linna kroonikaraamat (Arved Duvin, Valga 2005)</li>
+<li>Valga keskraamatukogu <a target="blank" href="http://www.valgark.ee/?page_id=38">Valgamaa kodulugu</a></li>
+<li>Valga keskraamatukogu <a target="blank" href="http://www.valgark.ee/isik/">Valgamaa kodulooline andmebaas ISIK</a></li>
+<li>Muinsuskaitseameti <a target="blank" href="https://register.muinas.ee">Kultuurimälestiste riiklik register</a></li>
+<li>Riigiarhiivi fotoarhiiv <a target="blank" href="http://www.ra.ee/fotis">FOTIS</a></li>
+<li>Eesti muuseumide veebivärav <a target="blank" href="https://www.muis.ee/">MUIS</a></li>
+<li><a target="blank" href="https://et.wikipedia.org/wiki/">Vikipeedia</a></li>
+<li><a target="blank" href="https://www.geni.com">geni.com</a></li>
+</ul>
+<p>Parandatud on ilmsed vead. Vastukäivate andmete puhul on järjekord:
+Arhiivimaterjalid -> Teatmeteosed -> Kroonikaraamatud -> Vikipeedia -> muud andmekogud</p>
+</div>
+
+<p>Otsimiseks kasuta temaatilisi otsinguid:
+&nbsp;<a href={% url 'wiki:wiki_artikkel_filter' %}>Artiklid</a>
+&nbsp;<a href={% url 'wiki:wiki_isik_filter' %}>Isikud</a>
+&nbsp;<a href={% url 'wiki:wiki_organisatsioon_filter' %}>Organisatsioonid</a>
+&nbsp;<a href={% url 'wiki:wiki_objekt_filter' %}>Objektid</a>
+</p>
+<p><form method="get" action="{% url 'wiki:mine_krono_kp' %}">
+...või vali kuupäev:
+<input type="date" name="kuup2ev" value="1902-02-24">
+<input type="submit" value='Vaata'>
+</form></p>
+<p> </p>
+<p>...või otseteed wiki/krono/aasta/kuu/päev, 
+näiteks <i>wiki/krono/1971/03/15</i>.</p>
+<div>
+Andmebaasid:
+<ul>
+{% for a in andmebaasid%}
+<li>{{a}}
+{% endfor %}
+</ul>
+</div>
+Andmebaasi- ja veebilahenduse tegi {% kalev %}.<br>
+Testserveri eest suured tänud: Margo Pärnaku, Siim Somma!<br>
+Abiks:
+<ul>
+<li><a href="https://www.python.org/">Python 3.7.1</a></li>
+<li><a href="https://www.djangoproject.com/">Django 2.1.2</a></li>
+<li><a href="https://mariadb.com/">MariaDB 10.0.36</a></li>
+<li><a href="http://apache.org/">Apache/2.4.10</a></li>
+</ul>
+Lisaks:
+<ul>
+<li><a href="https://www.w3schools.com/">W3Schools</a></li>
+<li><a href="https://github.com/carltongibson/django-filter">django-filter</a></li>
+<li><a href="https://github.com/jazzband/django-widget-tweaks">django-widget-tweaks</a></li>
+<li><a href="https://www.django-rest-framework.org/">Django REST framework</a></li>
+</ul>
+
+<div>
+{% render_logged_in_user_list %}
+</div>
+
+<!-- <div>
+Artikkel:
+{% for key, value in artikkel_fields.items %}
+<br>{{ key }} {{ value }}
+{% endfor %}
+</div>
+-->
+{% endblock %}

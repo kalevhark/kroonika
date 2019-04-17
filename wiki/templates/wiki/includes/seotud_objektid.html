@@ -1,0 +1,21 @@
+<!-- Loend seotud objektidest -->
+{% if object.objektid.all %}
+	<p><i class="fa fa-bank w3-xlarge text-objekt"></i>
+	{% for obj in object.objektid.all %}
+	  {% if forloop.counter > 1 %}
+		&ensp;
+	  {% endif %}
+	  <a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>{{ obj }}</a>
+	{% endfor %}
+	</p>
+{% endif %}
+{% if object.objekt_set.all %}
+	<p><i class="fa fa-bank w3-xlarge text-objekt"></i>
+	{% for obj in object.objekt_set.all %}
+	  {% if forloop.counter > 1 %}
+		&ensp;
+	  {% endif %}
+	  <a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>{{ obj }}</a>
+	{% endfor %}
+	</p>
+{% endif %}

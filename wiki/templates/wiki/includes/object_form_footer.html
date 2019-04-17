@@ -1,0 +1,8 @@
+<br>
+Lisatud {{ object.inp_date|date:"d.m.Y H:i" }}/{{ object.created_by }}
+<br>
+Muudetud {{ object.mod_date|date:"d.m.Y H:i" }}/{{ object.updated_by }}
+<br>
+{% if object.hist_searchdate %}
+  Tuletatud kuupäev {{ object.hist_searchdate|date:"d.m.Y" }}
+{% endif %}

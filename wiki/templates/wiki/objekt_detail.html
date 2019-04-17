@@ -1,0 +1,63 @@
+{% extends "wiki/wiki_base.html" %}
+
+{% block title %}{{ block.super }} - {{ object }}{% endblock %}
+
+{% block content %}
+<div class="w3-panel w3-card-4 w3-light-grey" >
+  <div class="w3-row w3-xlarge text-objekt" >
+    <h4>
+	  <i class="fa fa-address-card-o"></i>
+	  {{ object }}
+	</h4>
+  </div>
+  <div class="w3-row" >
+    <p>
+      &nbsp;{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="white" %}
+	  
+	  
+	  
+	  
+	</p>
+  </div>
+  <div class="w3-twothird" >
+    <div>
+      <div class="w3-third">
+	    {% if profiilipilt %} <!-- Kui on määratud profiilipilt -->
+		  <div class="w3-margin-right">
+		    <img class="pilt-postkaart-medium" id="profiiliPilt" src="{{ profiilipilt.link }}"/>
+	        <small><div class="w3-center" id="imgtext">{{ profiilipilt }}</div></small>
+		  </div>
+		{% else %} <!-- Seotud piltide ankur -->
+		  <div class="w3-margin-right" style="display: none">
+		    <img id="profiiliPilt" src="" style="max-width:100%"/>
+	        <small><div class="w3-center" id="imgtext"></div></small>
+		  </div>
+		{% endif %}
+	  </div>
+	  <div class="w3-twothird">
+	    <div>
+          {{ object.kirjeldus | safe | linebreaksbr }}
+		</div>
+      </div>
+	</div>
+  </div>
+  <div class="w3-third w3-padding" >
+    
+	{% include 'wiki/includes/seotud_objektid.html' %}
+	{% include 'wiki/includes/seotud_pildid.html' %}
+  </div>
+  <!-- Andmete lisamise/muutmise andmed: -->
+  {% include 'wiki/includes/object_updated_edit.html' with model='objekt' %}
+</div>
+<!-- Seotud artiklid: -->
+{% include 'wiki/includes/seotud_artiklid.html' %}
+<div class="w3-third w3-padding" >
+  {% include 'wiki/includes/seotud_isikud_artiklikaudu.html' %}
+</div>
+<div class="w3-third w3-padding" >
+  {% include 'wiki/includes/seotud_organisatsioonid_artiklikaudu.html' %}
+</div>
+<div class="w3-third w3-padding" >
+  {% include 'wiki/includes/seotud_objektid_artiklikaudu.html' %}
+</div>
+{% endblock %}

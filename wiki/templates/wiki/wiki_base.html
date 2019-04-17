@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="et">
+
+<head>
+{% load staticfiles %}
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="description" content="Valga linna ajalookroonika">
+<meta name="keywords" content="Valga, kroonika, ajalugu">
+<meta name="author" content="Kalev Härk">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Kirjeldus -->
+<meta property="og:url"           content="http://18.196.203.237/" />
+<meta property="og:type"          content="website" />
+<meta property="og:title"         content="Valga kroonika" />
+<meta property="og:description"   content="Valga linna ajalookroonika" />
+<meta property="og:image"         content="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
+<!-- CSS -->
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Custom CSS -->
+<link rel="stylesheet" href={% static "wiki/css/kroonika_general.css" %}>
+<link rel="stylesheet" href={% static "wiki/css/kroonika_color_metro.css" %}>
+<!-- <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}> -->
+
+<link rel="shortcut icon" href={% static "wiki/img/favicon.ico" %}>
+</head>
+
+<!-- Kroonika -->
+<title>
+{% block title %}Valga kroonika{% endblock %}
+</title>
+
+<body class="w3-light-grey">
+
+<!-- Navbar -->
+<div id="top" class="w3-top">
+  <div class="w3-bar w3-left-align w3-large w3-padding">
+    <a class="w3-bar-item w3-button w3-hide-large w3-right w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="myFunction()"><i class="fa fa-bars"></i></a>
+    <a href={% url 'algus' %} class="w3-bar-item w3-button w3-theme-d4 w3-hover-white"><i class="fa w3-margin-right"><img src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" style='max-height:22px;' alt="vapp"></i>Valga linna kroonika</a>
+    <form class="w3-hide-small" role="search" method="get" id="searchform" action="{% url 'wiki:wiki_artikkel_filter' %}" >
+      <input type="text" class="w3-bar-item w3-input w3-white" name="body_text__icontains" id="id_body_text__icontains" placeholder="Otsi.." />
+      <button class="w3-bar-item w3-button w3-hide-small w3-hover-white" type="submit" id="searchsubmit" title="Otsi valitud fraasi järgi"><i class="fa fa-search"></i></button>
+    </form>
+	<a href={% url 'wiki:info' %} class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white" title="Info"><i class="fa fa-info"></i></a>
+    <a href="https://et.wikipedia.org/wiki/Valga" target="blank" class="w3-bar-item w3-button w3-hide-medium  w3-hide-small w3-hover-white" title="Wikipedia"><i class="fa fa-wikipedia-w"></i></a>
+	<a href="https://www.facebook.com/valgalinn/" target="blank" class="w3-bar-item w3-button w3-hide-medium  w3-hide-small w3-hover-white" title="Facebook"><i class="fa fa-facebook-official"></i></a>
+    <a href="/admin/" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-right" title="Admin"><i class="fa fa-cog"></i></a>
+	{% if user.is_authenticated %}
+	  <a href={% url 'logout' %} class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-right" title={{ user.username }}>{{ user.username }}&nbsp;<i class="fa fa-sign-out"></i></a>
+	{% endif %}
+  </div> 
+</div>
+
+<div class="w3-container" style="margin-top:60px;">
+
+<!-- Navbar on small screens -->
+<div class="w3-row-padding w3-margin-bottom w3-hide-large">
+<div id="m-navbar" class="w3-bar-block w3-white w3-hide w3-hide-large w3-padding-16">
+  <a href={% url 'wiki:wiki_artikkel_filter' %} class="w3-bar-item w3-button"><i class="fa fa-search"></i>&nbsp;Otsi...</a>
+  <a href="https://et.wikipedia.org/wiki/Valga" target="blank" class="w3-bar-item w3-button"><i class="fa fa-wikipedia-w"></i>&nbsp;Valga Vikipeedias</a>
+  <a href={% url 'wiki:info' %} class="w3-bar-item w3-button"><i class="fa fa-info"></i>&nbsp;Projektist</a>
+</div>
+</div>
+
+<!-- Search on small screens -->
+<div class="w3-row-padding w3-margin-bottom w3-hide-medium w3-hide-large">
+<form class="w3-hide-medium w3-hide-large" role="search" method="get" id="searchform" action="{% url 'wiki:wiki_artikkel_filter' %}" >
+      <input type="text" class="w3-bar-item w3-input w3-white w3-mobile" name="body_text__icontains" id="id_body_text__icontains" placeholder="Otsi.." />
+      <button class="w3-bar-item w3-button w3-hide-small w3-hover-white" type="submit" id="searchsubmit" title="Otsi valitud fraasi järgi"><i class="fa fa-search"></i></button>
+      <button class="w3-bar-item w3-button w3-hide-small w3-hover-white" type="reset" id="searchreset" title="Uus otsing"><i class="fa fa-close"></i></button>
+</form>
+</div>
+	
+{% block content %} {% endblock %}
+
+</body>
+<footer>
+  <div class="w3-bar w3-padding">
+    <a href="#">
+	  <button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
+	</a>
+<!-- <div class="fb-like" data-href="http://18.196.203.237/" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="true"></div> -->
+</div>
+	<a href={% url 'wiki:info' %}>
+      <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018 Kalev Härk</small></button>
+	</a>
+  </div>
+</footer>
+
+<!-- Väikese ekraani menüü (Collapsing the Navigation Bar) -->
+<script>
+function myFunction() {
+    var x = document.getElementById("m-navbar");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else { 
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+
+<!-- Load Facebook SDK for JavaScript -->
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/et_EE/sdk.js#xfbml=1&version=v3.0";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
+<!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script> -->
+{% block javascript %} {% endblock %}
+</html>

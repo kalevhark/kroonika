@@ -1,0 +1,53 @@
+{% extends "wiki/wiki_base.html" %}
+
+{% block title %}{{ block.super }} - {{ object }} - muutmine{% endblock %}
+
+{% block content %}
+<form method="post">
+{% csrf_token %}
+{{ form.nimi }} {{ form.tyyp }}
+<br>
+{% if form.hist_date.help_text %}
+<small>{{ form.asukoht.help_text }}</small>
+{% endif %}
+{{ form.asukoht }}
+<br> 
+{{ form.kirjeldus }}
+<br>
+{% if form.hist_date.help_text %}
+<small>{{ form.hist_date.help_text }}</small>
+{% endif %}
+{{ form.hist_date }}
+või
+{% if form.hist_year.help_text %}
+<small>{{ form.hist_year.help_text }}</small>
+{% endif %}
+{{ form.hist_year }}
+{% if form.hist_month.help_text %}
+<small>{{ form.hist_month.help_text }}</small>
+{% endif %}
+{{ form.hist_month }}
+<br>
+{% if form.hist_enddate.help_text %}
+<small>{{ form.hist_enddate.help_text }}</small>
+{% endif %}
+{{ form.hist_enddate }}
+või
+{% if form.hist_endyear.help_text %}
+<small>{{ form.hist_endyear.help_text }}</small>
+{% endif %}
+{{ form.hist_endyear }}
+<br>
+<small>Seotud {{ form.objektid.name }} </small>
+<br>
+{{ form.objektid }}
+<br>
+{% if form.objektid.help_text %}
+<small>{{ form.objektid.help_text }}</small>
+{% endif %}
+<br>
+<button href={% url 'wiki:wiki_objekt_detail' pk=object.pk %} role="button">Loobu</button>
+<button type="submit" value="Update">Muuda</button>
+{% include 'wiki/includes/object_form_footer.html' %}
+</form>
+{% endblock %}

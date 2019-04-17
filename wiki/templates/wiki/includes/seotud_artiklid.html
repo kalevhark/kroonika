@@ -1,0 +1,15 @@
+{% if object.artikkel_set.all %}
+  <div class="w3-panel w3-card-4 w3-light-grey w3-padding-16">
+  <h5>
+    <i class="fa fa-comment w3-xlarge text-artikkel" title="Seotud artiklid"></i>
+	&nbsp;Mainitud kroonikas:
+  </h5>
+  {% for obj in object.artikkel_set.all %}
+	{% if forloop.counter > 1 %}
+	  <br>
+	{% endif %}
+	{% include 'wiki/includes/kp.html' with sd=obj.hist_date ed=obj.hist_enddate y=obj.hist_year m=obj.hist_month cs="primary" %}
+	  &nbsp;<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=obj.id %}>{{ obj.headline }}</a>
+  {% endfor %}
+  </div>
+{% endif %}

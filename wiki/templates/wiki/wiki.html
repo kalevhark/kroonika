@@ -1,0 +1,473 @@
+{% extends "wiki/wiki_base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+  <!-- Lingid teemalehtedele -->
+  <div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-quarter">
+      <a style="text-decoration: none;" href={% url 'wiki:wiki_artikkel_filter' %}>
+	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white">
+        <div class="w3-left"><i class="fa fa-comment w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>{{ andmed.artikkel.kirjeid }}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Artiklid</h4>
+      </div>
+	  </a>
+    </div>
+    <div class="w3-quarter">
+      <a style="text-decoration: none;" href={% url 'wiki:wiki_isik_filter' %}>
+	  <div class="w3-container background-isik w3-padding-16 w3-hover-white">
+        <div class="w3-left"><i class="fa fa-address-card-o w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>{{ andmed.isik.kirjeid }}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Isikud</h4>
+      </div>
+	  </a>
+    </div>
+	<div class="w3-quarter">
+      <a style="text-decoration: none;" href={% url 'wiki:wiki_organisatsioon_filter' %}>
+	  <div class="w3-container background-organisatsioon w3-padding-16 w3-hover-white">
+        <div class="w3-left"><i class="fa fa-group w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>{{ andmed.organisatsioon.kirjeid }}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Organisatsioonid</h4>
+      </div>
+	  </a>
+    </div>
+    <div class="w3-quarter">
+      <a style="text-decoration: none;" href={% url 'wiki:wiki_objekt_filter' %}>
+	  <div class="w3-container background-objekt w3-padding-16 w3-hover-white">
+        <div class="w3-left"><i class="fa fa-bank w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>{{ andmed.objekt.kirjeid }}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Objektid</h4>
+      </div>
+	  </a>
+    </div>
+  </div>
+  <!-- Sisu algab siit -->
+  
+  <div class="w3-row-padding w3-margin-bottom">
+    <!-- Artiklite esitlus -->
+	<div class="w3-quarter">
+	  <div class="w3-container w3-padding-16 w3-hover-white">
+	  <!-- Sel kuul ja päeval toimunud -->
+	  {% if andmed.artikkel.sel_p2eval %}
+		{% now "d" as p2ev %}
+		{% now "m" as kuu %}
+		{% now "Y" as aasta %}
+	    <h5>{% now "j.m." %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_p2eval_kirjeid }}</span></h5>
+		{% for obj in andmed.artikkel.sel_p2eval %}
+		  {% if forloop.counter > 1 %}
+		    <br>
+		  {% endif %}
+		  <a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}>
+		  <strong>{{ obj.hist_year }}</strong>:
+		  </a>
+	      <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=obj.id %}>
+		  {{ obj }}
+		  </a>
+		  {% if obj.profiilipilt %}
+		    <img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/><br>
+		  {% endif %}
+		  <!-- Kui kirjed rohkem kui 5, siis hakime 2+1+2 -->
+		  {% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
+			{% if forloop.counter == 2 and andmed.artikkel.sel_p2eval_kirjeid  > 6 %}
+				<br><span class="w3-tiny text-artikkel"> - - - </span>
+			{% endif %}
+			{% if forloop.counter == 3 %}
+				<br><span class="w3-tiny text-artikkel"> - - - </span>
+			{% endif %}
+		  {% endif %}
+		{% endfor %}
+		{% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
+			<p>
+			<a class="hover-artikkel" href={% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}>
+			  Näita kõiki <em>{% now "j.m." %} ajaloos</em> ({{ andmed.artikkel.sel_p2eval_kirjeid }})
+			</a>
+			</p>
+		{% endif %}
+      {% endif %}
+	  <!-- Sel kuul toimunud -->
+	  {% if andmed.artikkel.sel_kuul %}
+	    {% now "m" as kuu %}
+		{% now "Y" as aasta %}
+	    <h5>{% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_kuul_kirjeid }}</span></h5>
+		{% for obj in andmed.artikkel.sel_kuul %}
+		  {% if forloop.counter > 1 %}
+		    <br>
+		  {% endif %}
+		  <a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}>
+		  <strong>{{ obj.hist_year }}</strong>:
+		  </a>
+	      <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=obj.id %}>
+		  {{ obj }}
+		  </a>
+		  <!-- Kui kirjed rohkem kui 5, siis hakime 2+1+2 -->
+		  {% if andmed.artikkel.sel_kuul_kirjeid > 5 %}
+			{% if forloop.counter == 2 and andmed.artikkel.sel_kuul_kirjeid  > 6 %}
+				<br><span class="w3-tiny w3-text-artikkel"> - - - </span>
+			{% endif %}
+			{% if forloop.counter == 3 %}
+				<br><span class="w3-tiny w3-text-artikkel"> - - - </span>
+			{% endif %}
+		  {% endif %}
+		{% endfor %}
+		{% if andmed.artikkel.sel_kuul_kirjeid > 5 %}
+			<p>
+			<a class="hover-artikkel" href={% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}>
+			  Näita kõiki <em>{% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos</em> ({{ andmed.artikkel.sel_kuul_kirjeid }})
+			</a>
+			</p>
+		{% endif %}
+	  {% endif %}
+	  
+	  </div>
+	</div>
+	
+	<!-- Isikute esitlus -->
+    <div class="w3-quarter">
+	  <div class="w3-container w3-padding-16 w3-hover-white">
+	  {% if andmed.isik.sel_p2eval %}
+	    <h5>{% now "j.m." %} sündinud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_kirjeid }}</span></h5>
+		{% for obj in andmed.isik.sel_p2eval %}
+		  {% if forloop.counter > 1 %}
+		    <br>
+		  {% endif %}
+		  <a class="hover-isik" 
+			href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}>
+			<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
+		  </a>
+		  &nbsp;
+		  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
+		    {{ obj }}
+		  </a>
+		  {% if obj.profiilipilt %}
+		    <div class="w3-row" >
+		      <div class="w3-half">
+		        <img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/><br>
+			  </div>
+			  <div class="w3-half w3-padding w3-hide-small w3-hide-medium">
+			    <small>{{ obj.kirjeldus|truncatewords:8 }}</small>
+		      </div>
+			</div>
+		  {% endif %}
+	    {% endfor %}
+	  {% endif %}
+	  {% if andmed.isik.sel_kuul %}
+	    {% now "m" as kuu %}
+	    <h5>{% include 'wiki/includes/kuul.html' with kuu=kuu %} sündinud <span class="w3-badge background-isik">{{ andmed.isik.sel_kuul_kirjeid }}</span></h5>
+		{% for obj in andmed.isik.sel_kuul %}
+		  {% if forloop.counter > 1 %}
+		    <br>
+		  {% endif %}
+		  <a class="hover-isik" 
+			  href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}
+			>
+			<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
+			</a>
+		  &nbsp;
+		  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
+		    {{ obj }}
+		  </a>
+	    {% endfor %}
+	  {% endif %}
+	  {% if andmed.isik.juubilarid %}
+	    <h5>{% now "Y" %} juubilarid <span class="w3-badge background-isik">{{ andmed.isik.juubilarid.count }}</span></h5>
+		{% for obj in andmed.isik.juubilarid %}
+		  {% if forloop.counter > 1 %}
+		    <br>
+		  {% endif %}
+		  <a class="hover-isik" 
+			href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}>
+			<b>{{ obj.hist_date|date:"d.m.Y" }}</b>
+		  </a>
+		  &nbsp;
+		  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
+			 {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
+		  </a>  
+		  &nbsp;<b>{{ obj.vanus_gen }}</b>
+		  {% if obj.profiilipilt %}
+		    <div class="w3-row" >
+		      <div class="w3-half">
+		        <img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/><br>
+			  </div>
+			  <div class="w3-half w3-padding w3-hide-small w3-hide-medium">
+			    <small>{{ obj.kirjeldus|truncatewords:8 }}</small>
+		      </div>
+			</div>
+		  {% endif %}
+		{% endfor %}
+	  {% endif %}
+	  {% if andmed.isik.sel_p2eval_surnud %}
+	    <h5>{% now "j.m." %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_surnud_kirjeid }}</span></h5>
+		{% for obj in andmed.isik.sel_p2eval_surnud %}
+		  {% if forloop.counter > 1 %}
+		    <br>
+		  {% endif %}
+		  <a class="hover-isik" 
+			href={% url 'wiki:artikkel_day_archive' year=obj.hist_enddate|date:"Y" month=obj.hist_enddate|date:"m" day=obj.hist_enddate|date:"d" %}
+			>
+			{{ obj.hist_date|date:"d.m.Y" }}-<b>{{ obj.hist_enddate|date:"d.m.Y" }}</b>
+			</a>
+		  &nbsp;
+		  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
+		    {{ obj }}
+		  </a>
+	    {% endfor %}
+	  {% endif %}
+	  {% if andmed.isik.sel_kuul_surnud %}
+	    {% now "m" as kuu %}
+	    <h5>{% include 'wiki/includes/kuul.html' with kuu=kuu %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_kuul_surnud_kirjeid }}</span></h5>
+		{% for obj in andmed.isik.sel_kuul_surnud %}
+		  {% if forloop.counter > 1 %}
+		    <br>
+		  {% endif %}
+		  <a class="hover-isik" 
+			  href={% url 'wiki:artikkel_day_archive' year=obj.hist_enddate|date:"Y" month=obj.hist_enddate|date:"m" day=obj.hist_enddate|date:"d" %}
+			>
+			{{ obj.hist_date|date:"d.m.Y" }}-<strong>{{ obj.hist_enddate|date:"d.m.Y" }}</strong>
+			</a>
+		  &nbsp;
+		  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
+		    {{ obj }}
+		  </a>
+	    {% endfor %}
+	  {% endif %}
+
+	  </div>
+	</div>
+	
+	<!-- Organisatsioonide esitlus -->
+	<div class="w3-quarter">
+	  <div class="w3-container w3-padding-16 w3-hover-white">
+	  {% if andmed.organisatsioon.sel_p2eval %}
+	    <h5>{% now "j.m." %} loodud <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.sel_p2eval_kirjeid }}</span></h5>
+		{% for obj in andmed.organisatsioon.sel_p2eval %}
+		  {% if forloop.counter > 1 %}
+		      <br>
+		  {% endif %}
+		  <a class="hover-organisatsioon" 
+			href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}
+			>
+			<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
+			</a>
+		  &nbsp;
+		  <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
+		    {{ obj }}
+		  </a>
+		  {% if obj.profiilipilt %}
+		      <img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/><br>
+		  {% endif %}
+	    {% endfor %}
+	  {% endif %}
+	  {% if andmed.organisatsioon.sel_kuul %}
+	    {% now "m" as kuu %}
+	    <h5>{% include 'wiki/includes/kuul.html' with kuu=kuu %} asutatud  <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.sel_kuul_kirjeid }}</span></h5>
+		{% for obj in andmed.organisatsioon.sel_kuul %}
+		  {% if forloop.counter > 1 %}
+		      <br>
+		  {% endif %}
+		  <a class="hover-organisatsioon" 
+			href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}
+			>
+			<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
+			</a>
+		  &nbsp;
+		  <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
+		    {{ obj }}
+		  </a>
+	    {% endfor %}
+	  {% endif %}
+	  {% if andmed.organisatsioon.juubilarid %}
+	    <h5>{% now "Y" %} juubilarid <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.juubilarid.count }}</span></h5>
+		{% for obj in andmed.organisatsioon.juubilarid %}
+			{% if forloop.counter > 1 %}
+		      <br>
+		    {% endif %}
+		    {% if obj.hist_date %}
+			  <a class="hover-organisatsioon" 
+			    href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}
+			  >
+			  <b>{{ obj.hist_date|date:"d.m.Y" }}</b>
+			  </a>
+		    &nbsp;
+			{% else %}
+			  <a class="hover-organisatsioon" 
+			    href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}
+			  >
+			    <b>{{ obj.hist_year }}</b>
+			  </a>
+		    &nbsp;
+			{% endif %}
+			<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
+			  {{ obj.nimi }}
+			</a>  
+			&nbsp;<b>{{ obj.vanus_gen }}</b>
+			{% if obj.profiilipilt %}
+		    <div>
+          <img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/>
+        </div>
+		  {% endif %}
+		{% endfor %}
+	  {% endif %}
+	  </div>
+	</div>  
+
+	<!-- Objektide esitlus -->
+	<div class="w3-quarter">
+	  <div class="w3-container w3-padding-16 w3-hover-white">
+	  {% if andmed.objekt.sel_p2eval %}
+	    <h5>{% now "j.m." %} loodud <span class="w3-badge background-objekt">{{ andmed.objekt.sel_p2eval_kirjeid }}</span></h5>
+		{% for obj in andmed.objekt.sel_p2eval %}
+		  {% if forloop.counter > 1 %}
+		      <br>
+		  {% endif %}
+		  <a class="hover-objekt" 
+			href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}
+			>
+			<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
+			</a>
+		  &nbsp;
+		  <a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
+		    {{ obj }}
+		  </a>
+		  {% if obj.profiilipilt %}
+		      <img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/><br>
+		  {% endif %}
+	    {% endfor %}
+	  {% endif %}
+	  {% if andmed.objekt.sel_kuul %}
+	    {% now "m" as kuu %}
+	    <h5>{% include 'wiki/includes/kuul.html' with kuu=kuu %} valminud  <span class="w3-badge background-objekt">{{ andmed.objekt.sel_kuul.count }}</span></h5>
+		{% for obj in andmed.objekt.sel_kuul %}
+		  {% if forloop.counter > 1 %}
+		      <br>
+		  {% endif %}
+		  <a class="hover-objekt" 
+			href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}
+			>
+			<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
+			</a>
+		  &nbsp;
+		  <a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
+		    {{ obj }}
+		  </a>
+	    {% endfor %}
+	  {% endif %}
+	  {% if andmed.objekt.juubilarid %}
+	    <h5>{% now "Y" %} juubilarid <span class="w3-badge background-objekt">{{ andmed.objekt.juubilarid.count }}</span></h5>
+		{% for obj in andmed.objekt.juubilarid %}
+			{% if forloop.counter > 1 %}
+		      <br>
+		    {% endif %}
+		    {% if obj.hist_date %}
+			  <a class="hover-objekt" 
+			    href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}
+			  >
+			  <b>{{ obj.hist_date|date:"d.m.Y" }}</b>
+			  </a>
+		    &nbsp;
+			{% else %}
+			  <a class="hover-objekt" 
+			    href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}
+			  >
+			    <b>{{ obj.hist_year }}</b>
+			  </a>
+		    &nbsp;
+			{% endif %}
+			<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
+			  {{ obj.nimi }}
+			</a>  
+			&nbsp;<b>{{ obj.vanus_gen }}</b>
+			{% if obj.profiilipilt %}
+		    <div>
+          <img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/>
+        </div>
+		  {% endif %}
+		{% endfor %}
+	  {% endif %}
+	  <!-- Kaardid -->
+	</div>
+	  <div class="w3-container background-objekt w3-padding-16">
+      <i class="fa fa-map w3-xlarge"></i> Kaardid
+    </div>
+	  <div class="w3-margin-top">
+	    {% include 'wiki/includes/kaart_slideshow.html' %}
+	  </div>
+	</div>
+  </div>
+  <div class="w3-row-padding w3-margin-bottom w3-hide-small">
+    <div class="w3-quarter">
+	  <div class="w3-container w3-padding-16 w3-hover-white">
+	    {% if andmed.artikkel.kirjeid > 0 %}
+		  <h5>Viimasena lisatud:</h5>
+		  <a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=andmed.artikkel.viimane_lisatud.hist_year %}>
+		    {{ andmed.artikkel.viimane_lisatud.hist_year }}:
+		  </a>
+	      <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=andmed.artikkel.viimane_lisatud.id %}>
+		    {{ andmed.artikkel.viimane_lisatud }}
+		  </a>
+	      <h5>Viimasena muudeti:</h5>
+	      <a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=andmed.artikkel.viimane_muudetud.hist_year %}>
+		    {{ andmed.artikkel.viimane_muudetud.hist_year }}:
+		  </a>
+	      <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=andmed.artikkel.viimane_muudetud.id %}>
+		    {{ andmed.artikkel.viimane_muudetud }}
+		  </a>
+		{% endif %}
+	  </div>
+	</div>
+	<div class="w3-quarter">
+	  <div class="w3-container w3-padding-16 w3-hover-white">
+	    {% if andmed.isik.kirjeid > 0 %}
+		  <h5>Viimasena lisatud:</h5>
+		  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=andmed.isik.viimane_lisatud.id %}>
+		    {{ andmed.isik.viimane_lisatud }}
+		  </a>
+	      <h5>Viimasena muudeti:</h5>
+	      <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=andmed.isik.viimane_muudetud.id %}>
+		    {{ andmed.isik.viimane_muudetud }}
+		  </a>
+		{% endif %}
+	  </div>
+	</div>
+	<div class="w3-quarter">
+	  <div class="w3-container w3-padding-16 w3-hover-white">
+	    {% if andmed.organisatsioon.kirjeid > 0 %}
+		  <h5>Viimasena lisatud:</h5>
+		  <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=andmed.organisatsioon.viimane_lisatud.id %}>
+		    {{ andmed.organisatsioon.viimane_lisatud }}
+		  </a>
+	      <h5>Viimasena muudeti:</h5>
+	      <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=andmed.organisatsioon.viimane_muudetud.id %}>
+		    {{ andmed.organisatsioon.viimane_muudetud }}
+		  </a>
+		{% endif %}
+	  </div>
+	</div>
+	<div class="w3-quarter">
+	  <div class="w3-container w3-padding-16 w3-hover-white">
+	    {% if andmed.objekt.kirjeid > 0 %}
+		  <h5>Viimasena lisatud:</h5>
+		  <a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=andmed.objekt.viimane_lisatud.id %}>
+		    {{ andmed.objekt.viimane_lisatud }}
+		  </a>
+	      <h5>Viimasena muudeti:</h5>
+	      <a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=andmed.objekt.viimane_muudetud.id %}>
+		    {{ andmed.objekt.viimane_muudetud }}
+		  </a>
+		{% endif %}
+	  </div>
+	</div>
+  </div>
+{% endblock %}
