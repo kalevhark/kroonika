@@ -3,7 +3,7 @@ from django.db.models import Count
 from django.forms import ModelForm
 import datetime
 
-from .models import Kroonika, Artikkel, Isik, Organisatsioon, Objekt, Pilt
+from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Objekt, Pilt
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
     
@@ -329,7 +329,7 @@ class PiltAdmin(admin.ModelAdmin):
         'pilt']
     search_fields = ['nimi']
     filter_horizontal = (
-        'kroonikad',
+        'allikad',
         'artiklid',
         'isikud',
         'organisatsioonid',
@@ -346,7 +346,7 @@ class PiltAdmin(admin.ModelAdmin):
             }
          ),
         ('Seotud', {
-            'fields': [('kroonikad',
+            'fields': [('allikad',
                         'artiklid',
                         'isikud',
                         'organisatsioonid',
@@ -354,7 +354,7 @@ class PiltAdmin(admin.ModelAdmin):
         }
          ),
         ('Profiilipilt', {
-            'fields': [('profiilipilt_kroonika',
+            'fields': [('profiilipilt_allikas',
                         'profiilipilt_artikkel',
                         'profiilipilt_isik',
                         'profiilipilt_organisatsioon',
