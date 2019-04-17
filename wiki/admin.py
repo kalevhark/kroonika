@@ -365,7 +365,7 @@ class PiltAdmin(admin.ModelAdmin):
         'pilt']
     search_fields = ['nimi']
     filter_horizontal = (
-        'allikad',
+        'viited',
         'artiklid',
         'isikud',
         'organisatsioonid',
