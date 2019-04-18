@@ -1,5 +1,8 @@
-# xml-failist andmebaasi kerimiseks.
-# Django shellis kataloogis 'home/kalev/kroonika/' käivitamiseks: exec(open('wiki/ocr2db.py').read())
+"""
+xml-failist andmebaasi kerimiseks.
+Kasutamiseks samasse kataloogi, kus models.py
+Django shellis kataloogis 'home/kalev/kroonika/' käivitamiseks: exec(open('wiki/ocr2db.py').read())
+"""
 
 import os
 import xml.etree.ElementTree as ET

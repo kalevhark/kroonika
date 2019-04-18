@@ -1,5 +1,6 @@
 """
 Tükk kroonikaraamatu andmete lisamiseks viidete hulka
+Kasutamiseks samasse kataloogi, kus models.py
 # Django shellis kataloogis 'home/kalev/kroonika/' käivitamiseks: exec(open('wiki/kr2viide.py').read())
 """
 from django.contrib.auth.models import User
