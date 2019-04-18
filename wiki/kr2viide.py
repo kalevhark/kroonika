@@ -29,6 +29,6 @@ for obj in artiklid:
     print(viide.id)
     # Salvestame viite artikli juurde
     obj.viited.set([viide.id])
-    obj.updated_by.set([user])
+    # obj.updated_by.set([user])
     obj.save()
 
