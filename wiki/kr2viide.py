@@ -2,8 +2,13 @@
 Tükk kroonikaraamatu andmete lisamiseks viidete hulka
 # Django shellis kataloogis 'home/kalev/kroonika/' käivitamiseks: exec(open('wiki/kr2viide.py').read())
 """
+from django.contrib.auth.models import User
 from wiki.models import Artikkel, Allikas, Viide, Kroonika
 
+# Nullime Viide andmebaasi
+Viide.objects.all().delete()
+# Muudame kasutajana 'admin'
+user = User.objects.get(username='admin')
 # Käsitleme ainult Duvini kroonikaraamatut
 kroonika = Kroonika.objects.get(id=1)
 # Valime ainult Duvini raamatu artiklid
@@ -13,7 +18,7 @@ allikas = Allikas.objects.get(id=1)
 
 # Käime läbi kõik kirjed
 for obj in artiklid:
-    print(obj.lehekylg, obj.id)
+    print(obj.lehekylg, obj.id, end='')
     # Lisame uue viite
     viide = Viide(
         allikas=allikas,
@@ -24,5 +29,6 @@ for obj in artiklid:
     print(viide.id)
     # Salvestame viite artikli juurde
     obj.viited.set([viide.id])
+    obj.updated_by.set([user])
     obj.save()
 
