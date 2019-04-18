@@ -34,7 +34,7 @@ class ViideAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'kohaviit',
-        'allikas_set.nimi',
+        'allikas',
         'seotud_artikleid',
         'seotud_isikuid',
         'seotud_organeid',
@@ -55,6 +55,10 @@ class ViideAdmin(admin.ModelAdmin):
         (None, {
             'fields': [('mod_date')]}),
     ]
+
+    # Seotud allika nimi
+    def allikas(self, obj):
+        return obj.allikas_set.first().nimi
 
     # Kui palju on viitega seotud artikleid
     def seotud_artikleid(self, obj):
