@@ -12,13 +12,15 @@ allikas = Allikas.objects.get(id=1)
 
 # Käime läbi kõik kirjed
 for obj in artiklid:
+    print(obj.lehekylg, obj.id)
+    # Lisame uue viite
     viide = Viide(
         allikas=allikas,
         hist_year=2005,
         kohaviit=f'lk {obj.lehekylg}'
     )
     viide.save()
-    obj.viited.add(viide.id)
+    # Salvestame viite artikli juurde
+    obj.viited = viide.id
     obj.save()
-    print(obj.lehekylg)
 
