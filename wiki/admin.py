@@ -31,6 +31,16 @@ class AllikasAdmin(admin.ModelAdmin):
 
 class ViideAdmin(admin.ModelAdmin):
     readonly_fields = ['mod_date']
+    list_display = (
+        'id',
+        'kohaviit',
+        'allikas.nimi',
+        'seotud_artikleid',
+        'seotud_isikuid',
+        'seotud_organeid',
+        'seotud_objekte',
+        'seotud_pilte',
+    )
     fieldsets = [
         (None, {
             'fields': [
@@ -46,7 +56,37 @@ class ViideAdmin(admin.ModelAdmin):
             'fields': [('mod_date')]}),
     ]
 
-    
+    # Kui palju on viitega seotud artikleid
+    def seotud_artikleid(self, obj):
+        return obj.artikkel_set.count()
+
+    seotud_artikleid.short_description = 'Artikleid'
+
+    # Kui palju on viitega seotud organisatsioone
+    def seotud_organeid(self, obj):
+        return obj.organisatsioon_set.count()
+
+    seotud_organeid.short_description = 'Ühendusi'
+
+    # Kui palju on artikliga seotud isikuid
+    def seotud_isikuid(self, obj):
+        return obj.isik_set.count()
+
+    seotud_isikuid.short_description = 'Isikuid'
+
+    # Kui palju on artikliga seotud objekte
+    def seotud_objekte(self, obj):
+        return obj.objekt_set.count()
+
+    seotud_objekte.short_description = 'Objekte'
+
+    # Kui palju on objektiga seotud pilte
+    def seotud_pilte(self, obj):
+        return obj.pilt_set.count()
+
+    seotud_pilte.short_description = 'Pilte'
+
+
 class ArtikkelAdmin(admin.ModelAdmin):
     readonly_fields = [
         'hist_searchdate',
@@ -70,7 +110,8 @@ class ArtikkelAdmin(admin.ModelAdmin):
     filter_horizontal = (
         'isikud',
         'organisatsioonid',
-        'objektid'
+        'objektid',
+        'viited'
     )
     form = ArtikkelForm
     fieldsets = [
