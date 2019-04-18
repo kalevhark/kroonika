@@ -115,6 +115,9 @@ class Viide(models.Model):
         auto_now=True
     )
 
+    class Meta:
+        verbose_name_plural = "Viited"
+
 
 class Objekt(models.Model):
     OBJEKTITYYP = (
