@@ -1,5 +1,6 @@
 """
 Tükk kroonikaraamatu andmete lisamiseks viidete hulka
+# Django shellis kataloogis 'home/kalev/kroonika/' käivitamiseks: exec(open('wiki/kr2viide.py').read())
 """
 from wiki.models import Artikkel, Allikas, Viide, Kroonika
 
@@ -20,6 +21,7 @@ for obj in artiklid:
         kohaviit=f'lk {obj.lehekylg}'
     )
     viide.save()
+    print(viide.id)
     # Salvestame viite artikli juurde
     obj.viited.set([viide.id])
     obj.save()
