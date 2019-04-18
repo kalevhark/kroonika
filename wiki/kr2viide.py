@@ -21,6 +21,6 @@ for obj in artiklid:
     )
     viide.save()
     # Salvestame viite artikli juurde
-    obj.viited = viide.id
+    obj.viited.set([viide.id])
     obj.save()
 
