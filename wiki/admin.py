@@ -34,7 +34,7 @@ class ViideAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'kohaviit',
-        'allikas.nimi',
+        'allikas_set.nimi',
         'seotud_artikleid',
         'seotud_isikuid',
         'seotud_organeid',
