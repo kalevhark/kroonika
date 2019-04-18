@@ -18,7 +18,7 @@ allikas = Allikas.objects.get(id=1)
 
 # Käime läbi kõik kirjed
 for obj in artiklid:
-    print(obj.lehekylg, obj.id, end='')
+    print(obj.lehekylg, obj.id, end=' ')
     # Lisame uue viite
     viide = Viide(
         allikas=allikas,

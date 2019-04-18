@@ -118,6 +118,9 @@ class Viide(models.Model):
     class Meta:
         verbose_name_plural = "Viited"
 
+    def __str__(self):
+        return f'{self.kohaviit}:{self.allikas.nimi}'
+
 
 class Objekt(models.Model):
     OBJEKTITYYP = (
