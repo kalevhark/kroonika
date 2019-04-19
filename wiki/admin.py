@@ -115,6 +115,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
         'seotud_organeid',
         'seotud_objekte',
         'seotud_pilte',
+        'seotud_viiteid'
     )
     list_filter = ['hist_year']
     search_fields = ['body_text']
@@ -193,6 +194,11 @@ class ArtikkelAdmin(admin.ModelAdmin):
     def seotud_pilte(self, obj):
         return obj.pilt_set.count()
     seotud_pilte.short_description = 'Pilte'
+
+    # Kui palju on objektiga seotud viiteid
+    def seotud_viiteid(self, obj):
+        return obj.viited.count()
+    seotud_pilte.short_description = 'Viiteid'
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
     def save_model(self, request, obj, form, change):

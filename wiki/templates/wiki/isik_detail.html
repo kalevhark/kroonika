@@ -34,11 +34,14 @@
 		  </div>
 		{% endif %}
 	  </div>
-	  <div class="w3-twothird">
-	    <div>
+      <div class="w3-twothird">
+        <div>
           {{ object.kirjeldus | safe | linebreaksbr }}
-		</div>
-	  </div>
+        </div>
+        <div>
+          {% include 'wiki/includes/seotud_viited.html' %}
+        </div>
+      </div>
     </div>
   </div>
   <div class="w3-third w3-padding" >
