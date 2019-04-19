@@ -265,9 +265,9 @@ class IsikAdmin(admin.ModelAdmin):
             }
          ),
     ]
-    filter_horizontal = (
+    filter_horizontal = [
         'viited'
-    )
+    ]
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
     def save_model(self, request, obj, form, change):
