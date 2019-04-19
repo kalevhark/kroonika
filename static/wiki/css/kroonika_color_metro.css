@@ -36,17 +36,24 @@ background-color:#808080;
 color:white;
 }
 
+.background-viide
+{
+background-color:#A9A9A9;
+color:white;
+}
+
 .text-artikkel {color:#1e7145;}
 .text-isik {color:#00aba9;}
 .text-organisatsioon {color:#2d89ef;}
 .text-objekt {color:#2b5797;}
 .text-pilt {color:#808080;}
+.text-viide {color:#A9A9A9;}
 
 .hover-artikkel:hover {color:#1e7145;}
 .hover-isik:hover {color:#00aba9;}
 .hover-organisatsioon:hover {color:#2d89ef;}
 .hover-objekt:hover {color:#2b5797;}
 .hover-pilt:hover {color:#808080;}
-
+.hover-viide:hover {color:#A9A9A9;}
 
 
