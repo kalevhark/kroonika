@@ -9,9 +9,14 @@ from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
     
 class AllikasAdmin(admin.ModelAdmin):
     readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
+    list_display = (
+        'id',
+        'nimi',
+        'hist_year'
+    )
     fieldsets = [
         (None, {
-            'fields': ['nimi', 'kirjeldus', 'url']}),
+            'fields': ['nimi', 'hist_year', 'kirjeldus', 'url']}),
         (None, {
             'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]}),
     ]
