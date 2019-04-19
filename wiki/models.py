@@ -27,6 +27,12 @@ class Allikas(models.Model):
         'Allikas',
         max_length=100
     )
+    hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
+        'Ilmumisaasta',
+        null=True,
+        blank=True,
+        help_text='Ilmumisaasta'
+    )
     kirjeldus = models.TextField(
         'Kirjeldus',
         null=True,
@@ -61,7 +67,10 @@ class Allikas(models.Model):
     )
 
     def __str__(self):
-        return self.nimi
+        ilmumis_aasta = ''
+        if self.hist_year:
+            ilmumis_aasta = f'({self.hist_year})'
+        return self.nimi + ilmumis_aasta
 
     def profiilipilt(self):
         return Pilt.objects.filter(allikad=self.id, profiilipilt_allikas=True).first()
@@ -124,7 +133,7 @@ class Viide(models.Model):
         verbose_name_plural = "Viited"
 
     def __str__(self):
-        return f'{self.kohaviit}:{self.allikas.nimi}'
+        return f'{self.allikas}, {self.kohaviit}'
 
 
 class Objekt(models.Model):
