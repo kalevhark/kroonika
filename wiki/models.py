@@ -69,7 +69,7 @@ class Allikas(models.Model):
     def __str__(self):
         ilmumis_aasta = ''
         if self.hist_year:
-            ilmumis_aasta = f'({self.hist_year})'
+            ilmumis_aasta = f' ({self.hist_year})'
         return self.nimi + ilmumis_aasta
 
     def profiilipilt(self):

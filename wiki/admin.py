@@ -158,13 +158,19 @@ class ArtikkelAdmin(admin.ModelAdmin):
 
     # Kuupäevavälja vormindamiseks
     def format_hist_date(self, obj):
-        return obj.hist_date.strftime("%d.%m.%Y")
+        if obj.hist_date:
+            return obj.hist_date.strftime("%d.%m.%Y")
+        else:
+            return obj.hist_date
 
     format_hist_date.short_description = 'Kuupäev'
 
     # Kuupäevavälja vormindamiseks
     def format_mod_date(self, obj):
-        return obj.mod_date.strftime("%d.%m.%Y %H:%M")
+        if obj.mod_date:
+            return obj.mod_date.strftime("%d.%m.%Y %H:%M")
+        else:
+            return obj.mod_date
 
     format_mod_date.short_description = 'Muudetud'
 
