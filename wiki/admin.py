@@ -99,6 +99,7 @@ class ViideAdmin(admin.ModelAdmin):
 
 
 class ArtikkelAdmin(admin.ModelAdmin):
+    form = ArtikkelForm
     readonly_fields = [
         'hist_searchdate',
         'inp_date', 'created_by',
@@ -119,13 +120,12 @@ class ArtikkelAdmin(admin.ModelAdmin):
     )
     list_filter = ['hist_year']
     search_fields = ['body_text']
-    filter_horizontal = (
+    filter_horizontal = [
         'isikud',
         'organisatsioonid',
         'objektid',
         'viited'
-    )
-    form = ArtikkelForm
+    ]
     fieldsets = [
         (None, {
             'fields': ['body_text']
@@ -229,6 +229,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
 
     
 class IsikAdmin(admin.ModelAdmin):
+    form = IsikForm
     list_display = (
         'perenimi',
         'eesnimi',
@@ -238,7 +239,6 @@ class IsikAdmin(admin.ModelAdmin):
     )
     search_fields = ['perenimi']
     readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
-    form = IsikForm
     fieldsets = [
         (None, {
             'fields': ['eesnimi', 'perenimi']
@@ -308,7 +308,14 @@ class IsikAdmin(admin.ModelAdmin):
 
 
 class OrganisatsioonAdmin(admin.ModelAdmin):
-    readonly_fields = ['inp_date', 'mod_date', 'hist_searchdate', 'created_by', 'updated_by']
+    form = OrganisatsioonForm
+    readonly_fields = [
+        'inp_date',
+        'mod_date',
+        'hist_searchdate',
+        'created_by',
+        'updated_by'
+    ]
     list_display = [
         'nimi',
         'hist_date',
@@ -317,11 +324,10 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         'seotud_artikleid',
         'seotud_pilte',
     ]
-    filter_horizontal = (
+    filter_horizontal = [
         'viited'
-    )
+    ]
     search_fields = ['nimi']
-    form = OrganisatsioonForm
 
     # Kui palju on organisatsiooniga seotud artikleid
     def seotud_artikleid(self, obj):
@@ -364,7 +370,12 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
 
 
 class ObjektAdmin(admin.ModelAdmin):
-    readonly_fields = ['hist_searchdate','inp_date', 'created_by', 'mod_date', 'updated_by',]
+    form = ObjektForm
+    readonly_fields = [
+        'hist_searchdate',
+        'inp_date', 'created_by',
+        'mod_date', 'updated_by',
+    ]
     list_display = [
         'nimi',
         'hist_date',
@@ -374,7 +385,6 @@ class ObjektAdmin(admin.ModelAdmin):
         'seotud_pilte',
     ]
     search_fields = ['nimi']
-    form = ObjektForm
     fieldsets = [
         (None, {
             'fields': ['nimi', 'tyyp', 'asukoht', 'kirjeldus']
@@ -405,9 +415,9 @@ class ObjektAdmin(admin.ModelAdmin):
             }
          ),
     ]
-    filter_horizontal = (
+    filter_horizontal = [
         'viited'
-    )
+    ]
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
     def save_model(self, request, obj, form, change):
@@ -505,9 +515,9 @@ class PiltAdmin(admin.ModelAdmin):
             }
          ),
     ]
-    filter_horizontal = (
+    filter_horizontal = [
         'viited'
-    )
+    ]
 
     def link(self, obj):
         if obj.pilt:
