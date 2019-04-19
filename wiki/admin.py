@@ -265,6 +265,9 @@ class IsikAdmin(admin.ModelAdmin):
             }
          ),
     ]
+    filter_horizontal = (
+        'viited'
+    )
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
     def save_model(self, request, obj, form, change):
@@ -314,6 +317,9 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         'seotud_artikleid',
         'seotud_pilte',
     ]
+    filter_horizontal = (
+        'viited'
+    )
     search_fields = ['nimi']
     form = OrganisatsioonForm
 
@@ -399,6 +405,9 @@ class ObjektAdmin(admin.ModelAdmin):
             }
          ),
     ]
+    filter_horizontal = (
+        'viited'
+    )
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
     def save_model(self, request, obj, form, change):
@@ -496,6 +505,9 @@ class PiltAdmin(admin.ModelAdmin):
             }
          ),
     ]
+    filter_horizontal = (
+        'viited'
+    )
 
     def link(self, obj):
         if obj.pilt:
