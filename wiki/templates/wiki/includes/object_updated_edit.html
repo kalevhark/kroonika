@@ -1,11 +1,11 @@
 <div class="w3-row">
   <small>
-    {% if model == 'artikkel' %}
-	  Allikas: {{ object.kroonika.nimi }}
-	  {% if object.lehekylg %}
-	    (lk {{object.lehekylg}})
-	  {% endif %}
-	{% endif %}
+<!--	{% if model == 'artikkel' %}-->
+<!--		Allikas: {{ object.kroonika.nimi }}-->
+<!--		{% if object.lehekylg %}-->
+<!--			(lk {{object.lehekylg}})-->
+<!--		{% endif %}-->
+<!--	{% endif %}-->
 	{% if user.is_authenticated %}
 	  {% with update_url='wiki:'|add:model|add:'_update' %}
 	    <a class="w3-button w3-padding-bottom w3-hover-white fa fa-edit" href={% url update_url pk=object.id %}></a>
