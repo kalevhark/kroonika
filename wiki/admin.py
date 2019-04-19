@@ -104,8 +104,8 @@ class ArtikkelAdmin(admin.ModelAdmin):
         'headline',
         'hist_year',
         'hist_month',
-        'hist_date',
-        'mod_date',
+        'format_hist_date',
+        'format_mod_date',
         'seotud_isikuid',
         'seotud_organeid',
         'seotud_objekte',
@@ -150,6 +150,18 @@ class ArtikkelAdmin(admin.ModelAdmin):
             }
          ),
     ]
+
+    # Kuupäevavälja vormindamiseks
+    def format_hist_date(self, obj):
+        return obj.hist_date.strftime("%d.%m.%Y")
+
+    format_hist_date.short_description = 'Kuupäev'
+
+    # Kuupäevavälja vormindamiseks
+    def format_mod_date(self, obj):
+        return obj.mod_date.strftime("%d.%m.%Y %H:%M")
+
+    format_mod_date.short_description = 'Muudetud'
 
     # Kui palju on artikliga seotud organisatsioone
     def seotud_organeid(self, obj):
