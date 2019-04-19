@@ -4,36 +4,40 @@
 
 {% block content %}
 <div class="w3-panel w3-card-4 w3-light-grey">
+  <!-- Sisukaardi päis-->
   <div class="w3-row w3-xlarge text-isik" >
     <h4>
 	  <i class="fa fa-address-card-o"></i>
       {{ object }}
-	</h4>
+	  </h4>
+    <p class="w3-large">
+      {% if object.hist_date|date:"d.m.Y" %}<b>{{ object.hist_date|date:"d.m.Y" }}</b>{% endif %}
+      {% if object.synd_koht %}({{ object.synd_koht }}){% endif %}
+      {% if object.hist_enddate|date:"d.m.Y" %}- <b>{{ object.hist_enddate|date:"d.m.Y" }}</b>{% endif %}
+      {% if object.surm_koht %}({{ object.surm_koht }}){% endif %}
+      {% if object.maetud %} Maetud: <b>{{ object.maetud }}</b>{% endif %}
+    </p>
   </div>
-  <div class="w3-row">
-    <p>
-	{% if object.hist_date|date:"d.m.Y" %}<b>{{ object.hist_date|date:"d.m.Y" }}</b>{% endif %}
-    {% if object.synd_koht %}({{ object.synd_koht }}){% endif %}
-    {% if object.hist_enddate|date:"d.m.Y" %}- <b>{{ object.hist_enddate|date:"d.m.Y" }}</b>{% endif %}
-    {% if object.surm_koht %}({{ object.surm_koht }}){% endif %}
-    {% if object.maetud %} Maetud: <b>{{ object.maetud }}</b>{% endif %}
-	</p>
-  </div>
+
+  <!-- Sisukaardi kirjeldav osa-->
   <div class="w3-twothird" >
     <div>
+      <!-- Sisukaardi pildiosa-->
       <div class="w3-third">
-	    {% if profiilipilt %} <!-- Kui on määratud profiilipilt -->
-		  <div class="w3-margin-right">
-		    <img class="pilt-portree-medium" id="profiiliPilt" src="{{ profiilipilt.link }}"/>
-	        <small><div class="w3-center" id="imgtext">{{ profiilipilt }}</div></small>
-		  </div>
-		{% else %} <!-- Seotud piltide ankur -->
-		  <div class="w3-margin-right" style="display: none">
-		    <img id="profiiliPilt" src="" style="max-width:100%"/>
-	        <small><div class="w3-center" id="imgtext"></div></small>
-		  </div>
-		{% endif %}
-	  </div>
+        {% if profiilipilt %} <!-- Kui on määratud profiilipilt -->
+          <div class="w3-margin-right">
+            <img class="pilt-portree-medium" id="profiiliPilt" src="{{ profiilipilt.link }}"/>
+              <small><div class="w3-center" id="imgtext">{{ profiilipilt }}</div></small>
+          </div>
+        {% else %} <!-- Seotud piltide ankur -->
+          <div class="w3-margin-right" style="display: none">
+            <img id="profiiliPilt" src="" style="max-width:100%"/>
+              <small><div class="w3-center" id="imgtext"></div></small>
+          </div>
+        {% endif %}
+	    </div>
+
+      <!-- Sisukaardi tekstiosa-->
       <div class="w3-twothird">
         <div>
           {{ object.kirjeldus | safe | linebreaksbr }}
@@ -44,16 +48,22 @@
       </div>
     </div>
   </div>
+
+  <!--  Sisukaardi otseseosed-->
   <div class="w3-third w3-padding" >
     {% include 'wiki/includes/seotud_organisatsioonid.html' %}
-	{% include 'wiki/includes/seotud_objektid.html' %}
-	{% include 'wiki/includes/seotud_pildid.html' %}
+    {% include 'wiki/includes/seotud_objektid.html' %}
+    {% include 'wiki/includes/seotud_pildid.html' %}
   </div>
+
   <!-- Andmete lisamise/muutmise andmed: -->
   {% include 'wiki/includes/object_updated_edit.html' with model='isik' %}
 </div>
+
 <!-- Seotud artiklid: -->
 {% include 'wiki/includes/seotud_artiklid.html' %}
+
+<!--Seotud andmebaasid-->
 <div class="w3-third w3-padding" >
   {% include 'wiki/includes/seotud_isikud_artiklikaudu.html' %}
 </div>

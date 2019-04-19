@@ -4,57 +4,63 @@
 
 {% block content %}
 <div class="w3-panel w3-card-4 w3-light-grey" >
+	<!-- Sisukaardi päis-->
   <div class="w3-row w3-xlarge text-organisatsioon">
     <h4>
-	  <i class="fa fa-group"></i>
-	  {{ object }}
-	</h4>
+			<i class="fa fa-group"></i>
+			{{ object }}
+		</h4>
+    <p class="w3-large">
+	  	{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="white" %}
+		</p>
   </div>
-  <div class="w3-row" >
-    <p>
-	  &nbsp;{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="white" %}
 
-	  
-	  
-	  
-	</p>
-  </div>
+	<!-- Sisukaardi kirjeldav osa-->
   <div class="w3-twothird" >
     <div>
+
+			<!-- Sisukaardi pildiosa-->
       <div class="w3-third">
-	    {% if profiilipilt %} <!-- Kui on määratud profiilipilt -->
-		  <div class="w3-margin-right">
-		    <img class="pilt-postkaart-medium" id="profiiliPilt" src="{{ profiilipilt.link }}"/>
-	        <small><div class="w3-center" id="imgtext">{{ profiilipilt }}</div></small>
-		  </div>
-		{% else %} <!-- Seotud piltide ankur -->
-		  <div class="w3-margin-right" style="display: none">
-		    <img id="profiiliPilt" src="" style="max-width:100%"/>
-	        <small><div class="w3-center" id="imgtext"></div></small>
-		  </div>
-		{% endif %}
-	  </div>
-	  <div class="w3-twothird">
-	    <div>
-      	{{ object.kirjeldus | safe | linebreaksbr }}
+				{% if profiilipilt %} <!-- Kui on määratud profiilipilt -->
+					<div class="w3-margin-right">
+						<img class="pilt-postkaart-medium" id="profiiliPilt" src="{{ profiilipilt.link }}"/>
+							<small><div class="w3-center" id="imgtext">{{ profiilipilt }}</div></small>
+					</div>
+				{% else %} <!-- Seotud piltide ankur -->
+					<div class="w3-margin-right" style="display: none">
+						<img id="profiiliPilt" src="" style="max-width:100%"/>
+							<small><div class="w3-center" id="imgtext"></div></small>
+					</div>
+				{% endif %}
+	  	</div>
+
+			<!-- Sisukaardi tekstiosa-->
+			<div class="w3-twothird">
+				<div>
+					{{ object.kirjeldus | safe | linebreaksbr }}
+				</div>
+				<div>
+					{% include 'wiki/includes/seotud_viited.html' %}
+				</div>
 			</div>
-			<div>
-				{% include 'wiki/includes/seotud_viited.html' %}
-      </div>
-	  </div>
     </div>
   </div>
+
+	<!--  Sisukaardi otseseosed-->
   <div class="w3-third w3-padding" >
-  
-	{% include 'wiki/includes/seotud_isikud.html' %}
-    {% include 'wiki/includes/seotud_objektid.html' %}
-	{% include 'wiki/includes/seotud_pildid.html' %}
+		{% include 'wiki/includes/seotud_isikud.html' %}
+		{% include 'wiki/includes/seotud_objektid.html' %}
+		{% include 'wiki/includes/seotud_pildid.html' %}
   </div>
-  <!-- Andmete lisamise/muutmise andmed: -->
+
+	<!-- Andmete lisamise/muutmise andmed: -->
    {% include 'wiki/includes/object_updated_edit.html' with model='organisatsioon' %}
 </div>
-<!-- Seotud artiklid: -->
+
+<!-- Seotud artiklid -->
 {% include 'wiki/includes/seotud_artiklid.html' %}
+
+<!--Seotud andmebaasid-->
 <div class="w3-third w3-padding" >
   {% include 'wiki/includes/seotud_isikud_artiklikaudu.html' %}
 </div>

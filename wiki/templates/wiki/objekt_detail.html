@@ -14,9 +14,11 @@
       {% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="white" %}
 		</p>
   </div>
+
 	<!-- Sisukaardi kirjeldav osa-->
   <div class="w3-twothird">
     <div>
+
 			<!-- Sisukaardi pildiosa-->
       <div class="w3-third">
 				{% if profiilipilt %} <!-- Kui on määratud profiilipilt -->
@@ -31,6 +33,7 @@
 					</div>
 				{% endif %}
 	  	</div>
+
 			<!-- Sisukaardi tekstiosa-->
 			<div class="w3-twothird">
 				<div>
@@ -42,6 +45,7 @@
       </div>
 		</div>
   </div>
+
 	<!--  Sisukaardi otseseosed-->
 	<div class="w3-third w3-padding" >
 		{% include 'wiki/includes/seotud_objektid.html' %}
@@ -54,7 +58,7 @@
 <!-- Seotud artiklid: -->
 {% include 'wiki/includes/seotud_artiklid.html' %}
 
-<!--Seotud muu andmebaasid-->
+<!--Seotud andmebaasid-->
 <div class="w3-third w3-padding" >
   {% include 'wiki/includes/seotud_isikud_artiklikaudu.html' %}
 </div>
