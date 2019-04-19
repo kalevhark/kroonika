@@ -1,0 +1,7 @@
+<!--Viidete plokk-->
+{% if object.viited.all %}
+  <p><i class="fa fa-binoculars w3-xlarge"></i>
+	{% for obj in object.viited.all %}
+    {{ obj }}
+  {% endfor %}
+{% endif %}
