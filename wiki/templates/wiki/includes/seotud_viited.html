@@ -3,6 +3,11 @@
   <i class="fa fa-binoculars w3-small text-viide"></i>
 	{% for obj in object.viited.all %}
     <br>
-    <small class="text-viide">{{ obj }}</small>
+    <small class="text-viide">
+      {{ obj }}
+      {% if obj.url %}
+        {{ obj.url }}
+      {% endif %}
+    </small>
   {% endfor %}
 {% endif %}

@@ -133,7 +133,12 @@ class Viide(models.Model):
         verbose_name_plural = "Viited"
 
     def __str__(self):
-        return f'{self.allikas}, {self.kohaviit}'
+        viit = ''
+        if self.kohaviit:
+            viit = viit + ', ' + self.kohaviit
+        if self.url:
+            viit = viit + ', ' + self.kohaviit.split('/')[-1]
+        return f'{self.allikas}{viit}'
 
 
 class Objekt(models.Model):
