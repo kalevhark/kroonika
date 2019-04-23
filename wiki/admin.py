@@ -531,7 +531,7 @@ class PiltAdmin(admin.ModelAdmin):
         from django.contrib.admin.templatetags.admin_list import _boolean_icon
         # Kas pilti kasutatakse profiilipildina?
         return _boolean_icon(
-                obj.profiilipilt_kroonika or
+                obj.profiilipilt_allikas or
                 obj.profiilipilt_artikkel or
                 obj.profiilipilt_isik or
                 obj.profiilipilt_organisatsioon or
@@ -546,7 +546,7 @@ class PiltAdmin(admin.ModelAdmin):
                 obj.isikud.count() +
                 obj.organisatsioonid.count() +
                 obj.objektid.count() +
-                obj.kroonikad.count()
+                obj.allikad.count()
         )
 
     def save_model(self, request, obj, form, change):
