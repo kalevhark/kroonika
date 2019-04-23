@@ -137,7 +137,7 @@ class Viide(models.Model):
         if self.kohaviit:
             viit = viit + ', ' + self.kohaviit
         if self.url:
-            viit = viit + ', ' + self.kohaviit.split('/')[-1]
+            viit = viit + ', ' + self.url.split('/')[-1]
         return f'{self.allikas}{viit}'
 
 
