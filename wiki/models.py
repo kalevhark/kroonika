@@ -589,7 +589,7 @@ class Artikkel(models.Model):
     )
     last_accessed = models.DateTimeField(
         verbose_name='Vaadatud',
-        blank=True
+        default=timezone.now()
     )
     total_accessed = models.PositiveIntegerField(
         verbose_name='Vaatamisi',
