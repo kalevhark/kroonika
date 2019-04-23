@@ -266,6 +266,8 @@ class IsikAdmin(admin.ModelAdmin):
          ),
     ]
     filter_horizontal = [
+        'organisatsioonid',
+        'objektid',
         'viited'
     ]
 

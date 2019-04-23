@@ -667,6 +667,11 @@ class Pilt(models.Model):
         choices=KUUD,
         help_text="ja/või kuu"
     )
+    allikad = models.ManyToManyField(
+        Allikas,
+        blank=True,
+        verbose_name='Seotud allikad'
+    )
     artiklid = models.ManyToManyField(
         Artikkel,
         blank=True,
