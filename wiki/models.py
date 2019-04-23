@@ -586,6 +586,13 @@ class Artikkel(models.Model):
         related_name='+',
         verbose_name='Muutja'
     )
+    last_accessed = models.DateTimeField(
+        verbose_name='Vaadatud'
+    )
+    total_accessed = models.PositiveIntegerField(
+        verbose_name='Vaatamisi',
+        default=0
+    )
     # A. Duvini kroonikaraamatu viited:
     kroonika = models.ForeignKey(
         Kroonika,

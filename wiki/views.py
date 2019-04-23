@@ -197,6 +197,14 @@ class ArtikkelDetailView(generic.DetailView):
                 context['prev_obj'] = Artikkel.objects.get(id=loend[n-1]['id'])
         return context
 
+    def get_object(self):
+        obj = super().get_object()
+        # Record the last accessed date
+        obj.last_accessed = timezone.now()
+        obj.total_accessed += 1
+        obj.save()
+        return obj
+
 #
 # Artikli muutmiseks
 #
