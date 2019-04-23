@@ -4,9 +4,10 @@
 	{% for obj in object.viited.all %}
     <br>
     <small class="text-viide">
-      {{ obj }}
       {% if obj.url %}
-        {{ obj.url }}
+        <a href="{{ obj.url }}" target="_blank">{{ obj }}</a>
+      {% else %}
+        {{ obj }}
       {% endif %}
     </small>
   {% endfor %}
