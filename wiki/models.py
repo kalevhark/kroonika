@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils import timezone
 import datetime
 
 KUUD = (
@@ -587,7 +588,8 @@ class Artikkel(models.Model):
         verbose_name='Muutja'
     )
     last_accessed = models.DateTimeField(
-        verbose_name='Vaadatud'
+        verbose_name='Vaadatud',
+        blank=True
     )
     total_accessed = models.PositiveIntegerField(
         verbose_name='Vaatamisi',
