@@ -101,6 +101,7 @@ class Viide(models.Model):
     peatykk = models.CharField(
         'Peatükk',
         max_length=200,
+        blank=True,
         help_text='Artikli või peatüki pealkiri'
     )
     # TODO: Wiki markup süsteem viitamiseks tekstis
