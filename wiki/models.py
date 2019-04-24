@@ -157,7 +157,7 @@ class Viide(models.Model):
         else: # kui on ainult internetilink
             if self.url:
                 viit = viit + ', ' + self.url.split('/')[-1]
-        return ' '.join([autorid, self.peatykk, self.allikas, viit])
+        return ' '.join([autorid, self.peatykk, self.allikas.nimi, viit])
 
 
 class Objekt(models.Model):
