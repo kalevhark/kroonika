@@ -98,8 +98,8 @@ class Viide(models.Model):
         null=True,
         blank=True
     )
-    artikkel = models.CharField(
-        'Artikkel',
+    peatykk = models.CharField(
+        'Peatükk',
         max_length=200,
         help_text='Artikli või peatüki pealkiri'
     )

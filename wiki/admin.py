@@ -12,11 +12,15 @@ class AllikasAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'nimi',
-        'hist_year'
+        'hist_year',
+        'autorid'
     )
+    filter_horizontal = [
+        'autorid',
+    ]
     fieldsets = [
         (None, {
-            'fields': ['nimi', 'hist_year', 'kirjeldus', 'url']}),
+            'fields': ['nimi', 'autorid', 'hist_year', 'kirjeldus', 'url']}),
         (None, {
             'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]}),
     ]
@@ -50,6 +54,7 @@ class ViideAdmin(admin.ModelAdmin):
         (None, {
             'fields': [
                 'allikas',
+                'peatykk',
                 'hist_date',
                 'hist_year',
                 'kohaviit',
