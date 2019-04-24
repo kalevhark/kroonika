@@ -466,6 +466,7 @@ class Isik(models.Model):
             lyhinimi += ', ' + self.eesnimi[0] + '.'
         return lyhinimi
 
+    @property
     def lyhinimi(self):
         lyhinimi = self.perenimi
         if self.eesnimi:
