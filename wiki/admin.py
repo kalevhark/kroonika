@@ -104,6 +104,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
         'hist_searchdate',
         'inp_date', 'created_by',
         'mod_date', 'updated_by',
+        'last_accessed', 'total_accessed'
     ]
     list_display = (
         'id',
@@ -153,6 +154,10 @@ class ArtikkelAdmin(admin.ModelAdmin):
          ),
         (None, {
             'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
+            }
+         ),
+        (None, {
+            'fields': [('last_accessed', 'total_accessed')]
             }
          ),
     ]

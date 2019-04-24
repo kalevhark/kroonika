@@ -28,6 +28,11 @@ class Allikas(models.Model):
         'Allikas',
         max_length=100
     )
+    autorid = models.ManyToManyField(
+        'Isik',
+        blank=True,
+        verbose_name='Autorid'
+    )
     hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
         'Ilmumisaasta',
         null=True,
@@ -89,9 +94,14 @@ class Viide(models.Model):
         Allikas,
         on_delete=models.SET_NULL,
         verbose_name='Allikas',
-        help_text="Allikas",
+        help_text='Allikas',
         null=True,
         blank=True
+    )
+    artikkel = models.CharField(
+        'Artikkel',
+        max_length=200,
+        help_text='Artikli või peatüki pealkiri'
     )
     # TODO: Wiki markup süsteem viitamiseks tekstis
     # Kasutame Wiki markup süsteemi:
@@ -532,6 +542,11 @@ class Artikkel(models.Model):
         blank=True,
         help_text="Lõppes"
     )
+    hist_searchdate = models.DateField(  # automaatne väli, kui täpset kuupäeva pole teada
+        'Tuletatud kuupäev',
+        null=True,
+        blank=True
+    )
     # Sisu
     body_text = models.TextField(
         'Artikkel',
@@ -566,11 +581,6 @@ class Artikkel(models.Model):
     mod_date = models.DateTimeField(
         'Muudetud',
         auto_now=True
-    )
-    hist_searchdate = models.DateField( # Kuupäevaotsinguteks, kui täpset kuupäeva pole teada
-        'Tuletatud kuupäev',
-        null=True,
-        blank=True
     )
     created_by = models.ForeignKey(
         User,
