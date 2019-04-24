@@ -147,7 +147,7 @@ class Viide(models.Model):
     def __str__(self):
         autorid = ''
         if self.allikas.autorid:
-            autorid = ','.join(list(self.allikas.autorid)) + '. '
+            autorid = ','.join(list(self.allikas.autorid.all)) + '. '
         viit = ''
         if self.kohaviit:
             viit = viit + ', ' + self.kohaviit
