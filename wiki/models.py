@@ -148,17 +148,29 @@ class Viide(models.Model):
         verbose_name_plural = "Viited"
 
     def __str__(self):
+        # Viite autorid
         autorid = ''
         if self.allikas.autorid:
             for obj in self.allikas.autorid.all():
                 autorid = ', '.join([obj.lyhinimi])
+        # Viite kohaviida andmed
         viit = ''
         if self.kohaviit: # kui on füüsiline asukoht
             viit = viit + ', ' + self.kohaviit
         else: # kui on ainult internetilink
             if self.url:
                 viit = viit + ', ' + self.url.split('/')[-1]
-        return ' '.join([autorid, self.peatykk, self.allikas.nimi, viit])
+        # Ilmumise aeg
+        aeg = self.mod_date.strftime('%d.%m.%Y') # kasutame algselt viite kasutamise kuupäeva
+        if self.hist_date: # kui olemas, võtame ilmumise kuupäeva
+            aeg = self.hist_date.strftime('%d.%m.%Y')
+        else: # kui kuupäeva pole, siis ilmumisaasta
+            if self.hist_year:
+                aeg = str(self.hist_year)
+            else: # kui viite ilmumisaastat pole, siis allika ilmumisaasta
+                if self.allikas.hist_year:
+                    aeg = str(self.allikas.hist_year)
+        return ' '.join([autorid, self.peatykk, self.allikas.nimi, viit, aeg])
 
 
 class Objekt(models.Model):
