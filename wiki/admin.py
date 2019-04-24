@@ -491,8 +491,7 @@ class PiltAdmin(admin.ModelAdmin):
         'kasutatud',
         'profiilipilt',
         'pilt',
-        'pilt_height_field',
-        'pilt_width_field']
+        'pildi_suurus']
     search_fields = ['nimi']
     filter_horizontal = (
         'viited',
@@ -546,22 +545,25 @@ class PiltAdmin(admin.ModelAdmin):
         from django.contrib.admin.templatetags.admin_list import _boolean_icon
         # Kas pilti kasutatakse profiilipildina?
         return _boolean_icon(
-                obj.profiilipilt_allikas or
-                obj.profiilipilt_artikkel or
-                obj.profiilipilt_isik or
-                obj.profiilipilt_organisatsioon or
-                obj.profiilipilt_objekt
+            obj.profiilipilt_allikas or
+            obj.profiilipilt_artikkel or
+            obj.profiilipilt_isik or
+            obj.profiilipilt_organisatsioon or
+            obj.profiilipilt_objekt
         )
         profiilipilt.boolean = True
+
+    def pildi_suurus(self, obj):
+        return f'{obj.pilt_width_field}x{obj.pilt_height_field}',
 
     def kasutatud(self, obj):
         # Mitu korda on pildile viidatud
         return (
-                obj.artiklid.count() +
-                obj.isikud.count() +
-                obj.organisatsioonid.count() +
-                obj.objektid.count() +
-                obj.allikad.count()
+            obj.artiklid.count() +
+            obj.isikud.count() +
+            obj.organisatsioonid.count() +
+            obj.objektid.count() +
+            obj.allikad.count()
         )
 
     def save_model(self, request, obj, form, change):
