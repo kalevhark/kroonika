@@ -150,7 +150,8 @@ class Viide(models.Model):
     def __str__(self):
         autorid = ''
         if self.allikas.autorid:
-            autorid = ','.join(list(self.allikas.autorid.all())) + '. '
+            for obj in self.allikas.autorid.all():
+                autorid = ', '.join([obj.lyhinimi])
         viit = ''
         if self.kohaviit: # kui on füüsiline asukoht
             viit = viit + ', ' + self.kohaviit
@@ -460,6 +461,12 @@ class Isik(models.Model):
         return ' '.join([self.eesnimi, self.perenimi])
 
     def __repr__(self):
+        lyhinimi = self.perenimi
+        if self.eesnimi:
+            lyhinimi += ', ' + self.eesnimi[0] + '.'
+        return lyhinimi
+
+    def lyhinimi(self):
         lyhinimi = self.perenimi
         if self.eesnimi:
             lyhinimi += ', ' + self.eesnimi[0] + '.'
