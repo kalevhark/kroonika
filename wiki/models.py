@@ -459,6 +459,12 @@ class Isik(models.Model):
     def __str__(self):
         return ' '.join([self.eesnimi, self.perenimi])
 
+    def __repr__(self):
+        lyhinimi = self.perenimi
+        if self.eesnimi:
+            lyhinimi += ', ' + self.eesnimi[0] + '.'
+        return lyhinimi
+
     def get_absolute_url(self):
         return reverse('wiki:wiki_isik_detail', kwargs={'pk': self.pk})
 
