@@ -78,6 +78,9 @@ class Allikas(models.Model):
             ilmumis_aasta = f' ({self.hist_year})'
         return self.nimi + ilmumis_aasta
 
+    def __repr__(self):
+        return self.nimi
+
     def profiilipilt(self):
         return Pilt.objects.filter(allikad=self.id, profiilipilt_allikas=True).first()
 
@@ -149,10 +152,11 @@ class Viide(models.Model):
         if self.allikas.autorid:
             autorid = ','.join(list(self.allikas.autorid.all())) + '. '
         viit = ''
-        if self.kohaviit:
+        if self.kohaviit: # kui on füüsiline asukoht
             viit = viit + ', ' + self.kohaviit
-        if self.url:
-            viit = viit + ', ' + self.url.split('/')[-1]
+        else: # kui on ainult internetilink
+            if self.url:
+                viit = viit + ', ' + self.url.split('/')[-1]
         return ' '.join([autorid, self.peatykk, self.allikas, viit])
 
 
