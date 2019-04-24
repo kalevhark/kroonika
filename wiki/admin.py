@@ -482,12 +482,18 @@ class KroonikaAdmin(admin.ModelAdmin):
     
 
 class PiltAdmin(admin.ModelAdmin):
-    readonly_fields = ['inp_date', 'created_by', 'mod_date', 'updated_by',]
+    readonly_fields = [
+        'pilt_height_field',
+        'pilt_width_field',
+        'inp_date', 'created_by', 'mod_date', 'updated_by',
+    ]
     list_display = [
         'nimi',
         'kasutatud',
         'profiilipilt',
-        'pilt']
+        'pilt',
+        'pilt_height_field',
+        'pilt_width_field']
     search_fields = ['nimi']
     filter_horizontal = (
         'viited',

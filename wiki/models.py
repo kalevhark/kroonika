@@ -667,9 +667,13 @@ class Pilt(models.Model):
         null=True,
         blank=True
     )
+    pilt_height_field = models.IntegerField() # pildi mõõt
+    pilt_width_field = models.IntegerField() # pildi mõõt
     pilt = models.ImageField(
         upload_to='pildid/%Y/%m/%d/',
         max_length=255,
+        height_field = 'pilt_height_field',
+        width_field = 'pilt_width_field',
         null=True,
         blank=True
     )
