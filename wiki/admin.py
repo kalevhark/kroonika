@@ -12,8 +12,7 @@ class AllikasAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'nimi',
-        'hist_year',
-        'autorid'
+        'hist_year'
     )
     filter_horizontal = [
         'autorid',
