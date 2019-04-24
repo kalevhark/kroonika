@@ -8,6 +8,7 @@ from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
     
 class AllikasAdmin(admin.ModelAdmin):
+    search_fields = ['nimi']
     readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
     list_display = (
         'id',

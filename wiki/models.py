@@ -85,7 +85,7 @@ class Allikas(models.Model):
         return Pilt.objects.filter(allikad=self.id, profiilipilt_allikas=True).first()
 
     class Meta:
-        verbose_name = "Allikas"
+        ordering = ['nimi']
         verbose_name_plural = "Allikad"
 
 
