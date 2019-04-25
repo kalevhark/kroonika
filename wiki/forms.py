@@ -8,7 +8,10 @@ class ArtikkelForm(ModelForm):
         fields = ('body_text',
                   'hist_date', 'hist_year', 'hist_month',
                   'hist_enddate',
-                  'isikud', 'organisatsioonid', 'objektid',
+                  'isikud',
+                  'organisatsioonid',
+                  'objektid',
+                  'viited',
                   'kroonika', 'lehekylg',
         )
         widgets = {
@@ -16,6 +19,7 @@ class ArtikkelForm(ModelForm):
             'isikud': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud isikud'}),
             'organisatsioonid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}),
             'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
+            'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
         }
 
 
@@ -26,12 +30,15 @@ class IsikForm(ModelForm):
                   'kirjeldus',
                   'hist_date', 'synd_koht',
                   'hist_enddate', 'surm_koht', 'maetud',
-                  'objektid', 'organisatsioonid',
+                  'objektid',
+                  'organisatsioonid',
+                  'viited'
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
             'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
             'organisatsioonid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}),
+            'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
         }
 
 class OrganisatsioonForm(ModelForm):
@@ -41,10 +48,12 @@ class OrganisatsioonForm(ModelForm):
                   'hist_date', 'hist_year', 'hist_month',
                   'hist_enddate', 'hist_endyear',
                   'objektid',
+                  'viited'
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
             'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
+            'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
         }
 
 
@@ -55,10 +64,12 @@ class ObjektForm(ModelForm):
                   'hist_date', 'hist_year', 'hist_month',
                   'hist_enddate', 'hist_endyear',
                   'objektid',
+                  'viited'
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
             'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
+            'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
         }
         
 ##    def save_model(self, request, obj, form, change): 
