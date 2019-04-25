@@ -53,11 +53,18 @@ def algus(request):
     kirjeid = Artikkel.objects.count()
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
-        kp = Artikkel.objects.all().aggregate(max_inp_date=Max('inp_date'), max_mod_date=Max('mod_date'))
+        kp = Artikkel.objects.all().\
+            aggregate(
+            max_inp_date=Max('inp_date'),
+            max_mod_date=Max('mod_date')
+        )
         a['viimane_lisatud'] = Artikkel.objects.filter(inp_date=kp['max_inp_date'])[0]
         a['viimane_muudetud'] = Artikkel.objects.filter(mod_date=kp['max_mod_date'])[0]
         # Samal kuupäeval erinevatel aastatel toimunud
-        sel_p2eval = Artikkel.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
+        sel_p2eval = Artikkel.objects.filter(
+            hist_date__day = p2ev,
+            hist_date__month = kuu
+        )
         sel_p2eval_kirjeid = len(sel_p2eval)
         if sel_p2eval_kirjeid > 5: # Kui leiti rohkem kui viis kirjet võetakse 2 algusest + 1 keskelt + 2 lõpust
             a['sel_p2eval'] = sel_p2eval[:2] + sel_p2eval[int(sel_p2eval_kirjeid/2-1):int(sel_p2eval_kirjeid/2)] + sel_p2eval[sel_p2eval_kirjeid-2:]

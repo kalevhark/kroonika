@@ -682,6 +682,7 @@ class Artikkel(models.Model):
         return Pilt.objects.filter(artiklid=self.id, profiilipilt_artikkel=True).first()
 
     class Meta:
+        ordering = ['hist_searchdate']
         verbose_name_plural = "Artiklid"
 
 
