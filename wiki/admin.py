@@ -516,7 +516,8 @@ class PiltAdmin(admin.ModelAdmin):
                         'artiklid',
                         'isikud',
                         'organisatsioonid',
-                        'objektid')]
+                        'objektid',
+                        'viited')]
         }
          ),
         ('Profiilipilt', {
@@ -531,9 +532,6 @@ class PiltAdmin(admin.ModelAdmin):
             'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
             }
          ),
-    ]
-    filter_horizontal = [
-        'viited'
     ]
 
     def link(self, obj):
