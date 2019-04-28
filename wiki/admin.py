@@ -42,8 +42,9 @@ class ViideAdmin(admin.ModelAdmin):
     readonly_fields = ['mod_date']
     list_display = (
         'id',
-        'kohaviit',
         'seotud_allikas',
+        'hist_date',
+        'kohaviit',
         'seotud_artikleid',
         'seotud_isikuid',
         'seotud_organeid',
