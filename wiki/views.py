@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import F, BooleanField, DecimalField, IntegerField, ExpressionWrapper
 from django.db.models import Count, Max, Min
@@ -36,7 +38,7 @@ def info(request):
     # Artiklite ülevaade
     andmed = Artikkel.objects.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
     # Revision data
-    revision_data = {}
+    revision_data: Dict[str, Any] = {}
     revision_data['total'] = Artikkel.objects.count()
     revision_data['kroonika'] = Artikkel.objects.filter(kroonika__isnull=False).count()
     revision_data['revised'] = Artikkel.objects.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1).count()
@@ -231,10 +233,7 @@ import datetime
 class ArtikkelUpdate(LoginRequiredMixin, UpdateView):
     redirect_field_name = 'next'
     model = Artikkel
-##    fields = ['body_text', 'hist_date', 'hist_enddate', 'hist_year', 'hist_month',
-##              'isikud', 'organisatsioonid', 'objektid', 'kroonika', 'lehekylg', ]
     pk_url_kwarg = 'pk'
-##    context_object_name = 'artikkel'
 
     form_class = ArtikkelForm
 
@@ -268,11 +267,7 @@ class ArtikkelUpdate(LoginRequiredMixin, UpdateView):
 class IsikUpdate(LoginRequiredMixin, UpdateView):
     redirect_field_name = 'next'
     model = Isik
-##    fields = ['eesnimi', 'perenimi', 'kirjeldus',
-##              'hist_date', 'synd_koht', 'hist_enddate', 'surm_koht', 'maetud',
-##              'organisatsioonid', 'objektid', ]
     pk_url_kwarg = 'pk'
-##    context_object_name = 'isik'
     form_class = IsikForm
     
     def form_valid(self, form):
@@ -282,26 +277,21 @@ class IsikUpdate(LoginRequiredMixin, UpdateView):
             objekt.created_by = self.request.user
         else:
             objekt.updated_by = self.request.user
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+        if objekt.hist_date:
+            objekt.hist_year = objekt.hist_date.year
+        if objekt.hist_enddate:
+            objekt.hist_endyear = objekt.hist_enddate.year
         objekt.save()
         form.save_m2m()
         return redirect('wiki:wiki_isik_detail', pk=self.object.id)
-
-##    def form_valid(self, form):
-##        isik = form.save(commit=False)
-##        isik.save()
-##        form.save_m2m()
-##        return redirect('wiki:wiki_isik_detail', pk=isik.pk)
 
 
 class OrganisatsioonUpdate(LoginRequiredMixin, UpdateView):
     redirect_field_name = 'next'
     model = Organisatsioon
     form_class = OrganisatsioonForm
-##    fields = ['nimi', 'kirjeldus',
-##              'hist_date', 'hist_year', 'hist_month', 'hist_enddate', 'hist_endyear',
-##              'objektid', ]
     pk_url_kwarg = 'pk'
-##    context_object_name = 'organisatsioon'
 
     def form_valid(self, form):
         objekt = form.save(commit=False)
@@ -335,11 +325,7 @@ class ObjektUpdate(LoginRequiredMixin, UpdateView):
     redirect_field_name = 'next'
     model = Objekt
     form_class = ObjektForm
-##    fields = ['nimi', 'asukoht', 'tyyp', 'kirjeldus',
-##              'hist_date', 'hist_year', 'hist_month', 'hist_enddate', 'hist_endyear',
-##              'objektid', ]
     pk_url_kwarg = 'pk'
-##    context_object_name = 'objekt'
 
     def form_valid(self, form):
         objekt = form.save(commit=False)
