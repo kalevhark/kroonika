@@ -35,12 +35,20 @@ def info(request):
     #     artikkel_fields[field.name] = field.deconstruct()
     # Artiklite ülevaade
     andmed = Artikkel.objects.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
-        
+    # Revision data
+    revision_data = {}
+    revision_data['total'] = Artikkel.objects.count()
+    revision_data['kroonika'] = Artikkel.objects.count()
+    revision_data['revised'] = Artikkel.objects.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1)
+
     return render(
-        request, 'wiki/wiki-info.html',
-        {'andmebaasid':andmebaasid,
-         # 'artikkel_fields':artikkel_fields,
-         'andmed':andmed})
+        request, 'wiki/wiki-info.html', {
+            'andmebaasid': andmebaasid,
+            # 'artikkel_fields': artikkel_fields,
+            'andmed': andmed,
+            'revision_data': revision_data
+        }
+    )
 
 def algus(request):
     andmed = {} # Selle muutuja saadame veebi
