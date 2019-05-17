@@ -268,6 +268,21 @@ class Objekt(models.Model):
     )
 
     def __str__(self):
+        if self.hist_date:
+            sy = self.hist_date.year
+        else:
+            if self.hist_year:
+                sy = self.hist_year
+            else:
+                sy = ''
+        if self.hist_enddate:
+            su = self.hist_enddate.year
+        else:
+            if self.hist_endyear:
+                su = self.hist_endyear
+            else:
+                su = ''
+        daatumid = f'{sy}-{su}' if any([sy, su]) else ''
         return self.nimi
 
     def get_absolute_url(self):
@@ -369,6 +384,21 @@ class Organisatsioon(models.Model):
     )
 
     def __str__(self):
+        if self.hist_date:
+            sy = self.hist_date.year
+        else:
+            if self.hist_year:
+                sy = self.hist_year
+            else:
+                sy = ''
+        if self.hist_enddate:
+            su = self.hist_enddate.year
+        else:
+            if self.hist_endyear:
+                su = self.hist_endyear
+            else:
+                su = ''
+        daatumid = f'{sy}-{su}' if any([sy, su]) else ''
         return self.nimi
 
     def get_absolute_url(self):
