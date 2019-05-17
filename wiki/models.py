@@ -496,7 +496,7 @@ class Isik(models.Model):
                 su = self.hist_endyear
             else:
                 su = ''
-        daatumid = f' {sy}-{su}' if any([sy, su]) else ''
+        daatumid = f'{sy}-{su}' if any([sy, su]) else ''
         return ' '.join([self.eesnimi, self.perenimi, daatumid])
 
     def __repr__(self):
