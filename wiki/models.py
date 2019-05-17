@@ -512,22 +512,22 @@ class Isik(models.Model):
     )
 
     def __str__(self):
-        if self.hist_date:
-            sy = self.hist_date.year
-        else:
-            if self.hist_year:
-                sy = self.hist_year
-            else:
-                sy = ''
-        if self.hist_enddate:
-            su = self.hist_enddate.year
-        else:
-            if self.hist_endyear:
-                su = self.hist_endyear
-            else:
-                su = ''
-        daatumid = f'{sy}-{su}' if any([sy, su]) else ''
-        return ' '.join([self.eesnimi, self.perenimi, daatumid])
+        # if self.hist_date:
+        #     sy = self.hist_date.year
+        # else:
+        #     if self.hist_year:
+        #         sy = self.hist_year
+        #     else:
+        #         sy = ''
+        # if self.hist_enddate:
+        #     su = self.hist_enddate.year
+        # else:
+        #     if self.hist_endyear:
+        #         su = self.hist_endyear
+        #     else:
+        #         su = ''
+        # daatumid = f'{sy}-{su}' if any([sy, su]) else ''
+        return ' '.join([self.eesnimi, self.perenimi])
 
     def __repr__(self):
         lyhinimi = self.perenimi
