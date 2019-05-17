@@ -283,7 +283,7 @@ class Objekt(models.Model):
             else:
                 su = ''
         daatumid = f'{sy}-{su}' if any([sy, su]) else ''
-        return self.nimi + daatumid
+        return self.nimi
 
     def get_absolute_url(self):
         return reverse('wiki:wiki_objekt_detail', kwargs={'pk': self.pk})
@@ -399,7 +399,7 @@ class Organisatsioon(models.Model):
             else:
                 su = ''
         daatumid = f'{sy}-{su}' if any([sy, su]) else ''
-        return self.nimi + daatumid
+        return self.nimi
 
     def get_absolute_url(self):
         return reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': self.pk})
