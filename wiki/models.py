@@ -282,7 +282,7 @@ class Objekt(models.Model):
                 su = self.hist_endyear
             else:
                 su = ''
-        daatumid = f'{sy}-{su}' if any([sy, su]) else ''
+        daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
 
     def get_absolute_url(self):
@@ -398,7 +398,7 @@ class Organisatsioon(models.Model):
                 su = self.hist_endyear
             else:
                 su = ''
-        daatumid = f'{sy}-{su}' if any([sy, su]) else ''
+        daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
 
     def get_absolute_url(self):
