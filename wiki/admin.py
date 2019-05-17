@@ -256,7 +256,15 @@ class IsikAdmin(admin.ModelAdmin):
             }
          ),
         ('Elas', {
-            'fields': [('hist_date', 'synd_koht', 'hist_enddate', 'surm_koht', 'maetud')]
+            'fields': [
+                ('hist_date',
+                 'synd_koht',
+                 'hist_year',
+                 'hist_enddate',
+                 'surm_koht',
+                 'hist_endyear',
+                 'maetud'
+                 )]
             }
          ),
         ('Lisainfo', {
@@ -298,11 +306,17 @@ class IsikAdmin(admin.ModelAdmin):
         if obj.hist_date:
             sy = obj.hist_date.strftime('%d.%m.%Y')
         else:
-            sy = ''
+            if obj.hist_year:
+                sy = str(obj.hist_year)
+            else:
+                sy = ''
         if obj.hist_enddate:
             su = obj.hist_enddate.strftime('%d.%m.%Y')
         else:
-            su = ''
+            if obj.hist_endyear:
+                su = str(obj.hist_endyear)
+            else:
+                su = ''
         return sy + '-' + su
 
     def hist_date_view(self, obj):

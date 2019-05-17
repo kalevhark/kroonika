@@ -406,6 +406,12 @@ class Isik(models.Model):
         blank=True,
         help_text="Sündinud"
     )
+    hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
+        'Sünniaasta',
+        null=True,
+        blank=True,
+        help_text='Sünniaasta'
+    )
     synd_koht = models.CharField(
         max_length=100,
         blank=True,
@@ -415,6 +421,12 @@ class Isik(models.Model):
         null=True,
         blank=True,
         help_text="Surnud"
+    )
+    hist_endyear = models.IntegerField(  # juhuks kui on teada ainult aasta
+        'Surma-aasta',
+        null=True,
+        blank=True,
+        help_text='Surma-aasta'
     )
     surm_koht = models.CharField(
         max_length=100,
@@ -470,6 +482,7 @@ class Isik(models.Model):
     )
 
     def __str__(self):
+
         return ' '.join([self.eesnimi, self.perenimi])
 
     def __repr__(self):

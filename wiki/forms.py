@@ -28,8 +28,8 @@ class IsikForm(ModelForm):
         model = Isik
         fields = ('eesnimi', 'perenimi',
                   'kirjeldus',
-                  'hist_date', 'synd_koht',
-                  'hist_enddate', 'surm_koht', 'maetud',
+                  'hist_date', 'synd_koht', 'hist_year',
+                  'hist_enddate', 'surm_koht', 'hist_endyear', 'maetud',
                   'objektid',
                   'organisatsioonid',
                   'viited'
