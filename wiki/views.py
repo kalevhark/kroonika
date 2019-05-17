@@ -38,8 +38,8 @@ def info(request):
     # Revision data
     revision_data = {}
     revision_data['total'] = Artikkel.objects.count()
-    revision_data['kroonika'] = Artikkel.objects.count()
-    revision_data['revised'] = Artikkel.objects.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1)
+    revision_data['kroonika'] = Artikkel.objects.filter(kroonika__isnull=False).count()
+    revision_data['revised'] = Artikkel.objects.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1).count()
 
     return render(
         request, 'wiki/wiki-info.html', {
