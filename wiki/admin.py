@@ -352,6 +352,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         'seotud_pilte',
     ]
     filter_horizontal = [
+        'objektid',
         'viited'
     ]
     search_fields = ['nimi']
@@ -443,6 +444,7 @@ class ObjektAdmin(admin.ModelAdmin):
          ),
     ]
     filter_horizontal = [
+        'objektid',
         'viited'
     ]
 
