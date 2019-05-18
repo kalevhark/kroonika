@@ -1,5 +1,5 @@
 from .models import Artikkel, Isik, Organisatsioon, Objekt
-from django.forms import ModelForm, Textarea, SelectMultiple
+from django.forms import ModelForm, Textarea, SelectMultiple, ValidationError
 import datetime
 
 class ArtikkelForm(ModelForm):
@@ -22,6 +22,12 @@ class ArtikkelForm(ModelForm):
             'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
         }
 
+    def clean(self):
+        # start_date = self.cleaned_data.get('start_date')
+        # end_date = self.cleaned_data.get('end_date')
+        if not any([self.cleaned_data.get('hist_date'), self.cleaned_data.get('hist_year')]):
+            raise ValidationError("Alguskuupäev või -aasta peab olema")
+        return self.cleaned_data
 
 class IsikForm(ModelForm):
     class Meta:
