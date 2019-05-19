@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.templatetags.admin_list import _boolean_icon
 # from django.db.models import Count
 # from django.forms import ModelForm
 import datetime
@@ -123,7 +124,8 @@ class ArtikkelAdmin(admin.ModelAdmin):
         'seotud_organeid',
         'seotud_objekte',
         'seotud_pilte',
-        'seotud_viiteid'
+        'seotud_viiteid',
+        'revised' # TODO: Ajutine ümberkorraldamiseks
     )
     list_filter = ['hist_year']
     search_fields = ['body_text']
@@ -209,7 +211,15 @@ class ArtikkelAdmin(admin.ModelAdmin):
     # Kui palju on objektiga seotud viiteid
     def seotud_viiteid(self, obj):
         return obj.viited.count()
-    seotud_pilte.short_description = 'Viiteid'
+    seotud_viiteid.short_description = 'Viiteid'
+
+    # TODO: Ajutine func ümberkorraldamiseks
+    def revised(self, obj):
+        return _boolean_icon(
+            obj.kroonika and
+            obj.viited.count() < 2
+        )
+    revised.boolean = True
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
     def save_model(self, request, obj, form, change):
@@ -558,7 +568,6 @@ class PiltAdmin(admin.ModelAdmin):
             return 'pilti pole'
 
     def profiilipilt(self, obj):
-        from django.contrib.admin.templatetags.admin_list import _boolean_icon
         # Kas pilti kasutatakse profiilipildina?
         return _boolean_icon(
             obj.profiilipilt_allikas or
@@ -567,7 +576,7 @@ class PiltAdmin(admin.ModelAdmin):
             obj.profiilipilt_organisatsioon or
             obj.profiilipilt_objekt
         )
-        profiilipilt.boolean = True
+    profiilipilt.boolean = True
 
     def pildi_suurus(self, obj):
         return f'{obj.pilt_width_field}x{obj.pilt_height_field}',

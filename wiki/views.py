@@ -37,7 +37,7 @@ def info(request):
     #     artikkel_fields[field.name] = field.deconstruct()
     # Artiklite ülevaade
     andmed = Artikkel.objects.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
-    # Revision data
+    # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
     revision_data['total'] = Artikkel.objects.count()
     revision_data['kroonika'] = Artikkel.objects.filter(kroonika__isnull=False).count()
@@ -48,7 +48,7 @@ def info(request):
             'andmebaasid': andmebaasid,
             # 'artikkel_fields': artikkel_fields,
             'andmed': andmed,
-            'revision_data': revision_data
+            'revision_data': revision_data # TODO: Ajutine ümberkorraldamiseks
         }
     )
 
