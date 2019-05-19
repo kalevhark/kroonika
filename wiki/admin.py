@@ -216,7 +216,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
     # TODO: Ajutine func ümberkorraldamiseks
     def revised(self, obj):
         return _boolean_icon(
-            obj.kroonika.count() == 0 and
+            obj.kroonika == None and
             obj.viited.count() > 0
         )
     # revised.boolean = True
