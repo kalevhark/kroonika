@@ -219,7 +219,6 @@ class ArtikkelAdmin(admin.ModelAdmin):
             obj.kroonika == None and
             obj.viited.count() > 0
         )
-    # revised.boolean = True
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
     def save_model(self, request, obj, form, change):
@@ -576,7 +575,6 @@ class PiltAdmin(admin.ModelAdmin):
             obj.profiilipilt_organisatsioon or
             obj.profiilipilt_objekt
         )
-    # profiilipilt.boolean = True
 
     def pildi_suurus(self, obj):
         return f'{obj.pilt_width_field}x{obj.pilt_height_field}',
