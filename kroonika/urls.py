@@ -27,7 +27,7 @@ from wiki import views
 schema_view = get_schema_view(title='Valga linna kroonika API')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('', views.algus, name='algus'),
     # path('accounts/login/', auth_views.LoginView.as_view()),
     path('accounts/', include('django.contrib.auth.urls')),
