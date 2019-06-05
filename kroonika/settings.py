@@ -56,6 +56,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'kroonika.urls'
 
+ROOT_URL = '/kroonika' # Kui rakendus ei asu juurdomeenis: server_name/ROOT_URL/...
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -74,7 +76,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kroonika.wsgi.application'
 
-LOGOUT_REDIRECT_URL = './'
+LOGOUT_REDIRECT_URL = ROOT_URL
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -127,10 +129,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-STATIC_URL = '/kroonika/static/'
+STATIC_URL = ROOT_URL + '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URL = '/kroonika/media/'
+MEDIA_URL = ROOT_URL + '/media/'
 
 def FILTERS_VERBOSE_LOOKUPS():
     from django_filters.conf import DEFAULTS
