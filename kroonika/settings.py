@@ -74,7 +74,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kroonika.wsgi.application'
 
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = './'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -142,7 +142,8 @@ def FILTERS_VERBOSE_LOOKUPS():
     return verbose_lookups
 
 DATE_INPUT_FORMATS = [
-    '%d.%m.%Y', '%d.%m.%y',
+    '%d.%m.%Y',
+    '%d.%m.%y',
     ]
 
 REST_FRAMEWORK = {
