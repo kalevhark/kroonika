@@ -35,7 +35,7 @@ urlpatterns = [
 	path('api/', include(router.urls)),
     path('schema/', schema_view),
     path('wiki/', include('wiki.urls')),
-    ] # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    ]
 
 # Serve static files
 if settings.DEBUG:
