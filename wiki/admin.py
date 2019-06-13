@@ -41,7 +41,7 @@ class AllikasAdmin(admin.ModelAdmin):
 
 class ViideAdmin(admin.ModelAdmin):
     readonly_fields = ['mod_date']
-    list_display = (
+    list_display = [
         'id',
         'seotud_allikas',
         'hist_date',
@@ -51,7 +51,10 @@ class ViideAdmin(admin.ModelAdmin):
         'seotud_organeid',
         'seotud_objekte',
         'seotud_pilte',
-    )
+    ]
+    search_fields = [
+        'seotud_allikas',
+    ]
     fieldsets = [
         (None, {
             'fields': [
@@ -128,7 +131,10 @@ class ArtikkelAdmin(admin.ModelAdmin):
         'revised' # TODO: Ajutine ümberkorraldamiseks
     )
     list_filter = ['hist_year']
-    search_fields = ['body_text']
+    search_fields = [
+        'body_text',
+        'id'
+    ]
     filter_horizontal = [
         'isikud',
         'organisatsioonid',
