@@ -53,7 +53,7 @@ class ViideAdmin(admin.ModelAdmin):
         'seotud_pilte',
     ]
     search_fields = [
-        'seotud_allikas',
+        'allikas__nimi',
     ]
     fieldsets = [
         (None, {
