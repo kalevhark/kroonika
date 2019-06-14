@@ -29,9 +29,9 @@ def info(request):
         ' '.join(
             [
                 'Artikkel: ',
-                str(Artikkel.objects.count()),
-                'kirjet ',
-                str(Artikkel.objects.filter(viited__isnull=False).count())
+                f'kirjeid {Artikkel.objects.count()} ',
+                f'viidatud {Artikkel.objects.filter(viited__isnull=False).distinct().count()} ',
+                f'pildiga {Artikkel.objects.filter(pilt__isnull=False).distinct().count()} '
             ]
         )
     )
@@ -39,9 +39,9 @@ def info(request):
         ' '.join(
             [
                 'Isik: ',
-                str(Isik.objects.count()),
-                'kirjet',
-                str(Isik.objects.filter(viited__isnull=False).count())
+                f'kirjeid {Isik.objects.count()} ',
+                f'viidatud {Isik.objects.filter(viited__isnull=False).distinct().count()} ',
+                f'pildiga {Isik.objects.filter(pilt__isnull=False).distinct().count()} '
             ]
         )
     )
