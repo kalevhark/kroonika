@@ -16,7 +16,7 @@ from django.utils import timezone
 import django_filters
 from django_filters.views import FilterView
 
-from .models import Kroonika, Artikkel, Isik, Objekt, Organisatsioon, Pilt
+from .models import Allikas, Artikkel, Isik, Objekt, Organisatsioon, Pilt
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
 #
@@ -24,9 +24,27 @@ from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 #
 def info(request):
     andmebaasid = []
-    andmebaasid.append(' '.join(['Kroonika: ', str(Kroonika.objects.count()), 'kirjet']))
-    andmebaasid.append(' '.join(['Artikkel: ', str(Artikkel.objects.count()), 'kirjet']))
-    andmebaasid.append(' '.join(['Isik: ', str(Isik.objects.count()), 'kirjet']))
+    andmebaasid.append(' '.join(['Allikad: ', str(Allikas.objects.count()), 'kirjet']))
+    andmebaasid.append(
+        ' '.join(
+            [
+                'Artikkel: ',
+                str(Artikkel.objects.count()),
+                'kirjet ',
+                str(Artikkel.objects.filter(viited__isnull=False).count())
+            ]
+        )
+    )
+    andmebaasid.append(
+        ' '.join(
+            [
+                'Isik: ',
+                str(Isik.objects.count()),
+                'kirjet',
+                str(Isik.objects.filter(viited__isnull=False).count())
+            ]
+        )
+    )
     andmebaasid.append(' '.join(['Objekt: ', str(Objekt.objects.count()), 'kirjet']))
     andmebaasid.append(' '.join(['Organisatsioon: ', str(Organisatsioon.objects.count()), 'kirjet']))
     andmebaasid.append(' '.join(['Pilt: ', str(Pilt.objects.count()), 'kirjet']))
