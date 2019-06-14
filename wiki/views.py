@@ -45,9 +45,35 @@ def info(request):
             ]
         )
     )
-    andmebaasid.append(' '.join(['Objekt: ', str(Objekt.objects.count()), 'kirjet']))
-    andmebaasid.append(' '.join(['Organisatsioon: ', str(Organisatsioon.objects.count()), 'kirjet']))
-    andmebaasid.append(' '.join(['Pilt: ', str(Pilt.objects.count()), 'kirjet']))
+    andmebaasid.append(
+        ' '.join(
+            [
+                'Objekt: ',
+                f'kirjeid {Objekt.objects.count()} ',
+                f'viidatud {Objekt.objects.filter(viited__isnull=False).distinct().count()} ',
+                f'pildiga {Objekt.objects.filter(pilt__isnull=False).distinct().count()} '
+            ]
+        )
+    )
+    andmebaasid.append(
+        ' '.join(
+            [
+                'Organisatsioon: ',
+                f'kirjeid {Organisatsioon.objects.count()} ',
+                f'viidatud {Organisatsioon.objects.filter(viited__isnull=False).distinct().count()} ',
+                f'pildiga {Organisatsioon.objects.filter(pilt__isnull=False).distinct().count()} '
+            ]
+        )
+    )
+    andmebaasid.append(
+        ' '.join(
+            [
+                'Pilt: ',
+                f'kirjeid {Pilt.objects.count()} ',
+                f'viidatud {Pilt.objects.filter(viited__isnull=False).distinct().count()} '
+            ]
+        )
+    )
     # Tehniline info Artikkel andmebaasi kohta
     # artikkel_fields = dict()
     # fields = Artikkel._meta.get_fields()
@@ -57,7 +83,6 @@ def info(request):
     andmed = Artikkel.objects.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
     # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
-    revision_data['total'] = Artikkel.objects.count()
     revision_data['kroonika'] = Artikkel.objects.filter(kroonika__isnull=False).count()
     revision_data['revised'] = Artikkel.objects.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1).count()
 
