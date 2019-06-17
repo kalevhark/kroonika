@@ -55,7 +55,8 @@ class ViideAdmin(admin.ModelAdmin):
     search_fields = [
         'allikas__nimi',
         'hist_date',
-        'kohaviit'
+        'kohaviit',
+        'url'
     ]
     fieldsets = [
         (None, {
