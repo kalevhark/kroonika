@@ -46,6 +46,7 @@ class ViideAdmin(admin.ModelAdmin):
         'seotud_allikas',
         'hist_date',
         'kohaviit',
+        'url',
         'seotud_artikleid',
         'seotud_isikuid',
         'seotud_organeid',
