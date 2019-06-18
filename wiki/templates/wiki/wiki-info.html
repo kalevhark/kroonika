@@ -41,12 +41,13 @@
   <a href={% url 'wiki:wiki_organisatsioon_filter' %}>Organisatsioonid</a>
   <a href={% url 'wiki:wiki_objekt_filter' %}>Objektid</a>
 </p>
+
 <p><form method="get" action="{% url 'wiki:mine_krono_kp' %}">
   ...või vali kuupäev:
   <input type="date" name="kuup2ev" value="1902-02-24">
   <input type="submit" value='Vaata'>
 </form></p>
-<p> </p>
+
 <p>
   ...või otseteed wiki/krono/aasta/kuu/päev,
   näiteks <i>wiki/krono/1971/03/15</i>.
@@ -64,10 +65,10 @@ Testserveri eest suured tänud: Margo Pärnaku, Siim Somma!<br>
 
 Abiks:
 <ul>
-  <li><a href="https://www.python.org/">Python 3.7.1</a></li>
-  <li><a href="https://www.djangoproject.com/">Django 2.1.2</a></li>
-  <li><a href="https://mariadb.com/">MariaDB 10.0.36</a></li>
-  <li><a href="http://apache.org/">Apache/2.4.10</a></li>
+  <li><a href="https://www.python.org/">Python</a></li>
+  <li><a href="https://www.djangoproject.com/">Django</a></li>
+  <li><a href="https://mariadb.com/">MariaDB</a></li>
+  <li><a href="http://apache.org/">Apache</a></li>
 </ul>
 Lisaks:
 <ul>
@@ -92,3 +93,18 @@ Artikkel:
 </div>
 -->
 {% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=reCAPTCHA_site_key"></script>
+<script>
+grecaptcha.ready(function() {
+  $('#contactform').submit(function(e){
+    var form = this;
+    e.preventDefault()
+    grecaptcha.execute('reCAPTCHA_site_key', {action: 'contactform'}).then(function(token) {
+      $('#recaptcha').val(token)
+      form.submit()
+    });
+  })
+});
+</script>

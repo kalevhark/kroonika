@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django_filters',
     'widget_tweaks',
     'rest_framework',
+    'captcha',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -157,3 +158,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20
 }
+
+# https://www.google.com/recaptcha/intro/v3.html
+RECAPTCHA_PUBLIC_KEY = '6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i'
+RECAPTCHA_PRIVATE_KEY = '6Lc0b6kUAAAAANcptF-hA4XmfHCUikA9nr80yoTh'

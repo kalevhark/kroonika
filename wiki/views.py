@@ -1,5 +1,6 @@
 from typing import Dict, Any
 
+from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import F, BooleanField, DecimalField, IntegerField, ExpressionWrapper
 from django.db.models import Count, Max, Min
@@ -74,11 +75,6 @@ def info(request):
             ]
         )
     )
-    # Tehniline info Artikkel andmebaasi kohta
-    # artikkel_fields = dict()
-    # fields = Artikkel._meta.get_fields()
-    # for field in fields:
-    #     artikkel_fields[field.name] = field.deconstruct()
     # Artiklite ülevaade
     andmed = Artikkel.objects.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
     # TODO: Ajutine ümberkorraldamiseks
@@ -87,11 +83,13 @@ def info(request):
     revision_data['revised'] = Artikkel.objects.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1).count()
 
     return render(
-        request, 'wiki/wiki-info.html', {
+        request,
+        'wiki/wiki-info.html',
+        {
             'andmebaasid': andmebaasid,
-            # 'artikkel_fields': artikkel_fields,
             'andmed': andmed,
-            'revision_data': revision_data # TODO: Ajutine ümberkorraldamiseks
+            'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
+            'site_key': settings.RECAPTCHA_SITE_KEY
         }
     )
 
