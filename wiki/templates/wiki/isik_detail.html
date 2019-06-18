@@ -19,7 +19,7 @@
       {% endif %}
       {% if object.hist_enddate %}
         - <b>{{ object.hist_enddate|date:"d.m.Y" }}</b>
-      {% if object.hist_endyear %}
+      {% elif object.hist_endyear %}
         - <b>{{ object.hist_endyear }}</b>
       {% endif %}
       {% if object.surm_koht %}
