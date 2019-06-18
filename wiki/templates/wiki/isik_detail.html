@@ -7,7 +7,9 @@
   <!-- Sisukaardi päis-->
   <div class="w3-row w3-xlarge text-isik" >
     <h4>
-	  <i class="fa fa-address-card-o"></i>
+      <a style="text-decoration: none;" href={% url 'wiki:wiki_isik_filter' %}>
+	      <i class="fa fa-address-card-o"></i>
+      </a>
       {{ object }}
 	  </h4>
     <p class="w3-large">
