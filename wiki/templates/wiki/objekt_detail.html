@@ -7,7 +7,9 @@
 	<!-- Sisukaardi päis-->
   <div class="w3-row w3-xlarge text-objekt" >
     <h4>
-			<i class="fa fa-bank"></i>
+			<a style="text-decoration: none;" href={% url 'wiki:wiki_objekt_filter' %}>
+				<i class="fa fa-bank"></i>
+			</a>
 			{{ object }}
 		</h4>
     <p class="w3-large">

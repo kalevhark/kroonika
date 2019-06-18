@@ -7,7 +7,9 @@
 	<!-- Sisukaardi päis-->
   <div class="w3-row w3-xlarge text-organisatsioon">
     <h4>
-			<i class="fa fa-group"></i>
+			<a style="text-decoration: none;" href={% url 'wiki:wiki_organisatsioon_filter' %}>
+				<i class="fa fa-group"></i>
+			</a>
 			{{ object }}
 		</h4>
     <p class="w3-large">
