@@ -1,9 +1,10 @@
 <!-- 
 Muutujad:
 sd - alguskuupäev
-ed - lõppkuupäev
 y - algusaasta
 m - alguskuu
+ed - lõppkuupäev
+ey - lõppaasta
 cs - lingi värv (näiteks: "primary", "white", "dark")
  -->
 {% if sd %}
@@ -32,6 +33,11 @@ cs - lingi värv (näiteks: "primary", "white", "dark")
 		<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_year_archive' year=ed|date:"Y" %}> 
 		  {{ ed|date:"Y" }}
 		  <span class="tooltiptext">Mis juhtus {{ ed|date:"Y" }}?</span>
+		</a>
+  {% elif ey %}
+		<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_year_archive' year=ey %}>
+		  {{ ey }}
+		  <span class="tooltiptext">Mis juhtus {{ ey }}?</span>
 		</a>
 	{% endif %}
 {% else %}
