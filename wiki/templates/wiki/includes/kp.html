@@ -20,26 +20,6 @@ cs - lingi värv (näiteks: "primary", "white", "dark")
 	  {{ sd|date:"Y" }}
 	  <span class="tooltiptext">Mis juhtus {{ sd|date:"Y" }}?</span>
 	</a>
-	{% if ed %}
-		 -  
-		<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_day_archive' year=ed|date:"Y" month=ed|date:"m" day=ed|date:"d" %}>
-		  {{ ed|date:"d." }}
-		  <span class="tooltiptext">Mis juhtus {{ ed|date:"j.m.Y" }}?</span>
-		<a>
-		<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_month_archive' year=ed|date:"Y" month=ed|date:"m" %}>
-		  {{ ed|date:"m." }}
-		  <span class="tooltiptext">Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=ed|date:"m" %} {{ ed|date:"Y" }}?</span>
-		</a>
-		<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_year_archive' year=ed|date:"Y" %}> 
-		  {{ ed|date:"Y" }}
-		  <span class="tooltiptext">Mis juhtus {{ ed|date:"Y" }}?</span>
-		</a>
-  {% elif ey %}
-		<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_year_archive' year=ey %}>
-		  {{ ey }}
-		  <span class="tooltiptext">Mis juhtus {{ ey }}?</span>
-		</a>
-	{% endif %}
 {% else %}
 	{% if m %}
 		<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_month_archive' year=y month=m %}> 
@@ -53,4 +33,25 @@ cs - lingi värv (näiteks: "primary", "white", "dark")
 		  <span class="tooltiptext">Mis juhtus {{ y }}?</span>
 		</a>
 	{% endif %}
+{% endif %}
+{% if ed %}
+	&nbsp;-&nbsp;
+	<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_day_archive' year=ed|date:"Y" month=ed|date:"m" day=ed|date:"d" %}>
+	  {{ ed|date:"d." }}
+	  <span class="tooltiptext">Mis juhtus {{ ed|date:"j.m.Y" }}?</span>
+	<a>
+	<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_month_archive' year=ed|date:"Y" month=ed|date:"m" %}>
+	  {{ ed|date:"m." }}
+	  <span class="tooltiptext">Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=ed|date:"m" %} {{ ed|date:"Y" }}?</span>
+	</a>
+	<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_year_archive' year=ed|date:"Y" %}>
+	  {{ ed|date:"Y" }}
+	  <span class="tooltiptext">Mis juhtus {{ ed|date:"Y" }}?</span>
+	</a>
+{% elif ey %}
+	&nbsp;-&nbsp;
+	<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_year_archive' year=ey %}>
+	  {{ ey }}
+	  <span class="tooltiptext">Mis juhtus {{ ey }}?</span>
+	</a>
 {% endif %}
