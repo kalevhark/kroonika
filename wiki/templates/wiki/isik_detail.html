@@ -11,11 +11,23 @@
       {{ object }}
 	  </h4>
     <p class="w3-large">
-      {% if object.hist_date|date:"d.m.Y" %}<b>{{ object.hist_date|date:"d.m.Y" }}</b>{% endif %}
-      {% if object.synd_koht %}({{ object.synd_koht }}){% endif %}
-      {% if object.hist_enddate|date:"d.m.Y" %}- <b>{{ object.hist_enddate|date:"d.m.Y" }}</b>{% endif %}
-      {% if object.surm_koht %}({{ object.surm_koht }}){% endif %}
-      {% if object.maetud %} Maetud: <b>{{ object.maetud }}</b>{% endif %}
+      {% if object.hist_date %}
+        <b>{{ object.hist_date|date:"d.m.Y" }}</b>
+      {% endif %}
+      {% if object.synd_koht %}
+        ({{ object.synd_koht }})
+      {% endif %}
+      {% if object.hist_enddate %}
+        - <b>{{ object.hist_enddate|date:"d.m.Y" }}</b>
+      {% if object.hist_endyear %}
+        - <b>{{ object.hist_endyear }}</b>
+      {% endif %}
+      {% if object.surm_koht %}
+        ({{ object.surm_koht }})
+      {% endif %}
+      {% if object.maetud %}
+        &nbsp;Maetud: <b>{{ object.maetud }}</b>
+      {% endif %}
     </p>
   </div>
 
