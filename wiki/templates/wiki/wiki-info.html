@@ -42,11 +42,15 @@
   <a href={% url 'wiki:wiki_objekt_filter' %}>Objektid</a>
 </p>
 
-<p><form method="get" action="{% url 'wiki:mine_krono_kp' %}">
-  ...või vali kuupäev:
-  <input type="date" name="kuup2ev" value="1902-02-24">
-  <input type="submit" value='Vaata'>
-</form></p>
+<p>
+  <form method="get" action="{% url 'wiki:mine_krono_kp' %}">
+    {% csrf_token %}
+    ...või vali kuupäev:
+    <input type="date" name="kuup2ev" value="1902-02-24">
+    <input type="submit" value='Vaata'>
+    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>
+  </form>
+</p>
 
 <p>
   ...või otseteed wiki/krono/aasta/kuu/päev,
