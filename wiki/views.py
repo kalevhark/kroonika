@@ -7,13 +7,14 @@ from django.db.models import F, BooleanField, DecimalField, IntegerField, Expres
 from django.db.models import Count, Max, Min
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
-from django.views import generic
 from django.shortcuts import render
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
+from django.urls import reverse
 from django.utils import timezone
+from django.views import generic
+from django.views.generic.dates import ArchiveIndexView, YearArchiveView, MonthArchiveView, DayArchiveView
 
 import django_filters
 from django_filters.views import FilterView
@@ -488,8 +489,6 @@ class ArtikkelFilterView(FilterView):
 #
 # Kronoloogia
 #
-from django.views.generic.dates import ArchiveIndexView, YearArchiveView, MonthArchiveView, DayArchiveView
-
 class ArtikkelArchiveIndexView(ArchiveIndexView):
     queryset = Artikkel.objects.all()
     date_field = "hist_searchdate"

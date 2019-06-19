@@ -44,7 +44,7 @@
     <a class="w3-bar-item w3-button w3-hide-large w3-right w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="myFunction()"><i class="fa fa-bars"></i></a>
     <a href={% url 'algus' %} class="w3-bar-item w3-button w3-theme-d4 w3-hover-white"><i class="fa w3-margin-right"><img src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" style='max-height:22px;' alt="vapp"></i>Valga linna kroonika</a>
     <!-- Search on large screens -->
-    <form class="w3-hide-small" role="search" method="post" id="searchform_large" action="{% url 'wiki:wiki_artikkel_filter' %}" >
+    <form class="w3-hide-small" role="search" method="get" id="searchform_large" action="{% url 'wiki:wiki_artikkel_filter' %}" >
       {% csrf_token %}
       <input type="text" class="w3-bar-item w3-input w3-white" name="body_text__icontains" id="id_body_text__icontains" placeholder="Otsi.." />
       <button class="w3-bar-item w3-button w3-hide-small w3-hover-white" type="submit" id="searchsubmit_large" title="Otsi valitud fraasi järgi"><i class="fa fa-search"></i></button>
@@ -72,7 +72,7 @@
 
 <!-- Search on small screens -->
 <div class="w3-row-padding w3-margin-bottom w3-hide-medium w3-hide-large">
-<form class="w3-hide-medium w3-hide-large" role="search" method="post" id="searchform_small" action="{% url 'wiki:wiki_artikkel_filter' %}" >
+<form class="w3-hide-medium w3-hide-large" role="search" method="get" id="searchform_small" action="{% url 'wiki:wiki_artikkel_filter' %}" >
   {% csrf_token %}
   <input type="text" class="w3-bar-item w3-input w3-white w3-mobile" name="body_text__icontains" id="id_body_text__icontains" placeholder="Otsi.." />
   <button class="w3-bar-item w3-button w3-hide-small w3-hover-white" type="submit" id="searchsubmit_small" title="Otsi valitud fraasi järgi"><i class="fa fa-search"></i></button>
