@@ -43,7 +43,7 @@
 </p>
 
 <p>
-  <form method="get" action="{% url 'wiki:mine_krono_kp' %}">
+  <form method="post" action="{% url 'wiki:mine_krono_kp' %}">
     {% csrf_token %}
     ...või vali kuupäev:
     <input type="date" name="kuup2ev" value="1902-02-24">

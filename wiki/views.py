@@ -202,10 +202,10 @@ def algus(request):
 # Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse
 #
 def mine_krono_kp(request):
-    if not request.method == 'GET':
+    if not request.method == 'POST':
         return redirect('wiki:info')
 
-    data = request.GET
+    data = request.POST
     kuup2ev = data.get('kuup2ev').split('-')
 
     # get = request.GET.copy()
