@@ -122,6 +122,7 @@ def info(request):
         {
             'andmebaasid': andmebaasid,
             'andmed': andmed,
+            'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         }
     )
