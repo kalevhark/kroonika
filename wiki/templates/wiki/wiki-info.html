@@ -90,12 +90,19 @@ Lisaks:
 </div>
 
 <script>
-    grecaptcha.ready(function() {
-        grecaptcha.execute('6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i', {action: '{% url 'wiki:mine_krono_kp' %}'})
-        .then(function(token) {
-            document.getElementById("form").appendChild(document.CreateElement(`<input type="hidden" name="g-recaptcha-response" value=${token}`);
-        });
+  grecaptcha.ready(function() {
+    grecaptcha.execute('6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i', {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {
+      document.getElementById("form").appendChild(document.CreateElement(`<input type="hidden" name="g-recaptcha-response" value=${token}`);
     });
+    $('#form').submit(function(e){
+      var form = this;
+      e.preventDefault()
+      grecaptcha.execute('6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i', {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {
+        $('#recaptcha').val(token)
+        form.submit()
+      });
+    })
+  });
 </script>
 
 {% endblock %}
