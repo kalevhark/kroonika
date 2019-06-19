@@ -48,7 +48,7 @@
     ...või vali kuupäev:
     <input type="date" name="kuup2ev" value="1902-02-24">
     <input type="submit" value='Vaata'>
-<!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
+    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>
   </form>
 </p>
 
@@ -91,9 +91,9 @@ Lisaks:
 
 <script>
   grecaptcha.ready(function() {
-    grecaptcha.execute('6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i', {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {
-      document.getElementById("form").appendChild(document.CreateElement(`<input type="hidden" name="g-recaptcha-response" value=${token}`);
-    });
+<!--    grecaptcha.execute('6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i', {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {-->
+<!--      document.getElementById("form").appendChild(document.CreateElement(`<input type="hidden" name="g-recaptcha-response" value=${token}`);-->
+<!--    });-->
     $('#form').submit(function(e){
       var form = this;
       e.preventDefault()
