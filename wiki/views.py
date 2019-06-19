@@ -693,7 +693,7 @@ def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
         andmed[seotud_isik.id] = kirje
     return andmed
         
-from collections import Counter
+from collections import Counter, OrderedDict
 class IsikDetailView(generic.DetailView):
     model = Isik
 
@@ -723,9 +723,17 @@ class IsikDetailView(generic.DetailView):
             surmaaasta = None
         if surmaaasta:
             mainitud_aastatel.append(surmaaasta)
+        mainitud_aastatel = Counter(mainitud_aastatel) # loetleme kõik aastad ja mainimised
+
         # mainitud_aastatel = list(mainitud_aastatel)
         # mainitud_aastatel.sort()
-        context['mainitud_aastatel'] = dict(Counter(mainitud_aastatel))
+        context['mainitud_aastatel'] = dict(
+            OrderedDict(
+                sorted(
+                    mainitud_aastatel.items(), key=lambda t: t[0]
+                )
+            )
+        )
 
         # Isikuga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(isikud__id=self.object.id)
