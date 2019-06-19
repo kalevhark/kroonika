@@ -92,13 +92,13 @@ Lisaks:
 
 <script>
   grecaptcha.ready(function() {
-<!--    grecaptcha.execute( {{recaptcha_key}} , {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {-->
+<!--    grecaptcha.execute('{{recaptcha_key}}' , {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {-->
 <!--      document.getElementById("form").appendChild(document.CreateElement(`<input type="hidden" name="g-recaptcha-response" value=${token}`);-->
 <!--    });-->
     $('#form').submit(function(e){
       var form = this;
       e.preventDefault()
-      grecaptcha.execute( {{recaptcha_key}} , {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {
+      grecaptcha.execute('{{recaptcha_key}}' , {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {
         $('#recaptcha').val(token)
         form.submit()
       });
