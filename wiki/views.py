@@ -22,6 +22,39 @@ from .models import Allikas, Artikkel, Isik, Objekt, Organisatsioon, Pilt
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
 #
+# reCAPTCHA kontrollifunktsioon
+#
+def check_recaptcha(request, action):
+    data = request.POST
+
+    # get the token submitted in the form
+    recaptcha_response = data.get('g-recaptcha-response')
+
+    # captcha verification
+    url = 'https://www.google.com/recaptcha/api/siteverify'
+    payload = {
+        'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+        'response': recaptcha_response
+    }
+    resp = requests.post(
+        url,
+        data=payload
+    )
+    result_json = resp.json()
+    if result_json.get('success') and result_json.get('action') == action:
+        return True
+    else:
+        # Päringu teostamise IP aadress
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+            # print(ip)
+        print(ip, result_json)
+        return False
+
+#
 # Avalehekülg
 #
 def info(request):
@@ -201,39 +234,10 @@ def algus(request):
 # Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse
 #
 def mine_krono_kp(request):
-    if not request.method == 'POST':
+    if not (request.method == 'POST' and check_recaptcha(request, 'mine_krono_kp')):
         return redirect('wiki:info')
 
-    data = request.POST
-    kuup2ev = data.get('kuup2ev').split('-')
-
-    # get = request.GET.copy()
-    # kuup2ev = get['kuup2ev'].split('-')
-
-    # get the token submitted in the form
-    recaptcha_response = data.get('g-recaptcha-response')
-
-    # captcha verification
-    url = 'https://www.google.com/recaptcha/api/siteverify'
-    payload = {
-        'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
-        'response': recaptcha_response
-    }
-    resp = requests.post(
-        url,
-        data=payload
-    )
-    result_json = resp.json()
-    # TODO: Vaja kirjutada reaktsioon, kui sisend robotilt
-    print(result_json)
-
-    # Päringu teostamise IP aadress
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    # print(ip)
+    kuup2ev = request.POST.get('kuup2ev').split('-')
 
     return HttpResponseRedirect(
         reverse(
