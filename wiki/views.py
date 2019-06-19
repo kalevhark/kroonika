@@ -204,7 +204,8 @@ def mine_krono_kp(request):
     if not request.method == 'POST':
         return redirect('wiki:info')
 
-    data = request.POST
+    data = request.POST.copy()
+    print(data)
     kuup2ev = data.get('kuup2ev').split('-')
 
     # get = request.GET.copy()
