@@ -212,6 +212,7 @@ def mine_krono_kp(request):
 
     # get the token submitted in the form
     recaptcha_response = request.POST.get('g-recaptcha-response')
+    print(recaptcha_response)
 
     # captcha verification
     url = 'https://www.google.com/recaptcha/api/siteverify'
