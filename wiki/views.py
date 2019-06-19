@@ -90,7 +90,7 @@ def info(request):
             'andmebaasid': andmebaasid,
             'andmed': andmed,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
-            'site_key': settings.RECAPTCHA_PUBLIC_KEY
+            # 'site_key': settings.RECAPTCHA_PUBLIC_KEY
         }
     )
 
