@@ -1,3 +1,4 @@
+import requests
 from typing import Dict, Any
 
 from django.conf import settings
@@ -201,9 +202,27 @@ def algus(request):
 # Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse
 #
 def mine_krono_kp(request):
-    get = request.GET.copy()
+    if not request.method == 'GET':
+        return redirect('wiki:info')
 
-    kuup2ev = get['kuup2ev'].split('-')
+    data = request.GET
+    kuup2ev = data.get('kuup2ev').split('-')
+
+    # get = request.GET.copy()
+    # kuup2ev = get['kuup2ev'].split('-')
+
+    secret_key = settings.RECAPTCHA_SECRET_KEY
+
+    # captcha verification
+    data = {
+        'response': data.get('g-recaptcha-response'),
+        'secret': secret_key
+    }
+    resp = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+    result_json = resp.json()
+
+    print(result_json)
+
     return HttpResponseRedirect(
         reverse(
             'wiki:artikkel_day_archive',
