@@ -204,7 +204,7 @@ def mine_krono_kp(request):
     if not request.method == 'POST':
         return redirect('wiki:info')
 
-    data = request.POST.copy()
+    data = request.POST
     kuup2ev = data.get('kuup2ev').split('-')
 
     # get = request.GET.copy()
@@ -224,8 +224,15 @@ def mine_krono_kp(request):
         data=payload
     )
     result_json = resp.json()
-
+    # TODO: Vaja kirjutada reaktsioon, kui sisend robotilt
     print(result_json)
+
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    print(ip)
 
     return HttpResponseRedirect(
         reverse(
