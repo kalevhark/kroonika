@@ -723,8 +723,8 @@ class IsikDetailView(generic.DetailView):
             surmaaasta = None
         if surmaaasta:
             mainitud_aastatel.add(surmaaasta)
-        mainitud_aastatel = list(mainitud_aastatel)
-        context['mainitud_aastatel'] = mainitud_aastatel.sort()
+
+        context['mainitud_aastatel'] = mainitud_aastatel
 
         # Isikuga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(isikud__id=self.object.id)
