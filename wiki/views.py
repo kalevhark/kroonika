@@ -693,7 +693,7 @@ def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
         andmed[seotud_isik.id] = kirje
     return andmed
         
-            
+from collections import Counter
 class IsikDetailView(generic.DetailView):
     model = Isik
 
@@ -706,7 +706,7 @@ class IsikDetailView(generic.DetailView):
 
         # Isikud mainimine läbi aastate
         qs = Artikkel.objects.filter(isikud__id=self.object.id)
-        mainitud_aastatel = set(qs.all().values_list('hist_year', flat=True).distinct())
+        mainitud_aastatel = list(qs.all().values_list('hist_year', flat=True).distinct())
         if self.object.hist_date:
             synniaasta = self.object.hist_date.year
         elif self.object.hist_year:
@@ -714,7 +714,7 @@ class IsikDetailView(generic.DetailView):
         else:
             synniaasta = None
         if synniaasta:
-            mainitud_aastatel.add(synniaasta)
+            mainitud_aastatel.append(synniaasta)
         if self.object.hist_enddate:
             surmaaasta = self.object.hist_enddate.year
         elif self.object.hist_year:
@@ -722,10 +722,10 @@ class IsikDetailView(generic.DetailView):
         else:
             surmaaasta = None
         if surmaaasta:
-            mainitud_aastatel.add(surmaaasta)
-        mainitud_aastatel = list(mainitud_aastatel)
-        mainitud_aastatel.sort()
-        context['mainitud_aastatel'] = mainitud_aastatel
+            mainitud_aastatel.append(surmaaasta)
+        # mainitud_aastatel = list(mainitud_aastatel)
+        # mainitud_aastatel.sort()
+        context['mainitud_aastatel'] = Counter(mainitud_aastatel)
 
         # Isikuga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(isikud__id=self.object.id)
