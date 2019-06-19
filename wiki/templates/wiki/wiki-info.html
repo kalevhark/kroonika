@@ -48,7 +48,8 @@
     ...või vali kuupäev:
     <input type="date" name="kuup2ev" value="1902-02-24">
     <input type="submit" value='Vaata'>
-    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>
+    <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" />
+<!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
   </form>
 </p>
 
@@ -90,21 +91,18 @@ Lisaks:
 </div>
 
 
-<script>
-  grecaptcha.ready(function() {
-<!--    grecaptcha.execute('{{recaptcha_key}}' , {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {-->
-<!--      document.getElementById("form").appendChild(document.CreateElement(`<input type="hidden" name="g-recaptcha-response" value=${token}`);-->
-<!--    });-->
-    $('#form').submit(function(e){
-      var form = this;
-      e.preventDefault()
-      grecaptcha.execute('{{recaptcha_key}}' , {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {
-        $('#recaptcha').val(token)
-        form.submit()
-      });
-    })
-  });
-</script>
+<!--<script>-->
+<!--  grecaptcha.ready(function() {-->
+<!--    $('#form').submit(function(e){-->
+<!--      var form = this;-->
+<!--      e.preventDefault()-->
+<!--      grecaptcha.execute('{{recaptcha_key}}' , {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {-->
+<!--        $('#recaptcha').val(token)-->
+<!--        form.submit()-->
+<!--      });-->
+<!--    })-->
+<!--  });-->
+<!--</script>-->
 
 {% endblock %}
 
