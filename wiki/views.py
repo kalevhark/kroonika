@@ -41,7 +41,7 @@ def check_recaptcha(request, action):
         data=payload
     )
     result_json = resp.json()
-    if result_json.get('success') and result_json.get('action') == action:
+    if result_json.get('success') and result_json.get('action').split('/')[-1] == action:
         return True
     else:
         # Päringu teostamise IP aadress
