@@ -25,7 +25,7 @@ from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 #
 # reCAPTCHA kontrollifunktsioon
 #
-def check_recaptcha(request, action):
+def check_recaptcha(request):
     data = request.POST
 
     # get the token submitted in the form
@@ -42,7 +42,7 @@ def check_recaptcha(request, action):
         data=payload
     )
     result_json = resp.json()
-    if result_json.get('success') and result_json.get('action').split('/')[-1] == action:
+    if result_json.get('success'):
         return True
     else:
         # Päringu teostamise IP aadress
@@ -236,7 +236,7 @@ def algus(request):
 # Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse
 #
 def mine_krono_kp(request):
-    if not (request.method == 'POST' and check_recaptcha(request, 'mine_krono_kp')):
+    if not (request.method == 'POST' and check_recaptcha(request)):
         return redirect('wiki:info')
 
     kuup2ev = request.POST.get('kuup2ev').split('-')
