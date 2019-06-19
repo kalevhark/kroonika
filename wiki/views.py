@@ -123,7 +123,7 @@ def info(request):
         {
             'andmebaasid': andmebaasid,
             'andmed': andmed,
-            'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
+            # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         }
     )
@@ -699,16 +699,39 @@ class IsikDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         # Kas isikule on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
             isikud__id=self.object.id).filter(profiilipilt_isik=True).first()
+
+        # Isikud mainimine läbi aastate
+        qs = Artikkel.objects.filter(isikud__id=self.object.id)
+        mainitud_aastatel = set(qs.all().values_list('hist_year', flat=True).distinct())
+        if self.object.hist_date:
+            synniaasta = self.object.hist_date.year
+        elif self.object.hist_year:
+            synniaasta = self.object.hist_year
+        else:
+            synniaasta = None
+        if synniaasta:
+            mainitud_aastatel.add(synniaasta)
+        if self.object.hist_enddate:
+            surmaaasta = self.object.hist_enddate.year
+        elif self.object.hist_year:
+            surmaaasta = self.object.hist_endyear
+        else:
+            surmaaasta = None
+        if surmaaasta:
+            mainitud_aastatel.add(surmaaasta)
+        context['mainitud_aastatel'] = mainitud_aastatel
+
         # Isikuga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(isikud__id=self.object.id)
         context['seotud_artiklid'] = seotud_artiklid
         context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
         context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
         context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
-        
+
         return context
 
 
