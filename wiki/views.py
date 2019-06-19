@@ -90,7 +90,6 @@ def info(request):
             'andmebaasid': andmebaasid,
             'andmed': andmed,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
-            # 'site_key': settings.RECAPTCHA_PUBLIC_KEY
         }
     )
 
@@ -212,7 +211,7 @@ def mine_krono_kp(request):
     # kuup2ev = get['kuup2ev'].split('-')
 
     # get the token submitted in the form
-    recaptcha_response = data.get('g-recaptcha-response')
+    recaptcha_response = request.POST.get('g-recaptcha-response')
 
     # captcha verification
     url = 'https://www.google.com/recaptcha/api/siteverify'
