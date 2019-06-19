@@ -205,15 +205,13 @@ def mine_krono_kp(request):
         return redirect('wiki:info')
 
     data = request.POST.copy()
-    print(data)
     kuup2ev = data.get('kuup2ev').split('-')
 
     # get = request.GET.copy()
     # kuup2ev = get['kuup2ev'].split('-')
 
     # get the token submitted in the form
-    recaptcha_response = request.POST.get('g-recaptcha-response')
-    print(recaptcha_response)
+    recaptcha_response = data.get('g-recaptcha-response')
 
     # captcha verification
     url = 'https://www.google.com/recaptcha/api/siteverify'
