@@ -211,7 +211,7 @@ def mine_krono_kp(request):
     # get = request.GET.copy()
     # kuup2ev = get['kuup2ev'].split('-')
 
-    secret_key = settings.RECAPTCHA_SECRET_KEY
+    secret_key = settings.RECAPTCHA_PRIVATE_KEY
 
     # captcha verification
     data = {
