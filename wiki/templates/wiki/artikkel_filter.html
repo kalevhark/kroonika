@@ -18,19 +18,19 @@
 	 </b>
   </div>
   <form id="formOtsi" action="" method="get">
-  <div class="w3-container w3-cell w3-cell-middle w3-mobile">
-	{% render_field filter.form.hist_year class+="w3-input w3-border-0" placeholder=filter.form.hist_year.label %}
-  </div>
-  <div class="w3-container w3-cell w3-cell-middle w3-mobile">
-	{% render_field filter.form.body_text__icontains class+="w3-input w3-border-0" placeholder=filter.form.body_text__icontains.label %}
-  </div>
-  <div class="w3-container w3-cell w3-cell-middle w3-mobile">
-	{% render_field filter.form.isikud__perenimi__icontains class+="w3-input w3-border-0" placeholder=filter.form.isikud__perenimi__icontains.label %}
-  </div>
-  <div class="w3-container w3-cell w3-cell-middle w3-mobile">
-  	<button class="w3-bar-item w3-button background-artikkel w3-text-white w3-hover-white" type="submit" title="Otsi valitud kriteeriumide järgi"><i class="fa fa-search"></i></button>
-	<button class="w3-bar-item w3-button background-artikkel w3-text-white w3-hover-white" type="reset" title="Uus otsing" onclick="uusOtsing()"><i class="fa fa-close"></i></button>
-  </div>
+		<div class="w3-container w3-cell w3-cell-middle w3-mobile">
+		{% render_field filter.form.hist_year class+="w3-input w3-border-0" placeholder=filter.form.hist_year.label %}
+		</div>
+		<div class="w3-container w3-cell w3-cell-middle w3-mobile">
+		{% render_field filter.form.body_text__icontains class+="w3-input w3-border-0" placeholder=filter.form.body_text__icontains.label %}
+		</div>
+		<div class="w3-container w3-cell w3-cell-middle w3-mobile">
+		{% render_field filter.form.isikud__perenimi__icontains class+="w3-input w3-border-0" placeholder=filter.form.isikud__perenimi__icontains.label %}
+		</div>
+		<div class="w3-container w3-cell w3-cell-middle w3-mobile">
+			<button class="w3-bar-item w3-button background-artikkel w3-text-white w3-hover-white" type="submit" title="Otsi valitud kriteeriumide järgi"><i class="fa fa-search"></i></button>
+		<button class="w3-bar-item w3-button background-artikkel w3-text-white w3-hover-white" type="reset" title="Uus otsing" onclick="uusOtsing()"><i class="fa fa-close"></i></button>
+		</div>
   </form>
 </div>
 
