@@ -725,7 +725,7 @@ class IsikDetailView(generic.DetailView):
             mainitud_aastatel.append(surmaaasta)
         # mainitud_aastatel = list(mainitud_aastatel)
         # mainitud_aastatel.sort()
-        context['mainitud_aastatel'] = Counter(mainitud_aastatel)
+        context['mainitud_aastatel'] = dict(Counter(mainitud_aastatel))
 
         # Isikuga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(isikud__id=self.object.id)

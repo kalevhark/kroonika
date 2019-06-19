@@ -57,7 +57,7 @@
           {{ object.kirjeldus | safe | linebreaksbr }}
         </div>
         <div>
-          Mainitud aastatel: {{ mainitud_aastatel }}
+          Mainitud aastatel: {{ mainitud_aastatel | dictsort:0 }}
         </div>
         </div>
         <div>
