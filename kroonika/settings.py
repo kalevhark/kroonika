@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+from decouple import config
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,10 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '05655)*fc)5t$^u6-b(8*8#1njf=)4y@eesgsz-o@spx6rzcmo'
+SECRET_KEY = config('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     '18.196.203.237',
@@ -165,5 +166,4 @@ REST_FRAMEWORK = {
 }
 
 # https://www.google.com/recaptcha/intro/v3.html
-# RECAPTCHA_PUBLIC_KEY = '6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i'
-GOOGLE_RECAPTCHA_SECRET_KEY = '6Lc0b6kUAAAAANcptF-hA4XmfHCUikA9nr80yoTh'
+GOOGLE_RECAPTCHA_SECRET_KEY = config('GOOGLE_RECAPTCHA_SECRET_KEY')
