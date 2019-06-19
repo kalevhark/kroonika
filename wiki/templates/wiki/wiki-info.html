@@ -106,7 +106,7 @@ grecaptcha.ready(function() {
   $('#contactform').submit(function(e){
     var form = this;
     e.preventDefault()
-    grecaptcha.execute('6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i', {action: 'contactform'}).then(function(token) {
+    grecaptcha.execute('6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i', {action: 'wiki:mine_krono_kp'}).then(function(token) {
       $('#recaptcha').val(token)
       form.submit()
     });
