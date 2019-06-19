@@ -211,14 +211,19 @@ def mine_krono_kp(request):
     # get = request.GET.copy()
     # kuup2ev = get['kuup2ev'].split('-')
 
-    secret_key = settings.RECAPTCHA_PRIVATE_KEY
+    # get the token submitted in the form
+    recaptcha_response = data.get('g-recaptcha-response')
 
     # captcha verification
-    data = {
-        'response': data.get('g-recaptcha-response'),
-        'secret': secret_key
+    url = 'https://www.google.com/recaptcha/api/siteverify'
+    payload = {
+        'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+        'response': recaptcha_response
     }
-    resp = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+    resp = requests.post(
+        url,
+        data=payload
+    )
     result_json = resp.json()
 
     print(result_json)

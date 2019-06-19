@@ -43,7 +43,7 @@
 </p>
 
 <p>
-  <form method="post" action="{% url 'wiki:mine_krono_kp' %}">
+  <form id="form" method="post" action="{% url 'wiki:mine_krono_kp' %}">
     {% csrf_token %}
     ...või vali kuupäev:
     <input type="date" name="kuup2ev" value="1902-02-24">
@@ -89,28 +89,16 @@ Lisaks:
   Revision: {{ revision_data.kroonika }}/{{ revision_data.revised }}
 </div>
 
-<!-- <div>
-Artikkel:
-{% for key, value in artikkel_fields.items %}
-<br>{{ key }} {{ value }}
-{% endfor %}
-</div>
--->
+<script>
+    grecaptcha.ready(function() {
+        grecaptcha.execute('6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i', {action: '{% url 'wiki:mine_krono_kp' %}'})
+        .then(function(token) {
+            document.getElementById("form").appendChild(document.CreateElement(`<input type="hidden" name="g-recaptcha-response" value=${token}`);
+        });
+    });
+</script>
+
 {% endblock %}
 
 {% block javascript %}
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<script src="https://www.google.com/recaptcha/api.js?render=6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i"></script>
-<script>
-grecaptcha.ready(function() {
-  $('#contactform').submit(function(e){
-    var form = this;
-    e.preventDefault()
-    grecaptcha.execute('6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i', {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {
-      $('#recaptcha').val(token)
-      form.submit()
-    });
-  })
-});
-</script>
 {% endblock %}

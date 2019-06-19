@@ -2,29 +2,31 @@
 <html lang="et">
 
 <head>
-{% load staticfiles %}
-<!-- Required meta tags -->
-<meta charset="utf-8">
-<meta name="description" content="Valga linna kroonika">
-<meta name="keywords" content="Valga, linn, kroonika, ajalugu">
-<meta name="author" content="Kalev Härk">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<!-- Kirjeldus -->
-<meta property="og:url"           content="http://18.196.203.237/" />
-<meta property="og:type"          content="website" />
-<meta property="og:title"         content="Valga linnakroonika" />
-<meta property="og:description"   content="Valga linna kroonika" />
-<meta property="og:image"         content="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
-<!-- CSS -->
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<!-- Custom CSS -->
-<link rel="stylesheet" href={% static "wiki/css/kroonika_general.css" %}>
-<link rel="stylesheet" href={% static "wiki/css/kroonika_color_metro.css" %}>
-<!-- <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}> -->
+  {% load staticfiles %}
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="description" content="Valga linna kroonika">
+  <meta name="keywords" content="Valga, linn, kroonika, ajalugu">
+  <meta name="author" content="Kalev Härk">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Kirjeldus -->
+  <meta property="og:url"           content="http://18.196.203.237/" />
+  <meta property="og:type"          content="website" />
+  <meta property="og:title"         content="Valga linnakroonika" />
+  <meta property="og:description"   content="Valga linna kroonika" />
+  <meta property="og:image"         content="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
+  <!-- Google reCAPTCHA -->
+  <script src='https://www.google.com/recaptcha/api.js?render=6Lc0b6kUAAAAAI5eSRmcRti9xAb7bO46baecy23i'></script>
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href={% static "wiki/css/kroonika_general.css" %}>
+  <link rel="stylesheet" href={% static "wiki/css/kroonika_color_metro.css" %}>
+  <!-- <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}> -->
 
-<link rel="shortcut icon" href={% static "wiki/img/favicon.ico" %}>
+  <link rel="shortcut icon" href={% static "wiki/img/favicon.ico" %}>
 </head>
 
 <!-- Kroonika -->
@@ -76,6 +78,7 @@
 {% block content %} {% endblock %}
 
 </body>
+
 <footer>
   <div class="w3-bar w3-padding">
     <a href="#">
