@@ -433,7 +433,7 @@ class ObjektUpdate(LoginRequiredMixin, UpdateView):
         return redirect('wiki:wiki_objekt_detail', pk=self.object.id)
 
 #
-# Artiklite otsimiseks/filtreerimiseks
+# Artiklite otsimise/filtreerimise seaded
 #
 class ArtikkelFilter(django_filters.FilterSet):
     
@@ -452,6 +452,9 @@ class ArtikkelFilter(django_filters.FilterSet):
             self.queryset = self.queryset.none()
 
 
+#
+# Artiklite otsimise/filtreerimise vaade
+#
 class ArtikkelFilterView(FilterView):
     model = Artikkel
     paginate_by = 10
