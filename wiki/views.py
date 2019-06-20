@@ -1,3 +1,4 @@
+from collections import Counter, OrderedDict
 import requests
 from typing import Dict, Any
 
@@ -262,11 +263,40 @@ def mis_kuul(kuu, l6pp='s'):
             'detsembri'
             ]
     return kuud[kuu - 1] + l6pp
+
+
+def mainitud_aastatel(obj):
+    # Artiklites mainimine läbi aastate
+    qs = Artikkel.objects.filter(isikud__id=obj.id)
+    aastad = list(qs.all().values_list('hist_year', flat=True).distinct())
+    if obj.hist_date:
+        synniaasta = obj.hist_date.year
+    elif obj.hist_year:
+        synniaasta = obj.hist_year
+    else:
+        synniaasta = None
+    if synniaasta:
+        aastad.append(synniaasta)
+    if obj.hist_enddate:
+        surmaaasta = obj.hist_enddate.year
+    elif obj.hist_year:
+        surmaaasta = obj.hist_endyear
+    else:
+        surmaaasta = None
+    if surmaaasta:
+        aastad.append(surmaaasta)
+    aastad = Counter(aastad)  # loetleme kõik aastad ja mainimised
+
+    return dict(
+        OrderedDict(
+            sorted(
+                aastad.items(), key=lambda t: t[0]
+            )
+        )
+    )
 #
 # Artikli vaatamiseks
 #
-from django.core import serializers
-
 class ArtikkelDetailView(generic.DetailView):
     model = Artikkel
     template_name = 'wiki/artikkel_detail.html'
@@ -693,7 +723,7 @@ def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
         andmed[seotud_isik.id] = kirje
     return andmed
         
-from collections import Counter, OrderedDict
+
 class IsikDetailView(generic.DetailView):
     model = Isik
 
@@ -704,36 +734,8 @@ class IsikDetailView(generic.DetailView):
         context['profiilipilt'] = Pilt.objects.filter(
             isikud__id=self.object.id).filter(profiilipilt_isik=True).first()
 
-        # Isikud mainimine läbi aastate
-        qs = Artikkel.objects.filter(isikud__id=self.object.id)
-        mainitud_aastatel = list(qs.all().values_list('hist_year', flat=True).distinct())
-        if self.object.hist_date:
-            synniaasta = self.object.hist_date.year
-        elif self.object.hist_year:
-            synniaasta = self.object.hist_year
-        else:
-            synniaasta = None
-        if synniaasta:
-            mainitud_aastatel.append(synniaasta)
-        if self.object.hist_enddate:
-            surmaaasta = self.object.hist_enddate.year
-        elif self.object.hist_year:
-            surmaaasta = self.object.hist_endyear
-        else:
-            surmaaasta = None
-        if surmaaasta:
-            mainitud_aastatel.append(surmaaasta)
-        mainitud_aastatel = Counter(mainitud_aastatel) # loetleme kõik aastad ja mainimised
-
-        # mainitud_aastatel = list(mainitud_aastatel)
-        # mainitud_aastatel.sort()
-        context['mainitud_aastatel'] = dict(
-            OrderedDict(
-                sorted(
-                    mainitud_aastatel.items(), key=lambda t: t[0]
-                )
-            )
-        )
+        # Mainimine läbi aastate
+        context['mainitud_aastatel'] = mainitud_aastatel(self.object)
 
         # Isikuga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(isikud__id=self.object.id)
