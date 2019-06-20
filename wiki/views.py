@@ -272,7 +272,7 @@ def mainitud_aastatel(model, obj):
     elif model == 'Objekt':
         qs = Artikkel.objects.filter(objektid__id=obj.id)
     elif model == 'Organisatsioon':
-        qs = Artikkel.objects.filter(organisatsiooni__id=obj.id)
+        qs = Artikkel.objects.filter(organisatsioonid__id=obj.id)
 
     aastad = list(qs.all().values_list('hist_year', flat=True).distinct())
     if obj.hist_date:
