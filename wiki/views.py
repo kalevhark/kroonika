@@ -815,6 +815,10 @@ class OrganisatsioonDetailView(generic.DetailView):
         # Kas organisatsioonile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
             organisatsioonid__id=self.object.id).filter(profiilipilt_organisatsioon=True).first()
+
+        # Mainimine läbi aastate
+        context['mainitud_aastatel'] = mainitud_aastatel(self.object)
+
         # Organisatsiooniga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(organisatsioonid__id=self.object.id)
 
@@ -890,17 +894,21 @@ class ObjektDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         # Kas objektile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
             objektid__id=self.object.id).filter(profiilipilt_objekt=True).first()
+
+        # Mainimine läbi aastate
+        context['mainitud_aastatel'] = mainitud_aastatel(self.object)
+
         # Objektiga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(objektid__id=self.object.id)
         context['seotud_artiklid'] = seotud_artiklid
         context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
         context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
         context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
-        
-##        context['data'] = serializers.serialize( "python", Isik.objects.filter(pk=self.object.pk) )
+
         return context
 
 
