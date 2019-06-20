@@ -265,9 +265,15 @@ def mis_kuul(kuu, l6pp='s'):
     return kuud[kuu - 1] + l6pp
 
 
-def mainitud_aastatel(obj):
+def mainitud_aastatel(model, obj):
     # Artiklites mainimine läbi aastate
-    qs = Artikkel.objects.filter(isikud__id=obj.id)
+    if model == 'Isik':
+        qs = Artikkel.objects.filter(isikud__id=obj.id)
+    elif model == 'Objekt':
+        qs = Artikkel.objects.filter(objektid__id=obj.id)
+    elif model == 'Organisatsioon':
+        qs = Artikkel.objects.filter(organisatsiooni__id=obj.id)
+
     aastad = list(qs.all().values_list('hist_year', flat=True).distinct())
     if obj.hist_date:
         synniaasta = obj.hist_date.year
@@ -735,7 +741,7 @@ class IsikDetailView(generic.DetailView):
             isikud__id=self.object.id).filter(profiilipilt_isik=True).first()
 
         # Mainimine läbi aastate
-        context['mainitud_aastatel'] = mainitud_aastatel(self.object)
+        context['mainitud_aastatel'] = mainitud_aastatel('Isik', self.object)
 
         # Isikuga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(isikud__id=self.object.id)
@@ -817,7 +823,7 @@ class OrganisatsioonDetailView(generic.DetailView):
             organisatsioonid__id=self.object.id).filter(profiilipilt_organisatsioon=True).first()
 
         # Mainimine läbi aastate
-        context['mainitud_aastatel'] = mainitud_aastatel(self.object)
+        context['mainitud_aastatel'] = mainitud_aastatel('Organisatsioon', self.object)
 
         # Organisatsiooniga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(organisatsioonid__id=self.object.id)
@@ -900,7 +906,7 @@ class ObjektDetailView(generic.DetailView):
             objektid__id=self.object.id).filter(profiilipilt_objekt=True).first()
 
         # Mainimine läbi aastate
-        context['mainitud_aastatel'] = mainitud_aastatel(self.object)
+        context['mainitud_aastatel'] = mainitud_aastatel('Objekt', self.object)
 
         # Objektiga seotud artiklid
         seotud_artiklid = Artikkel.objects.filter(objektid__id=self.object.id)
