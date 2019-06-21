@@ -91,7 +91,7 @@ Lisaks:
   {% if revision_data.viiteta %}
     Viiteta:
     {% for pk in revision_data.viiteta %}
-      <br><a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=pk %}>{{ pk }}</a>
+      &nbsp;<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=pk %}>{{ pk }}</a>
     {% endfor %}
   {% endif %}
 </div>
