@@ -809,8 +809,10 @@ def seotud_organisatsioonid_artiklikaudu(seotud_artiklid, organisatsiooni_ise):
         kirje = {}
         kirje['id'] = seotud_organisatsioon.id
         kirje['nimi'] = seotud_organisatsioon.nimi
-        kirje['artiklid'] = seotud_artiklid.filter(organisatsioonid=seotud_organisatsioon).values(
-            'id', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
+        kirje['artiklid'] = seotud_artiklid.\
+            filter(organisatsioonid=seotud_organisatsioon).\
+            order_by('hist_searchdate').\
+            values('id', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
         andmed[seotud_organisatsioon.id] = kirje
     return andmed
 
@@ -892,8 +894,10 @@ def seotud_objektid_artiklikaudu(seotud_artiklid, objekt_ise):
         kirje = {}
         kirje['id'] = seotud_objekt.id
         kirje['nimi'] = seotud_objekt.nimi
-        kirje['artiklid'] = seotud_artiklid.filter(objektid=seotud_objekt).values(
-            'id', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
+        kirje['artiklid'] = seotud_artiklid.\
+            filter(objektid=seotud_objekt).\
+            order_by('hist_searchdate').\
+            values('id', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
         andmed[seotud_objekt.id] = kirje
     return andmed
     
