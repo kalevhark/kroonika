@@ -83,7 +83,6 @@ class ObjektForm(ModelForm):
         # )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            'objektid': FilteredSelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
-            # 'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
+            'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
             'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
         }
