@@ -1,6 +1,6 @@
 <!-- Loend seotud artiklite numbritest ja lühisisu -->
 {% for artikkel in object.artiklid %}
-<a style="cursor: pointer;" onclick="document.getElementById('id{{ artikkel.id }}').style.display='block'" class="hover-artikkel tooltip">{{ artikkel.hist_year }}<span class="tooltiptext">{{ artikkel.hist_year }}?</span></a>
+<a style="cursor: pointer;" onclick="document.getElementById('id{{ artikkel.id }}').style.display='block'" class="hover-artikkel tooltip">{{ artikkel.hist_year }}<span class="tooltiptext">{{ artikkel.hist_year }}</span></a>
 <div id="id{{ artikkel.id }}" class="w3-modal">
   <div class="w3-modal-content w3-padding-16 w3-light-gray">
 	  <header class="w3-container">
