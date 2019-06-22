@@ -46,6 +46,13 @@ või
 <small>{{ form.objektid.help_text }}</small>
 {% endif %}
 <br>
+<small>Seotud {{ form.viited.name }}</small>
+<br>
+{{ form.viited }}
+{% if form.viited.help_text %}
+<small>{{ form.viited.help_text }}</small>
+{% endif %}
+<br>
 <button href={% url 'wiki:wiki_objekt_detail' pk=object.pk %} role="button">Loobu</button>
 <button type="submit" value="Update">Muuda</button>
 {% include 'wiki/includes/object_form_footer.html' %}
