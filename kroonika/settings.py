@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+# Tundliku info eraldamiseks programmifailidest
+# Kasutus KEY = config('KEY')
 from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

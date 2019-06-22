@@ -49,6 +49,13 @@ või
 <small>{{ form.objektid.help_text }}</small>
 {% endif %}
 <br>
+<small>Seotud {{ form.viited.name }}</small>
+<br>
+{{ form.viited }}
+{% if form.viited.help_text %}
+<small>{{ form.viited.help_text }}</small>
+{% endif %}
+<br>
 {% if form.kroonika.help_text %}
 <small>{{ form.kroonika.help_text }}</small>
 {% endif %}
