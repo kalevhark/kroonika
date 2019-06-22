@@ -1,4 +1,5 @@
 from collections import Counter, OrderedDict
+import datetime
 import requests
 from typing import Dict, Any
 
@@ -9,13 +10,16 @@ from django.db.models import Count, Max, Min
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.shortcuts import get_list_or_404, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
 from django.views.generic.dates import ArchiveIndexView, YearArchiveView, MonthArchiveView, DayArchiveView
+from django.views.generic.edit import UpdateView
 
 import django_filters
 from django_filters.views import FilterView
@@ -340,11 +344,6 @@ class ArtikkelDetailView(generic.DetailView):
 #
 # Artikli muutmiseks
 #
-from django.views.generic.edit import UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
-import datetime
-
 class ArtikkelUpdate(LoginRequiredMixin, UpdateView):
     redirect_field_name = 'next'
     model = Artikkel
@@ -725,8 +724,10 @@ def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
         kirje['id'] = seotud_isik.id
         kirje['perenimi'] = seotud_isik.perenimi
         kirje['eesnimi'] = seotud_isik.eesnimi
-        kirje['artiklid'] = seotud_artiklid.filter(isikud=seotud_isik).values(
-            'id', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
+        kirje['artiklid'] = seotud_artiklid.\
+            filter(isikud=seotud_isik).\
+            order_by('hist_searchdate').\
+            values('id', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
         andmed[seotud_isik.id] = kirje
     return andmed
         
