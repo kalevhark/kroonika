@@ -1,6 +1,9 @@
 {% extends "wiki/wiki_base.html" %}
+{% load static %}
 
 {% block title %}{{ block.super }} - {{ object }} - muutmine{% endblock %}
+
+{{ form.media }}
 
 {% block content %}
 <form method="post">
