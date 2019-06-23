@@ -68,7 +68,7 @@ class ObjektForm(ModelForm):
 
     class Media:
         css = {'all': ('admin/css/widgets.css',), }
-        js = ('/admin/jsi18n/',)
+        js = ('kroonika/static/admin/js/',)
 
     class Meta:
         model = Objekt
