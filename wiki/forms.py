@@ -66,9 +66,9 @@ class OrganisatsioonForm(ModelForm):
 
 class ObjektForm(ModelForm):
 
-    class Media:
-        css = {'all': ('admin/css/widgets.css',), }
-        js = ('/kroonika/admin/jsi18n/',)
+    # class Media:
+    #     css = {'all': ('admin/css/widgets.css',), }
+    #     js = ('/kroonika/admin/jsi18n/',)
 
     class Meta:
         model = Objekt
@@ -78,18 +78,18 @@ class ObjektForm(ModelForm):
                   'objektid',
                   'viited'
         )
-        objektid = ModelMultipleChoiceField(
-            Objekt.objects.all(),
-            required=True,
-            widget = FilteredSelectMultiple(
-                "Seotud objektid",
-                is_stacked=False,
-                attrs={'rows': '10'}
-            )
-        )
+        # objektid = ModelMultipleChoiceField(
+        #     Objekt.objects.all(),
+        #     required=True,
+        #     widget = FilteredSelectMultiple(
+        #         "Seotud objektid",
+        #         is_stacked=False,
+        #         attrs={'rows': '10'}
+        #     )
+        # )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            # 'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
+            'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
             'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
         }
 
