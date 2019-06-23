@@ -5,14 +5,20 @@
 
 {% block css %}
     {{ form.media }}
-<!--    <script type="text/javascript" src="{% static 'js/jquery-3.1.1.min.js' %}"></script>-->
 <!--    <script type="text/javascript" src="{% static 'admin/js/jquery.min.js' %}"></script>-->
-    <script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
-    <script type="text/javascript" src="{% static 'admin/js/core.js' %}"></script>
-    <script type="text/javascript" src="{% static 'admin/js/getElementsBySelector.js' %}"></script>
-    <script type="text/javascript" src="{% static 'admin/js/actions.js' %}"></script>
-    <script type="text/javascript" src="{% static 'admin/js/SelectBox.js' %}"></script>
-    <script type="text/javascript" src="{% static 'admin/js/SelectFilter2.js' %}"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/vendor/jquery/jquery.js"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/calendar.js"></script>
+    <script type="text/javascript" src="/kroonika/admin/jsi18n/"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/jquery.init.js"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/admin/DateTimeShortcuts.js"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/core.js"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/admin/RelatedObjectLookups.js"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/SelectBox.js"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/actions.js"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/SelectFilter2.js"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/urlify.js"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/prepopulate.js"></script>
+    <script type="text/javascript" src="/kroonika/static/admin/js/vendor/xregexp/xregexp.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -70,5 +76,28 @@ või
 <button href={% url 'wiki:wiki_objekt_detail' pk=object.pk %} role="button">Loobu</button>
 <button type="submit" value="Update">Muuda</button>
 {% include 'wiki/includes/object_form_footer.html' %}
+
+</div>
+
+
+
+    <script type="text/javascript"
+            id="django-admin-form-add-constants"
+            src="/kroonika/static/admin/js/change_form.js"
+            >
+    </script>
+
+
+
+
+<script type="text/javascript"
+        id="django-admin-prepopulated-fields-constants"
+        src="/kroonika/static/admin/js/prepopulate_init.js"
+        data-prepopulated-fields="[]">
+</script>
+
+
+</div>
+
 </form>
 {% endblock %}
