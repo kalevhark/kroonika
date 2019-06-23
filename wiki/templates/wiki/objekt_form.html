@@ -4,10 +4,11 @@
 {% block title %}{{ block.super }} - {{ object }} - muutmine{% endblock %}
 
 {% block css %}
-  {{ form.media }}
+
 {% endblock %}
 
 {% block content %}
+{{ form.media }}
 <form method="post">
 {% csrf_token %}
 {{ form.nimi }} {{ form.tyyp }}
