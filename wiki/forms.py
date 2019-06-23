@@ -67,7 +67,7 @@ class OrganisatsioonForm(ModelForm):
 class ObjektForm(ModelForm):
 
     class Media:
-        css = {'all': ('/static/admin/css/widgets.css',), }
+        css = {'all': ('kroonika/static/admin/css/widgets.css',), }
         js = ('/admin/jsi18n/',)
 
     class Meta:
