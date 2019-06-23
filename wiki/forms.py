@@ -91,3 +91,6 @@ class ObjektForm(ModelForm):
             # 'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
             'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
         }
+
+    def __init__(self, parents=None, *args, **kwargs):
+        super(ObjektForm, self).__init__(*args, **kwargs)
