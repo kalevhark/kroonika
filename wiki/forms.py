@@ -80,9 +80,10 @@ class ObjektForm(ModelForm):
         )
         objektid = ModelMultipleChoiceField(
             Objekt.objects.all(),
+            required=True,
             widget = FilteredSelectMultiple(
                 "Seotud objektid",
-                False,
+                is_stacked=False,
                 attrs={'rows': '10'}
             )
         )
