@@ -3,7 +3,9 @@
 
 {% block title %}{{ block.super }} - {{ object }} - muutmine{% endblock %}
 
-{{ form.media }}
+{% block css %}
+  {{ form.media }}
+{% endblock %}
 
 {% block content %}
 <form method="post">
