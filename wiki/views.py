@@ -134,6 +134,26 @@ def info(request):
         }
     )
 
+#
+# Tagasiside vorm
+#
+def feedback(request):
+    from django.utils.version import get_version
+    context = {
+        'django_version': f'Django: {get_version()}',
+        'request': request.META
+    }
+    # return HttpResponse(f'Django: {django.get_version()}')
+    return render(
+        request,
+        'home/home.html',
+        context
+    )
+
+
+#
+# Avakuva
+#
 def algus(request):
     andmed = {} # Selle muutuja saadame veebi
     p2ev = datetime.date.today().day
