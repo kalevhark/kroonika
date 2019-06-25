@@ -1,0 +1,15 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+  {{ django_version }}<br>
+  {% for key, value in request.items %}
+    {{ key }}:{{ value }}<br>
+  {% endfor %}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
