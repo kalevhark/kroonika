@@ -6,6 +6,7 @@
 
 {% block content %}
   {{ django_version }}<br>
+  {{ request.HTTP_REFERER }}<br>
   {% for key, value in request.items %}
     {{ key }}:{{ value }}<br>
   {% endfor %}
