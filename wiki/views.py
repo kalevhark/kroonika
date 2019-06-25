@@ -146,7 +146,7 @@ def feedback(request):
     # return HttpResponse(f'Django: {django.get_version()}')
     return render(
         request,
-        'home/home.html',
+        'wiki/wiki_feedback.html',
         context
     )
 
