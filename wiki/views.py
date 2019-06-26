@@ -148,7 +148,7 @@ def feedback(request):
             # ...
             # redirect to a new URL:
             # return HttpResponseRedirect('/thanks/')
-            return redirect(request.META.HTTP_REFERER)
+            return HttpResponseRedirect(request.META.HTTP_REFERER)
 
     # if a GET (or any other method) we'll create a blank form
     else:
