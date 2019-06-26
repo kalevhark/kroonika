@@ -155,8 +155,7 @@ def feedback(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = FeedBackForm()
-        form.your_name = request.META['HTTP_REFERER']
+        form = FeedBackForm(initial={'your_name': request.META['HTTP_REFERER']})
 
     from django.utils.version import get_version
     context = {
