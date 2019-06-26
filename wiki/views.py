@@ -139,7 +139,7 @@ def info(request):
 #
 def feedback(request):
     # if this is a POST request we need to process the form data
-    if request.method == 'POST': # and check_recaptcha(request):
+    if request.method == 'POST' and check_recaptcha(request):
         # create a form instance and populate it with data from the request:
         form = FeedBackForm(request.POST)
         meta = request.META
