@@ -1,5 +1,5 @@
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.forms import ModelForm, Textarea, SelectMultiple, ValidationError, ModelMultipleChoiceField
+from django.forms import Form, ModelForm, Textarea, SelectMultiple, ValidationError, CharField, ModelMultipleChoiceField
 
 from .models import Artikkel, Isik, Organisatsioon, Objekt
 
@@ -95,3 +95,6 @@ class ObjektForm(ModelForm):
 
     # def __init__(self, parents=None, *args, **kwargs):
     #     super(ObjektForm, self).__init__(*args, **kwargs)
+
+class FeedBackForm(Form):
+    your_name = CharField(label='Sinu nimi', max_length=100)

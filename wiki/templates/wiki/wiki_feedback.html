@@ -7,9 +7,21 @@
 {% block content %}
   {{ django_version }}<br>
   {{ request.HTTP_REFERER }}<br>
-  {% for key, value in request.items %}
-    {{ key }}:{{ value }}<br>
-  {% endfor %}
+  <div>
+    <form id="form" method="post" action="{% url 'wiki:feedback' %}">
+      {% csrf_token %}
+      {{ form }}
+      <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
+      <input type="submit" value="Saada">
+    <!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
+    </form>
+  </div>
+  <div>
+    {% for key, value in request.items %}
+    <small>{{ key }}:{{ value }}</small><br>
+    {% endfor %}
+  </div>
+
 {% endblock %}
 
 {% block javascript %}

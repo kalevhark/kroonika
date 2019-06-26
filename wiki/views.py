@@ -25,7 +25,7 @@ import django_filters
 from django_filters.views import FilterView
 
 from .models import Allikas, Artikkel, Isik, Objekt, Organisatsioon, Pilt
-from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
+from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, FeedBackForm
 
 #
 # reCAPTCHA kontrollifunktsioon
@@ -138,11 +138,29 @@ def info(request):
 # Tagasiside vorm
 #
 def feedback(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = FeedBackForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            # return HttpResponseRedirect('/thanks/')
+            pass
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = FeedBackForm()
+
     from django.utils.version import get_version
     context = {
         'django_version': f'Django: {get_version()}',
-        'request': request.META
+        'request': request.META,
+        'form': form
     }
+
     # return HttpResponse(f'Django: {django.get_version()}')
     return render(
         request,
