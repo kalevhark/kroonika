@@ -142,14 +142,15 @@ def feedback(request):
     if request.method == 'POST': # and check_recaptcha(request):
         # create a form instance and populate it with data from the request:
         form = FeedBackForm(request.POST)
+        l2hteaadress = request.META.HTTP_REFERER
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
             # return HttpResponseRedirect('/thanks/')
-            # return HttpResponseRedirect(request.META.HTTP_REFERER)
-            pass
+            return HttpResponseRedirect(l2hteaadress)
+            # pass
 
     # if a GET (or any other method) we'll create a blank form
     else:
