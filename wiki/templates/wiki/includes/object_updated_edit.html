@@ -10,6 +10,8 @@
 	  {% with update_url='wiki:'|add:model|add:'_update' %}
 	    <a class="w3-button w3-padding-bottom w3-hover-white fa fa-edit" href={% url update_url pk=object.id %}></a>
 	  {% endwith %}
+	{% else %}
+		<a class="w3-button w3-padding-bottom w3-hover-white fa fa-bug" onclick="showFeedback()"></a>
 	{% endif %}
 	{% if object.updated_by.username %}
 	  {{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
@@ -17,4 +19,18 @@
 	  {{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
 	{% endif %}
   </small>
+	<div id="FeedBack" class="w3-hide">
+		Tagasiside vorm tuleb siia
+	</div>
 </div>
+
+<script>
+function showFeedback() {
+  var x = document.getElementById("FeedBack");
+  if (x.className.indexOf("w3-show-block") == -1) {
+    x.className += " w3-show-block";
+  } else {
+    x.className = x.className.replace(" w3-show-block", "");
+  }
+}
+</script>
