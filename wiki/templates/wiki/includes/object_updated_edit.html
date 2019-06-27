@@ -1,32 +1,25 @@
 <div class="w3-row">
-  <small>
-<!--	{% if model == 'artikkel' %}-->
-<!--		Allikas: {{ object.kroonika.nimi }}-->
-<!--		{% if object.lehekylg %}-->
-<!--			(lk {{object.lehekylg}})-->
-<!--		{% endif %}-->
-<!--	{% endif %}-->
-	{% if user.is_authenticated %}
-	  {% with update_url='wiki:'|add:model|add:'_update' %}
-	    <a class="w3-button w3-padding-bottom w3-hover-white fa fa-edit" href={% url update_url pk=object.id %}></a>
-	  {% endwith %}
-	{% else %}
+	<small>
 		<a class="w3-button w3-padding-bottom w3-hover-white fa fa-bug" onclick="showFeedback()"></a>
-	{% endif %}
-	{% if object.updated_by.username %}
-	  {{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
-	{% else %}
-	  {{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
-	{% endif %}
+		{% if user.is_authenticated %}
+			{% with update_url='wiki:'|add:model|add:'_update' %}
+				<a class="w3-button w3-padding-bottom w3-hover-white fa fa-edit" href={% url update_url pk=object.id %}></a>
+			{% endwith %}
+		{% endif %}
+		{% if object.updated_by.username %}
+	  	{{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
+		{% else %}
+	  	{{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
+		{% endif %}
   </small>
-	<div id="FeedBack" class="w3-hide">
+	<div id="panelFeedBack" class="w3-panel w3-card-4 w3-light-grey w3-hide">
 		Tagasiside vorm tuleb siia
 	</div>
 </div>
 
 <script>
 function showFeedback() {
-  var x = document.getElementById("FeedBack");
+  var x = document.getElementById("panelFeedBack");
   if (x.className.indexOf("w3-show-block") == -1) {
     x.className += " w3-show-block";
   } else {
