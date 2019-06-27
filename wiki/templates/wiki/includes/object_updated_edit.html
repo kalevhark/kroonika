@@ -1,7 +1,7 @@
 <div class="w3-row">
 	<small>
 		<!--		Tagasiside saatmiseks -->
-		<a class="w3-button w3-padding-bottom w3-hover-white fa fa-bug" onclick="showFeedback()"></a>
+		<a class="w3-button w3-padding-bottom w3-hover-white fa fa-bug" title="Märkasid viga või oskad täiendada?" onclick="showFeedback()"></a>
 		<!--		Kui kasutaja autenditud pakume muutmisvõimalust -->
 		{% if user.is_authenticated %}
 			{% with update_url='wiki:'|add:model|add:'_update' %}
