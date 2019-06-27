@@ -1,9 +1,9 @@
 <!--Viidete plokk-->
 {% if object.viited.all %}
-  <i class="fa fa-binoculars w3-small" alt="Viited"></i>
+  <i class="fa fa-binoculars w3-small text-viide" alt="Viited"></i>
 	{% for obj in object.viited.all %}
     <br>
-    <small class="text-viide">
+    <small>
       {% if obj.url %}
         <a href="{{ obj.url }}" target="_blank">{{ obj }}</a>
       {% else %}
