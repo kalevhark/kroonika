@@ -40,9 +40,7 @@
   <script>
     $('#formFeedback').submit(function(e) {
       e.preventDefault();
-      $.get('{% url 'wiki:feedback' %}', $('#formFeedback').serialize(), function (data) {
-        alert('handle your data here: ' + data);
-      });
+      alert('Siin!');
     });
   </script>
 {% endblock %}
