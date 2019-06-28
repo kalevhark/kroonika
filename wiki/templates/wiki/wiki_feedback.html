@@ -40,8 +40,9 @@
   <script>
     $('#formFeedback').submit(function(e) {
       e.preventDefault();
-      var requestData = $('#formFeedback :input').serialize();
-      console.log(requestData);
+      $.get('{% url 'wiki:feedback' %}', $('#formFeedback').serialize(), function (data) {
+        alert('handle your data here: ' + data);
+      });
     });
   </script>
 {% endblock %}
