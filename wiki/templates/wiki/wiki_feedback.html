@@ -39,28 +39,30 @@
 {% block javascript %}
   <script>
     $(document).ready(function() {
-      $('.need-alert').on('click', function (event) {
 
-            event.preventDefault();
+      // Grabs form submit button
+      var id=$("#formFeedback").data.formButtonId;
+      alert(id)
+      // Unbinds submit button on-click event
+      lp.jQuery("#"+id).unbind("click tap touchstart");
 
-            //sweetalert2 code
-            swal({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then(function () {
+      // Re-binds on-click event to add your own function
+      lp.jQuery("#"+id).bind("click tap touchstart",function(e) {
 
-                 //...
+        // Prevent submit
+        e.preventDefault();
+        e.stopPropagation();
 
+	      /*
+        Your custom validation stuff
+        Your custom validation stuff
+        Your custom validation stuff
+        Your custom validation stuff
+        */
 
-         $('.need-alert').submit();
-
-            }).catch(swal.noop);
-        })
+        // Submit form
+        $("#formFeedback").submit();
+      });
     });
   </script>
 {% endblock %}
