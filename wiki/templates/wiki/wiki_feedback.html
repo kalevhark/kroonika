@@ -41,7 +41,7 @@
     e.preventDefault();
 
     var requestData = $('#formFeedback :input').serialize();
-
+    alert(requestData)
     $.get('{{ request.HTTP_REFERER }}', requestData, function (data) {
         alert('handle your data here: ' + data);
     });
