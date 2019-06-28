@@ -38,31 +38,10 @@
 
 {% block javascript %}
   <script>
-    $(document).ready(function() {
-
-      // Grabs form submit button
-      var id=$("#formFeedback").data.formButtonId;
-      alert(id)
-      // Unbinds submit button on-click event
-      lp.jQuery("#"+id).unbind("click tap touchstart");
-
-      // Re-binds on-click event to add your own function
-      lp.jQuery("#"+id).bind("click tap touchstart",function(e) {
-
-        // Prevent submit
-        e.preventDefault();
-        e.stopPropagation();
-
-	      /*
-        Your custom validation stuff
-        Your custom validation stuff
-        Your custom validation stuff
-        Your custom validation stuff
-        */
-
-        // Submit form
-        $("#formFeedback").submit();
-      });
+    $('#formFeedback').submit(function(e) {
+      e.preventDefault();
+      alert('Siin!')
+      $('#formFeedback').submit();
     });
   </script>
 {% endblock %}
