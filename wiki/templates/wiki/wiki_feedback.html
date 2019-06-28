@@ -37,9 +37,11 @@
 {% endblock %}
 
 {% block javascript %}
-  $('#formFeedback').submit(function(e) {
-    e.preventDefault();
-    var requestData = $('#formFeedback :input').serialize();
-    console.log(requestData);
-  });
+  <script>
+    $('#formFeedback').submit(function(e) {
+      e.preventDefault();
+      var requestData = $('#formFeedback :input').serialize();
+      console.log(requestData);
+    });
+  </script>
 {% endblock %}
