@@ -23,9 +23,10 @@
       <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
 <!--      <input type="submit" value="Saada">-->
       <input type='button' value='Saada' onClick='submitFeedbackForm()' />
-      <p id="showSent" hidden>Saadetud!</p>
+
     <!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
     </form>
+    <span></span>
 
   </div>
   <div>
@@ -38,9 +39,9 @@
 
 {% block javascript %}
 <script>
-    function submitFeedbackForm() {
-      $("#formFeedback").submit();
-      $("#showSent").show();
-    }
-  </script>
+$("#formFeedback").submit(function( event ) {
+  $( "span" ).text( "Validated..." ).show();
+  return;
+});
+</script>
 {% endblock %}
