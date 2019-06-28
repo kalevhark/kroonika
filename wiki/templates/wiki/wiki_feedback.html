@@ -8,7 +8,7 @@
   {{ django_version }}<br>
   {{ request.HTTP_REFERER }}<br>
   <div>
-    <form id="form" method="post" action="{% url 'wiki:feedback' %}">
+    <form id="formFeedback" method="post" action="{% url 'wiki:feedback' %}">
       {% csrf_token %}
       <!--      {{ form }}-->
       {% for field in form %}
@@ -37,4 +37,13 @@
 {% endblock %}
 
 {% block javascript %}
+  $('#formFeedback').submit(function(e) {
+    e.preventDefault();
+
+    var requestData = $('#formFeedback :input').serialize();
+
+    $.get('{{ request.HTTP_REFERER }}', requestData, function (data) {
+        alert('handle your data here: ' + data);
+    });
+  });
 {% endblock %}
