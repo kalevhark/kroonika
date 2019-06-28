@@ -26,7 +26,7 @@
 
     <!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
     </form>
-    <span></span>
+    <span color="green"></span>
 
   </div>
   <div>
@@ -40,7 +40,7 @@
 {% block javascript %}
 <script>
 $("#formFeedback").submit(function( event ) {
-  $( "span" ).text( "Saadetud..." ).show(2000);
+  $("span").text("Saadetud...").show(5000);
   return;
 });
 </script>
