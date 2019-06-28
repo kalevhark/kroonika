@@ -8,7 +8,7 @@
   {{ django_version }}<br>
   {{ request.HTTP_REFERER }}<br>
   <div>
-    <form id="formFeedback" method="post" action="{% url 'wiki:feedback' %}">
+    <form class="need-alert" id="formFeedback" method="post" action="{% url 'wiki:feedback' %}">
       {% csrf_token %}
       <!--      {{ form }}-->
       {% for field in form %}
@@ -39,7 +39,7 @@
 {% block javascript %}
   <script>
     $(document).ready(function() {
-      $('#feedBack').on('click', function (event) {
+      $('.need-alert').on('click', function (event) {
 
             event.preventDefault();
 
@@ -57,7 +57,7 @@
                  //...
 
 
-         $('#feedBack').submit();
+         $('.need-alert').submit();
 
             }).catch(swal.noop);
         })
