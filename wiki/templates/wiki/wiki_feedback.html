@@ -11,6 +11,9 @@
     <form id="form" method="post" action="{% url 'wiki:feedback' %}">
       {% csrf_token %}
       {{ form }}
+      {% for field in form.visible_fields %}
+        {{ field.html_name }}:{{ field.id }}:{{ field.value }}
+      {% endfor %}
       <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
       <input type="submit" value="Saada">
     <!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
