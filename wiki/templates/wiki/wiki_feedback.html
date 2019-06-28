@@ -24,13 +24,11 @@
         {{ field.html_name }}:{{ field.value }}
       {% endfor %}
       <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
-      <input type="submit" value="Saada">
+<!--      <input type="submit" value="Saada">-->
+      <input type='button' value='Submit form' onClick='submitDetailsForm()' />
     <!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
     </form>
 
-    <form class="need-alert" action="" method="POST">
-        <input class="btn btn-danger btn-sm need-alert" type="submit" value="delete">
-    </form>
   </div>
   <div>
     {% for key, value in request.items %}
@@ -42,23 +40,8 @@
 
 {% block javascript %}
   <script>
-    $(document).ready(function() {
-      $('.need-alert').on('click', function (event) {
-        event.preventDefault();
-        //sweetalert2 code
-        swal({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          type: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-        }).then(function () {
-                 //...
-          $('.need-alert').submit();
-        }).catch(swal.noop);
-      })
-    });
+    function submitDetailsForm() {
+       $("#formFeedback").submit();
+    }
   </script>
 {% endblock %}
