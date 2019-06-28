@@ -44,27 +44,21 @@
   <script>
     $(document).ready(function() {
       $('.need-alert').on('click', function (event) {
-
-            event.preventDefault();
-
-            //sweetalert2 code
-            swal({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then(function () {
-
+        event.preventDefault();
+        //sweetalert2 code
+        swal({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          type: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then(function () {
                  //...
-
-
-         $('.need-alert').submit();
-
-            }).catch(swal.noop);
-        })
+          $('.need-alert').submit();
+        }).catch(swal.noop);
+      })
     });
   </script>
 {% endblock %}
