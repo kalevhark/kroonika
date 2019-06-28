@@ -8,7 +8,7 @@
   {{ django_version }}<br>
   {{ request.HTTP_REFERER }}<br>
   <div>
-    <form class="need-alert" id="formFeedback" method="post" action="{% url 'wiki:feedback' %}">
+    <form id="formFeedback" method="post" action="{% url 'wiki:feedback' %}">
       {% csrf_token %}
       <!--      {{ form }}-->
       {% for field in form %}
@@ -27,6 +27,10 @@
       <input type="submit" value="Saada">
     <!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
     </form>
+
+    <form class="need-alert" action="" method="POST">
+        <input class="btn btn-danger btn-sm need-alert" type="submit" value="delete">
+    </form>
   </div>
   <div>
     {% for key, value in request.items %}
@@ -38,10 +42,29 @@
 
 {% block javascript %}
   <script>
-    $('#formFeedback').submit(function(e) {
-      e.preventDefault();
-      alert('Siin!')
-      $('#formFeedback').submit();
+    $(document).ready(function() {
+      $('.need-alert').on('click', function (event) {
+
+            event.preventDefault();
+
+            //sweetalert2 code
+            swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then(function () {
+
+                 //...
+
+
+         $('.need-alert').submit();
+
+            }).catch(swal.noop);
+        })
     });
   </script>
 {% endblock %}
