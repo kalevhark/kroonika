@@ -38,7 +38,8 @@
 
 {% block javascript %}
   <script>
-    $('#feedBack').on('click', function (event) {
+    $(document).ready(function() {
+      $('#feedBack').on('click', function (event) {
 
             event.preventDefault();
 
@@ -60,5 +61,6 @@
 
             }).catch(swal.noop);
         })
+    });
   </script>
 {% endblock %}
