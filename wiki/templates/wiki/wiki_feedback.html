@@ -20,12 +20,10 @@
           {% endif %}
         </div>
       {% endfor %}
-      {% for field in form.visible_fields %}
-        {{ field.html_name }}:{{ field.value }}
-      {% endfor %}
       <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
 <!--      <input type="submit" value="Saada">-->
-      <input type='button' value='Submit form' onClick='submitDetailsForm()' />
+      <input type='button' value='Saada' onClick='submitFeedbackForm()' />
+      <div id="showSent" hidden>Saadetud!</div>
     <!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
     </form>
 
@@ -40,8 +38,9 @@
 
 {% block javascript %}
   <script>
-    function submitDetailsForm() {
-       $("#formFeedback").submit();
+    function submitFeedbackForm() {
+      $("#showSent").show(1000);
+      $("#formFeedback").submit();
     }
   </script>
 {% endblock %}
