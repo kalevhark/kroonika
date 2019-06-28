@@ -10,9 +10,18 @@
   <div>
     <form id="form" method="post" action="{% url 'wiki:feedback' %}">
       {% csrf_token %}
-      {{ form }}
+      <!--      {{ form }}-->
+      {% for field in form %}
+        <div class="fieldWrapper">
+          {{ field.errors }}
+          {{ field.label_tag }} {{ field }}
+          {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
       {% for field in form.visible_fields %}
-        {{ field.html_name }}:{{ field.id }}:{{ field.value }}
+        {{ field.html_name }}:{{ field.value }}
       {% endfor %}
       <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
       <input type="submit" value="Saada">
