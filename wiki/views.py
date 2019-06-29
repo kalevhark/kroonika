@@ -135,40 +135,43 @@ def info(request):
     )
 
 #
-# Tagasiside vorm
+# Tagasiside vormi töötlemine
 #
-# def feedback(request):
-#     # if this is a POST request we need to process the form data
-#     if request.method == 'POST' and check_recaptcha(request):
-#         # create a form instance and populate it with data from the request:
-#         form = FeedBackForm(request.POST)
-#         l2hteaadress = request.META['HTTP_REFERER']
-#         # check whether it's valid:
-#         if form.is_valid():
-#             # process the data in form.cleaned_data as required
-#             # ...
-#             # redirect to a new URL:
-#             # return HttpResponseRedirect('/thanks/')
-#             # return HttpResponseRedirect(l2hteaadress)
-#             pass
-#
-#     # if a GET (or any other method) we'll create a blank form
-#     else:
-#         form = FeedBackForm(initial={'your_name': request.META['HTTP_REFERER']})
-#
-#     from django.utils.version import get_version
-#     context = {
-#         'django_version': f'Django: {get_version()}',
-#         'request': request.META,
-#         'form': form
-#     }
-#
-#     # return HttpResponse(f'Django: {django.get_version()}')
-#     return render(
-#         request,
-#         'wiki/wiki_feedback.html',
-#         context
-#     )
+def feedback(request):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST' and check_recaptcha(request):
+        # create a form instance and populate it with data from the request:
+        form = VihjeForm(request.POST)
+        context = dict()
+        context['meta'] = request.META
+        context['form'] = form
+        # check whether it's valid:
+        if form.is_valid():
+            return render(
+                request,
+                'wiki/wiki_feedback.html',
+                context
+            )
+            # return HttpResponseRedirect(l2hteaadress)
+            # pass
+
+    # if a GET (or any other method) we'll create a blank form
+    # else:
+    #     form = FeedBackForm(initial={'your_name': request.META['HTTP_REFERER']})
+
+    # from django.utils.version import get_version
+    # context = {
+    #     'django_version': f'Django: {get_version()}',
+    #     'request': request.META,
+    #     'form': form
+    # }
+
+    # return HttpResponse(f'Django: {django.get_version()}')
+    return render(
+        request,
+        'wiki/wiki_feedback.html',
+        context
+    )
 
 
 #
