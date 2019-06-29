@@ -1,3 +1,4 @@
+from crispy_forms.helper import FormHelper
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms import Form, ModelForm, Textarea, SelectMultiple, ValidationError, CharField, ModelMultipleChoiceField
 
@@ -101,5 +102,16 @@ class ObjektForm(ModelForm):
 #     your_feedback = CharField(label='Sinu sõnum', widget=Textarea(attrs={'cols': '30', 'rows': '5'}))
 
 class VihjeForm(Form):
+    def __init__(self, *args, **kwargs):
+        super(VihjeForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+
 #     your_name = CharField(label='Sinu nimi', max_length=100)
-    kirjeldus = CharField(label='Sinu sõnum', widget=Textarea(attrs={'cols': '30', 'rows': '5'}))
+    kirjeldus = CharField(
+        label='Vihje parandamiseks/täiendamiseks',
+        widget=Textarea(attrs={'cols': '80', 'rows': '5'})
+    )
+    kontakt = CharField(
+        label='Sinu nimi/kontaktandmed',
+        max_length=80
+    )

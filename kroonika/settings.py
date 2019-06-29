@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'rest_framework',
     'captcha',
+    'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
