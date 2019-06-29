@@ -171,11 +171,11 @@ def feedback(request):
     # }
 
     # return HttpResponse(f'Django: {django.get_version()}')
-    return render(
-        request,
-        'wiki/wiki_feedback.html',
-        context
-    )
+    # return render(
+    #     request,
+    #     'wiki/wiki_feedback.html',
+    #     context
+    # )
 
 
 #
