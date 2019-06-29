@@ -1,28 +1,28 @@
 <div class="w3-row">
-	<small>
-		<!--		Tagasiside saatmiseks -->
-		<a class="w3-button w3-padding-bottom w3-hover-white fa fa-bug" title="Märkasid viga või oskad täiendada?" onclick="showFeedback()"></a>
-		<!--		Kui kasutaja autenditud pakume muutmisvõimalust -->
-		{% if user.is_authenticated %}
-			{% with update_url='wiki:'|add:model|add:'_update' %}
-				<a class="w3-button w3-padding-bottom w3-hover-white fa fa-edit" href={% url update_url pk=object.id %}></a>
-			{% endwith %}
-		{% endif %}
-		{% if object.updated_by.username %}
-	  	{{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
-		{% else %}
-	  	{{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
-		{% endif %}
+  <small>
+    <!--		Tagasiside saatmiseks -->
+    <a class="w3-button w3-padding-bottom w3-hover-white fa fa-bug" title="Märkasid viga või oskad täiendada?" onclick="showFeedback()"></a>
+    <!--		Kui kasutaja autenditud pakume muutmisvõimalust -->
+    {% if user.is_authenticated %}
+      {% with update_url='wiki:'|add:model|add:'_update' %}
+        <a class="w3-button w3-padding-bottom w3-hover-white fa fa-edit" href={% url update_url pk=object.id %}></a>
+      {% endwith %}
+    {% endif %}
+    {% if object.updated_by.username %}
+      {{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
+    {% else %}
+      {{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
+    {% endif %}
   </small>
-	<!--		Tagasiside vorm -->
-	<div id="panelFeedBack" class="w3-panel w3-card-4 w3-light-grey w3-hide">
-		<form id="form" method="post" action="{% url 'wiki:feedback' %}">
+  <!--		Tagasiside vorm -->
+  <div id="panelFeedBack" class="w3-panel w3-card-4 w3-light-grey w3-hide">
+    <form id="form" method="post" action="">
       {% csrf_token %}
-      {{ form }}
+
       <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
       <input type="submit" value="Saada">
     </form>
-	</div>
+  </div>
 </div>
 
 <script>

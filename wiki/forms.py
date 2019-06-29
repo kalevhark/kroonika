@@ -96,6 +96,6 @@ class ObjektForm(ModelForm):
     # def __init__(self, parents=None, *args, **kwargs):
     #     super(ObjektForm, self).__init__(*args, **kwargs)
 
-class FeedBackForm(Form):
-    your_name = CharField(label='Sinu nimi', max_length=100)
-    your_feedback = CharField(label='Sinu sõnum', widget=Textarea(attrs={'cols': '30', 'rows': '5'}))
+# class FeedBackForm(Form):
+#     your_name = CharField(label='Sinu nimi', max_length=100)
+#     your_feedback = CharField(label='Sinu sõnum', widget=Textarea(attrs={'cols': '30', 'rows': '5'}))
