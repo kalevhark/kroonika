@@ -15,6 +15,7 @@
     {% endif %}
   </small>
   <!--		Tagasiside vorm -->
+  {% load crispy_forms_tags %}
   <div id="panelFeedBack" class="w3-panel w3-card-4 w3-light-grey w3-hide">
     <form id="form" method="post" action="{% url 'wiki:feedback' %}">
       {% csrf_token %}
