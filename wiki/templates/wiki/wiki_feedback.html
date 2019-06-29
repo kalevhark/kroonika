@@ -13,7 +13,7 @@
   {{ django_version }}<br>
   {{ request.HTTP_REFERER }}<br>
   <div>
-    <form id="formFeedback" method="post" action="{% url 'wiki:feedback' %}">
+    <form id="formFeedback" method="post" action="">
       {% csrf_token %}
       <!--      {{ form }}-->
       {% for field in form %}
@@ -45,9 +45,7 @@
 {% block javascript %}
 <script>
 $("#formFeedback").submit(function( event ) {
-  setTimeout(function(){
-    $("span").text("Saadetud...").show();
-  }, 3000);
+  $("span").text("Saadetud...").show();
   return;
 });
 </script>

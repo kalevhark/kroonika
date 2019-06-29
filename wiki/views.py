@@ -149,8 +149,8 @@ def feedback(request):
             # ...
             # redirect to a new URL:
             # return HttpResponseRedirect('/thanks/')
-            return HttpResponseRedirect(l2hteaadress)
-            # pass
+            # return HttpResponseRedirect(l2hteaadress)
+            pass
 
     # if a GET (or any other method) we'll create a blank form
     else:
