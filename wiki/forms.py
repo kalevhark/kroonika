@@ -99,3 +99,7 @@ class ObjektForm(ModelForm):
 # class FeedBackForm(Form):
 #     your_name = CharField(label='Sinu nimi', max_length=100)
 #     your_feedback = CharField(label='Sinu sõnum', widget=Textarea(attrs={'cols': '30', 'rows': '5'}))
+
+class VihjeForm(Form):
+#     your_name = CharField(label='Sinu nimi', max_length=100)
+    kirjeldus = CharField(label='Sinu sõnum', widget=Textarea(attrs={'cols': '30', 'rows': '5'}))

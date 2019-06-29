@@ -26,7 +26,7 @@ from django_filters.views import FilterView
 
 from .models import Allikas, Artikkel, Isik, Objekt, Organisatsioon, Pilt
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm #, FeedBackForm
-
+from .forms import VihjeForm
 #
 # reCAPTCHA kontrollifunktsioon
 #
@@ -371,6 +371,8 @@ class ArtikkelDetailView(generic.DetailView):
             # Leiame ajaliselt eelneva artikli
             if n > 0:
                 context['prev_obj'] = Artikkel.objects.get(id=loend[n-1]['id'])
+        # Lisame vihjevormi
+        context['feedbackform'] = VihjeForm()
         return context
 
     def get_object(self):
