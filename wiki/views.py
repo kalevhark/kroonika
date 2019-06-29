@@ -139,6 +139,7 @@ def info(request):
 #
 def feedback(request):
     # if this is a POST request we need to process the form data
+    http_referer = request.META['HTTP_REFERER']
     if request.method == 'POST' and check_recaptcha(request):
         # create a form instance and populate it with data from the request:
         form = VihjeForm(request.POST)
@@ -156,10 +157,11 @@ def feedback(request):
                 'wiki/wiki_feedback.html',
                 context
             )
-            # return HttpResponseRedirect(l2hteaadress)
-            # pass
+    else:
+        # Kui on GET või tühi vorm, siis laeme algse lehe
+        return HttpResponseRedirect(http_referer)
+        # pass
 
-    # if a GET (or any other method) we'll create a blank form
     # else:
     #     form = FeedBackForm(initial={'your_name': request.META['HTTP_REFERER']})
 
