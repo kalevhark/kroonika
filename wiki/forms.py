@@ -113,5 +113,7 @@ class VihjeForm(Form):
     )
     kontakt = CharField(
         label='Sinu nimi/kontaktandmed',
-        max_length=80
+        widget=Textarea(attrs={'cols': '80', 'rows': '1'}),
+        max_length=80,
+        required=False
     )
