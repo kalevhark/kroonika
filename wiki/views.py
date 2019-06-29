@@ -157,28 +157,9 @@ def feedback(request):
                 'wiki/wiki_feedback.html',
                 context
             )
-    else:
-        # Kui on GET või tühi vorm, siis laeme algse lehe
-        return HttpResponseRedirect(http_referer)
-        # pass
 
-    # else:
-    #     form = FeedBackForm(initial={'your_name': request.META['HTTP_REFERER']})
-
-    # from django.utils.version import get_version
-    # context = {
-    #     'django_version': f'Django: {get_version()}',
-    #     'request': request.META,
-    #     'form': form
-    # }
-
-    # return HttpResponse(f'Django: {django.get_version()}')
-    # return render(
-    #     request,
-    #     'wiki/wiki_feedback.html',
-    #     context
-    # )
-
+    # Kui on GET või tühi vorm, siis laeme algse lehe
+    return HttpResponseRedirect(http_referer)
 
 #
 # Avakuva
