@@ -25,7 +25,7 @@ import django_filters
 from django_filters.views import FilterView
 
 from .models import Allikas, Artikkel, Isik, Objekt, Organisatsioon, Pilt
-from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, FeedBackForm
+from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm #, FeedBackForm
 
 #
 # reCAPTCHA kontrollifunktsioon
