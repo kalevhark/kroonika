@@ -6,8 +6,10 @@
 
 {% block content %}
   {{ django_version }}<br>
-  {{ meta }}<br>
-  {{ form }}
+  {{ kirjeldus }}<br>
+  {% for key, value in meta.items %}
+    {{key}}:{{ value }}<br>
+  {% endfor %}
 {% endblock %}
 
 {% block javascript %}

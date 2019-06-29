@@ -142,14 +142,15 @@ def feedback(request):
     if request.method == 'POST' and check_recaptcha(request):
         # create a form instance and populate it with data from the request:
         form = VihjeForm(request.POST)
-        from django.utils.version import get_version
-        context = {
-            'django_version': f'Django: {get_version()}',
-            'meta': request.META,
-            'form': form
-        }
         # check whether it's valid:
         if form.is_valid():
+            kirjeldus = form.cleaned_data['kirjeldus']
+            from django.utils.version import get_version
+            context = {
+                'django_version': f'Django: {get_version()}',
+                'meta': request.META,
+                'kirjeldus': kirjeldus
+            }
             return render(
                 request,
                 'wiki/wiki_feedback.html',
