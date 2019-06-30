@@ -46,7 +46,7 @@ class ViideAdmin(admin.ModelAdmin):
         'seotud_allikas',
         'hist_date',
         'kohaviit',
-        'url',
+        'short_url',
         'seotud_artikleid',
         'seotud_isikuid',
         'seotud_organeid',
@@ -111,6 +111,14 @@ class ViideAdmin(admin.ModelAdmin):
 
     seotud_pilte.short_description = 'Pilte'
 
+    def short_url(self, obj):
+        if len(obj.url) < 33:
+            tekst = obj.url
+        else:
+            tekst = obj.url[:30] + '...'
+        return tekst
+
+    short_url.short_description = 'Link'
 
 class ArtikkelAdmin(admin.ModelAdmin):
     form = ArtikkelForm
@@ -621,6 +629,30 @@ class PiltAdmin(admin.ModelAdmin):
     #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class VihjeAdmin(admin.ModelAdmin):
+    readonly_fields = ['inp_date']
+    fieldsets = [
+        (None, {
+            'fields': ['kirjeldus', 'kontakt', 'http_referer', 'remote_addr', 'django_version']}),
+        (None, {
+            'fields': [('inp_date', 'end_date')]}),
+    ]
+    list_display = [
+        'inp_date',
+        'lyhi_kirjeldus',
+        'kontakt',
+        'http_referer',
+    ]
+
+    def lyhi_kirjeldus(self, obj):
+        if len(obj.kirjeldus) < 33:
+            tekst = obj.kirjeldus
+        else:
+            tekst = obj.kirjeldus[:30] + '...'
+        return tekst
+
+    lyhi_kirjeldus.short_description = 'Vihje'
+
 admin.site.register(Allikas, AllikasAdmin)
 admin.site.register(Viide, ViideAdmin)
 admin.site.register(Kroonika, KroonikaAdmin)
@@ -629,4 +661,4 @@ admin.site.register(Isik, IsikAdmin)
 admin.site.register(Organisatsioon, OrganisatsioonAdmin)
 admin.site.register(Objekt, ObjektAdmin)
 admin.site.register(Pilt, PiltAdmin)
-admin.site.register(Vihje)
+admin.site.register(Vihje, VihjeAdmin)
