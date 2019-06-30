@@ -120,8 +120,6 @@ class VihjeForm(ModelForm):
                 Submit('save', 'Saada')
             )
         )
-        # self.helper.add_input(Submit('submit', 'Saada'))
-
 
     class Meta:
         model = Vihje
@@ -133,20 +131,3 @@ class VihjeForm(ModelForm):
             'kirjeldus': Textarea(attrs={'cols': 80, 'rows': 5}),
             'kontakt': Textarea(attrs={'cols': 80, 'rows': 1})
         }
-
-
-
-    # def __init__(self, *args, **kwargs):
-    #     super(VihjeForm, self).__init__(*args, **kwargs)
-    #     self.helper = FormHelper()
-
-    # kirjeldus = CharField(
-    #     label='Vihje parandamiseks/täiendamiseks',
-    #     widget=Textarea(attrs={'cols': '80', 'rows': '5'})
-    # )
-    # kontakt = CharField(
-    #     label='Sinu nimi/kontaktandmed',
-    #     widget=Textarea(attrs={'cols': '80', 'rows': '1'}),
-    #     max_length=80,
-    #     required=False
-    # )

@@ -170,6 +170,7 @@ def feedback(request):
             )
 
     # Kui on GET või tühi vorm, siis laeme algse lehe
+    # TODO: Võiks olla teade, et vigane või tühi vorm
     return HttpResponseRedirect(http_referer)
 
 #
