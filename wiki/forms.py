@@ -115,7 +115,10 @@ class VihjeForm(ModelForm):
                 'kontakt',
                 HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >')
             ),
-            Submit('submit', 'Saada', css_class='button white')
+            ButtonHolder(
+                HTML('<span class="hidden">✓ Saved data</span>'),
+                Submit('save', 'Save')
+            )
         )
         # self.helper.add_input(Submit('submit', 'Saada'))
 
