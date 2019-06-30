@@ -29,6 +29,11 @@
   <link rel="stylesheet" href={% static "wiki/css/kroonika_general.css" %}>
   <link rel="stylesheet" href={% static "wiki/css/kroonika_color_metro.css" %}>
   <!-- <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}> -->
+  <!-- note that there's also blue.uni-form.css and dark.uni-form.css available if you want to try changing defaults up -->
+  <link rel="stylesheet" href={% static "wiki/css/uni-form.css"  %} />
+  <link rel="stylesheet" href={% static "wiki/css/default.uni-form.css"  %} />
+<!-- uni-form JS library, optional -->
+  <script src={% static "wiki/js/uni-form.jquery.js" %} type="text/javascript"></script>
   {% block css %}{% endblock %}
 
   <link rel="shortcut icon" href={% static "wiki/img/favicon.ico" %}>
@@ -127,6 +132,13 @@ function myFunction() {
         x.className = x.className.replace(" w3-show", "");
     }
 }
+</script>
+
+<!-- Crispy Forms jaoks template -->
+<script>
+  $(function(){
+    $('form.uniForm').uniform();
+  });
 </script>
 
 <!-- Load Facebook SDK for JavaScript -->
