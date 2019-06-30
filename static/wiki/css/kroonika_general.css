@@ -83,6 +83,11 @@ div.message-info {
 }
 
 div.message-warning {
+    display: block;
+    font-weight: 400;
+    font-size: 13px;
+    padding: 10px 10px 10px 65px;
+    margin: 0 0 10px 0;
     background: #ffc url(../img/icon-alert.svg) 40px 14px no-repeat;
     background-size: 16px auto;
 }
