@@ -25,8 +25,8 @@ from django.views.generic.edit import UpdateView
 import django_filters
 from django_filters.views import FilterView
 
-from .models import Allikas, Artikkel, Isik, Objekt, Organisatsioon, Pilt
-from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm #, FeedBackForm
+from .models import Allikas, Artikkel, Isik, Objekt, Organisatsioon, Pilt, Vihje
+from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 from .forms import VihjeForm
 #
 # reCAPTCHA kontrollifunktsioon
@@ -154,6 +154,11 @@ def feedback(request):
                 'remote_addr': remote_addr,
                 'django_version': get_version() # Django versioon
             }
+            # Salvestame andmed andmebaasi
+            v = Vihje(**vihje)
+            v.save()
+            vihje['inp_date'] = v.inp_date
+
             context = {
                 'vihje': vihje,
                 'meta': request.META
