@@ -84,7 +84,7 @@ div.message-info {
 
 div.message-warning {
     background: #ffc url(../img/icon-alert.svg) 40px 14px no-repeat;
-    background-size: 14px auto;
+    background-size: 16px auto;
 }
 
 div.message-error {
