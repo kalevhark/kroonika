@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block content %}
-  <div>Suur tänu! Sinu parandus/täiendusettepanek salvestati järgneva infoga:</div>
-  <div w3-padding w3-white">
-    {{ vihje.kirjeldus }}<br>
+  <h4>Suur tänu! Sinu parandus/täiendusettepanek salvestati järgneva infoga:</h4>
+  <div class="w3-container w3-white"">
+    <p>{{ vihje.kirjeldus }}</p>
     {{ vihje.kontakt }}<br>
-    ja järgmiste meta-andmetega:<br>
+    Salvestati ka järgmised meta-andmed:<br>
     viide: {{ meta.HTTP_REFERER }}<br>
     aadress: {{ meta.REMOTE_ADDR }}<br>
     {{ django_version }}<br>
