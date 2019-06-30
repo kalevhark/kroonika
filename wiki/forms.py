@@ -1,4 +1,5 @@
 from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit, Layout
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms import Form, ModelForm, Textarea, SelectMultiple, ValidationError, CharField, ModelMultipleChoiceField
 
@@ -97,11 +98,24 @@ class ObjektForm(ModelForm):
     # def __init__(self, parents=None, *args, **kwargs):
     #     super(ObjektForm, self).__init__(*args, **kwargs)
 
-# class FeedBackForm(Form):
-#     your_name = CharField(label='Sinu nimi', max_length=100)
-#     your_feedback = CharField(label='Sinu sõnum', widget=Textarea(attrs={'cols': '30', 'rows': '5'}))
 
 class VihjeForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(VihjeForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'feedbackForm'
+        self.helper.form_class = 'blueForms'
+        self.helper.form_method = 'post'
+        self.helper.form_action = 'wiki:feedback'
+        self.helper.layout = Layout(
+            'kirjeldus',
+            'kontakt',
+            # StrictButton('Sign in', css_class='btn-default'),
+        )
+        self.helper.add_input(Submit('submit', 'Saada'))
+
+
     class Meta:
         model = Vihje
         fields = (
@@ -112,6 +126,9 @@ class VihjeForm(ModelForm):
             'kirjeldus': Textarea(attrs={'cols': 80, 'rows': 5}),
             'kontakt': Textarea(attrs={'cols': 80, 'rows': 1})
         }
+
+
+
     # def __init__(self, *args, **kwargs):
     #     super(VihjeForm, self).__init__(*args, **kwargs)
     #     self.helper = FormHelper()
