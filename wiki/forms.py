@@ -1,5 +1,5 @@
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset, HTML
+from crispy_forms.layout import Submit, Layout, Fieldset, HTML, ButtonHolder
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms import Form, ModelForm, Textarea, SelectMultiple, ValidationError, CharField, ModelMultipleChoiceField
 
@@ -110,12 +110,16 @@ class VihjeForm(ModelForm):
         self.helper.form_action = 'wiki:feedback'
         self.helper.layout = Layout(
             Fieldset(
+                'Märkasid viga või oskad täiendada?',
                 'kirjeldus',
                 'kontakt',
                 HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >')
+            ),
+            ButtonHolder(
+                Submit('submit', 'Saada', css_class='button white')
             )
         )
-        self.helper.add_input(Submit('submit', 'Saada'))
+        # self.helper.add_input(Submit('submit', 'Saada'))
 
 
     class Meta:
