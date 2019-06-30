@@ -7,7 +7,7 @@
 {% block content %}
   {{ django_version }}<br>
   {{ kirjeldus }}<br>
-  <a href="{{http_referer}}" role="button">Tagasi</a>
+  <a href="{{http_referer}}" role="button">Tagasi</a><br>
   {% for key, value in meta.items %}
     {{key}}:{{ value }}<br>
   {% endfor %}

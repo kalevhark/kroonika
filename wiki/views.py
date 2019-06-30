@@ -785,6 +785,8 @@ class IsikDetailView(generic.DetailView):
         context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
         context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
 
+        # Lisame vihjevormi
+        context['feedbackform'] = VihjeForm()
         return context
 
 
@@ -870,6 +872,8 @@ class OrganisatsioonDetailView(generic.DetailView):
         context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
         context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
 
+        # Lisame vihjevormi
+        context['feedbackform'] = VihjeForm()
         return context
 
 
@@ -954,6 +958,8 @@ class ObjektDetailView(generic.DetailView):
         context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
         context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
 
+        # Lisame vihjevormi
+        context['feedbackform'] = VihjeForm()
         return context
 
 
