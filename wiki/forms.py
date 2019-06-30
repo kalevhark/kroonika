@@ -119,7 +119,7 @@ class VihjeForm(ModelForm):
                 Submit('submit', 'Saada', css_class='button white')
             )
         )
-        # self.helper.add_input(Submit('submit', 'Saada'))
+        self.helper.add_input(Submit('submit', 'Saada'))
 
 
     class Meta:
