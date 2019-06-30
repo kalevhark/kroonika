@@ -883,7 +883,7 @@ class Vihje(models.Model):
         'Kontakt',
         help_text='Sinu nimi/kontaktandmed',
         max_length=100,
-        required=False
+        blank=True
     )
     http_referer = models.CharField(
         'Objekt',
