@@ -1,5 +1,5 @@
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout
+from crispy_forms.layout import Submit, Layout, Fieldset, HTML
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.forms import Form, ModelForm, Textarea, SelectMultiple, ValidationError, CharField, ModelMultipleChoiceField
 
@@ -109,9 +109,11 @@ class VihjeForm(ModelForm):
         self.helper.form_method = 'post'
         self.helper.form_action = 'wiki:feedback'
         self.helper.layout = Layout(
-            'kirjeldus',
-            'kontakt',
-            # StrictButton('Sign in', css_class='btn-default'),
+            Fieldset(
+                'kirjeldus',
+                'kontakt',
+                HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >')
+            )
         )
         self.helper.add_input(Submit('submit', 'Saada'))
 
