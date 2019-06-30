@@ -368,7 +368,7 @@ class ArtikkelDetailView(generic.DetailView):
             if n > 0:
                 context['prev_obj'] = Artikkel.objects.get(id=loend[n-1]['id'])
         # Lisame vihjevormi
-        context['feedbackform'] = VihjeForm()
+        context['feedbackform'] = VihjeForm(None)
         return context
 
     def get_object(self):
