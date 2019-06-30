@@ -103,7 +103,7 @@ class ObjektForm(ModelForm):
 
 class VihjeForm(ModelForm):
     class Meta:
-        model = Objekt
+        model = Vihje
         fields = (
             'kirjeldus',
             'kontakt'
