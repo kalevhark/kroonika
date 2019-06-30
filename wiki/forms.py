@@ -114,9 +114,6 @@ class VihjeForm(ModelForm):
                 'kirjeldus',
                 'kontakt',
                 HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >')
-            ),
-            ButtonHolder(
-                Submit('submit', 'Saada', css_class='button white')
             )
         )
         self.helper.add_input(Submit('submit', 'Saada'))
