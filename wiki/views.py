@@ -4,6 +4,7 @@ import requests
 from typing import Dict, Any
 
 from django.conf import settings
+from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import F, BooleanField, DecimalField, IntegerField, ExpressionWrapper
 from django.db.models import Count, Max, Min
@@ -158,7 +159,7 @@ def feedback(request):
             v = Vihje(**vihje)
             v.save()
             vihje['inp_date'] = v.inp_date
-
+            messages.add_message(request, messages.INFO, 'Tagasiside saadetud.')
             context = {
                 'vihje': vihje,
                 'meta': request.META
@@ -171,8 +172,7 @@ def feedback(request):
 
     # Kui on GET või tühi vorm, siis laeme algse lehe
     # TODO: Võiks olla teade, et vigane või tühi vorm
-    from django.contrib import messages
-    messages.add_message(request, messages.INFO, 'Tühi vorm?')
+    messages.add_message(request, messages.WARNING, 'Tühja vormi ei saadetud.')
     return HttpResponseRedirect(http_referer)
 
 #
