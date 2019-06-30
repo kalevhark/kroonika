@@ -6,12 +6,14 @@
 
 {% block content %}
   <h4>Suur tänu! Sinu parandus/täiendusettepanek salvestati järgneva infoga:</h4>
-  <div class="w3-container w3-white"">
+  <div class="w3-container w3-padding w3-white"">
     <p>{{ vihje.kirjeldus }}</p>
-    {{ vihje.kontakt }}<br>
-    Salvestati ka järgmised meta-andmed:<br>
-    viide: {{ meta.HTTP_REFERER }}<br>
-    aadress: {{ meta.REMOTE_ADDR }}<br>
+    {{ vihje.kontakt }}
+  </div>
+  Salvestati ka järgmised meta-andmed:<br>
+  <div class="w3-container w3-padding w3-white"">
+    viide: {{ vihje.http_referer }}<br>
+    aadress: {{ vihje.remote_addr }}<br>
     {{ django_version }}<br>
     <a href="{{http_referer}}" role="button">Tagasi</a>
   </div>

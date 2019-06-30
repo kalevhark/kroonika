@@ -139,7 +139,8 @@ def info(request):
 #
 def feedback(request):
     # if this is a POST request we need to process the form data
-    http_referer = request.META['HTTP_REFERER']
+    http_referer = request.META['HTTP_REFERER'] # mis objektilt tuli vihje
+    remote_addr = request.META['REMOTE_ADDR'] # kasutaja IP aadress
     if request.method == 'POST' and check_recaptcha(request):
         # create a form instance and populate it with data from the request:
         form = VihjeForm(request.POST)
@@ -147,14 +148,15 @@ def feedback(request):
         if form.is_valid():
             vihje = {
                 'kirjeldus': form.cleaned_data['kirjeldus'],
-                'kontakt': form.cleaned_data['kontakt']
+                'kontakt': form.cleaned_data['kontakt'],
+                'http_referer': http_referer,
+                'remote_addr': remote_addr
             }
             from django.utils.version import get_version
             context = {
                 'django_version': f'Django: {get_version()}',
                 'meta': request.META,
-                'vihje': vihje,
-                'http_referer': http_referer
+                'vihje': vihje
             }
             return render(
                 request,
