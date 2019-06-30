@@ -145,12 +145,15 @@ def feedback(request):
         form = VihjeForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            kirjeldus = form.cleaned_data['kirjeldus']
+            vihje = {
+                'kirjeldus': form.cleaned_data['kirjeldus'],
+                'kontakt': form.cleaned_data['kontakt']
+            }
             from django.utils.version import get_version
             context = {
                 'django_version': f'Django: {get_version()}',
                 'meta': request.META,
-                'kirjeldus': kirjeldus,
+                'vihje': vihje,
                 'http_referer': http_referer
             }
             return render(

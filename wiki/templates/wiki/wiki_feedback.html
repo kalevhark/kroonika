@@ -5,12 +5,19 @@
 {% endblock %}
 
 {% block content %}
+  <p>Suur tänu! Sinu parandus/täiendusettepanek salvestati järgneva infoga:</p>
   {{ django_version }}<br>
-  {{ kirjeldus }}<br>
-  <a href="{{http_referer}}" role="button">Tagasi</a><br>
-  {% for key, value in meta.items %}
-    {{key}}:{{ value }}<br>
-  {% endfor %}
+  <p>{{ vihje.kirjeldus }}</p>
+  <p>{{ vihje.kontakt }}</p>
+  ja järgmiste meta-andmetega:
+  <p>viide:{{ meta.HTTP_REFERER }}</p>
+  <p>aadress:{{ meta.REMOTE_ADDR }}</p>
+  <a href="{{http_referer}}" role="button">Tagasi</a>
+  <div>
+    {% for key, value in meta.items %}
+      <small>{{key}}:{{ value }}</small><br>
+    {% endfor %}
+  </div>
 {% endblock %}
 
 {% block javascript %}
