@@ -171,6 +171,8 @@ def feedback(request):
 
     # Kui on GET või tühi vorm, siis laeme algse lehe
     # TODO: Võiks olla teade, et vigane või tühi vorm
+    from django.contrib import messages
+    messages.add_message(request, messages.INFO, 'Tühi vorm?')
     return HttpResponseRedirect(http_referer)
 
 #
