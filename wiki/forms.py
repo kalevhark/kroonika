@@ -102,9 +102,9 @@ class ObjektForm(ModelForm):
 #     your_feedback = CharField(label='Sinu sõnum', widget=Textarea(attrs={'cols': '30', 'rows': '5'}))
 
 class VihjeForm(Form):
-    def __init__(self, *args, **kwargs):
-        super(VihjeForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
+    # def __init__(self, *args, **kwargs):
+    #     super(VihjeForm, self).__init__(*args, **kwargs)
+    #     self.helper = FormHelper()
 
 #     your_name = CharField(label='Sinu nimi', max_length=100)
     kirjeldus = CharField(
