@@ -872,3 +872,58 @@ class Pilt(models.Model):
 
     class Meta:
         verbose_name_plural = "Pildid"
+
+
+class Vihje(models.Model):
+    kirjeldus = models.TextField(
+        'Vihje',
+        help_text='Vihje parandamiseks/täiendamiseks',
+    )
+    kontakt = models.CharField(
+        'Kontakt',
+        help_text='Sinu nimi/kontaktandmed',
+        max_length=100,
+        required=False
+    )
+    http_referer = models.CharField(
+        'Objekt',
+        max_length=100,
+        blank=True
+    )
+    remote_addr = models.CharField(
+        'IP aadress',
+        max_length=40,
+        blank=True
+    )
+    django_version = models.CharField(
+        'Django versioon',
+        max_length=10,
+        blank=True
+    )
+    # Tehnilised väljad
+    inp_date = models.DateTimeField(
+        'Lisatud',
+        auto_now_add=True
+    )
+    end_date = models.DateField(  # parandatud/lahendatud
+        'Lahendatud',
+        null=True,
+        blank=True,
+        help_text="Lahendatud/parandatud"
+    )
+
+    def __str__(self):
+        tekst = self.kirjeldus[:50]
+        if len(self.kirjeldus) > 50:
+            tyhik = self.kirjeldus.find(' ',50,70)
+            if tyhik > 0:
+                tekst = self.kirjeldus[:tyhik] + '...'
+        return tekst
+
+    def __repr__(self):
+        tekst = str(self.inp_date.year) + str(self.inp_date.month) + str(self.inp_date.day) + ':' + self.kirjeldus[:50]
+        return tekst
+
+
+    class Meta:
+        verbose_name_plural = "Vihjed"

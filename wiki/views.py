@@ -18,6 +18,7 @@ from django.contrib.sessions.models import Session
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
+from django.utils.version import get_version
 from django.views.generic.dates import ArchiveIndexView, YearArchiveView, MonthArchiveView, DayArchiveView
 from django.views.generic.edit import UpdateView
 
@@ -150,13 +151,12 @@ def feedback(request):
                 'kirjeldus': form.cleaned_data['kirjeldus'],
                 'kontakt': form.cleaned_data['kontakt'],
                 'http_referer': http_referer,
-                'remote_addr': remote_addr
+                'remote_addr': remote_addr,
+                'django_version': get_version() # Django versioon
             }
-            from django.utils.version import get_version
             context = {
-                'django_version': f'Django: {get_version()}',
-                'meta': request.META,
-                'vihje': vihje
+                'vihje': vihje,
+                'meta': request.META
             }
             return render(
                 request,

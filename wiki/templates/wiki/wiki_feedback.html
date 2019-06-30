@@ -16,11 +16,14 @@
     Salvestati ka järgmised meta-andmed:<br>
   </div>
   <div class="w3-container w3-padding w3-white"">
-    viide: {{ vihje.http_referer }}<br>
-    aadress: {{ vihje.remote_addr }}<br>
-    {{ django_version }}<br>
+    Viide objektile: {{ vihje.http_referer }}<br>
+    IP aadress: {{ vihje.remote_addr }}<br>
+    Django: ver{{ vihje.django_version }}<br>
   </div>
-  <a href="{{ vihje.http_referer }}" class="w3-button w3-grey">Tagasi</a>
+  <div>
+    <a href="{{ vihje.http_referer }}" class="w3-button w3-light-grey">Tagasi</a>
+  </div>
+
   <div class="w3-container w3-padding">
     {% for key, value in meta.items %}
       <small>{{key}}:{{ value }}</small><br>
