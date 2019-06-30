@@ -4,7 +4,7 @@ from django.contrib.admin.templatetags.admin_list import _boolean_icon
 # from django.forms import ModelForm
 import datetime
 
-from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Objekt, Pilt
+from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Objekt, Pilt, Vihje
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
     
@@ -629,3 +629,4 @@ admin.site.register(Isik, IsikAdmin)
 admin.site.register(Organisatsioon, OrganisatsioonAdmin)
 admin.site.register(Objekt, ObjektAdmin)
 admin.site.register(Pilt, PiltAdmin)
+admin.site.register(Vihje)
