@@ -9,7 +9,7 @@
     <h4>Suur tänu! Sinu parandus/täiendusettepanek salvestati järgneva infoga:</h4>
   </div>
   <div class="w3-container w3-padding w3-white"">
-    <p>{{ vihje.inp_date }}: {{ vihje.kirjeldus }}</p>
+    <p>{{ vihje.inp_date|date:"d.m.Y" }}: {{ vihje.kirjeldus }}</p>
     {{ vihje.kontakt }}
   </div>
   <div class="w3-container w3-padding">
