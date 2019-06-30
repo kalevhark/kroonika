@@ -61,11 +61,9 @@
   </div>
   <div>
     {% if messages %}
-      <ul class="messages">
       {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message.tags }}:{{ message }}</div>
       {% endfor %}
-      </ul>
     {% endif %}
   </div>
 </div>
