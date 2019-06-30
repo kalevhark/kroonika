@@ -169,5 +169,6 @@ REST_FRAMEWORK = {
 }
 
 # https://www.google.com/recaptcha/intro/v3.html
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 GOOGLE_RECAPTCHA_SECRET_KEY = config('GOOGLE_RECAPTCHA_SECRET_KEY')
 GOOGLE_RECAPTCHA_PUBLIC_KEY = config('GOOGLE_RECAPTCHA_PUBLIC_KEY')
