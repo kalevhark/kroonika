@@ -62,7 +62,9 @@
   <div>
     {% if messages %}
       {% for message in messages %}
-        <div {% if message.tags %} class="message-{{ message.tags }}"{% endif %}>{{ message }}</div>
+        <div class="w3-panel w3-padding">
+          <div {% if message.tags %} class="message-{{ message.tags }}"{% endif %}>{{ message }}</div>
+        </div>
       {% endfor %}
     {% endif %}
   </div>
