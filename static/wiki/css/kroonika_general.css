@@ -66,6 +66,32 @@ html, body, h1, h2, h3, h4, h5 {
     opacity: 1;
 }
 
+div.messagelist {
+    padding: 0;
+    margin: 0;
+}
+
+div.message-info {
+    display: block;
+    font-weight: 400;
+    font-size: 13px;
+    padding: 10px 10px 10px 65px;
+    margin: 0 0 10px 0;
+    background: #dfd url(../img/icon-yes.svg) 40px 12px no-repeat;
+    background-size: 16px auto;
+    color: #333;
+}
+
+div.message-warning {
+    background: #ffc url(../img/icon-alert.svg) 40px 14px no-repeat;
+    background-size: 14px auto;
+}
+
+div.message-error {
+    background: #ffefef url(../img/icon-no.svg) 40px 12px no-repeat;
+    background-size: 16px auto;
+}
+
 /* Järgnev on pärit admin/base.css */
 /* GLOBAL DEFAULTS */
 
