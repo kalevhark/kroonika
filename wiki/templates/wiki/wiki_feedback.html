@@ -5,14 +5,16 @@
 {% endblock %}
 
 {% block content %}
-  <p>Suur tänu! Sinu parandus/täiendusettepanek salvestati järgneva infoga:</p>
-  {{ django_version }}<br>
-  <p>{{ vihje.kirjeldus }}</p>
-  <p>{{ vihje.kontakt }}</p>
-  ja järgmiste meta-andmetega:
-  <p>viide:{{ meta.HTTP_REFERER }}</p>
-  <p>aadress:{{ meta.REMOTE_ADDR }}</p>
-  <a href="{{http_referer}}" role="button">Tagasi</a>
+  <div>Suur tänu! Sinu parandus/täiendusettepanek salvestati järgneva infoga:</div>
+  <div w3-padding w3-white">
+    {{ vihje.kirjeldus }}<br>
+    {{ vihje.kontakt }}<br>
+    ja järgmiste meta-andmetega:<br>
+    viide: {{ meta.HTTP_REFERER }}<br>
+    aadress: {{ meta.REMOTE_ADDR }}<br>
+    {{ django_version }}<br>
+    <a href="{{http_referer}}" role="button">Tagasi</a>
+  </div>
   <div>
     {% for key, value in meta.items %}
       <small>{{key}}:{{ value }}</small><br>
