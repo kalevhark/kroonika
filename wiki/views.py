@@ -150,7 +150,8 @@ def feedback(request):
             context = {
                 'django_version': f'Django: {get_version()}',
                 'meta': request.META,
-                'kirjeldus': kirjeldus
+                'kirjeldus': kirjeldus,
+                'http_referer': http_referer
             }
             return render(
                 request,
