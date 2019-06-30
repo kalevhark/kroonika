@@ -151,6 +151,11 @@ p.mini {
     color: #999;
 }
 
+.help-block, p.help-block, form p.help-block, div.help-block, form div.help-block, div.help-block li {
+    font-size: 11px;
+    color: #999;
+}
+
 div.help ul {
      margin-bottom: 0;
 }
