@@ -569,21 +569,21 @@ ul.messagelist li {
     display: block;
     font-weight: 400;
     font-size: 13px;
-    padding: 10px 10px 10px 16px;
+    padding: 10px 10px 10px 65px;
     margin: 0 0 10px 0;
     background: #dfd url(../img/icon-yes.svg) 40px 12px no-repeat;
-    background-size: 16px auto;
+    background-size: 0px auto;
     color: #333;
 }
 
 ul.messagelist li.warning {
     background: #ffc url(../img/icon-alert.svg) 40px 14px no-repeat;
-    background-size: 14px auto;
+    background-size: 0px auto;
 }
 
 ul.messagelist li.error {
     background: #ffefef url(../img/icon-no.svg) 40px 12px no-repeat;
-    background-size: 16px auto;
+    background-size: 0px auto;
 }
 
 .errornote {
