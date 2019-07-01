@@ -172,8 +172,8 @@ def feedback(request):
 
     # Kui on GET või tühi vorm, siis laeme algse lehe
     # TODO: Võiks olla teade, et vigane või tühi vorm
-    messages.add_message(request, messages.WARNING, 'Tühja vormi ei saadetud.')
-    # messages.add_message(request, messages.ERROR, 'Tühja vormi ei saadetud.')
+    # messages.add_message(request, messages.WARNING, 'Tühja vormi ei saadetud.')
+    messages.add_message(request, messages.ERROR, 'Tühja vormi ei saadetud.')
     return HttpResponseRedirect(http_referer)
 
 #
