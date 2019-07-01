@@ -162,8 +162,7 @@ def feedback(request):
             messages.add_message(request, messages.INFO, 'Tagasiside saadetud.')
             context = {
                 'vihje': vihje,
-                'meta': request.META,
-                'v': v
+                'meta': request.META
             }
             return render(
                 request,

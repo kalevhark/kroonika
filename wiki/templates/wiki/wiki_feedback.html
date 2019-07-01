@@ -11,7 +11,6 @@
   <div class="w3-container w3-padding w3-white">
     <p>{{ vihje.inp_date|date:"d.m.Y" }}: {{ vihje.kirjeldus }}</p>
     <p>{{ vihje.kontakt }}</p>
-    {{ v }}
   </div>
   <div class="w3-container w3-padding">
     Salvestati ka järgmised meta-andmed:<br>
@@ -22,22 +21,16 @@
     Django: ver{{ vihje.django_version }}<br>
   </div>
   <div>
-    <a href="{{ vihje.http_referer }}" class="w3-button w3-light-grey">Tagasi</a>
+    <a href="{{ vihje.http_referer }}" class="button">Tagasi</a>
   </div>
 
   <div class="w3-container w3-padding">
     <p><small>Tehniline lisateave, mida ei salvestata:</small></p>
     {% for key, value in meta.items %}
-      <tiny>{{key}}:{{ value }}</tiny><br>
+      <p class="tiny">{{key}}:{{ value }}</p><br>
     {% endfor %}
   </div>
 {% endblock %}
 
 {% block javascript %}
-<script>
-$("#formFeedback").submit(function( event ) {
-  $("span").text("Saadetud...").show();
-  return;
-});
-</script>
 {% endblock %}
