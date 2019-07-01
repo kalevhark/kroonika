@@ -71,10 +71,10 @@
   <!-- Süsteemi teadete näitamiseks -->
   <div>
     {% if messages %}
-      <ul>
+      <ul class="messagelist">
       {% for message in messages %}
         <div class="w3-panel">
-          <li {% if message.tags %} class="message-{{ message.tags }}"{% endif %}>{{ message.tags }}:{{ message }}</li>
+          <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message.tags }}:{{ message }}</li>
         </div>
       {% endfor %}
       </ul>
