@@ -21,16 +21,7 @@
     Django: ver{{ vihje.django_version }}<br>
   </div>
   <div>
-    <a href="{{ vihje.http_referer }}" class="button">Tagasi</a>
-  </div>
-
-  <div class="w3-container w3-padding">
-    <small>
-      <p>Tehniline lisateave, mida ei salvestata:</p>
-      {% for key, value in meta.items %}
-        {{key}}:{{ value }}<br>
-      {% endfor %}
-    </small>
+    <a href="{{ vihje.http_referer }}" class="w3-button w3-round w3-light-blue">Tagasi</a>
   </div>
 {% endblock %}
 

@@ -161,8 +161,7 @@ def feedback(request):
             vihje['inp_date'] = v.inp_date
             messages.add_message(request, messages.INFO, 'Tagasiside saadetud.')
             context = {
-                'vihje': vihje,
-                'meta': request.META
+                'vihje': vihje
             }
             return render(
                 request,
