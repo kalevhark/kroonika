@@ -25,10 +25,12 @@
   </div>
 
   <div class="w3-container w3-padding">
-    <p><small>Tehniline lisateave, mida ei salvestata:</small></p>
-    {% for key, value in meta.items %}
-      <p class="tiny">{{key}}:{{ value }}</p><br>
-    {% endfor %}
+    <small>
+      <p>Tehniline lisateave, mida ei salvestata:</p>
+      {% for key, value in meta.items %}
+        {{key}}:{{ value }}<br>
+      {% endfor %}
+    </small>
   </div>
 {% endblock %}
 
