@@ -20,8 +20,8 @@
     IP aadress: {{ vihje.remote_addr }}<br>
     Django: ver{{ vihje.django_version }}<br>
   </div>
-  <div>
-    <a href="{{ vihje.http_referer }}" class="w3-button w3-round w3-light-blue">Tagasi</a>
+  <div class="w3-container w3-padding">
+    <a href="{{ vihje.http_referer }}" class="w3-button w3-round w3-light-blue w3-text-white">Tagasi</a>
   </div>
 {% endblock %}
 
