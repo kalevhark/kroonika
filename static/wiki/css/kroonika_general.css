@@ -66,33 +66,31 @@ html, body, h1, h2, h3, h4, h5 {
     opacity: 1;
 }
 
-.messages {
+.messagelist {
     padding: 0;
     margin: 0;
 }
 
-.message-info {
+.message {
     display: block;
     font-weight: 400;
     font-size: 13px;
     padding: 10px 10px 10px 65px;
     margin: 0 0 10px 0;
+}
+
+.alert-info {
     background: #dfd url(../img/icon-yes.svg) 40px 12px no-repeat;
     background-size: 16px auto;
     color: #333;
 }
 
-.message-warning {
-    display: block;
-    font-weight: 400;
-    font-size: 13px;
-    padding: 10px 10px 10px 65px;
-    margin: 0 0 10px 0;
+.alert-warning {
     background: #ffc url(../img/icon-alert.svg) 40px 14px no-repeat;
     background-size: 16px auto;
 }
 
-.message-error {
+.alert-error {
     background: #ffefef url(../img/icon-no.svg) 40px 12px no-repeat;
     background-size: 16px auto;
 }

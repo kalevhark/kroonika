@@ -68,12 +68,13 @@
 
 <div class="w3-container" style="margin-top:60px;">
 
+  <!-- Süsteemi teadete näitamiseks -->
   <div>
     {% if messages %}
-      <ul class="messages">
+      <ul class="messagelist">
       {% for message in messages %}
         <div class="w3-panel">
-          <li {% if message.tags %} class="message-{{ message.tags }}"{% endif %}>{{ message }}</li>
+          <li {% if message.tags %} class="message alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
         </div>
       {% endfor %}
       </ul>

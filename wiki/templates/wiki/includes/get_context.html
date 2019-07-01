@@ -1,5 +1,0 @@
-{% for key, value in context().items() %}
-	{% if not callable(value) %}
-		{{ key }}:{{ value }}
-	{% endif %}
-{% endfor %}
