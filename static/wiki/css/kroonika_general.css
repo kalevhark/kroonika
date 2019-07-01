@@ -71,7 +71,7 @@ div.messagelist {
     margin: 0;
 }
 
-div.message-info {
+.message-info {
     display: block;
     font-weight: 400;
     font-size: 13px;
@@ -82,7 +82,7 @@ div.message-info {
     color: #333;
 }
 
-div.message-warning {
+.message-warning {
     display: block;
     font-weight: 400;
     font-size: 13px;
@@ -92,7 +92,7 @@ div.message-warning {
     background-size: 16px auto;
 }
 
-div.message-error {
+.message-error {
     background: #ffefef url(../img/icon-no.svg) 40px 12px no-repeat;
     background-size: 16px auto;
 }

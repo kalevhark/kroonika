@@ -61,11 +61,13 @@
   </div>
   <div>
     {% if messages %}
+      <ul class="messages">
       {% for message in messages %}
         <div class="w3-panel">
-          <p {% if message.tags %} class="message-{{ message.tags }}"{% endif %}>{{ message }}</p>
+          <li {% if message.tags %} class="message-{{ message.tags }}"{% endif %}>{{ message }}</li>
         </div>
       {% endfor %}
+      </ul>
     {% endif %}
   </div>
 </div>
