@@ -79,18 +79,18 @@ html, body, h1, h2, h3, h4, h5 {
     margin: 0 0 10px 0;
 }
 
-.alert-info {
+.message .alert-info {
     background: #dfd url(../img/icon-yes.svg) 40px 12px no-repeat;
     background-size: 16px auto;
     color: #333;
 }
 
-.alert-warning {
+.message .alert-warning {
     background: #ffc url(../img/icon-alert.svg) 40px 14px no-repeat;
     background-size: 16px auto;
 }
 
-.alert-error {
+.message .alert-error {
     background: #ffefef url(../img/icon-no.svg) 40px 12px no-repeat;
     background-size: 16px auto;
 }
