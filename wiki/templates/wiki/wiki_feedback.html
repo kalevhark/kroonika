@@ -8,14 +8,15 @@
   <div class="w3-container w3-padding">
     <h4>Suur tänu! Sinu parandus/täiendusettepanek salvestati järgneva infoga:</h4>
   </div>
-  <div class="w3-container w3-padding w3-white"">
+  <div class="w3-container w3-padding w3-white">
     <p>{{ vihje.inp_date|date:"d.m.Y" }}: {{ vihje.kirjeldus }}</p>
-    {{ vihje.kontakt }}
+    <p>{{ vihje.kontakt }}</p>
+    {{ v }}
   </div>
   <div class="w3-container w3-padding">
     Salvestati ka järgmised meta-andmed:<br>
   </div>
-  <div class="w3-container w3-padding w3-white"">
+  <div class="w3-container w3-padding w3-white">
     Viide objektile: {{ vihje.http_referer }}<br>
     IP aadress: {{ vihje.remote_addr }}<br>
     Django: ver{{ vihje.django_version }}<br>
@@ -25,8 +26,9 @@
   </div>
 
   <div class="w3-container w3-padding">
+    <p><small>Tehniline lisateave, mida ei salvestata:</small></p>
     {% for key, value in meta.items %}
-      <small>{{key}}:{{ value }}</small><br>
+      <tiny>{{key}}:{{ value }}</tiny><br>
     {% endfor %}
   </div>
 {% endblock %}

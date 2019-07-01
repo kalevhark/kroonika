@@ -921,8 +921,11 @@ class Vihje(models.Model):
         return tekst
 
     def __repr__(self):
-        tekst = str(self.inp_date.year) + str(self.inp_date.month) + str(self.inp_date.day) + ':' + self.kirjeldus[:50]
-        return tekst
+        y_str = str(self.inp_date.year)
+        m_str = str(self.inp_date.month).zfill(2)
+        d_str = str(self.inp_date.day).zfill(2)
+        tekst = self.kirjeldus[:50]
+        return f'{y_str}{m_str}{d_str}: {tekst}'
 
 
     class Meta:

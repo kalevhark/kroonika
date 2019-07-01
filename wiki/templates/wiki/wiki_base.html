@@ -4,6 +4,7 @@
 <head>
   {% load staticfiles %}
   {% load crispy_forms_tags %}
+
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="description" content="Valga linna kroonika">
@@ -22,12 +23,15 @@
   <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=grecaptcha_onload"></script>
   <!-- CSS -->
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <!-- <link rel="stylesheet" href={% static "wiki/css/w3.css" %}> -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <!-- Custom CSS -->
   <link rel="stylesheet" href={% static "wiki/css/kroonika_general.css" %}>
+  <!--  Alternatiivsed värvivalikud metro või colorful-->
   <link rel="stylesheet" href={% static "wiki/css/kroonika_color_metro.css" %}>
   <!-- <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}> -->
+
   {% block css %}{% endblock %}
 
   <link rel="shortcut icon" href={% static "wiki/img/favicon.ico" %}>
@@ -35,7 +39,9 @@
 
 <!-- Kroonika -->
 <title>
-{% block title %}Valga kroonika{% endblock %}
+  {% block title %}
+    Valga linnakroonika
+  {% endblock %}
 </title>
 
 <body class="w3-light-grey">
@@ -55,8 +61,8 @@
 
     <!-- Lingid erilehtedele -->
     <a href={% url 'wiki:info' %} class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white" title="Projektist"><i class="fa fa-info"></i></a>
-    <a href="https://et.wikipedia.org/wiki/Valga" target="blank" class="w3-bar-item w3-button w3-hide-medium  w3-hide-small w3-hover-white" title="Wikipedia"><i class="fa fa-wikipedia-w"></i></a>
-	  <a href="https://www.facebook.com/valgalinn/" target="blank" class="w3-bar-item w3-button w3-hide-medium  w3-hide-small w3-hover-white" title="Facebook"><i class="fa fa-facebook-official"></i></a>
+    <a href="https://et.wikipedia.org/wiki/Valga" target="blank" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white" title="Wikipedia"><i class="fa fa-wikipedia-w"></i></a>
+	  <a href="https://www.facebook.com/valgalinn/" target="blank" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white" title="Facebook"><i class="fa fa-facebook-official"></i></a>
 
     <!-- Kasutaja ja adminlingid -->
     <a href={% url 'admin:index' %} class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-right" title="Admin"><i class="fa fa-cog"></i></a>
