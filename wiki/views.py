@@ -138,6 +138,7 @@ def info(request):
 
 
 def heatmap(request):
+    andmed = Artikkel.objects.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
     return render(
         request,
         'wiki/wiki_heatmap.html',
