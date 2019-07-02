@@ -145,7 +145,7 @@ def heatmap(request):
         order_by('hist_searchdate__year', 'hist_searchdate__month')
     bigdata = ''
     for periood in perioodid:
-        bigdata += f"\r{periood['hist_searchdate__year']},{periood['hist_searchdate__month']},{periood['ct']}"
+        bigdata += f"\n{periood['hist_searchdate__year']},{periood['hist_searchdate__month']},{periood['ct']}"
 #     bigdata = """1910,1,3
 # 1910,2,6
 # 1910,3,6
