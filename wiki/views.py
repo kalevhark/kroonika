@@ -143,7 +143,7 @@ def heatmap(request):
         request,
         'wiki/wiki_heatmap.html',
         {
-            'andmed': [2019],
+            'andmed': andmed,
         }
     )
 
