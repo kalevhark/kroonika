@@ -137,7 +137,7 @@ def info(request):
     )
 
 
-def info(request):
+def heatmap(request):
     return render(
         request,
         'wiki/wiki-heatmap.html',
