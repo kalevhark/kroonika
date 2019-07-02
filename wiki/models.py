@@ -458,6 +458,11 @@ class Isik(models.Model):
         blank=True,
         help_text='Surma-aasta'
     )
+    gone = models.BooleanField( # surnud teadmata ajal
+        'Surnud',
+        default=False,
+        help_text='Surnud'
+    )
     surm_koht = models.CharField(
         max_length=100,
         blank=True,
@@ -512,6 +517,7 @@ class Isik(models.Model):
     )
 
     def __str__(self):
+        # Sünniaeg
         if self.hist_date:
             sy = self.hist_date.year
         else:
@@ -519,13 +525,15 @@ class Isik(models.Model):
                 sy = self.hist_year
             else:
                 sy = ''
+        # Surmaaeg
         if self.hist_enddate:
             su = self.hist_enddate.year
+        elif self.hist_endyear:
+            su = self.hist_endyear
+        elif self.gone:
+            su = '?'
         else:
-            if self.hist_endyear:
-                su = self.hist_endyear
-            else:
-                su = ''
+            su = ''
         daatumid = f'{sy}-{su}' if any([sy, su]) else ''
         return ' '.join([self.eesnimi, self.perenimi, daatumid])
 

@@ -38,7 +38,7 @@ class IsikForm(ModelForm):
         fields = ('eesnimi', 'perenimi',
                   'kirjeldus',
                   'hist_date', 'synd_koht', 'hist_year',
-                  'hist_enddate', 'surm_koht', 'hist_endyear', 'maetud',
+                  'hist_enddate', 'surm_koht', 'hist_endyear', 'gone', 'maetud',
                   'objektid',
                   'organisatsioonid',
                   'viited'

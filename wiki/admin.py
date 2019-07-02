@@ -290,6 +290,7 @@ class IsikAdmin(admin.ModelAdmin):
                  'hist_enddate',
                  'surm_koht',
                  'hist_endyear',
+                 'gone'
                  'maetud'
                  )]
             }
@@ -339,12 +340,14 @@ class IsikAdmin(admin.ModelAdmin):
                 sy = ''
         if obj.hist_enddate:
             su = obj.hist_enddate.strftime('%d.%m.%Y')
+        elif obj.hist_endyear:
+            su = str(obj.hist_endyear)
+        elif obj.gone:
+            su = '?'
         else:
-            if obj.hist_endyear:
-                su = str(obj.hist_endyear)
-            else:
-                su = ''
-        return sy + '-' + su
+            su = ''
+        daatumid = f'{sy}-{su}' if any([sy, su]) else ''
+        return daatumid
 
     def hist_date_view(self, obj):
         return obj.hist_date
@@ -355,7 +358,7 @@ class IsikAdmin(admin.ModelAdmin):
         return obj.artikkel_set.count()
     seotud_artikleid.short_description = 'Artikleid'
 
-    # Kui palju on objektiga seotud pilte
+    # Kui palju on isikuga seotud pilte
     def seotud_pilte(self, obj):
         return obj.pilt_set.count()
     seotud_pilte.short_description = 'Pilte'
