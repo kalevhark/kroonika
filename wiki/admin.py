@@ -290,7 +290,7 @@ class IsikAdmin(admin.ModelAdmin):
                  'hist_enddate',
                  'surm_koht',
                  'hist_endyear',
-                 'gone'
+                 'gone',
                  'maetud'
                  )]
             }
