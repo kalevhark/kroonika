@@ -220,6 +220,11 @@ class Objekt(models.Model):
         blank=True,
         help_text='Likvideerimise aasta'
     )
+    gone = models.BooleanField(  # surnud teadmata ajal
+        'Hävinud/likvideeritud',
+        default=False,
+        help_text='Hävinud/likvideeritud'
+    )
     tyyp = models.CharField(
         max_length=1,
         choices=OBJEKTITYYP
@@ -338,6 +343,11 @@ class Organisatsioon(models.Model):
         null=True,
         blank=True,
         help_text='Lõpetamise aasta'
+    )
+    gone = models.BooleanField(  # surnud teadmata ajal
+        'Lõpetatud/likvideeritud',
+        default=False,
+        help_text='Lõpetatud/likvideeritud'
     )
     kirjeldus = models.TextField(
         blank=True

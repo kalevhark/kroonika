@@ -453,7 +453,7 @@ class ObjektAdmin(admin.ModelAdmin):
             }
          ),
         (None, {
-            'fields': ['hist_enddate', 'hist_endyear']
+            'fields': ['hist_enddate', 'hist_endyear', 'gone']
             }
          ),
         ('Seotud', {

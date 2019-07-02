@@ -55,7 +55,7 @@ class OrganisatsioonForm(ModelForm):
         model = Organisatsioon
         fields = ('nimi', 'kirjeldus',
                   'hist_date', 'hist_year', 'hist_month',
-                  'hist_enddate', 'hist_endyear',
+                  'hist_enddate', 'hist_endyear', 'gone',
                   'objektid',
                   'viited'
         )
@@ -76,7 +76,7 @@ class ObjektForm(ModelForm):
         model = Objekt
         fields = ('nimi', 'tyyp', 'asukoht', 'kirjeldus',
                   'hist_date', 'hist_year', 'hist_month',
-                  'hist_enddate', 'hist_endyear',
+                  'hist_enddate', 'hist_endyear', 'gone',
                   'objektid',
                   'viited'
         )
