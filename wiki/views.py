@@ -139,12 +139,12 @@ def info(request):
 
 def heatmap(request):
     perioodid = Artikkel.objects.\
-        values('hist_searcdate__year', 'hist_searcdate__month').\
+        values('hist_searchdate__year', 'hist_searchdate__month').\
         annotate(ct=Count('id')).\
-        order_by('hist_searcdate__year', 'hist_searcdate__month')
+        order_by('hist_searchdate__year', 'hist_searchdate__month')
     bigdata = ''
     for periood in perioodid:
-        bigdata += f"\n{periood['hist_searcdate__year']},{periood['hist_searcdate__month']},{periood['ct']}"
+        bigdata += f"\n{periood['hist_searchdate__year']},{periood['hist_searchdate__month']},{periood['ct']}"
     # bigdata = """1915,1,1
     # 1915,2,2
     # 1915,3,3
