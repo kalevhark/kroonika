@@ -138,7 +138,7 @@ def info(request):
 
 
 def heatmap(request):
-    bigdata = """/n1915,1,1
+    bigdata = """1915,1,1
     1915,2,2
     1915,3,3
     1915,4,4
