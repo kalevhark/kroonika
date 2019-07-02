@@ -282,11 +282,12 @@ class Objekt(models.Model):
                 sy = ''
         if self.hist_enddate:
             su = self.hist_enddate.year
+        elif self.hist_endyear:
+            su = self.hist_endyear
+        elif self.gone:
+            su = '?'
         else:
-            if self.hist_endyear:
-                su = self.hist_endyear
-            else:
-                su = ''
+            su = ''
         daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
 
@@ -403,11 +404,12 @@ class Organisatsioon(models.Model):
                 sy = ''
         if self.hist_enddate:
             su = self.hist_enddate.year
+        elif self.hist_endyear:
+            su = self.hist_endyear
+        elif self.gone:
+            su = '?'
         else:
-            if self.hist_endyear:
-                su = self.hist_endyear
-            else:
-                su = ''
+            su = ''
         daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
 
