@@ -127,7 +127,7 @@ def info(request):
 
     return render(
         request,
-        'wiki/wiki-info.html',
+        'wiki/wiki_info.html',
         {
             'andmebaasid': andmebaasid,
             'andmed': andmed,
@@ -140,7 +140,7 @@ def info(request):
 def heatmap(request):
     return render(
         request,
-        'wiki/wiki-heatmap.html',
+        'wiki/wiki_heatmap.html',
         {
             'andmed': [2019],
         }
