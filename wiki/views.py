@@ -180,7 +180,22 @@ def heatmap(request):
 1943,9,4
 1943,10,10
 1943,11,3
-1943,12,4"""
+1943,12,4
+1944,1,5
+1944,2,4
+1944,3,3
+1944,4,1
+1944,5,6
+1944,6,5
+1944,7,2
+1944,8,2
+1944,9,2
+1945,9,1
+1945,10,1
+1949,9,1
+1971,3,1
+1981,9,1
+2004,7,1"""
     andmed = Artikkel.objects.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
     return render(
         request,
