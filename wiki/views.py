@@ -139,6 +139,7 @@ def info(request):
 
 def heatmap(request):
     perioodid = Artikkel.objects.\
+        filter(hist_searchdate__isnull=False).\
         values('hist_searchdate__year', 'hist_searchdate__month').\
         annotate(ct=Count('id')).\
         order_by('hist_searchdate__year', 'hist_searchdate__month')
