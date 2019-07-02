@@ -136,6 +136,16 @@ def info(request):
         }
     )
 
+
+def info(request):
+    return render(
+        request,
+        'wiki/wiki-heatmap.html',
+        {
+            'andmed': [2019],
+        }
+    )
+
 #
 # Tagasiside vormi töötlemine
 #

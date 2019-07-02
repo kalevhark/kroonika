@@ -32,5 +32,6 @@ urlpatterns = [
     path('update/isik/<int:pk>', IsikUpdate.as_view(), name='isik_update'),
     path('update/organisatsioon/<int:pk>', OrganisatsioonUpdate.as_view(), name='organisatsioon_update'),
     path('update/objekt/<int:pk>', ObjektUpdate.as_view(), name='objekt_update'),
+    path('heatmap/', views.heatmap, name='heatmap'),
     ]
 

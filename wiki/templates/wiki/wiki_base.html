@@ -17,10 +17,14 @@
   <meta property="og:title"         content="Valga linnakroonika" />
   <meta property="og:description"   content="Valga linna kroonika" />
   <meta property="og:image"         content="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
+
+  <!--  Laetavad moodulid-->
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <!-- Google reCAPTCHA -->
   <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=grecaptcha_onload"></script>
+  {% block src %}{% endblock %}
+
   <!-- CSS -->
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <!-- <link rel="stylesheet" href={% static "wiki/css/w3.css" %}> -->
