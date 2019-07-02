@@ -146,7 +146,19 @@ def heatmap(request):
     bigdata = ''
     for periood in perioodid:
         bigdata += f"\n{periood['hist_searchdate__year']},{periood['hist_searchdate__month']},{periood['ct']}"
-    bigdata = """1940,1,9
+    bigdata = """1939,1,5
+1939,2,13
+1939,3,11
+1939,4,5
+1939,5,11
+1939,6,8
+1939,7,3
+1939,8,4
+1939,9,5
+1939,10,8
+1939,11,6
+1939,12,4
+1940,1,9
 1940,2,5
 1940,3,8
 1940,4,7
