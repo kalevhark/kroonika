@@ -1,4 +1,5 @@
 from django import template
+from wiki.models import VIGA_TEKSTIS
 from wiki.views import get_all_logged_in_users
 register = template.Library()
 
@@ -12,3 +13,8 @@ def render_logged_in_user_list(context):
 @register.simple_tag
 def kalev():
     return 'Kalev Härk'
+
+# Vigast kohta tähistav sümbol
+@register.simple_tag
+def viga_tekstis():
+    return VIGA_TEKSTIS

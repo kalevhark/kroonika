@@ -7,6 +7,7 @@
 
 {% block content %}
 {% load widget_tweaks %}
+{% load wiki_extras %}
 
 <div class="w3-cell-row w3-container w3-padding-16">
 
@@ -60,8 +61,8 @@
 				</div>
 				<div>
 					{% if object.vigane %}
-						<i class="fa fa-binoculars w3-small w3-text-red" alt="Viga?"></i>
-						NB! Andmetes on loogikavigu või vasturääkivusi, mis on tähistatud (?)
+						<i class="fa fa-question w3-small w3-text-red" alt="Viga?"></i>
+						NB! Andmetes on ilmseid loogikavigu või kaheldavaid kohti, mis on tähistatud märkega {% viga_tekstis %}
 					{% endif %}
 				</div>
 				<div>
