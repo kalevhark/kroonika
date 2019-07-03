@@ -59,6 +59,12 @@
 						{{ object.body_text | safe | linebreaksbr }}
 				</div>
 				<div>
+					{% if object.vigane %}
+						<i class="fa fa-binoculars w3-small w3-text-red" alt="Viga?"></i>
+						NB! Andmetes on loogikavigu või vasturääkivusi, mis on tähistatud (?)
+					{% endif %}
+				</div>
+				<div>
 						{% include 'wiki/includes/seotud_viited.html' %}
 				</div>
 			</div>

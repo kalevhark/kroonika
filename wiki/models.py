@@ -19,6 +19,7 @@ KUUD = (
         (12, 'detsember'),
         )
 
+VIGA_TEKSTIS = '(?)'
 
 class Allikas(models.Model):
     """
@@ -757,6 +758,11 @@ class Artikkel(models.Model):
 
     def profiilipilt(self):
         return Pilt.objects.filter(artiklid=self.id, profiilipilt_artikkel=True).first()
+
+    # Kui tekstis on vigase koha märge
+    @property
+    def vigane(self):
+        return VIGA_TEKSTIS in self.body_text
 
     class Meta:
         ordering = ['hist_searchdate']
