@@ -34,10 +34,6 @@ Highcharts.chart('container', {
         margin: [60, 10, 80, 50]
     },
 
-    boost: {
-        useGPUTranslations: true
-    },
-
     title: {
         text: 'Artikleid andmebaasis (n={{ andmed.id__count }})',
         align: 'left',
@@ -124,7 +120,15 @@ Highcharts.chart('container', {
 
 
     title: {
-        text: 'Sales per employee per weekday'
+        text: 'Artikleid andmebaasis (n={{ andmed.id__count }})',
+        align: 'left',
+        x: 40
+    },
+
+    subtitle: {
+        text: 'Aastatel {{ andmed.hist_searchdate__min|date:"Y" }}-{{ andmed.hist_searchdate__max|date:"Y" }}',
+        align: 'left',
+        x: 40
     },
 
     xAxis: {
@@ -141,7 +145,7 @@ Highcharts.chart('container', {
 
     yAxis: {
         title: {
-            text: null
+            text: Kuud
         },
         labels: {
             format: '{value}'
@@ -174,8 +178,7 @@ Highcharts.chart('container', {
 
     tooltip: {
         formatter: function () {
-            return '<b>' + this.series.xAxis.categories[this.point.x] + '</b> sold <br><b>' +
-                this.point.value + '</b> items on <br><b>' + this.series.yAxis.categories[this.point.y] + '</b>';
+            return 'Artikleid: <b>' + this.point.value + '</b> ' + this.series.yAxis.categories[this.point.y] + ' ' + this.series.yAxis.categories[this.point.y];
         }
     },
 
