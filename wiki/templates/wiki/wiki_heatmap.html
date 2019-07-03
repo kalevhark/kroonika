@@ -20,8 +20,6 @@
 
 <pre id="csv" style="display: none">Aasta,Kuu,Artikleid{{bigdata}}</pre>
 
-<div id="container1" style="height: 400px; min-width: 310px; max-width: 800px; margin: 0 auto"></div>
-
 <script>
 Highcharts.chart('container', {
 
@@ -94,7 +92,7 @@ Highcharts.chart('container', {
 
     series: [{
         borderWidth: 0,
-        data: {{ bigdata1 }},
+        data: {{ artikleid_kuus }},
         // nullColor: '#EFEFEF',
         // colsize: 24 * 36e5, // one day
         // tooltip: {
@@ -102,92 +100,6 @@ Highcharts.chart('container', {
         //    pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
         // },
         // turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
-    }]
-
-});
-</script>
-
-<script>
-  Highcharts.chart('container1', {
-
-    chart: {
-        type: 'heatmap',
-        marginTop: 40,
-        marginBottom: 80,
-        plotBorderWidth: 1
-    },
-
-    title: {
-        text: 'Artikleid andmebaasis (n={{ andmed.id__count }})',
-        align: 'left',
-        x: 40
-    },
-
-    subtitle: {
-        text: 'Aastatel {{ andmed.hist_searchdate__min|date:"Y" }}-{{ andmed.hist_searchdate__max|date:"Y" }}',
-        align: 'left',
-        x: 40
-    },
-
-    xAxis: {
-        min: {{ andmed.hist_searchdate__min|date:"Y" }},
-        max: {{ andmed.hist_searchdate__max|date:"Y" }},
-        labels: {
-            align: 'left',
-            x: 5,
-            y: 14
-        },
-        showLastLabel: false,
-        tickLength: 16
-    },
-
-    yAxis: {
-        title: {
-            text: 'Kuud'
-        },
-        labels: {
-            format: '{value}'
-        },
-        minPadding: 0,
-        maxPadding: 0,
-        startOnTick: false,
-        endOnTick: false,
-        tickPositions: [3, 6, 9, 12],
-        tickWidth: 1,
-        min: 0,
-        max: 12,
-        reversed: false
-    },
-
-    colorAxis: {
-        min: 0,
-        minColor: '#FFFFFF',
-        maxColor: Highcharts.getOptions().colors[0]
-    },
-
-    legend: {
-        align: 'right',
-        layout: 'vertical',
-        margin: 0,
-        verticalAlign: 'top',
-        y: 25,
-        symbolHeight: 280
-    },
-
-    tooltip: {
-        formatter: function () {
-            return 'Artikleid: <b>' + this.point.value + '</b>';
-        }
-    },
-
-    series: [{
-        name: 'Artikleid kuus',
-        borderWidth: 1,
-        data: {{ bigdata1 }},
-        dataLabels: {
-            enabled: false,
-            color: '#000000'
-        }
     }]
 
 });
