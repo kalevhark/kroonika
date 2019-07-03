@@ -56,14 +56,9 @@
 			{% endif %}
 	  	</div>
 			<div class="w3-twothird">
+				{% include 'wiki/includes/vigane.html' %}
 				<div>
 						{{ object.body_text | safe | linebreaksbr }}
-				</div>
-				<div>
-					{% if object.vigane %}
-						<i class="fa fa-question w3-small w3-text-red" alt="Viga?"></i>
-						NB! Andmetes on ilmseid loogikavigu või kaheldavaid kohti, mis on tähistatud märkega {% viga_tekstis %}
-					{% endif %}
 				</div>
 				<div>
 						{% include 'wiki/includes/seotud_viited.html' %}
