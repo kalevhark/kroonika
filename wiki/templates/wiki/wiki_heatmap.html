@@ -178,12 +178,12 @@ Highcharts.chart('container', {
 
     tooltip: {
         formatter: function () {
-            return 'Artikleid: <b>' + this.point.value + '</b> ' + this.series.yAxis.categories[this.point.y] + ' ' + this.series.yAxis.categories[this.point.y];
+            return 'Artikleid: <b>' + this.point.value + '</b>';
         }
     },
 
     series: [{
-        name: 'Sales per employee',
+        name: 'Artikleid kuus',
         borderWidth: 1,
         data: {{ bigdata1 }},
         dataLabels: {
