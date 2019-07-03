@@ -56,13 +56,8 @@
         <div>
           {{ object.kirjeldus | safe | linebreaksbr }}
         </div>
-        <div>
-          Mainitud aastatel: {{ mainitud_aastatel }}
-        </div>
-
-        <div>
-          {% include 'wiki/includes/seotud_viited.html' %}
-        </div>
+        {% include 'wiki/includes/mainitud_aastatel.html' %}
+        {% include 'wiki/includes/seotud_viited.html' %}
       </div>
     </div>
   </div>
