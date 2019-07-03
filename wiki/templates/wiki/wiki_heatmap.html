@@ -7,9 +7,9 @@
   <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/heatmap.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/data.js"></script>
-<script src="https://code.highcharts.com/modules/boost-canvas.js"></script>
-<script src="https://code.highcharts.com/modules/boost.js"></script>
+<!--<script src="https://code.highcharts.com/modules/data.js"></script>-->
+<!--<script src="https://code.highcharts.com/modules/boost-canvas.js"></script>-->
+<!--<script src="https://code.highcharts.com/modules/boost.js"></script>-->
 {% endblock %}
 
 {% block content %}
@@ -18,7 +18,7 @@
 
 <div id="container" style="height: 300px; min-width: 310px; max-width: 1000px; margin: 0 auto"></div>
 
-<pre id="csv" style="display: none">Aasta,Kuu,Artikleid{{bigdata}}</pre>
+<!--<pre id="csv" style="display: none">Aasta,Kuu,Artikleid{{bigdata}}</pre>-->
 
 <script>
 Highcharts.chart('container', {
@@ -39,7 +39,7 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text: 'Aastatel {{ andmed.hist_searchdate__min|date:"Y" }}-{{ andmed.hist_searchdate__max|date:"Y" }}',
+        text: 'Aastatel {{ andmed.hist_searchdate__min|date:"Y" }}-{{ andmed.hist_searchdate__max|date:"Y" }} kuude kaupa',
         align: 'left',
         x: 40
     },
@@ -58,7 +58,7 @@ Highcharts.chart('container', {
 
     yAxis: {
         title: {
-            text: null
+            text: 'kuud'
         },
         labels: {
             format: '{value}'
@@ -95,10 +95,10 @@ Highcharts.chart('container', {
         data: {{ artikleid_kuus }},
         // nullColor: '#EFEFEF',
         // colsize: 24 * 36e5, // one day
-        // tooltip: {
-        //    headerFormat: 'Temperature<br/>',
-        //    pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
-        // },
+        tooltip: {
+           headerFormat: 'Artikleid:<br/>',
+           pointFormat: '{point.x} {point.y}: <b>{point.value}</b>'
+        },
         // turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
     }]
 
