@@ -292,6 +292,11 @@ class Objekt(models.Model):
         daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
 
+    # Kui kirjelduses on vigase koha märge
+    @property
+    def vigane(self):
+        return VIGA_TEKSTIS in self.kirjeldus
+
     def get_absolute_url(self):
         return reverse('wiki:wiki_objekt_detail', kwargs={'pk': self.pk})
 
@@ -413,6 +418,11 @@ class Organisatsioon(models.Model):
             su = ''
         daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
+
+    # Kui kirjelduses on vigase koha märge
+    @property
+    def vigane(self):
+        return VIGA_TEKSTIS in self.kirjeldus
 
     def get_absolute_url(self):
         return reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': self.pk})
@@ -562,6 +572,11 @@ class Isik(models.Model):
         if self.eesnimi:
             lyhinimi += ', ' + self.eesnimi[0] + '.'
         return lyhinimi
+
+    # Kui kirjelduses on vigase koha märge
+    @property
+    def vigane(self):
+        return VIGA_TEKSTIS in self.kirjeldus
 
     def get_absolute_url(self):
         return reverse('wiki:wiki_isik_detail', kwargs={'pk': self.pk})
