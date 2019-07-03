@@ -93,10 +93,9 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        boostThreshold: 100,
         borderWidth: 0,
         data: {{ bigdata1 }},
-        nullColor: '#EFEFEF',
+        // nullColor: '#EFEFEF',
         // colsize: 24 * 36e5, // one day
         // tooltip: {
         //    headerFormat: 'Temperature<br/>',
@@ -117,7 +116,6 @@ Highcharts.chart('container', {
         marginBottom: 80,
         plotBorderWidth: 1
     },
-
 
     title: {
         text: 'Artikleid andmebaasis (n={{ andmed.id__count }})',
@@ -145,7 +143,7 @@ Highcharts.chart('container', {
 
     yAxis: {
         title: {
-            text: Kuud
+            text: 'Kuud'
         },
         labels: {
             format: '{value}'
