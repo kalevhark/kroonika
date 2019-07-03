@@ -119,6 +119,14 @@ def info(request):
     )
     # Artiklite ülevaade
     andmed = Artikkel.objects.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
+    perioodid = Artikkel.objects. \
+        filter(hist_searchdate__isnull=False). \
+        values('hist_searchdate__year', 'hist_searchdate__month'). \
+        annotate(ct=Count('id')). \
+        order_by('hist_searchdate__year', 'hist_searchdate__month')
+    artikleid_kuus = [
+        [periood['hist_searchdate__year'], periood['hist_searchdate__month'], periood['ct']] for periood in perioodid
+    ]
     # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
     revision_data['kroonika'] = Artikkel.objects.filter(kroonika__isnull=False).count()
@@ -131,6 +139,7 @@ def info(request):
         {
             'andmebaasid': andmebaasid,
             'andmed': andmed,
+            'artikleid_kuus': artikleid_kuus,
             # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         }
