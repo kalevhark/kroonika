@@ -44,7 +44,7 @@
 <!-- Kroonika -->
 <title>
   {% block title %}
-    Valga linnakroonika
+    Valga linna kroonika
   {% endblock %}
 </title>
 
@@ -54,7 +54,7 @@
 <div id="top" class="w3-top">
   <div class="w3-bar w3-left-align w3-large w3-padding">
     <a class="w3-bar-item w3-button w3-hide-large w3-right w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="myFunction()"><i class="fa fa-bars"></i></a>
-    <a href={% url 'algus' %} class="w3-bar-item w3-button w3-theme-d4 w3-hover-white"><i class="fa w3-margin-right"><img src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" style='max-height:22px;' alt="vapp"></i>Valga linna kroonika</a>
+    <a href="{% url 'algus' %}" class="w3-bar-item w3-button w3-theme-d4 w3-hover-white"><i class="fa w3-margin-right"><img src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" style='max-height:22px;' alt="vapp"></i>Valga linna kroonika</a>
 
     <!-- Search on large screens -->
     <form class="w3-hide-small" role="search" method="get" id="searchform_large" action="{% url 'wiki:wiki_artikkel_filter' %}" >
