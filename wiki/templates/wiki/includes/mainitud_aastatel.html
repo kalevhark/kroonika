@@ -1,5 +1,8 @@
 {% if mainitud_aastatel %}
   <div class="w3-padding-16">
-    Mainitud aastatel: {{ mainitud_aastatel }}
+    Mainimisi aastatel:
+    {% for aasta in mainitud_aastatel %}
+      {{ aasta }}&nbsp
+    {% endfor %}
   </div>
 {% endif %}

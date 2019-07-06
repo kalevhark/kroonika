@@ -368,7 +368,7 @@ class ArtikkelDetailView(generic.DetailView):
         # Kas artiklile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
             artiklid__id=self.object.id).filter(profiilipilt_artikkel=True).first()
-        kuup2ev = context['artikkel'].hist_searchdate
+        # kuup2ev = context['artikkel'].hist_searchdate
         obj_id = context['artikkel'].id
         # Järjestame artiklid kronoloogiliselt
         loend = Artikkel.objects.order_by('hist_searchdate', 'id').values('id')
