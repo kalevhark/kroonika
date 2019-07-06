@@ -913,7 +913,10 @@ class Pilt(models.Model):
         return self.nimi
 
     def caption(self):
-        tekst = self.viited.first()
+        tekst = self.kirjeldus or self.nimi # Kui on, siis kirjeldus, muidu pealkiri
+        viide = self.viited.first()
+        if viide:
+            tekst = f'{tekst} (Allikas: {viide})'
         return tekst
 
     def link(self):
