@@ -4,6 +4,8 @@ function myPilt(imgs) {
   var expandImg = document.getElementById("profiiliPilt");
   var imgText = document.getElementById("imgtext");
   expandImg.src = imgs.src;
+  expandImg.alt = imgs.alt;
+  expandImg.title = imgs.title;
   imgText.innerHTML = imgs.alt;
   expandImg.parentElement.style.display = "block";
 }
