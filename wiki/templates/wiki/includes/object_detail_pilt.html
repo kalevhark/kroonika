@@ -5,7 +5,7 @@
   {% if profiilipilt %} <!-- Kui on määratud profiilipilt -->
     <div class="w3-margin-right">
       <img class="{{cls}}" id="profiiliPilt" src="{{ profiilipilt.link }}" alt="{{ profiilipilt }}" title="{{ profiilipilt }}"/>
-        <small><div class="w3-center" id="imgtext">{{ profiilipilt }}</div></small>
+        <small><div class="w3-center" id="imgtext">{{ profiilipilt.caption }}</div></small>
     </div>
   {% else %} <!-- Seotud piltide ankur -->
     <div class="w3-margin-right" style="display: none">

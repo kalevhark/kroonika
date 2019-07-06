@@ -912,6 +912,10 @@ class Pilt(models.Model):
     def __repr__(self):
         return self.nimi
 
+    def caption(self):
+        tekst = self.viited.first()
+        return tekst
+
     def link(self):
         return self.pilt.url
 
