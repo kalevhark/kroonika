@@ -906,6 +906,10 @@ class Pilt(models.Model):
     )
 
     def __str__(self):
+        tekst = self.kirjeldus or self.nimi # Kui on, siis kirjeldus, muidu pealkiri
+        return tekst
+
+    def __repr__(self):
         return self.nimi
 
     def link(self):
