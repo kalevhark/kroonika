@@ -9,7 +9,7 @@
       <br>
     {% endif %}
 	{% include 'wiki/includes/kp.html' with sd=obj.hist_date ed=obj.hist_enddate y=obj.hist_year m=obj.hist_month cs="primary" %}
-	  &nbsp;<a class="hover-artikkel text-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=obj.id %}>{{ obj.headline }}</a>
+	  &nbsp;<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=obj.id %}>{{ obj.headline }}</a>
   {% endfor %}
   </div>
 {% endif %}
