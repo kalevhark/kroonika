@@ -853,6 +853,7 @@ class Pilt(models.Model):
         blank=True,
         verbose_name='Seotud objektid'
     )
+    # NB! Pildi puhul kasutatakse veebis ainult esimest viidet
     viited = models.ManyToManyField(
         Viide,
         blank=True,
@@ -863,7 +864,6 @@ class Pilt(models.Model):
         'Allika profiilipilt',
         default=False
     )
-    # profiilipilt_kroonika = models.BooleanField('Kroonika profiilipilt', default=False)
     profiilipilt_artikkel = models.BooleanField(
         'Artikli profiilipilt',
         default=False
