@@ -356,6 +356,8 @@ def mainitud_aastatel(model, obj):
             )
         )
     )
+
+
 #
 # Artikli vaatamiseks
 #
