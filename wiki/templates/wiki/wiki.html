@@ -30,15 +30,17 @@
 	  </a>
     </div>
 	<div class="w3-quarter">
-      <a style="text-decoration: none;" href={% url 'wiki:wiki_organisatsioon_filter' %}>
-	  <div class="w3-container background-organisatsioon w3-padding-16 w3-hover-white">
-        <div class="w3-left"><i class="fa fa-group w3-xxxlarge"></i></div>
+		<a style="text-decoration: none;" href={% url 'wiki:wiki_organisatsioon_filter' %}>
+	  	<div class="w3-container background-organisatsioon w3-padding-16 w3-hover-white">
+        <div class="w3-left">
+					<i class="fa fa-group w3-xxxlarge"></i>
+				</div>
         <div class="w3-right">
           <h3>{{ andmed.organisatsioon.kirjeid }}</h3>
         </div>
         <div class="w3-clear"></div>
-        <h4 w3-hide-medium>Organisatsioonid</h4>
-				<h5 w3-hide-large w3-hide-small>Organisatsioonid</h5>
+        <h4 class="w3-hide-medium">Organisatsioonid</h4>
+				<h5 class="w3-hide-large w3-hide-small">Organisatsioonid</h5>
       </div>
 	  </a>
     </div>
