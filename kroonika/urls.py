@@ -18,7 +18,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-# from rest_framework import routers, serializers, viewsets
 from rest_framework.schemas import get_schema_view
 
 from .routers import router
