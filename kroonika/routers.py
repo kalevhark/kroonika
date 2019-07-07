@@ -1,7 +1,8 @@
 from rest_framework import routers
+
 from wiki.viewsets import (
     UserViewSet,
-    KroonikaViewSet,
+    # KroonikaViewSet,
     ArtikkelViewSet,
     IsikViewSet,
     OrganisatsioonViewSet,
@@ -12,7 +13,7 @@ from wiki.viewsets import (
 
 router = routers.DefaultRouter()
 router.register(r'user', UserViewSet)
-router.register(r'kroonika', KroonikaViewSet)
+# router.register(r'kroonika', KroonikaViewSet)
 router.register(r'artikkel', ArtikkelViewSet)
 router.register(r'isik', IsikViewSet)
 router.register(r'organisatsioon', OrganisatsioonViewSet)

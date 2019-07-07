@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 from .models import (
-    Kroonika,
+    # Kroonika,
     Artikkel,
     Isik,
     Objekt,
@@ -18,16 +18,17 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class KroonikaSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Kroonika
-        fields = '__all__'
+# class KroonikaSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = Kroonika
+#         fields = '__all__'
 
 
 class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Artikkel
         fields = '__all__'
+        exclude = ('lehekylg', 'kroonika',) # TODO:Kuni Kroonika kõrvaldamiseni
 
 
 class IsikSerializer(serializers.HyperlinkedModelSerializer):

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 
 from .models import (
-    Kroonika,
+    # Kroonika,
     Artikkel,
     Isik,
     Objekt,
@@ -16,7 +16,7 @@ from .models import (
 )
 from .serializers import (
     UserSerializer,
-    KroonikaSerializer,
+    # KroonikaSerializer,
     ArtikkelSerializer,
     IsikSerializer,
     ObjektSerializer,
@@ -30,9 +30,10 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
 
-class KroonikaViewSet(viewsets.ModelViewSet):
-    queryset = Kroonika.objects.all()
-    serializer_class = KroonikaSerializer
+
+# class KroonikaViewSet(viewsets.ModelViewSet):
+#     queryset = Kroonika.objects.all()
+#     serializer_class = KroonikaSerializer
 
 
 class ArtikkelFilter(filters.FilterSet):
