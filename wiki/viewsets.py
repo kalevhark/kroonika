@@ -11,7 +11,8 @@ from .models import (
     Isik,
     Objekt,
     Organisatsioon,
-    Pilt
+    Pilt,
+    Viide
 )
 from .serializers import (
     UserSerializer,
@@ -20,7 +21,8 @@ from .serializers import (
     IsikSerializer,
     ObjektSerializer,
     OrganisatsioonSerializer,
-    PiltSerializer
+    PiltSerializer,
+    ViideSerializer
 )
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -94,3 +96,7 @@ class OrganisatsioonViewSet(viewsets.ModelViewSet):
 class PiltViewSet(viewsets.ModelViewSet):
     queryset = Pilt.objects.all()
     serializer_class = PiltSerializer
+
+class ViideViewSet(viewsets.ModelViewSet):
+    queryset = Viide.objects.all()
+    serializer_class = ViideSerializer

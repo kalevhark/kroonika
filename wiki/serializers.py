@@ -7,7 +7,8 @@ from .models import (
     Isik,
     Objekt,
     Organisatsioon,
-    Pilt
+    Pilt,
+    Viide
 )
 
 
@@ -50,4 +51,10 @@ class OrganisatsioonSerializer(serializers.HyperlinkedModelSerializer):
 class PiltSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Pilt
+        fields = '__all__'
+
+
+class ViideSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Viide
         fields = '__all__'

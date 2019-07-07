@@ -4,10 +4,10 @@ from wiki.viewsets import (
     # KroonikaViewSet,
     ArtikkelViewSet,
     IsikViewSet,
-    ObjektViewSet,
     OrganisatsioonViewSet,
     ObjektViewSet,
-    PiltViewSet
+    PiltViewSet,
+    ViideViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -18,3 +18,4 @@ router.register(r'isik', IsikViewSet)
 router.register(r'organisatsioon', OrganisatsioonViewSet)
 router.register(r'objekt', ObjektViewSet)
 router.register(r'pilt', PiltViewSet)
+router.register(r'viide', ViideViewSet)
