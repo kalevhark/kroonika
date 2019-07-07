@@ -29,6 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
+    http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
 
 
 # class KroonikaViewSet(viewsets.ModelViewSet):
