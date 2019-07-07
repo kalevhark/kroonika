@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 
 from .models import (
-    Kroonika,
+    # Kroonika,
     Artikkel,
     Isik,
     Objekt,
@@ -15,7 +15,7 @@ from .models import (
 )
 from .serializers import (
     UserSerializer,
-    KroonikaSerializer,
+    # KroonikaSerializer,
     ArtikkelSerializer,
     IsikSerializer,
     ObjektSerializer,
@@ -28,16 +28,16 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
 
-class KroonikaViewSet(viewsets.ModelViewSet):
-    queryset = Kroonika.objects.all()
-    serializer_class = KroonikaSerializer
+# class KroonikaViewSet(viewsets.ModelViewSet):
+#     queryset = Kroonika.objects.all()
+#     serializer_class = KroonikaSerializer
 
 
 class ArtikkelFilter(filters.FilterSet):
     # Võimaldab API päringuid: http://18.196.203.237/api/artikkel/?aasta=1913&kuu=10
     aasta = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='year')
     kuu = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='month')
-    p2ev = django_filters.NumberFilter(field_name='his_searcdate', lookup_expr='day')
+    p2ev = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='day')
     sisaldab = django_filters.CharFilter(field_name='body_text', lookup_expr='icontains')
 
 
@@ -89,6 +89,7 @@ class OrganisatsioonViewSet(viewsets.ModelViewSet):
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = OrganisatsioonFilter
+
 
 class PiltViewSet(viewsets.ModelViewSet):
     queryset = Pilt.objects.all()
