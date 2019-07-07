@@ -11,7 +11,7 @@ from .models import (
     Viide
 )
 
-
+# TODO: Korrektselt ei tööta, "permissions-detail" ei leita
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
@@ -27,7 +27,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Artikkel
-        fields = '__all__'
+        # fields = '__all__'
         exclude = ('lehekylg', 'kroonika',) # TODO:Kuni Kroonika kõrvaldamiseni
 
 
