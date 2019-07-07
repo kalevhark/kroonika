@@ -11,7 +11,11 @@
 {% load widget_tweaks %}
 <div class="w3-cell-row w3-container background-objekt w3-text-white w3-padding-16">
   <div class="w3-container w3-cell w3-cell-middle w3-large  w3-mobile">
-     <i class="fa fa-bank"></i><b> Objektid ({{ kirjeid }})
+    <a style="text-decoration: none;" href={% url 'wiki:wiki_objekt_filter' %}>
+			<i class="fa fa-bank"></i>
+		</a>
+<!--    <i class="fa fa-bank"></i>-->
+		<b> Objektid ({{ kirjeid }})
 	 {% if object_list.paginator.num_pages > 1 %}
 	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
 	 {% endif %}
