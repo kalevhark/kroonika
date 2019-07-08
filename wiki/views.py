@@ -217,8 +217,12 @@ def algus(request):
         # Samal päeval ja kuul toimunud
         sel_kuul = Artikkel.objects.filter(hist_searchdate__month = kuu)
         sel_kuul_kirjeid = len(sel_kuul)
-        if sel_kuul_kirjeid > 5: # Kui leiti rohkem kui viis kirjet võetakse 2 algusest + 1 keskelt + 2 lõpust
-            a['sel_kuul'] = sel_kuul[:2] + sel_kuul[int(sel_kuul_kirjeid/2-1):int(sel_kuul_kirjeid/2)] + sel_kuul[sel_kuul_kirjeid-2:]
+        if sel_kuul_kirjeid > 9: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
+            a['sel_kuul'] = (
+                    sel_kuul[:4] +
+                    sel_kuul[int(sel_kuul_kirjeid/2-1):int(sel_kuul_kirjeid/2)] +
+                    sel_kuul[sel_kuul_kirjeid-4:]
+            )
         else:
             a['sel_kuul'] = sel_kuul
         a['sel_kuul_kirjeid'] = sel_kuul_kirjeid

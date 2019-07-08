@@ -119,22 +119,22 @@
 		    <br>
 		  {% endif %}
 		  <a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}>
-		  <strong>{{ obj.hist_year }}</strong>:
+		  	<strong>{{ obj.hist_year }}</strong>:
 		  </a>
-	      <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=obj.id %}>
-		  {{ obj }}
+			<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=obj.id %}>
+		  	{{ obj }}
 		  </a>
-		  <!-- Kui kirjed rohkem kui 5, siis hakime 2+1+2 -->
-		  {% if andmed.artikkel.sel_kuul_kirjeid > 5 %}
-			{% if forloop.counter == 2 and andmed.artikkel.sel_kuul_kirjeid  > 6 %}
-				<br><span class="w3-tiny w3-text-artikkel"> - - - </span>
-			{% endif %}
-			{% if forloop.counter == 3 %}
-				<br><span class="w3-tiny w3-text-artikkel"> - - - </span>
-			{% endif %}
+		  <!-- Kui kirjed rohkem kui 9, siis hakime 4+1+4 -->
+		  {% if andmed.artikkel.sel_kuul_kirjeid > 9 %}
+				{% if forloop.counter == 4 and andmed.artikkel.sel_kuul_kirjeid  > 10 %}
+					<br><span class="w3-tiny w3-text-artikkel"> - - - </span>
+				{% endif %}
+				{% if forloop.counter == 5 %}
+					<br><span class="w3-tiny w3-text-artikkel"> - - - </span>
+				{% endif %}
 		  {% endif %}
 		{% endfor %}
-		{% if andmed.artikkel.sel_kuul_kirjeid > 5 %}
+		{% if andmed.artikkel.sel_kuul_kirjeid > 9 %}
 			<p>
 			<a class="hover-artikkel" href={% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}>
 			  Näita kõiki <em>{% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos</em> ({{ andmed.artikkel.sel_kuul_kirjeid }})
