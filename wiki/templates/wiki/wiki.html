@@ -6,18 +6,19 @@
 	<!-- Lingid teemalehtedele -->
 	<div class="w3-row-padding w3-margin-bottom">
     <div class="w3-quarter">
-      <a style="text-decoration: none;" href={% url 'wiki:wiki_artikkel_filter' %}>
+      <a class="w3-tooltip" style="text-decoration: none;" href={% url 'wiki:wiki_artikkel_filter' %}>
 	  		<div class="w3-container background-artikkel w3-padding-16  w3-hover-white">
         	<div class="w3-left">
 						<i class="fa fa-comment w3-xxxlarge"></i>
 					</div>
 					<div class="w3-right">
-						<h3>{{ andmed.artikkel.kirjeid }}</h3>
+						<h3>Artiklid ({{ andmed.artikkel.kirjeid }})</h3>
 					</div>
         	<div class="w3-clear"></div>
-					<h4 class="w3-hide-medium">Artiklid</h4>
-					<p class="w3-hide-large w3-hide-small">Artiklid</p>
+<!--					<h4 class="w3-hide-medium">Artiklid</h4>-->
+<!--					<p class="w3-hide-large w3-hide-small">Artiklid</p>-->
       	</div>
+        <span class="w3-text">Klõpsa artiklite sirvimiseks</span>
 	  	</a>
     </div>
     <div class="w3-quarter">
