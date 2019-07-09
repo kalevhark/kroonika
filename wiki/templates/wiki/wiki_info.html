@@ -46,10 +46,10 @@
 </p>
 
 <p>Otsimiseks kasuta temaatilisi otsinguid:
-  <a href={% url 'wiki:wiki_artikkel_filter' %}>Artiklid</a>
-  <a href={% url 'wiki:wiki_isik_filter' %}>Isikud</a>
-  <a href={% url 'wiki:wiki_organisatsioon_filter' %}>Organisatsioonid</a>
-  <a href={% url 'wiki:wiki_objekt_filter' %}>Objektid</a>
+  <a href={% url 'wiki:wiki_artikkel_filter' %}>Lood</a>
+  <a href={% url 'wiki:wiki_isik_filter' %}>Inimesed</a>
+  <a href={% url 'wiki:wiki_organisatsioon_filter' %}>Asutised</a>
+  <a href={% url 'wiki:wiki_objekt_filter' %}>Kohad</a>
 </p>
 
 <p>
@@ -179,14 +179,10 @@ Highcharts.chart('container', {
     },
 
     colorAxis: {
-        stops: [
-            [0, '#3060cf'],
-            [0.5, '#fffbbc'],
-            [0.9, '#c4463a'],
-            [1, '#c4463a']
-        ],
-        min: 1,
+        min: 0,
         max: 30,
+        minColor: '#FFFFFF',
+        maxColor: '#006600'
         startOnTick: false,
         endOnTick: false,
         labels: {
