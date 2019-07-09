@@ -33,7 +33,7 @@
     </ul>
   </p>
   {% if andmed.id__count > 0 %}
-    Andmebaasis on {{ andmed.id__count }} artiklit {{ andmed.hist_searchdate__min|date:"d.m.Y" }} kuni {{ andmed.hist_searchdate__max|date:"d.m.Y" }}.
+    Andmebaasis on {{ andmed.id__count }} lugu {{ andmed.hist_searchdate__min|date:"d.m.Y" }} kuni {{ andmed.hist_searchdate__max|date:"d.m.Y" }}.
     <!--    Artiklite heatmap kuude kaupa-->
     <div id="container" style="float: left; height: 300px; min-width: 310px; max-width: 1000px; margin: 0 auto"></div>
   {% endif %}
@@ -196,7 +196,7 @@ Highcharts.chart('container', {
         // nullColor: '#EFEFEF',
         // colsize: 24 * 36e5, // one day
         tooltip: {
-           headerFormat: 'Artikleid:<br/>',
+           headerFormat: 'Lugusid:<br/>',
            pointFormat: '{point.x} {point.y}: <b>{point.value}</b>'
         },
         // turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
