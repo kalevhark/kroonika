@@ -12,57 +12,57 @@
 						<i class="fa fa-comment w3-xxxlarge"></i>
 					</div>
 					<div class="w3-right">
-						<h3>Artiklid ({{ andmed.artikkel.kirjeid }})</h3>
+						<h4>Artiklid ({{ andmed.artikkel.kirjeid }})</h4>
 					</div>
-        	<div class="w3-clear"></div>
+<!--        	<div class="w3-clear"></div>-->
 <!--					<h4 class="w3-hide-medium">Artiklid</h4>-->
 <!--					<p class="w3-hide-large w3-hide-small">Artiklid</p>-->
       	</div>
-        <span class="w3-text">Klõpsa artiklite sirvimiseks</span>
+        <span class="w3-text w3-center">Klõpsa artiklite sirvimiseks</span>
 	  	</a>
     </div>
     <div class="w3-quarter">
-      <a style="text-decoration: none;" href={% url 'wiki:wiki_isik_filter' %}>
+      <a class="w3-tooltip" style="text-decoration: none;" href={% url 'wiki:wiki_isik_filter' %}>
 	  		<div class="w3-container background-isik w3-padding-16 w3-hover-white">
         	<div class="w3-left">
 						<i class="fa fa-address-card-o w3-xxxlarge"></i>
 					</div>
 					<div class="w3-right">
-						<h3>{{ andmed.isik.kirjeid }}</h3>
+						<h4>Isikud ({{ andmed.isik.kirjeid }})</h4>
 					</div>
-					<div class="w3-clear"></div>
-					<h4 class="w3-hide-medium">Isikud</h4>
-					<p class="w3-hide-large w3-hide-small">Isikud</p>
+<!--					<div class="w3-clear"></div>-->
+<!--					<h4 class="w3-hide-medium">Isikud</h4>-->
+<!--					<p class="w3-hide-large w3-hide-small">Isikud</p>-->
       	</div>
 	  	</a>
     </div>
 		<div class="w3-quarter">
-			<a style="text-decoration: none;" href={% url 'wiki:wiki_organisatsioon_filter' %}>
+			<a class="w3-tooltip" style="text-decoration: none;" href={% url 'wiki:wiki_organisatsioon_filter' %}>
 	  		<div class="w3-container background-organisatsioon w3-padding-16 w3-hover-white">
         	<div class="w3-left">
 						<i class="fa fa-group w3-xxxlarge"></i>
 					</div>
         	<div class="w3-right">
-          	<h3>{{ andmed.organisatsioon.kirjeid }}</h3>
+          	<h4>Organisatsioonid ({{ andmed.organisatsioon.kirjeid }})</h4>
         	</div>
-					<div class="w3-clear"></div>
-					<h4 class="w3-hide-medium">Organisatsioonid</h4>
-					<p class="w3-hide-large w3-hide-small">Organisatsioonid</p>
+<!--					<div class="w3-clear"></div>-->
+<!--					<h4 class="w3-hide-medium">Organisatsioonid</h4>-->
+<!--					<p class="w3-hide-large w3-hide-small">Organisatsioonid</p>-->
       	</div>
 	  	</a>
     </div>
     <div class="w3-quarter">
-      <a style="text-decoration: none;" href={% url 'wiki:wiki_objekt_filter' %}>
+      <a class="w3-tooltip" style="text-decoration: none;" href={% url 'wiki:wiki_objekt_filter' %}>
 	  		<div class="w3-container background-objekt w3-padding-16 w3-hover-white">
         	<div class="w3-left">
 						<i class="fa fa-bank w3-xxxlarge"></i>
 					</div>
         	<div class="w3-right">
-          	<h3>{{ andmed.objekt.kirjeid }}</h3>
+          	<h4>Objektid ({{ andmed.objekt.kirjeid }})</h4>
         	</div>
-					<div class="w3-clear"></div>
-					<h4 class="w3-hide-medium">Objektid</h4>
-					<p class="w3-hide-large w3-hide-small">Objektid</p>
+<!--					<div class="w3-clear"></div>-->
+<!--					<h4 class="w3-hide-medium">Objektid</h4>-->
+<!--					<p class="w3-hide-large w3-hide-small">Objektid</p>-->
       	</div>
 	  	</a>
     </div>
