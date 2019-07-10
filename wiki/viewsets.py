@@ -59,6 +59,7 @@ class ArtikkelFilter(filters.FilterSet):
 class ArtikkelViewSet(viewsets.ModelViewSet):
     queryset = Artikkel.objects.all().order_by('-hist_searchdate')
     serializer_class = ArtikkelSerializer
+    http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ArtikkelFilter
@@ -77,6 +78,7 @@ class IsikFilter(filters.FilterSet):
 class IsikViewSet(viewsets.ModelViewSet):
     queryset = Isik.objects.all()
     serializer_class = IsikSerializer
+    http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = IsikFilter
@@ -89,6 +91,7 @@ class ObjektFilter(filters.FilterSet):
 class ObjektViewSet(viewsets.ModelViewSet):
     queryset = Objekt.objects.all()
     serializer_class = ObjektSerializer
+    http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ObjektFilter
@@ -101,6 +104,7 @@ class OrganisatsioonFilter(filters.FilterSet):
 class OrganisatsioonViewSet(viewsets.ModelViewSet):
     queryset = Organisatsioon.objects.all()
     serializer_class = OrganisatsioonSerializer
+    http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = OrganisatsioonFilter
@@ -109,7 +113,9 @@ class OrganisatsioonViewSet(viewsets.ModelViewSet):
 class PiltViewSet(viewsets.ModelViewSet):
     queryset = Pilt.objects.all()
     serializer_class = PiltSerializer
+    http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
 
 class ViideViewSet(viewsets.ModelViewSet):
     queryset = Viide.objects.all()
     serializer_class = ViideSerializer
+    http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
