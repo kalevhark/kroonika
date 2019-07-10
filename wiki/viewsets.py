@@ -71,6 +71,13 @@ class IsikFilter(filters.FilterSet):
     nimi = django_filters.CharFilter(method='filter_nimi')
 
     def filter_nimi(self, queryset, field_name, value):
+        """
+        Otsib fraasi ees- või perenimest
+        :param queryset:
+        :param field_name:
+        :param value:
+        :return: queryset
+        """
         return queryset.filter(
             Q(eesnimi__icontains=value) | Q(perenimi__icontains=value)
         )
@@ -78,10 +85,10 @@ class IsikFilter(filters.FilterSet):
 class IsikViewSet(viewsets.ModelViewSet):
     """
     retrieve:
-    Inimese andmed
+    Isiku kirje
 
     list:
-    Loetelu isikutest
+    Isikute loetelu
 
     """
     queryset = Isik.objects.all()
