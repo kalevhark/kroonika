@@ -14,6 +14,7 @@ from wiki.views import ArtikkelUpdate, IsikUpdate, OrganisatsioonUpdate, ObjektU
 # from wiki.views import UserDetail, UserList
 
 app_name = 'wiki'
+
 urlpatterns = [
     path('', ArtikkelFilterView.as_view(), name='wiki_artikkel_filter'),
     path('<int:pk>', ArtikkelDetailView.as_view(), name='wiki_artikkel_detail'),

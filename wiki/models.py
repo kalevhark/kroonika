@@ -779,6 +779,13 @@ class Artikkel(models.Model):
     def vigane(self):
         return VIGA_TEKSTIS in self.body_text
 
+    @property
+    def hist_dates_string(self):
+        if all(self.hist_date, self.hist_enddate):
+            return f'{self.hist_enddate - self.hist_date}'
+        else:
+            return f'{str(self.hist_date.month).zfill(2)}{str(self.hist_date.day).zfill(2)}'
+
     class Meta:
         ordering = ['hist_searchdate']
         verbose_name_plural = "Artiklid"
