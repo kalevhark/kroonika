@@ -781,7 +781,7 @@ class Artikkel(models.Model):
 
     @property
     def hist_dates_string(self):
-        if all(self.hist_date, self.hist_enddate):
+        if all([self.hist_date, self.hist_enddate]):
             return f'{self.hist_enddate - self.hist_date}'
         else:
             return f'{str(self.hist_date.month).zfill(2)}{str(self.hist_date.day).zfill(2)}'
