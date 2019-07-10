@@ -642,7 +642,7 @@ class Kroonika(models.Model):
         verbose_name_plural = "Kroonikad"
 
 
-# Ajutine filtreeriv Manager TODO: Kuni revisjoni lõpuni
+# Ajutine filtreeriv Manager kui vaja näidata ilma Kroonikata TODO: Kuni revisjoni lõpuni
 class KroonikataArtikkelManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(kroonika__isnull=True)
@@ -754,7 +754,7 @@ class Artikkel(models.Model):
         help_text="lehekülg"
     )
 
-    objects = KroonikataArtikkelManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
+    # objects = KroonikataArtikkelManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
 
     def __str__(self):
         tekst = self.body_text[:50]
