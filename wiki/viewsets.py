@@ -76,6 +76,14 @@ class IsikFilter(filters.FilterSet):
         )
 
 class IsikViewSet(viewsets.ModelViewSet):
+    """
+    retrieve:
+    Inimese andmed
+
+    list:
+    Loetelu isikutest
+
+    """
     queryset = Isik.objects.all()
     serializer_class = IsikSerializer
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
