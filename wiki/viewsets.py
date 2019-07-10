@@ -89,10 +89,6 @@ class IsikViewSet(viewsets.ModelViewSet):
 
     list:
     Isikute loetelu
-
-    nimi:
-    Otsib mõlemast nimest
-
     """
     queryset = Isik.objects.all()
     serializer_class = IsikSerializer
