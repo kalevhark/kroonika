@@ -46,7 +46,7 @@ class ArtikkelFilter(filters.FilterSet):
     tags = django_filters.CharFilter(method='filter_tags')
 
     def filter_tags(self, queryset, field_name, value):
-        tags = value.split(' ')
+        tags = value.split('+')
         if len(tags) > 1:
             for tag in tags:
                 queryset_filter = queryset.filter(body_text__icontains=tag)
