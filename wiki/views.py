@@ -26,9 +26,12 @@ from django.views.generic.edit import UpdateView
 import django_filters
 from django_filters.views import FilterView
 
+from rest_framework import generics
+
 from .models import Allikas, Artikkel, Isik, Objekt, Organisatsioon, Pilt, Vihje
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 from .forms import VihjeForm
+from .serializers import UserSerializer
 #
 # reCAPTCHA kontrollifunktsioon
 #
@@ -1003,3 +1006,14 @@ def get_all_logged_in_users():
 
     # Query all logged in users based on id list
     return User.objects.filter(id__in=uid_list)
+
+
+# Vajalikud API jaoks
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

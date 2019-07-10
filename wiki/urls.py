@@ -10,6 +10,8 @@ from wiki.views import ArtikkelFilterView, IsikFilterView, OrganisatsioonFilterV
 from wiki.views import ArtikkelArchiveIndexView, ArtikkelYearArchiveView, ArtikkelMonthArchiveView, ArtikkelDayArchiveView
 # Muutmisvaated
 from wiki.views import ArtikkelUpdate, IsikUpdate, OrganisatsioonUpdate, ObjektUpdate
+# API vaatd
+from wiki.views import UserDetail, UserList
 
 app_name = 'wiki'
 urlpatterns = [
@@ -32,6 +34,8 @@ urlpatterns = [
     path('update/isik/<int:pk>', IsikUpdate.as_view(), name='isik_update'),
     path('update/organisatsioon/<int:pk>', OrganisatsioonUpdate.as_view(), name='organisatsioon_update'),
     path('update/objekt/<int:pk>', ObjektUpdate.as_view(), name='objekt_update'),
+    path('users/', UserList.as_view()),
+    path('users/<int:pk>/', UserDetail.as_view()),
     # path('heatmap/', views.heatmap, name='heatmap'),
     ]
 
