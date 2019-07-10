@@ -779,12 +779,18 @@ class Artikkel(models.Model):
     def vigane(self):
         return VIGA_TEKSTIS in self.body_text
 
-    @property
+    @property # TODO: Selleks et otsida kuupäeva, mis jääb alguse ja lõpu vahele [str in hist_dates_string]
     def hist_dates_string(self):
+        tekst = f'{str(self.hist_date.month).zfill(2)}{str(self.hist_date.day).zfill(2)}'
         if all([self.hist_date, self.hist_enddate]):
-            return f'{self.hist_enddate - self.hist_date}'
-        else:
-            return f'{str(self.hist_date.month).zfill(2)}{str(self.hist_date.day).zfill(2)}'
+            vahemik = (self.hist_enddate - self.hist_date).days
+            if vahemik < 31: # kui on loogiline vahemik (kuu)
+                from datetime import timedelta
+                for n in range(vahemik):
+                    p2ev = self.hist_date + timedelta(days=p2ev+1)
+                    p2eva_string = f' {str(p2ev.month).zfill(2)}{str(p2ev.day).zfill(2)}'
+                    tekst += p2eva_string
+        return tekst
 
     class Meta:
         ordering = ['hist_searchdate']
