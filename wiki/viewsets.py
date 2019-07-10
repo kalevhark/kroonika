@@ -49,10 +49,10 @@ class ArtikkelFilter(filters.FilterSet):
         tags = value.split(' ')
         if len(tags) > 1:
             for tag in tags:
-                queryset_filter = queryset.filter(body_text__icontains=tag)
+                queryset_filter = queryset.filter(Q(body_text__icontains=tag))
             return queryset_filter
         else:
-            queryset.filter(body_text__icontains=value)
+            queryset.filter(Q(body_text__icontains=value))
 
 
 class ArtikkelViewSet(viewsets.ModelViewSet):
