@@ -46,8 +46,8 @@ class ArtikkelFilter(filters.FilterSet):
     tags = django_filters.CharFilter(method='filter_tags')
 
     def filter_tags(self, queryset, field_name, value):
-        value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
-        tags = value.split('+')
+        # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
+        tags = value.split(' ')
         if len(tags) > 1:
             for tag in tags:
                 queryset = queryset.filter(body_text__icontains=tag)
