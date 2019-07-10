@@ -42,8 +42,8 @@ class ArtikkelFilter(filters.FilterSet):
     aasta = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='year')
     kuu = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='month')
     p2ev = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='day')
-    sisaldab = django_filters.CharFilter(field_name='body_text', lookup_expr='icontains')
-    tags = django_filters.CharFilter(method='filter_tags')
+    # body_text = django_filters.CharFilter(field_name='body_text', lookup_expr='icontains')
+    sisaldab = django_filters.CharFilter(method='filter_tags')
 
     def filter_tags(self, queryset, field_name, value):
         # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
