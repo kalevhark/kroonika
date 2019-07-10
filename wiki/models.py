@@ -787,9 +787,9 @@ class Artikkel(models.Model):
             if vahemik < 31: # kui on loogiline vahemik (kuu)
                 from datetime import timedelta
                 for n in range(vahemik):
-                    p2ev = self.hist_date + timedelta(days=p2ev+1)
-                    p2eva_string = f' {str(p2ev.month).zfill(2)}{str(p2ev.day).zfill(2)}'
-                    tekst += p2eva_string
+                    vahemiku_p2ev = self.hist_date + timedelta(days=n+1)
+                    vahemiku_p2eva_string = f' {str(vahemiku_p2ev.month).zfill(2)}{str(vahemiku_p2ev.day).zfill(2)}'
+                    tekst += vahemiku_p2eva_string
         return tekst
 
     class Meta:
