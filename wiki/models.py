@@ -642,6 +642,12 @@ class Kroonika(models.Model):
         verbose_name_plural = "Kroonikad"
 
 
+# Ajutine filtreeriv Manager TODO: Kuni revisjoni lõpuni
+class KroonikataArtikkelManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(kroonika__isnull=True)
+
+
 class Artikkel(models.Model):
     # Toimumisaeg
     hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
@@ -747,6 +753,8 @@ class Artikkel(models.Model):
         blank=True,
         help_text="lehekülg"
     )
+
+    objects = KroonikataArtikkelManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
 
     def __str__(self):
         tekst = self.body_text[:50]
