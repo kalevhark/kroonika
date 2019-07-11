@@ -644,8 +644,29 @@ class Kroonika(models.Model):
 
 # Ajutine filtreeriv Manager kui vaja näidata ilma Kroonikata TODO: Kuni revisjoni lõpuni
 class KroonikataArtikkelManager(models.Manager):
+    # def get_queryset(self):
+    #    return super().get_queryset().filter(kroonika__isnull=True)
+
+    def with_histdates(self):
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT a.id, a.hist_date, a.hist_enddate
+                FROM wiki_artikkel a
+                WHERE a.hist_date IS NOT NULL, a.hist_enddate IS NOT NULL
+                ORDER BY a.hist_date""")
+            result_list = []
+            for row in cursor.fetchall():
+                a = self.model(id=row[0], hist_date=row[1], hist_enddate=row[2])
+                a.hist_dates_string = f'{a.histdate}-{a.hist_enddate}'
+                result_list.append(a)
+        return result_list
+
+
+# Tagastab ainult kirjed, kus algus- ja lõppkuupäev on esitatud
+class HistDatesArtikkelManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(kroonika__isnull=True)
+        return super().get_queryset().filter(hist_date__isnull=False, hist_enddate__isnull=False)
 
 
 class Artikkel(models.Model):
@@ -755,6 +776,7 @@ class Artikkel(models.Model):
     )
 
     # objects = KroonikataArtikkelManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
+    dates = HistDatesArtikkelManager()
 
     def __str__(self):
         tekst = self.body_text[:50]
