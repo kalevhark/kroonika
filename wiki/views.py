@@ -211,13 +211,14 @@ def algus(request):
             hist_date__day = p2ev,
             hist_date__month = kuu
         )
+        sel_p2eval_inrange = inrange_dates_artikkel(p2ev, kuu) # hist_date < KKPP <= hist_enddate
         sel_p2eval_kirjeid = len(sel_p2eval)
         if sel_p2eval_kirjeid > 5: # Kui leiti rohkem kui viis kirjet võetakse 2 algusest + 1 keskelt + 2 lõpust
             a['sel_p2eval'] = sel_p2eval[:2] + sel_p2eval[int(sel_p2eval_kirjeid/2-1):int(sel_p2eval_kirjeid/2)] + sel_p2eval[sel_p2eval_kirjeid-2:]
         else:
             a['sel_p2eval'] = sel_p2eval
         a['sel_p2eval_kirjeid'] = sel_p2eval_kirjeid
-        # Samal päeval ja kuul toimunud
+        # Samal kuul toimunud
         sel_kuul = Artikkel.objects.filter(hist_searchdate__month = kuu)
         sel_kuul_kirjeid = len(sel_kuul)
         if sel_kuul_kirjeid > 9: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
@@ -296,6 +297,23 @@ def algus(request):
     return render(request, 'wiki/wiki.html', {'andmed': andmed})
 
 
+#
+# Tagastab kõik artiklid, kus hist_date < KKPP <= hist_enddate vahemikus
+#
+def inrange_dates_artikkel(p2ev, kuu):
+    # Vaatleme ainult algus ja lõpuajaga ridasid
+    q = Artikkel.objects.filter(
+        hist_date__isnull=False,
+        hist_enddate__isnull=False
+    )
+    # Jätame välja read, kus hist_date == KKPP
+    q = q.exclude(
+        hist_date__month=kuu,
+        hist_date__day=p2ev
+    )
+    kkpp_string = str(kuu).zfill(2)+str(p2ev).zfill(2)
+    id_list = [art.id for art in q if kkpp_string in art.hist_dates_string]
+    return Artikkel.objects.filter(id__in=id_list) # queryset
 #
 # Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse
 #
