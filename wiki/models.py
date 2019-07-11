@@ -644,10 +644,16 @@ class Kroonika(models.Model):
 
 # Ajutine filtreeriv Manager kui vaja näidata ilma Kroonikata TODO: Kuni revisjoni lõpuni
 class KroonikataArtikkelManager(models.Manager):
-    # def get_queryset(self):
-    #    return super().get_queryset().filter(kroonika__isnull=True)
+    def get_queryset(self):
+       return super().get_queryset().filter(kroonika__isnull=True)
 
-    def with_histdates(self):
+
+# Tagastab ainult kirjed, kus algus- ja lõppkuupäev on esitatud
+class HistDatesStringArtikkelManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(hist_date__isnull=False, hist_enddate__isnull=False)
+
+    def with_histdates_strings(self):
         from django.db import connection
         with connection.cursor() as cursor:
             cursor.execute("""
@@ -661,13 +667,6 @@ class KroonikataArtikkelManager(models.Manager):
                 a.hist_dates_string = f'{a.histdate}-{a.hist_enddate}'
                 result_list.append(a)
         return result_list
-
-
-# Tagastab ainult kirjed, kus algus- ja lõppkuupäev on esitatud
-class HistDatesArtikkelManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(hist_date__isnull=False, hist_enddate__isnull=False)
-
 
 class Artikkel(models.Model):
     # Toimumisaeg
@@ -776,7 +775,7 @@ class Artikkel(models.Model):
     )
 
     # objects = KroonikataArtikkelManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
-    dates = HistDatesArtikkelManager()
+    dates = HistDatesStringArtikkelManager()
 
     def __str__(self):
         tekst = self.body_text[:50]
@@ -809,18 +808,18 @@ class Artikkel(models.Model):
     def vigane(self):
         return VIGA_TEKSTIS in self.body_text
 
-    @property # TODO: Selleks et otsida kuupäeva, mis jääb alguse ja lõpu vahele [str in hist_dates_string]
-    def hist_dates_string(self):
-        tekst = f'{str(self.hist_date.month).zfill(2)}{str(self.hist_date.day).zfill(2)}'
-        if all([self.hist_date, self.hist_enddate]):
-            vahemik = (self.hist_enddate - self.hist_date).days
-            if vahemik < 31: # kui on loogiline vahemik (kuu)
-                from datetime import timedelta
-                for n in range(vahemik):
-                    vahemiku_p2ev = self.hist_date + timedelta(days=n+1)
-                    vahemiku_p2eva_string = f' {str(vahemiku_p2ev.month).zfill(2)}{str(vahemiku_p2ev.day).zfill(2)}'
-                    tekst += vahemiku_p2eva_string
-        return tekst
+    # @property # TODO: Selleks et otsida kuupäeva, mis jääb alguse ja lõpu vahele [str in hist_dates_string]
+    # def hist_dates_string(self):
+    #     tekst = f'{str(self.hist_date.month).zfill(2)}{str(self.hist_date.day).zfill(2)}'
+    #     if all([self.hist_date, self.hist_enddate]):
+    #         vahemik = (self.hist_enddate - self.hist_date).days
+    #         if vahemik < 31: # kui on loogiline vahemik (kuu)
+    #             from datetime import timedelta
+    #             for n in range(vahemik):
+    #                 vahemiku_p2ev = self.hist_date + timedelta(days=n+1)
+    #                 vahemiku_p2eva_string = f' {str(vahemiku_p2ev.month).zfill(2)}{str(vahemiku_p2ev.day).zfill(2)}'
+    #                 tekst += vahemiku_p2eva_string
+    #     return tekst
 
     class Meta:
         ordering = ['hist_searchdate']
