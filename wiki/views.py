@@ -190,9 +190,9 @@ def feedback(request):
 #
 def algus(request):
     andmed = {} # Selle muutuja saadame veebi
-    p2ev = datetime.date.today().day
-    kuu = datetime.date.today().month
-    aasta = datetime.date.today().year
+    p2ev = datetime.date.today().day # str(p2ev).zfill(2) -> PP
+    kuu = datetime.date.today().month # str(kuu).zfill(2) -> KK
+    # aasta = datetime.date.today().year
     
     # Andmebaas Artikkel andmed veebi
     a = dict()
@@ -207,11 +207,12 @@ def algus(request):
         a['viimane_lisatud'] = Artikkel.objects.filter(inp_date=kp['max_inp_date'])[0]
         a['viimane_muudetud'] = Artikkel.objects.filter(mod_date=kp['max_mod_date'])[0]
         # Samal kuupäeval erinevatel aastatel toimunud
-        sel_p2eval = Artikkel.objects.filter(
+        sel_p2eval_exactly = Artikkel.objects.filter( # hist_date == KKPP
             hist_date__day = p2ev,
             hist_date__month = kuu
         )
         sel_p2eval_inrange = inrange_dates_artikkel(p2ev, kuu) # hist_date < KKPP <= hist_enddate
+        sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
         sel_p2eval_kirjeid = len(sel_p2eval)
         if sel_p2eval_kirjeid > 5: # Kui leiti rohkem kui viis kirjet võetakse 2 algusest + 1 keskelt + 2 lõpust
             a['sel_p2eval'] = sel_p2eval[:2] + sel_p2eval[int(sel_p2eval_kirjeid/2-1):int(sel_p2eval_kirjeid/2)] + sel_p2eval[sel_p2eval_kirjeid-2:]
