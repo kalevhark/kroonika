@@ -664,7 +664,7 @@ class HistDatesStringArtikkelManager(models.Manager):
             result_list = []
             for row in cursor.fetchall():
                 a = self.model(id=row[0], hist_date=row[1], hist_enddate=row[2])
-                a.hist_dates_string = f'{a.histdate}-{a.hist_enddate}'
+                a.hist_dates_string = f'{a.hist_date}-{a.hist_enddate}'
                 result_list.append(a)
         return result_list
 
