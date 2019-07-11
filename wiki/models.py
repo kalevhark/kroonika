@@ -669,7 +669,7 @@ class HistDatesStringArtikkelManager(models.Manager):
                 if vahemik < 100: # kui on loogiline vahemik (max 100 päeva)
                     from datetime import timedelta
                     for n in range(vahemik):
-                        vahemiku_p2ev = self.hist_date + timedelta(days=n+1)
+                        vahemiku_p2ev = a.hist_date + timedelta(days=n+1)
                         vahemiku_p2eva_string = f' {str(vahemiku_p2ev.month).zfill(2)}{str(vahemiku_p2ev.day).zfill(2)}'
                         tekst += vahemiku_p2eva_string
                 a.hist_dates_string = tekst
