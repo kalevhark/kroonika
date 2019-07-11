@@ -664,7 +664,15 @@ class HistDatesStringArtikkelManager(models.Manager):
             result_list = []
             for row in cursor.fetchall():
                 a = self.model(id=row[0], hist_date=row[1], hist_enddate=row[2])
-                a.hist_dates_string = f'{a.hist_date}-{a.hist_enddate}'
+                tekst = f'{str(a.hist_date.month).zfill(2)}{str(a.hist_date.day).zfill(2)}'
+                vahemik = (a.hist_enddate - a.hist_date).days
+                if vahemik < 100: # kui on loogiline vahemik (max 100 päeva)
+                    from datetime import timedelta
+                    for n in range(vahemik):
+                        vahemiku_p2ev = self.hist_date + timedelta(days=n+1)
+                        vahemiku_p2eva_string = f' {str(vahemiku_p2ev.month).zfill(2)}{str(vahemiku_p2ev.day).zfill(2)}'
+                        tekst += vahemiku_p2eva_string
+                a.hist_dates_string = tekst
                 result_list.append(a)
         return result_list
 
