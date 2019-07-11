@@ -659,7 +659,7 @@ class HistDatesStringArtikkelManager(models.Manager):
             cursor.execute("""
                 SELECT a.id, a.hist_date, a.hist_enddate
                 FROM wiki_artikkel a
-                WHERE a.hist_date IS NOT NULL, a.hist_enddate IS NOT NULL
+                WHERE a.hist_date IS NOT NULL AND a.hist_enddate IS NOT NULL
                 ORDER BY a.hist_date""")
             result_list = []
             for row in cursor.fetchall():
@@ -774,6 +774,7 @@ class Artikkel(models.Model):
         help_text="lehekülg"
     )
 
+    objects = models.Manager()  # The default manager
     # objects = KroonikataArtikkelManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
     dates = HistDatesStringArtikkelManager()
 
