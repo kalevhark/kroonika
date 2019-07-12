@@ -445,16 +445,19 @@ class Organisatsioon(models.Model):
 
 class Isik(models.Model):
     perenimi = models.CharField(
+        'Perekonnanimi',
         max_length=100,
         help_text="Perekonnanimi"
     )
     eesnimi = models.CharField(
+        'Eesnimi',
         max_length=100,
         blank=True,
         help_text="Eesnimi/nimed/initsiaal(id)"
     )
     # Eludaatumid
     hist_date = models.DateField(
+        'Sünniaeg',
         null=True,
         blank=True,
         help_text="Sündinud"
@@ -466,14 +469,16 @@ class Isik(models.Model):
         help_text='Sünniaasta'
     )
     synd_koht = models.CharField(
+        'Sünnikoht',
         max_length=100,
         blank=True,
         help_text="Sünnikoht"
     )
     hist_enddate = models.DateField(
+        'Surmaaeg',
         null=True,
         blank=True,
-        help_text="Surnud"
+        help_text="Surmaaeg"
     )
     hist_endyear = models.IntegerField(  # juhuks kui on teada ainult aasta
         'Surma-aasta',
@@ -484,30 +489,35 @@ class Isik(models.Model):
     gone = models.BooleanField( # surnud teadmata ajal
         'Surnud',
         default=False,
-        help_text='Surnud'
+        help_text='Kas on surnud?'
     )
     surm_koht = models.CharField(
+        'Surmakoht',
         max_length=100,
         blank=True,
         help_text="Surmakoht"
     )
     maetud = models.CharField(
+        'Maetud',
         max_length=200,
         blank=True,
-        help_text="Maetud"
+        help_text="Matmiskoht"
     )
     # Kirjeldus
     kirjeldus = models.TextField(
-        blank=True
+        blank=True,
+        help_text="Elulugu"
     )
     # Seotud
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
+        help_text="Milliste kohtadega seotud"
     )
     organisatsioonid = models.ManyToManyField(
         Organisatsioon,
         blank=True,
+        help_text="Milliste organisatsioonidega seotud"
     )
     viited = models.ManyToManyField(
         Viide,
