@@ -718,7 +718,9 @@ class ArtikkelDayArchiveView(DayArchiveView):
         kuu = context['day'].month
         p2ev = context['day'].day
         # Leiame samal kuupäeval teistel aastatel märgitud artiklid
-        sel_p2eval = Artikkel.objects.exclude(hist_searchdate__year = aasta).filter(hist_date__month = kuu, hist_date__day = p2ev)
+        sel_p2eval_exactly = Artikkel.objects.exclude(hist_searchdate__year = aasta).filter(hist_date__month = kuu, hist_date__day = p2ev)
+        sel_p2eval_inrange = inrange_dates_artikkel(p2ev, kuu)  # hist_date < KKPP <= hist_enddate
+        sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
         context['sel_p2eval'] = sel_p2eval
         # Leiame samal kuupäeval sündinud isikud
         syndinud_isikud = Isik.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
