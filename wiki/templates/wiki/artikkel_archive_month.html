@@ -56,14 +56,14 @@
 <!-- Loend samal kuul sündinud isikutest -->
 {% if syndinud_isikud %}
   {% with object_list=syndinud_isikud %}
-	  {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=syndinud_isikud_pealkiri bookmark=syndinud %}
+	  {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=syndinud_isikud_pealkiri bookmark='syndinud' %}
   {% endwith %}
 {% endif%}
 
 <!-- Loend samal kuul surnud isikutest -->
 {% if surnud_isikud %}
   {% with object_list=surnud_isikud %}
-	  {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=surnud_isikud_pealkiri bookmark=surnud %}
+	  {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=surnud_isikud_pealkiri bookmark='surnud' %}
   {% endwith %}
 {% endif%}
 
