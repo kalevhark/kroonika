@@ -6,7 +6,7 @@ from typing import Dict, Any
 from django.conf import settings
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import F, BooleanField, DecimalField, IntegerField, ExpressionWrapper
+from django.db.models import F, Q, BooleanField, DecimalField, IntegerField, ExpressionWrapper
 from django.db.models import Count, Max, Min
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse, HttpResponseRedirect
@@ -220,7 +220,7 @@ def algus(request):
             a['sel_p2eval'] = sel_p2eval
         a['sel_p2eval_kirjeid'] = sel_p2eval_kirjeid
         # Samal kuul toimunud
-        sel_kuul = Artikkel.objects.filter(hist_searchdate__month = kuu)
+        sel_kuul = Artikkel.objects.filter(Q(hist_searchdate__month = kuu) | Q(hist_enddate__month = kuu))
         sel_kuul_kirjeid = len(sel_kuul)
         if sel_kuul_kirjeid > 9: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
             a['sel_kuul'] = (
