@@ -82,7 +82,7 @@
 		{% now "m" as kuu %}
 		{% now "Y" as aasta %}
 	    <h5>
-				<a class="w3-hover-white" href={% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}>
+				<a style="text-decoration: none;" href={% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}>
 					{% now "j.m." %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_p2eval_kirjeid }}</span>
 				</a>
 			</h5>
