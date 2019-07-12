@@ -9,7 +9,7 @@ from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Ob
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
 
-class PiltInline(GenericTabularInline):
+class PiltInline(admin.TabularInline):
     model = Pilt
 
 
