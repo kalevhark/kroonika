@@ -1051,6 +1051,6 @@ def test(request):
     queryset = Artikkel.objects.all()
     _data['ids'] = [obj.id for obj in queryset]
     _data['test_url'] = reverse('wiki:wiki_artikkel_detail', kwargs={'pk': _data['ids'][0]})
-    _data['prefix'] = reverse_lazy('wiki:wiki_artikkel_detail')
+    _data['prefix'] = reverse_lazy('wiki:wiki_artikkel_detail', kwargs={'pk': _data['ids'][0]})
     data.append(_data)
     return JsonResponse(data, safe=False)
