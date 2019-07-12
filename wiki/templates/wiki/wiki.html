@@ -243,9 +243,10 @@
 					<br>
 				{% endif %}
 				<a class="hover-isik"
+			 	<strong>&dagger;&nbsp;</strong>
 				href={% url 'wiki:artikkel_day_archive' year=obj.hist_enddate|date:"Y" month=obj.hist_enddate|date:"m" day=obj.hist_enddate|date:"d" %}
 				>
-					{{ obj.hist_date|date:"d.m.Y" }}-<b>{{ obj.hist_enddate|date:"d.m.Y" }}</b>
+					<b>{{ obj.hist_enddate|date:"d.m.Y" }}</b>
 				</a>
 				&nbsp;
 				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
