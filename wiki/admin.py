@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin.templatetags.admin_list import _boolean_icon
+from django.contrib.contenttypes.admin import GenericTabularInline
 # from django.db.models import Count
 # from django.forms import ModelForm
 import datetime
@@ -7,7 +8,11 @@ import datetime
 from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Objekt, Pilt, Vihje
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
-    
+
+class PiltInline(GenericTabularInline):
+    model = Pilt
+
+
 class AllikasAdmin(admin.ModelAdmin):
     search_fields = ['nimi']
     readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
@@ -186,6 +191,9 @@ class ArtikkelAdmin(admin.ModelAdmin):
             'fields': [('last_accessed', 'total_accessed')]
             }
          ),
+    ]
+    inlines = [
+        PiltInline,
     ]
 
     # Kuupäevavälja vormindamiseks
