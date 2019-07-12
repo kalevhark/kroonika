@@ -35,6 +35,7 @@ urlpatterns = [
 	path('api/', include(router.urls)),
     path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('schema/', schema_view),
+    path('test/', views.test, name='test'),
     path('wiki/', include('wiki.urls')),
     ]
 

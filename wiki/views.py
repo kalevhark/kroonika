@@ -9,7 +9,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import F, Q, BooleanField, DecimalField, IntegerField, ExpressionWrapper
 from django.db.models import Count, Max, Min
 from django.db.models.functions import ExtractYear
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_list_or_404, get_object_or_404
@@ -614,6 +614,7 @@ class ArtikkelArchiveIndexView(ArchiveIndexView):
     paginate_by = 20
     ordering = ('hist_searchdate', 'id')
 
+
 class ArtikkelYearArchiveView(YearArchiveView):
     queryset = Artikkel.objects.all()
     date_field = "hist_searchdate"
@@ -704,7 +705,8 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid_pealkiri'] = '{0} valminud objektid'.format(mis_kuul(kuu))
         return context
-    
+
+
 class ArtikkelDayArchiveView(DayArchiveView):
     queryset = Artikkel.objects.all()
     date_field = 'hist_searchdate'
@@ -748,6 +750,7 @@ class ArtikkelDayArchiveView(DayArchiveView):
         context['valminud_objektid_pealkiri'] = '{0}. {1} valminud objektid'.format(p2ev, mis_kuul(kuu, 'l'))
         
         return context
+
 
 #
 # Isikute otsimiseks/filtreerimiseks
@@ -987,7 +990,8 @@ def seotud_objektid_artiklikaudu(seotud_artiklid, objekt_ise):
             values('id', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
         andmed[seotud_objekt.id] = kirje
     return andmed
-    
+
+
 class ObjektDetailView(generic.DetailView):
     model = Objekt
 
@@ -1038,3 +1042,14 @@ def get_all_logged_in_users():
 # class UserDetail(generics.RetrieveAPIView):
 #     queryset = User.objects.all()
 #     serializer_class = UserSerializer
+
+
+def test(request):
+    data = []
+    _data = dict()
+    # Artiklite testandmed
+    queryset = Artikkel.objects.all()
+    _data['test_url'] = reverse('wiki:wiki_artikkel_detail')
+    _data['ids'] = [obj.id for obj in queryset]
+    data.append(_data)
+    return JsonResponse(data, safe=False)
