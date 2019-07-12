@@ -156,7 +156,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
     ]
     fieldsets = [
         (None, {
-            'fields': [('body_text', 'pilt_set')]
+            'fields': [('body_text')]
             }
          ),
         ('Toimus', {
