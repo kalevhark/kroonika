@@ -219,7 +219,7 @@ def algus(request):
         else:
             a['sel_p2eval'] = sel_p2eval
         a['sel_p2eval_kirjeid'] = sel_p2eval_kirjeid
-        # Samal kuul toimunud
+        # Samal kuul toimunud TODO: probleem kui hist_searchdate__month ja hist_enddate__month ei ole järjest
         sel_kuul = Artikkel.objects.filter(Q(hist_searchdate__month = kuu) | Q(hist_enddate__month = kuu))
         sel_kuul_kirjeid = len(sel_kuul)
         if sel_kuul_kirjeid > 9: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
@@ -675,8 +675,8 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         aasta = context['month'].year
         kuu = context['month'].month
         p2ev = context['month']
-        # Leiame samal kuul teistel aastatel märgitud artiklid
-        sel_kuul = Artikkel.objects.exclude(hist_searchdate__year = aasta).filter(hist_searchdate__month = kuu)
+        # Leiame samal kuul teistel aastatel märgitud artiklid TODO: probleem kui hist_searchdate__month ja hist_enddate__month ei ole järjest
+        sel_kuul = Artikkel.objects.exclude(hist_searchdate__year = aasta).filter(Q(hist_searchdate__month = kuu) | Q(hist_enddate__month = kuu))
         context['sel_kuul'] = sel_kuul
         # Leiame samal kuul sündinud isikud
         syndinud_isikud = Isik.objects.filter(
