@@ -264,6 +264,19 @@
 				{% if forloop.counter > 1 %}
 					<br>
 				{% endif %}
+				{% if obj.hist_date %}
+					<a class="hover-isik"
+						href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}
+					>
+					{{ obj.hist_date|date:"d.m.Y" }}
+					</a>
+				{% elif obj.hist_year %}
+					<a class="hover-isik"
+						href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}
+					>
+					{{ obj.hist_year }}
+					</a>
+				{% endif %}
 				<a class="hover-isik"
 					href={% url 'wiki:artikkel_day_archive' year=obj.hist_enddate|date:"Y" month=obj.hist_enddate|date:"m" day=obj.hist_enddate|date:"d" %}
 				>
