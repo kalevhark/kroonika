@@ -22,18 +22,16 @@
 	  	</a>
     </div>
     <div class="w3-quarter">
-      <a class="w3-tooltip" style="text-decoration: none;" href={% url 'wiki:wiki_isik_filter' %}>
+      <a style="text-decoration: none;" href={% url 'wiki:wiki_isik_filter' %}>
 	  		<div class="w3-container background-isik w3-padding-16 w3-hover-white">
         	<div class="w3-left">
 						<i class="fa fa-address-card-o w3-xxxlarge"></i>
 					</div>
 					<div class="w3-right">
-						<h4>Isikud ({{ andmed.isik.kirjeid }})</h4>
-<!--						<small><span class="w3-text">Klõpsa sirvimiseks</span></small>-->
+						<h4 class="w3-hide-medium">Isikud ({{ andmed.isik.kirjeid }})</h4>
+						<h4 class="w3-hide-large w3-hide-small">Isikud<br>({{ andmed.isik.kirjeid }})</h4>
 					</div>
 <!--					<div class="w3-clear"></div>-->
-<!--					<h4 class="w3-hide-medium">Isikud</h4>-->
-<!--					<p class="w3-hide-large w3-hide-small">Isikud</p>-->
       	</div>
 	  	</a>
     </div>
@@ -44,7 +42,7 @@
 						<i class="fa fa-group w3-xxxlarge"></i>
 					</div>
         	<div class="w3-right">
-          	<h5>Asutised ({{ andmed.organisatsioon.kirjeid }})</h5>
+          	<h4>Asutised ({{ andmed.organisatsioon.kirjeid }})</h4>
 <!--						<small><span class="w3-text">Klõpsa sirvimiseks</span></small>-->
         	</div>
 <!--					<div class="w3-clear"></div>-->
