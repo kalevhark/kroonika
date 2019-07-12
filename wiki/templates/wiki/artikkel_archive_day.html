@@ -70,14 +70,14 @@
 <!-- Loend samal päeval sündinud isikutest -->
 {% if syndinud_isikud %}
   {% with object_list=syndinud_isikud %}
-	{% include 'wiki/includes/object_list_isikud.html' with periood=day pealkiri=syndinud_isikud_pealkiri %}
+	{% include 'wiki/includes/object_list_isikud.html' with periood=day pealkiri=syndinud_isikud_pealkiri bookmark='syndinud' %}
   {% endwith %}
 {% endif%}
 
 <!-- Loend samal päeval surnud isikutest -->
 {% if surnud_isikud %}
   {% with object_list=surnud_isikud %}
-	{% include 'wiki/includes/object_list_isikud.html' with periood=day pealkiri=surnud_isikud_pealkiri %}
+	{% include 'wiki/includes/object_list_isikud.html' with periood=day pealkiri=surnud_isikud_pealkiri bookmark='surnud' %}
   {% endwith %}
 {% endif%}
 
