@@ -6,7 +6,9 @@
 {% load crispy_forms_tags %}
 
 <form method="post" class="uniForm">
-    {{ form|crispy }}
+  {{ form|crispy }}
+  <button href={% url 'wiki:wiki_isik_detail' pk=object.pk %} role="button">Loobu</button>
+  <button class="btn btn-info btn-sm btn-block" type="submit" value="Update">Muuda</button>
 </form>
 
 <!--<form method="post">
