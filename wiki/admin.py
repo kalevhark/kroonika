@@ -9,10 +9,6 @@ from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Ob
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
 
-class PiltInline(admin.TabularInline):
-    model = Pilt
-    fk_name = 'artiklid'
-
 class AllikasAdmin(admin.ModelAdmin):
     search_fields = ['nimi']
     readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
@@ -160,7 +156,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
     ]
     fieldsets = [
         (None, {
-            'fields': ['body_text']
+            'fields': [('body_text', 'pilt_set')]
             }
          ),
         ('Toimus', {
@@ -191,9 +187,6 @@ class ArtikkelAdmin(admin.ModelAdmin):
             'fields': [('last_accessed', 'total_accessed')]
             }
          ),
-    ]
-    inlines = [
-        PiltInline,
     ]
 
     # Kuupäevavälja vormindamiseks
