@@ -11,7 +11,7 @@ from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
 class PiltInline(admin.TabularInline):
     model = Pilt
-
+    fk_name = 'artiklid'
 
 class AllikasAdmin(admin.ModelAdmin):
     search_fields = ['nimi']
