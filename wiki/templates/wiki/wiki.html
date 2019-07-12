@@ -82,7 +82,7 @@
 		{% now "m" as kuu %}
 		{% now "Y" as aasta %}
 	    <h5>
-				<a style="text-decoration: none;" href={% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}">
 					{% now "j.m." %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_p2eval_kirjeid }}</span>
 				</a>
 			</h5>
@@ -121,7 +121,11 @@
 	  {% if andmed.artikkel.sel_kuul %}
 	    {% now "m" as kuu %}
 		{% now "Y" as aasta %}
-	    <h5>{% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_kuul_kirjeid }}</span></h5>
+	    <h5>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}">
+					{% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_kuul_kirjeid }}</span>
+				</a>
+			</h5>
 		{% for obj in andmed.artikkel.sel_kuul %}
 		  {% if forloop.counter > 1 %}
 		    <br>
