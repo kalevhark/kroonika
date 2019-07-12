@@ -16,7 +16,7 @@ from django.shortcuts import get_list_or_404, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
-from django.urls import reverse, get_script_prefix
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views import generic
 from django.utils.version import get_version
@@ -1051,6 +1051,6 @@ def test(request):
     queryset = Artikkel.objects.all()
     _data['ids'] = [obj.id for obj in queryset]
     _data['test_url'] = reverse('wiki:wiki_artikkel_detail', kwargs={'pk': _data['ids'][0]})
-    _data['prefix'] = get_script_prefix()
+    _data['prefix'] = reverse_lazy('wiki:wiki_artikkel_detail')
     data.append(_data)
     return JsonResponse(data, safe=False)
