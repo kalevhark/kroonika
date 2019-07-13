@@ -1049,8 +1049,15 @@ def test(request):
     _data = dict()
     # Artiklite testandmed
     queryset = Artikkel.objects.all()
-    _data['ids'] = [obj.id for obj in queryset]
-    _data['test_url'] = reverse('wiki:wiki_artikkel_detail', kwargs={'pk': _data['ids'][0]})
-    _data['prefix'] = reverse_lazy('wiki:wiki_artikkel_detail', kwargs={'pk': _data['ids'][0]})
+    _data['meta'] = request.META
+    _data['ids'] = sorted([obj.id for obj in queryset])
+    _data['test_url'] = 'wiki:wiki_artikkel_detail' # reverse('wiki:wiki_artikkel_detail', kwargs={'pk': _data['ids'][0]})
+    queryset = (
+        Artikkel.objects
+            .filter(hist_searchdate__isnull=False)
+            .annotate(year=ExtractYear('hist_searchdate'))
+            .values('year')
+    )
+    _data['aastad'] = set([el['year'] for el in queryset])
     data.append(_data)
     return JsonResponse(data, safe=False)
