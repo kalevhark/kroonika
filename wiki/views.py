@@ -1048,16 +1048,24 @@ def test(request):
     data = []
     _data = dict()
     # Artiklite testandmed
-    queryset = Artikkel.objects.all()
     _data['meta_server_addr'] = request.META['SERVER_ADDR']
-    _data['ids'] = sorted([obj.id for obj in queryset])
-    _data['test_url'] = reverse('wiki:wiki_artikkel_detail', kwargs={'pk': _data['ids'][0]})
+    queryset = Artikkel.objects.all()
+    _data['test_url_artiklid_id'] = [
+        reverse('wiki:wiki_artikkel_detail', kwargs={'pk': obj.id})
+        for obj
+        in queryset
+    ]
     queryset = (
         Artikkel.objects
             .filter(hist_searchdate__isnull=False)
             .annotate(year=ExtractYear('hist_searchdate'))
             .values('year')
     )
-    _data['aastad'] = list(set(el['year'] for el in queryset))
+    aastad = list(set(el['year'] for el in queryset))
+    _data['test_url_artiklid_aasta'] = [
+        reverse('wiki:artikkel_year_archive', kwargs={'year': aasta})
+        for aasta
+        in aastad
+    ]
     data.append(_data)
     return JsonResponse(data, safe=False)
