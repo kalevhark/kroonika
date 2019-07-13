@@ -1045,7 +1045,7 @@ def get_all_logged_in_users():
 
 
 def test(request):
-    data = []
+    # data = []
     _data = dict()
     _data['meta_server_addr'] = request.META['SERVER_ADDR']
     # Artiklite testandmed
@@ -1093,5 +1093,5 @@ def test(request):
     _data['test_url_viited_id'] = [
         obj.url for obj in queryset if len(obj.url)>0
     ]
-    data.append(_data)
-    return JsonResponse(data, safe=False)
+    # data.append(_data)
+    return JsonResponse(_data, safe=False)
