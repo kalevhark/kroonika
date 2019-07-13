@@ -183,9 +183,12 @@ class Objekt(models.Model):
         ('M', 'Muu'),
     )
     nimi = models.CharField(
-        max_length=200
+        'Kohanimi',
+        max_length=200,
+        help_text='Kohanimi/nimed'
     )
     asukoht = models.CharField(
+        'Asukoht',
         max_length=200,
         blank=True,
         help_text='Asukoht'
@@ -228,15 +231,19 @@ class Objekt(models.Model):
     )
     tyyp = models.CharField(
         max_length=1,
-        choices=OBJEKTITYYP
+        choices=OBJEKTITYYP,
+        help_text='Mis liiki koht'
     )
     kirjeldus = models.TextField(
-        blank=True
+        'Kirjeldus',
+        blank=True,
+        help_text='Koha või objekti kirjeldus'
     )
     # Seotud:
     objektid = models.ManyToManyField(
         "self",
         blank=True,
+        verbose_name='Kohad'
     )
     viited = models.ManyToManyField(
         Viide,

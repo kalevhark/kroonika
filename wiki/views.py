@@ -1044,13 +1044,16 @@ def get_all_logged_in_users():
 #     serializer_class = UserSerializer
 
 
+#
+# JSON-vormis põhiobjektide lingid, et kontrollida kas töötavad
+#
 def test(request):
     # data = []
-    _data = dict()
-    _data['meta_server_addr'] = request.META['SERVER_ADDR']
+    data = dict()
+    data['meta_server_addr'] = request.META['SERVER_ADDR']
     # Artiklite testandmed
     queryset = Artikkel.objects.all()
-    _data['test_url_artiklid_id'] = [
+    data['test_url_artiklid_id'] = [
         reverse('wiki:wiki_artikkel_detail', kwargs={'pk': obj.id})
         for obj
         in queryset
@@ -1062,36 +1065,36 @@ def test(request):
             .values('year')
     )
     aastad = list(set(el['year'] for el in queryset))
-    _data['test_url_artiklid_aasta'] = [
+    data['test_url_artiklid_aasta'] = [
         reverse('wiki:artikkel_year_archive', kwargs={'year': aasta})
         for aasta
         in aastad
     ]
     # Isikute testandmed
     queryset = Isik.objects.all()
-    _data['test_url_isikud_id'] = [
+    data['test_url_isikud_id'] = [
         reverse('wiki:wiki_isik_detail', kwargs={'pk': obj.id})
         for obj
         in queryset
     ]
     # Organisatsioonide testandmed
     queryset = Organisatsioon.objects.all()
-    _data['test_url_organisatsioonid_id'] = [
+    data['test_url_organisatsioonid_id'] = [
         reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': obj.id})
         for obj
         in queryset
     ]
     # Objektide testandmed
     queryset = Objekt.objects.all()
-    _data['test_url_objektid_id'] = [
+    data['test_url_objektid_id'] = [
         reverse('wiki:wiki_objekt_detail', kwargs={'pk': obj.id})
         for obj
         in queryset
     ]
     # Viidete testandmed
     queryset = Viide.objects.all()
-    _data['test_url_viited_id'] = [
+    data['test_url_viited_id'] = [
         obj.url for obj in queryset if len(obj.url)>0
     ]
     # data.append(_data)
-    return JsonResponse(_data, safe=False)
+    return JsonResponse(data, safe=False)
