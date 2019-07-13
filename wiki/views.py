@@ -1049,7 +1049,7 @@ def test(request):
     _data = dict()
     # Artiklite testandmed
     queryset = Artikkel.objects.all()
-    _data['meta'] = request.META
+    _data['meta_server_addr'] = request.META['SERVER_ADDR']
     _data['ids'] = sorted([obj.id for obj in queryset])
     _data['test_url'] = 'wiki:wiki_artikkel_detail' # reverse('wiki:wiki_artikkel_detail', kwargs={'pk': _data['ids'][0]})
     queryset = (
