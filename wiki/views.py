@@ -1089,9 +1089,9 @@ def test(request):
         in queryset
     ]
     # Viidete testandmed
-    queryset = Viide.objects.filter(url__isnull=False)
+    queryset = Viide.objects.all()
     _data['test_url_viited_id'] = [
-        obj.url for obj in queryset
+        obj.url for obj in queryset if len(obj.url)>0
     ]
     data.append(_data)
     return JsonResponse(data, safe=False)
