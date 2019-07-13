@@ -1058,6 +1058,6 @@ def test(request):
             .annotate(year=ExtractYear('hist_searchdate'))
             .values('year')
     )
-    _data['aastad'] = set([el['year'] for el in queryset])
+    _data['aastad'] = list(set(el['year'] for el in queryset))
     data.append(_data)
     return JsonResponse(data, safe=False)
