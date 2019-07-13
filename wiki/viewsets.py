@@ -12,6 +12,7 @@ from .models import (
     Objekt,
     Organisatsioon,
     Pilt,
+    Allikas,
     Viide
 )
 from .serializers import (
@@ -22,6 +23,7 @@ from .serializers import (
     ObjektSerializer,
     OrganisatsioonSerializer,
     PiltSerializer,
+    AllikasSerializer,
     ViideSerializer
 )
 
@@ -128,6 +130,13 @@ class PiltViewSet(viewsets.ModelViewSet):
     queryset = Pilt.objects.all()
     serializer_class = PiltSerializer
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
+
+
+class AllikasViewSet(viewsets.ModelViewSet):
+    queryset = Allikas.objects.all()
+    serializer_class = AllikasSerializer
+    http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
+
 
 class ViideViewSet(viewsets.ModelViewSet):
     queryset = Viide.objects.all()

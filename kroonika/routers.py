@@ -8,6 +8,7 @@ from wiki.viewsets import (
     OrganisatsioonViewSet,
     ObjektViewSet,
     PiltViewSet,
+    AllikasViewSet,
     ViideViewSet,
 )
 
@@ -19,4 +20,5 @@ router.register(r'isik', IsikViewSet)
 router.register(r'organisatsioon', OrganisatsioonViewSet)
 router.register(r'objekt', ObjektViewSet)
 router.register(r'pilt', PiltViewSet)
+router.register(r'viide', AllikasViewSet)
 router.register(r'viide', ViideViewSet)
