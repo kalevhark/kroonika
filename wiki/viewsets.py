@@ -1,9 +1,9 @@
+from django.contrib.auth.models import User
+from django.db.models import Q
 import django_filters
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from django.contrib.auth.models import User
-from django.db.models import Q
 
 from .models import (
     # Kroonika,
