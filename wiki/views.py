@@ -28,7 +28,7 @@ from django_filters.views import FilterView
 
 # from rest_framework import generics
 
-from .models import Allikas, Artikkel, Isik, Objekt, Organisatsioon, Pilt, Vihje
+from .models import Allikas, Viide, Artikkel, Isik, Objekt, Organisatsioon, Pilt, Vihje
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 from .forms import VihjeForm
 # from .serializers import UserSerializer
@@ -1047,8 +1047,8 @@ def get_all_logged_in_users():
 def test(request):
     data = []
     _data = dict()
-    # Artiklite testandmed
     _data['meta_server_addr'] = request.META['SERVER_ADDR']
+    # Artiklite testandmed
     queryset = Artikkel.objects.all()
     _data['test_url_artiklid_id'] = [
         reverse('wiki:wiki_artikkel_detail', kwargs={'pk': obj.id})
@@ -1066,6 +1066,32 @@ def test(request):
         reverse('wiki:artikkel_year_archive', kwargs={'year': aasta})
         for aasta
         in aastad
+    ]
+    # Isikute testandmed
+    queryset = Isik.objects.all()
+    _data['test_url_isikud_id'] = [
+        reverse('wiki:wiki_isik_detail', kwargs={'pk': obj.id})
+        for obj
+        in queryset
+    ]
+    # Organisatsioonide testandmed
+    queryset = Organisatsioon.objects.all()
+    _data['test_url_organisatsioonid_id'] = [
+        reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': obj.id})
+        for obj
+        in queryset
+    ]
+    # Objektide testandmed
+    queryset = Objekt.objects.all()
+    _data['test_url_objektid_id'] = [
+        reverse('wiki:wiki_objekt_detail', kwargs={'pk': obj.id})
+        for obj
+        in queryset
+    ]
+    # Viidete testandmed
+    queryset = Viide.objects.filter(url__isnull=False)
+    _data['test_url_viited_id'] = [
+        obj.url for obj in queryset
     ]
     data.append(_data)
     return JsonResponse(data, safe=False)
