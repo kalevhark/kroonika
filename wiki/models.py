@@ -18,7 +18,8 @@ def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_')
         thumbnail(self.thumbnail, self.image, (200, 200), 'thumb')
     """
     # create thumbnail image
-    with Image.open(src_image_field) as img:
+    src_image_field_file = 'media/' + str(src_image_field)
+    with Image.open(src_image_field_file) as img:
         img.thumbnail(size) #, Image.ANTIALIAS)
 
         # build file name for dst
@@ -1044,10 +1045,10 @@ class Pilt(models.Model):
     def save(self, *args, **kwargs):
         # save for image
         super(Pilt, self).save(*args, **kwargs)
-        # make_thumbnail(self.pilt_thumbnail, self.pilt, (200, 200), 'thumb')
-        # make_thumbnail(self.pilt_icon, self.pilt, (100, 100), 'icon')
+        make_thumbnail(self.pilt_thumbnail, self.pilt, (200, 200), 'thumb')
+        make_thumbnail(self.pilt_icon, self.pilt, (100, 100), 'icon')
         # save for thumbnail and icon
-        # super(Pilt, self).save(*args, **kwargs)
+        super(Pilt, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Pildid"
