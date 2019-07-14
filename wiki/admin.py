@@ -1,16 +1,26 @@
 from django.contrib import admin
 from django.contrib.admin.templatetags.admin_list import _boolean_icon
-from django.contrib.contenttypes.admin import GenericTabularInline
 # from django.db.models import Count
-# from django.forms import ModelForm
 import datetime
 
 from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Objekt, Pilt, Vihje
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
 
-class PiltInline(admin.TabularInline):
+class PiltArtikkelInline(admin.TabularInline):
     model = Pilt.artiklid.through
+
+
+class PiltIsikInline(admin.TabularInline):
+    model = Pilt.isikud.through
+
+
+class PiltOrganisatsioonInline(admin.TabularInline):
+    model = Pilt.organisatsioonid.through
+
+
+class PiltObjektInline(admin.TabularInline):
+    model = Pilt.objektid.through
 
 
 class AllikasAdmin(admin.ModelAdmin):
@@ -193,7 +203,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
          ),
     ]
     inlines = [
-        PiltInline,
+        PiltArtikkelInline,
     ]
 
     # Kuupäevavälja vormindamiseks
@@ -325,6 +335,9 @@ class IsikAdmin(admin.ModelAdmin):
         'objektid',
         'viited'
     ]
+    inlines = [
+        PiltIsikInline,
+    ]
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
     def save_model(self, request, obj, form, change):
@@ -393,6 +406,10 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         'objektid',
         'viited'
     ]
+    inlines = [
+        PiltOrganisatsioonInline,
+    ]
+
     search_fields = ['nimi']
 
     # Kui palju on organisatsiooniga seotud artikleid
@@ -484,6 +501,9 @@ class ObjektAdmin(admin.ModelAdmin):
     filter_horizontal = [
         'objektid',
         'viited'
+    ]
+    inlines = [
+        PiltObjektInline,
     ]
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
