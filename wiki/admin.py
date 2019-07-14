@@ -588,9 +588,9 @@ class PiltAdmin(admin.ModelAdmin):
             }
          ),
     ]
-    inlines = [
-        PiltInline,
-    ]
+    # inlines = [
+    #     PiltInline,
+    # ]
 
 
     def link(self, obj):
