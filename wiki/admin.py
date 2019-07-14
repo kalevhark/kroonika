@@ -9,6 +9,7 @@ from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
 class PiltArtikkelInline(admin.TabularInline):
     model = Pilt.artiklid.through
+    extra = 1
 
 
 class PiltIsikInline(admin.TabularInline):
