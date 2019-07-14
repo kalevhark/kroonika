@@ -18,7 +18,7 @@ def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_')
         thumbnail(self.thumbnail, self.image, (200, 200), 'thumb')
     """
     # create thumbnail image
-    src_image_field_file = '/kroonika/media/' + str(src_image_field)
+    src_image_field_file = str(src_image_field)
     with Image.open(src_image_field_file) as img:
         img.thumbnail(size) #, Image.ANTIALIAS)
 
