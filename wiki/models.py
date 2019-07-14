@@ -1,8 +1,49 @@
-from django.db import models
+import datetime
+
 from django.contrib.auth.models import User
+from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-import datetime
+
+from django.core.files.base import ContentFile
+import os.path
+from PIL import Image
+from io import BytesIO
+
+def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_'):
+    """
+    make thumbnail image and field from source image field
+
+    @example
+        thumbnail(self.thumbnail, self.image, (200, 200), 'thumb')
+    """
+    # create thumbnail image
+    image = Image.open(src_image_field)
+    image.thumbnail(size, Image.ANTIALIAS)
+
+    # build file name for dst
+    dst_path, dst_ext = os.path.splitext(src_image_field.name)
+    dst_ext = dst_ext.lower()
+    dst_fname = dst_path + sep + name_suffix + dst_ext
+
+    # check extension
+    if dst_ext in ['.jpg', '.jpeg']:
+        filetype = 'JPEG'
+    elif dst_ext == '.gif':
+        filetype = 'GIF'
+    elif dst_ext == '.png':
+        filetype = 'PNG'
+    else:
+        raise RuntimeError('unrecognized file type of "%s"' % dst_ext)
+
+    # Save thumbnail to in-memory file as StringIO
+    dst_bytes = BytesIO()
+    image.save(dst_bytes, filetype)
+    dst_bytes.seek(0)
+
+    # set save=False, otherwise it will run in an infinite loop
+    dst_image_field.save(dst_fname, ContentFile(dst_bytes.read()), save=False)
+    dst_bytes.close()
 
 KUUD = (
         (1, 'jaanuar'),
@@ -878,6 +919,16 @@ class Pilt(models.Model):
         null=True,
         blank=True
     )
+    pilt_thumbnail = models.ImageField(
+        upload_to='pildid/%Y/%m/%d/',
+        editable=False,
+        blank=True
+    )
+    pilt_icon = models.ImageField(
+        upload_to='pildid/%Y/%m/%d/',
+        editable=False,
+        blank=True
+    )
     hist_date = models.DateField(
         'Kuupäev',
         null=True,
@@ -989,6 +1040,14 @@ class Pilt(models.Model):
 
     def link(self):
         return self.pilt.url
+
+    def save(self, *args, **kwargs):
+        # save for image
+        super(Pilt, self).save(*args, **kwargs)
+        make_thumbnail(self.pilt_thumbnail, self.pilt, (200, 200), 'thumb')
+        make_thumbnail(self.pilt_icon, self.pilt, (100, 100), 'icon')
+        # save for thumbnail and icon
+        super(Pilt, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Pildid"

@@ -1,9 +1,34 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, HTML, ButtonHolder
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.forms import Form, ModelForm, Textarea, SelectMultiple, ValidationError, CharField, ModelMultipleChoiceField
+from django.forms import (
+    ModelForm,
+    Textarea,
+    SelectMultiple,
+    ValidationError,
+    CharField, ModelMultipleChoiceField
+)
+from django.forms.models import inlineformset_factory
 
-from .models import Artikkel, Isik, Organisatsioon, Objekt, Vihje
+from .models import Artikkel, Isik, Organisatsioon, Objekt, Vihje, Pilt
+
+
+class PiltForm(ModelForm):
+
+    class Meta:
+        model = Pilt
+        exclude = ()
+
+
+# PiltFormSet = inlineformset_factory(
+#     Artikkel,
+#     Pilt,
+#     form=PiltForm,
+#     fields='__all__',
+#     extra=1,
+#     can_delete=True
+#     )
+
 
 class ArtikkelForm(ModelForm):
     class Meta:

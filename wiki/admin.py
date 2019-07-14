@@ -7,21 +7,36 @@ from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Ob
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
 
+#
+# Piltide lisamiseks artiklite halduris
+#
 class PiltArtikkelInline(admin.TabularInline):
     model = Pilt.artiklid.through
     extra = 1
 
 
+#
+# Piltide lisamiseks isikute halduris
+#
 class PiltIsikInline(admin.TabularInline):
     model = Pilt.isikud.through
+    extra = 1
 
 
+#
+# Piltide lisamiseks organisatsioonide halduris
+#
 class PiltOrganisatsioonInline(admin.TabularInline):
     model = Pilt.organisatsioonid.through
+    extra = 1
 
 
+#
+# Piltide lisamiseks objektide halduris
+#
 class PiltObjektInline(admin.TabularInline):
     model = Pilt.objektid.through
+    extra = 1
 
 
 class AllikasAdmin(admin.ModelAdmin):
