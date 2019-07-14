@@ -9,6 +9,10 @@ from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Ob
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 
 
+class PiltInline(admin.TabularInline):
+    model = Pilt.artiklid.through
+
+
 class AllikasAdmin(admin.ModelAdmin):
     search_fields = ['nimi']
     readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
@@ -187,6 +191,9 @@ class ArtikkelAdmin(admin.ModelAdmin):
             'fields': [('last_accessed', 'total_accessed')]
             }
          ),
+    ]
+    inlines = [
+        PiltInline,
     ]
 
     # Kuupäevavälja vormindamiseks
@@ -581,6 +588,10 @@ class PiltAdmin(admin.ModelAdmin):
             }
          ),
     ]
+    inlines = [
+        PiltInline,
+    ]
+
 
     def link(self, obj):
         if obj.pilt:
