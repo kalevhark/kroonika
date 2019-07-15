@@ -18,7 +18,7 @@ def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_')
         thumbnail(self.thumbnail, self.image, (200, 200), 'thumb')
     """
     # create thumbnail image
-    with Image.open(src_image_field, 'rb') as img:
+    with Image.open(src_image_field.name, 'rb') as img:
         img.thumbnail(size) #, Image.ANTIALIAS)
 
         # build file name for dst
