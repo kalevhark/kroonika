@@ -20,7 +20,7 @@ def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_')
     """
     # create thumbnail image
     cwd = os.getcwd()
-    with open('kroonika/media/' + src_image_field.name, 'rb') as f:
+    with open('/home/kalev/python/kroonika/media/' + src_image_field.name, 'rb') as f:
         with Image.open(f) as img:
             img.thumbnail(size) #, Image.ANTIALIAS)
 
