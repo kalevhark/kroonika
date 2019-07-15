@@ -5,7 +5,7 @@ html, body, h1, h2, h3, h4, h5 {
 /* Kasutamiseks objektivaates */
 .pilt-postkaart-medium {
 	max-height: 512px;
-	max-width: 100%;
+	max-width: 1024px;
 }
 .pilt-portree-medium {
 	max-height: 512px;
@@ -26,7 +26,7 @@ html, body, h1, h2, h3, h4, h5 {
 /* Kasutamiseks pisipildireana */
 .pilt-pildirida
 {
-	max-height: 128px;
+	max-height: 64px;
 }
 
 .tooltip {
