@@ -18,32 +18,33 @@ def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_')
         thumbnail(self.thumbnail, self.image, (200, 200), 'thumb')
     """
     # create thumbnail image
-    with Image.open(src_image_field) as img:
-        img.thumbnail(size) #, Image.ANTIALIAS)
+    with open('media/' + src_image_field.name, 'rb') as f:
+        with Image.open(f) as img:
+            img.thumbnail(size) #, Image.ANTIALIAS)
 
-        # build file name for dst
-        dst_path, dst_ext = os.path.splitext(src_image_field.name)
-        dst_ext = dst_ext.lower()
-        dst_fname = dst_path + sep + name_suffix + dst_ext
+            # build file name for dst
+            dst_path, dst_ext = os.path.splitext(src_image_field.name)
+            dst_ext = dst_ext.lower()
+            dst_fname = dst_path + sep + name_suffix + dst_ext
 
-        # check extension
-        if dst_ext in ['.jpg', '.jpeg']:
-            filetype = 'JPEG'
-        elif dst_ext == '.gif':
-            filetype = 'GIF'
-        elif dst_ext == '.png':
-            filetype = 'PNG'
-        else:
-            raise RuntimeError('unrecognized file type of "%s"' % dst_ext)
+            # check extension
+            if dst_ext in ['.jpg', '.jpeg']:
+                filetype = 'JPEG'
+            elif dst_ext == '.gif':
+                filetype = 'GIF'
+            elif dst_ext == '.png':
+                filetype = 'PNG'
+            else:
+                raise RuntimeError('unrecognized file type of "%s"' % dst_ext)
 
-        # Save thumbnail to in-memory file as StringIO
-        dst_bytes = BytesIO()
-        img.save(dst_bytes, filetype)
-        dst_bytes.seek(0)
+            # Save thumbnail to in-memory file as StringIO
+            dst_bytes = BytesIO()
+            img.save(dst_bytes, filetype)
+            dst_bytes.seek(0)
 
-        # set save=False, otherwise it will run in an infinite loop
-        dst_image_field.save(dst_fname, ContentFile(dst_bytes.read()), save=False)
-        dst_bytes.close()
+            # set save=False, otherwise it will run in an infinite loop
+            dst_image_field.save(dst_fname, ContentFile(dst_bytes.read()), save=False)
+            dst_bytes.close()
 
 KUUD = (
         (1, 'jaanuar'),
@@ -1044,10 +1045,10 @@ class Pilt(models.Model):
     def save(self, *args, **kwargs):
         # save for image
         super(Pilt, self).save(*args, **kwargs)
-        # make_thumbnail(self.pilt_thumbnail, self.pilt, (200, 200), 'thumb')
-        # make_thumbnail(self.pilt_icon, self.pilt, (100, 100), 'icon')
+        make_thumbnail(self.pilt_thumbnail, self.pilt, (200, 200), 'thumb')
+        make_thumbnail(self.pilt_icon, self.pilt, (100, 100), 'icon')
         # save for thumbnail and icon
-        # super(Pilt, self).save(*args, **kwargs)
+        super(Pilt, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Pildid"
