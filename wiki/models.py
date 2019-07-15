@@ -924,12 +924,12 @@ class Pilt(models.Model):
         blank=True
     )
     pilt_thumbnail = models.ImageField(
-        upload_to='',
+        upload_to='', # Salvestatakse samasse kataloogi pildiga make_thumbnail abil
         editable=False,
         blank=True
     )
     pilt_icon = models.ImageField(
-        upload_to='',
+        upload_to='', # Salvestatakse samasse kataloogi pildiga make_thumbnail abil
         editable=False,
         blank=True
     )
