@@ -22,7 +22,7 @@ def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_')
     # create thumbnail image
     cwd = settings.MEDIA_ROOT
 
-    with Image.open(cwd + src_image_field.name, 'rb') as img:
+    with Image.open(cwd + src_image_field.name) as img:
         img.thumbnail(size) #, Image.ANTIALIAS)
 
         # build file name for dst
