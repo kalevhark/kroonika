@@ -4,12 +4,12 @@ html, body, h1, h2, h3, h4, h5 {
 
 /* Kasutamiseks objektivaates */
 .pilt-postkaart-medium {
-	max-height: 400px;
+	max-height: 512px;
 	max-width: 100%;
 }
 .pilt-portree-medium {
-	max-height: 500px;
-	max-width: 100%;
+	max-height: 512px;
+	max-width: 288px;
 }
 
 /* Kasutamiseks uudisvoos */
@@ -19,14 +19,14 @@ html, body, h1, h2, h3, h4, h5 {
 }
 .pilt-portree-small {
 	max-height: 128px;
-	max-width: 128px;
+	max-width: 96px;
 	float: left;
 	margin-right: 1em;
 }
 /* Kasutamiseks pisipildireana */
 .pilt-pildirida
 {
-	max-height: 100px;
+	max-height: 128px;
 }
 
 .tooltip {
