@@ -20,9 +20,9 @@ def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_')
         thumbnail(self.thumbnail, self.image, (200, 200), 'thumb')
     """
     # create thumbnail image
-    cwd = settings.MEDIA_ROOT
+    media_dir = settings.MEDIA_ROOT
 
-    with Image.open(cwd + src_image_field.name) as img:
+    with Image.open(media_dir + src_image_field.name) as img:
         img.thumbnail(size) #, Image.ANTIALIAS)
 
         # build file name for dst
@@ -924,12 +924,12 @@ class Pilt(models.Model):
         blank=True
     )
     pilt_thumbnail = models.ImageField(
-        upload_to='pildid/%Y/%m/%d/',
+        upload_to='',
         editable=False,
         blank=True
     )
     pilt_icon = models.ImageField(
-        upload_to='pildid/%Y/%m/%d/',
+        upload_to='',
         editable=False,
         blank=True
     )
