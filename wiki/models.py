@@ -1044,10 +1044,10 @@ class Pilt(models.Model):
     def save(self, *args, **kwargs):
         # save for image
         super(Pilt, self).save(*args, **kwargs)
-        # make_thumbnail(self.pilt_thumbnail, self.pilt, (200, 200), 'thumb')
-        # make_thumbnail(self.pilt_icon, self.pilt, (100, 100), 'icon')
+        make_thumbnail(self.pilt_thumbnail, self.pilt, (200, 200), 'thumb')
+        make_thumbnail(self.pilt_icon, self.pilt, (100, 100), 'icon')
         # save for thumbnail and icon
-        # super(Pilt, self).save(*args, **kwargs)
+        super(Pilt, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Pildid"
