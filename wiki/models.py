@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
@@ -19,34 +20,34 @@ def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_')
         thumbnail(self.thumbnail, self.image, (200, 200), 'thumb')
     """
     # create thumbnail image
-    cwd = os.getcwd()
-    with open('/home/kalev/python/kroonika/media/' + src_image_field.name, 'rb') as f:
-        with Image.open(f) as img:
-            img.thumbnail(size) #, Image.ANTIALIAS)
+    cwd = settings.MEDIA_ROOT
 
-            # build file name for dst
-            dst_path, dst_ext = os.path.splitext(src_image_field.name)
-            dst_ext = dst_ext.lower()
-            dst_fname = dst_path + sep + name_suffix + dst_ext
+    with Image.open(cwd + src_image_field.name, 'rb') as img:
+        img.thumbnail(size) #, Image.ANTIALIAS)
 
-            # check extension
-            if dst_ext in ['.jpg', '.jpeg']:
-                filetype = 'JPEG'
-            elif dst_ext == '.gif':
-                filetype = 'GIF'
-            elif dst_ext == '.png':
-                filetype = 'PNG'
-            else:
-                raise RuntimeError('unrecognized file type of "%s"' % dst_ext)
+        # build file name for dst
+        dst_path, dst_ext = os.path.splitext(src_image_field.name)
+        dst_ext = dst_ext.lower()
+        dst_fname = dst_path + sep + name_suffix + dst_ext
 
-            # Save thumbnail to in-memory file as StringIO
-            dst_bytes = BytesIO()
-            img.save(dst_bytes, filetype)
-            dst_bytes.seek(0)
+        # check extension
+        if dst_ext in ['.jpg', '.jpeg']:
+            filetype = 'JPEG'
+        elif dst_ext == '.gif':
+            filetype = 'GIF'
+        elif dst_ext == '.png':
+            filetype = 'PNG'
+        else:
+            raise RuntimeError('unrecognized file type of "%s"' % dst_ext)
 
-            # set save=False, otherwise it will run in an infinite loop
-            dst_image_field.save(dst_fname, ContentFile(dst_bytes.read()), save=False)
-            dst_bytes.close()
+        # Save thumbnail to in-memory file as StringIO
+        dst_bytes = BytesIO()
+        img.save(dst_bytes, filetype)
+        dst_bytes.seek(0)
+
+        # set save=False, otherwise it will run in an infinite loop
+        dst_image_field.save(dst_fname, ContentFile(dst_bytes.read()), save=False)
+        dst_bytes.close()
 
 KUUD = (
         (1, 'jaanuar'),
