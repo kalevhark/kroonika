@@ -15,7 +15,7 @@ html, body, h1, h2, h3, h4, h5 {
 /* Kasutamiseks uudisvoos */
 .pilt-postkaart-small {
 	max-height: 256px;
-	max-width: 100%;
+	/* max-width: 100%; */
 }
 .pilt-portree-small {
 	max-height: 256px;
