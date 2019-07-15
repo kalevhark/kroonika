@@ -5,11 +5,11 @@ html, body, h1, h2, h3, h4, h5 {
 /* Kasutamiseks objektivaates */
 .pilt-postkaart-medium {
 	max-height: 512px;
-	max-width: 1024px;
+	max-width: 100%;
 }
 .pilt-portree-medium {
 	max-height: 512px;
-	max-width: 288px;
+	max-width: 50%;
 }
 
 /* Kasutamiseks uudisvoos */
