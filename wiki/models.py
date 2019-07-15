@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from django.core.files.base import ContentFile
+import os
 import os.path
 from PIL import Image
 from io import BytesIO
@@ -18,7 +19,8 @@ def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_')
         thumbnail(self.thumbnail, self.image, (200, 200), 'thumb')
     """
     # create thumbnail image
-    with open('media/' + src_image_field.name, 'rb') as f:
+    cwd = os.getcwd()
+    with open('kroonika/media/' + src_image_field.name, 'rb') as f:
         with Image.open(f) as img:
             img.thumbnail(size) #, Image.ANTIALIAS)
 
