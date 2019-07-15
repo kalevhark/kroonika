@@ -9,7 +9,7 @@ html, body, h1, h2, h3, h4, h5 {
 }
 .pilt-portree-medium {
 	max-height: 512px;
-	max-width: 50%;
+	max-width: 100%;
 }
 
 /* Kasutamiseks uudisvoos */
