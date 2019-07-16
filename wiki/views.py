@@ -1098,6 +1098,11 @@ def test(request):
     ]
     # Piltide testandmed
     queryset = Pilt.objects.all()
-    # Pildifailid, millel puuduvad thumb
-    data['test_url_pildid'] = [obj.pilt.url for obj in queryset if len(obj.pilt_thumbnail.name)==0]
+    # Pildifailid, millel puuduvad thumbnailid
+    data['test_url_pildid'] = [
+        obj.pilt.url
+        for obj
+        in queryset
+        if len(obj.pilt_thumbnail.name)==0
+    ]
     return JsonResponse(data, safe=False)
