@@ -224,12 +224,13 @@
 				 {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
 				</a>
 				&nbsp;&nbsp;<b>{{ obj.vanus_gen }}</b>
-				{% if obj.profiilipilt %}
+        {% include 'wiki/includes/algus_pilt.html' with model='portree' %}
+				<!--{% if obj.profiilipilt %}
 					<div class="w3-row" >
 						<img class="pilt-portree-small" src="{{ obj.profiilipilt.pilt.url }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/>
 						<small>{{ obj.kirjeldus|truncatewords:8 }}</small>
 					</div>
-				{% endif %}
+				{% endif %}-->
 			{% endfor %}
 	  {% endif %}
 	  {% if andmed.isik.sel_p2eval_surnud %}

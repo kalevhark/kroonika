@@ -1,0 +1,13 @@
+{% if obj.profiilipilt %}
+  <div class="w3-row" >
+		<img
+        class="pilt-{{ tyyp }}-small"
+        src="{{ obj.profiilipilt.pilt.url }}"
+        alt="{{ obj.profiilipilt }}"
+        title="{{ obj.profiilipilt }}"
+    />
+		<small>
+      {{ obj.kirjeldus|truncatewords:8 }}
+    </small>
+	</div>
+{% endif %}
