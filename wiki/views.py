@@ -1098,3 +1098,9 @@ def test(request):
     ]
     # data.append(_data)
     return JsonResponse(data, safe=False)
+
+def pildid(request):
+    queryset = Pilt.objects.all()
+    # Pildifailid, millel puuduvad thumb
+    failid = [obj.pilt.name for obj in queryset if len(obj.pilt_thumbnail==0)]
+    return JsonResponse(failid, safe=False)
