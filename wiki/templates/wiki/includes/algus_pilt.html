@@ -6,8 +6,10 @@
         alt="{{ obj.profiilipilt }}"
         title="{{ obj.profiilipilt }}"
     />
-		<small>
-      {{ obj.kirjeldus|truncatewords:10 }}
-    </small>
+		{% if tyyp == "portree" %}
+      <small>
+        {{ obj.kirjeldus|truncatewords:10 }}
+      </small>
+    {% endif %}
 	</div>
 {% endif %}
