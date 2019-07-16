@@ -36,7 +36,6 @@ urlpatterns = [
     path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('schema/', schema_view),
     path('test/', views.test, name='test'), # linkide testimiseks
-    path('pildid/', views.pildid, name='pildid'), # ajutine pildifailide töötlemiseks
     path('wiki/', include('wiki.urls')),
     ]
 
