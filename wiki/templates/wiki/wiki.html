@@ -224,7 +224,7 @@
 				 {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
 				</a>
 				&nbsp;&nbsp;<b>{{ obj.vanus_gen }}</b>
-        {% include 'wiki/includes/algus_pilt.html' with model='portree' %}
+        {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 				<!--{% if obj.profiilipilt %}
 					<div class="w3-row" >
 						<img class="pilt-portree-small" src="{{ obj.profiilipilt.pilt.url }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/>
