@@ -175,16 +175,7 @@
 				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
 					{{ obj }}
 				</a>
-				{% if obj.profiilipilt %}
-					<div class="w3-row" >
-						<div class="w3-half">
-							<img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/><br>
-						</div>
-						<div class="w3-half w3-padding w3-hide-small w3-hide-medium">
-							<small>{{ obj.kirjeldus|truncatewords:8 }}</small>
-						</div>
-					</div>
-				{% endif %}
+				{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 	    {% endfor %}
 	  {% endif %}
 	  {% if andmed.isik.sel_kuul %}
@@ -356,11 +347,7 @@
 					{{ obj.nimi }}
 				</a>
 				&nbsp;<b>{{ obj.vanus_gen }}</b>
-				{% if obj.profiilipilt %}
-					<div>
-						<img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/>
-					</div>
-				{% endif %}
+				{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 			{% endfor %}
 	  {% endif %}
 	  </div>
