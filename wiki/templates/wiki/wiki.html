@@ -226,7 +226,7 @@
 				&nbsp;&nbsp;<b>{{ obj.vanus_gen }}</b>
 				{% if obj.profiilipilt %}
 					<div class="w3-row" >
-						<img class="pilt-portree-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/>
+						<img class="pilt-portree-small" src="{{ obj.profiilipilt.pilt.url }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/>
 						<small>{{ obj.kirjeldus|truncatewords:8 }}</small>
 					</div>
 				{% endif %}

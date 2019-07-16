@@ -12,7 +12,7 @@ import os.path
 from PIL import Image
 from io import BytesIO
 
-def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_'):
+def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
     """
     make thumbnail image and field from source image field
 
@@ -21,9 +21,13 @@ def make_thumbnail(dst_image_field, src_image_field, size, name_suffix, sep='_')
     """
     # create thumbnail image
     media_dir = settings.MEDIA_ROOT
-
     with Image.open(media_dir + src_image_field.name) as img:
-        img.thumbnail(size) #, Image.ANTIALIAS)
+        if name_suffix == 'thumb':
+            dest_size = (img.size[0], 128)
+        else:
+            dest_size = (img.size[0], 64)
+
+        img.thumbnail(dest_size) #, Image.ANTIALIAS)
 
         # build file name for dst
         dst_path, dst_ext = os.path.splitext(src_image_field.name)
@@ -1048,8 +1052,8 @@ class Pilt(models.Model):
     def save(self, *args, **kwargs):
         # save for image
         super(Pilt, self).save(*args, **kwargs)
-        make_thumbnail(self.pilt_thumbnail, self.pilt, (200, 200), 'thumb')
-        make_thumbnail(self.pilt_icon, self.pilt, (100, 100), 'icon')
+        make_thumbnail(self.pilt_thumbnail, self.pilt, 'thumb')
+        make_thumbnail(self.pilt_icon, self.pilt, 'icon')
         # save for thumbnail and icon
         super(Pilt, self).save(*args, **kwargs)
 
