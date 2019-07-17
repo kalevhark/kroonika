@@ -1144,7 +1144,7 @@ def test(request):
         obj.url for obj in queryset if len(obj.url)>0
     ]
     # Piltide testandmed
-    queryset = Pilt.objects.filter(pilt_thumbnail='')
+    queryset = Pilt.objects.all()
     # Pildifailid, millel puuduvad thumbnailid
     data['test_url_pildid'] = [
         obj.pilt.url
