@@ -1033,69 +1033,10 @@ def get_all_logged_in_users():
     return User.objects.filter(id__in=uid_list)
 
 
-# Vajalikud API jaoks
-# class UserList(generics.ListAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-#
-#
-# class UserDetail(generics.RetrieveAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-
-
-# Ajutine
-from django.core.files.base import ContentFile
-import os.path
-from PIL import Image
-from io import BytesIO
-
-def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
-    """
-    make thumbnail image and field from source image field
-
-    @example
-        thumbnail(self.thumbnail, self.image, (200, 200), 'thumb')
-    """
-    # create thumbnail image
-    media_dir = settings.MEDIA_ROOT
-    with Image.open(media_dir + src_image_field.name) as img:
-        if name_suffix == 'thumb':
-            dest_size = (img.size[0], 128)
-        else:
-            dest_size = (img.size[0], 64)
-
-        img.thumbnail(dest_size) #, Image.ANTIALIAS)
-
-        # build file name for dst
-        dst_path, dst_ext = os.path.splitext(src_image_field.name)
-        dst_ext = dst_ext.lower()
-        dst_fname = dst_path + sep + name_suffix + dst_ext
-
-        # check extension
-        if dst_ext in ['.jpg', '.jpeg']:
-            filetype = 'JPEG'
-        elif dst_ext == '.gif':
-            filetype = 'GIF'
-        elif dst_ext == '.png':
-            filetype = 'PNG'
-        else:
-            raise RuntimeError('unrecognized file type of "%s"' % dst_ext)
-
-        # Save thumbnail to in-memory file as StringIO
-        dst_bytes = BytesIO()
-        img.save(dst_bytes, filetype)
-        dst_bytes.seek(0)
-
-        # set save=False, otherwise it will run in an infinite loop
-        dst_image_field.save(dst_fname, ContentFile(dst_bytes.read())) #, save=False)
-        dst_bytes.close()
-
 #
 # JSON-vormis põhiobjektide lingid, et kontrollida kas töötavad
 #
 def test(request):
-    # data = []
     data = dict()
     data['meta_server_addr'] = request.META['SERVER_ADDR']
     # Artiklite testandmed
@@ -1152,13 +1093,5 @@ def test(request):
         in queryset
         # if len(obj.pilt_thumbnail.name)==0
     ]
-    # Prooviks ühe pildi konverteerimine
-    queryset = Pilt.objects.filter(pilt_thumbnail='')
-    data['test_pilt_thumbnail'] = []
-    for p in queryset:
-        p.save()
-        # make_thumbnail(p.pilt_thumbnail, p.pilt, 'thumb')
-        # make_thumbnail(p.pilt_icon, p.pilt, 'icon')
-        data['test_pilt_thumbnail'].append([p.id, p.pilt.name, p.pilt_icon.name, p.pilt_thumbnail.name])
     return JsonResponse(data, safe=False)
 

@@ -57,7 +57,9 @@
 		        &ensp;
 			  {% endif %}
 			  <!-- Vaja lisada pildirida! -->
-			  <a class="hover-pilt" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}"><img class="pilt-pildirida" src="{{ pilt.pilt.url }}" alt="{{ pilt }}" title="{{ pilt }}"></a>
+			  <a class="hover-pilt" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
+					<img class="pilt-pildirida" src="{{ pilt.pilt_icon.url }}" alt="{{ pilt }}" title="{{ pilt }}">
+				</a>
 			{% endfor %}
 		  </div>
 	</div>
