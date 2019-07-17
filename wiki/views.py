@@ -1088,7 +1088,7 @@ def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
         dst_bytes.seek(0)
 
         # set save=False, otherwise it will run in an infinite loop
-        dst_image_field.save(dst_fname, ContentFile(dst_bytes.read()), save=False)
+        dst_image_field.save(dst_fname, ContentFile(dst_bytes.read())) #, save=False)
         dst_bytes.close()
 
 #
