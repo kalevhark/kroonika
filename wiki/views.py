@@ -1153,6 +1153,7 @@ def test(request):
         # if len(obj.pilt_thumbnail.name)==0
     ]
     # Prooviks ühe pildi konverteerimine
+    queryset = Pilt.objects.filter(pilt_thumbnail='')
     p = queryset.first()
     make_thumbnail(p.pilt_thumbnail, p.pilt, 'thumb')
     make_thumbnail(p.pilt_icon, p.pilt, 'icon')
