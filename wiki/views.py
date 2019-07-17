@@ -1154,10 +1154,11 @@ def test(request):
     ]
     # Prooviks ühe pildi konverteerimine
     queryset = Pilt.objects.filter(pilt_thumbnail='')
-    p = queryset.first()
-    p.save()
-    # make_thumbnail(p.pilt_thumbnail, p.pilt, 'thumb')
-    # make_thumbnail(p.pilt_icon, p.pilt, 'icon')
-    data['test_pilt_thumbnail'] = [p.id, p.pilt.name, p.pilt_icon.name, p.pilt_thumbnail.name]
+    data['test_pilt_thumbnail'] = []
+    for p in queryset:
+        p.save()
+        # make_thumbnail(p.pilt_thumbnail, p.pilt, 'thumb')
+        # make_thumbnail(p.pilt_icon, p.pilt, 'icon')
+        data['test_pilt_thumbnail'].append([p.id, p.pilt.name, p.pilt_icon.name, p.pilt_thumbnail.name])
     return JsonResponse(data, safe=False)
 
