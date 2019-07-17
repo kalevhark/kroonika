@@ -1156,6 +1156,6 @@ def test(request):
     p = queryset.first()
     make_thumbnail(p.pilt_thumbnail, p.pilt, 'thumb')
     make_thumbnail(p.pilt_icon, p.pilt, 'icon')
-    data['test_pilt_thumbnail'] = [p.pilt, p.pilt_icon, p.pilt_thumbnail]
+    data['test_pilt_thumbnail'] = [p.pilt.name, p.pilt_icon.name, p.pilt_thumbnail.name]
     return JsonResponse(data, safe=False)
 
