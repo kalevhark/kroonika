@@ -59,7 +59,7 @@ class ArtikkelFilter(filters.FilterSet):
 
 
 class ArtikkelViewSet(viewsets.ModelViewSet):
-    queryset = Artikkel.objects.all().order_by('-hist_searchdate')
+    queryset = Artikkel.objects.all().order_by('hist_searchdate')
     serializer_class = ArtikkelSerializer
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
