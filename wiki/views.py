@@ -133,7 +133,11 @@ def info(request):
     # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
     revision_data['kroonika'] = Artikkel.objects.filter(kroonika__isnull=False).count()
-    revision_data['revised'] = Artikkel.objects.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1).count()
+    revision_data['revised'] = [
+        obj.id
+        for obj
+        in Artikkel.objects.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1)
+    ]
     revision_data['viiteta'] = list(Artikkel.objects.filter(viited__isnull=True).values_list('id', flat=True))
 
     return render(

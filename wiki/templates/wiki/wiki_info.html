@@ -98,7 +98,7 @@ Lisaks:
 {% render_logged_in_user_list %}
 </div>
 <div>
-  Revision: {{ revision_data.kroonika }}/{{ revision_data.revised }}<br>
+  Revision: {{ revision_data.kroonika }}:{{ revision_data.revised }}?<br>
   {% if revision_data.viiteta %}
     Viiteta:
     {% for pk in revision_data.viiteta %}
