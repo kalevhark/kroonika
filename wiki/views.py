@@ -297,11 +297,22 @@ def algus(request):
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = Organisatsioon.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
-        juubilarid = Organisatsioon.objects.exclude(hist_year=None).annotate(
-            nulliga=ExpressionWrapper(
-                (datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()), vanus_gen=ExpressionWrapper(
-                    datetime.date.today().year - F('hist_year'), output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
-        a['juubilarid'] = juubilarid
+        # juubilarid = Organisatsioon.objects.exclude(hist_year=None).annotate(
+        #     nulliga=ExpressionWrapper(
+        #         (datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()), vanus_gen=ExpressionWrapper(
+        #             datetime.date.today().year - F('hist_year'), output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
+        # a['juubilarid'] = juubilarid
+        organisatsioonid_synniajaga = Organisatsioon.objects.exclude(
+            hist_date__isnull=True,
+            hist_year__isnull=True
+        ).annotate(
+            synniaasta_gen=ExpressionWrapper(
+                ExtractYear('hist_date') if 'hist_date' else 'hist_year',
+                output_field=IntegerField()
+            )
+        )
+        juubilarid = [organisatsioon.id for organisatsioon in organisatsioonid_synniajaga if organisatsioon.vanus() % 5 == 0]
+        a['juubilarid'] = organisatsioonid_synniajaga.filter(id__in=juubilarid).order_by('synniaasta_gen')
     andmed['organisatsioon'] = a
     
     # Andmebaas Objekt andmed veebi

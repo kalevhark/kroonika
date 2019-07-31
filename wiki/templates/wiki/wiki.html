@@ -312,6 +312,9 @@
 				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
 					{{ obj }}
 				</a>
+				{% if obj.vanus|divisibleby:"5" %}
+					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+				{% endif %}
 				{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 	    {% endfor %}
 	  {% endif %}
@@ -331,6 +334,9 @@
 				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
 					{{ obj }}
 				</a>
+				{% if obj.vanus|divisibleby:"5" %}
+					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+				{% endif %}
 	    {% endfor %}
 	  {% endif %}
 	  {% if andmed.organisatsioon.juubilarid %}
@@ -356,7 +362,7 @@
 				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
 					{{ obj.nimi }}
 				</a>
-				&nbsp;<b>{{ obj.vanus_gen }}</b>
+				&nbsp;<b>{{ obj.vanus }}</b>
 				{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 			{% endfor %}
 	  {% endif %}
@@ -381,6 +387,9 @@
 				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
 					{{ obj }}
 				</a>
+				{% if obj.vanus|divisibleby:"5" %}
+					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+				{% endif %}
 				{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 	    {% endfor %}
 	  {% endif %}
@@ -400,6 +409,9 @@
 				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
 					{{ obj }}
 				</a>
+				{% if obj.vanus|divisibleby:"5" %}
+					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+				{% endif %}
 	    {% endfor %}
 	  {% endif %}
 	  {% if andmed.objekt.juubilarid %}

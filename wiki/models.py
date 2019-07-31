@@ -367,10 +367,10 @@ class Objekt(models.Model):
     def vanus(self, d=datetime.date.today()):
         if self.hist_date:
             return d.year - self.hist_date.year
+        elif self.hist_year:
+            return d.year - self.hist_year
         else:
-            if self.hist_year:
-                return d.year - self.hist_year
-        return None
+            return None
 
     def profiilipilt(self):
         return Pilt.objects.filter(objektid=self.id, profiilipilt_objekt=True).first()
@@ -494,10 +494,10 @@ class Organisatsioon(models.Model):
     def vanus(self, d=datetime.date.today()):
         if self.hist_date:
             return d.year - self.hist_date.year
+        elif self.hist_year:
+            return d.year - self.hist_year
         else:
-            if self.hist_year:
-                return d.year - self.hist_year
-        return None
+            return None
 
     def profiilipilt(self):
         return Pilt.objects.filter(organisatsioonid=self.id, profiilipilt_organisatsioon=True).first()
