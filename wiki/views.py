@@ -243,8 +243,8 @@ def algus(request):
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
         kp = Isik.objects.all().aggregate(max_inp_date=Max('inp_date'), max_mod_date=Max('mod_date'))
-        a['viimane_lisatud'] = Isik.objects.filter(inp_date=kp['max_inp_date'])[0]
-        a['viimane_muudetud'] = Isik.objects.filter(mod_date=kp['max_mod_date'])[0]
+        a['viimane_lisatud'] = Isik.objects.filter(inp_date=kp['max_inp_date']).last()
+        a['viimane_muudetud'] = Isik.objects.filter(mod_date=kp['max_mod_date']).last()
         a['sel_p2eval'] = Isik.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = Isik.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
@@ -267,8 +267,8 @@ def algus(request):
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
         kp = Organisatsioon.objects.all().aggregate(max_inp_date=Max('inp_date'), max_mod_date=Max('mod_date'))
-        a['viimane_lisatud'] = Organisatsioon.objects.filter(inp_date=kp['max_inp_date'])[0]
-        a['viimane_muudetud'] = Organisatsioon.objects.filter(mod_date=kp['max_mod_date'])[0]
+        a['viimane_lisatud'] = Organisatsioon.objects.filter(inp_date=kp['max_inp_date']).last()
+        a['viimane_muudetud'] = Organisatsioon.objects.filter(mod_date=kp['max_mod_date']).last()
         a['sel_p2eval'] = Organisatsioon.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = Organisatsioon.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
@@ -286,8 +286,8 @@ def algus(request):
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
         kp = Objekt.objects.all().aggregate(max_inp_date=Max('inp_date'), max_mod_date=Max('mod_date'))
-        a['viimane_lisatud'] = Objekt.objects.filter(inp_date=kp['max_inp_date'])[0]
-        a['viimane_muudetud'] = Objekt.objects.filter(mod_date=kp['max_mod_date'])[0]
+        a['viimane_lisatud'] = Objekt.objects.filter(inp_date=kp['max_inp_date']).last()
+        a['viimane_muudetud'] = Objekt.objects.filter(mod_date=kp['max_mod_date']).last()
         a['sel_p2eval'] = Objekt.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = Objekt.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
