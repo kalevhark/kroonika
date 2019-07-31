@@ -359,7 +359,7 @@ class Objekt(models.Model):
     # Kui kirjelduses on vigase koha märge
     @property
     def vigane(self):
-        return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else True
+        return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
     def get_absolute_url(self):
         return reverse('wiki:wiki_objekt_detail', kwargs={'pk': self.pk})
@@ -374,6 +374,12 @@ class Objekt(models.Model):
 
     def profiilipilt(self):
         return Pilt.objects.filter(objektid=self.id, profiilipilt_objekt=True).first()
+
+    def save(self, *args, **kwargs):
+        if self.hist_date:
+            self.hist_year = self.hist_date.year
+        super().save(*args, **kwargs)
+
 
     class Meta:
         ordering = ['nimi']
@@ -501,6 +507,12 @@ class Organisatsioon(models.Model):
 
     def profiilipilt(self):
         return Pilt.objects.filter(organisatsioonid=self.id, profiilipilt_organisatsioon=True).first()
+
+    def save(self, *args, **kwargs):
+        if self.hist_date:
+            self.hist_year = self.hist_date.year
+        super().save(*args, **kwargs)
+
 
     class Meta:
         ordering = ['nimi']
