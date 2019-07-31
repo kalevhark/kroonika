@@ -104,7 +104,7 @@ LOGOUT_REDIRECT_URL = ROOT_URL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'kroonika_db',
+        'NAME': 'public',
         'USER': 'kroonika',
         'PASSWORD': 'kr00nika',
         'HOST': 'localhost',
