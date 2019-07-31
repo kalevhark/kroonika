@@ -19,14 +19,14 @@
 	  {% endif %}
 	  {% if obj.hist_endyear %}
 	    -
-		{% if obj.hist_enddate %}
-		  {{ obj.hist_enddate|date:"d.m.Y" }}
-		{% else %}
-		  {{ obj.hist_endyear }}
-		{% endif %}
+			{% if obj.hist_enddate %}
+				{{ obj.hist_enddate|date:"d.m.Y" }}
+			{% else %}
+				{{ obj.hist_endyear }}
+			{% endif %}
 	  {% endif %}
 	  &nbsp;{% now 'Y' %}:
-	  {% if not obj.nulliga %}
+	  {% if obj.vanus|divisibleby:"5" %}
 	    <b class="text-organisatsioon">{{ obj.vanus }}</b>
 	  {% else	%}
 	    {{ obj.vanus }}

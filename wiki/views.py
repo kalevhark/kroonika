@@ -759,13 +759,13 @@ class ArtikkelDayArchiveView(DayArchiveView):
         context['surnud_isikud_pealkiri'] = '{0}. {1} surnud isikud'.format(p2ev, mis_kuul(kuu, 'l'))
         # Leiame samal kuupäeval loodud organisatsioonid
         loodud_organisatsioonid = Organisatsioon.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
-                nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
         context['loodud_organisatsioonid_pealkiri'] = '{0}. {1} loodud organisatsioonid'.format(p2ev, mis_kuul(kuu, 'l'))
         # Leiame samal kuupäeval loodud objektid
         valminud_objektid = Objekt.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
-                nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid_pealkiri'] = '{0}. {1} valminud objektid'.format(p2ev, mis_kuul(kuu, 'l'))
