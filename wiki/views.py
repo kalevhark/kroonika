@@ -792,7 +792,7 @@ class IsikFilter(django_filters.FilterSet):
 ##            self.queryset = self.queryset.none()
 
 def on_juubel(aasta, synniaasta):
-    return aasta - synniaasta
+    return (aasta - synniaasta) % 5
 
 class IsikFilterView(FilterView):
     model = Isik
