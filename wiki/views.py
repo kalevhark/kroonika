@@ -264,14 +264,18 @@ def algus(request):
         #     vanus_gen=ExpressionWrapper(
         #         datetime.date.today().year - ExtractYear('hist_date'),
         #         output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
-        isikud_synniajaga = Isik.objects.exclude(hist_date=None).annotate(
-            vanus_gen=ExpressionWrapper(
-                datetime.date.today().year - ExtractYear('hist_date'),
-                output_field=IntegerField()
-            )
+        # isikud_synniajaga = Isik.objects.exclude(hist_date=None).annotate(
+        #     vanus_gen=ExpressionWrapper(
+        #         datetime.date.today().year - ExtractYear('hist_date'),
+        #         output_field=IntegerField()
+        #     )
+        # )
+        isikud_synniajaga = Isik.objects.exclude(
+            hist_date__isnull=True,
+            hist_year__isnull=True
         )
-        juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus_gen%5==0]
-        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('-vanus_gen')
+        juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus()%5==0]
+        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid) #.order_by('-vanus')
     andmed['isik'] = a
 
     # Andmebaas Organisatsioon andmed veebi
