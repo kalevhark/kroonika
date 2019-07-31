@@ -175,6 +175,9 @@
 				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
 					{{ obj }}
 				</a>
+				{% if obj.vanus|divisible:"5" %}
+					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+				{% endif %}
 				{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 	    {% endfor %}
 	  {% endif %}
@@ -198,6 +201,9 @@
 				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
 					{{ obj }}
 				</a>
+				{% if obj.vanus|divisible:"5" %}
+					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+				{% endif %}
 	    {% endfor %}
 	  {% endif %}
 	  {% if andmed.isik.juubilarid %}
@@ -208,13 +214,13 @@
 				{% endif %}
 				{% if obj.hist_date %}
 					<a class="hover-isik"
-					href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}>
+						href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}>
 						<b>{{ obj.hist_date|date:"d.m.Y" }}</b>
 					</a>
 				{% else %}
 					<a class="hover-isik"
-					href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}>
-						<b>{{ obj.hist_date|date:"d.m.Y" }}</b>
+						href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}>
+						<b>{{ obj.hist_year }}</b>
 					</a>
 				{% endif %}&nbsp;
 				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
