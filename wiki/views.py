@@ -274,8 +274,10 @@ def algus(request):
             hist_date__isnull=True,
             hist_year__isnull=True
         )
-        juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus()%5==0]
-        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('hist_year')
+        juubilarid = [
+            isik.id for isik in isikud_synniajaga if isik.vanus()%5==0
+        ]
+        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'hist_date')
     andmed['isik'] = a
 
     # Andmebaas Organisatsioon andmed veebi
@@ -300,14 +302,11 @@ def algus(request):
         organisatsioonid_synniajaga = Organisatsioon.objects.exclude(
             hist_date__isnull=True,
             hist_year__isnull=True
-        ).annotate(
-            synniaasta_gen=ExpressionWrapper(
-                ExtractYear('hist_date') if 'hist_date' else F('hist_year'),
-                output_field=IntegerField()
-            )
         )
-        juubilarid = [organisatsioon.id for organisatsioon in organisatsioonid_synniajaga if organisatsioon.vanus() % 5 == 0]
-        a['juubilarid'] = organisatsioonid_synniajaga.filter(id__in=juubilarid).order_by('synniaasta_gen')
+        juubilarid = [
+            organisatsioon.id for organisatsioon in organisatsioonid_synniajaga if organisatsioon.vanus() % 5 == 0
+        ]
+        a['juubilarid'] = organisatsioonid_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'hist_date')
     andmed['organisatsioon'] = a
     
     # Andmebaas Objekt andmed veebi
@@ -324,12 +323,20 @@ def algus(request):
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = Objekt.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
-        juubilarid = Objekt.objects.exclude(hist_year=None).annotate(
-            nulliga=ExpressionWrapper(
-                (datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
-            vanus_gen=ExpressionWrapper(
-                    datetime.date.today().year - (ExtractYear('hist_date') if 'hist_date' else F('hist_year')), output_field=IntegerField())).filter(nulliga=0).order_by('hist_year')
-        a['juubilarid'] = juubilarid
+        # juubilarid = Objekt.objects.exclude(hist_year=None).annotate(
+        #     nulliga=ExpressionWrapper(
+        #         (datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
+        #     vanus_gen=ExpressionWrapper(
+        #             datetime.date.today().year - (ExtractYear('hist_date') if 'hist_date' else F('hist_year')), output_field=IntegerField())).filter(nulliga=0).order_by('hist_year')
+        # a['juubilarid'] = juubilarid
+        objektid_synniajaga = Objekt.objects.exclude(
+            hist_date__isnull=True,
+            hist_year__isnull=True
+        )
+        juubilarid = [
+            objekt.id for objekt in objektid_synniajaga if objekt.vanus() % 5 == 0
+        ]
+        a['juubilarid'] = objektid_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'hist_date')
     andmed['objekt'] = a
     
     return render(request, 'wiki/wiki.html', {'andmed': andmed})

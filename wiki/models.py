@@ -377,7 +377,7 @@ class Objekt(models.Model):
 
     class Meta:
         ordering = ['nimi']
-        verbose_name_plural = "Objektid"
+        verbose_name_plural = "Kohad"
 
 
 class Organisatsioon(models.Model):
@@ -504,7 +504,7 @@ class Organisatsioon(models.Model):
 
     class Meta:
         ordering = ['nimi']
-        verbose_name_plural = "Organisatsioonid"
+        verbose_name_plural = "Asutised"
 
 
 class Isik(models.Model):
@@ -670,6 +670,12 @@ class Isik(models.Model):
 
     def profiilipilt(self):
         return Pilt.objects.filter(isikud=self.id, profiilipilt_isik=True).first()
+
+    def save(self, *args, **kwargs):
+        if self.hist_date:
+            self.hist_year = self.hist_date.year
+        super().save(*args, **kwargs)
+
 
     class Meta:
         ordering = ['perenimi', 'eesnimi']

@@ -363,6 +363,9 @@ class IsikAdmin(admin.ModelAdmin):
             objekt.created_by = request.user
         else:
             objekt.updated_by = request.user
+        # Lisame sünnikuupäeva põhjal sünniaasta
+        if objekt.hist_date:
+            objekt.hist_year = objekt.hist_date.year
         objekt.save()
         form.save_m2m()
         return objekt
@@ -450,17 +453,17 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         if objekt.hist_date:
             objekt.hist_year = objekt.hist_date.year
             objekt.hist_month = objekt.hist_date.month
-            objekt.hist_searchdate = objekt.hist_date
-        else:
-            if objekt.hist_year:
-                y = objekt.hist_year
-                if objekt.hist_month:
-                    m = objekt.hist_month
-                else:
-                    m = 1
-                objekt.hist_searchdate = datetime.datetime(y, m, 1)
-            else:
-                objekt.hist_searchdate = None
+        #     objekt.hist_searchdate = objekt.hist_date
+        # else:
+        #     if objekt.hist_year:
+        #         y = objekt.hist_year
+        #         if objekt.hist_month:
+        #             m = objekt.hist_month
+        #         else:
+        #             m = 1
+        #         objekt.hist_searchdate = datetime.datetime(y, m, 1)
+        #     else:
+        #         objekt.hist_searchdate = None
         if objekt.hist_enddate:
             objekt.hist_endyear = objekt.hist_enddate.year
         objekt.save()
@@ -534,17 +537,17 @@ class ObjektAdmin(admin.ModelAdmin):
         if objekt.hist_date:
             objekt.hist_year = objekt.hist_date.year
             objekt.hist_month = objekt.hist_date.month
-            objekt.hist_searchdate = objekt.hist_date
-        else:
-            if objekt.hist_year:
-                y = objekt.hist_year
-                if objekt.hist_month:
-                    m = objekt.hist_month
-                else:
-                    m = 1
-                objekt.hist_searchdate = datetime.datetime(y, m, 1)
-            else:
-                objekt.hist_searchdate = None
+        #     objekt.hist_searchdate = objekt.hist_date
+        # else:
+        #     if objekt.hist_year:
+        #         y = objekt.hist_year
+        #         if objekt.hist_month:
+        #             m = objekt.hist_month
+        #         else:
+        #             m = 1
+        #         objekt.hist_searchdate = datetime.datetime(y, m, 1)
+        #     else:
+        #         objekt.hist_searchdate = None
         if objekt.hist_enddate:
             objekt.hist_endyear = objekt.hist_enddate.year
         objekt.save()
