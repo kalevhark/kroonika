@@ -437,7 +437,7 @@
 				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
 					{{ obj.nimi }}
 				</a>
-				&nbsp;<b>{{ obj.vanus_gen }}</b>
+				&nbsp;<b>{{ obj.vanus }}</b>
 				{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 			{% endfor %}
 	  {% endif %}
