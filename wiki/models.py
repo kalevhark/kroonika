@@ -612,6 +612,11 @@ class Isik(models.Model):
     )
 
     def __str__(self):
+        # Eesnimi
+        if self.eesnimi:
+            eesnimi = self.eesnimi
+        else:
+            eesnimi = ''
         # Sünniaeg
         if self.hist_date:
             sy = self.hist_date.year
@@ -630,7 +635,7 @@ class Isik(models.Model):
         else:
             su = ''
         daatumid = f'{sy}-{su}' if any([sy, su]) else ''
-        return ' '.join([self.eesnimi, self.perenimi, daatumid])
+        return ' '.join([eesnimi, self.perenimi, daatumid])
 
     def __repr__(self):
         lyhinimi = self.perenimi
