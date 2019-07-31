@@ -273,9 +273,14 @@ def algus(request):
         isikud_synniajaga = Isik.objects.exclude(
             hist_date__isnull=True,
             hist_year__isnull=True
+        ).annotate(
+            synniaasta_gen=ExpressionWrapper(
+                ExtractYear('hist_date') if 'hist_date' else 'hist_year',
+                output_field=IntegerField()
+            )
         )
-        juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus%5==0]
-        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('-vanus')
+        juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus()%5==0]
+        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('synniaasta_gen')
     andmed['isik'] = a
 
     # Andmebaas Organisatsioon andmed veebi
