@@ -204,6 +204,12 @@ class Viide(models.Model):
             for obj in self.allikas.autorid.all():
                 autorid = ', '.join([obj.lyhinimi])
         # Viite kohaviida andmed
+        peatykk = ''
+        if self.peatykk:
+            peatykk = str(self.peatykk)
+        allika_nimi = ''
+        if self.allikas.nimi:
+            allika_nimi = str(self.allikas.nimi)
         viit = ''
         if self.kohaviit: # kui on füüsiline asukoht
             viit = viit + ', ' + self.kohaviit
@@ -220,7 +226,7 @@ class Viide(models.Model):
             else: # kui viite ilmumisaastat pole, siis allika ilmumisaasta
                 if self.allikas.hist_year:
                     aeg = str(self.allikas.hist_year)
-        return ' '.join([autorid, str(self.peatykk), str(self.allikas.nimi), viit, aeg])
+        return ' '.join([autorid, peatykk, allika_nimi, viit, aeg])
 
 
 class Objekt(models.Model):
