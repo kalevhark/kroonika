@@ -267,7 +267,7 @@ def algus(request):
             )
         )
         juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus_gen%5==0]
-        a['juubilarid'] = Isik.objects.filter(id in juubilarid)
+        a['juubilarid'] = isikud_synniajaga.filter(id in juubilarid)
     andmed['isik'] = a
 
     # Andmebaas Organisatsioon andmed veebi
