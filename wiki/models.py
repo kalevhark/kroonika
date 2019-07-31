@@ -663,6 +663,8 @@ class Isik(models.Model):
     def vanus(self, d=datetime.date.today()):
         if self.hist_date:
             return d.year - self.hist_date.year
+        elif self.hist_year:
+            return d.year - self.hist_year
         else:
             return None
 
