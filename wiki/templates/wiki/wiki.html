@@ -175,7 +175,7 @@
 				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
 					{{ obj }}
 				</a>
-				{% if obj.vanus|divisible:"5" %}
+				{% if obj.vanus|divisibleby:"5" %}
 					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
 				{% endif %}
 				{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
@@ -201,7 +201,7 @@
 				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
 					{{ obj }}
 				</a>
-				{% if obj.vanus|divisible:"5" %}
+				{% if obj.vanus|divisibleby:"5" %}
 					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
 				{% endif %}
 	    {% endfor %}
