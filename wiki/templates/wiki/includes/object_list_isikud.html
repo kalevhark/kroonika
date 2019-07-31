@@ -15,7 +15,7 @@
 	&nbsp;{{ obj.hist_date|date:"d.m.Y" }} 
 	{% if obj.vanus %}
 	  {% now 'Y' %}:
-	  {% if not obj.nulliga %}
+	  {% if obj.vanus||divisibleby:"5" %}
 			<b class="text-isik">{{ obj.vanus }}</b>
 	  {% else	%}
 			{{ obj.vanus }}
