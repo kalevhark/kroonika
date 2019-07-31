@@ -807,8 +807,7 @@ class IsikFilterView(FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        list = Isik.objects.all().annotate(
-            nulliga=ExpressionWrapper(on_juubel(datetime.date.today().year, ExtractYear('hist_date')), output_field=IntegerField())).order_by('perenimi')
+        list = Isik.objects.all().order_by('perenimi')
         filter = IsikFilter(self.request.GET, queryset=list)
         list = filter.qs
 
