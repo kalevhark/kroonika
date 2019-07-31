@@ -660,6 +660,7 @@ class Isik(models.Model):
     def get_absolute_url(self):
         return reverse('wiki:wiki_isik_detail', kwargs={'pk': self.pk})
 
+    @property
     def vanus(self, d=datetime.date.today()):
         if self.hist_date:
             return d.year - self.hist_date.year

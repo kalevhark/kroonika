@@ -274,8 +274,8 @@ def algus(request):
             hist_date__isnull=True,
             hist_year__isnull=True
         )
-        juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus()%5==0]
-        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid) #.order_by('-vanus')
+        juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus%5==0]
+        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('-vanus')
     andmed['isik'] = a
 
     # Andmebaas Organisatsioon andmed veebi
