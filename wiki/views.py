@@ -208,8 +208,8 @@ def algus(request):
             max_inp_date=Max('inp_date'),
             max_mod_date=Max('mod_date')
         )
-        a['viimane_lisatud'] = Artikkel.objects.filter(inp_date=kp['max_inp_date'])[0]
-        a['viimane_muudetud'] = Artikkel.objects.filter(mod_date=kp['max_mod_date'])[0]
+        a['viimane_lisatud'] = Artikkel.objects.filter(inp_date=kp['max_inp_date']).last()
+        a['viimane_muudetud'] = Artikkel.objects.filter(mod_date=kp['max_mod_date']).last()
         # Samal kuupäeval erinevatel aastatel toimunud
         sel_p2eval_exactly = Artikkel.objects.filter( # hist_date == KKPP
             hist_date__day = p2ev,
