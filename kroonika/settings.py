@@ -103,12 +103,12 @@ LOGOUT_REDIRECT_URL = ROOT_URL
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'kroonika_db',
-        'USER': 'kroonika',
-        'PASSWORD': 'kr00nika',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE':   'django.db.backends.postgresql',
+        'NAME':     'kroonika_db',
+        'USER':     config('PSQL_USER'),
+        'PASSWORD': config('PSQL_PSWD'),
+        'HOST':     'localhost',
+        'PORT':     '5432',
     }
 }
 
