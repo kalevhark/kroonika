@@ -747,13 +747,13 @@ class ArtikkelDayArchiveView(DayArchiveView):
         context['sel_p2eval'] = sel_p2eval
         # Leiame samal kuupäeval sündinud isikud
         syndinud_isikud = Isik.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
-                nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['syndinud_isikud'] = syndinud_isikud
         context['syndinud_isikud_pealkiri'] = '{0}. {1} sündinud isikud'.format(p2ev, mis_kuul(kuu, 'l'))
         # Leiame samal kuupäeval surnud isikud
         surnud_isikud = Isik.objects.filter(hist_enddate__month = kuu, hist_enddate__day = p2ev).annotate(
-                nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['surnud_isikud'] = surnud_isikud
         context['surnud_isikud_pealkiri'] = '{0}. {1} surnud isikud'.format(p2ev, mis_kuul(kuu, 'l'))
@@ -791,8 +791,6 @@ class IsikFilter(django_filters.FilterSet):
 ##        if self.data == {}:
 ##            self.queryset = self.queryset.none()
 
-def on_juubel(aasta, synniaasta):
-    return aasta - synniaasta
 
 class IsikFilterView(FilterView):
     model = Isik
