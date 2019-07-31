@@ -255,9 +255,11 @@ def algus(request):
         a['sel_kuul_surnud_kirjeid'] = len(a['sel_kuul_surnud'])
         juubilarid = Isik.objects.exclude(hist_date=None).annotate(
             nulliga=ExpressionWrapper(
-                int((datetime.date.today().year - ExtractYear('hist_date')))%5, output_field=IntegerField()),
+                (datetime.date.today().year - int(ExtractYear('hist_date')))%5,
+                output_field=IntegerField()),
             vanus_gen=ExpressionWrapper(
-                    datetime.date.today().year - ExtractYear('hist_date'), output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
+                datetime.date.today().year - ExtractYear('hist_date'),
+                output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
         a['juubilarid'] = juubilarid
     andmed['isik'] = a
 
