@@ -359,7 +359,7 @@ class Objekt(models.Model):
     # Kui kirjelduses on vigase koha märge
     @property
     def vigane(self):
-        return VIGA_TEKSTIS in self.kirjeldus
+        return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else True
 
     def get_absolute_url(self):
         return reverse('wiki:wiki_objekt_detail', kwargs={'pk': self.pk})
