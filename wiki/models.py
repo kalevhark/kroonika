@@ -204,12 +204,14 @@ class Viide(models.Model):
             for obj in self.allikas.autorid.all():
                 autorid = ', '.join([obj.lyhinimi])
         # Viite kohaviida andmed
-        peatykk = ''
         if self.peatykk:
-            peatykk = str(self.peatykk)
-        allika_nimi = ''
+            peatykk = self.peatykk
+        else:
+            peatykk = ''
         if self.allikas.nimi:
-            allika_nimi = str(self.allikas.nimi)
+            allika_nimi = self.allikas.nimi
+        else:
+            allika_nimi = ''
         viit = ''
         if self.kohaviit: # kui on füüsiline asukoht
             viit = viit + ', ' + self.kohaviit

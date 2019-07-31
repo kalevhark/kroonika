@@ -271,7 +271,7 @@ def algus(request):
             )
         )
         juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus_gen%5==0]
-        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid)
+        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('-vanus_gen')
     andmed['isik'] = a
 
     # Andmebaas Organisatsioon andmed veebi
@@ -804,7 +804,7 @@ class IsikFilterView(FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         list = Isik.objects.all().annotate(
-            nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField())).order_by('perenimi')
+            nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=DecimalField())).order_by('perenimi')
         filter = IsikFilter(self.request.GET, queryset=list)
         list = filter.qs
 
