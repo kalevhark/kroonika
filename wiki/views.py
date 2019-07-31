@@ -278,9 +278,9 @@ def algus(request):
                 ExtractYear('hist_date') if 'hist_date' else 'hist_year',
                 output_field=IntegerField()
             )
-        ).order_by('synniaasta_gen')
+        )
         juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus()%5==0]
-        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid)
+        a['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('synniaasta_gen')
     andmed['isik'] = a
 
     # Andmebaas Organisatsioon andmed veebi
