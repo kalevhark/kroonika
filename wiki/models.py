@@ -220,7 +220,7 @@ class Viide(models.Model):
             else: # kui viite ilmumisaastat pole, siis allika ilmumisaasta
                 if self.allikas.hist_year:
                     aeg = str(self.allikas.hist_year)
-        return ' '.join([autorid, self.peatykk, self.allikas.nimi, viit, aeg])
+        return ' '.join([autorid, str(self.peatykk), str(self.allikas.nimi), viit, aeg])
 
 
 class Objekt(models.Model):
