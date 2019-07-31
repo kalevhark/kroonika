@@ -6,7 +6,7 @@ from typing import Dict, Any
 from django.conf import settings
 from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import F, Q, BooleanField, DecimalField, IntegerField, ExpressionWrapper
+from django.db.models import F, Q, Value, BooleanField, DecimalField, IntegerField, ExpressionWrapper
 from django.db.models import Count, Max, Min
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -275,7 +275,7 @@ def algus(request):
             hist_year__isnull=True
         ).annotate(
             synniaasta_gen=ExpressionWrapper(
-                ExtractYear('hist_date') if 'hist_date' else F('hist_year'),
+                ExtractYear('hist_date') if 'hist_date' else Value('hist_year'),
                 output_field=IntegerField()
             )
         )
