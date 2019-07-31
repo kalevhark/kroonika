@@ -791,8 +791,8 @@ class IsikFilter(django_filters.FilterSet):
 ##        if self.data == {}:
 ##            self.queryset = self.queryset.none()
 
-def nulliga(synniaasta):
-    return datetime.date.today().year - synniaasta
+def on_juubel(aasta, synniaasta):
+    return aasta - synniaasta
 
 class IsikFilterView(FilterView):
     model = Isik
@@ -808,7 +808,7 @@ class IsikFilterView(FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         list = Isik.objects.all().annotate(
-            nulliga=ExpressionWrapper(nulliga(ExtractYear('hist_date')), output_field=IntegerField())).order_by('perenimi')
+            nulliga=ExpressionWrapper(on_juubel(datetime.date.today().year, ExtractYear('hist_date')), output_field=IntegerField())).order_by('perenimi')
         filter = IsikFilter(self.request.GET, queryset=list)
         list = filter.qs
 
