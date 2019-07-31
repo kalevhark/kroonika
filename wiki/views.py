@@ -275,7 +275,7 @@ def algus(request):
             hist_year__isnull=True
         ).annotate(
             synniaasta_gen=ExpressionWrapper(
-                ExtractYear('hist_date') if 'hist_date' else 'hist_year',
+                ExtractYear('hist_date') if 'hist_date' else F('hist_year'),
                 output_field=IntegerField()
             )
         )
@@ -307,7 +307,7 @@ def algus(request):
             hist_year__isnull=True
         ).annotate(
             synniaasta_gen=ExpressionWrapper(
-                ExtractYear('hist_date') if 'hist_date' else 'hist_year',
+                ExtractYear('hist_date') if 'hist_date' else F('hist_year'),
                 output_field=IntegerField()
             )
         )
