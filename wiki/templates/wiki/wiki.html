@@ -214,7 +214,7 @@
 				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
 				 {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
 				</a>
-				&nbsp;&nbsp;<b>{{ obj.vanus_gen }}</b>
+				&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
         {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 				<!--{% if obj.profiilipilt %}
 					<div class="w3-row" >
