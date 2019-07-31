@@ -253,14 +253,21 @@ def algus(request):
         a['sel_p2eval_surnud_kirjeid'] = len(a['sel_p2eval_surnud'])
         a['sel_kuul_surnud'] = Isik.objects.filter(hist_enddate__month = kuu).order_by('hist_enddate__day')
         a['sel_kuul_surnud_kirjeid'] = len(a['sel_kuul_surnud'])
-        juubilarid = Isik.objects.exclude(hist_date=None).annotate(
-            nulliga=ExpressionWrapper(
-                (datetime.date.today().year - ExtractYear('hist_date'))%5,
-                output_field=IntegerField()),
+        # juubilarid = Isik.objects.exclude(hist_date=None).annotate(
+        #     nulliga=ExpressionWrapper(
+        #         (datetime.date.today().year - ExtractYear('hist_date'))%5,
+        #         output_field=IntegerField()),
+        #     vanus_gen=ExpressionWrapper(
+        #         datetime.date.today().year - ExtractYear('hist_date'),
+        #         output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
+        isikud_synniajaga = Isik.objects.exclude(hist_date=None).annotate(
             vanus_gen=ExpressionWrapper(
                 datetime.date.today().year - ExtractYear('hist_date'),
-                output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
-        a['juubilarid'] = juubilarid
+                output_field=IntegerField()
+            )
+        )
+        juubilarid = [isik.id for isik in isikud_synniajaga if isik.vanus_gen%5==0]
+        a['juubilarid'] = Isik.objects.filter(id in juubilarid)
     andmed['isik'] = a
 
     # Andmebaas Organisatsioon andmed veebi
