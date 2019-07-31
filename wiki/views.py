@@ -333,7 +333,7 @@ def algus(request):
             nulliga=ExpressionWrapper(
                 (datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
             vanus_gen=ExpressionWrapper(
-                    datetime.date.today().year - (ExtractYear('hist_date') if 'hist_date' else F('hist_year')), output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
+                    datetime.date.today().year - (ExtractYear('hist_date') if 'hist_date' else 'hist_year'), output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
         a['juubilarid'] = juubilarid
     andmed['objekt'] = a
     
