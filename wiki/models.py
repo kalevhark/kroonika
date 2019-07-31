@@ -373,7 +373,7 @@ class Objekt(models.Model):
         return None
 
     def profiilipilt(self):
-        return Pilt.objects.filter(objektid=self.id, profiilipilt_objekt__isnull=False).first()
+        return Pilt.objects.filter(objektid=self.id, profiilipilt_objekt=True).first()
 
     class Meta:
         ordering = ['nimi']
@@ -500,7 +500,7 @@ class Organisatsioon(models.Model):
         return None
 
     def profiilipilt(self):
-        return Pilt.objects.filter(organisatsioonid=self.id, profiilipilt_organisatsioon__isnull=False).first()
+        return Pilt.objects.filter(organisatsioonid=self.id, profiilipilt_organisatsioon=True).first()
 
     class Meta:
         ordering = ['nimi']
@@ -667,7 +667,7 @@ class Isik(models.Model):
             return None
 
     def profiilipilt(self):
-        return Pilt.objects.filter(isikud=self.id, profiilipilt_isik__isnull=False).first()
+        return Pilt.objects.filter(isikud=self.id, profiilipilt_isik=True).first()
 
     class Meta:
         ordering = ['perenimi', 'eesnimi']
@@ -889,7 +889,7 @@ class Artikkel(models.Model):
     headline.short_description = 'Artikkel'
 
     def profiilipilt(self):
-        return Pilt.objects.filter(artiklid=self.id, profiilipilt_artikkel__isnull=False).first()
+        return Pilt.objects.filter(artiklid=self.id, profiilipilt_artikkel=True).first()
 
     # Kui tekstis on vigase koha märge
     @property
