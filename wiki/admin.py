@@ -409,7 +409,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
     readonly_fields = [
         'inp_date',
         'mod_date',
-        'hist_searchdate',
+        # 'hist_searchdate',
         'created_by',
         'updated_by'
     ]
@@ -474,7 +474,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
 class ObjektAdmin(admin.ModelAdmin):
     form = ObjektForm
     readonly_fields = [
-        'hist_searchdate',
+        # 'hist_searchdate',
         'inp_date', 'created_by',
         'mod_date', 'updated_by',
     ]
@@ -508,10 +508,10 @@ class ObjektAdmin(admin.ModelAdmin):
             'fields': [('viited')]
         }
          ),
-        (None, {
-            'fields': ['hist_searchdate']
-            }
-         ),
+        # (None, {
+        #     'fields': ['hist_searchdate']
+        #     }
+        #  ),
         (None, {
             'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
             }

@@ -492,7 +492,7 @@ class Organisatsioon(models.Model):
     # Kui kirjelduses on vigase koha märge
     @property
     def vigane(self):
-        return VIGA_TEKSTIS in self.kirjeldus
+        return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
     def get_absolute_url(self):
         return reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': self.pk})
@@ -667,7 +667,7 @@ class Isik(models.Model):
     # Kui kirjelduses on vigase koha märge
     @property
     def vigane(self):
-        return VIGA_TEKSTIS in self.kirjeldus
+        return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
     def get_absolute_url(self):
         return reverse('wiki:wiki_isik_detail', kwargs={'pk': self.pk})
