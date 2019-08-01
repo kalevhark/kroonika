@@ -76,7 +76,16 @@
     <!-- Artiklite esitlus -->
 	<div class="w3-quarter">
 	  <div class="w3-container w3-padding-16 w3-hover-white">
-	  <!-- Sel päeval toimunud -->
+		<!-- Sel päeval toimunud -->
+	  {% if andmed.100_aastat_tagasi %}
+			<h5>
+				100 aastat tagasi...
+			</h5>
+			{% if andmed.artikkel.100_aastat_tagasi % }
+				andmed.artikkel.100_aastat_tagasi.count
+			{% endif %}
+		{% endif %}
+		<!-- Sel päeval toimunud -->
 	  {% if andmed.artikkel.sel_p2eval %}
 			{% now "d" as p2ev %}
 			{% now "m" as kuu %}

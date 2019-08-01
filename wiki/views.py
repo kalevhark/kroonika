@@ -196,7 +196,7 @@ def algus(request):
     andmed = {} # Selle muutuja saadame veebi
     p2ev = datetime.date.today().day # str(p2ev).zfill(2) -> PP
     kuu = datetime.date.today().month # str(kuu).zfill(2) -> KK
-    # aasta = datetime.date.today().year
+    aasta = datetime.date.today().year
     
     # Andmebaas Artikkel andmed veebi
     a = dict()
@@ -237,6 +237,8 @@ def algus(request):
         else:
             a['sel_kuul'] = sel_kuul
         a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
+        # 100 aastat tagasi toimunud
+        a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(hist_date_year = (aasta-100))
         a['top10'] = Artikkel.objects.order_by('-total_accessed')[:10]
     andmed['artikkel'] = a
 
@@ -339,7 +341,13 @@ def algus(request):
         ]
         a['juubilarid'] = objektid_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'hist_date')
     andmed['objekt'] = a
-    
+
+    # Kas on 100 aastat tagasi toimunud asju?
+    andmed['100_aastat_tagasi'] = any(
+        [
+            andmed['artikkel']['100_aastat_tagasi'],
+        ]
+    )
     return render(request, 'wiki/wiki.html', {'andmed': andmed})
 
 
