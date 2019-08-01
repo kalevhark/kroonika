@@ -230,6 +230,12 @@ class Viide(models.Model):
                     aeg = str(self.allikas.hist_year)
         return ' '.join([autorid, peatykk, allika_nimi, viit, aeg])
 
+# Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
+class SajandTagasiObjektManager(models.Manager):
+    def get_queryset(self):
+        sajandtagasi = datetime.date.today().year - 100
+        return super().get_queryset().filter(hist_year__lte=sajandtagasi)
+
 
 class Objekt(models.Model):
     OBJEKTITYYP = (
@@ -337,6 +343,8 @@ class Objekt(models.Model):
         verbose_name='Muutja'
     )
 
+    objects = SajandTagasiObjektManager()  # Kui on vaja näidata kuni sajand tagasi
+
     def __str__(self):
         if self.hist_date:
             sy = self.hist_date.year
@@ -386,6 +394,13 @@ class Objekt(models.Model):
     class Meta:
         ordering = ['nimi']
         verbose_name_plural = "Kohad"
+
+
+# Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
+class SajandTagasiOrganisatsioonManager(models.Manager):
+    def get_queryset(self):
+        sajandtagasi = datetime.date.today().year - 100
+        return super().get_queryset().filter(hist_year__lte=sajandtagasi)
 
 
 class Organisatsioon(models.Model):
@@ -472,6 +487,8 @@ class Organisatsioon(models.Model):
         verbose_name='Muutja'
     )
 
+    objects = SajandTagasiOrganisatsioonManager()  # Kui on vaja näidata kuni sajand tagasi
+
     def __str__(self):
         if self.hist_date:
             sy = self.hist_date.year
@@ -521,6 +538,12 @@ class Organisatsioon(models.Model):
     class Meta:
         ordering = ['nimi']
         verbose_name_plural = "Asutised"
+
+# Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
+class SajandTagasiIsikManager(models.Manager):
+    def get_queryset(self):
+        sajandtagasi = datetime.date.today().year - 100
+        return super().get_queryset().filter(hist_year__lte=sajandtagasi)
 
 
 class Isik(models.Model):
@@ -628,6 +651,8 @@ class Isik(models.Model):
         related_name='+',
         verbose_name='Muutja'
     )
+
+    objects = SajandTagasiIsikManager()  # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         # Eesnimi
