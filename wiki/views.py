@@ -237,6 +237,7 @@ def algus(request):
         else:
             a['sel_kuul'] = sel_kuul
         a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
+        a['top10'] = Artikkel.objects.order_by('-total_accessed')[:10]
     andmed['artikkel'] = a
 
     # Andmebaas Isik andmed veebi
