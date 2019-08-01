@@ -1,8 +1,6 @@
 from django import template
-from django.conf import settings
-from django.db.models import Max, Min
 
-from wiki.models import Artikkel, VIGA_TEKSTIS
+from wiki.models import VIGA_TEKSTIS
 from wiki.views import get_all_logged_in_users
 
 
@@ -24,8 +22,3 @@ def kalev():
 def viga_tekstis():
     return VIGA_TEKSTIS
 
-# Andmebaasi perioodi valik
-@register.simple_tag
-def periood():
-    min_year, max_year = Artikkel.objects.aggregate(Min('hist_year'), Max('hist_year')).values()
-    return ' kõik'

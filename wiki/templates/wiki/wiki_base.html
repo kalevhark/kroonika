@@ -3,7 +3,6 @@
 
 <head>
   {% load staticfiles %}
-  {% load wiki_extras %}
   {% load crispy_forms_tags %}
 
   <!-- Required meta tags -->
@@ -46,7 +45,7 @@
 <!-- Kroonika -->
 <title>
   {% block title %}
-    Valga linna kroonika{% periood %}
+    Valga linna kroonika {{ andmed.artikkel.kirjeid }}
   {% endblock %}
 </title>
 
