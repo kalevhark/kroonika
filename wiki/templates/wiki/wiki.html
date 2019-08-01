@@ -81,11 +81,14 @@
 			<h5>
 				100 aastat tagasi...
 			</h5>
-			{% if andmed.artikkel.100_aastat_tagasi % }
-				andmed.artikkel.100_aastat_tagasi.count
+			{% if andmed.artikkel.100_aastat_tagasi %}
+				{{ andmed.artikkel.100_aastat_tagasi.count }}
 			{% endif %}
-			{% if andmed.isik.100_aastat_tagasi % }
-				andmed.isik.100_aastat_tagasi.count
+			{% if andmed.isik.100_aastat_tagasi %}
+				{{ andmed.isik.100_aastat_tagasi.count }}
+			{% endif %}
+			{% if andmed.organisatsioon.100_aastat_tagasi %}
+				{{ andmed.organisatsioon.100_aastat_tagasi.count }}
 			{% endif %}
 		{% endif %}
 		<!-- Sel päeval toimunud -->

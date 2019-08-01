@@ -252,13 +252,13 @@ def algus(request):
         a['viimane_lisatud'] = Isik.objects.latest('inp_date')
         # a['viimane_muudetud'] = Isik.objects.filter(mod_date=kp['max_mod_date']).last()
         a['viimane_muudetud'] = Isik.objects.latest('mod_date')
-        a['sel_p2eval'] = Isik.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
-        a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['100_aastat_tagasi'] = Isik.objects.filter(
             hist_date__day = p2ev,
             hist_date__month = kuu,
             hist_date__year = (aasta-100)
         )
+        a['sel_p2eval'] = Isik.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
+        a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = Isik.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         a['sel_p2eval_surnud'] = Isik.objects.filter(hist_enddate__day = p2ev, hist_enddate__month = kuu)
@@ -298,6 +298,11 @@ def algus(request):
         a['viimane_lisatud'] = Organisatsioon.objects.latest('inp_date')
         # a['viimane_muudetud'] = Organisatsioon.objects.filter(mod_date=kp['max_mod_date']).last()
         a['viimane_muudetud'] = Organisatsioon.objects.latest('mod_date')
+        a['100_aastat_tagasi'] = Organisatsioon.objects.filter(
+            hist_date__day=p2ev,
+            hist_date__month=kuu,
+            hist_date__year=(aasta - 100)
+        )
         a['sel_p2eval'] = Organisatsioon.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = Organisatsioon.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
@@ -352,6 +357,7 @@ def algus(request):
         [
             andmed['artikkel']['100_aastat_tagasi'],
             andmed['isik']['100_aastat_tagasi'],
+            andmed['organisatsioon']['100_aastat_tagasi'],
         ]
     )
     return render(request, 'wiki/wiki.html', {'andmed': andmed})
