@@ -157,16 +157,19 @@
 	  <!-- top10 -->
 		{% if andmed.artikkel.top10 %}
 			<h5>
-				Enim loetud lood
+				loetumad
 			</h5>
 			{% for obj in andmed.artikkel.top10 %}
+				{% if forloop.counter > 1 %}
+					<br>
+				{% endif %}
 				<a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
 					<strong>{{ obj.hist_year }}</strong>:
 				</a>
 				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
 					{{ obj }}
 				</a>
-				&nbsp;{{ obj.total_accessed }} vaatamist
+				<small>&nbsp;{{ obj.total_accessed }} vaatamist</small>
 			{% endfor %}
 		{% endif %}
 	  </div>
