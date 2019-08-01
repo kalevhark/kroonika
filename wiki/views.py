@@ -26,12 +26,10 @@ from django.views.generic.edit import UpdateView
 import django_filters
 from django_filters.views import FilterView
 
-# from rest_framework import generics
-
 from .models import Allikas, Viide, Artikkel, Isik, Objekt, Organisatsioon, Pilt, Vihje
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 from .forms import VihjeForm
-# from .serializers import UserSerializer
+
 #
 # reCAPTCHA kontrollifunktsioon
 #

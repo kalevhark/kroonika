@@ -3,6 +3,7 @@ import datetime
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 
@@ -231,10 +232,10 @@ class Viide(models.Model):
         return ' '.join([autorid, peatykk, allika_nimi, viit, aeg])
 
 # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-class SajandTagasiObjektManager(models.Manager):
+class ObjektSajandTagasiManager(models.Manager):
     def get_queryset(self):
         sajandtagasi = datetime.date.today().year - 100
-        return super().get_queryset().filter(hist_year__lte=sajandtagasi)
+        return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
 
 
 class Objekt(models.Model):
@@ -343,7 +344,7 @@ class Objekt(models.Model):
         verbose_name='Muutja'
     )
 
-    objects = SajandTagasiObjektManager()  # Kui on vaja näidata kuni sajand tagasi
+    objects = ObjektSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         if self.hist_date:
@@ -397,10 +398,10 @@ class Objekt(models.Model):
 
 
 # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-class SajandTagasiOrganisatsioonManager(models.Manager):
+class OrganisatsioonSajandTagasiManager(models.Manager):
     def get_queryset(self):
         sajandtagasi = datetime.date.today().year - 100
-        return super().get_queryset().filter(hist_year__lte=sajandtagasi)
+        return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
 
 
 class Organisatsioon(models.Model):
@@ -487,7 +488,7 @@ class Organisatsioon(models.Model):
         verbose_name='Muutja'
     )
 
-    objects = SajandTagasiOrganisatsioonManager()  # Kui on vaja näidata kuni sajand tagasi
+    objects = OrganisatsioonSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         if self.hist_date:
@@ -540,10 +541,10 @@ class Organisatsioon(models.Model):
         verbose_name_plural = "Asutised"
 
 # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-class SajandTagasiIsikManager(models.Manager):
+class IsikSajandTagasiManager(models.Manager):
     def get_queryset(self):
         sajandtagasi = datetime.date.today().year - 100
-        return super().get_queryset().filter(hist_year__lte=sajandtagasi)
+        return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
 
 
 class Isik(models.Model):
@@ -652,7 +653,7 @@ class Isik(models.Model):
         verbose_name='Muutja'
     )
 
-    objects = SajandTagasiIsikManager()  # Kui on vaja näidata kuni sajand tagasi
+    objects = IsikSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         # Eesnimi
