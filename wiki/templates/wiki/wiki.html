@@ -78,45 +78,45 @@
 	  <div class="w3-container w3-padding-16 w3-hover-white">
 	  <!-- Sel päeval toimunud -->
 	  {% if andmed.artikkel.sel_p2eval %}
-		{% now "d" as p2ev %}
-		{% now "m" as kuu %}
-		{% now "Y" as aasta %}
-	    <h5>
+			{% now "d" as p2ev %}
+			{% now "m" as kuu %}
+			{% now "Y" as aasta %}
+			<h5>
 				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}">
 					{% now "j.m." %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_p2eval_kirjeid }}</span>
 				</a>
 			</h5>
-		{% for obj in andmed.artikkel.sel_p2eval %}
-		  {% if forloop.counter > 1 %}
-		    <br>
-		  {% endif %}
-		  <a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}>
-		  <strong>{{ obj.hist_year }}</strong>:
-		  </a>
-	      <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
-		  {{ obj }}
-		  </a>
-		  {% if obj.profiilipilt %}
-		    <img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/><br>
-		  {% endif %}
-		  <!-- Kui kirjed rohkem kui 5, siis hakime 2+1+2 -->
-		  {% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
-			{% if forloop.counter == 2 and andmed.artikkel.sel_p2eval_kirjeid  > 6 %}
-				<br><span class="w3-tiny text-artikkel"> - - - </span>
+			{% for obj in andmed.artikkel.sel_p2eval %}
+				{% if forloop.counter > 1 %}
+					<br>
+				{% endif %}
+				<a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}>
+					<strong>{{ obj.hist_year }}</strong>:
+				</a>
+				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
+					{{ obj }}
+				</a>
+				{% if obj.profiilipilt %}
+					<img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/><br>
+				{% endif %}
+				<!-- Kui kirjed rohkem kui 5, siis hakime 2+1+2 -->
+				{% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
+					{% if forloop.counter == 2 and andmed.artikkel.sel_p2eval_kirjeid  > 6 %}
+						<br><span class="w3-tiny text-artikkel"> - - - </span>
+					{% endif %}
+					{% if forloop.counter == 3 %}
+						<br><span class="w3-tiny text-artikkel"> - - - </span>
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+			{% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
+				<p>
+					<a class="hover-artikkel" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}">
+						Näita kõiki <em>{% now "j.m." %} ajaloos</em> ({{ andmed.artikkel.sel_p2eval_kirjeid }})
+					</a>
+				</p>
 			{% endif %}
-			{% if forloop.counter == 3 %}
-				<br><span class="w3-tiny text-artikkel"> - - - </span>
-			{% endif %}
-		  {% endif %}
-		{% endfor %}
-		{% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
-			<p>
-			<a class="hover-artikkel" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}">
-			  Näita kõiki <em>{% now "j.m." %} ajaloos</em> ({{ andmed.artikkel.sel_p2eval_kirjeid }})
-			</a>
-			</p>
 		{% endif %}
-      {% endif %}
 	  <!-- Sel kuul toimunud -->
 	  {% if andmed.artikkel.sel_kuul %}
 	    {% now "m" as kuu %}
@@ -148,9 +148,9 @@
 			{% endfor %}
 			{% if andmed.artikkel.sel_kuul_kirjeid > 9 %}
 				<p>
-				<a class="hover-artikkel" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}">
-					Näita kõiki <em>{% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos</em> ({{ andmed.artikkel.sel_kuul_kirjeid }})
-				</a>
+					<a class="hover-artikkel" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}">
+						Näita kõiki <em>{% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos</em> ({{ andmed.artikkel.sel_kuul_kirjeid }})
+					</a>
 				</p>
 			{% endif %}
 	  {% endif %}
@@ -168,7 +168,7 @@
 				</a>
 				&nbsp;{{ obj.total_accessed }} vaatamist
 			{% endfor %}
-		{% endif %]
+		{% endif %}
 	  </div>
 	</div>
 	
