@@ -344,7 +344,8 @@ class Objekt(models.Model):
         verbose_name='Muutja'
     )
 
-    objects = ObjektSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
+    if settings.KROONIKA['SAJAND_TAGASI']:
+        objects = ObjektSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         if self.hist_date:
@@ -488,7 +489,8 @@ class Organisatsioon(models.Model):
         verbose_name='Muutja'
     )
 
-    objects = OrganisatsioonSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
+    if settings.KROONIKA['SAJAND_TAGASI']:
+        objects = OrganisatsioonSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         if self.hist_date:
@@ -653,7 +655,8 @@ class Isik(models.Model):
         verbose_name='Muutja'
     )
 
-    objects = IsikSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
+    if settings.KROONIKA['SAJAND_TAGASI']:
+        objects = IsikSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         # Eesnimi
