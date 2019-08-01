@@ -281,20 +281,20 @@ class ArtikkelAdmin(admin.ModelAdmin):
         else:
             objekt.updated_by = request.user
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if objekt.hist_date:
-            objekt.hist_year = objekt.hist_date.year
-            objekt.hist_month = objekt.hist_date.month
-            objekt.hist_searchdate = objekt.hist_date
-        else:
-            if objekt.hist_year:
-                y = objekt.hist_year
-                if objekt.hist_month:
-                    m = objekt.hist_month
-                else:
-                    m = 1
-                objekt.hist_searchdate = datetime.datetime(y, m, 1)
-            else:
-                objekt.hist_searchdate = None
+        # if objekt.hist_date:
+        #     objekt.hist_year = objekt.hist_date.year
+        #     objekt.hist_month = objekt.hist_date.month
+        #     objekt.hist_searchdate = objekt.hist_date
+        # else:
+        #     if objekt.hist_year:
+        #         y = objekt.hist_year
+        #         if objekt.hist_month:
+        #             m = objekt.hist_month
+        #         else:
+        #             m = 1
+        #         objekt.hist_searchdate = datetime.datetime(y, m, 1)
+        #     else:
+        #         objekt.hist_searchdate = None
         objekt.save()
         form.save_m2m()
         return objekt
@@ -364,8 +364,8 @@ class IsikAdmin(admin.ModelAdmin):
         else:
             objekt.updated_by = request.user
         # Lisame sünnikuupäeva põhjal sünniaasta
-        if objekt.hist_date:
-            objekt.hist_year = objekt.hist_date.year
+        # if objekt.hist_date:
+        #     objekt.hist_year = objekt.hist_date.year
         objekt.save()
         form.save_m2m()
         return objekt
@@ -450,9 +450,9 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         else:
             objekt.updated_by = request.user
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if objekt.hist_date:
-            objekt.hist_year = objekt.hist_date.year
-            objekt.hist_month = objekt.hist_date.month
+        # if objekt.hist_date:
+        #     objekt.hist_year = objekt.hist_date.year
+        #     objekt.hist_month = objekt.hist_date.month
         #     objekt.hist_searchdate = objekt.hist_date
         # else:
         #     if objekt.hist_year:
@@ -534,9 +534,9 @@ class ObjektAdmin(admin.ModelAdmin):
         else:
             objekt.updated_by = request.user
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if objekt.hist_date:
-            objekt.hist_year = objekt.hist_date.year
-            objekt.hist_month = objekt.hist_date.month
+        # if objekt.hist_date:
+        #     objekt.hist_year = objekt.hist_date.year
+        #     objekt.hist_month = objekt.hist_date.month
         #     objekt.hist_searchdate = objekt.hist_date
         # else:
         #     if objekt.hist_year:
@@ -669,10 +669,10 @@ class PiltAdmin(admin.ModelAdmin):
             objekt.created_by = request.user
         else:
             objekt.updated_by = request.user
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if objekt.hist_date:
-            objekt.hist_year = objekt.hist_date.year
-            objekt.hist_month = objekt.hist_date.month
+        # # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+        # if objekt.hist_date:
+        #     objekt.hist_year = objekt.hist_date.year
+        #     objekt.hist_month = objekt.hist_date.month
         objekt.save()
         form.save_m2m()
         return objekt

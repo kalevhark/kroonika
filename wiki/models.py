@@ -376,6 +376,7 @@ class Objekt(models.Model):
         return Pilt.objects.filter(objektid=self.id, profiilipilt_objekt=True).first()
 
     def save(self, *args, **kwargs):
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year
             self.hist_month = self.hist_date.month
@@ -510,6 +511,7 @@ class Organisatsioon(models.Model):
         return Pilt.objects.filter(organisatsioonid=self.id, profiilipilt_organisatsioon=True).first()
 
     def save(self, *args, **kwargs):
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year
             self.hist_month = self.hist_date.month
@@ -686,6 +688,7 @@ class Isik(models.Model):
         return Pilt.objects.filter(isikud=self.id, profiilipilt_isik=True).first()
 
     def save(self, *args, **kwargs):
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year
         super().save(*args, **kwargs)
@@ -932,6 +935,7 @@ class Artikkel(models.Model):
         return tekst
 
     def save(self, *args, **kwargs):
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year
             self.hist_month = self.hist_date.month
@@ -1102,11 +1106,13 @@ class Pilt(models.Model):
         return self.pilt.url
 
     def save(self, *args, **kwargs):
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year
             self.hist_month = self.hist_date.month
         # save for image
         super(Pilt, self).save(*args, **kwargs)
+        # Loome pisipildid
         make_thumbnail(self.pilt_thumbnail, self.pilt, 'thumb')
         make_thumbnail(self.pilt_icon, self.pilt, 'icon')
         # save for thumbnail and icon
