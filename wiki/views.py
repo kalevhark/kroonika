@@ -332,6 +332,11 @@ def algus(request):
         a['viimane_lisatud'] = Objekt.objects.latest('inp_date')
         # a['viimane_muudetud'] = Objekt.objects.filter(mod_date=kp['max_mod_date']).last()
         a['viimane_muudetud'] = Objekt.objects.latest('mod_date')
+        a['100_aastat_tagasi'] = Objekt.objects.filter(
+            hist_date__day=p2ev,
+            hist_date__month=kuu,
+            hist_date__year=(aasta - 100)
+        )
         a['sel_p2eval'] = Objekt.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = Objekt.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
@@ -358,6 +363,7 @@ def algus(request):
             andmed['artikkel']['100_aastat_tagasi'],
             andmed['isik']['100_aastat_tagasi'],
             andmed['organisatsioon']['100_aastat_tagasi'],
+            andmed['objekt']['100_aastat_tagasi'],
         ]
     )
     return render(request, 'wiki/wiki.html', {'andmed': andmed})

@@ -76,19 +76,62 @@
     <!-- Artiklite esitlus -->
 	<div class="w3-quarter">
 	  <div class="w3-container w3-padding-16 w3-hover-white">
-		<!-- Sel päeval toimunud -->
+		<!-- Sel päeval 100 aastat tagasi toimunud -->
 	  {% if andmed.100_aastat_tagasi %}
 			<h5>
 				100 aastat tagasi...
 			</h5>
 			{% if andmed.artikkel.100_aastat_tagasi %}
-				{{ andmed.artikkel.100_aastat_tagasi.count }}
+				{% for obj in andmed.artikkel.100_aastat_tagasi %}
+					{% if forloop.counter > 1 %}
+						<br>
+					{% endif %}
+					<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
+						... {{ obj }}
+					</a>
+				{% endfor %}
 			{% endif %}
 			{% if andmed.isik.100_aastat_tagasi %}
-				{{ andmed.isik.100_aastat_tagasi.count }}
+				{% for obj in andmed.isik.100_aastat_tagasi %}
+					{% if forloop.counter > 1 %}
+						<br>
+					{% endif %}
+					<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id %}">
+						sündis {{ obj }}
+					</a>
+					{% if obj.vanus|divisibleby:"5" %}
+						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+					{% endif %}
+					{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
+				{% endfor %}
 			{% endif %}
 			{% if andmed.organisatsioon.100_aastat_tagasi %}
-				{{ andmed.organisatsioon.100_aastat_tagasi.count }}
+				{% for obj in andmed.organisatsioon.100_aastat_tagasi %}
+					{% if forloop.counter > 1 %}
+						<br>
+					{% endif %}
+					<a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}">
+						{{ obj }}
+					</a>
+					{% if obj.vanus|divisibleby:"5" %}
+						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+					{% endif %}
+					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+				{% endfor %}
+			{% endif %}
+			{% if andmed.objekt.100_aastat_tagasi %}
+				{% for obj in andmed.objekt.100_aastat_tagasi %}
+					{% if forloop.counter > 1 %}
+						<br>
+					{% endif %}
+					<a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id %}">
+						{{ obj }}
+					</a>
+					{% if obj.vanus|divisibleby:"5" %}
+						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+					{% endif %}
+					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+				{% endfor %}
 			{% endif %}
 		{% endif %}
 		<!-- Sel päeval toimunud -->
