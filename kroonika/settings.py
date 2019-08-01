@@ -183,6 +183,7 @@ SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 GOOGLE_RECAPTCHA_SECRET_KEY = config('GOOGLE_RECAPTCHA_SECRET_KEY')
 GOOGLE_RECAPTCHA_PUBLIC_KEY = config('GOOGLE_RECAPTCHA_PUBLIC_KEY')
 
+# Kroonika üldised seaded
 KROONIKA = {
-    'SAJAND_TAGASI': True
+    'SAJAND_TAGASI': True # kui on vaja näidata kuni sajand tagasi True
 }

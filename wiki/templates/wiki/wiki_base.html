@@ -12,7 +12,7 @@
   <meta name="author" content="Kalev Härk" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <!-- Kirjeldus -->
-  <meta property="og:url"           content="http://18.196.203.237/" />
+<!--  <meta property="og:url"           content="http://18.196.203.237/" />-->
   <meta property="og:type"          content="website" />
   <meta property="og:title"         content="Valga linna kroonika" />
   <meta property="og:description"   content="Valga linna kroonika" />
@@ -32,9 +32,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <!-- Custom CSS -->
-  <link rel="stylesheet" href={% static "wiki/css/kroonika_general.css" %}>
+  <link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}">
   <!--  Alternatiivsed värvivalikud metro või colorful-->
-  <link rel="stylesheet" href={% static "wiki/css/kroonika_color_metro.css" %}>
+  <link rel="stylesheet" href="{% static 'wiki/css/kroonika_color_metro.css' %}">
   <!-- <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}> -->
 
   {% block css %}{% endblock %}
@@ -45,7 +45,7 @@
 <!-- Kroonika -->
 <title>
   {% block title %}
-    Valga linna kroonika {{ andmed.artikkel.kirjeid }}
+    Valga linna kroonika
   {% endblock %}
 </title>
 
