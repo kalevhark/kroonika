@@ -238,7 +238,7 @@ def algus(request):
             a['sel_kuul'] = sel_kuul
         a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
         # 100 aastat tagasi toimunud
-        a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(hist_date_year = (aasta-100))
+        a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(hist_date__year = (aasta-100))
         a['top10'] = Artikkel.objects.order_by('-total_accessed')[:10]
     andmed['artikkel'] = a
 
@@ -254,6 +254,11 @@ def algus(request):
         a['viimane_muudetud'] = Isik.objects.latest('mod_date')
         a['sel_p2eval'] = Isik.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
+        a['100_aastat_tagasi'] = Isik.objects.filter(
+            hist_date__day = p2ev,
+            hist_date__month = kuu,
+            hist_date__year = (aasta-100)
+        )
         a['sel_kuul'] = Isik.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         a['sel_p2eval_surnud'] = Isik.objects.filter(hist_enddate__day = p2ev, hist_enddate__month = kuu)
@@ -346,6 +351,7 @@ def algus(request):
     andmed['100_aastat_tagasi'] = any(
         [
             andmed['artikkel']['100_aastat_tagasi'],
+            andmed['isik']['100_aastat_tagasi'],
         ]
     )
     return render(request, 'wiki/wiki.html', {'andmed': andmed})
