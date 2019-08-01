@@ -185,5 +185,5 @@ GOOGLE_RECAPTCHA_PUBLIC_KEY = config('GOOGLE_RECAPTCHA_PUBLIC_KEY')
 
 # Kroonika üldised seaded
 KROONIKA = {
-    'SAJAND_TAGASI': True # kui on vaja näidata kuni sajand tagasi True
+    'SAJAND_TAGASI': False # kui on vaja näidata kuni sajand tagasi True
 }
