@@ -891,7 +891,8 @@ class Artikkel(models.Model):
 
     # objects = models.Manager()  # The default manager
     # objects = KroonikataArtikkelManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
-    objects = SajandTagasiArtikkelManager() # Kui on vaja näidata kuni sajand tagasi
+    if settings.KROONIKA['SAJAND_TAGASI']:
+        objects = SajandTagasiArtikkelManager() # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         tekst = self.body_text[:50]
