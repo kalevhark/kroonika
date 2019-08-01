@@ -246,9 +246,9 @@ def algus(request):
     if kirjeid > 0:
         # kp = Isik.objects.all().aggregate(max_inp_date=Max('inp_date'), max_mod_date=Max('mod_date'))
         # a['viimane_lisatud'] = Isik.objects.filter(inp_date=kp['max_inp_date']).last()
-        a['viimane_lisatud'] = Isik.objects.latest('inp_date').last()
+        a['viimane_lisatud'] = Isik.objects.latest('inp_date')
         # a['viimane_muudetud'] = Isik.objects.filter(mod_date=kp['max_mod_date']).last()
-        a['viimane_muudetud'] = Isik.objects.latest('mod_date').last()
+        a['viimane_muudetud'] = Isik.objects.latest('mod_date')
         a['sel_p2eval'] = Isik.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = Isik.objects.filter(hist_date__month = kuu).order_by('hist_date__day')

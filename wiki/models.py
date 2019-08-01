@@ -378,6 +378,7 @@ class Objekt(models.Model):
     def save(self, *args, **kwargs):
         if self.hist_date:
             self.hist_year = self.hist_date.year
+            self.hist_month = self.hist_date.month
         super().save(*args, **kwargs)
 
 
@@ -511,6 +512,7 @@ class Organisatsioon(models.Model):
     def save(self, *args, **kwargs):
         if self.hist_date:
             self.hist_year = self.hist_date.year
+            self.hist_month = self.hist_date.month
         super().save(*args, **kwargs)
 
 
@@ -929,6 +931,23 @@ class Artikkel(models.Model):
                     tekst += vahemiku_p2eva_string
         return tekst
 
+    def save(self, *args, **kwargs):
+        if self.hist_date:
+            self.hist_year = self.hist_date.year
+            self.hist_month = self.hist_date.month
+            self.hist_searchdate = self.hist_date
+        else:
+            if self.hist_year:
+                y = self.hist_year
+                if self.hist_month:
+                    m = self.hist_month
+                else:
+                    m = 1
+                self.hist_searchdate = datetime.datetime(y, m, 1)
+            else:
+                self.hist_searchdate = None
+        super().save(*args, **kwargs)
+
     class Meta:
         ordering = ['hist_searchdate']
         verbose_name_plural = "Artiklid"
@@ -1083,6 +1102,9 @@ class Pilt(models.Model):
         return self.pilt.url
 
     def save(self, *args, **kwargs):
+        if self.hist_date:
+            self.hist_year = self.hist_date.year
+            self.hist_month = self.hist_date.month
         # save for image
         super(Pilt, self).save(*args, **kwargs)
         make_thumbnail(self.pilt_thumbnail, self.pilt, 'thumb')
