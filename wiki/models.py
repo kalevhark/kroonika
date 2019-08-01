@@ -751,34 +751,11 @@ class KroonikataArtikkelManager(models.Manager):
     def get_queryset(self):
        return super().get_queryset().filter(kroonika__isnull=True)
 
-
-# # Tagastab ainult kirjed, kus algus- ja lõppkuupäev on esitatud
-# class HistDatesStringArtikkelManager(models.Manager):
-#     def get_queryset(self):
-#         return super().get_queryset().filter(hist_date__isnull=False, hist_enddate__isnull=False)
-#
-#     def with_histdates_strings(self):
-#         from django.db import connection
-#         with connection.cursor() as cursor:
-#             cursor.execute("""
-#                 SELECT a.id, a.hist_date, a.hist_enddate
-#                 FROM wiki_artikkel a
-#                 WHERE a.hist_date IS NOT NULL AND a.hist_enddate IS NOT NULL
-#                 ORDER BY a.hist_date""")
-#             result_list = []
-#             for row in cursor.fetchall():
-#                 a = self.model(id=row[0], hist_date=row[1], hist_enddate=row[2])
-#                 tekst = f'{str(a.hist_date.month).zfill(2)}{str(a.hist_date.day).zfill(2)}'
-#                 vahemik = (a.hist_enddate - a.hist_date).days
-#                 if vahemik < 100: # kui on loogiline vahemik (max 100 päeva)
-#                     from datetime import timedelta
-#                     for n in range(vahemik):
-#                         vahemiku_p2ev = a.hist_date + timedelta(days=n+1)
-#                         vahemiku_p2eva_string = f' {str(vahemiku_p2ev.month).zfill(2)}{str(vahemiku_p2ev.day).zfill(2)}'
-#                         tekst += vahemiku_p2eva_string
-#                 a.hist_dates_string = tekst
-#                 result_list.append(a)
-#         return result_list
+# Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
+class SajandTagasiArtikkelManager(models.Manager):
+    def get_queryset(self):
+        sajandtagasi = datetime.date.today().year - 100
+        return super().get_queryset().filter(hist_year__lte=sajandtagasi)
 
 class Artikkel(models.Model):
     # Toimumisaeg
@@ -886,9 +863,9 @@ class Artikkel(models.Model):
         help_text="lehekülg"
     )
 
-    objects = models.Manager()  # The default manager
+    # objects = models.Manager()  # The default manager
     # objects = KroonikataArtikkelManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
-    # hist_date_ranges = HistDatesStringArtikkelManager()
+    objects = SajandTagasiArtikkelManager() # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         tekst = self.body_text[:50]
