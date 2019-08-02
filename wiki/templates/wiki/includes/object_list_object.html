@@ -1,0 +1,31 @@
+<a class="hover-{{model}}" href="{% url 'wiki:wiki_{{model}}_detail' pk=obj.id %}">
+  <strong>{{ obj }}</strong>
+</a>
+<!-- Sünniaeg -->
+{% if obj.hist_year %}
+  {% if obj.hist_enddate %}
+    &nbsp;{{ obj.hist_date|date:"d.m.Y" }}
+  {% else %}
+    {{ obj.hist_year }}
+  {% endif %}
+{% endif %}
+<!-- Surmaaeg -->
+{% if obj.hist_endyear %}
+  <strong>&nbsp;&dagger;</strong>
+  {% if obj.hist_enddate %}
+    {{ obj.hist_enddate|date:"d.m.Y" }}
+  {% else %}
+    {{ obj.hist_endyear }}
+  {% endif %}
+{% endif %}
+<!-- Vanus -->
+{% if obj.vanus %}
+  {% if obj.vanus|divisibleby:"5" %}
+    <b class="text-{{model}}">{{ obj.vanus }}</b>
+  {% else	%}
+{% endif %}
+{% if obj.vanus != obj.vanus_gen %}
+  {% if obj.vanus_gen > 0 %}
+    ;{{ periood|date:'Y' }}:{{ obj.vanus_gen }}
+  {% endif %}
+{% endif %}
