@@ -26,6 +26,6 @@
 {% endif %}
 {% if obj.vanus != obj.vanus_gen %}
   {% if obj.vanus_gen > 0 %}
-    ;{{ periood|date:'Y' }}:{{ obj.vanus_gen }}
+    {{ periood|date:'Y' }}:{{ obj.vanus_gen }}
   {% endif %}
 {% endif %}
