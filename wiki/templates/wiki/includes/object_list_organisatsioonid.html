@@ -10,39 +10,40 @@
 
 {% for obj in object_list %}
   <div class="w3-cell-row w3-hover-white w3-padding-small">
-	<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}> {{ obj }}</a>
-	{% if obj.hist_year %}
-	  {% if obj.hist_date %}
-	    {{ obj.hist_date|date:"d.m.Y" }}
-	  {% else %}
-	    {{ obj.hist_year }}
-	  {% endif %}
-	  {% if obj.hist_endyear %}
-	    -
-			{% if obj.hist_enddate %}
-				{{ obj.hist_enddate|date:"d.m.Y" }}
+		<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}> {{ obj }}</a>
+		{% if obj.hist_year %}
+			{% if obj.hist_date %}
+				{{ obj.hist_date|date:"d.m.Y" }}
 			{% else %}
-				{{ obj.hist_endyear }}
+				{{ obj.hist_year }}
 			{% endif %}
-	  {% endif %}
-	  &nbsp;{% now 'Y' %}:
-	  {% if obj.vanus|divisibleby:"5" %}
-	    <b class="text-organisatsioon">{{ obj.vanus }}</b>
-	  {% else	%}
-	    {{ obj.vanus }}
-	  {% endif %}
-	  {% if obj.vanus != obj.vanus_gen %}
-	    {% if obj.vanus_gen > 0 %}
-	      ; {{ month|date:'Y' }}:{{ obj.vanus_gen }})
+			{% if obj.hist_endyear %}
+				-
+				{% if obj.hist_enddate %}
+					{{ obj.hist_enddate|date:"d.m.Y" }}
+				{% else %}
+					{{ obj.hist_endyear }}
+				{% endif %}
+			{% endif %}
+			&nbsp;{% now 'Y' %}:
+			{% if obj.vanus|divisibleby:"5" %}
+				<b class="text-organisatsioon">{{ obj.vanus }}</b>
+			{% else	%}
+				{{ obj.vanus }}
+			{% endif %}
+			{% if obj.vanus != obj.vanus_gen %}
+				{% if obj.vanus_gen > 0 %}
+					; {{ month|date:'Y' }}:{{ obj.vanus_gen }})
+			{% endif %}
+			{% endif %}
 		{% endif %}
-	  {% endif %}
-	{% endif %}
+		{% include 'wiki/includes/object_list_objects_artikkel_links.html' %}
 	<!-- Loetelu seotud artiklinumbritest -->
-	{% for artikkel in obj.artikkel_set.all %} 
+	<!--{% for artikkel in obj.artikkel_set.all %}
 	  &nbsp;
 	  <a class="hover-artikkel tooltip" href={% url 'wiki:wiki_artikkel_detail' pk=artikkel.id %}>{{ artikkel.id }}
 	  <span class="tooltiptext">{{ artikkel.hist_year }}: {{ artikkel }}</span>
 	  </a>
-	{% endfor %}
+	{% endfor %}-->
   </div>
 {% endfor %}
