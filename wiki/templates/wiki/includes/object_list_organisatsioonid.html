@@ -25,11 +25,8 @@
 					{{ obj.hist_endyear }}
 				{% endif %}
 			{% endif %}
-<!--			&nbsp;{% now 'Y' %}:-->
 			{% if obj.vanus|divisibleby:"5" %}
 				<b class="text-organisatsioon">&nbsp;{{ obj.vanus }}</b>
-<!--			{% else	%}-->
-<!--				{{ obj.vanus }}-->
 			{% endif %}
 			{% if obj.vanus != obj.vanus_gen %}
 				{% if obj.vanus_gen > 0 %}
