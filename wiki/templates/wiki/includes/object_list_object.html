@@ -2,15 +2,16 @@
   <strong>{{ obj }}</strong>
 </a>
 <!-- Sünniaeg -->
-{% if obj.hist_year %}
+{% if obj.hist_year or obj.hist_date %}
+  &nbsp;
   {% if obj.hist_enddate %}
-    &nbsp;{{ obj.hist_date|date:"d.m.Y" }}
+    {{ obj.hist_date|date:"d.m.Y" }}
   {% else %}
     {{ obj.hist_year }}
   {% endif %}
 {% endif %}
 <!-- Surmaaeg -->
-{% if obj.hist_endyear %}
+{% if obj.hist_endyear or obj.hist_enddate %}
   <strong>&nbsp;&dagger;</strong>
   {% if obj.hist_enddate %}
     {{ obj.hist_enddate|date:"d.m.Y" }}
