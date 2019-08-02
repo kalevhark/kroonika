@@ -18,23 +18,23 @@
 				{{ obj.hist_year }}
 			{% endif %}
 			{% if obj.hist_endyear %}
-				-
+				&dagger;&nbsp;
 				{% if obj.hist_enddate %}
 					{{ obj.hist_enddate|date:"d.m.Y" }}
 				{% else %}
 					{{ obj.hist_endyear }}
 				{% endif %}
 			{% endif %}
-			&nbsp;{% now 'Y' %}:
+<!--			&nbsp;{% now 'Y' %}:-->
 			{% if obj.vanus|divisibleby:"5" %}
-				<b class="text-organisatsioon">{{ obj.vanus }}</b>
-			{% else	%}
-				{{ obj.vanus }}
+				<b class="text-organisatsioon">&nbsp;{{ obj.vanus }}</b>
+<!--			{% else	%}-->
+<!--				{{ obj.vanus }}-->
 			{% endif %}
 			{% if obj.vanus != obj.vanus_gen %}
 				{% if obj.vanus_gen > 0 %}
 					; {{ month|date:'Y' }}:{{ obj.vanus_gen }})
-			{% endif %}
+				{% endif %}
 			{% endif %}
 		{% endif %}
 		{% include 'wiki/includes/object_list_objects_artikkel_links.html' %}
