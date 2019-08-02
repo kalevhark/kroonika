@@ -10,7 +10,9 @@
 
 {% for obj in object_list %}
   <div class="w3-cell-row w3-hover-white w3-padding-small">
-		<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}> {{ obj }}</a>
+		<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
+			<strong>{{ obj }}</strong>
+		</a>
 		{% if obj.hist_year %}
 			{% if obj.hist_date %}
 				{{ obj.hist_date|date:"d.m.Y" }}
@@ -18,7 +20,7 @@
 				{{ obj.hist_year }}
 			{% endif %}
 			{% if obj.hist_endyear %}
-				&dagger;&nbsp;
+				<strong>&dagger;&nbsp;</strong>
 				{% if obj.hist_enddate %}
 					{{ obj.hist_enddate|date:"d.m.Y" }}
 				{% else %}
