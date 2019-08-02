@@ -2,6 +2,13 @@
 {% for artikkel in obj.artikkel_set.all %}
   &nbsp;
   <a class="hover-artikkel tooltip" href={% url 'wiki:wiki_artikkel_detail' pk=artikkel.id %}>{{ artikkel.hist_year }}
-  <span class="tooltiptext">{{ artikkel.hist_year }}: {{ artikkel }}</span>
+    <span class="tooltiptext">
+      {% if artikkel.hist_date %}
+        {{ artikkel.hist_date|date:"d.m.Y" }}
+      {% else %}
+        {{ artikkel.hist_year }}
+      {% endif %}:
+      &nbsp;{{ artikkel.body_text|truncatewords:10 }}
+    </span>
   </a>
 {% endfor %}
