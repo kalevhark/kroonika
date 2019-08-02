@@ -390,6 +390,8 @@ class Objekt(models.Model):
         if self.hist_date:
             self.hist_year = self.hist_date.year
             self.hist_month = self.hist_date.month
+        if self.hist_enddate:
+            self.hist_endyear = self.hist_enddate.year
         super().save(*args, **kwargs)
 
 
@@ -535,6 +537,8 @@ class Organisatsioon(models.Model):
         if self.hist_date:
             self.hist_year = self.hist_date.year
             self.hist_month = self.hist_date.month
+        if self.hist_enddate:
+            self.hist_endyear = self.hist_enddate.year
         super().save(*args, **kwargs)
 
 
@@ -720,6 +724,8 @@ class Isik(models.Model):
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year
+        if self.hist_enddate:
+            self.hist_endyear = self.hist_enddate.year
         super().save(*args, **kwargs)
 
 
