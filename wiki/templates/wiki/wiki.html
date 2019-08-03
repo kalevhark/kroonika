@@ -87,7 +87,7 @@
 						<br>
 					{% endif %}
 					<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
-						... {{ obj }}
+						... {{ obj.body_text|truncatewords:10 }}
 					</a>
 				{% endfor %}
 			{% endif %}
@@ -152,7 +152,7 @@
 					<strong>{{ obj.hist_year }}</strong>:
 				</a>
 				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
-					{{ obj }}
+					{{ obj.body_text|truncatewords:10 }}
 				</a>
 				{% if obj.profiilipilt %}
 					<img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/><br>
@@ -192,7 +192,7 @@
 					<strong>{{ obj.hist_year }}</strong>:
 				</a>
 				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
-					{{ obj }}
+					{{ obj.body_text|truncatewords:10 }}
 				</a>
 				<!-- Kui kirjed rohkem kui 9, siis hakime 4+1+4 -->
 				{% if andmed.artikkel.sel_kuul_kirjeid > 9 %}
@@ -225,7 +225,7 @@
 					<strong>{{ obj.hist_year }}</strong>:
 				</a>
 				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
-					{{ obj }}
+					{{ obj.body_text|truncatewords:10 }}
 				</a>
 				<small>&nbsp;{{ obj.total_accessed }} vaatamist</small>
 			{% endfor %}
