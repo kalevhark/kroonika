@@ -4,7 +4,7 @@
 	{{ artikkel.hist_year }}
 	<span class="tooltiptext">
 		{% if artikkel.hist_date %}
-			{{ artikkel.hist_date|date: 'd.m.Y' }}
+			{{ artikkel.hist_date|date:"d.m.Y" }}
 		{% else %}
 			{{ artikkel.hist_year }}
 		{% endif %}
