@@ -1,18 +1,29 @@
 <!-- Loend seotud artiklite numbritest ja lühisisu -->
 {% for artikkel in object.artiklid %}
-<a style="cursor: pointer;" onclick="document.getElementById('id{{ artikkel.id }}').style.display='block'" class="hover-artikkel tooltip">{{ artikkel.hist_year }}<span class="tooltiptext">{{ artikkel.body_text|truncatechars:50 }}</span></a>
+<a style="cursor: pointer;" onclick="document.getElementById('id{{ artikkel.id }}').style.display='block'" class="hover-artikkel tooltip">
+	{{ artikkel.hist_year }}
+	<span class="tooltiptext">
+		{% if artikkel.hist_date %}
+			{{ artikkel.hist_date|date: 'd.m.Y' }}
+		{% else %}
+			{{ artikkel.hist_year }}
+		{% endif %}
+		:
+		{{ artikkel.body_text|truncatedwords:10 }}
+	</span>
+</a>
 <div id="id{{ artikkel.id }}" class="w3-modal">
   <div class="w3-modal-content w3-padding-16 w3-light-gray">
 	  <header class="w3-container">
-	  <span onclick="document.getElementById('id{{ artikkel.id }}').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-	  <h5>{% include 'wiki/includes/kp.html' with sd=artikkel.hist_date ed=artikkel.hist_enddate y=artikkel.hist_year m=artikkel.hist_month cs="dark" %}</h5>
+			<span onclick="document.getElementById('id{{ artikkel.id }}').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+			<h5>{% include 'wiki/includes/kp.html' with sd=artikkel.hist_date ed=artikkel.hist_enddate y=artikkel.hist_year m=artikkel.hist_month cs="dark" %}</h5>
 	  </header>
-	<div class="w3-container w3-padding-16">
-	  {{ artikkel.body_text }}
-	</div>
-	<footer class="w3-container">
-	  <a style="text-decoration: none;" class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=artikkel.id %}>Artikli juurde</a>
-	</footer>
+		<div class="w3-container w3-padding-16">
+			{{ artikkel.body_text }}
+		</div>
+		<footer class="w3-container">
+			<a style="text-decoration: none;" class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=artikkel.id %}>Artikli juurde</a>
+		</footer>
   </div>
 </div>
 

@@ -1,16 +1,16 @@
 {% if seotud_isikud_artiklikaudu %}
 <!-- Loend seotud isikutest, mis on nimetatud samas artiklis -->
   <div>
-	<h5>
-	  <i class="fa fa-chain w3-xlarge text-isik"></i>
-	  Isikud, kellega koos mainitud artikli(te)s:
-	</h5>
-	{% for seotud_isik, object in seotud_isikud_artiklikaudu.items %}
-	  {% if forloop.counter > 1 %}
-	    <br>
-	  {% endif %}
-	  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=object.id %}>{{ object.eesnimi}} {{ object.perenimi }}</a>
-	  {% include 'wiki/includes/seotud_artiklikaudu_artiklid.html' %}
+		<h5>
+			<i class="fa fa-chain w3-xlarge text-isik"></i>
+			Isikud, kellega koos mainitud artikli(te)s:
+		</h5>
+		{% for seotud_isik, object in seotud_isikud_artiklikaudu.items %}
+			{% if forloop.counter > 1 %}
+				<br>
+			{% endif %}
+			<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=object.id %}>{{ object.eesnimi}} {{ object.perenimi }}</a>
+			{% include 'wiki/includes/seotud_artiklikaudu_artiklid.html' %}
     {% endfor %}
   </div>
 {% endif %}
