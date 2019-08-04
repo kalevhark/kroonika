@@ -1,4 +1,6 @@
 {% extends "wiki/wiki_base.html" %}
+{% load wiki_extras %}
+{% load widget_tweaks %}
 
 {% block title %}
   {{ block.super }} - Kronoloogia
@@ -8,7 +10,6 @@
 {% endblock %}
 
 {% block content %}
-{% load widget_tweaks %}
 <div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
   <div class="w3-container w3-cell w3-cell-middle w3-mobile  w3-large">
     <a style="text-decoration: none;" href={% url 'wiki:wiki_artikkel_filter' %}>
