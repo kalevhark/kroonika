@@ -18,13 +18,9 @@
 	<!-- Lehekülgede nummerdamine -->
 	{% include 'wiki/includes/pagination.html' with object_list=page_obj %}
 	
-	<!-- Loendi päis: -->
-<!--	{% include 'wiki/includes/object_list_thead.html' %}-->
-
-	<tbody>
-    <!-- Loend kõigist artiklitest -->
+  <!-- Loend kõigist artiklitest -->
 	{% include 'wiki/includes/object_list.html' %}
-	</tbody>
+
 {% endif %}
 </table>
 	
