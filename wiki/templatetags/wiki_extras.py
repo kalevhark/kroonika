@@ -24,6 +24,20 @@ def viga_tekstis():
 
 # Sektsioonide nimetused
 @register.simple_tag
+def model_name_artikkel():
+    return 'Lood'
+
+@register.simple_tag
+def model_name_isik():
+    return 'Isikud'
+
+@register.simple_tag
+def model_name_organisatsioon():
+    return 'Asutised'
+
+@register.simple_tag
 def model_name_objekt():
     return 'Kohad'
+
+
 

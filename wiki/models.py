@@ -826,8 +826,8 @@ class Artikkel(models.Model):
     )
     # Sisu
     body_text = models.TextField(
-        'Artikkel',
-        help_text='Artikli tekst'
+        'Lugu',
+        help_text='Tekst'
     )
     # Seotud:
     isikud = models.ManyToManyField(
@@ -838,12 +838,12 @@ class Artikkel(models.Model):
     organisatsioonid = models.ManyToManyField(
         Organisatsioon,
         blank=True,
-        verbose_name='Seotud organisatsioonid'
+        verbose_name='Seotud asutised'
     )
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
-        verbose_name='Seotud objektid'
+        verbose_name='Seotud kohad'
     )
     viited = models.ManyToManyField(
         Viide,
@@ -924,7 +924,7 @@ class Artikkel(models.Model):
             if tyhik > 0:
                 return self.body_text[:tyhik] + '...'
         return self.body_text[:50]
-    headline.short_description = 'Artikkel'
+    headline.short_description = 'Lugu'
 
     def profiilipilt(self):
         return Pilt.objects.filter(artiklid=self.id, profiilipilt_artikkel=True).first()
@@ -967,7 +967,7 @@ class Artikkel(models.Model):
 
     class Meta:
         ordering = ['hist_searchdate']
-        verbose_name_plural = "Artiklid"
+        verbose_name_plural = "Lood"
 
 
 class Pilt(models.Model):

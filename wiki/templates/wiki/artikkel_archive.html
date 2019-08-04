@@ -1,6 +1,7 @@
 {% extends "wiki/wiki_base.html" %}
+{% load wiki_extras %}
 
-{% block title %}{{ block.super }} - Kõik kirjed {% endblock %}
+{% block title %}{{ block.super }} - Kõik {% model_name_artikkel|lower %} {% endblock %}
 
 {% block breadcrumb %}
 {% endblock %}
@@ -8,7 +9,7 @@
 {% block content %}
 <div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
   <div class="w3-container w3-cell w3-cell-middle">
-     <i class="fa fa-comment w3-xlarge"> Artiklid kronoloogilises järjestuses</i>
+     <i class="fa fa-comment w3-xlarge"> {% model_name_artikkel %} kronoloogilises järjestuses</i>
   </div>
 </div>
 
