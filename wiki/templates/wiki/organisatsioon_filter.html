@@ -1,7 +1,8 @@
 {% extends "wiki/wiki_base.html" %}
+{% load wiki_extras %}
 
 {% block title %}
-  {{ block.super }} - Organisatsioonid
+  {{ block.super }} - {% model_name_organisatsioon %}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -15,7 +16,7 @@
 			<i class="fa fa-group"></i>
 		</a>
 <!--		<i class="fa fa-group"></i>-->
-		<b> Organisatsioonid ({{ kirjeid }})
+		<b> {% model_name_organisatsioon %} ({{ kirjeid }})
 	 {% if object_list.paginator.num_pages > 1 %}
 	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
 	 {% endif %}
@@ -37,7 +38,7 @@
 {% else %}
 	<div class="w3-container w3-padding">
 	  {% if filter.form.nimi__icontains.value %}
-	    Otsinguga (organisatsiooni nimi sisaldab fraasi &#x0022;{{filter.form.nimi__icontains.value }}&#x0022;) ei leitud midagi
+	    Otsinguga ({% model_name_organisatsioon %} nimi sisaldab fraasi &#x0022;{{filter.form.nimi__icontains.value }}&#x0022;) ei leitud midagi
 	  {% else %}
 	    Valikut pole tehtud
 	  {% endif %}

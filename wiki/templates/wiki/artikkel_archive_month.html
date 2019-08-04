@@ -1,4 +1,5 @@
 {% extends "wiki/wiki_base.html" %}
+{% load wiki_extras %}
 
 {% block title %}{{ block.super }} - {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:"Y" }}{% endblock %}
 
@@ -9,7 +10,7 @@
 {% block content %}
 <div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
   <div class="w3-container w3-large">
-     <i class="fa fa-comment"></i><b> Artiklid {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:"Y" }} kohta</b>
+     <i class="fa fa-comment"></i><b> {% model_name_artikkel %} {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:"Y" }} kohta</b>
   </div>
 </div>
 

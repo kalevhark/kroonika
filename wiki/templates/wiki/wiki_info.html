@@ -47,10 +47,10 @@
 </p>
 
 <p>Otsimiseks kasuta temaatilisi otsinguid:
-  <a href={% url 'wiki:wiki_artikkel_filter' %}>Lood</a>
-  <a href={% url 'wiki:wiki_isik_filter' %}>Inimesed</a>
-  <a href={% url 'wiki:wiki_organisatsioon_filter' %}>Asutised</a>
-  <a href={% url 'wiki:wiki_objekt_filter' %}>Kohad</a>
+  <a href={% url 'wiki:wiki_artikkel_filter' %}>{% model_name_artikkel %}</a>
+  <a href={% url 'wiki:wiki_isik_filter' %}>{% model_name_isik %}</a>
+  <a href={% url 'wiki:wiki_organisatsioon_filter' %}>{% model_name_organisatsioon %}</a>
+  <a href={% url 'wiki:wiki_objekt_filter' %}>{% model_name_objekt %}</a>
 </p>
 
 <p>
