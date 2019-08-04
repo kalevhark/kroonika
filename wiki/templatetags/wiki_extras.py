@@ -24,11 +24,6 @@ def viga_tekstis():
 
 # Sektsioonide nimetused
 @register.simple_tag
-def model_name():
-    model_names = dict()
-    model_names['artikkel'] = 'Lood'
-    model_names['isik'] = 'Isikud'
-    model_names['organisatsioon'] = 'Asutised'
-    model_names['objekt'] = 'Kohad'
-    return model_names
+def model_name_objekt():
+    return 'Kohad'
 
