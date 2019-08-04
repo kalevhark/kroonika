@@ -719,14 +719,14 @@ class ArtikkelYearArchiveView(YearArchiveView):
                 # nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
-        context['loodud_organisatsioonid_pealkiri'] = '{0}. aastal loodud organisatsioonid'.format(aasta)
+        context['loodud_organisatsioonid_pealkiri'] = f'{aasta}. aastal loodud asutised'
         # Leiame samal aastal avatud objektid
         valminud_objektid = (
             Objekt.objects.filter(hist_date__year = aasta) | Objekt.objects.filter(hist_year = aasta)).distinct().annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['valminud_objektid'] = valminud_objektid
-        context['valminud_objektid_pealkiri'] = '{0}. aastal valminud objektid'.format(aasta)
+        context['valminud_objektid_pealkiri'] = f'{aasta}. aastal valminud kohad'
         
         return context
 
@@ -766,13 +766,13 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
-        context['loodud_organisatsioonid_pealkiri'] = '{0} loodud organisatsioonid'.format(mis_kuul(kuu))
+        context['loodud_organisatsioonid_pealkiri'] = f'{mis_kuul(kuu)} loodud asutised'
         # Leiame samal kuul avatud objektid
         valminud_objektid = Objekt.objects.filter(hist_date__month = kuu).annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['valminud_objektid'] = valminud_objektid
-        context['valminud_objektid_pealkiri'] = '{0} valminud objektid'.format(mis_kuul(kuu))
+        context['valminud_objektid_pealkiri'] = f'{mis_kuul(kuu)} valminud kohad'
         return context
 
 
@@ -810,13 +810,13 @@ class ArtikkelDayArchiveView(DayArchiveView):
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
-        context['loodud_organisatsioonid_pealkiri'] = '{0}. {1} loodud organisatsioonid'.format(p2ev, mis_kuul(kuu, 'l'))
+        context['loodud_organisatsioonid_pealkiri'] = '{0}. {1} loodud asutised'.format(p2ev, mis_kuul(kuu, 'l'))
         # Leiame samal kuupäeval loodud objektid
         valminud_objektid = Objekt.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['valminud_objektid'] = valminud_objektid
-        context['valminud_objektid_pealkiri'] = '{0}. {1} valminud objektid'.format(p2ev, mis_kuul(kuu, 'l'))
+        context['valminud_objektid_pealkiri'] = '{0}. {1} valminud kohad'.format(p2ev, mis_kuul(kuu, 'l'))
         
         return context
 
