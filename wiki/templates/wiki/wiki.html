@@ -1,5 +1,6 @@
 {% extends "wiki/wiki_base.html" %}
 {% load staticfiles %}
+{% load wiki_extras %}
 
 {% block content %}
 
@@ -12,10 +13,10 @@
 						<i class="fa fa-comment w3-xxxlarge"></i>
 					</div>
 					<div class="w3-hide-medium w3-right">
-						<h4>Lood ({{ andmed.artikkel.kirjeid }})</h4>
+						<h4>{% model_name_artikkel %} ({{ andmed.artikkel.kirjeid }})</h4>
 					</div>
 					<div class="w3-hide-large w3-hide-small w3-left ">
-						<h6>Lood ({{ andmed.artikkel.kirjeid }})</h6>
+						<h6>{% model_name_artikkel %} ({{ andmed.artikkel.kirjeid }})</h6>
 					</div>
 <!--        	<div class="w3-clear"></div>-->
       	</div>
@@ -28,10 +29,10 @@
 						<i class="fa fa-address-card-o w3-xxxlarge"></i>
 					</div>
 					<div class="w3-hide-medium w3-right">
-						<h4>Isikud ({{ andmed.isik.kirjeid }})</h4>
+						<h4>{% model_name_isik %} ({{ andmed.isik.kirjeid }})</h4>
 					</div>
 					<div class="w3-hide-large w3-hide-small w3-left ">
-						<h6>Isikud ({{ andmed.isik.kirjeid }})</h6>
+						<h6>{% model_name_isik %} ({{ andmed.isik.kirjeid }})</h6>
 					</div>
 <!--					<div class="w3-clear"></div>-->
       	</div>
@@ -44,10 +45,10 @@
 						<i class="fa fa-group w3-xxxlarge"></i>
 					</div>
         	<div class="w3-hide-medium w3-right">
-						<h4>Asutised ({{ andmed.organisatsioon.kirjeid }})</h4>
+						<h4>{% model_name_organisatsioon %} ({{ andmed.organisatsioon.kirjeid }})</h4>
 					</div>
 					<div class="w3-hide-large w3-hide-small w3-left ">
-						<h6>Asutised ({{ andmed.organisatsioon.kirjeid }})</h6>
+						<h6>{% model_name_organisatsioon %} ({{ andmed.organisatsioon.kirjeid }})</h6>
 					</div>
 <!--					<div class="w3-clear"></div>-->
       	</div>
@@ -60,10 +61,10 @@
 						<i class="fa fa-bank w3-xxxlarge"></i>
 					</div>
         	<div class="w3-hide-medium w3-right">
-						<h4>Kohad ({{ andmed.objekt.kirjeid }})</h4>
+						<h4>{% model_name_objekt %} ({{ andmed.objekt.kirjeid }})</h4>
 					</div>
 					<div class="w3-hide-large w3-hide-small w3-left ">
-						<h6>Kohad ({{ andmed.objekt.kirjeid }})</h6>
+						<h6>{% model_name_objekt %} ({{ andmed.objekt.kirjeid }})</h6>
 					</div>
 <!--					<div class="w3-clear"></div>-->
       	</div>
