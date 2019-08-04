@@ -1,4 +1,5 @@
 {% extends "wiki/wiki_base.html" %}
+{% load wiki_extras %}
 
 {% block title %}
   {{ block.super }} - Kohad
@@ -15,7 +16,7 @@
 			<i class="fa fa-bank"></i>
 		</a>
 <!--    <i class="fa fa-bank"></i>-->
-		<b> {% model_name_objekt %} ({{ kirjeid }})
+		<b> {% model_name.objekt %} ({{ kirjeid }})
 	 {% if object_list.paginator.num_pages > 1 %}
 	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
 	 {% endif %}
