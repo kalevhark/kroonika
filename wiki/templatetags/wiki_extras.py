@@ -22,3 +22,13 @@ def kalev():
 def viga_tekstis():
     return VIGA_TEKSTIS
 
+# Sektsioonide nimetused
+@register.simple_tag
+def model_name():
+    model_names = dict()
+    model_names['artikkel'] = 'Lood'
+    model_names['isik'] = 'Isikud'
+    model_names['organisatsioon'] = 'Asutised'
+    model_names['objekt'] = 'Kohad'
+    return model_names
+

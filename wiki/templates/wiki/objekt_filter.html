@@ -1,7 +1,7 @@
 {% extends "wiki/wiki_base.html" %}
 
 {% block title %}
-  {{ block.super }} - Objektid
+  {{ block.super }} - Kohad
 {% endblock %}
 
 {% block breadcrumb %}
@@ -15,7 +15,7 @@
 			<i class="fa fa-bank"></i>
 		</a>
 <!--    <i class="fa fa-bank"></i>-->
-		<b> Objektid ({{ kirjeid }})
+		<b> {% model_name.objekt %} ({{ kirjeid }})
 	 {% if object_list.paginator.num_pages > 1 %}
 	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
 	 {% endif %}
