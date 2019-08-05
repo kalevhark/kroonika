@@ -158,7 +158,7 @@ def otsi(request):
     return render(
         request,
         'wiki/wiki_otsi.html',
-        {'kroonika_url': settings.BASE_DIR}
+        {'kroonika_url': request.META}
     )
 
 #
