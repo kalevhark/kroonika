@@ -39,7 +39,7 @@ var watchExampleVM = new Vue({
         };
         this.answer = 'Otsime...';
         console.log(window.kroonika_url);
-        var kroonika_url = 'http://' + window.kroonika_url; //  'http://192.168.1.143/kroonika/';
+        var kroonika_url = 'http://' + document.getElementById("myVar").value; //  'http://192.168.1.143/kroonika/';
         var isik_api_url = kroonika_url + 'api/isik/?format=json';
         var organisatsioon_api_url = kroonika_url + 'api/organisatsioon/?format=json';
         var objekt_api_url = kroonika_url + 'api/objekt/?format=json';
