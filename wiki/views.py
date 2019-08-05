@@ -150,6 +150,17 @@ def info(request):
         }
     )
 
+
+#
+# Avalehekülg
+#
+def otsi(request):
+    return render(
+        request,
+        'wiki/wiki_otsi.html',
+        {}
+    )
+
 #
 # Tagasiside vormi töötlemine
 #
@@ -1204,4 +1215,3 @@ def test(request):
         # if len(obj.pilt_thumbnail.name)==0
     ]
     return JsonResponse(data, safe=False)
-

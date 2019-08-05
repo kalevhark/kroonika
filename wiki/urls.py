@@ -19,6 +19,7 @@ urlpatterns = [
     path('', ArtikkelFilterView.as_view(), name='wiki_artikkel_filter'),
     path('<int:pk>', ArtikkelDetailView.as_view(), name='wiki_artikkel_detail'),
     path('info/', views.info, name='info'),
+    path('otsi/', views.otsi, name='otsi'),
     path('feedback/', views.feedback, name='feedback'),
     path('krono/', ArtikkelArchiveIndexView.as_view(), name='artikkel_index_archive'),
     path('krono/<int:year>/', ArtikkelYearArchiveView.as_view(), name='artikkel_year_archive'),

@@ -1,0 +1,68 @@
+{% extends "wiki/wiki_base.html" %}
+{% load staticfiles %}
+{% load wiki_extras %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block src %}
+  <!-- development version, includes helpful console warnings -->
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+{% endblock %}
+
+{% block content %}
+{% verbatim %}
+  <div id="kroonika-api">
+    <div class="header">
+      Otsi:
+      <input v-model="question">
+      &nbsp;{{ answer }}
+    </div>
+    <div class="row">
+      <div class="column left">
+        <div  class="box-small">
+          <p>Isikuid: {{ isik_results_count }}{{ isik_message }}</p>
+          <ul>
+            <li v-for="result in isik_results">
+              <a v-bind:href="result.url">{{ result.eesnimi }} {{ result.perenimi }}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="box-small">
+          <p>Organisatsioone: {{ organisatsioon_results_count }}{{ organisatsioon_message}}</p>
+          <ul>
+            <li v-for="result in organisatsioon_results">
+                <a v-bind:href="result.url">{{ result.nimi }}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="box-small">
+          <p>Objekte: {{ objekt_results_count }}{{ objekt_message}}</p>
+          <ul>
+            <li v-for="result in objekt_results">
+                <a v-bind:href="result.url">{{ result.nimi }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="column right">
+        <div class="box-big">
+          <p>Artikleid: {{ artikkel_results_count }}{{ artikkel_message}}</p>
+          <ul>
+            <li v-for="result in artikkel_results">
+                <a v-bind:href="result.url">{{ result.body_text.slice(0, 100) }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endverbatim %}
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'wiki/js/wiki_otsi.js'%}"></script>
+{% endblock %}

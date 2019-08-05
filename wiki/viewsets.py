@@ -71,6 +71,7 @@ class IsikFilter(filters.FilterSet):
     perenimi = django_filters.CharFilter(field_name='perenimi', lookup_expr='icontains')
     eesnimi = django_filters.CharFilter(field_name='eesnimi', lookup_expr='icontains')
     nimi = django_filters.CharFilter(method='filter_nimi')
+    sisaldab = django_filters.CharFilter(method='filter_tags')
 
     def filter_nimi(self, queryset, field_name, value):
         """
@@ -83,6 +84,24 @@ class IsikFilter(filters.FilterSet):
         return queryset.filter(
             Q(eesnimi__icontains=value) | Q(perenimi__icontains=value)
         )
+
+    def filter_tags(self, queryset, field_name, value):
+        # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
+        tags = value.split(' ')
+        if len(tags) > 1:
+            for tag in tags:
+                queryset = queryset.filter(
+                    Q(eesnimi__icontains=tag) |
+                    Q(perenimi__icontains=tag) |
+                    Q(kirjeldus__icontains=tag)
+                )
+            return queryset
+        else:
+            return queryset.filter(
+                    Q(eesnimi__icontains=value) |
+                    Q(perenimi__icontains=value) |
+                    Q(kirjeldus__icontains=value)
+                )
 
 class IsikViewSet(viewsets.ModelViewSet):
     """
