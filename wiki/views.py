@@ -145,6 +145,7 @@ def info(request):
             'andmebaasid': andmebaasid,
             'andmed': andmed,
             'artikleid_kuus': artikleid_kuus,
+            'meta_andmed': request.META,
             # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         }
@@ -158,7 +159,7 @@ def otsi(request):
     return render(
         request,
         'wiki/wiki_otsi.html',
-        {'kroonika_url': request.META}
+        {'kroonika_url': request.META['HTTP_HOST'] + request.META['SCRIPT_NAME']}
     )
 
 #

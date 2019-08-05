@@ -108,7 +108,11 @@ Lisaks:
     {% endfor %}
   {% endif %}
 </div>
-
+<div>
+  {% for item, value in meta_andmed.items %}
+    <small>{{ item }}:{{ value }}</small><br>
+  {% endfor %}
+</div>
 
 <!--<script>-->
 <!--  grecaptcha.ready(function() {-->
