@@ -15,6 +15,7 @@ from .models import (
 
 # TODO: Korrektselt ei tööta, "permissions-detail" ei leita
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name')
@@ -39,18 +40,33 @@ class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class IsikSerializer(serializers.HyperlinkedModelSerializer):
+    link = serializers.SerializerMethodField()
+
+    def get_link(self, obj):
+        return obj.get_absolute_url()
+
     class Meta:
         model = Isik
         fields = '__all__'
 
 
 class ObjektSerializer(serializers.HyperlinkedModelSerializer):
+    link = serializers.SerializerMethodField()
+
+    def get_link(self, obj):
+        return obj.get_absolute_url()
+
     class Meta:
         model = Objekt
         fields = '__all__'
 
 
 class OrganisatsioonSerializer(serializers.HyperlinkedModelSerializer):
+    link = serializers.SerializerMethodField()
+
+    def get_link(self, obj):
+        return obj.get_absolute_url()
+
     class Meta:
         model = Organisatsioon
         fields = '__all__'

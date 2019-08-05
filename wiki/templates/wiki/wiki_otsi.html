@@ -14,6 +14,7 @@
 {% endblock %}
 
 {% block content %}
+{{ kroonika_url }}<br>
 {% verbatim %}
   <div id="kroonika-api">
     <div class="header">
@@ -27,7 +28,7 @@
           <p>Isikuid: {{ isik_results_count }}{{ isik_message }}</p>
           <ul>
             <li v-for="result in isik_results">
-              <a v-bind:href="result.url">{{ result.eesnimi }} {{ result.perenimi }}</a>
+              <a v-bind:href="result.link">{{ result.eesnimi }} {{ result.perenimi }}</a>
             </li>
           </ul>
         </div>
@@ -35,7 +36,7 @@
           <p>Organisatsioone: {{ organisatsioon_results_count }}{{ organisatsioon_message}}</p>
           <ul>
             <li v-for="result in organisatsioon_results">
-                <a v-bind:href="result.url">{{ result.nimi }}</a>
+                <a v-bind:href="result.link">{{ result.nimi }}</a>
             </li>
           </ul>
         </div>
@@ -43,7 +44,7 @@
           <p>Objekte: {{ objekt_results_count }}{{ objekt_message}}</p>
           <ul>
             <li v-for="result in objekt_results">
-                <a v-bind:href="result.url">{{ result.nimi }}</a>
+                <a v-bind:href="result.link">{{ result.nimi }}</a>
             </li>
           </ul>
         </div>
