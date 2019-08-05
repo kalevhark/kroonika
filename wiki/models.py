@@ -967,6 +967,7 @@ class Artikkel(models.Model):
 
     class Meta:
         ordering = ['hist_searchdate']
+        verbose_name = "Lugu"
         verbose_name_plural = "Lood"
 
 

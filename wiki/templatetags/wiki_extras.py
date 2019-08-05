@@ -1,6 +1,6 @@
 from django import template
 
-from wiki.models import VIGA_TEKSTIS
+from wiki.models import VIGA_TEKSTIS, Artikkel, Isik, Organisatsioon, Objekt
 from wiki.views import get_all_logged_in_users
 
 
@@ -25,19 +25,19 @@ def viga_tekstis():
 # Sektsioonide nimetused
 @register.simple_tag
 def model_name_artikkel():
-    return 'Lood'
+    return Artikkel._meta.verbose_name_plural
 
 @register.simple_tag
 def model_name_isik():
-    return 'Isikud'
+    return Isik._meta.verbose_name_plural
 
 @register.simple_tag
 def model_name_organisatsioon():
-    return 'Asutised'
+    return Organisatsioon._meta.verbose_name_plural
 
 @register.simple_tag
 def model_name_objekt():
-    return 'Kohad'
+    return Objekt._meta.verbose_name_plural
 
 
 

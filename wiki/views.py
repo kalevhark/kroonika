@@ -706,27 +706,39 @@ class ArtikkelYearArchiveView(YearArchiveView):
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['syndinud_isikud'] = syndinud_isikud
-        context['syndinud_isikud_pealkiri'] = '{0}. aastal sündinud isikud'.format(aasta)
+        context['syndinud_isikud_pealkiri'] = '{0}. aastal sündinud {1}'.format(
+            aasta,
+            Isik._meta.verbose_name_plural.lower()
+        )
         # Leiame samal aastal surnud isikud
         surnud_isikud = Isik.objects.filter(hist_enddate__year = aasta).annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['surnud_isikud'] = surnud_isikud
-        context['surnud_isikud_pealkiri'] = '{0}. aastal surnud isikud'.format(aasta)
+        context['surnud_isikud_pealkiri'] = '{0}. aastal surnud {1}'.format(
+            aasta,
+            Isik._meta.verbose_name_plural.lower()
+        )
         # Leiame samal aastal loodud organisatsioonid
         loodud_organisatsioonid = (
             Organisatsioon.objects.filter(hist_date__year = aasta) | Organisatsioon.objects.filter(hist_year = aasta)).distinct().annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
-        context['loodud_organisatsioonid_pealkiri'] = f'{aasta}. aastal loodud asutised'
+        context['loodud_organisatsioonid_pealkiri'] = '{0}. aastal loodud {1}'.format(
+            aasta,
+            Organisatsioon._meta.verbose_name_plural.lower()
+        )
         # Leiame samal aastal avatud objektid
         valminud_objektid = (
             Objekt.objects.filter(hist_date__year = aasta) | Objekt.objects.filter(hist_year = aasta)).distinct().annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['valminud_objektid'] = valminud_objektid
-        context['valminud_objektid_pealkiri'] = f'{aasta}. aastal valminud kohad'
+        context['valminud_objektid_pealkiri'] = '{0}. aastal valminud {1}'.format(
+            aasta,
+            Objekt._meta.verbose_name_plural.lower()
+        )
         
         return context
 
@@ -754,25 +766,37 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(p2ev.year - ExtractYear('hist_date'), output_field=IntegerField()))
         context['syndinud_isikud'] = syndinud_isikud
-        context['syndinud_isikud_pealkiri'] = '{0} sündinud isikud'.format(mis_kuul(kuu))
+        context['syndinud_isikud_pealkiri'] = '{0} sündinud {1}'.format(
+            mis_kuul(kuu),
+            Isik._meta.verbose_name_plural.lower()
+        )
         # Leiame samal kuul surnud isikud
         surnud_isikud = Isik.objects.filter(hist_enddate__month = kuu).annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(p2ev.year - ExtractYear('hist_date'), output_field=IntegerField()))
         context['surnud_isikud'] = surnud_isikud
-        context['surnud_isikud_pealkiri'] = '{0} surnud isikud'.format(mis_kuul(kuu))
+        context['surnud_isikud_pealkiri'] = '{0} surnud {1}'.format(
+            mis_kuul(kuu),
+            Isik._meta.verbose_name_plural.lower()
+        )
         # Leiame samal kuul loodud organisatsioonid
         loodud_organisatsioonid = Organisatsioon.objects.filter(hist_date__month = kuu).annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
-        context['loodud_organisatsioonid_pealkiri'] = f'{mis_kuul(kuu)} loodud asutised'
+        context['loodud_organisatsioonid_pealkiri'] = '{0} loodud {1}'.format(
+            mis_kuul(kuu),
+            Organisatsioon._meta.verbose_name_plural.lower()
+        )
         # Leiame samal kuul avatud objektid
         valminud_objektid = Objekt.objects.filter(hist_date__month = kuu).annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['valminud_objektid'] = valminud_objektid
-        context['valminud_objektid_pealkiri'] = f'{mis_kuul(kuu)} valminud kohad'
+        context['valminud_objektid_pealkiri'] = '{0} valminud {1}'.format(
+            mis_kuul(kuu),
+            Objekt._meta.verbose_name_plural.lower()
+        )
         return context
 
 
@@ -798,25 +822,41 @@ class ArtikkelDayArchiveView(DayArchiveView):
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['syndinud_isikud'] = syndinud_isikud
-        context['syndinud_isikud_pealkiri'] = '{0}. {1} sündinud isikud'.format(p2ev, mis_kuul(kuu, 'l'))
+        context['syndinud_isikud_pealkiri'] = '{0}. {1} sündinud {2}'.format(
+            p2ev,
+            mis_kuul(kuu, 'l'),
+            Isik._meta.verbose_name_plural.lower()
+        )
         # Leiame samal kuupäeval surnud isikud
         surnud_isikud = Isik.objects.filter(hist_enddate__month = kuu, hist_enddate__day = p2ev).annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['surnud_isikud'] = surnud_isikud
-        context['surnud_isikud_pealkiri'] = '{0}. {1} surnud isikud'.format(p2ev, mis_kuul(kuu, 'l'))
+        context['surnud_isikud_pealkiri'] = '{0}. {1} surnud {2}'.format(
+            p2ev,
+            mis_kuul(kuu, 'l'),
+            Isik._meta.verbose_name_plural.lower()
+        )
         # Leiame samal kuupäeval loodud organisatsioonid
         loodud_organisatsioonid = Organisatsioon.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
-        context['loodud_organisatsioonid_pealkiri'] = '{0}. {1} loodud asutised'.format(p2ev, mis_kuul(kuu, 'l'))
+        context['loodud_organisatsioonid_pealkiri'] = '{0}. {1} loodud {2}'.format(
+            p2ev,
+            mis_kuul(kuu, 'l'),
+            Organisatsioon._meta.verbose_name_plural.lower()
+        )
         # Leiame samal kuupäeval loodud objektid
         valminud_objektid = Objekt.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
                 # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['valminud_objektid'] = valminud_objektid
-        context['valminud_objektid_pealkiri'] = '{0}. {1} valminud kohad'.format(p2ev, mis_kuul(kuu, 'l'))
+        context['valminud_objektid_pealkiri'] = '{0}. {1} valminud {2}'.format(
+            p2ev,
+            mis_kuul(kuu, 'l'),
+            Objekt._meta.verbose_name_plural.lower()
+        )
         
         return context
 
