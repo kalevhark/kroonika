@@ -27,7 +27,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
-    link = Field(source='get_absolute_url')
+    link = serializers.SerializerMethodField()
+
+    def get_link(self, obj):
+        return obj.get_absolute_url()
 
     class Meta:
         model = Artikkel
