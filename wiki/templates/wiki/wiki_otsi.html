@@ -54,7 +54,7 @@
           <p>Artikleid: {{ artikkel_results_count }}{{ artikkel_message}}</p>
           <ul>
             <li v-for="result in artikkel_results">
-                <a v-bind:href="result.link">{{ result.hist_year}}:{{ result.headline }}</a>
+                <a v-bind:href="result.link">{{ result.hist_year}}:{{ result.body_text.slice(0, 100) }}</a>
             </li>
           </ul>
         </div>
