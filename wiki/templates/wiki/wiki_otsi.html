@@ -53,7 +53,7 @@
           <p>Artikleid: {{ artikkel_results_count }}{{ artikkel_message}}</p>
           <ul>
             <li v-for="result in artikkel_results">
-                <a v-bind:href="result.url">{{ result.body_text.slice(0, 100) }}</a>
+                <a v-bind:href="result.link">{{ result.body_text.slice(0, 100) }}</a>
             </li>
           </ul>
         </div>

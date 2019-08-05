@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from django.db.models import Field
 
 from .models import (
     # Kroonika,
@@ -26,6 +27,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
+    link = Field(source='get_absolute_url')
+
     class Meta:
         model = Artikkel
         # fields = '__all__'

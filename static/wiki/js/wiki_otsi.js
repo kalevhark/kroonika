@@ -38,10 +38,11 @@ var watchExampleVM = new Vue({
           return
         };
         this.answer = 'Otsime...';
-        var isik_api_url = 'http://192.168.1.143/kroonika/api/isik/?format=json';
-        var organisatsioon_api_url = 'http://192.168.1.143/kroonika/api/organisatsioon/?format=json';
-        var objekt_api_url = 'http://192.168.1.143/kroonika/api/objekt/';
-        var artikkel_api_url = 'http://192.168.1.143/kroonika/api/artikkel/?format=json'
+        var kroonika_url = 'http://192.168.1.143/kroonika/';
+        var isik_api_url = kroonika_url + 'api/isik/?format=json';
+        var organisatsioon_api_url = kroonika_url + 'api/organisatsioon/?format=json';
+        var objekt_api_url = kroonika_url + 'api/objekt/?format=json';
+        var artikkel_api_url = kroonika_url + 'api/artikkel/?format=json';
         var vm = this;
         // Nullime väärtused enne uut päringut
         vm.isik_results = [];
