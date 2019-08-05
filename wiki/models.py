@@ -966,7 +966,10 @@ class Artikkel(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        ordering = ['hist_searchdate']
+        ordering = [
+            'hist_searchdate',
+            'id'
+        ]
         verbose_name = "Lugu"
         verbose_name_plural = "Lood"
 
