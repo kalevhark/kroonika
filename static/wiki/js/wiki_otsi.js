@@ -38,8 +38,8 @@ var watchExampleVM = new Vue({
           return
         };
         this.answer = 'Otsime...';
-        console.log(window.kroonika_url);
         var kroonika_url = 'http://' + document.getElementById("myVar").value; //  'http://192.168.1.143/kroonika/';
+        console.log(kroonika_url);
         var isik_api_url = kroonika_url + 'api/isik/?format=json';
         var organisatsioon_api_url = kroonika_url + 'api/organisatsioon/?format=json';
         var objekt_api_url = kroonika_url + 'api/objekt/?format=json';
