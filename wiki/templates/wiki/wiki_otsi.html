@@ -34,7 +34,12 @@
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in isik_results">
-              <a class="hover-isik" v-bind:href="result.link">{{ result.eesnimi }} {{ result.perenimi }}</a>
+              <a
+                  class="hover-isik"
+                  style="text-decoration: none;"
+                  v-bind:href="result.link">
+                {{ result.eesnimi }} {{ result.perenimi }}
+              </a>
             </li>
           </ul>
         </div>
@@ -46,7 +51,12 @@
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in organisatsioon_results">
-                <a class="hover-organisatsioon" v-bind:href="result.link">{{ result.nimi }}</a>
+                <a
+                    class="hover-organisatsioon"
+                    style="text-decoration: none;"
+                    v-bind:href="result.link">
+                  {{ result.nimi }}
+                </a>
             </li>
           </ul>
         </div>
@@ -58,27 +68,34 @@
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in objekt_results">
-                <a class="hover-objekt" v-bind:href="result.link">{{ result.nimi }}</a>
+                <a
+                    class="hover-objekt"
+                    style="text-decoration: none;"
+                    v-bind:href="result.link">
+                  {{ result.nimi }}
+                </a>
             </li>
           </ul>
         </div>
       </div>
-      <div class="w3-cell w3-cell-top w3-padding-small w3-hover-white">
-        <div class="w3-padding-small">
-          <strong>
-            Lugusid: {{ artikkel_results_count }}{{ artikkel_message}}
-          </strong>
+      <div class="w3-cell w3-cell-top w3-padding-small">
+        <div class="w3-cell-row w3-hover-white">
+          <div class="w3-padding-small">
+            <strong>
+              Lugusid: {{ artikkel_results_count }}{{ artikkel_message}}
+            </strong>
+          </div>
+          <ul class="w3-ul">
+            <li class="w3-padding-small" style="list-style-type:none;" v-for="result in artikkel_results">
+                <a
+                    class="hover-artikkel"
+                    style="text-decoration: none;"
+                    v-bind:href="result.link">
+                  {{ result.hist_year}}: {{ result.body_text.slice(0, 100) }}{{ function(result.body_text.length) { return (result.body_text.length > 100) ? "..." : ""; } }}
+                </a>
+            </li>
+          </ul>
         </div>
-        <ul class="w3-ul">
-          <li class="w3-padding-small" style="list-style-type:none;" v-for="result in artikkel_results">
-              <a
-                  class="hover-artikkel"
-                  style="text-decoration: none;"
-                  v-bind:href="result.link">
-                {{ result.hist_year}}: {{ result.body_text.slice(0, 100) }}
-              </a>
-          </li>
-        </ul>
       </div>
     </div>
   </div>
