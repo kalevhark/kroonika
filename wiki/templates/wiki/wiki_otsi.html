@@ -25,7 +25,7 @@
       &nbsp;{{ answer }}
     </div>
     <div class="w3-cell-row">
-      <div class="w3-container w3-red w3-cell" style="width:25%">
+      <div class="w3-container w3-cell" style="width:25%">
 
         <p>Isikuid: {{ isik_results_count }}{{ isik_message }}</p>
         <ul>
@@ -47,11 +47,11 @@
         </ul>
 
       </div>
-      <div class="w3-container w3-green w3-cell">
+      <div class="w3-container w3-cell">
 
         <p>Lugusid: {{ artikkel_results_count }}{{ artikkel_message}}</p>
-        <ul class="w3-ul" style="list-style-type:none;">
-          <li class="w3-padding-small" v-for="result in artikkel_results">
+        <ul class="w3-ul">
+          <li class="w3-padding-small" style="list-style-type:none;" v-for="result in artikkel_results">
               <a class="hover-artikkel" v-bind:href="result.link">
                 {{ result.hist_year}}:{{ result.body_text.slice(0, 100) }}
               </a>
