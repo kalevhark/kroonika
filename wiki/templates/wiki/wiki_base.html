@@ -64,12 +64,12 @@
         method="get"
         id="searchform_large"
         action="{% url 'wiki:otsi' %}" >
-      {% csrf_token %}
+<!--      {% csrf_token %}-->
       <input
           type="text"
           class="w3-bar-item w3-input w3-white"
-          name="body_text__icontains"
-          id="id_body_text__icontains"
+          name="question"
+          id="question"
           placeholder="Otsi.." />
       <button
           class="w3-bar-item w3-button w3-hide-small w3-hover-white"
