@@ -91,7 +91,7 @@
                     class="hover-artikkel"
                     style="text-decoration: none;"
                     v-bind:href="result.link">
-                  {{ result.hist_year}}: {{ result.body_text.slice(0, 100) }}{{ result.body_text.length }}
+                  {{ result.hist_year}}: {{ result.body_text.slice(0, 100) }}{{ result.body_text.length>100 ? '...' : '' }}
                 </a>
             </li>
           </ul>
