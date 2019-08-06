@@ -40,10 +40,10 @@ var watchExampleVM = new Vue({
         this.answer = 'Otsime...';
         // var kroonika_url = 'http://' + document.getElementById("myVar").value; //  'http://192.168.1.143/kroonika/';
         console.log(kroonika_url);
-        var isik_api_url = '/kroonika/api/isik/?format=json';
-        var organisatsioon_api_url = '/kroonika/api/organisatsioon/?format=json';
-        var objekt_api_url = '/kroonika/api/objekt/?format=json';
-        var artikkel_api_url = '/kroonika/api/artikkel/?format=json';
+        var isik_api_url = kroonika_url + '/api/isik/?format=json';
+        var organisatsioon_api_url = kroonika_url + '/kroonika/api/organisatsioon/?format=json';
+        var objekt_api_url = kroonika_url + '/kroonika/api/objekt/?format=json';
+        var artikkel_api_url = kroonika_url + '/kroonika/api/artikkel/?format=json';
         var vm = this;
         // Nullime väärtused enne uut päringut
         vm.isik_results = [];
