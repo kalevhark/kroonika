@@ -52,11 +52,13 @@
         </div>
       </div>
       <div class="w3-cell w3-cell-top w3-hover-white">
-        Lugusid: {{ artikkel_results_count }}{{ artikkel_message}}<br>
+        <div class="w3-padding-small">
+          Lugusid: {{ artikkel_results_count }}{{ artikkel_message}}
+        </div>
         <ul class="w3-ul">
           <li class="w3-padding-small" style="list-style-type:none;" v-for="result in artikkel_results">
               <a class="hover-artikkel" v-bind:href="result.link">
-                {{ result.hist_year}}:{{ result.body_text.slice(0, 100) }}
+                {{ result.hist_year}}: {{ result.body_text.slice(0, 100) }}
               </a>
           </li>
         </ul>
