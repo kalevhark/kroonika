@@ -25,29 +25,33 @@
       &nbsp;{{ answer }}
     </div>
     <div class="w3-cell-row">
-      <div class="w3-container w3-cell" style="width:25%">
-
-        <p>Isikuid: {{ isik_results_count }}{{ isik_message }}</p>
-        <ul>
-          <li v-for="result in isik_results">
-            <a v-bind:href="result.link">{{ result.eesnimi }} {{ result.perenimi }}</a>
-          </li>
-        </ul>
-        <p>Asutisi: {{ organisatsioon_results_count }}{{ organisatsioon_message}}</p>
-        <ul>
-          <li v-for="result in organisatsioon_results">
-              <a v-bind:href="result.link">{{ result.nimi }}</a>
-          </li>
-        </ul>
-        <p>Kohti: {{ objekt_results_count }}{{ objekt_message}}</p>
-        <ul>
-          <li v-for="result in objekt_results">
-              <a v-bind:href="result.link">{{ result.nimi }}</a>
-          </li>
-        </ul>
-
+      <div class="w3-cell" style="width:25%">
+        <div class="w3-cell-row w3-hover-white">
+          <p>Isikuid: {{ isik_results_count }}{{ isik_message }}</p>
+          <ul class="w3-ul">
+            <li class="w3-padding-small" style="list-style-type:none;" v-for="result in isik_results">
+              <a class="hover-isik" v-bind:href="result.link">{{ result.eesnimi }} {{ result.perenimi }}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="w3-cell-row w3-hover-white">
+          <p>Asutisi: {{ organisatsioon_results_count }}{{ organisatsioon_message}}</p>
+          <ul class="w3-ul">
+            <li class="w3-padding-small" style="list-style-type:none;" v-for="result in organisatsioon_results">
+                <a class="hover-organisatsioon" v-bind:href="result.link">{{ result.nimi }}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="w3-cell-row w3-hover-white">
+          <p>Kohti: {{ objekt_results_count }}{{ objekt_message}}</p>
+          <ul class="w3-ul">
+            <li class="w3-padding-small" style="list-style-type:none;" v-for="result in objekt_results">
+                <a class="hover-objekt" v-bind:href="result.link">{{ result.nimi }}</a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="w3-container w3-cell">
+      <div class="w3-cell w3-hover-white">
 
         <p>Lugusid: {{ artikkel_results_count }}{{ artikkel_message}}</p>
         <ul class="w3-ul">
