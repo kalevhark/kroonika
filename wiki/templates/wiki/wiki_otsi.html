@@ -14,12 +14,11 @@
 {% endblock %}
 
 {% block content %}
-<input type="hidden" id="myVar" name="variable" value="{{ kroonika_url }}">
 {% verbatim %}
   <div id="kroonika-api">
     <div class="header">
       Otsi:
-      <input id="id_body_text__icontains" v-model="question">
+      <input v-model="question">
       &nbsp;{{ answer }}
     </div>
     <div class="row">
