@@ -157,10 +157,8 @@ def info(request):
 #
 def otsi(request):
     data = request.GET
-    if data.is_valid():
-        question = data.cleaned_data['search']
-    else:
-        question = ''
+    question = data.cleaned_data['search']
+
     return render(
         request,
         'wiki/wiki_otsi.html',
