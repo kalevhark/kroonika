@@ -1,7 +1,7 @@
 var watchExampleVM = new Vue({
     el: '#kroonika-api',
     data: {
-      question: document.getElementById("question").value,
+      question: question,
       answer: 'Otsimiseks on vaja vähemalt kolm tähte',
       isik_results: [],
       isik_count_results: 0,
@@ -38,8 +38,6 @@ var watchExampleVM = new Vue({
           return
         };
         this.answer = 'Otsime...';
-        // var kroonika_url = 'http://' + document.getElementById("myVar").value; //  'http://192.168.1.143/kroonika/';
-        console.log(kroonika_url);
         var isik_api_url = kroonika_url + '/api/isik/?format=json';
         var organisatsioon_api_url = kroonika_url + '/api/organisatsioon/?format=json';
         var objekt_api_url = kroonika_url + '/api/objekt/?format=json';

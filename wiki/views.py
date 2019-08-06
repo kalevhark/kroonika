@@ -156,10 +156,18 @@ def info(request):
 # Avalehekülg
 #
 def otsi(request):
+    data = request.GET
+    if data.is_valid():
+        question = data.cleaned_data['search']
+    else:
+        question = ''
     return render(
         request,
         'wiki/wiki_otsi.html',
-        {'kroonika_url': settings.ROOT_URL}
+        {
+            'kroonika_url': settings.ROOT_URL,
+            'question': question
+        }
         # {'kroonika_url': request.META['SCRIPT_NAME']}
         # {'kroonika_url': request.META['HTTP_HOST'] + request.META['SCRIPT_NAME']}
     )
