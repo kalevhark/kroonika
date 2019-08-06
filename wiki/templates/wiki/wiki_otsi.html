@@ -29,7 +29,7 @@
         <div class="w3-cell-row w3-cell-top w3-hover-white">
           <div class="w3-padding-small">
             <strong>
-              Isikuid: {{ isik_results_count }}{{ isik_message }}
+              {{ isik_results_count>0 ? 'Isikuid: ' : '' }}{{ isik_results_count>0 ? isik_results_count : '' }}{{ isik_message }}
             </strong>
           </div>
           <ul class="w3-ul">
