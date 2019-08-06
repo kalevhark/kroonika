@@ -1,7 +1,7 @@
 var watchExampleVM = new Vue({
     el: '#kroonika-api',
     data: {
-      question: document.getElementById("id_body_text__icontains").value,
+      question: document.getElementById("question").value,
       answer: 'Otsimiseks on vaja vähemalt kolm tähte',
       isik_results: [],
       isik_count_results: 0,
