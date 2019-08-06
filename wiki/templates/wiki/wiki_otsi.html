@@ -65,5 +65,8 @@
 {% endblock %}
 
 {% block javascript %}
+  <script type="text/javascript">
+    var kroonika_url = "{{ kroonika_url }}"
+  </script>
   <script src="{% static 'wiki/js/wiki_otsi.js'%}"></script>
 {% endblock %}
