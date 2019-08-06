@@ -112,42 +112,38 @@ li a:hover {
       <input id="question" v-model="question">
       &nbsp;{{ answer }}
     </div>
-    <div class="row">
-      <div class="column left">
-        <div  class="box-small">
-          <p>Isikuid: {{ isik_results_count }}{{ isik_message }}</p>
-          <ul>
-            <li v-for="result in isik_results">
-              <a v-bind:href="result.link">{{ result.eesnimi }} {{ result.perenimi }}</a>
-            </li>
-          </ul>
-        </div>
-        <div class="box-small">
-          <p>Asutisi: {{ organisatsioon_results_count }}{{ organisatsioon_message}}</p>
-          <ul>
-            <li v-for="result in organisatsioon_results">
-                <a v-bind:href="result.link">{{ result.nimi }}</a>
-            </li>
-          </ul>
-        </div>
-        <div class="box-small">
-          <p>Kohti: {{ objekt_results_count }}{{ objekt_message}}</p>
-          <ul>
-            <li v-for="result in objekt_results">
-                <a v-bind:href="result.link">{{ result.nimi }}</a>
-            </li>
-          </ul>
-        </div>
+    <div class="w3-cell-row">
+      <div class="w3-container w3-red w3-cell" style="width:25%">
+
+        <p>Isikuid: {{ isik_results_count }}{{ isik_message }}</p>
+        <ul>
+          <li v-for="result in isik_results">
+            <a v-bind:href="result.link">{{ result.eesnimi }} {{ result.perenimi }}</a>
+          </li>
+        </ul>
+        <p>Asutisi: {{ organisatsioon_results_count }}{{ organisatsioon_message}}</p>
+        <ul>
+          <li v-for="result in organisatsioon_results">
+              <a v-bind:href="result.link">{{ result.nimi }}</a>
+          </li>
+        </ul>
+        <p>Kohti: {{ objekt_results_count }}{{ objekt_message}}</p>
+        <ul>
+          <li v-for="result in objekt_results">
+              <a v-bind:href="result.link">{{ result.nimi }}</a>
+          </li>
+        </ul>
+
       </div>
-      <div class="column right">
-        <div class="box-big">
-          <p>Lugusid: {{ artikkel_results_count }}{{ artikkel_message}}</p>
-          <ul>
-            <li v-for="result in artikkel_results">
-                <a v-bind:href="result.link">{{ result.hist_year}}:{{ result.body_text.slice(0, 100) }}</a>
-            </li>
-          </ul>
-        </div>
+      <div class="w3-container w3-green w3-cell">
+
+        <p>Lugusid: {{ artikkel_results_count }}{{ artikkel_message}}</p>
+        <ul>
+          <li v-for="result in artikkel_results">
+              <a v-bind:href="result.link">{{ result.hist_year}}:{{ result.body_text.slice(0, 100) }}</a>
+          </li>
+        </ul>
+
       </div>
     </div>
   </div>
