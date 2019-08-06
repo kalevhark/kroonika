@@ -1,7 +1,7 @@
 var watchExampleVM = new Vue({
     el: '#kroonika-api',
     data: {
-      question: '',
+      // question: '',
       answer: 'Otsimiseks on vaja vähemalt kolm tähte',
       isik_results: [],
       isik_count_results: 0,
