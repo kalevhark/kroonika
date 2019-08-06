@@ -50,7 +50,7 @@
       <div class="w3-container w3-green w3-cell">
 
         <p>Lugusid: {{ artikkel_results_count }}{{ artikkel_message}}</p>
-        <ul class="w3-ul">
+        <ul class="w3-ul" style="list-style-type:none;">
           <li class="w3-padding-small" v-for="result in artikkel_results">
               <a v-bind:href="result.link">{{ result.hist_year}}:{{ result.body_text.slice(0, 100) }}</a>
           </li>
