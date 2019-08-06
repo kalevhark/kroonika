@@ -29,7 +29,9 @@
         <div class="w3-cell-row w3-cell-top w3-hover-white">
           <div class="w3-padding-small">
             <strong>
-              {{ isik_results_count>0 ? 'Isikuid: ' : '' }}{{ isik_results_count>0 ? isik_results_count : '' }}{{ isik_message }}
+              {{ isik_results_count>0 ? 'Isikuid: ' : '' }}
+              {{ isik_results_count>0 ? isik_results_count : '' }}
+              {{ isik_message }}
             </strong>
           </div>
           <ul class="w3-ul">
@@ -46,7 +48,9 @@
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
             <strong>
-              Asutisi: {{ organisatsioon_results_count }}{{ organisatsioon_message}}
+              {{ organisatsioon_results_count>0 ? 'Asutisi: ' : '' }}
+              {{ organisatsioon_results_count>0 ? organisatsioon_results_count : '' }}
+              {{ organisatsioon_message}}
             </strong>
           </div>
           <ul class="w3-ul">
@@ -63,7 +67,9 @@
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
             <strong>
-              Kohti: {{ objekt_results_count }}{{ objekt_message}}
+              {{ objekt_results_count>0 ? 'Kohti: ' : '' }}
+              {{ objekt_results_count>0 ? objekt_results_count : '' }}
+              {{ objekt_message}}
             </strong>
           </div>
           <ul class="w3-ul">
@@ -82,7 +88,9 @@
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
             <strong>
-              Lugusid: {{ artikkel_results_count }}{{ artikkel_message}}
+              {{ artikkel_results_count>0 ? 'Lugusid: ' : '' }}
+              {{ artikkel_results_count>0 ? artikkel_results_count : '' }}
+              {{ artikkel_message}}
             </strong>
           </div>
           <ul class="w3-ul">
