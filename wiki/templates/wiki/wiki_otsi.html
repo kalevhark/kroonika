@@ -19,14 +19,14 @@
 {% block content %}
 {% verbatim %}
   <div id="kroonika-api">
-    <div class="header">
+    <div class="w3-cell-row">
       Otsi:
       <input id="question" placeholder="fraas..." v-model="question">
       &nbsp;{{ answer }}
     </div>
     <div class="w3-cell-row">
       <div class="w3-cell" style="width:25%">
-        <div class="w3-cell-row w3-hover-white">
+        <div class="w3-cell-row w3-cell-top w3-hover-white">
           <div class="w3-padding-small">
             <strong>
               Isikuid: {{ isik_results_count }}{{ isik_message }}
@@ -78,7 +78,7 @@
           </ul>
         </div>
       </div>
-      <div class="w3-cell w3-cell-top w3-padding-small">
+      <div class="w3-cell w3-cell-top">
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
             <strong>
