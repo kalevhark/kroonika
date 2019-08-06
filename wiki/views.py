@@ -156,8 +156,8 @@ def info(request):
 # Avalehekülg
 #
 def otsi(request):
-    data = request.GET
-    question = data.cleaned_data['search']
+    # data = request.GET
+    question = request.GET['search']
 
     return render(
         request,
