@@ -2,6 +2,7 @@ var watchExampleVM = new Vue({
     el: '#kroonika-api',
     data: {
       question: question,
+      wiki_objekt_filter: wiki_objekt_filter,
       answer: 'Otsimiseks on vaja vähemalt kolm tähte',
       isik_results: [],
       isik_count_results: 0,

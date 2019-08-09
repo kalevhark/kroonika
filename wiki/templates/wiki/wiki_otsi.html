@@ -28,6 +28,7 @@
       <div class="w3-cell" style="width:25%">
         <div class="w3-cell-row w3-cell-top w3-hover-white">
           <div class="w3-padding-small">
+
             <strong>
               {{ isik_results_count>0 ? 'Isikuid: ' : '' }}
               {{ isik_results_count>0 ? isik_results_count : '' }}
@@ -66,6 +67,7 @@
         </div>
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
+            {{ wiki_objekt_filter }}
             <strong>
               {{ objekt_results_count>0 ? 'Kohti: ' : '' }}
               {{ objekt_results_count>0 ? objekt_results_count : '' }}
@@ -113,6 +115,10 @@
 {% block javascript %}
   <script type="text/javascript">
     var kroonika_url = "{{ kroonika_url }}"
+    var wiki_artikkel_filter = "{% url 'wiki:wiki_artikkel_filter' %}"
+    var wiki_isik_filter = "{% url 'wiki:wiki_isik_filter' %}"
+    var wiki_organisatsioon_filter = "{% url 'wiki:wiki_organisatsioon_filter' %}"
+    var wiki_objekt_filter = "{% url 'wiki:wiki_objekt_filter' %}"
     var question = "{{ question }}"
   </script>
   <script src="{% static 'wiki/js/wiki_otsi.js'%}"></script>
