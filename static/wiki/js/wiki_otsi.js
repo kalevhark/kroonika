@@ -39,6 +39,7 @@ var watchExampleVM = new Vue({
           return
         };
         this.answer = 'Otsime...';
+        // API url
         var isik_api_url = kroonika_url + '/api/isik/?format=json';
         var organisatsioon_api_url = kroonika_url + '/api/organisatsioon/?format=json';
         var objekt_api_url = kroonika_url + '/api/objekt/?format=json';
@@ -54,6 +55,8 @@ var watchExampleVM = new Vue({
         vm.artikkel_results = [];
         vm.artikkel_results_count = 0;
         vm.total_count = 0;
+        // Lingid liigiotsingule
+        vm.wiki_objekt_filter = wiki_objekt_filter
         let page = 1;
         // Päring isik
         axios.get(isik_api_url, {
