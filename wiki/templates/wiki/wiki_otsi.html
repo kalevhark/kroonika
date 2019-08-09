@@ -118,7 +118,7 @@
     var wiki_artikkel_filter = "{% url 'wiki:wiki_artikkel_filter' %}"
     var wiki_isik_filter = "{% url 'wiki:wiki_isik_filter' %}"
     var wiki_organisatsioon_filter = "{% url 'wiki:wiki_organisatsioon_filter' %}"
-    var wiki_objekt_filter = "{% url 'wiki:wiki_objekt_filter' %}"
+    var wiki_objekt_filter = {% url 'wiki:wiki_objekt_filter' %}
     var question = "{{ question }}"
   </script>
   <script src="{% static 'wiki/js/wiki_otsi.js'%}"></script>
