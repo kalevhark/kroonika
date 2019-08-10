@@ -665,8 +665,7 @@ class ArtikkelFilter(django_filters.FilterSet):
         # küsime algse päringu
         initial_qs = super(ArtikkelFilter, self).qs
         # päringu parameetrid
-        fraasid = getattr(self.data, 'body_text__icontains', '').split(' ')
-        data = self.data
+        fraasid = self.data.get('body_text__icontains', default='').split(' ')
         if len(fraasid) > 1:
             # from operator import and_, or_
             # from functools import reduce
