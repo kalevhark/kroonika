@@ -662,11 +662,20 @@ class ArtikkelFilter(django_filters.FilterSet):
 
     @property
     def qs(self, *args, **kwargs):
-        parent = super(ArtikkelFilter, self).qs
+        # küsime algse päringu
+        initial_qs = super(ArtikkelFilter, self).qs
+        # päringu parameetrid
+        fraasid = getattr(self.data, 'body_text__icontains', '').split(' ')
+        if len(fraasid) > 1:
+            from operator import and_, or_
+            from functools import reduce
+            Artikkel.objects.filter(reduce(and_, [Q(body_text__icontains=q) for q in fraasid]))
+            # TODO: Siin peaks olema lisatud teised päringuväljad (hist_year, isikud_perenimi)
+            modified_qs = initial_qs
+        else:
+            modified_qs = initial_qs
         # author = getattr(self.request, 'user', None)
-        data = self.data
-        print(blaah)
-        return parent
+        return modified_qs
 
 
 #
