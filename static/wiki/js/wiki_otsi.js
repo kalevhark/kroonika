@@ -80,7 +80,7 @@ var watchExampleVM = new Vue({
         } else {
           // Kui ühtegi isikut ei leitud
           div_leitud_isikud.style.display='none';
-        }
+        };
       })
       .catch(function (error) {
         vm.answer = 'Viga! API kättesaamatu. ' + error;
@@ -96,7 +96,7 @@ var watchExampleVM = new Vue({
         vm.organisatsioon_results_count = response.data.count
         vm.total_count = vm.total_count + response.data.count
         vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
-        var div_leitud_isikud = document.getElementById("leitud_organisatsioonid");
+        var div_leitud_organisatsioonid = document.getElementById("leitud_organisatsioonid");
         if (vm.organisatsioon_results_count > 0) {
           // Kui leiti organisatsioone
           vm.organisatsioon_results = response.data.results;
@@ -105,11 +105,11 @@ var watchExampleVM = new Vue({
           } else {
             vm.organisatsioon_message = '';
           };
-          div_leitud_isikud.style.display='block';
+          div_leitud_organisatsioonid.style.display='block';
         } else {
           // Kui ei leitud organisatsioone
-          div_leitud_isikud.style.display='none';
-        }
+          div_leitud_organisatsioonid.style.display='none';
+        };
       })
       .catch(function (error) {
         vm.answer = 'Viga! API kättesaamatu. ' + error;
@@ -125,7 +125,7 @@ var watchExampleVM = new Vue({
         vm.objekt_results_count = response.data.count
         vm.total_count = vm.total_count + response.data.count
         vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
-        var div_leitud_isikud = document.getElementById("leitud_objektid");
+        var div_leitud_objektid = document.getElementById("leitud_objektid");
         if (vm.objekt_results_count > 0) {
           // Kui leiti objekte
           vm.objekt_results = response.data.results;
@@ -134,10 +134,11 @@ var watchExampleVM = new Vue({
           } else {
             vm.objekt_message = '';
           };
-          div_leitud_isikud.style.display='block';
+          div_leitud_objektid.style.display='block';
         } else {
           // Kui ei leitud objekte
-          div_leitud_isikud.style.display='none';
+          div_leitud_objektid.style.display='none';
+        };
       })
       .catch(function (error) {
         vm.answer = 'Viga! API kättesaamatu. ' + error;
