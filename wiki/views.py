@@ -656,9 +656,16 @@ class ArtikkelFilter(django_filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         super(ArtikkelFilter, self).__init__(*args, **kwargs)
-        # at startup user doen't push Submit button, and QueryDict (in data) is empty
+        # at startup user doesn't push Submit button, and QueryDict (in data) is empty
         if self.data == {}:
             self.queryset = self.queryset.none()
+
+    @property
+    def qs(self, *args, **kwargs):
+        parent = super(ArtikkelFilter, self).qs
+        # author = getattr(self.request, 'user', None)
+        print(blaah)
+        return parent
 
 
 #
