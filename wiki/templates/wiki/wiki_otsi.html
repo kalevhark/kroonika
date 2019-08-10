@@ -18,6 +18,11 @@
 {% endblock %}
 
 {% block css %}
+<style>
+  div:empty {
+   display: none;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -31,12 +36,16 @@
       <div class="w3-cell" style="width:25%">
         <div class="w3-cell-row w3-cell-top w3-hover-white">
           <div class="w3-padding-small">
-
-            <strong>
-              [[ isik_results_count>0 ? 'Isikuid: ' : '' ]]
-              [[ isik_results_count>0 ? isik_results_count : '' ]]
-              [[ isik_message ]]
-            </strong>
+            <a
+                class="hover-isik"
+                href="{% url 'wiki:wiki_isik_filter' %}"
+                style="text-decoration: none;">
+              <strong>
+                [[ isik_results_count>0 ? 'Isikuid: ' : '' ]]
+                [[ isik_results_count>0 ? isik_results_count : '' ]]
+                [[ isik_message ]]
+              </strong>
+            </a>
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in isik_results">
@@ -51,11 +60,16 @@
         </div>
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
-            <strong>
-              [[ organisatsioon_results_count>0 ? 'Asutisi: ' : '' ]]
-              [[ organisatsioon_results_count>0 ? organisatsioon_results_count : '' ]]
-              [[ organisatsioon_message ]]
-            </strong>
+            <a
+                class="hover-organisatsioon"
+                href="{% url 'wiki:wiki_organisatsioon_filter' %}"
+                style="text-decoration: none;">
+              <strong>
+                [[ organisatsioon_results_count>0 ? 'Asutisi: ' : '' ]]
+                [[ organisatsioon_results_count>0 ? organisatsioon_results_count : '' ]]
+                [[ organisatsioon_message ]]
+              </strong>
+            </a>
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in organisatsioon_results">
@@ -70,11 +84,16 @@
         </div>
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
-            <strong>
-              [[ objekt_results_count>0 ? 'Kohti: ' : '' ]]
-              [[ objekt_results_count>0 ? objekt_results_count : '' ]]
-              [[ objekt_message ]]
-            </strong>
+            <a
+                class="hover-objekt"
+                href="{% url 'wiki:wiki_objekt_filter' %}"
+                style="text-decoration: none;">
+              <strong>
+                [[ objekt_results_count>0 ? 'Kohti: ' : '' ]]
+                [[ objekt_results_count>0 ? objekt_results_count : '' ]]
+                [[ objekt_message ]]
+              </strong>
+            </a>
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in objekt_results">
@@ -92,7 +111,7 @@
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
             <a
-                class="hover-objekt"
+                class="hover-artikkel"
                 href="{% url 'wiki:wiki_artikkel_filter' %}"
                 style="text-decoration: none;">
               <strong>
