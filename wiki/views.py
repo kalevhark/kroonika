@@ -676,6 +676,7 @@ class ArtikkelFilter(django_filters.FilterSet):
             # TODO: Siin peaks olema lisatud teised päringuväljad (hist_year, isikud_perenimi)
         else:
             modified_qs = initial_qs
+        print(blaah)
         # author = getattr(self.request, 'user', None)
         return modified_qs
 
