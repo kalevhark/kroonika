@@ -8,6 +8,10 @@
 {% block src %}
   <!-- development version, includes helpful console warnings -->
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script type="text/javascript">
+    var kroonika_url = "{{ kroonika_url }}"
+    var question = "{{ question }}"
+  </script>
 
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
@@ -17,12 +21,11 @@
 {% endblock %}
 
 {% block content %}
-{% verbatim %}
   <div id="kroonika-api">
     <div class="w3-cell-row">
       Otsi:
       <input id="question" placeholder="fraas..." v-model="question">
-      &nbsp;{{ answer }}
+      &nbsp;[[ answer ]]
     </div>
     <div class="w3-cell-row">
       <div class="w3-cell" style="width:25%">
@@ -30,9 +33,9 @@
           <div class="w3-padding-small">
 
             <strong>
-              {{ isik_results_count>0 ? 'Isikuid: ' : '' }}
-              {{ isik_results_count>0 ? isik_results_count : '' }}
-              {{ isik_message }}
+              [[ isik_results_count>0 ? 'Isikuid: ' : '' ]]
+              [[ isik_results_count>0 ? isik_results_count : '' ]]
+              [[ isik_message ]]
             </strong>
           </div>
           <ul class="w3-ul">
@@ -41,7 +44,7 @@
                   class="hover-isik"
                   style="text-decoration: none;"
                   v-bind:href="result.link">
-                {{ result.eesnimi }} {{ result.perenimi }}
+                [[ result.eesnimi ]] [[ result.perenimi ]]
               </a>
             </li>
           </ul>
@@ -49,9 +52,9 @@
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
             <strong>
-              {{ organisatsioon_results_count>0 ? 'Asutisi: ' : '' }}
-              {{ organisatsioon_results_count>0 ? organisatsioon_results_count : '' }}
-              {{ organisatsioon_message}}
+              [[ organisatsioon_results_count>0 ? 'Asutisi: ' : '' ]]
+              [[ organisatsioon_results_count>0 ? organisatsioon_results_count : '' ]]
+              [[ organisatsioon_message ]]
             </strong>
           </div>
           <ul class="w3-ul">
@@ -60,7 +63,7 @@
                     class="hover-organisatsioon"
                     style="text-decoration: none;"
                     v-bind:href="result.link">
-                  {{ result.nimi }}
+                  [[ result.nimi ]]
                 </a>
             </li>
           </ul>
@@ -68,9 +71,9 @@
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
             <strong>
-              {{ objekt_results_count>0 ? 'Kohti: ' : '' }}
-              {{ objekt_results_count>0 ? objekt_results_count : '' }}
-              {{ objekt_message}}
+              [[ objekt_results_count>0 ? 'Kohti: ' : '' ]]
+              [[ objekt_results_count>0 ? objekt_results_count : '' ]]
+              [[ objekt_message ]]
             </strong>
           </div>
           <ul class="w3-ul">
@@ -79,7 +82,7 @@
                     class="hover-objekt"
                     style="text-decoration: none;"
                     v-bind:href="result.link">
-                  {{ result.nimi }}
+                  [[ result.nimi ]]
                 </a>
             </li>
           </ul>
@@ -89,9 +92,9 @@
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
             <strong>
-              {{ artikkel_results_count>0 ? 'Lugusid: ' : '' }}
-              {{ artikkel_results_count>0 ? artikkel_results_count : '' }}
-              {{ artikkel_message}}
+              [[ artikkel_results_count>0 ? 'Lugusid: ' : '' ]]
+              [[ artikkel_results_count>0 ? artikkel_results_count : '' ]]
+              [[ artikkel_message ]]
             </strong>
           </div>
           <ul class="w3-ul">
@@ -100,7 +103,7 @@
                     class="hover-artikkel"
                     style="text-decoration: none;"
                     v-bind:href="result.link">
-                  {{ result.hist_year}}: {{ result.body_text.slice(0, 100) }}{{ result.body_text.length>100 ? '...' : '' }}
+                  [[ result.hist_year ]]: [[ result.body_text.slice(0, 100) ]][[ result.body_text.length>100 ? '...' : '' ]]
                 </a>
             </li>
           </ul>
@@ -108,13 +111,8 @@
       </div>
     </div>
   </div>
-{% endverbatim %}
 {% endblock %}
 
 {% block javascript %}
-  <script type="text/javascript">
-    var kroonika_url = "{{ kroonika_url }}"
-    var question = "{{ question }}"
-  </script>
   <script src="{% static 'wiki/js/wiki_otsi.js'%}"></script>
 {% endblock %}

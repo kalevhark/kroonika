@@ -10,7 +10,7 @@ from wiki.views import ArtikkelFilterView, IsikFilterView, OrganisatsioonFilterV
 from wiki.views import ArtikkelArchiveIndexView, ArtikkelYearArchiveView, ArtikkelMonthArchiveView, ArtikkelDayArchiveView
 # Muutmisvaated
 from wiki.views import ArtikkelUpdate, IsikUpdate, OrganisatsioonUpdate, ObjektUpdate
-# API vaatd
+# API vaated
 # from wiki.views import UserDetail, UserList
 
 app_name = 'wiki'
