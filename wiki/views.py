@@ -667,9 +667,12 @@ class ArtikkelFilter(django_filters.FilterSet):
         # päringu parameetrid
         fraasid = getattr(self.data, 'body_text__icontains', '').split(' ')
         if len(fraasid) > 1:
-            from operator import and_, or_
-            from functools import reduce
-            modified_qs = Artikkel.objects.filter(reduce(and_, [Q(body_text__icontains=q) for q in fraasid]))
+            # from operator import and_, or_
+            # from functools import reduce
+            # modified_qs = Artikkel.objects.filter(reduce(and_, [Q(body_text__icontains=q) for q in fraasid]))
+            modified_qs = Artikkel.objects.all()
+            for fraas in fraasid:
+                modified_qs = modified_qs.filter(body_text__icontains=fraas)
             # TODO: Siin peaks olema lisatud teised päringuväljad (hist_year, isikud_perenimi)
         else:
             modified_qs = initial_qs
