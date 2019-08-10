@@ -10,6 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script type="text/javascript">
     var kroonika_url = "{{ kroonika_url }}"
+    var kroonika_filter_artikkel_url = "{% url 'wiki:wiki_organisatsioon_filter' %}"
     var question = "{{ question }}"
   </script>
 
@@ -112,7 +113,7 @@
               <strong>
                 [[ artikkel_results_count>0 ? 'Lugusid: ' : '' ]]
                 [[ artikkel_results_count>0 ? artikkel_results_count : '' ]]
-                [[ artikkel_message ]]
+                [[ artikkel_message ]] [[ kroonika_filter_artikkel_url ]]
               </strong>
             </a>
           </div>
