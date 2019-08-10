@@ -664,6 +664,7 @@ class ArtikkelFilter(django_filters.FilterSet):
     def qs(self, *args, **kwargs):
         parent = super(ArtikkelFilter, self).qs
         # author = getattr(self.request, 'user', None)
+        data = self.data
         print(blaah)
         return parent
 
