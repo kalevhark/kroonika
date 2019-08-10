@@ -3,7 +3,6 @@ var watchExampleVM = new Vue({
   el: '#kroonika-api',
   data: {
     question: question,
-    kroonika_filter_artikkel_url: kroonika_filter_artikkel_url,
     answer: 'Otsimiseks on vaja vähemalt kolm tähte',
     isik_results: [],
     isik_count_results: 0,
@@ -155,7 +154,6 @@ var watchExampleVM = new Vue({
         vm.artikkel_results_count = response.data.count
         vm.total_count = vm.total_count + response.data.count
         vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
-        vm.kroonika_filter_artikkel_url + this.question
         if (vm.artikkel_results_count > 0) {
           vm.artikkel_results = response.data.results;
           if (vm.artikkel_results_count > response.data.results.length) {
