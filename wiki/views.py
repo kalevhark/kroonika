@@ -663,23 +663,25 @@ class ArtikkelFilter(django_filters.FilterSet):
     @property
     def qs(self, *args, **kwargs):
         # küsime algse päringu
-        initial_qs = super(ArtikkelFilter, self).qs
+        # initial_qs = super(ArtikkelFilter, self).qs
         # päringu parameetrid
         fraasid = self.data.get('body_text__icontains', default='').split(' ')
         if len(fraasid) > 1:
-            # from operator import and_, or_
-            # from functools import reduce
-            # modified_qs = Artikkel.objects.filter(reduce(and_, [Q(body_text__icontains=q) for q in fraasid]))
             modified_qs = Artikkel.objects.all()
             if self.data.get('hist_year__exact'):
-                modified_qs = modified_qs.filter(hist_year__exact=self.data['hist_year__exact'])
+                modified_qs = modified_qs.filter(
+                    hist_year__exact=self.data['hist_year__exact']
+                )
             if self.data.get('isikud__perenimi__icontains'):
-                modified_qs = modified_qs.filter(isikud__perenimi__icontains=self.data['isikud__perenimi__icontains'])
+                modified_qs = modified_qs.filter(
+                    isikud__perenimi__icontains=self.data['isikud__perenimi__icontains']
+                )
             for fraas in fraasid:
-                modified_qs = modified_qs.filter(body_text__icontains=fraas)
-            # TODO: Siin peaks olema lisatud teised päringuväljad (hist_year, isikud_perenimi)
+                modified_qs = modified_qs.filter(
+                    body_text__icontains=fraas
+                )
         else:
-            modified_qs = initial_qs
+            modified_qs = super(ArtikkelFilter, self).qs
         # author = getattr(self.request, 'user', None)
         return modified_qs
 
