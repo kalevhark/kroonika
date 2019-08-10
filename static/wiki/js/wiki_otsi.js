@@ -155,7 +155,7 @@ var watchExampleVM = new Vue({
         vm.artikkel_results_count = response.data.count
         vm.total_count = vm.total_count + response.data.count
         vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
-        vm.kroonika_filter_artikkel_url + '?body_text__icontains=' + this.question
+        vm.kroonika_filter_artikkel_url + this.question
         if (vm.artikkel_results_count > 0) {
           vm.artikkel_results = response.data.results;
           if (vm.artikkel_results_count > response.data.results.length) {
