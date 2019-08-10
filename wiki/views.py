@@ -671,13 +671,15 @@ class ArtikkelFilter(django_filters.FilterSet):
             # from functools import reduce
             # modified_qs = Artikkel.objects.filter(reduce(and_, [Q(body_text__icontains=q) for q in fraasid]))
             modified_qs = Artikkel.objects.all()
+            if self.data.get('hist_year__exact'):
+                modified_qs = modified_qs.filter(hist_year__exact=self.data['hist_year__exact'])
+            if self.data.get('isikud__perenimi__icontains'):
+                modified_qs = modified_qs.filter(isikud__perenimi__icontains=self.data['isikud__perenimi__icontains'])
             for fraas in fraasid:
                 modified_qs = modified_qs.filter(body_text__icontains=fraas)
             # TODO: Siin peaks olema lisatud teised päringuväljad (hist_year, isikud_perenimi)
         else:
             modified_qs = initial_qs
-
-        print(blaah)
         # author = getattr(self.request, 'user', None)
         return modified_qs
 
