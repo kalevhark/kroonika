@@ -67,13 +67,19 @@ var watchExampleVM = new Vue({
         vm.isik_results_count = response.data.count
         vm.total_count = vm.total_count + response.data.count
         vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
+        var div_leitud_isikud = document.getElementById("leitud_isikud");
         if (vm.isik_results_count > 0) {
+          // Kui leiti isikuid
           vm.isik_results = response.data.results;
           if (vm.isik_results_count > response.data.results.length) {
             vm.isik_message = ' näitame ' + response.data.results.length;
           } else {
             vm.isik_message = '';
           };
+          div_leitud_isikud.style.display='block'
+        } else {
+          // Kui ühtegi isikut ei leitud
+          div_leitud_isikud.style.display='none'
         }
       })
       .catch(function (error) {
