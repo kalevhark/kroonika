@@ -91,11 +91,16 @@
       <div class="w3-cell w3-cell-top">
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
-            <strong>
-              [[ artikkel_results_count>0 ? 'Lugusid: ' : '' ]]
-              [[ artikkel_results_count>0 ? artikkel_results_count : '' ]]
-              [[ artikkel_message ]]
-            </strong>
+            <a
+                class="hover-objekt"
+                href="{% url 'wiki:wiki_artikkel_filter' %}"
+                style="text-decoration: none;">
+              <strong>
+                [[ artikkel_results_count>0 ? 'Lugusid: ' : '' ]]
+                [[ artikkel_results_count>0 ? artikkel_results_count : '' ]]
+                [[ artikkel_message ]]
+              </strong>
+            </a>
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in artikkel_results">
