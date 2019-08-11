@@ -105,16 +105,11 @@
       <div class="w3-cell w3-cell-top">
         <div class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
-            <a
-                class="hover-artikkel"
-                href="{% url 'wiki:wiki_artikkel_filter' %}"
-                style="text-decoration: none;">
-              <strong>
-                [[ artikkel_results_count>0 ? 'Lugusid: ' : '' ]]
-                [[ artikkel_results_count>0 ? artikkel_results_count : '' ]]
-                <a v-bind:href="artikkel_api_url">[[ artikkel_message ]]</a>
-              </strong>
-            </a>
+            <strong>
+              [[ artikkel_results_count>0 ? 'Lugusid: ' : '' ]]
+              [[ artikkel_results_count>0 ? artikkel_results_count : '' ]]
+              <a v-bind:href="kroonika_url">[[ artikkel_message ]]</a>
+            </strong>
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in artikkel_results">
