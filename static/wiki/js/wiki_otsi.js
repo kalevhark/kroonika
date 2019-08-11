@@ -4,6 +4,7 @@ var watchExampleVM = new Vue({
   data: {
     question: question,
     answer: 'Otsimiseks on vaja vähemalt kolm tähte',
+    wiki_artikkel_filter_url,
     isik_results: [],
     isik_count_results: 0,
     isik_message: '',

@@ -10,6 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script type="text/javascript">
     var kroonika_url = "{{ kroonika_url }}"
+    wiki_artikkel_filter_url = "{% url 'wiki:wiki_artikkel_filter' %}"
     var question = "{{ question }}"
   </script>
 
@@ -108,7 +109,8 @@
             <strong>
               [[ artikkel_results_count>0 ? 'Lugusid: ' : '' ]]
               [[ artikkel_results_count>0 ? artikkel_results_count : '' ]]
-              <a v-bind:href="'/wiki/?body_text__icontains=' + question">[[ artikkel_message ]]</a>
+              <a v-bind:href="'/kroonika/wiki/?body_text__icontains=' + question">[[ artikkel_message ]]</a>
+              [[ wiki_artikkel_filter_url ]]
             </strong>
           </div>
           <ul class="w3-ul">
