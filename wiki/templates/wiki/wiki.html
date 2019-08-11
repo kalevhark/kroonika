@@ -238,7 +238,7 @@
 	<div class="w3-quarter">
 	  <div class="w3-container w3-padding-16 w3-hover-white">
 	  {% if andmed.isik.sel_p2eval %}
-	    <h5>
+			<h5>
 				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_syndinud">
 					{% now "j.m." %} sündinud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_kirjeid }}</span>
 				</a>
@@ -287,7 +287,11 @@
 	    {% endfor %}
 	  {% endif %}
 	  {% if andmed.isik.juubilarid %}
-	    <h5>{% now "Y" %} juubilarid <span class="w3-badge background-isik">{{ andmed.isik.juubilarid.count }}</span></h5>
+	    <h5>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_isikud_syndinud">
+					{% now "Y" %} juubilarid <span class="w3-badge background-isik">{{ andmed.isik.juubilarid.count }}</span>
+				</a>
+			</h5>
 			{% for obj in andmed.isik.juubilarid %}
 				{% if forloop.counter > 1 %}
 					<br>
@@ -382,7 +386,11 @@
 	<div class="w3-quarter">
 	  <div class="w3-container w3-padding-16 w3-hover-white">
 	  {% if andmed.organisatsioon.sel_p2eval %}
-	    <h5>{% now "j.m." %} loodud <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.sel_p2eval_kirjeid }}</span></h5>
+	    <h5>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_organisatsioonid">
+					{% now "j.m." %} loodud <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.sel_p2eval_kirjeid }}</span>
+				</a>
+			</h5>
 			{% for obj in andmed.organisatsioon.sel_p2eval %}
 				{% if forloop.counter > 1 %}
 						<br>
@@ -404,7 +412,11 @@
 	  {% endif %}
 	  {% if andmed.organisatsioon.sel_kuul %}
 	    {% now "m" as kuu %}
-	    <h5>{% include 'wiki/includes/kuul.html' with kuu=kuu %} asutatud  <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.sel_kuul_kirjeid }}</span></h5>
+	    <h5>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_organisatsioonid">
+					{% include 'wiki/includes/kuul.html' with kuu=kuu %} asutatud  <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.sel_kuul_kirjeid }}</span>
+				</a>
+			</h5>
 			{% for obj in andmed.organisatsioon.sel_kuul %}
 				{% if forloop.counter > 1 %}
 						<br>
@@ -424,7 +436,11 @@
 	    {% endfor %}
 	  {% endif %}
 	  {% if andmed.organisatsioon.juubilarid %}
-	    <h5>{% now "Y" %} juubilarid <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.juubilarid.count }}</span></h5>
+	    <h5>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_organisatsioonid">
+					{% now "Y" %} juubilarid <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.juubilarid.count }}</span>
+				</a>
+			</h5>
 			{% for obj in andmed.organisatsioon.juubilarid %}
 				{% if forloop.counter > 1 %}
 					<br>
@@ -457,7 +473,11 @@
 	<div class="w3-quarter">
 	  <div class="w3-container w3-padding-16 w3-hover-white">
 	  {% if andmed.objekt.sel_p2eval %}
-	    <h5>{% now "j.m." %} loodud <span class="w3-badge background-objekt">{{ andmed.objekt.sel_p2eval_kirjeid }}</span></h5>
+	    <h5>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_objektid">
+					{% now "j.m." %} loodud <span class="w3-badge background-objekt">{{ andmed.objekt.sel_p2eval_kirjeid }}</span>
+				</a>
+			</h5>
 			{% for obj in andmed.objekt.sel_p2eval %}
 				{% if forloop.counter > 1 %}
 					<br>
@@ -479,7 +499,11 @@
 	  {% endif %}
 	  {% if andmed.objekt.sel_kuul %}
 	    {% now "m" as kuu %}
-	    <h5>{% include 'wiki/includes/kuul.html' with kuu=kuu %} valminud  <span class="w3-badge background-objekt">{{ andmed.objekt.sel_kuul.count }}</span></h5>
+	    <h5>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_objektid">
+					{% include 'wiki/includes/kuul.html' with kuu=kuu %} valminud  <span class="w3-badge background-objekt">{{ andmed.objekt.sel_kuul.count }}</span>
+				</a>
+			</h5>
 			{% for obj in andmed.objekt.sel_kuul %}
 				{% if forloop.counter > 1 %}
 					<br>
@@ -499,7 +523,11 @@
 	    {% endfor %}
 	  {% endif %}
 	  {% if andmed.objekt.juubilarid %}
-	    <h5>{% now "Y" %} juubilarid <span class="w3-badge background-objekt">{{ andmed.objekt.juubilarid.count }}</span></h5>
+	    <h5>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_objektid">
+					{% now "Y" %} juubilarid <span class="w3-badge background-objekt">{{ andmed.objekt.juubilarid.count }}</span>
+				</a>
+			</h5>
 			{% for obj in andmed.objekt.juubilarid %}
 				{% if forloop.counter > 1 %}
 					<br>
