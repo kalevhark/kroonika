@@ -238,7 +238,11 @@
 	<div class="w3-quarter">
 	  <div class="w3-container w3-padding-16 w3-hover-white">
 	  {% if andmed.isik.sel_p2eval %}
-	    <h5>{% now "j.m." %} sündinud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_kirjeid }}</span></h5>
+	    <h5>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_syndinud">
+					{% now "j.m." %} sündinud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_kirjeid }}</span>
+				</a>
+			</h5>
 			{% for obj in andmed.isik.sel_p2eval %}
 				{% if forloop.counter > 1 %}
 					<br>
@@ -313,19 +317,23 @@
 			{% endfor %}
 	  {% endif %}
 	  {% if andmed.isik.sel_p2eval_surnud %}
-	    <h5>{% now "j.m." %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_surnud_kirjeid }}</span></h5>
+	    <h5>
+				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_surnud">
+					{% now "j.m." %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_surnud_kirjeid }}</span>
+				</a>
+			</h5>
 			{% for obj in andmed.isik.sel_p2eval_surnud %}
 				{% if forloop.counter > 1 %}
 					<br>
 				{% endif %}
 				<strong>&#9768;&nbsp;</strong>
-				<a class="hover-isik"
-				href={% url 'wiki:artikkel_day_archive' year=obj.hist_enddate|date:"Y" month=obj.hist_enddate|date:"m" day=obj.hist_enddate|date:"d" %}
-				>
+				<a
+						class="hover-isik"
+						href="{% url 'wiki:artikkel_day_archive' year=obj.hist_enddate|date:'Y' month=obj.hist_enddate|date:'m' day=obj.hist_enddate|date:'d' %}">
 					<b>{{ obj.hist_enddate|date:"d.m.Y" }}</b>
 				</a>
 				&nbsp;
-				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
+				<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id %}">
 					{{ obj }}
 				</a>
 	    {% endfor %}
