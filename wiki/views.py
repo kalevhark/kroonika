@@ -1239,7 +1239,7 @@ def test(request):
     # Viidete testandmed
     queryset = Viide.objects.all()
     data['test_url_viited_id'] = [
-        obj.url for obj in queryset if len(obj.url)>0
+        obj.url for obj in queryset if obj.url
     ]
     # Piltide testandmed
     queryset = Pilt.objects.all()
