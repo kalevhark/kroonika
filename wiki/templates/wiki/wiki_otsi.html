@@ -112,7 +112,7 @@
               <strong>
                 [[ artikkel_results_count>0 ? 'Lugusid: ' : '' ]]
                 [[ artikkel_results_count>0 ? artikkel_results_count : '' ]]
-                <span v-html="artikkel_message"></span> [[ kroonika_filter_artikkel_url ]]
+                <a v-bind:href="artikkel_api_url">[[ artikkel_message ]]</a>
               </strong>
             </a>
           </div>
