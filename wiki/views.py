@@ -1203,17 +1203,30 @@ def test(request):
         for obj
         in queryset
     ]
+    # queryset = (
+    #     Artikkel.objects
+    #         .filter(hist_searchdate__isnull=False)
+    #         .annotate(year=ExtractYear('hist_searchdate'))
+    #         .values('year')
+    # )
+    # aastad = list(set(el['year'] for el in queryset))
     queryset = (
-        Artikkel.objects
-            .filter(hist_searchdate__isnull=False)
-            .annotate(year=ExtractYear('hist_searchdate'))
-            .values('year')
+        Artikkel.objects.dates('hist_searchdate', 'year')
     )
-    aastad = list(set(el['year'] for el in queryset))
+    aastad = list(el.year for el in queryset)
     data['test_url_artiklid_aasta'] = [
         reverse('wiki:artikkel_year_archive', kwargs={'year': aasta})
         for aasta
         in aastad
+    ]
+    queryset = (
+        Artikkel.objects.dates('hist_searchdate', 'month')
+    )
+    kuud = list((el.year, el.month) for el in queryset)
+    data['test_url_artiklid_kuu'] = [
+        reverse('wiki:artikkel_month_archive', kwargs={'year': kuu(0), 'month': kuu(1)})
+        for kuu
+        in kuud
     ]
     # Isikute testandmed
     queryset = Isik.objects.all()
