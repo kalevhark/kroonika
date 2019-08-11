@@ -109,8 +109,13 @@
             <strong>
               [[ artikkel_results_count>0 ? 'Lugusid: ' : '' ]]
               [[ artikkel_results_count>0 ? artikkel_results_count : '' ]]
-              <a v-bind:href="wiki_artikkel_filter_url + '?body_text__icontains=' + question">[[ artikkel_message ]]</a>
-              [[ wiki_artikkel_filter_url ]]
+              <a
+                  class="hover-artikkel"
+                  style="text-decoration: none;"
+                  title="näita kõiki..."
+                  v-bind:href="wiki_artikkel_filter_url + '?body_text__icontains=' + question">
+                [[ artikkel_message ]]
+              </a>
             </strong>
           </div>
           <ul class="w3-ul">
