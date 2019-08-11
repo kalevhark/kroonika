@@ -72,7 +72,7 @@ var watchExampleVM = new Vue({
           // Kui leiti isikuid
           vm.isik_results = response.data.results;
           if (vm.isik_results_count > response.data.results.length) {
-            vm.isik_message = ' näitame ' + response.data.results.length;
+            vm.isik_message = '<span style="color:red"> näitame ' + response.data.results.length + '</span>';
           } else {
             vm.isik_message = '';
           };
