@@ -12,6 +12,9 @@
     // Muutujad vue jaoks
     var kroonika_url = "{{ kroonika_url }}"
     var wiki_artikkel_filter_url = "{% url 'wiki:wiki_artikkel_filter' %}"
+    var wiki_isik_filter_url = "{% url 'wiki:wiki_isik_filter' %}"
+    var wiki_organisatsioon_filter_url = "{% url 'wiki:wiki_organisatsioon_filter' %}"
+    var wiki_objekt_filter_url = "{% url 'wiki:wiki_objekt_filter' %}"
     var question = "{{ question }}"
   </script>
 
@@ -33,16 +36,17 @@
       <div class="w3-cell" style="width:25%">
         <div id="leitud_isikud" class="w3-cell-row w3-cell-top w3-hover-white">
           <div class="w3-padding-small">
-            <a  id="wiki_filter_isik"
-                class="hover-isik"
-                href="{% url 'wiki:wiki_isik_filter' %}"
-                style="text-decoration: none;">
-              <strong>
-                [[ isik_results_count>0 ? 'Isikuid: ' : '' ]]
-                [[ isik_results_count>0 ? isik_results_count : '' ]]
+            <strong>
+              [[ isik_results_count>0 ? 'Isikuid: ' : '' ]]
+              [[ isik_results_count>0 ? isik_results_count : '' ]]
+              <a
+                  class="hover-isik"
+                  style="text-decoration: none;"
+                  title="näita kõiki..."
+                  v-bind:href="wiki_isik_filter_url + '?perenimi__icontains=' + question">
                 [[ isik_message ]]
-              </strong>
-            </a>
+              </a>
+            </strong>
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in isik_results">
@@ -57,16 +61,17 @@
         </div>
         <div id="leitud_organisatsioonid" class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
-            <a
-                class="hover-organisatsioon"
-                href="{% url 'wiki:wiki_organisatsioon_filter' %}"
-                style="text-decoration: none;">
-              <strong>
-                [[ organisatsioon_results_count>0 ? 'Asutisi: ' : '' ]]
-                [[ organisatsioon_results_count>0 ? organisatsioon_results_count : '' ]]
+            <strong>
+              [[ organisatsioon_results_count>0 ? 'Asutisi: ' : '' ]]
+              [[ organisatsioon_results_count>0 ? organisatsioon_results_count : '' ]]
+              <a
+                  class="hover-organisatsioon"
+                  style="text-decoration: none;"
+                  title="näita kõiki..."
+                  v-bind:href="wiki_organisatsioon_filter_url + '?nimi__icontains=' + question">
                 [[ organisatsioon_message ]]
-              </strong>
-            </a>
+              </a>
+            </strong>
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in organisatsioon_results">
@@ -81,16 +86,17 @@
         </div>
         <div id="leitud_objektid" class="w3-cell-row w3-hover-white">
           <div class="w3-padding-small">
-            <a
-                class="hover-objekt"
-                href="{% url 'wiki:wiki_objekt_filter' %}"
-                style="text-decoration: none;">
-              <strong>
-                [[ objekt_results_count>0 ? 'Kohti: ' : '' ]]
-                [[ objekt_results_count>0 ? objekt_results_count : '' ]]
+            <strong>
+              [[ objekt_results_count>0 ? 'Kohti: ' : '' ]]
+              [[ objekt_results_count>0 ? objekt_results_count : '' ]]
+              <a
+                  class="hover-objekt"
+                  style="text-decoration: none;"
+                  title="näita kõiki..."
+                  v-bind:href="wiki_objekt_filter_url + '?nimi__icontains=' + question">
                 [[ objekt_message ]]
-              </strong>
-            </a>
+              </a>
+            </strong>
           </div>
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in objekt_results">
