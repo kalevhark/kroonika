@@ -35,8 +35,9 @@ var watchExampleVM = new Vue({
   },
   methods: {
     getAnswer: function () {
-      if (this.question.length < 3) {
-        this.answer = 'Vähemalt kolm tähte palun!'
+      var min_fraasipikkus = Math.min(...(this.question.trim().split(' ').map(fraas => fraas.length)));
+      if (min_fraasipikkus < 3) {
+        this.answer = 'Vähemalt kolm tähte igas fraasis palun !'
         return
       };
       this.answer = 'Otsime...';
@@ -155,12 +156,11 @@ var watchExampleVM = new Vue({
         vm.artikkel_results_count = response.data.count
         vm.total_count = vm.total_count + response.data.count
         vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
+        vm.artikkel_message = '';
         if (vm.artikkel_results_count > 0) {
           vm.artikkel_results = response.data.results;
           if (vm.artikkel_results_count > response.data.results.length) {
             vm.artikkel_message = ' näitame ' + response.data.results.length;
-          } else {
-            vm.artikkel_message = '';
           };
         }
       })
