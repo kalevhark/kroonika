@@ -665,7 +665,7 @@ class ArtikkelFilter(django_filters.FilterSet):
         # küsime algse päringu
         # initial_qs = super(ArtikkelFilter, self).qs
         # päringu parameetrid
-        fraasid = self.data.get('body_text__icontains', default='').split(' ')
+        fraasid = self.data.get('body_text__icontains', '').split(' ')
         if len(fraasid) > 1:
             modified_qs = Artikkel.objects.all()
             if self.data.get('hist_year__exact'):
