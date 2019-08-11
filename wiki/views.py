@@ -1224,7 +1224,7 @@ def test(request):
     )
     kuud = list((el.year, el.month) for el in queryset)
     data['test_url_artiklid_kuu'] = [
-        reverse('wiki:artikkel_month_archive', kwargs={'year': kuu(0), 'month': kuu(1)})
+        reverse('wiki:artikkel_month_archive', kwargs={'year': kuu[0], 'month': kuu[1]})
         for kuu
         in kuud
     ]
