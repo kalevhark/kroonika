@@ -38,6 +38,7 @@ var watchExampleVM = new Vue({
   },
   methods: {
     getAnswer: function () {
+      // Kontrollime kas iga fraasi pikkus on vähemalt kolm tähemärki
       var min_fraasipikkus = Math.min(...(this.question.trim().split(' ').map(fraas => fraas.length)));
       if (min_fraasipikkus < 3) {
         this.answer = 'Vähemalt kolm tähte igas fraasis palun !'
@@ -72,14 +73,13 @@ var watchExampleVM = new Vue({
         vm.isik_results_count = response.data.count
         vm.total_count = vm.total_count + response.data.count
         vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
+        vm.isik_message = '';
         var div_leitud_isikud = document.getElementById("leitud_isikud");
         if (vm.isik_results_count > 0) {
           // Kui leiti isikuid
           vm.isik_results = response.data.results;
           if (vm.isik_results_count > response.data.results.length) {
             vm.isik_message = ' näitame ' + response.data.results.length;
-          } else {
-            vm.isik_message = '';
           };
           div_leitud_isikud.style.display='block';
         } else {
@@ -101,14 +101,13 @@ var watchExampleVM = new Vue({
         vm.organisatsioon_results_count = response.data.count
         vm.total_count = vm.total_count + response.data.count
         vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
+        vm.organisatsioon_message = '';
         var div_leitud_organisatsioonid = document.getElementById("leitud_organisatsioonid");
         if (vm.organisatsioon_results_count > 0) {
           // Kui leiti organisatsioone
           vm.organisatsioon_results = response.data.results;
           if (vm.organisatsioon_results_count > response.data.results.length) {
             vm.organisatsioon_message = ' näitame ' + response.data.results.length;
-          } else {
-            vm.organisatsioon_message = '';
           };
           div_leitud_organisatsioonid.style.display='block';
         } else {
@@ -130,14 +129,13 @@ var watchExampleVM = new Vue({
         vm.objekt_results_count = response.data.count
         vm.total_count = vm.total_count + response.data.count
         vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
+        vm.objekt_message = '';
         var div_leitud_objektid = document.getElementById("leitud_objektid");
         if (vm.objekt_results_count > 0) {
           // Kui leiti objekte
           vm.objekt_results = response.data.results;
           if (vm.objekt_results_count > response.data.results.length) {
             vm.objekt_message = ' näitame ' + response.data.results.length;
-          } else {
-            vm.objekt_message = '';
           };
           div_leitud_objektid.style.display='block';
         } else {
