@@ -3,7 +3,8 @@
 function myPilt(imgs) {
   var expandImg = document.getElementById("profiiliPilt");
   var imgText = document.getElementById("imgtext");
-  expandImg.src = imgs.src;
+  // expandImg.src = imgs.src;
+  expandImg.src = imgs.getAttribute("data-img-big");
   expandImg.alt = imgs.alt;
   expandImg.title = imgs.title;
   imgText.innerHTML = imgs.alt;
@@ -14,7 +15,14 @@ function myPilt(imgs) {
 {% if object.pilt_set.all %}
   <p><i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
 	{% for obj in object.pilt_set.all %}
-	  <img class="pilt-pildirida" src="{{ obj.pilt.url }}" alt="{{ obj.caption }}" title="{{ obj }}" onclick="myPilt(this);">
+	  <img
+				class="pilt-pildirida"
+				src="{{ obj.pilt_icon.url }}"
+				data-img-big="{{ obj.pilt.url }}"
+				alt="{{ obj.caption }}"
+				title="{{ obj }}"
+				onclick="myPilt(this);"
+		>
 	  <!-- {{ obj.id }}<a class="pildid" id="pilt{{obj.id}}" href="{{ obj.link }}">{{ obj }}</a><br> -->
 	{% endfor %}
   </p>
