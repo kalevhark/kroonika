@@ -1,6 +1,6 @@
 <!-- Pildigalerii -->
 <script>
-function myPilt(imgs) {
+function showPilt(imgs) {
   var expandImg = document.getElementById("profiiliPilt");
   var imgText = document.getElementById("imgtext");
   // expandImg.src = imgs.src;
@@ -15,16 +15,14 @@ function myPilt(imgs) {
 {% if object.pilt_set.all %}
   <p><i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
 	{% for obj in object.pilt_set.all %}
-		<div class="pilt-pildirida">
-			<img
-					src="{{ obj.pilt_icon.url }}"
-					data-img-big="{{ obj.pilt.url }}"
-					alt="{{ obj.caption }}"
-					title="{{ obj }}"
-					onclick="myPilt(this);"
-			>
-		</div>
-	  <!-- {{ obj.id }}<a class="pildid" id="pilt{{obj.id}}" href="{{ obj.link }}">{{ obj }}</a><br> -->
+		<img
+				class="pilt-pildirida"
+				src="{{ obj.pilt_icon.url }}"
+				data-img-big="{{ obj.pilt.url }}"
+				alt="{{ obj.caption }}"
+				title="{{ obj }}"
+				onclick="showPilt(this);"
+		>
 	{% endfor %}
   </p>
 {% endif %}
