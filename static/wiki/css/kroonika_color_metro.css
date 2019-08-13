@@ -49,7 +49,14 @@ color:white;
 .text-pilt {color:#808080;}
 .text-viide {color:#A9A9A9;}
 
-.hover-artikkel:hover {color:#1e7145;}
+.hover-artikkel {
+  text-decoration: none;
+}
+.hover-artikkel:hover {
+  color:#1e7145;
+  text-decoration: underline;
+  text-decoration-style:dotted;
+}
 .hover-isik {
   text-decoration: none;
 }

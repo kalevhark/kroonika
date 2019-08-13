@@ -10,7 +10,7 @@
 				<br>
 			{% endif %}
 			<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=object.id %}">
-				{{ object.nimi }}
+				<strong>{{ object.nimi }}</strong>
 			</a>
 			&nbsp;&ndash;&nbsp;
 			{% include 'wiki/includes/seotud_artiklikaudu_artiklid.html' %}
