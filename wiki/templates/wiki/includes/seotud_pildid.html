@@ -16,7 +16,7 @@ function showPilt(imgs) {
   <p>
 		<i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
 		{% for obj in object.pilt_set.all %}
-			<div class="portfolio-image">
+			<div class="pilt-pildirida">
 				<a href="#">
 					<img
 						src="{{ obj.pilt_icon.url }}"
@@ -26,11 +26,6 @@ function showPilt(imgs) {
 						onclick="showPilt(this);"
 					>
 				</a>
-				<div class="overlay">
-					<a href="#" class="magnifying-glass-icon">
-						<i class="fa fa-search"></i>
-					</a>
-				</div>
 			</div>
 		{% endfor %}
   </p>
