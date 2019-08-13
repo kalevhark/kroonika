@@ -8,7 +8,9 @@
     {% if forloop.counter > 1 %}
       <br>
     {% endif %}
-	{% include 'wiki/includes/kp.html' with sd=obj.hist_date ed=obj.hist_enddate y=obj.hist_year m=obj.hist_month cs="primary" %}
+	  <strong>
+      {% include 'wiki/includes/kp.html' with sd=obj.hist_date ed=obj.hist_enddate y=obj.hist_year m=obj.hist_month cs="primary" %}
+    </strong>
 	  &nbsp;<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=obj.id %}>{{ obj.headline }}</a>
   {% endfor %}
   </div>
