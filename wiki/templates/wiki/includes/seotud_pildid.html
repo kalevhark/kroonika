@@ -15,6 +15,7 @@ function showPilt(imgs) {
 {% if object.pilt_set.all %}
   <p>
 		<i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
+		<div>
 		{% for obj in object.pilt_set.all %}
 
 				<a href="#">
@@ -29,5 +30,6 @@ function showPilt(imgs) {
 				</a>
 
 		{% endfor %}
+		</div>
   </p>
 {% endif %}
