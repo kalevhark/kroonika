@@ -49,25 +49,25 @@ color:white;
 .text-pilt {color:#808080;}
 .text-viide {color:#A9A9A9;}
 
-.hover-artikkel {
-  text-decoration: none;
-}
 .hover-artikkel:hover {
   color:#1e7145;
   text-decoration: underline;
   text-decoration-style:dotted;
 }
-.hover-isik {
-  text-decoration: none;
-}
 .hover-isik:hover {
   color:#00aba9;
-  text-decoration: underline;
-  text-decoration-style:dotted;
 }
-.hover-organisatsioon:hover {color:#2d89ef;}
-.hover-objekt:hover {color:#2b5797;}
-.hover-pilt:hover {color:#808080;}
-.hover-viide:hover {color:#A9A9A9;}
+.hover-organisatsioon:hover {
+  color:#2d89ef;
+}
+.hover-objekt:hover {
+  color:#2b5797;
+}
+.hover-pilt:hover {
+  color:#808080;
+}
+.hover-viide:hover {
+  color:#A9A9A9;
+}
 
 
