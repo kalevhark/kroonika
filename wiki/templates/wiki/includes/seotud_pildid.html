@@ -13,19 +13,20 @@ function showPilt(imgs) {
 </script>
 
 {% if object.pilt_set.all %}
-  <p><i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
-	{% for obj in object.pilt_set.all %}
-
-			<a class="hover-pilt pilt-pildirida" href="#">
-				<img
-					src="{{ obj.pilt_icon.url }}"
-					data-img-big="{{ obj.pilt.url }}"
-					alt="{{ obj.caption }}"
-					title="{{ obj }}"
-					onclick="showPilt(this);"
-				>
-			</a>
-
-	{% endfor %}
+  <p>
+		<i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
+		{% for obj in object.pilt_set.all %}
+			<div class="hover-pilt">
+				<a class="hover-pilt pilt-pildirida" href="#">
+					<img
+						src="{{ obj.pilt_icon.url }}"
+						data-img-big="{{ obj.pilt.url }}"
+						alt="{{ obj.caption }}"
+						title="{{ obj }}"
+						onclick="showPilt(this);"
+					>
+				</a>
+			</div>
+		{% endfor %}
   </p>
 {% endif %}
