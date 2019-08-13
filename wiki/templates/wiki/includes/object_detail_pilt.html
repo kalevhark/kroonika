@@ -4,6 +4,7 @@
 <div class="w3-third">
   {% if profiilipilt %} <!-- Kui on määratud profiilipilt -->
     <div class="w3-margin-right">
+      <a href="#">
       <img
           class="{{cls}}"
           id="profiiliPilt"
@@ -11,6 +12,7 @@
           alt="{{ profiilipilt.caption }}"
           title="{{ profiilipilt }}"
       />
+      </a>
       <small>
         <div class="w3-center" id="imgtext">
           {{ profiilipilt.caption }}
