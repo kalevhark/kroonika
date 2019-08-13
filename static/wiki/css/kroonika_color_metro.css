@@ -50,7 +50,10 @@ color:white;
 .text-viide {color:#A9A9A9;}
 
 .hover-artikkel:hover {color:#1e7145;}
-.hover-isik:hover {color:#00aba9;}
+.hover-isik:hover {
+  color:#00aba9;
+  border-bottom: 1px dotted black;
+}
 .hover-organisatsioon:hover {color:#2d89ef;}
 .hover-objekt:hover {color:#2b5797;}
 .hover-pilt:hover {color:#808080;}

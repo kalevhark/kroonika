@@ -966,8 +966,8 @@ def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
         kirje = {}
         kirje['id'] = seotud_isik.id
         kirje['nimi'] = seotud_isik
-        kirje['perenimi'] = seotud_isik.perenimi
-        kirje['eesnimi'] = seotud_isik.eesnimi
+        # kirje['perenimi'] = seotud_isik.perenimi
+        # kirje['eesnimi'] = seotud_isik.eesnimi
         kirje['artiklid'] = seotud_artiklid.\
             filter(isikud=seotud_isik).\
             order_by('hist_searchdate').\
