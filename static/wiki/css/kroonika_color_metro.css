@@ -50,6 +50,9 @@ color:white;
 .text-viide {color:#A9A9A9;}
 
 .hover-artikkel:hover {color:#1e7145;}
+.hover-isik {
+  text-decoration: none;
+}
 .hover-isik:hover {
   color:#00aba9;
   text-decoration: underline;
