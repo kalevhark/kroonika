@@ -9,7 +9,9 @@
 			{% if forloop.counter > 1 %}
 				<br>
 			{% endif %}
-			<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=object.id %}>{{ object }}</a>
+			<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=object.id %}">
+				{{ seotud_isik }}
+			</a>
 			{% include 'wiki/includes/seotud_artiklikaudu_artiklid.html' %}
     {% endfor %}
   </div>
