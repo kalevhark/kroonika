@@ -51,8 +51,8 @@ color:white;
 
 .hover-artikkel:hover {
   color:#1e7145;
-  text-decoration: underline;
-  text-decoration-style:dotted;
+/*  text-decoration: underline;
+  text-decoration-style:dotted; */
 }
 .hover-isik:hover {
   color:#00aba9;
