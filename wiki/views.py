@@ -128,6 +128,7 @@ def info(request):
     artikleid_kuus = [
         [periood['hist_searchdate__year'], periood['hist_searchdate__month'], periood['ct']] for periood in perioodid
     ]
+    artikleid_kuus_max = max([kuu_andmed[2] for kuu_andmed in artikleid_kuus])
     # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
     revision_data['kroonika'] = Artikkel.objects.filter(kroonika__isnull=False).count()
