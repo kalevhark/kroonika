@@ -146,6 +146,7 @@ def info(request):
             'andmebaasid': andmebaasid,
             'andmed': andmed,
             'artikleid_kuus': artikleid_kuus,
+            'artikleid_kuus_max': artikleid_kuus_max,
             'meta_andmed': request.META,
             # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
