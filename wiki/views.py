@@ -1054,7 +1054,7 @@ class OrganisatsioonFilterView(FilterView):
     
 def seotud_organisatsioonid_artiklikaudu(seotud_artiklid, organisatsiooni_ise):
     # Isikuga artiklite kaudu seotud organisatsioonid
-    organisatsioonid = Organisatsioon.objects.filter(artikkel__pk__in=seotud_artiklid).distinct().all().exclude(pk=organisatsiooni_ise)
+    organisatsioonid = Organisatsioon.objects.filter(artikkel__pk__in=seotud_artiklid).distinct().exclude(pk=organisatsiooni_ise)
     andmed = {}
     for seotud_organisatsioon in organisatsioonid:
         kirje = {}
@@ -1141,7 +1141,7 @@ class ObjektFilterView(FilterView):
     
 def seotud_objektid_artiklikaudu(seotud_artiklid, objekt_ise):
     # Objektiga artiklite kaudu seotud organisatsioonid
-    objektid = Objekt.objects.filter(artikkel__pk__in=seotud_artiklid).distinct().all().exclude(pk=objekt_ise)
+    objektid = Objekt.objects.filter(artikkel__pk__in=seotud_artiklid).distinct().exclude(pk=objekt_ise)
     andmed = {}
     for seotud_objekt in objektid:
         kirje = {}
