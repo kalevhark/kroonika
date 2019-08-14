@@ -965,7 +965,7 @@ class IsikFilterView(FilterView):
 
 def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
     # Isikuga artiklite kaudu seotud teised isikud
-    isikud = Isik.objects.filter(artikkel__pk__in=seotud_artiklid).distinct().all().exclude(pk=isik_ise)
+    isikud = Isik.objects.filter(artikkel__pk__in=seotud_artiklid).distinct().exclude(pk=isik_ise)
     andmed = {}
     for seotud_isik in isikud:
         kirje = {}
