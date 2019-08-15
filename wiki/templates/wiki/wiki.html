@@ -89,6 +89,7 @@
 					{% endif %}
 					<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
 						... {{ obj.body_text|truncatewords:10 }}
+						{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 					</a>
 				{% endfor %}
 			{% endif %}
@@ -99,11 +100,11 @@
 					{% endif %}
 					<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id %}">
 						sündis {{ obj }}
+						{% if obj.vanus|divisibleby:"5" %}
+							&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+						{% endif %}
+						{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 					</a>
-					{% if obj.vanus|divisibleby:"5" %}
-						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-					{% endif %}
-					{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 				{% endfor %}
 			{% endif %}
 			{% if andmed.organisatsioon.100_aastat_tagasi %}
@@ -113,11 +114,11 @@
 					{% endif %}
 					<a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}">
 						{{ obj }}
+						{% if obj.vanus|divisibleby:"5" %}
+							&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+						{% endif %}
+						{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 					</a>
-					{% if obj.vanus|divisibleby:"5" %}
-						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-					{% endif %}
-					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 				{% endfor %}
 			{% endif %}
 			{% if andmed.objekt.100_aastat_tagasi %}
@@ -127,11 +128,11 @@
 					{% endif %}
 					<a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id %}">
 						{{ obj }}
+						{% if obj.vanus|divisibleby:"5" %}
+							&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+						{% endif %}
+						{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 					</a>
-					{% if obj.vanus|divisibleby:"5" %}
-						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-					{% endif %}
-					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 				{% endfor %}
 			{% endif %}
 		{% endif %}
@@ -252,11 +253,11 @@
 				&nbsp;
 				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
 					{{ obj }}
+					{% if obj.vanus|divisibleby:"5" %}
+						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+					{% endif %}
+					{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 				</a>
-				{% if obj.vanus|divisibleby:"5" %}
-					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-				{% endif %}
-				{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 	    {% endfor %}
 	  {% endif %}
 	  {% if andmed.isik.sel_kuul %}
@@ -306,10 +307,10 @@
 					</a>
 				{% endif %}&nbsp;
 				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
-				 {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
+					 {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
+					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+        	{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 				</a>
-				&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-        {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 				<!--{% if obj.profiilipilt %}
 					<div class="w3-row" >
 						<img class="pilt-portree-small" src="{{ obj.profiilipilt.pilt.url }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/>
@@ -401,11 +402,11 @@
 				&nbsp;
 				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
 					{{ obj }}
+					{% if obj.vanus|divisibleby:"5" %}
+						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+					{% endif %}
+					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 				</a>
-				{% if obj.vanus|divisibleby:"5" %}
-					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-				{% endif %}
-				{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 	    {% endfor %}
 	  {% endif %}
 	  {% if andmed.organisatsioon.sel_kuul %}
@@ -458,10 +459,10 @@
 				{% endif %}
 				&nbsp;
 				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
-					{{ obj.nimi }}
+						{{ obj.nimi }}
+					&nbsp;<b>{{ obj.vanus }}</b>
+					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 				</a>
-				&nbsp;<b>{{ obj.vanus }}</b>
-				{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 			{% endfor %}
 	  {% endif %}
 	  </div>
@@ -488,11 +489,11 @@
 				&nbsp;
 				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
 					{{ obj }}
+					{% if obj.vanus|divisibleby:"5" %}
+						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+					{% endif %}
+					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 				</a>
-				{% if obj.vanus|divisibleby:"5" %}
-					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-				{% endif %}
-				{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 	    {% endfor %}
 	  {% endif %}
 	  {% if andmed.objekt.sel_kuul %}
@@ -546,9 +547,9 @@
 				&nbsp;
 				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
 					{{ obj.nimi }}
+					&nbsp;<b>{{ obj.vanus }}</b>
+					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 				</a>
-				&nbsp;<b>{{ obj.vanus }}</b>
-				{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 			{% endfor %}
 	  {% endif %}
 	  <!-- Kaardid -->
