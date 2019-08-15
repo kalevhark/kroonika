@@ -154,11 +154,8 @@
 				</a>
 				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
 					{{ obj.body_text|truncatewords:10 }}
+					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 				</a>
-				{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
-<!--				{% if obj.profiilipilt %}-->
-<!--					<img class="pilt-postkaart-small" src="{{ obj.profiilipilt.link }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/><br>-->
-<!--				{% endif %}-->
 				<!-- Kui kirjed rohkem kui 5, siis hakime 2+1+2 -->
 				{% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
 					{% if forloop.counter == 2 and andmed.artikkel.sel_p2eval_kirjeid  > 6 %}
