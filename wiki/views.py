@@ -68,7 +68,25 @@ def check_recaptcha(request):
 #
 def info(request):
     andmebaasid = []
-    andmebaasid.append(' '.join(['Allikad: ', str(Allikas.objects.count()), 'kirjet']))
+    # Allikad ja viited
+    tyhjad_viited = Viide.objects.annotate(
+        num_art=Count('artikkel__id'),
+        num_isik=Count('isik__id'),
+        num_org=Count('organisatsioon__id'),
+        num_obj=Count('objekt__id'),
+        num_pilt=Count('pilt__id')
+    ).filter(
+        num_art=0, num_isik=0, num_org=0, num_obj=0, num_pilt=0
+    ).count()
+    andmebaasid.append(
+        ' '.join(
+            [
+                'Allikad:',
+                f'{Allikas.objects.count()} kirjet',
+                f'millele viitab: {Viide.objects.count()} (kasutud {tyhjad_viited}) kirjet',
+            ]
+        )
+    )
     andmebaasid.append(
         ' '.join(
             [
