@@ -33,7 +33,7 @@ a {
 }
 
 .pilt-postkaart-small {
-	object-fit: cover;
+	object-fit: contain;
 	position: relative;
   left: 50%;
   transform: translate(-50%, 0)
