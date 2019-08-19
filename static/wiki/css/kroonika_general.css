@@ -19,6 +19,8 @@ a {
 /* Kasutamiseks uudisvoos */
 .pilt-wiki-algus {
   display: flex;
+  text-align: center;
+  align-items: center;
   max-height: 200px;
   overflow: hidden;
   border: 1px solid #ddd;
@@ -32,6 +34,9 @@ a {
 
 .pilt-postkaart-small {
 	object-fit: cover;
+	position: relative;
+  left: 50%;
+  transform: translate(-50%, 0)
 }
 
 .pilt-portree-small {
