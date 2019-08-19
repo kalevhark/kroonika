@@ -5,6 +5,7 @@ html, body, h1, h2, h3, h4, h5 {
 a {
   text-decoration: none;
 }
+
 /* Kasutamiseks objektivaates */
 .pilt-postkaart-medium {
 	max-height: 512px;
@@ -16,30 +17,32 @@ a {
 }
 
 /* Kasutamiseks uudisvoos */
+.pilt-wiki-algus {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  max-height: 200px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  margin: 5px;
+}
+
+.pilt-wiki-algus:hover {
+  box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+
 .pilt-postkaart-small {
 	max-height: 128px;
 	max-width: 256px;
-	border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 5px;
-}
-
-.pilt-postkaart-small:hover {
-  box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
 }
 
 .pilt-portree-small {
 	max-height: 128px;
 	max-width: 96px;
-	border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 5px;
 	margin-right: 1em;
 	float: left;
-}
-
-.pilt-portree-small:hover {
-  box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
 }
 
 /* Kasutamiseks objecti detailvaates */
