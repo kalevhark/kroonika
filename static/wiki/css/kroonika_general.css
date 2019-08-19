@@ -32,7 +32,6 @@ a {
 }
 
 .pilt-postkaart-small {
-	max-width: 256px;
 	object-fit: cover;
 }
 
