@@ -787,7 +787,7 @@ class KroonikataArtikkelManager(models.Manager):
        return super().get_queryset().filter(kroonika__isnull=True)
 
 # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-class SajandTagasiArtikkelManager(models.Manager):
+class ArtikkelSajandTagasiManager(models.Manager):
     def get_queryset(self):
         sajandtagasi = datetime.date.today().year - 100
         return super().get_queryset().filter(hist_year__lte=sajandtagasi)
@@ -901,7 +901,7 @@ class Artikkel(models.Model):
     # objects = models.Manager()  # The default manager
     # objects = KroonikataArtikkelManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
     if settings.KROONIKA['SAJAND_TAGASI']:
-        objects = SajandTagasiArtikkelManager() # Kui on vaja näidata kuni sajand tagasi
+        objects = ArtikkelSajandTagasiManager() # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         tekst = self.body_text[:50]

@@ -1198,7 +1198,7 @@ class ObjektDetailView(generic.DetailView):
         return context
 
 
-# Loendab kõik sisse logitud kasutajad
+# Loetleb kõik sisse logitud kasutajad
 def get_all_logged_in_users():
     # Query all non-expired sessions
     # use timezone.now() instead of datetime.now() in latest versions of Django
