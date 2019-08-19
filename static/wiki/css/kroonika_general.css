@@ -17,7 +17,7 @@ a {
 
 /* Kasutamiseks uudisvoos */
 .pilt-postkaart-small {
-	/* max-height: 128px; */
+	max-height: 128px;
 	max-width: 256px;
 	border: 1px solid #ddd;
   border-radius: 4px;
