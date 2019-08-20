@@ -32,7 +32,7 @@ color:white;
 
 .background-pilt
 {
-background-color:#808080;
+background-color:#008CBA;
 color:white;
 }
 
@@ -46,7 +46,7 @@ color:white;
 .text-isik {color:#00aba9;}
 .text-organisatsioon {color:#2d89ef;}
 .text-objekt {color:#2b5797;}
-.text-pilt {color:#808080;}
+.text-pilt {color:#008CBA;}
 .text-viide {color:#A9A9A9;}
 
 .hover-artikkel:hover {
@@ -64,7 +64,7 @@ color:white;
   color:#2b5797;
 }
 .hover-pilt:hover {
-  color:#808080;
+  color:#008CBA;
 }
 .hover-viide:hover {
   color:#A9A9A9;
