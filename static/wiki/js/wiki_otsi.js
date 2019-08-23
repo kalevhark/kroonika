@@ -35,7 +35,7 @@ var watchExampleVM = new Vue({
     // more about the _.debounce function (and its cousin
     // _.throttle), visit: https://lodash.com/docs#debounce
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
-    this.$nextTick(() = this.$refs.input.focus())
+    this.$nextTick(() = this.$refs.input.focus());
   },
   methods: {
     getAnswer: function () {
