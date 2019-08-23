@@ -36,7 +36,7 @@ var watchExampleVM = new Vue({
     // _.throttle), visit: https://lodash.com/docs#debounce
     setTimeout(x => {
       this.$nextTick(() => this.setFocus()); // this works great, just watch out with going to fast !!!
-    }, 1000);
+    }, 3000);
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
   },
   methods: {
