@@ -83,7 +83,7 @@ def info(request):
             [
                 'Allikad:',
                 f'{Allikas.objects.count()} kirjet',
-                f'millele viitab: {Viide.objects.count()} (kasutud {tyhjad_viited}) kirjet',
+                f'millele viitab: {Viide.objects.count()} (kasutuid {tyhjad_viited}) kirjet',
             ]
         )
     )
