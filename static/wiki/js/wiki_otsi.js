@@ -34,7 +34,8 @@ var watchExampleVM = new Vue({
     // finished typing before making the ajax request. To learn
     // more about the _.debounce function (and its cousin
     // _.throttle), visit: https://lodash.com/docs#debounce
-    this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
+    this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
+    document.getElementById("question").focus();
   },
   methods: {
     getAnswer: function () {
