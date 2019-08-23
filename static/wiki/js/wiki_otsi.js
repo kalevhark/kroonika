@@ -34,10 +34,16 @@ var watchExampleVM = new Vue({
     // finished typing before making the ajax request. To learn
     // more about the _.debounce function (and its cousin
     // _.throttle), visit: https://lodash.com/docs#debounce
+    setTimeout(x => {
+      this.$nextTick(() => this.setFocus()); // this works great, just watch out with going to fast !!!
+    }, 1000);
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
-    document.getElementById("question").focus();
   },
   methods: {
+    setFocus: function() {
+      // Note, you need to add a ref="search" attribute to your input.
+      this.$refs.question.focus();
+    },
     getAnswer: function () {
       // Kontrollime kas iga fraasi pikkus on vähemalt kolm tähemärki
       var min_fraasipikkus = Math.min(...(this.question.trim().split(' ').map(fraas => fraas.length)));
