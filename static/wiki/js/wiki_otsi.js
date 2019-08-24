@@ -1,11 +1,13 @@
-// Register a global custom directive called `v-focus`
-Vue.directive('focus', {
-  // When the bound element is inserted into the DOM...
-  inserted: function (el) {
-    // Focus the element
-    el.input.focus()
+var focus = {
+	// When the bound element is inserted into the DOM...
+  bind: function (el) {
+  // Focus the element
+    el.focus()
   }
-})
+};
+console.log(focus);
+
+Vue.directive('focus', focus);
 
 // Vue otsimisäpp
 var watchExampleVM = new Vue({
