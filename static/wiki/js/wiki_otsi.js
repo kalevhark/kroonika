@@ -1,6 +1,15 @@
+
 var watchExampleVM = new Vue({
-  delimiters: ['[[', ']]'],
   el: '#kroonika-api',
+  delimiters: ['[[', ']]'],
+  directives: {
+    focus: {
+      // directive definition
+      inserted: function (el) {
+        el.focus()
+      }
+    }
+  },
   data: {
     question: question,
     answer: 'Otsimiseks on vaja vähemalt kolm tähte',
