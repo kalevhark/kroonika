@@ -11,14 +11,6 @@ Vue.directive('focus', {
 var watchExampleVM = new Vue({
   el: '#kroonika-api',
   delimiters: ['[[', ']]'],
-  directives: {
-    focus: {
-      // directive definition
-      inserted: function (el) {
-        el.focus()
-      }
-    }
-  },
   data: {
     question: question,
     answer: 'Otsimiseks on vaja vähemalt kolm tähte',
@@ -26,6 +18,7 @@ var watchExampleVM = new Vue({
     wiki_isik_filter_url,
     wiki_organisatsioon_filter_url,
     wiki_objekt_filter_url,
+    artikkel_message: '',
     isik_results: [],
     isik_results_count: 0,
     isik_message: '',
