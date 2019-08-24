@@ -58,7 +58,8 @@
               <a
                   class="hover-isik"
                   style="text-decoration: none;"
-                  v-bind:href="result.link">
+                  v-bind:href="result.link"
+                  v-bind:title="result.kirjeldus.slice(0, 50)">
                 [[ result.eesnimi ]] [[ result.perenimi ]]
               </a>
             </li>
