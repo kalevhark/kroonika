@@ -20,6 +20,7 @@ var watchExampleVM = new Vue({
     wiki_isik_filter_url,
     wiki_organisatsioon_filter_url,
     wiki_objekt_filter_url,
+    artikkel_message: '',
     isik_results: [],
     isik_results_count: 0,
     isik_message: '',
@@ -175,7 +176,10 @@ var watchExampleVM = new Vue({
           if (vm.artikkel_results_count > response.data.results.length) {
             vm.artikkel_message = ' näitame ' + response.data.results.length;
           };
-        }
+        } else {
+          // Kui ei leitud objekte
+          div_leitud_artiklid.style.display='none';
+        };
       })
       .catch(function (error) {
         vm.answer = 'Viga! API kättesaamatu. ' + error;
