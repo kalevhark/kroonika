@@ -177,7 +177,7 @@ var watchExampleVM = new Vue({
           if (vm.artikkel_results_count > response.data.results.length) {
             vm.artikkel_message = ' näitame ' + response.data.results.length;
           };
-          div_leitud_objektid.style.display='block';
+          div_leitud_artiklid.style.display='block';
         } else {
           // Kui ei leitud objekte
           div_leitud_artiklid.style.display='none';
