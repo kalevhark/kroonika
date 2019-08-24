@@ -84,7 +84,8 @@
                 <a
                     class="hover-organisatsioon"
                     style="text-decoration: none;"
-                    v-bind:href="result.link">
+                    v-bind:href="result.link"
+                    v-bind:title="result.kirjeldus.slice(0, 50)">
                   [[ result.nimi ]]
                 </a>
             </li>
@@ -109,7 +110,8 @@
                 <a
                     class="hover-objekt"
                     style="text-decoration: none;"
-                    v-bind:href="result.link">
+                    v-bind:href="result.link"
+                    v-bind:title="result.kirjeldus.slice(0, 50)">
                   [[ result.nimi ]]
                 </a>
             </li>
@@ -136,7 +138,8 @@
                 <a
                     class="hover-artikkel"
                     style="text-decoration: none;"
-                    v-bind:href="result.link">
+                    v-bind:href="result.link"
+                    v-bind:title="result.hist_searchdate">
                   [[ result.hist_year ]]: [[ result.body_text.slice(0, 100) ]][[ result.body_text.length>100 ? '...' : '' ]]
                 </a>
             </li>
