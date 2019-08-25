@@ -1,14 +1,3 @@
-var focus = {
-	// When the bound element is inserted into the DOM...
-  bind: function (el) {
-  // Focus the element
-    el.focus()
-  }
-};
-console.log(focus);
-
-Vue.directive('focus', focus);
-
 // Vue otsimisäpp
 var watchExampleVM = new Vue({
   el: '#kroonika-api',
@@ -49,7 +38,13 @@ var watchExampleVM = new Vue({
     // _.throttle), visit: https://lodash.com/docs#debounce
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
   },
+  mounted() {
+    this.focusInput();
+  },
   methods: {
+    focusInput() {
+      this.$refs.question.focus();
+    },
     getAnswer: function () {
       // Kontrollime kas iga fraasi pikkus on vähemalt kolm tähemärki
       var min_fraasipikkus = Math.min(...(this.question.trim().split(' ').map(fraas => fraas.length)));
