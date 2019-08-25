@@ -43,6 +43,7 @@ var watchExampleVM = new Vue({
   },
   methods: {
     focusInput() {
+      // Vajalik et saada sisestusväli automaatselt aktiivseks
       this.$refs.question.focus();
     },
     getAnswer: function () {
