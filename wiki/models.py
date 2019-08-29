@@ -997,8 +997,8 @@ class Pilt(models.Model):
         max_length=255,
         height_field = 'pilt_height_field',
         width_field = 'pilt_width_field',
-        null=True,
-        blank=True
+        # null=True,
+        # blank=True
     )
     pilt_thumbnail = models.ImageField(
         upload_to='', # Salvestatakse samasse kataloogi pildiga make_thumbnail abil
