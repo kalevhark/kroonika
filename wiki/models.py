@@ -997,8 +997,8 @@ class Pilt(models.Model):
         max_length=255,
         height_field = 'pilt_height_field',
         width_field = 'pilt_width_field',
-        # null=True,
-        # blank=True
+        null=True,
+        blank=True
     )
     pilt_thumbnail = models.ImageField(
         upload_to='', # Salvestatakse samasse kataloogi pildiga make_thumbnail abil
@@ -1129,11 +1129,12 @@ class Pilt(models.Model):
             self.hist_month = self.hist_date.month
         # save for image
         super(Pilt, self).save(*args, **kwargs)
-        # Loome pisipildid
-        make_thumbnail(self.pilt_thumbnail, self.pilt, 'thumb')
-        make_thumbnail(self.pilt_icon, self.pilt, 'icon')
-        # save for thumbnail and icon
-        super(Pilt, self).save(*args, **kwargs)
+        if self.pilt:
+            # Loome pisipildid
+            make_thumbnail(self.pilt_thumbnail, self.pilt, 'thumb')
+            make_thumbnail(self.pilt_icon, self.pilt, 'icon')
+            # save for thumbnail and icon
+            super(Pilt, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Pildid"
