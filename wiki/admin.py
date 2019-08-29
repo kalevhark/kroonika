@@ -303,6 +303,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
 class IsikAdmin(admin.ModelAdmin):
     form = IsikForm
     list_display = (
+        'id',
         'perenimi',
         'eesnimi',
         'eluaeg',
@@ -310,7 +311,12 @@ class IsikAdmin(admin.ModelAdmin):
         'seotud_pilte',
     )
     search_fields = ['perenimi']
-    readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
+    readonly_fields = [
+        'inp_date',
+        'mod_date',
+        'created_by',
+        'updated_by'
+    ]
     fieldsets = [
         (None, {
             'fields': ['eesnimi', 'perenimi']
@@ -414,6 +420,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         'updated_by'
     ]
     list_display = [
+        'id',
         'nimi',
         'hist_date',
         'hist_year',
@@ -429,7 +436,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         PiltOrganisatsioonInline,
     ]
 
-    search_fields = ['nimi']
+    search_fields = ['id', 'nimi']
 
     # Kui palju on organisatsiooniga seotud artikleid
     def seotud_artikleid(self, obj):
@@ -479,6 +486,7 @@ class ObjektAdmin(admin.ModelAdmin):
         'mod_date', 'updated_by',
     ]
     list_display = [
+        'id',
         'nimi',
         'hist_date',
         'hist_year',
@@ -486,7 +494,7 @@ class ObjektAdmin(admin.ModelAdmin):
         'seotud_artikleid',
         'seotud_pilte',
     ]
-    search_fields = ['nimi']
+    search_fields = ['id', 'nimi']
     fieldsets = [
         (None, {
             'fields': ['nimi', 'tyyp', 'asukoht', 'kirjeldus']
