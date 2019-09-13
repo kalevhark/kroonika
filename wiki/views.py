@@ -532,17 +532,17 @@ class ArtikkelDetailView(generic.DetailView):
         # kuup2ev = context['artikkel'].hist_searchdate
         obj_id = context['artikkel'].id
         # Järjestame artiklid kronoloogiliselt
-        # loend = artikkel_qs
+        loend = artikkel_qs.values_list('id')
         # Leiame valitud artikli järjekorranumbri
-        n = next((i for i, x in enumerate(artikkel_qs) if x['id'] == obj_id), -1)
+        n = next((i for i, x in enumerate(loend) if x['id'] == obj_id), -1)
         context['n'] = n
         if n > -1:
             # Leiame ajaliselt järgneva artikli
-            if n < artikkel_qs.count() - 1:
-                context['next_obj'] = artikkel_qs.get(id=artikkel_qs[n+1]['id'])
+            if n < loend.count() - 1:
+                context['next_obj'] = artikkel_qs.get(id=loend[n+1]['id'])
             # Leiame ajaliselt eelneva artikli
             if n > 0:
-                context['prev_obj'] = artikkel_qs.get(id=artikkel_qs[n-1]['id'])
+                context['prev_obj'] = artikkel_qs.get(id=loend[n-1]['id'])
         # Lisame vihjevormi
         context['feedbackform'] = VihjeForm()
         return context
