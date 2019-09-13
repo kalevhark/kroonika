@@ -65,7 +65,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'kroonika.urls'
 
-ROOT_URL = '/kroonika' # Kui rakendus ei asu juurdomeenis: server_name/ROOT_URL/... TODO: Ainult lokaalses masinas
+ROOT_URL = '' # '/kroonika' # Kui rakendus ei asu juurdomeenis: server_name/ROOT_URL/... TODO: Ainult lokaalses masinas
 
 TEMPLATES = [
     {
