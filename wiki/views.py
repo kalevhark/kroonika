@@ -78,6 +78,7 @@ def artikkel_qs_userfilter(user):
 # Avalehekülg
 #
 def info(request):
+    # Filtreerime artiklite hulga kasutaja järgi
     artikkel_qs = artikkel_qs_userfilter(request.user)
     andmebaasid = []
     # Allikad ja viited
@@ -248,6 +249,8 @@ def feedback(request):
 # Avakuva
 #
 def algus(request):
+    # Filtreerime artiklite hulga kasutaja järgi
+    artikkel_qs = artikkel_qs_userfilter(request.user)
     andmed = {} # Selle muutuja saadame veebi
     p2ev = datetime.date.today().day # str(p2ev).zfill(2) -> PP
     kuu = datetime.date.today().month # str(kuu).zfill(2) -> KK
@@ -255,7 +258,7 @@ def algus(request):
     
     # Andmebaas Artikkel andmed veebi
     a = dict()
-    kirjeid = Artikkel.objects.count()
+    kirjeid = artikkel_qs.count()
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
         # kp = Artikkel.objects.all().\
@@ -264,15 +267,15 @@ def algus(request):
         #     max_mod_date=Max('mod_date')
         # )
         # a['viimane_lisatud'] = Artikkel.objects.filter(inp_date=kp['max_inp_date']).last()
-        a['viimane_lisatud'] = Artikkel.objects.latest('inp_date')
+        a['viimane_lisatud'] = artikkel_qs.latest('inp_date')
         # a['viimane_muudetud'] = Artikkel.objects.filter(mod_date=kp['max_mod_date']).last()
-        a['viimane_muudetud'] = Artikkel.objects.latest('mod_date')
+        a['viimane_muudetud'] = artikkel_qs.latest('mod_date')
         # Samal kuupäeval erinevatel aastatel toimunud
-        sel_p2eval_exactly = Artikkel.objects.filter( # hist_date == KKPP
+        sel_p2eval_exactly = artikkel_qs.filter( # hist_date == KKPP
             hist_date__day = p2ev,
             hist_date__month = kuu
         )
-        sel_p2eval_inrange = inrange_dates_artikkel(p2ev, kuu) # hist_date < KKPP <= hist_enddate
+        sel_p2eval_inrange = inrange_dates_artikkel(artikkel_qs, p2ev, kuu) # hist_date < KKPP <= hist_enddate
         sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
         sel_p2eval_kirjeid = len(sel_p2eval)
         if sel_p2eval_kirjeid > 5: # Kui leiti rohkem kui viis kirjet võetakse 2 algusest + 1 keskelt + 2 lõpust
@@ -281,7 +284,7 @@ def algus(request):
             a['sel_p2eval'] = sel_p2eval
         a['sel_p2eval_kirjeid'] = sel_p2eval_kirjeid
         # Samal kuul toimunud TODO: probleem kui hist_searchdate__month ja hist_enddate__month ei ole järjest
-        sel_kuul = Artikkel.objects.filter(Q(hist_searchdate__month = kuu) | Q(hist_enddate__month = kuu))
+        sel_kuul = artikkel_qs.filter(Q(hist_searchdate__month = kuu) | Q(hist_enddate__month = kuu))
         sel_kuul_kirjeid = len(sel_kuul)
         if sel_kuul_kirjeid > 9: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
             a['sel_kuul'] = (
@@ -294,7 +297,7 @@ def algus(request):
         a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
         # 100 aastat tagasi toimunud
         a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(hist_date__year = (aasta-100))
-        a['top10'] = Artikkel.objects.order_by('-total_accessed')[:10]
+        a['top10'] = artikkel_qs.order_by('-total_accessed')[:10]
     andmed['artikkel'] = a
 
     # Andmebaas Isik andmed veebi
@@ -427,9 +430,9 @@ def algus(request):
 #
 # Tagastab kõik artiklid, kus hist_date < KKPP <= hist_enddate vahemikus
 #
-def inrange_dates_artikkel(p2ev, kuu):
+def inrange_dates_artikkel(qs, p2ev, kuu):
     # Vaatleme ainult algus ja lõpuajaga ridasid
-    q = Artikkel.objects.filter(
+    q = qs.filter(
         hist_date__isnull=False,
         hist_enddate__isnull=False
     )
@@ -440,7 +443,8 @@ def inrange_dates_artikkel(p2ev, kuu):
     )
     kkpp_string = str(kuu).zfill(2)+str(p2ev).zfill(2)
     id_list = [art.id for art in q if kkpp_string in art.hist_dates_string]
-    return Artikkel.objects.filter(id__in=id_list) # queryset
+    return qs.filter(id__in=id_list) # queryset
+
 #
 # Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse
 #
@@ -472,17 +476,16 @@ def mis_kuul(kuu, l6pp='s'):
             ]
     return kuud[kuu - 1] + l6pp
 
-
-def mainitud_aastatel(model, obj):
+def mainitud_aastatel(qs, model, obj):
     # Artiklites mainimine läbi aastate
     if model == 'Isik':
-        qs = Artikkel.objects.filter(isikud__id=obj.id)
+        filter = qs.filter(isikud__id=obj.id)
     elif model == 'Objekt':
-        qs = Artikkel.objects.filter(objektid__id=obj.id)
+        filter = qs.filter(objektid__id=obj.id)
     elif model == 'Organisatsioon':
-        qs = Artikkel.objects.filter(organisatsioonid__id=obj.id)
+        filter = qs.filter(organisatsioonid__id=obj.id)
 
-    aastad = list(qs.all().values_list('hist_year', flat=True).distinct())
+    aastad = list(filter.all().values_list('hist_year', flat=True).distinct())
     if obj.hist_date:
         synniaasta = obj.hist_date.year
     elif obj.hist_year:
@@ -517,7 +520,11 @@ class ArtikkelDetailView(generic.DetailView):
     model = Artikkel
     template_name = 'wiki/artikkel_detail.html'
 
+    def get_queryset(self):
+        return artikkel_qs_userfilter(self.request.user)
+
     def get_context_data(self, **kwargs):
+        artikkel_qs = artikkel_qs_userfilter(self.request.user)
         context = super().get_context_data(**kwargs)
         # Kas artiklile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
@@ -525,17 +532,17 @@ class ArtikkelDetailView(generic.DetailView):
         # kuup2ev = context['artikkel'].hist_searchdate
         obj_id = context['artikkel'].id
         # Järjestame artiklid kronoloogiliselt
-        loend = Artikkel.objects.order_by('hist_searchdate', 'id').values('id')
+        # loend = artikkel_qs
         # Leiame valitud artikli järjekorranumbri
-        n = next((i for i, x in enumerate(loend) if x['id'] == obj_id), -1)
+        n = next((i for i, x in enumerate(artikkel_qs) if x['id'] == obj_id), -1)
         context['n'] = n
         if n > -1:
             # Leiame ajaliselt järgneva artikli
-            if n < Artikkel.objects.count() - 1:
-                context['next_obj'] = Artikkel.objects.get(id=loend[n+1]['id'])
+            if n < artikkel_qs.count() - 1:
+                context['next_obj'] = artikkel_qs.get(id=artikkel_qs[n+1]['id'])
             # Leiame ajaliselt eelneva artikli
             if n > 0:
-                context['prev_obj'] = Artikkel.objects.get(id=loend[n-1]['id'])
+                context['prev_obj'] = artikkel_qs.get(id=artikkel_qs[n-1]['id'])
         # Lisame vihjevormi
         context['feedbackform'] = VihjeForm()
         return context
@@ -702,7 +709,8 @@ class ArtikkelFilter(django_filters.FilterSet):
         # päringu parameetrid
         fraasid = self.data.get('body_text__icontains', '').split(' ')
         if len(fraasid) > 1:
-            modified_qs = Artikkel.objects.all()
+            # modified_qs = Artikkel.objects.all()
+            modified_qs = artikkel_qs_userfilter(self.request.user)
             if self.data.get('hist_year__exact'):
                 modified_qs = modified_qs.filter(
                     hist_year__exact=self.data['hist_year__exact']
@@ -733,10 +741,10 @@ class ArtikkelFilterView(FilterView):
             'body_text',
             'isikud__perenimi',
             }
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        list = Artikkel.objects.all().order_by('hist_searchdate')
+        list = artikkel_qs_userfilter(self.request.user)
         filter = ArtikkelFilter(self.request.GET, queryset=list)
         list = filter.qs
 
@@ -758,29 +766,35 @@ class ArtikkelFilterView(FilterView):
 # Kronoloogia
 #
 class ArtikkelArchiveIndexView(ArchiveIndexView):
-    queryset = Artikkel.objects.all()
+    # queryset = Artikkel.objects.all()
     date_field = "hist_searchdate"
     make_object_list = True
     allow_future = True
     paginate_by = 20
-    ordering = ('hist_searchdate', 'id')
+    # ordering = ('hist_searchdate', 'id')
 
+    def get_queryset(self):
+        return artikkel_qs_userfilter(self.request.user)
 
 class ArtikkelYearArchiveView(YearArchiveView):
-    queryset = Artikkel.objects.all()
+    # queryset = Artikkel.objects.all()
     date_field = "hist_searchdate"
     make_object_list = True
     allow_future = True
     allow_empty = True
     paginate_by = 20
     ordering = ('hist_searchdate', 'id')
-    
+
+    def get_queryset(self):
+        return artikkel_qs_userfilter(self.request.user)
+
     def get_context_data(self, **kwargs):
+        artikkel_qs = artikkel_qs_userfilter(self.request.user)
         context = super().get_context_data(**kwargs)
         aasta = context['year'].year
         # Eelnev ja järgnev artikleid sisaldav aasta
-        context['aasta_eelmine'] = Artikkel.objects.filter(hist_year__lt=aasta).aggregate(Max('hist_year'))['hist_year__max']
-        context['aasta_j2rgmine'] = Artikkel.objects.filter(hist_year__gt=aasta).aggregate(Min('hist_year'))['hist_year__min']
+        context['aasta_eelmine'] = artikkel_qs.filter(hist_year__lt=aasta).aggregate(Max('hist_year'))['hist_year__max']
+        context['aasta_j2rgmine'] = artikkel_qs.filter(hist_year__gt=aasta).aggregate(Min('hist_year'))['hist_year__min']
         
         # Leiame samal aastal sündinud isikud
         syndinud_isikud = Isik.objects.filter(
@@ -826,21 +840,25 @@ class ArtikkelYearArchiveView(YearArchiveView):
 
 
 class ArtikkelMonthArchiveView(MonthArchiveView):
-    queryset = Artikkel.objects.all()
-    date_field = 'hist_searchdate'
+    # queryset = Artikkel.objects.all()
+    date_field = 'hist_date'
     make_object_list = True
     allow_future = True
     allow_empty = True
-    paginate_by = 10
-    ordering = ('hist_searchdate', 'id')
-    
+    paginate_by = 20
+    # ordering = ('hist_searchdate', 'id')
+
+    def get_queryset(self):
+        return artikkel_qs_userfilter(self.request.user)
+
     def get_context_data(self, **kwargs):
+        artikkel_qs = artikkel_qs_userfilter(self.request.user)
         context = super().get_context_data(**kwargs)
         aasta = context['month'].year
         kuu = context['month'].month
         p2ev = context['month']
         # Leiame samal kuul teistel aastatel märgitud artiklid TODO: probleem kui hist_searchdate__month ja hist_enddate__month ei ole järjest
-        sel_kuul = Artikkel.objects.exclude(hist_searchdate__year = aasta).filter(Q(hist_searchdate__month = kuu) | Q(hist_enddate__month = kuu))
+        sel_kuul = artikkel_qs.exclude(hist_searchdate__year = aasta).filter(Q(hist_date__month = kuu) | Q(hist_enddate__month = kuu))
         context['sel_kuul'] = sel_kuul
         # Leiame samal kuul sündinud isikud
         syndinud_isikud = Isik.objects.filter(
@@ -883,20 +901,24 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
 
 
 class ArtikkelDayArchiveView(DayArchiveView):
-    queryset = Artikkel.objects.all()
+    # queryset = Artikkel.objects.all()
     date_field = 'hist_searchdate'
     make_object_list = True
     allow_future = True
     allow_empty = True
-    
+
+    def get_queryset(self):
+        return artikkel_qs_userfilter(self.request.user)
+
     def get_context_data(self, **kwargs):
+        artikkel_qs = artikkel_qs_userfilter(self.request.user)
         context = super().get_context_data(**kwargs)
         aasta = context['day'].year
         kuu = context['day'].month
         p2ev = context['day'].day
         # Leiame samal kuupäeval teistel aastatel märgitud artiklid
-        sel_p2eval_exactly = Artikkel.objects.exclude(hist_searchdate__year = aasta).filter(hist_date__month = kuu, hist_date__day = p2ev)
-        sel_p2eval_inrange = inrange_dates_artikkel(p2ev, kuu)  # hist_date < KKPP <= hist_enddate
+        sel_p2eval_exactly = artikkel_qs.exclude(hist_searchdate__year = aasta).filter(hist_date__month = kuu, hist_date__day = p2ev)
+        sel_p2eval_inrange = inrange_dates_artikkel(artikkel_qs, p2ev, kuu)  # hist_date < KKPP <= hist_enddate
         sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
         context['sel_p2eval'] = sel_p2eval
         # Leiame samal kuupäeval sündinud isikud
@@ -971,8 +993,6 @@ class IsikFilterView(FilterView):
             'perenimi',
             }
 
-
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         list = Isik.objects.all().order_by('perenimi')
@@ -1015,6 +1035,7 @@ class IsikDetailView(generic.DetailView):
     model = Isik
 
     def get_context_data(self, **kwargs):
+        artikkel_qs = artikkel_qs_userfilter(self.request.user)
         context = super().get_context_data(**kwargs)
 
         # Kas isikule on määratud profiilipilt
@@ -1022,10 +1043,10 @@ class IsikDetailView(generic.DetailView):
             isikud__id=self.object.id).filter(profiilipilt_isik=True).first()
 
         # Mainimine läbi aastate
-        context['mainitud_aastatel'] = mainitud_aastatel('Isik', self.object)
+        context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Isik', self.object)
 
         # Isikuga seotud artiklid
-        seotud_artiklid = Artikkel.objects.filter(isikud__id=self.object.id)
+        seotud_artiklid = artikkel_qs.filter(isikud__id=self.object.id)
         context['seotud_artiklid'] = seotud_artiklid
         context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
         context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
@@ -1102,16 +1123,17 @@ class OrganisatsioonDetailView(generic.DetailView):
     model = Organisatsioon
 
     def get_context_data(self, **kwargs):
+        artikkel_qs = artikkel_qs_userfilter(self.request.user)
         context = super().get_context_data(**kwargs)
         # Kas organisatsioonile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
             organisatsioonid__id=self.object.id).filter(profiilipilt_organisatsioon=True).first()
 
         # Mainimine läbi aastate
-        context['mainitud_aastatel'] = mainitud_aastatel('Organisatsioon', self.object)
+        context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Organisatsioon', self.object)
 
         # Organisatsiooniga seotud artiklid
-        seotud_artiklid = Artikkel.objects.filter(organisatsioonid__id=self.object.id)
+        seotud_artiklid = artikkel_qs.filter(organisatsioonid__id=self.object.id)
 
         context['seotud_artiklid'] = seotud_artiklid
         context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
@@ -1189,6 +1211,7 @@ class ObjektDetailView(generic.DetailView):
     model = Objekt
 
     def get_context_data(self, **kwargs):
+        artikkel_qs = artikkel_qs_userfilter(self.request.user)
         context = super().get_context_data(**kwargs)
 
         # Kas objektile on määratud profiilipilt
@@ -1196,10 +1219,10 @@ class ObjektDetailView(generic.DetailView):
             objektid__id=self.object.id).filter(profiilipilt_objekt=True).first()
 
         # Mainimine läbi aastate
-        context['mainitud_aastatel'] = mainitud_aastatel('Objekt', self.object)
+        context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
 
         # Objektiga seotud artiklid
-        seotud_artiklid = Artikkel.objects.filter(objektid__id=self.object.id)
+        seotud_artiklid = artikkel_qs.filter(objektid__id=self.object.id)
         context['seotud_artiklid'] = seotud_artiklid
         context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
         context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
@@ -1233,11 +1256,11 @@ def test(request):
     data = dict()
     data['meta_server_addr'] = request.META['SERVER_ADDR']
     # Artiklite testandmed
-    queryset = Artikkel.objects.all()
+    artikkel_qs = artikkel_qs_userfilter(request.user)
     data['test_url_artiklid_id'] = [
         reverse('wiki:wiki_artikkel_detail', kwargs={'pk': obj.id})
         for obj
-        in queryset
+        in artikkel_qs
     ]
     # queryset = (
     #     Artikkel.objects
@@ -1247,7 +1270,7 @@ def test(request):
     # )
     # aastad = list(set(el['year'] for el in queryset))
     queryset = (
-        Artikkel.objects.dates('hist_searchdate', 'year')
+        artikkel_qs.dates('hist_searchdate', 'year')
     )
     aastad = list(el.year for el in queryset)
     data['test_url_artiklid_aasta'] = [
@@ -1256,7 +1279,7 @@ def test(request):
         in aastad
     ]
     queryset = (
-        Artikkel.objects.dates('hist_searchdate', 'month')
+        artikkel_qs.dates('hist_searchdate', 'month')
     )
     kuud = list((el.year, el.month) for el in queryset)
     data['test_url_artiklid_kuu'] = [

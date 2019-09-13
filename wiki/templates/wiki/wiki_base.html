@@ -81,14 +81,25 @@
     </form>
 
     <!-- Lingid erilehtedele -->
-    <a href={% url 'wiki:info' %} class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white" title="Projektist"><i class="fa fa-info"></i></a>
-    <a href="https://et.wikipedia.org/wiki/Valga" target="blank" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white" title="Wikipedia"><i class="fa fa-wikipedia-w"></i></a>
+    <a
+        href="{% url 'wiki:info' %}"
+        class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
+        title="Projektist">
+      <i class="fa fa-info"></i>
+    </a>
+    <a
+        href="https://et.wikipedia.org/wiki/Valga"
+        target="blank"
+        class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
+        title="Wikipedia">
+      <i class="fa fa-wikipedia-w"></i>
+    </a>
 	  <a href="https://www.facebook.com/valgalinn/" target="blank" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white" title="Facebook"><i class="fa fa-facebook-official"></i></a>
 
     <!-- Kasutaja ja adminlingid -->
-    <a href={% url 'admin:index' %} class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-right" title="Admin"><i class="fa fa-cog"></i></a>
+    <a href="{% url 'admin:index' %}" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-right" title="Admin"><i class="fa fa-cog"></i></a>
     {% if user.is_authenticated %}
-      <a href="{% url 'logout' %}?next={{ request.path | urlencode }}"class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-right" title={{ user.first_name }}>{{ user.first_name }}&nbsp;<i class="fa fa-sign-out"></i></a>
+      <a href="{% url 'logout' %}?next={{ request.path | urlencode }}" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-right" title={{ user.first_name }}>{{ user.first_name }}&nbsp;<i class="fa fa-sign-out"></i></a>
       <!--      <a href={% url 'logout' %} class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-right" title={{ user.first_name }}>{{ user.first_name }}&nbsp;<i class="fa fa-sign-out"></i></a>-->
     {% endif %}
   </div>

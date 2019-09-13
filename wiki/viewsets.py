@@ -27,6 +27,8 @@ from .serializers import (
     ViideSerializer
 )
 
+from .views import artikkel_qs_userfilter
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -59,13 +61,15 @@ class ArtikkelFilter(filters.FilterSet):
 
 
 class ArtikkelViewSet(viewsets.ModelViewSet):
-    queryset = Artikkel.objects.all().order_by('hist_searchdate')
+    queryset = Artikkel.objects.all()
     serializer_class = ArtikkelSerializer
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ArtikkelFilter
 
+    def get_queryset(self):
+        return artikkel_qs_userfilter(self.request.user)
 
 class IsikFilter(filters.FilterSet):
     perenimi = django_filters.CharFilter(field_name='perenimi', lookup_expr='icontains')
