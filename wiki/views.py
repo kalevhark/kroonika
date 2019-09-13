@@ -539,7 +539,7 @@ class ArtikkelDetailView(generic.DetailView):
         context['n'] = n
         if n > -1:
             # Leiame ajaliselt järgneva artikli
-            if n < loend.count() - 1:
+            if n < len(loend) - 1:
                 context['next_obj'] = artikkel_qs.get(id=loend[n + 1])
                 # context['next_obj'] = artikkel_qs.get(id=loend[n+1]['id'])
             # Leiame ajaliselt eelneva artikli
