@@ -64,9 +64,21 @@ def check_recaptcha(request):
         return False
 
 #
+# Kontrollitakse kasutajat
+#
+def artikkel_qs_userfilter(user):
+    if user.is_authenticated:
+        if user.is_staff: # näita kõike
+            return Artikkel.objects.all()
+    else: # kasuta filtrit
+        return Artikkel.objects.filter(kroonika__isnull=True)
+
+
+#
 # Avalehekülg
 #
 def info(request):
+    artikkel_qs = artikkel_qs_userfilter(request.user)
     andmebaasid = []
     # Allikad ja viited
     tyhjad_viited = Viide.objects.annotate(
@@ -91,9 +103,9 @@ def info(request):
         ' '.join(
             [
                 'Artikkel: ',
-                f'kirjeid {Artikkel.objects.count()} ',
-                f'viidatud {Artikkel.objects.filter(viited__isnull=False).distinct().count()} ',
-                f'pildiga {Artikkel.objects.filter(pilt__isnull=False).distinct().count()} '
+                f'kirjeid {artikkel_qs.count()} ',
+                f'viidatud {artikkel_qs.filter(viited__isnull=False).distinct().count()} ',
+                f'pildiga {artikkel_qs.filter(pilt__isnull=False).distinct().count()} '
             ]
         )
     )
@@ -137,8 +149,8 @@ def info(request):
         )
     )
     # Artiklite ülevaade
-    andmed = Artikkel.objects.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
-    perioodid = Artikkel.objects. \
+    andmed = artikkel_qs.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
+    perioodid = artikkel_qs. \
         filter(hist_searchdate__isnull=False). \
         values('hist_searchdate__year', 'hist_searchdate__month'). \
         annotate(ct=Count('id')). \
@@ -152,13 +164,13 @@ def info(request):
         artikleid_kuus_max = 1 # kui ei ole artikleid sisestatud
     # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
-    revision_data['kroonika'] = Artikkel.objects.filter(kroonika__isnull=False).count()
+    revision_data['kroonika'] = artikkel_qs.filter(kroonika__isnull=False).count()
     revision_data['revised'] = [
         obj.id
         for obj
-        in Artikkel.objects.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1)
+        in artikkel_qs.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1)
     ]
-    revision_data['viiteta'] = list(Artikkel.objects.filter(viited__isnull=True).values_list('id', flat=True))
+    revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
 
     return render(
         request,

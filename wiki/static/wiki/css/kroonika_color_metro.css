@@ -32,7 +32,13 @@ color:white;
 
 .background-pilt
 {
-background-color:#808080;
+background-color:#008CBA;
+color:white;
+}
+
+.background-viide
+{
+background-color:#A9A9A9;
 color:white;
 }
 
@@ -40,13 +46,28 @@ color:white;
 .text-isik {color:#00aba9;}
 .text-organisatsioon {color:#2d89ef;}
 .text-objekt {color:#2b5797;}
-.text-pilt {color:#808080;}
+.text-pilt {color:#008CBA;}
+.text-viide {color:#A9A9A9;}
 
-.hover-artikkel:hover {color:#1e7145;}
-.hover-isik:hover {color:#00aba9;}
-.hover-organisatsioon:hover {color:#2d89ef;}
-.hover-objekt:hover {color:#2b5797;}
-.hover-pilt:hover {color:#808080;}
-
+.hover-artikkel:hover {
+  color:#1e7145;
+/*  text-decoration: underline;
+  text-decoration-style:dotted; */
+}
+.hover-isik:hover {
+  color:#00aba9;
+}
+.hover-organisatsioon:hover {
+  color:#2d89ef;
+}
+.hover-objekt:hover {
+  color:#2b5797;
+}
+.hover-pilt:hover {
+  color:#008CBA;
+}
+.hover-viide:hover {
+  color:#A9A9A9;
+}
 
 

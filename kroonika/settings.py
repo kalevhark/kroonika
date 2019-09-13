@@ -30,9 +30,8 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     '18.196.203.237',
-    '127.0.0.1',
-    '192.168.1.143',
-    'deb9server.lan'
+    '127.0.0.1', 'localhost',
+    '192.168.1.143', 'deb9server.lan'
 ]
 
 
@@ -66,7 +65,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'kroonika.urls'
 
-ROOT_URL = '/kroonika' # Kui rakendus ei asu juurdomeenis: server_name/ROOT_URL/...
+ROOT_URL = '' # ''/kroonika' # Kui rakendus ei asu juurdomeenis: server_name/ROOT_URL/... TODO: Ainult lokaalses masinas
 
 TEMPLATES = [
     {
@@ -86,7 +85,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kroonika.wsgi.application'
 
-LOGOUT_REDIRECT_URL = ROOT_URL
+LOGOUT_REDIRECT_URL = ROOT_URL + '/'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases

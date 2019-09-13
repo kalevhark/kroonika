@@ -782,7 +782,7 @@ class Kroonika(models.Model):
 
 
 # Ajutine filtreeriv Manager kui vaja näidata ilma Kroonikata TODO: Kuni revisjoni lõpuni
-class KroonikataArtikkelManager(models.Manager):
+class ArtikkelKroonikataManager(models.Manager):
     def get_queryset(self):
        return super().get_queryset().filter(kroonika__isnull=True)
 
@@ -899,7 +899,7 @@ class Artikkel(models.Model):
     )
 
     # objects = models.Manager()  # The default manager
-    # objects = KroonikataArtikkelManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
+    # objects = ArtikkelKroonikataManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
     if settings.KROONIKA['SAJAND_TAGASI']:
         objects = ArtikkelSajandTagasiManager() # Kui on vaja näidata kuni sajand tagasi
 
