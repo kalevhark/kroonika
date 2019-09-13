@@ -540,10 +540,12 @@ class ArtikkelDetailView(generic.DetailView):
         if n > -1:
             # Leiame ajaliselt järgneva artikli
             if n < loend.count() - 1:
-                context['next_obj'] = artikkel_qs.get(id=loend[n+1]['id'])
+                context['next_obj'] = artikkel_qs.get(id=loend[n + 1])
+                # context['next_obj'] = artikkel_qs.get(id=loend[n+1]['id'])
             # Leiame ajaliselt eelneva artikli
             if n > 0:
-                context['prev_obj'] = artikkel_qs.get(id=loend[n-1]['id'])
+                context['next_obj'] = artikkel_qs.get(id=loend[n - 1])
+                # context['prev_obj'] = artikkel_qs.get(id=loend[n-1]['id'])
         # Lisame vihjevormi
         context['feedbackform'] = VihjeForm()
         return context
