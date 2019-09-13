@@ -532,7 +532,7 @@ class ArtikkelDetailView(generic.DetailView):
         # kuup2ev = context['artikkel'].hist_searchdate
         obj_id = context['artikkel'].id
         # Järjestame artiklid kronoloogiliselt
-        loend = artikkel_qs.values_list('id')
+        loend = artikkel_qs.values_list('id', flat=True)
         # Leiame valitud artikli järjekorranumbri
         # n = next((i for i, x in enumerate(loend) if x['id'] == obj_id), -1)
         n = loend.index(obj_id)
