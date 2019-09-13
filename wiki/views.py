@@ -534,7 +534,8 @@ class ArtikkelDetailView(generic.DetailView):
         # Järjestame artiklid kronoloogiliselt
         loend = artikkel_qs.values_list('id')
         # Leiame valitud artikli järjekorranumbri
-        n = next((i for i, x in enumerate(loend) if x['id'] == obj_id), -1)
+        # n = next((i for i, x in enumerate(loend) if x['id'] == obj_id), -1)
+        n = loend.index(obj_id)
         context['n'] = n
         if n > -1:
             # Leiame ajaliselt järgneva artikli
