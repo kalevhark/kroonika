@@ -226,7 +226,7 @@ def feedback(request):
                 'kontakt': form.cleaned_data['kontakt'],
                 'http_referer': http_referer,
                 'remote_addr': remote_addr,
-                # 'http_user_agent': http_user_agent[:200],
+                'http_user_agent': http_user_agent[:200],
                 'django_version': get_version() # Django versioon
             }
             # Salvestame andmed andmebaasi

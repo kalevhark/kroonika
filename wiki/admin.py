@@ -695,11 +695,20 @@ class VihjeAdmin(admin.ModelAdmin):
     readonly_fields = ['inp_date']
     fieldsets = [
         (None, {
-            'fields': ['kirjeldus', 'kontakt', 'http_referer', 'remote_addr', 'django_version']}),
+            'fields': [
+                'kirjeldus',
+                'kontakt',
+                'http_referer',
+                'remote_addr',
+                'http_user_agent',
+                'django_version'
+            ]
+        }),
         (None, {
             'fields': [('inp_date', 'end_date')]}),
     ]
     list_display = [
+        'id',
         'inp_date',
         'lyhi_kirjeldus',
         'kontakt',
