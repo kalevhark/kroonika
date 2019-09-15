@@ -215,6 +215,7 @@ def feedback(request):
     # if this is a POST request we need to process the form data
     http_referer = request.META['HTTP_REFERER'] # mis objektilt tuli vihje
     remote_addr = request.META['REMOTE_ADDR'] # kasutaja IP aadress
+    http_user_agent = request.META['HTTP_USER_AGENT'] # kasutaja veebilehitseja
     if request.method == 'POST' and check_recaptcha(request):
         # create a form instance and populate it with data from the request:
         form = VihjeForm(request.POST)
@@ -225,6 +226,7 @@ def feedback(request):
                 'kontakt': form.cleaned_data['kontakt'],
                 'http_referer': http_referer,
                 'remote_addr': remote_addr,
+                # 'http_user_agent': http_user_agent[:200],
                 'django_version': get_version() # Django versioon
             }
             # Salvestame andmed andmebaasi

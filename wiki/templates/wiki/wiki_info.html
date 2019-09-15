@@ -1,4 +1,6 @@
 {% extends "wiki/wiki_base.html" %}
+{% load staticfiles %}
+{% load wiki_extras %}
 
 {% block breadcrumb %}
 {% endblock %}
@@ -10,111 +12,108 @@
 {% endblock %}
 
 {% block content %}
-{% load staticfiles %}
-{% load wiki_extras %}
-<div>
-  <p>
-    Valga linna kroonika seotuna isikute, organisatsioonide ja objektidega on kasutamiseks informatsioonilistel ja hariduslikel eesmärkidel. Kogutud ja esitatud materjalid võivad olla ebatäpsed, mistõttu nende kasutamine on iga kasutaja enda riskil.
-  </p>
-  <p>
-    Viidatud materjalid võivad olla nende autorite omand ja nende kasutamisel tuleb viidata algallikale.
-  </p>
-  <p>
-    Kirjaviis ja kohanimed on algallikast. Mõnel juhul on selguse huvides tänapäevane termin või nimi lisatud.
-    Kuupäevade puhul on kasutatud sel hetkel kehtinud kalendrit.
-    <ul>
-      <li>
-        Ülevaade kalendrite kasutamisest ajaloos on
-        <a target="blank" href="https://en.wikipedia.org/wiki/List_of_adoption_dates_of_the_Gregorian_calendar_per_country">siin</a>
-      </li>
-      <li>
-        Kalendriarvutaja on
-        <a target="blank" href="https://stevemorse.org/jcal/julian.html">siin</a>
-      </li>
-    </ul>
-  </p>
-  {% if andmed.id__count > 0 %}
+  <div class="w3-row-padding w3-margin-bottom">
     <p>
-      Andmebaasis on {{ andmed.id__count }} lugu aastatest {{ andmed.hist_searchdate__min|date:"Y" }} kuni {{ andmed.hist_searchdate__max|date:"Y" }}.
+      Valga linna kroonika seotuna isikute, organisatsioonide ja objektidega on kasutamiseks informatsioonilistel ja hariduslikel eesmärkidel. Kogutud ja esitatud materjalid võivad olla ebatäpsed, mistõttu nende kasutamine on iga kasutaja enda riskil.
     </p>
-    <!--    Artiklite heatmap kuude kaupa-->
-    <div id="container" style="float: left; height: 300px; min-width: 310px; max-width: 1000px; margin: 0 auto"></div>
-  {% endif %}
-</div>
+    <p>
+      Viidatud materjalid võivad olla nende autorite omand ja nende kasutamisel tuleb viidata algallikale.
+    </p>
+    <p>
+      Kirjaviis ja kohanimed on algallikast. Mõnel juhul on selguse huvides tänapäevane termin või nimi lisatud.
+      Kuupäevade puhul on kasutatud sel hetkel kehtinud kalendrit.
+      <ul>
+        <li>
+          Ülevaade kalendrite kasutamisest ajaloos on
+          <a target="blank" href="https://en.wikipedia.org/wiki/List_of_adoption_dates_of_the_Gregorian_calendar_per_country">siin</a>
+        </li>
+        <li>
+          Kalendriarvutaja on
+          <a target="blank" href="https://stevemorse.org/jcal/julian.html">siin</a>
+        </li>
+      </ul>
+    </p>
+    {% if andmed.id__count > 0 %}
+      <p>
+        Andmebaasis on {{ andmed.id__count }} lugu aastatest {{ andmed.hist_searchdate__min|date:"Y" }} kuni {{ andmed.hist_searchdate__max|date:"Y" }}.
+      </p>
+      <!--    Artiklite heatmap kuude kaupa-->
+      <div id="container" style="float: left; height: 300px; min-width: 310px; max-width: 1000px; margin: 0 auto"></div>
+    {% endif %}
 
-<p style="clear: left;">
-  Parandatud on ilmsed vead. Vastukäivate andmete puhul on järjekord:
-  <br>
-  Arhiivimaterjalid -> Teatmeteosed -> Uurimused -> Ajakirjandus -> Vikipeedia -> muud andmekogud
-</p>
+    <p style="clear: left;">
+      Parandatud on ilmsed vead. Vastukäivate andmete puhul on järjekord:
+      <br>
+      Arhiivimaterjalid -> Teatmeteosed -> Uurimused -> Ajakirjandus -> Vikipeedia -> muud andmekogud
+    </p>
 
-<p>Otsimiseks kasuta temaatilisi otsinguid:
-  <a href="{% url 'wiki:wiki_artikkel_filter' %}">{% model_name_artikkel %}</a>
-  <a href="{% url 'wiki:wiki_isik_filter' %}">{% model_name_isik %}</a>
-  <a href="{% url 'wiki:wiki_organisatsioon_filter' %}">{% model_name_organisatsioon %}</a>
-  <a href="{% url 'wiki:wiki_objekt_filter' %}">{% model_name_objekt %}</a>
-</p>
+    <p>Otsimiseks kasuta temaatilisi otsinguid:
+      <a href="{% url 'wiki:wiki_artikkel_filter' %}">{% model_name_artikkel %}</a>
+      <a href="{% url 'wiki:wiki_isik_filter' %}">{% model_name_isik %}</a>
+      <a href="{% url 'wiki:wiki_organisatsioon_filter' %}">{% model_name_organisatsioon %}</a>
+      <a href="{% url 'wiki:wiki_objekt_filter' %}">{% model_name_objekt %}</a>
+    </p>
 
-<p>
-  <form id="form" method="post" action="{% url 'wiki:mine_krono_kp' %}">
-    {% csrf_token %}
-    ...või vali kuupäev:
-    <input type="date" name="kuup2ev" value="1902-02-24">
-    <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
-    <input type="submit" value="Vaata">
-  <!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
-  </form>
-</p>
+    <p>
+      <form id="form" method="post" action="{% url 'wiki:mine_krono_kp' %}">
+        {% csrf_token %}
+        ...või vali kuupäev:
+        <input type="date" name="kuup2ev" value="1902-02-24">
+        <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
+        <input type="submit" value="Vaata">
+      <!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
+      </form>
+    </p>
 
-<p>
-  ...või otseteed wiki/krono/aasta/kuu/päev,
-  näiteks <i>wiki/krono/1902/02/24</i>.
-</p>
-<div>
-  Andmebaasid:
-  <ul>
-    {% for a in andmebaasid %}
-      <li>{{a}}
-    {% endfor %}
-  </ul>
-</div>
-Andmebaasi- ja veebilahenduse tegi {% kalev %}.<br>
-Testserveri eest suured tänud: Margo Pärnaku, Siim Somma!<br>
+    <p>
+      ...või otseteed wiki/krono/aasta/kuu/päev,
+      näiteks <i>wiki/krono/1902/02/24</i>.
+    </p>
+    <div>
+      Andmebaasid:
+      <ul>
+        {% for a in andmebaasid %}
+          <li>{{a}}
+        {% endfor %}
+      </ul>
+    </div>
+    Andmebaasi- ja veebilahenduse tegi {% kalev %}.<br>
+    Testserveri eest suured tänud: Margo Pärnaku, Siim Somma!<br>
 
-Abiks:
-<ul>
-  <li><a href="https://www.python.org/">Python</a></li>
-  <li><a href="https://www.djangoproject.com/">Django</a></li>
-  <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-  <li><a href="http://apache.org/">Apache</a></li>
-</ul>
-Lisaks:
-<ul>
-  <li><a href="https://www.w3schools.com/">W3Schools</a></li>
-  <li><a href="https://github.com/carltongibson/django-filter">django-filter</a></li>
-  <li><a href="https://github.com/jazzband/django-widget-tweaks">django-widget-tweaks</a></li>
-  <li><a href="https://www.django-rest-framework.org/">Django REST framework</a></li>
-</ul>
+    Abiks:
+    <ul>
+      <li><a href="https://www.python.org/">Python</a></li>
+      <li><a href="https://www.djangoproject.com/">Django</a></li>
+      <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
+      <li><a href="http://apache.org/">Apache</a></li>
+    </ul>
+    Lisaks:
+    <ul>
+      <li><a href="https://www.w3schools.com/">W3Schools</a></li>
+      <li><a href="https://github.com/carltongibson/django-filter">django-filter</a></li>
+      <li><a href="https://github.com/jazzband/django-widget-tweaks">django-widget-tweaks</a></li>
+      <li><a href="https://www.django-rest-framework.org/">Django REST framework</a></li>
+    </ul>
 
-<div>
-{% render_logged_in_user_list %}
-</div>
-<div>
-  Revision: {{ revision_data.kroonika }}:{{ revision_data.revised }}?<br>
-  {% if revision_data.viiteta %}
-    Viiteta:
-    {% for pk in revision_data.viiteta %}
-      &nbsp;<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=pk %}">
-        {{ pk }}
-      </a>
-    {% endfor %}
-  {% endif %}
-</div>
-<div>
-  {% for item, value in meta_andmed.items %}
-    <small>{{ item }}:{{ value }}</small><br>
-  {% endfor %}
-</div>
+    <div>
+    {% render_logged_in_user_list %}
+    </div>
+    <div>
+      Revision: {{ revision_data.kroonika }}:{{ revision_data.revised }}?<br>
+      {% if revision_data.viiteta %}
+        Viiteta:
+        {% for pk in revision_data.viiteta %}
+          &nbsp;<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=pk %}">
+            {{ pk }}
+          </a>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div>
+      {% for item, value in meta_andmed.items %}
+        <small>{{ item }}:{{ value }}</small><br>
+      {% endfor %}
+    </div>
 
 <!--<script>-->
 <!--  grecaptcha.ready(function() {-->
@@ -128,6 +127,7 @@ Lisaks:
 <!--    })-->
 <!--  });-->
 <!--</script>-->
+  </div>
 
 {% endblock %}
 

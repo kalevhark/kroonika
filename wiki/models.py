@@ -990,8 +990,12 @@ class Pilt(models.Model):
         null=True,
         blank=True
     )
-    pilt_height_field = models.IntegerField() # pildi mõõt
-    pilt_width_field = models.IntegerField() # pildi mõõt
+    pilt_height_field = models.IntegerField(
+        null=True
+    ) # pildi mõõt
+    pilt_width_field = models.IntegerField(
+        null=True
+    ) # pildi mõõt
     pilt = models.ImageField(
         upload_to='pildid/%Y/%m/%d/',
         max_length=255,
@@ -1158,6 +1162,11 @@ class Vihje(models.Model):
     remote_addr = models.CharField(
         'IP aadress',
         max_length=40,
+        blank=True
+    )
+    http_user_agent = models.CharField(
+        'Veebilehitseja',
+        max_length=200,
         blank=True
     )
     django_version = models.CharField(

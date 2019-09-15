@@ -54,8 +54,23 @@
 <!-- Navbar -->
 <div id="top" class="w3-top">
   <div class="w3-bar w3-left-align w3-large w3-padding">
-    <a class="w3-bar-item w3-button w3-hide-large w3-right w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="myFunction()"><i class="fa fa-bars"></i></a>
-    <a href="{% url 'algus' %}" class="w3-bar-item w3-button w3-theme-d4 w3-hover-white"><i class="fa w3-margin-right"><img src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" style='max-height:22px;' alt="vapp"></i>Valga linna kroonika</a>
+    <a
+        class="w3-bar-item w3-button w3-hide-large w3-right w3-hover-white w3-large w3-theme-d2"
+        href="javascript:void(0);"
+        onclick="myFunction()">
+      <i class="fa fa-bars"></i>
+    </a>
+    <a
+        href="{% url 'algus' %}"
+        class="w3-bar-item w3-button w3-theme-d4 w3-hover-white">
+      <i class="fa w3-margin-right">
+        <img
+            src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}"
+            style='max-height:22px;'
+            alt="vapp">
+      </i>
+      Valga linna kroonika
+    </a>
 
     <!-- Search on large screens -->
     <form
@@ -122,37 +137,54 @@
 
   <!-- Navbar on small screens -->
   <div class="w3-row-padding w3-margin-bottom w3-hide-large">
-  <div id="m-navbar" class="w3-bar-block w3-white w3-hide w3-hide-large w3-padding-16">
-    <a href={% url 'wiki:wiki_artikkel_filter' %} class="w3-bar-item w3-button"><i class="fa fa-search"></i>&nbsp;Otsi...</a>
-    <a href="https://et.wikipedia.org/wiki/Valga" target="blank" class="w3-bar-item w3-button"><i class="fa fa-wikipedia-w"></i>&nbsp;Valga Vikipeedias</a>
-    <a href={% url 'wiki:info' %} class="w3-bar-item w3-button"><i class="fa fa-info"></i>&nbsp;Projektist</a>
-  </div>
+    <div id="m-navbar" class="w3-bar-block w3-white w3-hide w3-hide-large w3-padding-16">
+      <a href={% url 'wiki:wiki_artikkel_filter' %} class="w3-bar-item w3-button"><i class="fa fa-search"></i>&nbsp;Otsi...</a>
+      <a href="https://et.wikipedia.org/wiki/Valga" target="blank" class="w3-bar-item w3-button"><i class="fa fa-wikipedia-w"></i>&nbsp;Valga Vikipeedias</a>
+      <a href={% url 'wiki:info' %} class="w3-bar-item w3-button"><i class="fa fa-info"></i>&nbsp;Projektist</a>
+    </div>
   </div>
 
   <!-- Search on small screens -->
   <div class="w3-row-padding w3-margin-bottom w3-hide-medium w3-hide-large">
-  <form class="w3-hide-medium w3-hide-large" role="search" method="get" id="searchform_small" action="{% url 'wiki:wiki_artikkel_filter' %}" >
-    {% csrf_token %}
-    <input type="text" class="w3-bar-item w3-input w3-white w3-mobile" name="body_text__icontains" id="id_body_text__icontains" placeholder="Otsi.." />
-    <button class="w3-bar-item w3-button w3-hide-small w3-hover-white" type="submit" id="searchsubmit_small" title="Otsi valitud fraasi järgi"><i class="fa fa-search"></i></button>
-    <button class="w3-bar-item w3-button w3-hide-small w3-hover-white" type="reset" id="searchreset" title="Uus otsing"><i class="fa fa-close"></i></button>
-  </form>
+    <form class="w3-hide-medium w3-hide-large" role="search" method="get" id="searchform_small" action="{% url 'wiki:wiki_artikkel_filter' %}" >
+      {% csrf_token %}
+      <input type="text" class="w3-bar-item w3-input w3-white w3-mobile" name="body_text__icontains" id="id_body_text__icontains" placeholder="Otsi.." />
+      <button class="w3-bar-item w3-button w3-hide-small w3-hover-white" type="submit" id="searchsubmit_small" title="Otsi valitud fraasi järgi"><i class="fa fa-search"></i></button>
+      <button class="w3-bar-item w3-button w3-hide-small w3-hover-white" type="reset" id="searchreset" title="Uus otsing"><i class="fa fa-close"></i></button>
+    </form>
   </div>
-	
-{% block content %} {% endblock %}
 
+{% block content %} {% endblock %}
+</div>
 </body>
 
 <footer>
   <div class="w3-bar w3-padding">
     <a href="#">
-	  <button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
-	</a>
-<!-- <div class="fb-like" data-href="http://18.196.203.237/" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="true"></div> -->
-</div>
-	<a href={% url 'wiki:info' %}>
-      <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018-2019 Kalev Härk</small></button>
-	</a>
+	    <button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
+
+	  </a>
+    <a
+        rel="license"
+        href="http://creativecommons.org/licenses/by-sa/4.0/">
+      <img
+          alt="Creative Commonsi litsents"
+          style="border-width:0"
+          src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"
+      />
+    </a>
+    <small>
+    "<span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Valga linna kroonika</span>" on antud Creative Commonsi litsentsi "
+    <a
+        rel="license"
+        href="http://creativecommons.org/licenses/by-sa/4.0/">Autorile viitamine + Jagamine samadel tingimustel 4.0 Rahvusvaheline
+    </a>" alla.
+    </small>
+    <!-- <div class="fb-like" data-href="http://18.196.203.237/" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="true"></div> -->
+
+    <a href={% url 'wiki:info' %}>
+        <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018-2019 Kalev Härk</small></button>
+    </a>
   </div>
 </footer>
 
