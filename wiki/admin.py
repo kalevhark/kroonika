@@ -71,7 +71,14 @@ class AllikasAdmin(admin.ModelAdmin):
 
 
 class ViideAdmin(admin.ModelAdmin):
-    readonly_fields = ['mod_date']
+    readonly_fields = [
+        'mod_date',
+        'seotud_artiklid',
+        'seotud_isikud',
+        'seotud_organisatsioonid',
+        'seotud_objektid',
+        'seotud_pildid',
+    ]
     list_display = [
         'id',
         'seotud_allikas',
@@ -80,7 +87,7 @@ class ViideAdmin(admin.ModelAdmin):
         'short_url',
         'seotud_artikleid',
         'seotud_isikuid',
-        'seotud_organeid',
+        'seotud_organisatsioone',
         'seotud_objekte',
         'seotud_pilte',
     ]
@@ -103,7 +110,15 @@ class ViideAdmin(admin.ModelAdmin):
             ]
         }),
         (None, {
-            'fields': [('mod_date')]}),
+            'fields': [
+                'mod_date',
+                'seotud_artiklid',
+                'seotud_isikud',
+                'seotud_organisatsioonid',
+                'seotud_objektid',
+                'seotud_pildid',
+            ]
+        }),
     ]
 
     # Seotud allika nimi
@@ -116,31 +131,56 @@ class ViideAdmin(admin.ModelAdmin):
     def seotud_artikleid(self, obj):
         return obj.artikkel_set.count()
 
-    seotud_artikleid.short_description = 'Artikleid'
+    seotud_artikleid.short_description = 'Lugusid'
 
-    # Kui palju on viitega seotud organisatsioone
-    def seotud_organeid(self, obj):
-        return obj.organisatsioon_set.count()
+    # Seotud artiklid
+    def seotud_artiklid(self, obj):
+        id_list = list(obj.artikkel_set.values_list('id', flat=True))
+        return ', '.join([str(el) for el in id_list])
 
-    seotud_organeid.short_description = 'Ühendusi'
-
-    # Kui palju on artikliga seotud isikuid
+    # Kui palju on viitega seotud isikuid
     def seotud_isikuid(self, obj):
         return obj.isik_set.count()
 
     seotud_isikuid.short_description = 'Isikuid'
 
-    # Kui palju on artikliga seotud objekte
+    # Seotud isikud
+    def seotud_isikud(self, obj):
+        id_list = list(obj.isik_set.values_list('id', flat=True))
+        return ', '.join([str(el) for el in id_list])
+
+    # Kui palju on viitega seotud organisatsioone
+    def seotud_organisatsioone(self, obj):
+        return obj.organisatsioon_set.count()
+
+    seotud_organisatsioone.short_description = 'Asutisi'
+
+    # Seotud organisatsioonid
+    def seotud_organisatsioonid(self, obj):
+        id_list = list(obj.organisatsioon_set.values_list('id', flat=True))
+        return ', '.join([str(el) for el in id_list])
+
+    # Kui palju on viitega seotud objekte
     def seotud_objekte(self, obj):
         return obj.objekt_set.count()
 
-    seotud_objekte.short_description = 'Objekte'
+    seotud_objekte.short_description = 'Kohti'
 
-    # Kui palju on objektiga seotud pilte
+    # Seotud objektid
+    def seotud_objektid(self, obj):
+        id_list = list(obj.objekt_set.values_list('id', flat=True))
+        return ', '.join([str(el) for el in id_list])
+
+    # Kui palju on viitega seotud pilte
     def seotud_pilte(self, obj):
         return obj.pilt_set.count()
 
     seotud_pilte.short_description = 'Pilte'
+
+    # Seotud pildid
+    def seotud_pildid(self, obj):
+        id_list = list(obj.pilt_set.values_list('id', flat=True))
+        return ', '.join([str(el) for el in id_list])
 
     def short_url(self, obj):
         if len(obj.url) < 33:
