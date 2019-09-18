@@ -219,10 +219,10 @@ class ArtikkelAdmin(admin.ModelAdmin):
         'id'
     ]
     filter_horizontal = [
+        'viited',
         'isikud',
         'organisatsioonid',
         'objektid',
-        'viited'
     ]
     fieldsets = [
         (None, {
@@ -233,12 +233,12 @@ class ArtikkelAdmin(admin.ModelAdmin):
             'fields': [('hist_date', 'hist_year', 'hist_month', 'hist_enddate')]
             }
          ),
-        ('Seotud', {
-            'fields': [('isikud', 'organisatsioonid', 'objektid')]
-            }
-         ),
         ('Viited', {
             'fields': [('viited')]
+        }
+         ),
+        ('Seotud', {
+            'fields': [('isikud', 'organisatsioonid', 'objektid')]
             }
          ),
         ('Kroonika', {
@@ -753,6 +753,7 @@ class VihjeAdmin(admin.ModelAdmin):
         'lyhi_kirjeldus',
         'kontakt',
         'http_referer',
+        'done'
     ]
 
     def lyhi_kirjeldus(self, obj):
@@ -763,6 +764,11 @@ class VihjeAdmin(admin.ModelAdmin):
         return tekst
 
     lyhi_kirjeldus.short_description = 'Vihje'
+
+    def done(self, obj):
+        return _boolean_icon(
+            obj.end_date != None
+        )
 
 admin.site.register(Allikas, AllikasAdmin)
 admin.site.register(Viide, ViideAdmin)
