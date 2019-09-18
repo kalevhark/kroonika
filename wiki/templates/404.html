@@ -1,0 +1,19 @@
+{% extends "wiki/wiki_base.html" %}
+{% load staticfiles %}
+{% load wiki_extras %}
+
+{% block title %}{{ block.super }} - lehekülge ei leitud{% endblock %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block src %}
+{% endblock %}
+
+{% block content %}
+  <div class="w3-panel w3-card-4 w3-light-grey" >
+    <h4>Lehekülge ei leitud.</h4>
+    <p>"{{ request_path }}" küsimise peale tekkis viga "{{ exception }}".</p>
+    <p>Palun kontrolli ega Sa ei eksinud? Kui see on minu viga, siis ma näen seda serveri veateadetest ja parandan.</p>
+  </div>
+{% endblock %}

@@ -14,22 +14,26 @@
 <div class="w3-cell-row w3-container w3-padding-16">
 
 	<!-- Kronoloogiliselt eelnev artikkel -->
-  <div class="w3-container w3-cell w3-cell-middle">
+  <div class="w3-container w3-padding-16 w3-cell w3-cell-middle w3-hover-white">
 		{% if prev_obj %}
 			{% include 'wiki/includes/kp.html' with sd=prev_obj.hist_date ed=prev_obj.hist_enddate y=prev_obj.hist_year m=prev_obj.hist_month cs="dark" %}
 			<br>
-			<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id %}>
+			<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id %}">
 				<i class="fa fa-angle-left"></i>&nbsp;{{ prev_obj }}
 			</a>
 		{% endif %}
   </div>
-
+	<!-- Valitud artikkel -->
+	<div class="w3-container w3-cell w3-cell-middle w3-xlarge text-artikkel">
+<!--    <i class="fa fa-comment">	</i>-->
+		{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="white" %}
+  </div>
   <!-- Kronoloogiliselt järgnev artikkel -->
-  <div class="w3-container w3-right-align w3-cell w3-cell-middle">
+  <div class="w3-container w3-padding-16 w3-right-align w3-cell w3-cell-middle w3-hover-white">
 		{% if next_obj %}
 		{% include 'wiki/includes/kp.html' with sd=next_obj.hist_date ed=next_obj.hist_enddate y=next_obj.hist_year m=next_obj.hist_month cs="dark" %}
 			<br>
-		<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=next_obj.id %}>
+		<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id %}">
 			{{ next_obj }}&nbsp;<i class="fa fa-angle-right"></i>
 		</a>
 		{% endif %}
@@ -37,24 +41,18 @@
 </div>
 
 <div class="w3-panel w3-card-4 w3-light-grey" >
-  <div class="w3-row w3-padding-16 w3-xlarge text-artikkel">
-    <i class="fa fa-comment">	</i>
-		{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="white" %}
-  </div>
   <div class="w3-twothird w3-padding" >
     <!-- Artikkel -->
 		<div>
 			{% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
 			<div class="w3-twothird">
 				{% include 'wiki/includes/vigane.html' %}
-				<div>
-						{{ object.body_text | safe | linebreaksbr }}
-				</div>
+				{{ object.body_text | safe | linebreaksbr }}
 				{% include 'wiki/includes/seotud_viited.html' %}
 			</div>
     </div>
   </div>
-	<div class="w3-third" >
+	<div class="w3-third w3-padding" >
 		{% include 'wiki/includes/seotud_isikud.html' %}
 		{% include 'wiki/includes/seotud_organisatsioonid.html' %}
 		{% include 'wiki/includes/seotud_objektid.html' %}
