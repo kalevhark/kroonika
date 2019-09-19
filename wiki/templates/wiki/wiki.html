@@ -213,11 +213,11 @@
 			{% endif %}
 	  {% endif %}
 	  <!-- top10 -->
-		{% if andmed.artikkel.top10 %}
+		{% if andmed.artikkel.loetumad %}
 			<h5>
 				loetumad
 			</h5>
-			{% for obj in andmed.artikkel.top10 %}
+			{% for obj in andmed.artikkel.loetumad %}
 				{% if forloop.counter > 1 %}
 					<br>
 				{% endif %}

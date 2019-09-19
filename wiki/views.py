@@ -299,7 +299,7 @@ def algus(request):
         a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
         # 100 aastat tagasi toimunud
         a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(hist_date__year = (aasta-100))
-        a['top10'] = artikkel_qs.order_by('-total_accessed')[:10]
+        a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:20] # 20 loetumat artiklit
     andmed['artikkel'] = a
 
     # Andmebaas Isik andmed veebi
