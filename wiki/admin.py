@@ -379,23 +379,24 @@ class IsikAdmin(admin.ModelAdmin):
             'fields': [('kirjeldus')]
             }
          ),
+        ('Viited', {
+            'fields': [('viited')]
+        }
+         ),
         ('Seotud', {
             'fields': [('organisatsioonid', 'objektid')]
             }
          ),
-        ('Viited', {
-            'fields': [('viited')]
-            }
-         ),
+
         (None, {
             'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
             }
          ),
     ]
     filter_horizontal = [
+        'viited',
         'organisatsioonid',
         'objektid',
-        'viited'
     ]
     inlines = [
         PiltIsikInline,
@@ -469,8 +470,8 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         'seotud_pilte',
     ]
     filter_horizontal = [
+        'viited',
         'objektid',
-        'viited'
     ]
     inlines = [
         PiltOrganisatsioonInline,
@@ -548,26 +549,22 @@ class ObjektAdmin(admin.ModelAdmin):
             'fields': ['hist_enddate', 'hist_endyear', 'gone']
             }
          ),
-        ('Seotud', {
-            'fields': ['objektid']
-            }
-         ),
         ('Viited', {
             'fields': [('viited')]
         }
          ),
-        # (None, {
-        #     'fields': ['hist_searchdate']
-        #     }
-        #  ),
+        ('Seotud', {
+            'fields': ['objektid']
+            }
+         ),
         (None, {
             'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
             }
          ),
     ]
     filter_horizontal = [
+        'viited',
         'objektid',
-        'viited'
     ]
     inlines = [
         PiltObjektInline,
@@ -653,13 +650,19 @@ class PiltAdmin(admin.ModelAdmin):
             'fields': ['hist_date', 'hist_year', 'hist_month']
             }
          ),
+        ('Viited', {
+            'fields': [('viited')]
+        }
+         ),
         ('Seotud', {
-            'fields': [('allikad',
+            'fields': [
+                ('allikad',
                         'artiklid',
                         'isikud',
                         'organisatsioonid',
                         'objektid',
-                        'viited')]
+                 )
+            ]
         }
          ),
         ('Profiilipilt', {
