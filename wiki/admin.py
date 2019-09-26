@@ -635,6 +635,7 @@ class PiltAdmin(admin.ModelAdmin):
     search_fields = ['nimi']
     filter_horizontal = (
         'viited',
+        'allikad',
         'artiklid',
         'isikud',
         'organisatsioonid',
@@ -657,10 +658,10 @@ class PiltAdmin(admin.ModelAdmin):
         ('Seotud', {
             'fields': [
                 ('allikad',
-                        'artiklid',
-                        'isikud',
-                        'organisatsioonid',
-                        'objektid',
+                'artiklid',
+                'isikud',
+                'organisatsioonid',
+                'objektid',
                  )
             ]
         }
