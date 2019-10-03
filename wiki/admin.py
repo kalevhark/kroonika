@@ -350,7 +350,10 @@ class IsikAdmin(admin.ModelAdmin):
         'seotud_artikleid',
         'seotud_pilte',
     )
-    search_fields = ['perenimi']
+    search_fields = [
+        'id',
+        'perenimi'
+    ]
     readonly_fields = [
         'inp_date',
         'mod_date',
