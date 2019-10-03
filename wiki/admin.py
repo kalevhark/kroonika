@@ -471,6 +471,32 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         'seotud_artikleid',
         'seotud_pilte',
     ]
+    fieldsets = [
+        (None, {
+            'fields': ['nimi', 'kirjeldus']
+        }
+         ),
+        (None, {
+            'fields': ['hist_date', 'hist_year', 'hist_month']
+        }
+         ),
+        (None, {
+            'fields': ['hist_enddate', 'hist_endyear', 'gone']
+        }
+         ),
+        ('Viited', {
+            'fields': [('viited')]
+        }
+         ),
+        ('Seotud', {
+            'fields': ['objektid']
+        }
+         ),
+        (None, {
+            'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
+        }
+         ),
+    ]
     filter_horizontal = [
         'viited',
         'objektid',
@@ -478,7 +504,6 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
     inlines = [
         PiltOrganisatsioonInline,
     ]
-
     search_fields = ['id', 'nimi']
 
     # Kui palju on organisatsiooniga seotud artikleid
