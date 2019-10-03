@@ -459,7 +459,6 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
     readonly_fields = [
         'inp_date',
         'mod_date',
-        # 'hist_searchdate',
         'created_by',
         'updated_by'
     ]
