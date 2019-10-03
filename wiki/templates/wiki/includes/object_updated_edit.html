@@ -26,6 +26,7 @@
 		var x = document.getElementById("panelFeedBack");
 		if (x.className.indexOf("w3-show-block") == -1) {
 			x.className += " w3-show-block";
+			document.getElementById("id_kirjeldus").focus();
 		} else {
 			x.className = x.className.replace(" w3-show-block", "");
 		}
