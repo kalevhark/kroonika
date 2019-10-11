@@ -1,4 +1,5 @@
 {% load staticfiles %}
+<div class="w3-padding-16">
 {% if object.viited.all %}
   {% for obj in object.viited.all %}
     <br>
@@ -28,3 +29,4 @@
     </small>
   {% endfor %}
 {% endif %}
+</div>
