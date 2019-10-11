@@ -1,0 +1,30 @@
+{% load staticfiles %}
+{% if object.viited.all %}
+  {% for obj in object.viited.all %}
+    <br>
+    <small>
+      {% if obj.url %}
+        {% if "wikipedia.org" in obj.url %}
+          <a class="hover-viide" href="{{ obj.url }}" target="_blank">
+            <img
+                src="{% static 'wiki/img/favicon/wikipedia.ico' %}"
+                alt="Wikipedia"
+                style="width:32px;height:32px;"
+                title="{{ obj.url }}"
+            >
+          </a>
+        {% endif %}
+        {% if "geni.com" in obj.url %}
+          <a class="hover-viide" href="{{ obj.url }}" target="_blank">
+            <img
+                src="{% static 'wiki/img/favicon/touch-icon-iphone.png' %}"
+                alt="geni.com"
+                style="width:32px;height:32px;"
+                title="{{ obj.url }}"
+            >
+          </a>
+        {% endif %}
+      {% endif %}
+    </small>
+  {% endfor %}
+{% endif %}
