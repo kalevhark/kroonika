@@ -1,25 +1,25 @@
 {% load staticfiles %}
+<!--Kui objektiga on seotud viited Vikipeedia, geni.com veebidesse-->
 <div class="w3-padding-16">
 {% if object.viited.all %}
   {% for obj in object.viited.all %}
       {% if obj.url %}
         {% if "wikipedia.org" in obj.url %}
-          <a class="hover-viide" href="{{ obj.url }}" target="_blank">
+          <a href="{{ obj.url }}" target="_blank">
             <img
+                class="pilt-special-links"
                 src="{% static 'wiki/img/favicon/wikipedia.ico' %}"
                 alt="Wikipedia"
-                style="float:left;width:32px;height:32px;"
-                title="{{ obj.url }}"
+                title="Vikipeedia: {{ obj.url }}"
             >
           </a>
-        {% endif %}
-        {% if "geni.com" in obj.url %}
-          <a class="hover-viide" href="{{ obj.url }}" target="_blank">
+        {% elif "geni.com" in obj.url %}
+          <a href="{{ obj.url }}" target="_blank">
             <img
+                class="pilt-special-links"
                 src="{% static 'wiki/img/favicon/touch-icon-iphone.png' %}"
                 alt="geni.com"
-                style="float:left;width:32px;height:32px;"
-                title="{{ obj.url }}"
+                title="geni.com: {{ obj.url }}"
             >
           </a>
         {% endif %}

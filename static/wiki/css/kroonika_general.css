@@ -56,6 +56,19 @@ a {
   box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5); /* = #008CBA */
 }
 
+/* Kasutamiseks objecti detailvaates */
+.pilt-special-links {
+	border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  width:32px;
+  height:32px;
+}
+
+.pilt-special-links:hover {
+  box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5); /* = #008CBA */
+}
+
 /* Kasutamiseks pisipildireana */
 .pilt-pildirida {
 	max-height: 64px;
