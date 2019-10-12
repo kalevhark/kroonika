@@ -22,6 +22,15 @@
                 title="geni.com: {{ obj.url }}"
             >
           </a>
+        {% elif "register.muinas.ee" in obj.url %}
+          <a href="{{ obj.url }}" target="_blank">
+            <img
+                class="pilt-special-links"
+                src="{% static 'wiki/img/favicon/register-muinas.png' %}"
+                alt="Kultuurimälestiste register"
+                title="Kultuurimälestiste register: {{ obj.url }}"
+            >
+          </a>
         {% endif %}
       {% endif %}
   {% endfor %}
