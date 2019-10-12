@@ -196,6 +196,7 @@ class Viide(models.Model):
     )
 
     class Meta:
+        ordering = ['hist_date', 'hist_year']
         verbose_name_plural = "Viited"
 
     def __str__(self):
@@ -243,7 +244,7 @@ class Objekt(models.Model):
         ('H', 'Hoone'),
         ('T', 'Tänav'),
         ('E', 'Ehitis'),
-        ('A', 'Asula'),
+        ('A', 'Asustusüksus'),
         ('M', 'Muu'),
     )
     nimi = models.CharField(
