@@ -183,10 +183,13 @@ class ViideAdmin(admin.ModelAdmin):
         return ', '.join([str(el) for el in id_list])
 
     def short_url(self, obj):
-        if len(obj.url) < 33:
-            tekst = obj.url
+        if obj.url:
+            if len(obj.url) < 33:
+                tekst = obj.url
+            else:
+                tekst = obj.url[:30] + '...'
         else:
-            tekst = obj.url[:30] + '...'
+            tekst = ''
         return tekst
 
     short_url.short_description = 'Link'
