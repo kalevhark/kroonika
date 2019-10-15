@@ -6,12 +6,12 @@
 	  <i class="fa fa-chain w3-xlarge text-organisatsioon"></i>
       {% model_name_organisatsioon %}, millega koos mainitud sissekannetes:<br>
 		</h5>
-		{% for seotud_organisatsioon, object in seotud_organisatsioonid_artiklikaudu.items %}
+		{% for seotud_organisatsioon, obj in seotud_organisatsioonid_artiklikaudu.items %}
 			{% if forloop.counter > 1 %}
 				<br>
 			{% endif %}
-			<a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=object.id %}">
-				<strong>{{ object.nimi }}</strong>
+			<a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
+				<strong>{{ obj.nimi }}</strong>
 			</a>
 			&nbsp;&ndash;&nbsp;
 			{% include 'wiki/includes/seotud_artiklikaudu_artiklid.html' %}

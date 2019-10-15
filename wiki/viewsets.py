@@ -117,6 +117,7 @@ class IsikViewSet(viewsets.ModelViewSet):
     """
     queryset = Isik.objects.all()
     serializer_class = IsikSerializer
+    # lookup_field = 'slug'
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)

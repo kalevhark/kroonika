@@ -7,7 +7,11 @@
 	<!-- Lingid teemalehtedele -->
 	<div class="w3-row-padding w3-margin-bottom">
     <div class="w3-quarter">
-      <a class="w3-tooltip" style="text-decoration: none;" href={% url 'wiki:wiki_artikkel_filter' %}>
+      <a
+					class="w3-tooltip"
+					style="text-decoration: none;"
+					href="{% url 'wiki:wiki_artikkel_filter' %}"
+			>
 	  		<div class="w3-container background-artikkel w3-padding-16  w3-hover-white">
         	<div class="w3-left">
 						<i class="fa fa-comment w3-xxxlarge"></i>
@@ -98,7 +102,7 @@
 					{% if forloop.counter > 1 %}
 						<br>
 					{% endif %}
-					<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id %}">
+					<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
 						sündis {{ obj }}
 						{% if obj.vanus|divisibleby:"5" %}
 							&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
@@ -112,7 +116,7 @@
 					{% if forloop.counter > 1 %}
 						<br>
 					{% endif %}
-					<a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}">
+					<a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
 						{{ obj }}
 						{% if obj.vanus|divisibleby:"5" %}
 							&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
@@ -126,7 +130,7 @@
 					{% if forloop.counter > 1 %}
 						<br>
 					{% endif %}
-					<a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id %}">
+					<a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
 						{{ obj }}
 						{% if obj.vanus|divisibleby:"5" %}
 							&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
@@ -251,7 +255,7 @@
 					<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
 				</a>
 				&nbsp;
-				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
+				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}>
 					{{ obj }}
 					{% if obj.vanus|divisibleby:"5" %}
 						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
@@ -277,7 +281,7 @@
 				<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
 				</a>
 				&nbsp;
-				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
+				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}>
 					{{ obj }}
 				</a>
 				{% if obj.vanus|divisibleby:"5" %}
@@ -306,7 +310,7 @@
 						<b>{{ obj.hist_year }}</b>
 					</a>
 				{% endif %}&nbsp;
-				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
+				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}>
 					 {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
 					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
         	{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
@@ -336,7 +340,7 @@
 					<b>{{ obj.hist_enddate|date:"d.m.Y" }}</b>
 				</a>
 				&nbsp;
-				<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id %}">
+				<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
 					{{ obj }}
 				</a>
 	    {% endfor %}
@@ -373,7 +377,7 @@
 					<strong>{{ obj.hist_enddate|date:"d.m.Y" }}</strong>
 				</a>
 				&nbsp;
-				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}>
+				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}>
 					{{ obj }}
 				</a>
 	    {% endfor %}
@@ -400,7 +404,7 @@
 					<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
 				</a>
 				&nbsp;
-				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
+				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}>
 					{{ obj }}
 					{% if obj.vanus|divisibleby:"5" %}
 						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
@@ -426,7 +430,7 @@
 				<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
 				</a>
 				&nbsp;
-				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
+				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}>
 					{{ obj }}
 				</a>
 				{% if obj.vanus|divisibleby:"5" %}
@@ -458,7 +462,7 @@
 					</a>
 				{% endif %}
 				&nbsp;
-				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id %}>
+				<a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}>
 						{{ obj.nimi }}
 					&nbsp;<b>{{ obj.vanus }}</b>
 					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
@@ -487,7 +491,7 @@
 					<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
 				</a>
 				&nbsp;
-				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
+				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}>
 					{{ obj }}
 					{% if obj.vanus|divisibleby:"5" %}
 						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
@@ -513,7 +517,7 @@
 					<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
 				</a>
 				&nbsp;
-				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
+				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}>
 					{{ obj }}
 				</a>
 				{% if obj.vanus|divisibleby:"5" %}
@@ -545,7 +549,7 @@
 					</a>
 				{% endif %}
 				&nbsp;
-				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id %}>
+				<a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}>
 					{{ obj.nimi }}
 					&nbsp;<b>{{ obj.vanus }}</b>
 					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
@@ -587,11 +591,14 @@
 	  <div class="w3-container w3-padding-16 w3-hover-white">
 	    {% if andmed.isik.kirjeid > 0 %}
 		  <h5>Viimasena lisatud:</h5>
-		  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=andmed.isik.viimane_lisatud.id %}>
+		  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=andmed.isik.viimane_lisatud.id slug=andmed.isik.viimane_lisatud.slug %}>
 		    {{ andmed.isik.viimane_lisatud }}
 		  </a>
 	      <h5>Viimasena muudeti:</h5>
-	      <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=andmed.isik.viimane_muudetud.id %}>
+	      <a
+						class="hover-isik"
+						href="{% url 'wiki:wiki_isik_detail' pk=andmed.isik.viimane_muudetud.id slug=andmed.isik.viimane_lisatud.slug %}"
+				>
 		    {{ andmed.isik.viimane_muudetud }}
 		  </a>
 		{% endif %}
@@ -601,11 +608,17 @@
 	  <div class="w3-container w3-padding-16 w3-hover-white">
 	    {% if andmed.organisatsioon.kirjeid > 0 %}
 		  <h5>Viimasena lisatud:</h5>
-		  <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=andmed.organisatsioon.viimane_lisatud.id %}>
+		  <a
+					class="hover-organisatsioon"
+					href="{% url 'wiki:wiki_organisatsioon_detail' pk=andmed.organisatsioon.viimane_lisatud.id  slug=andmed.organisatsioon.viimane_lisatud.slug %}"
+			>
 		    {{ andmed.organisatsioon.viimane_lisatud }}
 		  </a>
 	      <h5>Viimasena muudeti:</h5>
-	      <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=andmed.organisatsioon.viimane_muudetud.id %}>
+	      <a
+						class="hover-organisatsioon"
+						href="{% url 'wiki:wiki_organisatsioon_detail' pk=andmed.organisatsioon.viimane_muudetud.id slug=andmed.organisatsioon.viimane_muudetud.slug %}"
+				>
 		    {{ andmed.organisatsioon.viimane_muudetud }}
 		  </a>
 		{% endif %}
@@ -615,11 +628,17 @@
 	  <div class="w3-container w3-padding-16 w3-hover-white">
 	    {% if andmed.objekt.kirjeid > 0 %}
 		  <h5>Viimasena lisatud:</h5>
-		  <a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=andmed.objekt.viimane_lisatud.id %}>
+		  <a
+					class="hover-objekt"
+					href="{% url 'wiki:wiki_objekt_detail' pk=andmed.objekt.viimane_lisatud.id slug=andmed.objekt.viimane_lisatud.slug %}"
+			>
 		    {{ andmed.objekt.viimane_lisatud }}
 		  </a>
 	      <h5>Viimasena muudeti:</h5>
-	      <a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=andmed.objekt.viimane_muudetud.id %}>
+	      <a
+						class="hover-objekt"
+						href="{% url 'wiki:wiki_objekt_detail' pk=andmed.objekt.viimane_muudetud.id slug=andmed.objekt.viimane_muudetud.slug %}"
+				>
 		    {{ andmed.objekt.viimane_muudetud }}
 		  </a>
 		{% endif %}

@@ -5,7 +5,7 @@
 	  {% if forloop.counter > 1 %}
 		&ensp;
 	  {% endif %}
-	  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}> {{ obj }}</a>
+	  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}> {{ obj }}</a>
 	{% endfor %}
 	</p>
 {% endif %}
@@ -16,7 +16,7 @@
 	  {% if forloop.counter > 1 %}
 		&ensp;
 	  {% endif %}
-	  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id %}> {{ obj }}</a>
+	  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}> {{ obj }}</a>
 	{% endfor %}
 	</p>
 {% endif %}

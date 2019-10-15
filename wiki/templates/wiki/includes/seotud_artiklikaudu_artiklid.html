@@ -1,5 +1,5 @@
 <!-- Loend seotud artiklite numbritest ja lühisisu -->
-{% for artikkel in object.artiklid %}
+{% for artikkel in obj.artiklid %}
 <a style="cursor: pointer;" onclick="document.getElementById('id{{ artikkel.id }}').style.display='block'" class="hover-artikkel tooltip">
 	{{ artikkel.hist_year }}
 	<span class="tooltiptext">

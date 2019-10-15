@@ -56,7 +56,7 @@
     <small>{{ form.viited.help_text }}</small>
     {% endif %}
     <br>
-    <button href={% url 'wiki:wiki_objekt_detail' pk=object.pk %} role="button">Loobu</button>
+    <button href={% url 'wiki:wiki_objekt_detail' pk=object.pk  slug=object.slug %} role="button">Loobu</button>
     <button type="submit" value="Update">Muuda</button>
     {% include 'wiki/includes/object_form_footer.html' %}
 </form>

@@ -36,7 +36,7 @@
 				{% if forloop.counter > 1 %}
 					&ensp;
 				{% endif %}
-				<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=isik.id %}">
+				<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=isik.id slug=isik.slug %}">
 					{{ isik }}
 				</a>
 			{% endfor %}
@@ -47,7 +47,7 @@
 				{% if forloop.counter > 1 %}
 					&ensp;
 				{% endif %}
-				<a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=organisatsioon.id %}">
+				<a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=organisatsioon.id slug=organisatsioon.slug %}">
 					{{ organisatsioon }}
 				</a>
 			{% endfor %}
@@ -58,7 +58,7 @@
 				{% if forloop.counter > 1 %}
 					&ensp;
 				{% endif %}
-				<a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=objekt.id %}">
+				<a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=objekt.id  slug=objekt.slug %}">
 					{{ objekt }}
 				</a>
 			{% endfor %}

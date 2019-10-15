@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.relations import HyperlinkedIdentityField
+from rest_framework.reverse import reverse
 from django.contrib.auth.models import User
 from django.db.models import Field
 
@@ -12,6 +14,37 @@ from .models import (
     Allikas,
     Viide
 )
+
+
+class ParameterisedHyperlinkedIdentityField(HyperlinkedIdentityField):
+    """
+    Represents the instance, or a property on the instance, using hyperlinking.
+
+    lookup_fields is a tuple of tuples of the form:
+        ('model_field', 'url_parameter')
+    """
+    lookup_fields = (('pk', 'pk'),)
+
+    def __init__(self, *args, **kwargs):
+        self.lookup_fields = kwargs.pop('lookup_fields', self.lookup_fields)
+        super(ParameterisedHyperlinkedIdentityField, self).__init__(*args, **kwargs)
+
+    def get_url(self, obj, view_name, request, format):
+        """
+        Given an object, return the URL that hyperlinks to the object.
+
+        May raise a `NoReverseMatch` if the `view_name` and `lookup_field`
+        attributes are not configured to correctly match the URL conf.
+        """
+        kwargs = {}
+        for model_field, url_param in self.lookup_fields:
+            attr = obj
+            for field in model_field.split('.'):
+                attr = getattr(attr,field)
+            kwargs[url_param] = attr
+
+        return reverse(view_name, kwargs=kwargs, request=request, format=format)
+
 
 # TODO: Korrektselt ei tööta, "permissions-detail" ei leita
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -41,6 +74,10 @@ class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
 
 class IsikSerializer(serializers.HyperlinkedModelSerializer):
     link = serializers.SerializerMethodField()
+    url = ParameterisedHyperlinkedIdentityField(
+        view_name='wiki:wiki_isik_detail',
+        lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
+    )
 
     def get_link(self, obj):
         return obj.get_absolute_url()
@@ -48,10 +85,17 @@ class IsikSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Isik
         fields = '__all__'
-
+        # lookup_field = 'slug'
+        # extra_kwargs = {
+        #     'url': {'lookup_field': 'slug'}
+        # }
 
 class ObjektSerializer(serializers.HyperlinkedModelSerializer):
     link = serializers.SerializerMethodField()
+    url = ParameterisedHyperlinkedIdentityField(
+        view_name='wiki:wiki_objekt_detail',
+        lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
+    )
 
     def get_link(self, obj):
         return obj.get_absolute_url()
@@ -63,6 +107,10 @@ class ObjektSerializer(serializers.HyperlinkedModelSerializer):
 
 class OrganisatsioonSerializer(serializers.HyperlinkedModelSerializer):
     link = serializers.SerializerMethodField()
+    url = ParameterisedHyperlinkedIdentityField(
+        view_name='wiki:wiki_organisatsioon_detail',
+        lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
+    )
 
     def get_link(self, obj):
         return obj.get_absolute_url()

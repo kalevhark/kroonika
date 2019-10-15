@@ -2,12 +2,13 @@ import datetime
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
 
-from django.core.files.base import ContentFile
 import os
 import os.path
 from PIL import Image
@@ -252,6 +253,11 @@ class Objekt(models.Model):
         max_length=200,
         help_text='Kohanimi/nimed'
     )
+    slug = models.SlugField(
+        default='',
+        editable=False,
+        max_length=200,
+    )
     asukoht = models.CharField(
         'Asukoht',
         max_length=200,
@@ -372,8 +378,15 @@ class Objekt(models.Model):
     def vigane(self):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
+    # def get_absolute_url(self):
+    #     return reverse('wiki:wiki_objekt_detail', kwargs={'pk': self.pk})
+
     def get_absolute_url(self):
-        return reverse('wiki:wiki_objekt_detail', kwargs={'pk': self.pk})
+        kwargs = {
+            'pk': self.id,
+            'slug': self.slug
+        }
+        return reverse('wiki:wiki_objekt_detail', kwargs=kwargs)
 
     def vanus(self, d=datetime.date.today()):
         if self.hist_date:
@@ -387,6 +400,9 @@ class Objekt(models.Model):
         return Pilt.objects.filter(objektid=self.id, profiilipilt_objekt=True).first()
 
     def save(self, *args, **kwargs):
+        # Loome slugi
+        value = self.nimi
+        self.slug = slugify(value, allow_unicode=True)
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year
@@ -411,6 +427,11 @@ class OrganisatsioonSajandTagasiManager(models.Manager):
 class Organisatsioon(models.Model):
     nimi = models.CharField(
         max_length=200
+    )
+    slug = models.SlugField(
+        default='',
+        editable=False,
+        max_length=200,
     )
     hist_date = models.DateField(
         'Loodud',
@@ -519,8 +540,15 @@ class Organisatsioon(models.Model):
     def vigane(self):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
+    # def get_absolute_url(self):
+    #     return reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': self.pk})
+
     def get_absolute_url(self):
-        return reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': self.pk})
+        kwargs = {
+            'pk': self.id,
+            'slug': self.slug
+        }
+        return reverse('wiki:wiki_organisatsioon_detail', kwargs=kwargs)
 
     def vanus(self, d=datetime.date.today()):
         if self.hist_date:
@@ -534,6 +562,9 @@ class Organisatsioon(models.Model):
         return Pilt.objects.filter(organisatsioonid=self.id, profiilipilt_organisatsioon=True).first()
 
     def save(self, *args, **kwargs):
+        # Loome slugi
+        value = self.nimi
+        self.slug = slugify(value, allow_unicode=True)
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year
@@ -565,6 +596,11 @@ class Isik(models.Model):
         max_length=100,
         blank=True,
         help_text="Eesnimi/nimed/initsiaal(id)"
+    )
+    slug = models.SlugField(
+        default='',
+        editable=False,
+        max_length=200,
     )
     # Eludaatumid
     hist_date = models.DateField(
@@ -707,8 +743,15 @@ class Isik(models.Model):
     def vigane(self):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
+    # def get_absolute_url(self):
+    #     return reverse('wiki:wiki_isik_detail', kwargs={'pk': self.pk})
+
     def get_absolute_url(self):
-        return reverse('wiki:wiki_isik_detail', kwargs={'pk': self.pk})
+        kwargs = {
+            'pk': self.id,
+            'slug': self.slug
+        }
+        return reverse('wiki:wiki_isik_detail', kwargs=kwargs)
 
     def vanus(self, d=datetime.date.today()):
         if self.hist_date:
@@ -722,6 +765,9 @@ class Isik(models.Model):
         return Pilt.objects.filter(isikud=self.id, profiilipilt_isik=True).first()
 
     def save(self, *args, **kwargs):
+        # Loome slugi
+        value = ' '.join(filter(None, [self.eesnimi, self.perenimi]))
+        self.slug = slugify(value, allow_unicode=True)
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year

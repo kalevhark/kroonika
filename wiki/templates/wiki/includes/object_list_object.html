@@ -1,4 +1,4 @@
-<a class="hover-{{model}}" href="{% url 'wiki:wiki_'|add:model|add:'_detail' pk=obj.id %}">
+<a class="hover-{{model}}" href="{% url 'wiki:wiki_'|add:model|add:'_detail' pk=obj.id slug=obj.slug %}">
   <strong>{{ obj }}</strong>
 </a>
 <!-- Sünniaeg -->
