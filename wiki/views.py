@@ -171,7 +171,8 @@ def info(request):
         for obj
         in artikkel_qs.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1)
     ]
-    revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
+     # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
+    revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
 
     return render(
         request,
@@ -520,6 +521,7 @@ def mainitud_aastatel(qs, model, obj):
 #
 class ArtikkelDetailView(generic.DetailView):
     model = Artikkel
+    query_pk_and_slug = True
     template_name = 'wiki/artikkel_detail.html'
 
     def get_queryset(self):
@@ -594,7 +596,7 @@ class ArtikkelUpdate(LoginRequiredMixin, UpdateView):
                 objekt.hist_searchdate = None
         objekt.save()
         form.save_m2m()
-        return redirect('wiki:wiki_artikkel_detail', pk=self.object.id)
+        return redirect('wiki:wiki_artikkel_detail', pk=self.object.id, slug=self.object.slug)
 
 
 class IsikUpdate(LoginRequiredMixin, UpdateView):
@@ -1032,7 +1034,7 @@ def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
         kirje['artiklid'] = seotud_artiklid.\
             filter(isikud=seotud_isik).\
             order_by('hist_searchdate').\
-            values('id', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
+            values('id', 'slug', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
         andmed[seotud_isik.id] = kirje
     return andmed
         
@@ -1122,7 +1124,7 @@ def seotud_organisatsioonid_artiklikaudu(seotud_artiklid, organisatsiooni_ise):
         kirje['artiklid'] = seotud_artiklid.\
             filter(organisatsioonid=seotud_organisatsioon).\
             order_by('hist_searchdate').\
-            values('id', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
+            values('id', 'slug', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
         andmed[seotud_organisatsioon.id] = kirje
     return andmed
 
@@ -1211,7 +1213,7 @@ def seotud_objektid_artiklikaudu(seotud_artiklid, objekt_ise):
         kirje['artiklid'] = seotud_artiklid.\
             filter(objektid=seotud_objekt).\
             order_by('hist_searchdate').\
-            values('id', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
+            values('id', 'slug', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
         andmed[seotud_objekt.id] = kirje
     return andmed
 
@@ -1299,21 +1301,21 @@ def test(request):
     # Isikute testandmed
     queryset = Isik.objects.all()
     data['test_url_isikud_id'] = [
-        reverse('wiki:wiki_isik_detail', kwargs={'pk': obj.id})
+        reverse('wiki:wiki_isik_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
         for obj
         in queryset
     ]
     # Organisatsioonide testandmed
     queryset = Organisatsioon.objects.all()
     data['test_url_organisatsioonid_id'] = [
-        reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': obj.id})
+        reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
         for obj
         in queryset
     ]
     # Objektide testandmed
     queryset = Objekt.objects.all()
     data['test_url_objektid_id'] = [
-        reverse('wiki:wiki_objekt_detail', kwargs={'pk': obj.id})
+        reverse('wiki:wiki_objekt_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
         for obj
         in queryset
     ]

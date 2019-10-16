@@ -62,6 +62,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
     link = serializers.SerializerMethodField()
+    url = ParameterisedHyperlinkedIdentityField(
+        view_name='wiki:wiki_artikkel_detail',
+        lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
+    )
 
     def get_link(self, obj):
         return obj.get_absolute_url()

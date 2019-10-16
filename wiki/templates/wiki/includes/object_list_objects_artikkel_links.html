@@ -1,7 +1,11 @@
 <!-- Loetelu seotud artiklinumbritest -->
 {% for artikkel in obj.artikkel_set.all %}
   &nbsp;
-  <a class="hover-artikkel tooltip" href={% url 'wiki:wiki_artikkel_detail' pk=artikkel.id %}>{{ artikkel.hist_year }}
+  <a
+      class="hover-artikkel tooltip"
+      href="{% url 'wiki:wiki_artikkel_detail' pk=artikkel.id slug=artikkel.slug %}"
+  >
+    {{ artikkel.hist_year }}
     <span class="tooltiptext">
       {% if artikkel.hist_date %}
         {{ artikkel.hist_date|date:"d.m.Y" }}

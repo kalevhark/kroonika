@@ -17,7 +17,8 @@ app_name = 'wiki'
 
 urlpatterns = [
     path('', ArtikkelFilterView.as_view(), name='wiki_artikkel_filter'),
-    path('<int:pk>', ArtikkelDetailView.as_view(), name='wiki_artikkel_detail'),
+    # path('<int:pk>', ArtikkelDetailView.as_view(), name='wiki_artikkel_detail'),
+    path('<int:pk>-<str:slug>/', ArtikkelDetailView.as_view(), name='wiki_artikkel_detail'),
     path('info/', views.info, name='info'),
     path('otsi/', views.otsi, name='otsi'),
     path('feedback/', views.feedback, name='feedback'),

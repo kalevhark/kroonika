@@ -91,7 +91,7 @@
 					{% if forloop.counter > 1 %}
 						<br>
 					{% endif %}
-					<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
+					<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
 						... {{ obj.body_text|truncatewords:10 }}
 						{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 					</a>
@@ -157,7 +157,7 @@
 				<a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=obj.hist_year %}>
 					<strong>{{ obj.hist_year }}</strong>:
 				</a>
-				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
+				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
 					{{ obj.body_text|truncatewords:10 }}
 					{% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
 				</a>
@@ -195,7 +195,7 @@
 				<a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
 					<strong>{{ obj.hist_year }}</strong>:
 				</a>
-				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
+				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
 					{{ obj.body_text|truncatewords:10 }}
 				</a>
 				<!-- Kui kirjed rohkem kui 9, siis hakime 4+1+4 -->
@@ -228,7 +228,7 @@
 				<a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
 					<strong>{{ obj.hist_year }}</strong>:
 				</a>
-				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id %}">
+				<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
 					{{ obj.body_text|truncatewords:10 }}
 				</a>
 				<small>&nbsp;{{ obj.total_accessed }} vaatamist</small>
@@ -574,14 +574,14 @@
 		  <a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=andmed.artikkel.viimane_lisatud.hist_year %}>
 		    {{ andmed.artikkel.viimane_lisatud.hist_year }}:
 		  </a>
-			<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=andmed.artikkel.viimane_lisatud.id %}>
+			<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=andmed.artikkel.viimane_lisatud.id slug=andmed.artikkel.viimane_lisatud.slug %}>
 		    {{ andmed.artikkel.viimane_lisatud }}
 		  </a>
 			<h5>Viimasena muudeti:</h5>
 	    <a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=andmed.artikkel.viimane_muudetud.hist_year %}>
 		    {{ andmed.artikkel.viimane_muudetud.hist_year }}:
 		  </a>
-			<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=andmed.artikkel.viimane_muudetud.id %}>
+			<a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_detail' pk=andmed.artikkel.viimane_muudetud.id slug=andmed.artikkel.viimane_muudetud.slug %}>
 		    {{ andmed.artikkel.viimane_muudetud }}
 		  </a>
 		{% endif %}

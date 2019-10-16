@@ -70,7 +70,7 @@ KUUD = (
         (12, 'detsember'),
         )
 
-VIGA_TEKSTIS = '(?)'
+VIGA_TEKSTIS = '[?]'
 
 class Allikas(models.Model):
     """
@@ -840,6 +840,11 @@ class ArtikkelSajandTagasiManager(models.Manager):
         return super().get_queryset().filter(hist_year__lte=sajandtagasi)
 
 class Artikkel(models.Model):
+    slug = models.SlugField(
+        default='',
+        editable=False,
+        max_length=200,
+    )
     # Toimumisaeg
     hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
         'Aasta',
@@ -962,8 +967,15 @@ class Artikkel(models.Model):
         tekst = str(self.hist_year) + ':' + self.body_text
         return tekst
 
+    # def get_absolute_url(self):
+    #     return reverse('wiki:wiki_artikkel_detail', kwargs={'pk': self.pk})
+
     def get_absolute_url(self):
-        return reverse('wiki:wiki_artikkel_detail', kwargs={'pk': self.pk})
+        kwargs = {
+            'pk': self.id,
+            'slug': self.slug
+        }
+        return reverse('wiki:wiki_artikkel_detail', kwargs=kwargs)
 
     def headline(self):
         if len(self.body_text) > 50:
@@ -995,6 +1007,9 @@ class Artikkel(models.Model):
         return tekst
 
     def save(self, *args, **kwargs):
+        # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
+        value = ' '.join(self.body_text.split(' ')[:10])[:200]
+        self.slug = slugify(value, allow_unicode=True)
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year

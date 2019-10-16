@@ -5,7 +5,11 @@
     <!--		Kui kasutaja autenditud pakume muutmisvõimalust -->
     {% if user.is_authenticated %}
       {% with update_url='wiki:'|add:model|add:'_update' %}
-        <a class="w3-button w3-padding-bottom w3-hover-white fa fa-edit" href={% url update_url pk=object.id %}></a>
+        <a
+            class="w3-button w3-padding-bottom w3-hover-white fa fa-edit"
+            href="{% url update_url pk=object.id %}"
+        >
+        </a>
       {% endwith %}
     {% endif %}
     {% if object.updated_by.username %}

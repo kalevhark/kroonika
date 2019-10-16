@@ -18,7 +18,7 @@
 		{% if prev_obj %}
 			{% include 'wiki/includes/kp.html' with sd=prev_obj.hist_date ed=prev_obj.hist_enddate y=prev_obj.hist_year m=prev_obj.hist_month cs="dark" %}
 			<br>
-			<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id %}">
+			<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}">
 				<i class="fa fa-angle-left"></i>&nbsp;{{ prev_obj }}
 			</a>
 		{% endif %}
@@ -33,7 +33,7 @@
 		{% if next_obj %}
 		{% include 'wiki/includes/kp.html' with sd=next_obj.hist_date ed=next_obj.hist_enddate y=next_obj.hist_year m=next_obj.hist_month cs="dark" %}
 			<br>
-		<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id %}">
+		<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}">
 			{{ next_obj }}&nbsp;<i class="fa fa-angle-right"></i>
 		</a>
 		{% endif %}
