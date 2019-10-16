@@ -16,7 +16,7 @@
         class="hover-artikkel"
         href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}"
       >
-        {{ obj.headline }}
+        {{ obj.body_text|truncatewords:10 }}
       </a>
     {% endfor %}
   </div>
