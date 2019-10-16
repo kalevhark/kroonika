@@ -617,7 +617,7 @@ class IsikUpdate(LoginRequiredMixin, UpdateView):
             objekt.hist_endyear = objekt.hist_enddate.year
         objekt.save()
         form.save_m2m()
-        return redirect('wiki:wiki_isik_detail', pk=self.object.id)
+        return redirect('wiki:wiki_isik_detail', pk=self.object.id, slug=self.object.slug)
 
 
 class OrganisatsioonUpdate(LoginRequiredMixin, UpdateView):
@@ -686,7 +686,7 @@ class ObjektUpdate(LoginRequiredMixin, UpdateView):
             objekt.hist_endyear = objekt.hist_enddate.year
         objekt.save()
         form.save_m2m()
-        return redirect('wiki:wiki_objekt_detail', pk=self.object.id)
+        return redirect('wiki:wiki_objekt_detail', pk=self.object.id, slug=self.object.slug)
 
 #
 # Artiklite otsimise/filtreerimise seaded
