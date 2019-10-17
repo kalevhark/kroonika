@@ -1,0 +1,21 @@
+<!-- model = artikkel, isik, organisatsioon, objekt -->
+
+<!-- Lehekülgede valimine -->
+<div class="w3-cell-row w3-margin-top">
+
+  <!-- Järgmine lehekülg -->
+  {% if object_list.has_next %}
+    <div>
+      <a
+          style="text-decoration: none;"
+          href="?{% if filter.form %}{% for element in filter.form %}{{ element.name }}={{ element.value }}&{% endfor %}{% endif %}page={{ object_list.next_page_number }}"
+          title="järgmisele leheküljele (lk {{ object_list.next_page_number }})"
+      >
+        <div class="w3-container background-{{ model }} w3-padding-16  w3-hover-white w3-center">
+          <b><i class="fa fa-angle-right w3-large"></i></b>
+        </div>
+      </a>
+    </div>
+  {% endif %}
+
+</div>

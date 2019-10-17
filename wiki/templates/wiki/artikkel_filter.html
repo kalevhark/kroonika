@@ -16,7 +16,7 @@
 			<i class="fa fa-comment"></i>
 		</a>
 <!--		<i class="fa fa-comment"></i>-->
-		<b> {% model_name_artikkel %} (valitud {{ kirjeid }})
+		<b> {% model_name_artikkel %} (valitud {{ object_list.paginator.count }})
 	 {% if object_list.paginator.num_pages > 1 %}
 	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
 	 {% endif %}
@@ -52,9 +52,10 @@
 
 {% if object_list %}
 	<!-- Lehekülgede nummerdamine -->
-	{% include 'wiki/includes/pagination.html' with teema="artikkel" %}
+	{% include 'wiki/includes/pagination.html' with model="artikkel" %}
 	<!-- Loend filtriga valitud artiklitest -->
 	{% include 'wiki/includes/object_list.html' %}
+	{% include 'wiki/includes/pagination_next.html' with model="artikkel" %}
 {% else %}
 	<div class="w3-container w3-padding">
 	  {% if filter.form.hist_year.value or filter.form.perenimi__icontains.value or filter.form.eesnimi__icontains.value %}

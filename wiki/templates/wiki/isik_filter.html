@@ -14,11 +14,11 @@
 
 <div class="w3-cell-row w3-container background-isik w3-text-white w3-padding-16">
   <div class="w3-container w3-cell w3-cell-middle w3-mobile  w3-large">
-    <a style="text-decoration: none;" href={% url 'wiki:wiki_isik_filter' %}>
+    <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
 			<i class="fa fa-address-card-o"></i>
 		</a>
 <!--		<i class="fa fa-address-card-o"></i>-->
-		<b> Isikud (valitud {{ kirjeid }})
+		<b> Isikud (valitud {{ object_list.paginator.count }})
 	 {% if object_list.paginator.num_pages > 1 %}
 	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
 	 {% endif %}
@@ -50,8 +50,9 @@
 </div>
 
 {% if object_list %}
-  {% include 'wiki/includes/pagination.html' with teema="isik" %}
+  {% include 'wiki/includes/pagination.html' with model="isik" %}
   {% include 'wiki/includes/object_list_isikud.html'%}
+	{% include 'wiki/includes/pagination_next.html' with model="isik" %}
 {% else %}
   <div class="w3-container w3-padding">
 	  {% if filter.form.perenimi__icontains.value or filter.form.eesnimi__icontains.value %}

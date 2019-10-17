@@ -17,7 +17,7 @@
 			<i class="fa fa-group"></i>
 		</a>
 <!--		<i class="fa fa-group"></i>-->
-		<b> {% model_name_organisatsioon %} ({{ kirjeid }})
+		<b> {% model_name_organisatsioon %} ({{ object_list.paginator.count }})
 	 {% if object_list.paginator.num_pages > 1 %}
 	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
 	 {% endif %}
@@ -46,8 +46,9 @@
 </div>
 	
 {% if object_list %}
-  {% include 'wiki/includes/pagination.html' with teema="organisatsioon" %}
+  {% include 'wiki/includes/pagination.html' with model="organisatsioon" %}
   {% include 'wiki/includes/object_list_organisatsioonid.html' with periood=day %}
+	{% include 'wiki/includes/pagination_next.html' with model="organisatsioon" %}
 {% else %}
 	<div class="w3-container w3-padding">
 	  {% if filter.form.nimi__icontains.value %}

@@ -93,10 +93,13 @@
     class="seotud w3-cell-row">
   {% if object_list %}
     {% if page_obj.paginator.num_pages > 1 %}
-      {% include 'wiki/includes/pagination.html'  with object_list=page_obj teema="artikkel" %}
+      {% include 'wiki/includes/pagination.html'  with object_list=page_obj model="artikkel" %}
     {% endif %}
     <!-- Loend valitud aasta artiklitest -->
     {% include 'wiki/includes/object_list.html' %}
+    {% if page_obj.paginator.num_pages > 1 %}
+      {% include 'wiki/includes/pagination_next.html' with object_list=page_obj model="artikkel" %}
+    {% endif %}
   {% else %}
     Valitud aasta ({{ year|date:"Y" }}) kohta sissekanded puuduvad! Proovige <a href="{% url 'wiki:wiki_artikkel_filter' %}"> uuesti</a>.
   {% endif %}

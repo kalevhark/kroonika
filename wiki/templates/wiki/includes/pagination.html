@@ -1,105 +1,86 @@
-<!-- teema = artikkel, isik, organisatsioon, objekt -->
+<!-- model = artikkel, isik, organisatsioon, objekt -->
 
 <!-- Lehekülgede valimine -->
 <div class="w3-cell-row w3-margin-top">
 
-<!-- Esimene lehekülg -->
-<div class="w3-quarter w3-hide-small">
-{% if object_list.has_previous %}
-<a style="text-decoration: none;" href="?
-{% if filter.form %}
-{% for element in filter.form %}
-{{ element.name }}=
-{% if element.value %}
-{{ element.value }}
-{% endif %}
-&{% endfor %}
-{% endif %}
-page=1">
-<div class="w3-container background-{{ teema }} w3-padding-16  w3-hover-white w3-center">
-<b><i class="fa fa-angle-double-left w3-large"></i></b>
-</div>
-</a>
-{% else %}
-<div class="w3-container background-{{ teema }} text-{{ teema }} w3-padding-16  w3-center">
-<b><i class="fa fa-angle-double-left w3-large"></i></b>
-</div>
-{% endif %}
-</div>
+  <!-- Esimene lehekülg -->
+  <div class="w3-quarter w3-hide-small">
+    {% if object_list.has_previous %}
+      <a
+          style="text-decoration: none;"
+          href="?{% include 'wiki/includes/pagination_querystring.html' %}page=1"
+          title="esimesele leheküljele (lk 1)"
+      >
+        <div class="w3-container background-{{ model }} w3-padding-16  w3-hover-white w3-center">
+          <b><i class="fa fa-angle-double-left w3-large"></i></b>
+        </div>
+      </a>
+    {% else %}
+      <div class="w3-container background-{{ model }} text-{{ model }} w3-padding-16  w3-center">
+        <b><i class="fa fa-angle-double-left w3-large"></i></b>
+      </div>
+    {% endif %}
+  </div>
+  
+  <!-- Eelmine lehekülg -->
+  {% if object_list.has_previous %}
+    <div class="w3-quarter">
+      <a
+          style="text-decoration: none;"
+          href="?{% include 'wiki/includes/pagination_querystring.html' %}page={{ object_list.previous_page_number }}"
+          title="eelmisele leheküljele (lk {{ object_list.previous_page_number }})"
+      >
+        <div class="w3-container background-{{ model }} w3-padding-16  w3-hover-white w3-center">
+          <b><i class="fa fa-angle-left w3-large"></i></b>
+        </div>
+      </a>
+    </div>
+  {% else %}
+    <div class="w3-quarter w3-hide-small">
+      <div class="w3-container background-{{ model }} text-{{ model }} w3-padding-16  w3-center">
+        <b><i class="fa fa-angle-left w3-large"></i></b>
+      </div>
+    </div>
+  {% endif %}
+  
+  <!-- Järgmine lehekülg -->
+  {% if object_list.has_next %}
+    <div class="w3-quarter">
+      <a
+          style="text-decoration: none;"
+          href="?{% include 'wiki/includes/pagination_querystring.html' %}page={{ object_list.next_page_number }}"
+          title="järgmisele leheküljele (lk {{ object_list.next_page_number }})"
+      >
+        <div class="w3-container background-{{ model }} w3-padding-16  w3-hover-white w3-center">
+          <b><i class="fa fa-angle-right w3-large"></i></b>
+        </div>
+      </a>
+    </div>
+  {% else %}
+    <div class="w3-quarter w3-hide-small">
+      <div class="w3-container background-{{ model }} text-{{ model }} w3-padding-16  w3-center">
+        <b><i class="fa fa-angle-right w3-large"></i></b>
+      </div>
+    </div>
+  {% endif %}
+  
+  <!-- Viimane lehekülg -->
+  <div class="w3-quarter w3-hide-small">
+    {% if object_list.has_next %}
+      <a
+          style="text-decoration: none;"
+          href="?{% include 'wiki/includes/pagination_querystring.html' %}page={{ object_list.paginator.num_pages }}"
+          title="viimasele leheküljele (lk {{ object_list.paginator.num_pages }})"
+      >
+        <div class="w3-container background-{{ model }} w3-padding-16  w3-hover-white w3-center">
+          <b><i class="fa fa-angle-double-right w3-large"></i></b>
+        </div>
+      </a>
+    {% else %}
+      <div class="w3-container background-{{ model }} text-{{ model }} w3-padding-16  w3-center">
+        <b><i class="fa fa-angle-double-right w3-large"></i></b>
+      </div>
+    {% endif %}
+  </div>
 
-<!-- Eelmine lehekülg -->
-{% if object_list.has_previous %}
-<div class="w3-quarter">
-<a style="text-decoration: none;" href="?
-{% if filter.form %}
-{% for element in filter.form %}
-{{ element.name }}=
-{% if element.value %}
-{{ element.value }}
-{% endif %}
-&{% endfor %}
-{% endif %}
-page={{ object_list.previous_page_number }}">
-<div class="w3-container background-{{ teema }} w3-padding-16  w3-hover-white w3-center">
-<b><i class="fa fa-angle-left w3-large"></i></b>
-</div>
-</a>
-</div>
-{% else %}
-<div class="w3-quarter w3-hide-small">
-<div class="w3-container background-{{ teema }} text-{{ teema }} w3-padding-16  w3-center">
-<b><i class="fa fa-angle-left w3-large"></i></b>
-</div>
-</div>
-{% endif %}
-
-<!-- Järgmine lehekülg -->
-{% if object_list.has_next %}
-<div class="w3-quarter">
-<a style="text-decoration: none;" href="?
-{% if filter.form %}
-{% for element in filter.form %}
-{{ element.name }}=
-{% if element.value %}
-{{ element.value }}
-{% endif %}
-&{% endfor %}
-{% endif %}
-page={{ object_list.next_page_number }}">
-<div class="w3-container background-{{ teema }} w3-padding-16  w3-hover-white w3-center">
-<b><i class="fa fa-angle-right w3-large"></i></b>
-</div>
-</div>
-</a>
-{% else %}
-<div class="w3-quarter w3-hide-small">
-<div class="w3-container background-{{ teema }} text-{{ teema }} w3-padding-16  w3-center">
-<b><i class="fa fa-angle-right w3-large"></i></b>
-</div>
-</div>
-{% endif %}
-
-<!-- Viimane lehekülg -->
-<div class="w3-quarter w3-hide-small">
-{% if object_list.has_next %}
-<a style="text-decoration: none;" href="?
-{% if filter.form %}
-{% for element in filter.form %}
-{{ element.name }}=
-{% if element.value %}
-{{ element.value }}
-{% endif %}
-&{% endfor %}
-{% endif %}
-page={{ object_list.paginator.num_pages }}">
-<div class="w3-container background-{{ teema }} w3-padding-16  w3-hover-white w3-center">
-<b><i class="fa fa-angle-double-right w3-large"></i></b>
-</div>
-</a>
-{% else %}
-<div class="w3-container background-{{ teema }} text-{{ teema }} w3-padding-16  w3-center">
-<b><i class="fa fa-angle-double-right w3-large"></i></b>
-</div>
-{% endif %}
-</div>
 </div>

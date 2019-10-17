@@ -764,7 +764,7 @@ class ArtikkelFilterView(FilterView):
         except EmptyPage:
             artiklid = paginator.page(paginator.num_pages)
         context['object_list'] = artiklid
-        context['kirjeid'] = len(list)
+        # context['kirjeid'] = len(list)
         context['filter'] = filter
         return context
             
@@ -784,7 +784,6 @@ class ArtikkelArchiveIndexView(ArchiveIndexView):
         return artikkel_qs_userfilter(self.request.user)
 
 class ArtikkelYearArchiveView(YearArchiveView):
-    # queryset = Artikkel.objects.all()
     date_field = "hist_searchdate"
     make_object_list = True
     allow_future = True
@@ -1015,7 +1014,7 @@ class IsikFilterView(FilterView):
         except EmptyPage:
             isikud = paginator.page(paginator.num_pages)
         context['object_list'] = isikud
-        context['kirjeid'] = len(list)
+        # context['kirjeid'] = len(list)
         context['filter'] = filter
         return context
     
@@ -1108,7 +1107,7 @@ class OrganisatsioonFilterView(FilterView):
         except EmptyPage:
             organisatsioonid = paginator.page(paginator.num_pages)
         context['object_list'] = organisatsioonid
-        context['kirjeid'] = len(list)
+        # context['kirjeid'] = len(list)
         context['filter'] = filter
         return context
     
@@ -1197,7 +1196,7 @@ class ObjektFilterView(FilterView):
         except EmptyPage:
             objektid = paginator.page(paginator.num_pages)
         context['object_list'] = objektid
-        context['kirjeid'] = len(list)
+        # context['kirjeid'] = len(list)
         context['filter'] = filter
         return context
     
