@@ -43,7 +43,7 @@
 					class="w3-bar-item w3-button background-artikkel w3-text-white w3-hover-white"
 					type="button"
 					title="Uus otsing"
-					onclick="location.href={% url 'wiki:wiki_artikkel_filter' %};">
+					onclick="goFilter()">
 				<i class="fa fa-close"></i>
 			</button>
 		</div>
@@ -75,4 +75,13 @@
 	</div>
 {% endif %}
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+	function goFilter() {
+  	url = "{% url 'wiki:wiki_objekt_filter' %}";
+  	location.href=url
+  }
+</script>
 {% endblock %}
