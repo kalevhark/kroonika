@@ -13,12 +13,5 @@
 		{% include 'wiki/includes/object_list_object.html' with model='organisatsioon' %}
 		<!-- Lingid seotud artiklitele -->
 		{% include 'wiki/includes/object_list_objects_artikkel_links.html' %}
-	<!-- Loetelu seotud artiklinumbritest -->
-	<!--{% for artikkel in obj.artikkel_set.all %}
-	  &nbsp;
-	  <a class="hover-artikkel tooltip" href={% url 'wiki:wiki_artikkel_detail' pk=artikkel.id %}>{{ artikkel.id }}
-	  <span class="tooltiptext">{{ artikkel.hist_year }}: {{ artikkel }}</span>
-	  </a>
-	{% endfor %}-->
   </div>
 {% endfor %}

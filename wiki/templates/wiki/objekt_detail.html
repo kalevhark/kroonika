@@ -43,17 +43,6 @@
   {% include 'wiki/includes/object_updated_edit.html' with model='objekt' %}
 </div>
 
-<!-- Seotud artiklid: -->
-{% include 'wiki/includes/seotud_artiklid.html' %}
+{% include 'wiki/includes/seotud_artiklikaudu.html' with model='objekt' %}
 
-<!--Seotud andmebaasid-->
-<div class="w3-third w3-padding" >
-  {% include 'wiki/includes/seotud_isikud_artiklikaudu.html' %}
-</div>
-<div class="w3-third w3-padding" >
-  {% include 'wiki/includes/seotud_organisatsioonid_artiklikaudu.html' %}
-</div>
-<div class="w3-third w3-padding" >
-  {% include 'wiki/includes/seotud_objektid_artiklikaudu.html' %}
-</div>
 {% endblock %}

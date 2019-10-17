@@ -1,0 +1,80 @@
+<div class="w3-bar">
+  {% if seotud_artiklid %}
+    <button
+        class="w3-bar-item w3-button tablink background-{{model}}"
+        onclick="openLinks(event, 'artiklid')"
+    >
+      Lugusid {{ seotud_artiklid.count }}
+    </button>
+  {% endif %}
+  {% if seotud_isikud_artiklikaudu %}
+    <button
+        class="w3-bar-item w3-button tablink"
+        onclick="openLinks(event, 'isikud')"
+    >
+      Isikuid {{ seotud_isikud_artiklikaudu|length }}
+    </button>
+  {% endif %}
+  {% if seotud_organisatsioonid_artiklikaudu %}
+    <button
+        class="w3-bar-item w3-button tablink"
+        onclick="openLinks(event, 'organisatsioonid')">
+      Asutisi {{ seotud_organisatsioonid_artiklikaudu|length }}
+    </button>
+  {% endif %}
+  {% if seotud_objektid_artiklikaudu %}
+    <button
+        class="w3-bar-item w3-button tablink"
+        onclick="openLinks(event, 'objektid')">
+      Kohti {{ seotud_objektid_artiklikaudu|length }}
+    </button>
+  {% endif %}
+</div>
+
+<!-- Seotud artiklid: -->
+<div
+    id="artiklid"
+    class="seotud"
+>
+  {% include 'wiki/includes/seotud_artiklid.html' %}
+</div>
+<!--Seotud andmebaasid-->
+<div
+    id="isikud"
+    class="seotud"
+    style="display:none"
+>
+  {% include 'wiki/includes/seotud_artiklikaudu_isikud.html' %}
+</div>
+<div
+    id = "organisatsioonid"
+    class="seotud"
+    style="display:none"
+>
+  {% include 'wiki/includes/seotud_artiklikaudu_organisatsioonid.html' %}
+</div>
+<div
+    id = "objektid"
+    class="seotud"
+    style="display:none"
+>
+  {% include 'wiki/includes/seotud_artiklikaudu_objektid.html' %}
+</div>
+
+{% block javascript %}
+<script>
+function openLinks(evt, linkName) {
+  var i, x, tablinks;
+  x = document.getElementsByClassName("seotud");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < x.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" background-{{model}}", "");
+  }
+  document.getElementById(linkName).style.display = "block";
+  evt.currentTarget.className += " background-{{model}}";
+}
+</script>
+{% endblock %}
