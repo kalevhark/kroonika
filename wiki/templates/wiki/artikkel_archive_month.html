@@ -34,52 +34,145 @@
   </div>
 </div>
 
+<div class="w3-bar">
+  <button
+        class="w3-bar-item w3-button tablink background-artikkel"
+        onclick="openLinks(event, 'artiklid')"
+    >
+    {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %}{{ month|date:'Y' }} ({{ object_list.count }})
+  </button>
+  {% if sel_kuul %}
+    <button
+        class="w3-bar-item w3-button tablink"
+        onclick="openLinks(event, 'artiklid_teistel')"
+    >
+      Teistel aastatel ({{ sel_kuul.count }})
+    </button>
+  {% endif %}
+  {% if syndinud_isikud %}
+    <button
+        class="w3-bar-item w3-button tablink"
+        onclick="openLinks(event, 'isikud_syndinud')"
+    >
+      Sündis ({{ syndinud_isikud.count }})
+    </button>
+  {% endif %}
+  {% if surnud_isikud %}
+    <button
+        class="w3-bar-item w3-button tablink"
+        onclick="openLinks(event, 'isikud_surnud')">
+      Suri ({{ surnud_isikud.count }})
+    </button>
+  {% endif %}
+  {% if loodud_organisatsioonid %}
+    <button
+        class="w3-bar-item w3-button tablink"
+        onclick="openLinks(event, 'organisatsioonid')">
+      Asutati ({{ loodud_organisatsioonid.count }})
+    </button>
+  {% endif %}
+  {% if valminud_objektid %}
+    <button
+        class="w3-bar-item w3-button tablink"
+        onclick="openLinks(event, 'objektid')">
+      Valmis ({{ valminud_objektid.count }})
+    </button>
+  {% endif %}
+</div>
+
 <!-- Loend valitud aasta ja kuu artiklitest -->
-{% if object_list %}
- {% include 'wiki/includes/object_list.html' %}
-{% else %}
-  <div class="w3-container w3-padding-16">
-    Valitud kuu ja aasta ({% include "wiki/includes/kuu.html" with kuu=month|date:"m" %}{{ month|date:'Y' }}) kohta andmed puuduvad! Proovige <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_filter' %}> uuesti</a>.
-  </div>
-{% endif %}
+<div
+    id="artiklid"
+    class="seotud">
+  {% if object_list %}
+    <div class="w3-cell-row w3-container background-artikkel w3-text-white">
+      <div class="w3-cell w3-cell-middle">
+        <h5><i class="fa fa-comment w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %}{{ month|date:'Y' }}</h5>
+      </div>
+    </div>
+    {% include 'wiki/includes/object_list.html' %}
+  {% else %}
+    <div class="w3-container w3-padding-16">
+      Valitud kuu ja aasta ({% include "wiki/includes/kuu.html" with kuu=month|date:"m" %}{{ month|date:'Y' }}) kohta andmed puuduvad! Proovige <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_filter' %}> uuesti</a>.
+    </div>
+  {% endif %}
+</div>
 
 <!-- Loend valitud kuu teiste aastate artiklitest -->
 {% if sel_kuul %}
-  <div class="w3-cell-row w3-container background-artikkel w3-text-white w3">
-	<div class="w3-cell w3-cell-middle">
-	  <h5><i class="fa fa-comment w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} teistel aastatel:</h5>
-	</div>
+  <div
+      id="artiklid_teistel"
+      class="seotud">
+    <div class="w3-cell-row w3-container background-artikkel w3-text-white">
+      <div class="w3-cell w3-cell-middle">
+        <h5><i class="fa fa-comment w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} teistel aastatel:</h5>
+      </div>
+    </div>
+    {% include 'wiki/includes/object_list.html' with object_list=sel_kuul %}
   </div>
-  {% include 'wiki/includes/object_list.html' with object_list=sel_kuul %}
 {% endif %}
 
 
 <!-- Loend samal kuul sündinud isikutest -->
 {% if syndinud_isikud %}
-  {% with object_list=syndinud_isikud %}
-	  {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=syndinud_isikud_pealkiri bookmark='syndinud' %}
-  {% endwith %}
+  <div
+      id="isikud_syndinud"
+      class="seotud w3-cell-row">
+    {% with object_list=syndinud_isikud %}
+      {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=syndinud_isikud_pealkiri bookmark='syndinud' %}
+    {% endwith %}
+  </div>
 {% endif%}
 
 <!-- Loend samal kuul surnud isikutest -->
 {% if surnud_isikud %}
-  {% with object_list=surnud_isikud %}
-	  {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=surnud_isikud_pealkiri bookmark='surnud' %}
-  {% endwith %}
+  <div
+      id="isikud_surnud"
+      class="seotud w3-cell-row">
+    {% with object_list=surnud_isikud %}
+      {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=surnud_isikud_pealkiri bookmark='surnud' %}
+    {% endwith %}
+  </div>
 {% endif%}
 
 <!-- Loend samal kuul loodud organisatsioonidest -->
 {% if loodud_organisatsioonid %}
-  {% with object_list=loodud_organisatsioonid %}
-    {% include 'wiki/includes/object_list_organisatsioonid.html' with periood=month pealkiri=loodud_organisatsioonid_pealkiri %}
-  {% endwith %}
+  <div
+      id="organisatsioonid"
+      class="seotud w3-cell-row">
+    {% with object_list=loodud_organisatsioonid %}
+      {% include 'wiki/includes/object_list_organisatsioonid.html' with periood=month pealkiri=loodud_organisatsioonid_pealkiri %}
+    {% endwith %}
+  </div>
 {% endif%}
 
-<!-- Samal päeval valminud objektid -->
+<!-- Samal samal kuul valminud objektid -->
 {% if valminud_objektid %}
-  {% with object_list=valminud_objektid %}
-    {% include 'wiki/includes/object_list_objektid.html' with periood=month pealkiri=valminud_objektid_pealkiri %}
-  {% endwith %}
+  <div
+      id="objektid"
+      class="seotud w3-cell-row">
+    {% with object_list=valminud_objektid %}
+      {% include 'wiki/includes/object_list_objektid.html' with periood=month pealkiri=valminud_objektid_pealkiri %}
+    {% endwith %}
+  </div>
 {% endif%}
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+function openLinks(evt, linkName) {
+  var i, x, tablinks;
+  x = document.getElementsByClassName("seotud");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < x.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" background-artikkel", "");
+  }
+  document.getElementById(linkName).style.display = "block";
+  evt.currentTarget.className += " background-artikkel";
+}
+</script>
 {% endblock %}
