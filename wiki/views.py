@@ -741,7 +741,7 @@ class ArtikkelFilter(django_filters.FilterSet):
 #
 class ArtikkelFilterView(FilterView):
     model = Artikkel
-    paginate_by = 10
+    paginate_by = 20
     template_name = 'wiki/artikkel_filter.html'
     filterset_fields = {
             'hist_year',
@@ -984,11 +984,11 @@ class IsikFilter(django_filters.FilterSet):
             'perenimi': ['icontains'],
             }
 
-##    def __init__(self, *args, **kwargs):
-##        super(IsikFilter, self).__init__(*args, **kwargs)
-##        # at startup user doen't push Submit button, and QueryDict (in data) is empty
-##        if self.data == {}:
-##            self.queryset = self.queryset.none()
+    # def __init__(self, *args, **kwargs):
+    #     super(IsikFilter, self).__init__(*args, **kwargs)
+    #     # at startup user doen't push Submit button, and QueryDict (in data) is empty
+    #     if self.data == {}:
+    #         self.queryset = self.queryset.none()
 
 
 class IsikFilterView(FilterView):

@@ -1,5 +1,6 @@
 {% extends "wiki/wiki_base.html" %}
 {% load wiki_extras %}
+{% load widget_tweaks %}
 
 {% block title %}
   {{ block.super }} - {% model_name_organisatsioon %}
@@ -12,7 +13,7 @@
 {% load widget_tweaks %}
 <div class="w3-cell-row w3-container background-organisatsioon w3-text-white w3-padding-16">
   <div class="w3-container w3-cell w3-cell-middle w3-large w3-mobile">
-    <a style="text-decoration: none;" href={% url 'wiki:wiki_organisatsioon_filter' %}>
+    <a style="text-decoration: none;" href="{% url 'wiki:wiki_organisatsioon_filter' %}">
 			<i class="fa fa-group"></i>
 		</a>
 <!--		<i class="fa fa-group"></i>-->
@@ -24,10 +25,22 @@
   </div>
   <form action="" method="get">
   <div class="w3-container w3-cell w3-cell-middle w3-mobile">
-	{% render_field filter.form.nimi__icontains class+="w3-input w3-border-0" placeholder=filter.form.nimi__icontains.label %}
+		{% render_field filter.form.nimi__icontains class+="w3-input w3-border-0" placeholder=filter.form.nimi__icontains.label %}
   </div>
   <div class="w3-container w3-cell w3-cell-middle w3-mobile">
-  	<button class="w3-button w3-block background-organisatsioon w3-text-white w3-hover-white" type="submit" value="Otsi"><i class="fa fa-search"></i></button>
+  	<button
+				class="w3-bar-item w3-button background-organisatsioon w3-text-white w3-hover-white"
+				type="submit"
+				value="Otsi">
+			<i class="fa fa-search"></i>
+		</button>
+		<button
+				class="w3-bar-item w3-button background-organisatsioon w3-text-white w3-hover-white"
+				type="button"
+				title="Uus otsing"
+				onclick="goFilter()">
+			<i class="fa fa-close"></i>
+		</button>
   </div>
   </form>
 </div>
@@ -45,4 +58,13 @@
 	</div>
 {% endif %}
 
+{% endblock %}
+
+{% block javascript %}
+<script>
+	function goFilter() {
+  	url = "{% url 'wiki:wiki_organisatsioon_filter' %}";
+  	location.href=url
+  }
+</script>
 {% endblock %}
