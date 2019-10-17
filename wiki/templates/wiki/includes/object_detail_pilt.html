@@ -2,34 +2,22 @@
 
 <!-- Sisukaardi pildiosa-->
 <div class="w3-third">
-  {% if profiilipilt %} <!-- Kui on määratud profiilipilt -->
-    <div class="w3-margin-right w3-center">
-        <img
-          class="{{cls}} pilt-detail"
-          id="profiiliPilt"
-          src="{{ profiilipilt.pilt.url }}"
-          alt="{{ profiilipilt.caption }}"
-          title="{{ profiilipilt }}"
-        />
-      <small>
-        <div class="w3-center" id="imgtext">
-          {{ profiilipilt.caption }}
-        </div>
-      </small>
-    </div>
-  {% else %} <!-- Seotud piltide ankur -->
-    <div class="w3-margin-right" style="display: none">
-        <img
-          class="{{cls}} pilt-detail"
-          id="profiiliPilt"
-          src=""
-          style="max-width:100%"
-        />
-      <small>
-        <div class="w3-center" id="imgtext"></div>
-      </small>
-    </div>
-  {% endif %}
+  <div
+      class="w3-margin-right w3-center"
+      style="display: {% if profiilipilt %}block{% else %}none{% endif %}">
+    <img
+      class="{{cls}} pilt-detail"
+      id="profiiliPilt"
+      src="{{ profiilipilt.pilt.url }}"
+      alt="{{ profiilipilt.caption }}"
+      title="{{ profiilipilt }}"
+    />
+    <small>
+      <div class="w3-center" id="imgtext">
+        {{ profiilipilt.caption }}
+      </div>
+    </small>
+  </div>
 
   <!-- The Modal https://www.w3schools.com/howto/howto_css_modal_images.asp -->
   <div id="myModal" class="modal">
