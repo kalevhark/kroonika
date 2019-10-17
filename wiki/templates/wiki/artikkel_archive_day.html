@@ -54,14 +54,14 @@
         class="w3-bar-item w3-button tablink background-artikkel"
         onclick="openLinks(event, 'artiklid')"
     >
-    {{ day|date:"d.m.Y" }} ({{ object_list.count }})
+    <i class="fa fa-comment"></i> {{ day|date:"d.m.Y" }} ({{ object_list.count }})
   </button>
   {% if sel_kuul %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'artiklid_teistel')"
     >
-      Teistel aastatel ({{ sel_kuul.count }})
+      <i class="fa fa-comment"></i> Teistel aastatel ({{ sel_kuul.count }})
     </button>
   {% endif %}
   {% if syndinud_isikud %}
@@ -69,28 +69,28 @@
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'isikud_syndinud')"
     >
-      Sündis ({{ syndinud_isikud.count }})
+      <i class="fa fa-address-card-o"></i> Sündis ({{ syndinud_isikud.count }})
     </button>
   {% endif %}
   {% if surnud_isikud %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'isikud_surnud')">
-      Suri ({{ surnud_isikud.count }})
+      <i class="fa fa-address-card-o"></i> Suri ({{ surnud_isikud.count }})
     </button>
   {% endif %}
   {% if loodud_organisatsioonid %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'organisatsioonid')">
-      Asutati ({{ loodud_organisatsioonid.count }})
+      <i class="fa fa-group"></i> Asutati ({{ loodud_organisatsioonid.count }})
     </button>
   {% endif %}
   {% if valminud_objektid %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'objektid')">
-      Valmis ({{ valminud_objektid.count }})
+      <i class="fa fa-bank"></i> Valmis ({{ valminud_objektid.count }})
     </button>
   {% endif %}
 </div>

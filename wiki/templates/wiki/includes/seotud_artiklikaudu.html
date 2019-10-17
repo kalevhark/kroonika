@@ -4,7 +4,7 @@
         class="w3-bar-item w3-button tablink background-{{model}}"
         onclick="openLinks(event, 'artiklid')"
     >
-      Lugusid {{ seotud_artiklid.count }}
+      <i class="fa fa-comment"></i> Lugusid {{ seotud_artiklid.count }}
     </button>
   {% endif %}
   {% if seotud_isikud_artiklikaudu %}
@@ -12,21 +12,21 @@
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'isikud')"
     >
-      Isikuid {{ seotud_isikud_artiklikaudu|length }}
+      <i class="fa fa-address-card-o"></i> Isikuid {{ seotud_isikud_artiklikaudu|length }}
     </button>
   {% endif %}
   {% if seotud_organisatsioonid_artiklikaudu %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'organisatsioonid')">
-      Asutisi {{ seotud_organisatsioonid_artiklikaudu|length }}
+      <i class="fa fa-group"></i> Asutisi {{ seotud_organisatsioonid_artiklikaudu|length }}
     </button>
   {% endif %}
   {% if seotud_objektid_artiklikaudu %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'objektid')">
-      Kohti {{ seotud_objektid_artiklikaudu|length }}
+      <i class="fa fa-bank"></i> Kohti {{ seotud_objektid_artiklikaudu|length }}
     </button>
   {% endif %}
 </div>
