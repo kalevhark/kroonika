@@ -30,7 +30,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     '18.196.203.237',
-    '18.190.26.213',
+    '18.190.26.217',
     '127.0.0.1', 'localhost',
     '192.168.1.143', 'deb9server.lan'
 ]
