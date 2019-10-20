@@ -542,8 +542,8 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         #         objekt.hist_searchdate = datetime.datetime(y, m, 1)
         #     else:
         #         objekt.hist_searchdate = None
-        if objekt.hist_enddate:
-            objekt.hist_endyear = objekt.hist_enddate.year
+        # if objekt.hist_enddate:
+        #     objekt.hist_endyear = objekt.hist_enddate.year
         objekt.save()
         form.save_m2m()
         return objekt
@@ -623,8 +623,8 @@ class ObjektAdmin(admin.ModelAdmin):
         #         objekt.hist_searchdate = datetime.datetime(y, m, 1)
         #     else:
         #         objekt.hist_searchdate = None
-        if objekt.hist_enddate:
-            objekt.hist_endyear = objekt.hist_enddate.year
+        # if objekt.hist_enddate:
+        #     objekt.hist_endyear = objekt.hist_enddate.year
         objekt.save()
         form.save_m2m()
         return objekt

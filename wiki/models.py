@@ -330,11 +330,11 @@ class Objekt(models.Model):
         'Muudetud',
         auto_now=True
     )
-    hist_searchdate = models.DateField(
-        'Tuletatud kuupäev',
-        null=True,
-        blank=True
-    ) # Kuupäevaotsinguteks, kui täpset kuupäeva pole teada
+    # hist_searchdate = models.DateField(
+    #     'Tuletatud kuupäev',
+    #     null=True,
+    #     blank=True
+    # ) # Kuupäevaotsinguteks, kui täpset kuupäeva pole teada
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -492,11 +492,11 @@ class Organisatsioon(models.Model):
         'Muudetud',
         auto_now=True
     )
-    hist_searchdate = models.DateField( # Kuupäevaotsinguteks, kui täpset kuupäeva pole teada
-        'Tuletatud kuupäev',
-        null=True,
-        blank=True
-    )
+    # hist_searchdate = models.DateField( # Kuupäevaotsinguteks, kui täpset kuupäeva pole teada
+    #     'Tuletatud kuupäev',
+    #     null=True,
+    #     blank=True
+    # )
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
