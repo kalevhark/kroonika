@@ -1,7 +1,8 @@
 import calendar
 from datetime import datetime, date, timedelta
 import json
-from lxml import etree
+# from lxml import etree
+import xml.etree.ElementTree as ET
 
 from astral import *
 from django.db.models import Sum, Count, Avg, Min, Max
@@ -9,6 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 import pandas as pd
 import pytz
+import requests
 
 from . import IlmateenistusValga
 
@@ -1130,8 +1132,10 @@ def container_history_p2evad(request):
 def yrno_48h():
     # Weather forecast from Yr, delivered by the Norwegian Meteorological Institute and the NRK
     href = 'http://www.yr.no/place/Estonia/Valgamaa/Valga/forecast_hour_by_hour.xml'
-    tree = etree.parse(href)
-    root = tree.getroot()
+    # tree = etree.parse(href)
+    # root = tree.getroot()
+    r = requests.get(href)
+    root = ET.fromstring(r.text)
     yr = {}
     tag_timezone = root.find("location").find("timezone") # Otsime XML puu asukoha andmetega
     utcoffsetMinutes = int(tag_timezone.attrib['utcoffsetMinutes'])

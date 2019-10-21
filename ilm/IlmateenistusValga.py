@@ -6,8 +6,10 @@ from astral import *
 from bs4 import BeautifulSoup
 from django.db import connection
 from django.db.models import Sum, Count, Avg, Min, Max
-from lxml import etree
+# from lxml import etree
+import xml.etree.ElementTree as ET
 import pytz
+import requests
 
 from .models import Ilm, Jaam
 
@@ -235,8 +237,11 @@ class IlmateenistusData():
         # Loeme Ilmateenistuse viimase mõõtmise andmed veebist
         jaam = 'Valga'
         href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
-        tree = etree.parse(href)
-        root = tree.getroot()
+        # tree = etree.parse(href)
+        r = requests.get(href)
+        # tree = ET.parse(r.text)
+        # root = tree.getroot()
+        root = ET.fromstring(r.text)
         i = dict()
         # Mõõtmise aeg
         dt = datetime.fromtimestamp(int(root.attrib['timestamp']))
