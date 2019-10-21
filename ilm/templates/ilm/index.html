@@ -1,0 +1,42 @@
+{% extends "ilm/base.html" %}
+{% load static %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href={% static "ilm/css/ilm_loader.css" %}>
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'ilm/js/ilm_mixed_ilmateade.js' %}"></script>
+<script>
+// Järgnev käivitub kui leht laetud ja kutsub välja graafiku
+var chart,
+	obj, 
+	chartTitle;
+
+$(document).ready(function() {
+  mixed_ilmateade();
+});
+$(window).bind('resize', function(e)
+  {
+    if (window.RT) clearTimeout(window.RT);
+    window.RT = setTimeout(function()
+      {
+        mixed_ilmateade();
+<!--        this.location.reload(false);-->
+      }, 100);
+  }
+);
+</script>
+{% endblock %}
+
+{% block content %}
+  <div class="w3-row">
+    <div id="loader"></div>
+    <div
+        id="container_mixed_ilmateade"
+        class="animate-bottom"
+        data-url="{% url 'ilm:mixed_ilmateade' %}"
+        style="min-width: 400px; margin: 0 auto; display:none;">
+    </div>
+  </div>
+{% endblock %}

@@ -33,6 +33,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 	path('api/', include(router.urls)),
+    path('ilm/', include('ilm.urls')),
     path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('schema/', schema_view),
     path('test/', views.test, name='test'), # linkide testimiseks

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+    <meta charset="utf-8">
+    <title>{% block title %}Valga linna ilm{% endblock %}</title>
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}"> -->
+
+	{% block stylesheet %}{% endblock %}
+
+		<link rel="shortcut icon" href={% static "ilm/img/favicon.ico" %}>
+  </head>
+  <body class="w3-light-grey">
+    <header>
+    </header>
+	<!-- Navbar -->
+	<div id="top" class="w3-top">
+	  <div class="w3-bar w3-left-align w3-large w3-padding">
+		<!-- <a class="w3-bar-item w3-button w3-hide-large w3-right w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="myFunction()"><i class="fa fa-bars"></i></a> -->
+		<a href={% url 'ilm:index' %} class="w3-bar-item w3-button w3-theme-d4 w3-hover-white"><i class="fa w3-margin-right"><img src="{% static 'ilm/img/220px-Valga_coat_of_arms.svg.png' %}" style='max-height:22px;' alt="vapp"></i>Valga linna ilm</a>
+		<a href={% url 'ilm:history' %} class="w3-bar-item w3-button w3-hide-small w3-hover-white" title="Ajalugu"><i class="fa fa-line-chart"></i></a>
+		<a href="https://et.wikipedia.org/wiki/Valga" target="blank" class="w3-bar-item w3-button w3-hide-medium  w3-hide-small w3-hover-white" title="Wikipedia"><i class="fa fa-wikipedia-w"></i></a>
+		
+	  </div> 
+	</div>
+
+    <div class="w3-container"  style="margin-top:60px;">
+	<main>
+      {% block content %}{% endblock %}
+    </main>
+	</div>
+    <footer>
+	  <div class="w3-bar w3-padding">
+        <a href="#">
+	      <button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
+	    </a>
+	    <a href={% url 'ilm:index' %}>
+          <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018 Kalev Härk</small></button>
+	    </a>
+      </div>
+	</footer>
+	<!-- jQuery teek -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<!-- HighCharts skriptid -->
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/highcharts-more.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+	<script src="https://code.highcharts.com/modules/export-data.js"></script>
+	<script src="https://code.highcharts.com/modules/windbarb.js"></script>
+	<script src="{% static 'ilm/js/highcharts-regression.js' %}"></script>
+	<!-- Äpi skriptid, kui vaja -->
+	<script src="{% static 'ilm/js/ilm.js' %}"></script>
+    {% block javascript %}{% endblock %}
+  </body>
+</html>

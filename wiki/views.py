@@ -38,7 +38,7 @@ def check_recaptcha(request):
 
     # get the token submitted in the form
     recaptcha_response = data.get('g-recaptcha-response')
-    print(settings.GOOGLE_RECAPTCHA_SECRET_KEY)
+    # print(settings.GOOGLE_RECAPTCHA_SECRET_KEY)
     # captcha verification
     url = 'https://www.google.com/recaptcha/api/siteverify'
     payload = {
