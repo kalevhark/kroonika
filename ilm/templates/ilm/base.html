@@ -4,12 +4,13 @@
     <meta charset="utf-8">
     <title>{% block title %}Valga linna ilm{% endblock %}</title>
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}"> -->
-
+    <!-- Custom CSS -->
+  	<link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}">
 	{% block stylesheet %}{% endblock %}
 
-		<link rel="shortcut icon" href={% static "ilm/img/favicon.ico" %}>
+		<link rel="shortcut icon" href="{% static 'ilm/img/favicon.ico' %}">
   </head>
   <body class="w3-light-grey">
     <header>
@@ -18,8 +19,29 @@
 	<div id="top" class="w3-top">
 	  <div class="w3-bar w3-left-align w3-large w3-padding">
 		<!-- <a class="w3-bar-item w3-button w3-hide-large w3-right w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="myFunction()"><i class="fa fa-bars"></i></a> -->
-		<a href={% url 'ilm:index' %} class="w3-bar-item w3-button w3-theme-d4 w3-hover-white"><i class="fa w3-margin-right"><img src="{% static 'ilm/img/220px-Valga_coat_of_arms.svg.png' %}" style='max-height:22px;' alt="vapp"></i>Valga linna ilm</a>
-		<a href={% url 'ilm:history' %} class="w3-bar-item w3-button w3-hide-small w3-hover-white" title="Ajalugu"><i class="fa fa-line-chart"></i></a>
+		<a
+				href="{% url 'ilm:index' %}"
+				class="w3-bar-item w3-button w3-theme-d4 w3-hover-white">
+			<i class="fa w3-margin-right">
+				<img
+						src="{% static 'ilm/img/220px-Valga_coat_of_arms.svg.png' %}"
+						style='max-height:22px;'
+						alt="vapp"
+				></i>
+			Valga linna ilm
+		</a>
+		<a
+				href="{% url 'ilm:history' %}"
+				class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+				title="Ilmaandmete ajalugu">
+			<i class="fa fa-line-chart"></i>
+		</a>
+		<a
+				href="{% url 'algus' %}"
+				class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+				title="Valga linna kroonika">
+			<i class="fa fa-leanpub"></i>
+		</a>
 		<a href="https://et.wikipedia.org/wiki/Valga" target="blank" class="w3-bar-item w3-button w3-hide-medium  w3-hide-small w3-hover-white" title="Wikipedia"><i class="fa fa-wikipedia-w"></i></a>
 		
 	  </div> 

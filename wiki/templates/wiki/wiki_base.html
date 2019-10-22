@@ -103,6 +103,12 @@
       <i class="fa fa-info"></i>
     </a>
     <a
+        href="{% url 'ilm:index' %}"
+        class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
+        title="Valga linna ilm">
+      <i class="fa fa-thermometer"></i>
+    </a>
+    <a
         href="https://et.wikipedia.org/wiki/Valga"
         target="blank"
         class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
@@ -122,7 +128,7 @@
       <a
           href="{% url 'logout' %}?next={{ request.path | urlencode }}"
           class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
-          title="Logi välja">{{ user.first_name }}&nbsp;<i class="fa fa-close"></i>
+          title="Logi välja">{{ user.first_name }}&nbsp;<i class="fa fa-sign-out"></i>
       </a>
       <!--      <a href={% url 'logout' %} class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-right" title={{ user.first_name }}>{{ user.first_name }}&nbsp;<i class="fa fa-sign-out"></i></a>-->
     {% else %}
@@ -130,7 +136,7 @@
         href="{% url 'admin:index' %}"
         class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
         title="Logi sisse">
-      <i class="fa fa-lock"></i>
+      <i class="fa fa-sign-in"></i>
     </a>
     {% endif %}
   </div>
