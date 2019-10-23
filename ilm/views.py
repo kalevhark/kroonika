@@ -273,7 +273,7 @@ def container_history_aasta(request):
         # X-telje väärtused
         categories.append(f"{hist[i]['timestamp__day']}.{str(hist[i]['timestamp__month']).zfill(2)}")
         # Ajaloo väärtused
-        hist_temp_averages.append(round(hist[i]['airtemperature__avg'], 1))
+        hist_temp_averages.append(round(float(hist[i]['airtemperature__avg']), 1))
         hist_temp_ranges.append(
             [
                 round(float(hist[i]['airtemperature__min']), 1),
@@ -285,7 +285,7 @@ def container_history_aasta(request):
                 (sel[offset]['timestamp__month'] == hist[i]['timestamp__month']) and
                 (sel[offset]['timestamp__day'] == hist[i]['timestamp__day'])
         ):
-            sel_temp_averages.append(round(sel[offset]['airtemperature__avg'], 1))
+            sel_temp_averages.append(round(float(sel[offset]['airtemperature__avg']), 1))
             sel_temp_ranges.append(
                 [
                     round(float(sel[offset]['airtemperature__min']), 1),
