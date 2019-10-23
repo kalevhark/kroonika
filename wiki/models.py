@@ -1218,7 +1218,7 @@ class Vihje(models.Model):
     )
     http_referer = models.CharField(
         'Objekt',
-        max_length=100,
+        max_length=250,
         blank=True
     )
     remote_addr = models.CharField(
