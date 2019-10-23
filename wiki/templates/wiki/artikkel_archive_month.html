@@ -9,8 +9,11 @@
 
 {% block content %}
 <div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
-  <div class="w3-container w3-large">
-     <i class="fa fa-comment"></i><b> {% model_name_artikkel %} {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:"Y" }} kohta</b>
+  <div class="w3-large">
+     <a style="text-decoration: none;" href="{% url 'wiki:wiki_artikkel_filter' %}">
+      <i class="fa fa-comment"></i>
+    </a>
+    <b> {% model_name_artikkel %} {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:"Y" }} kohta</b>
   </div>
 </div>
 

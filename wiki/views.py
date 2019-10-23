@@ -569,7 +569,6 @@ class ArtikkelUpdate(LoginRequiredMixin, UpdateView):
     redirect_field_name = 'next'
     model = Artikkel
     pk_url_kwarg = 'pk'
-
     form_class = ArtikkelForm
 
     def form_valid(self, form):
@@ -602,8 +601,8 @@ class ArtikkelUpdate(LoginRequiredMixin, UpdateView):
 class IsikUpdate(LoginRequiredMixin, UpdateView):
     redirect_field_name = 'next'
     model = Isik
-    pk_url_kwarg = 'pk'
     form_class = IsikForm
+    pk_url_kwarg = 'pk'
     
     def form_valid(self, form):
         objekt = form.save(commit=False)
@@ -1014,8 +1013,13 @@ class IsikFilterView(FilterView):
         except EmptyPage:
             isikud = paginator.page(paginator.num_pages)
         context['object_list'] = isikud
-        # context['kirjeid'] = len(list)
         context['filter'] = filter
+        # if isikud: # Kui leiti objekte, siis leitakse mainimised lugudes
+        #     artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        #     artikkel_qs_dict = dict()
+        #     for obj in isikud:
+        #         artikkel_qs_dict[obj.id] = artikkel_qs.filter(isikud__in=[obj])
+        #     context['artikkel_qs_dict'] = artikkel_qs_dict
         return context
     
 
@@ -1107,8 +1111,13 @@ class OrganisatsioonFilterView(FilterView):
         except EmptyPage:
             organisatsioonid = paginator.page(paginator.num_pages)
         context['object_list'] = organisatsioonid
-        # context['kirjeid'] = len(list)
         context['filter'] = filter
+        # if organisatsioonid: # Kui leiti objekte, siis leitakse mainimised lugudes
+        #     artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        #     artikkel_qs_dict = dict()
+        #     for obj in organisatsioonid:
+        #         artikkel_qs_dict[obj.id] = artikkel_qs.filter(organisatsioonid__in=[obj])
+        #     context['artikkel_qs_dict'] = artikkel_qs_dict
         return context
     
 def seotud_organisatsioonid_artiklikaudu(seotud_artiklid, organisatsiooni_ise):
@@ -1196,8 +1205,13 @@ class ObjektFilterView(FilterView):
         except EmptyPage:
             objektid = paginator.page(paginator.num_pages)
         context['object_list'] = objektid
-        # context['kirjeid'] = len(list)
         context['filter'] = filter
+        # if objektid: # Kui leiti objekte, siis leitakse mainimised lugudes
+        #     artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        #     artikkel_qs_dict = dict()
+        #     for obj in objektid:
+        #         artikkel_qs_dict[obj.id] = artikkel_qs.filter(objektid__in=[obj])
+        #     context['artikkel_qs_dict'] = artikkel_qs_dict
         return context
     
 def seotud_objektid_artiklikaudu(seotud_artiklid, objekt_ise):

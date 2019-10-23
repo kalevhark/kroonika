@@ -1,4 +1,6 @@
 <div id="bookmark_isikud_{{ bookmark }}"></div>
+{% load wiki_extras %}
+
 {% if pealkiri %}
 <div class="w3-cell-row w3-container background-isik w3-text-white">
   <div class="w3-cell w3-cell-middle">
@@ -13,6 +15,6 @@
   <div class="w3-cell-row w3-hover-white w3-padding-small">
 		{% include 'wiki/includes/object_list_object.html' with model='isik' %}
 		<!-- Lingid seotud artiklitele -->
-		{% include 'wiki/includes/object_list_objects_artikkel_links.html' %}
+		{% object_mainitud_artiklites obj 'isik' %}
 	</div>
 {% endfor %}

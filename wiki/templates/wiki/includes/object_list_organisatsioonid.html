@@ -1,4 +1,5 @@
 <div id="bookmark_organisatsioonid"></div>
+{% load wiki_extras %}
 
 {% if pealkiri %}
 <div class="w3-cell-row w3-container background-organisatsioon w3-text-white">
@@ -12,6 +13,6 @@
   <div class="w3-cell-row w3-hover-white w3-padding-small">
 		{% include 'wiki/includes/object_list_object.html' with model='organisatsioon' %}
 		<!-- Lingid seotud artiklitele -->
-		{% include 'wiki/includes/object_list_objects_artikkel_links.html' %}
+    {% object_mainitud_artiklites obj 'organisatsioon' %}
   </div>
 {% endfor %}
