@@ -138,7 +138,7 @@ class VihjeForm(ModelForm):
                 'Märkasid viga või oskad täiendada?',
                 'kirjeldus',
                 'kontakt',
-                # HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >')
+                HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >')
             ),
             ButtonHolder(
                 # HTML('<span class="hidden">✓ Saved data</span>'),

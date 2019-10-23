@@ -217,7 +217,7 @@ def feedback(request):
     http_referer = request.META['HTTP_REFERER'] # mis objektilt tuli vihje
     remote_addr = request.META['REMOTE_ADDR'] # kasutaja IP aadress
     http_user_agent = request.META['HTTP_USER_AGENT'] # kasutaja veebilehitseja
-    if request.method == 'POST': # TODO: and check_recaptcha(request):
+    if request.method == 'POST' and check_recaptcha(request):
         # create a form instance and populate it with data from the request:
         form = VihjeForm(request.POST)
         # check whether it's valid:
