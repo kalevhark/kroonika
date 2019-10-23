@@ -1,9 +1,9 @@
 {% extends "wiki/wiki_base.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}{{ block.super }} - {{ isik }} - muutmine{% endblock %}
 
 {% block content %}
-{% load crispy_forms_tags %}
 
 <form method="post" class="uniForm">
   {% csrf_token %}
@@ -13,64 +13,4 @@
   {% include 'wiki/includes/object_form_footer.html' %}
 </form>
 
-<!--<form method="post">
-  {% csrf_token %}
-  {% if form.eesnimi.help_text %}
-    <small>{{ form.eesnimi.help_text }}</small>
-  {% endif %}
-  {{ form.eesnimi }}
-  {% if form.perenimi.help_text %}
-    <small>{{ form.perenimi.help_text }}</small>
-  {% endif %}
-  {{ form.perenimi }}
-  <br>
-  {{ form.kirjeldus}}
-  <br>
-  {% if form.hist_date.help_text %}
-    <small>{{ form.hist_date.help_text }}</small>
-  {% endif %}
-  {{ form.hist_date }}
-  {% if form.synd_koht.help_text %}
-    <small>{{ form.synd_koht.help_text }}</small>
-  {% endif %}
-  {{ form.synd_koht }}
-  <br>
-  {% if form.hist_enddate.help_text %}
-    <small>{{ form.hist_enddate.help_text }}</small>
-  {% endif %}
-  {{ form.hist_enddate }}
-  {% if form.surm_koht.help_text %}
-    <small>{{ form.surm_koht.help_text }}</small>
-  {% endif %}
-  {{ form.surm_koht }}
-  {% if form.maetud.help_text %}
-    <small>{{ form.maetud.help_text }}</small>
-  {% endif %}
-  {{ form.maetud }}
-  <br>
-  <small>Seotud {{ form.organisatsioonid.name }} </small>
-  <br>
-  {{ form.organisatsioonid }}
-  {% if form.organisatsioonid.help_text %}
-    <small>{{ form.organisatsioonid.help_text }}</small>
-  {% endif %}
-  <br>
-  <small>Seotud {{ form.objektid.name }}</small>
-  <br>
-  {{ form.objektid }}
-  {% if form.objektid.help_text %}
-    <small>{{ form.objektid.help_text }}</small>
-  {% endif %}
-  <br>
-  <small>Seotud {{ form.viited.name }}</small>
-  <br>
-  {{ form.viited }}
-  {% if form.viited.help_text %}
-    <small>{{ form.viited.help_text }}</small>
-  {% endif %}
-  <br>
-  <button href={% url 'wiki:wiki_isik_detail' pk=object.pk %} role="button">Loobu</button>
-  <button class="btn btn-info btn-sm btn-block" type="submit" value="Update">Muuda</button>
-  {% include 'wiki/includes/object_form_footer.html' %}
-</form>-->
 {% endblock %}
