@@ -1,8 +1,8 @@
 from django import template
+from django.conf import settings
 
 from wiki.models import VIGA_TEKSTIS, Artikkel, Isik, Organisatsioon, Objekt
 from wiki.views import get_all_logged_in_users, artikkel_qs_userfilter
-
 
 register = template.Library()
 
@@ -55,5 +55,8 @@ def model_name_organisatsioon():
 def model_name_objekt():
     return Objekt._meta.verbose_name_plural
 
+@register.simple_tag
+def recaptcha_public_key():
+    return settings.GOOGLE_RECAPTCHA_PUBLIC_KEY
 
 

@@ -4,6 +4,7 @@
 <head>
   {% load staticfiles %}
   {% load crispy_forms_tags %}
+  {% load wiki_extras %}
 
   <!-- Required meta tags -->
   <meta charset="utf-8" />
@@ -216,7 +217,7 @@
     $('.g-recaptcha-response').each(function( k, v ) {
       var submit = $(v).closest("form").find('[type="submit"]');
       grecaptcha.render( submit[0], {
-        'sitekey' : '6Ld0Ib8UAAAAAKTO2vJSALHmouxtDcptgM_OOJ-q',
+        'sitekey' : '{% recaptcha_public_key %}',
         'callback' : function( token ) {
           $(v).closest("form").find('.g-recaptcha-response').val( token );
           $(v).closest("form").submit();
