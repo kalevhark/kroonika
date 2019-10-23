@@ -462,7 +462,7 @@ def container_history_kuud(request):
         categories.append(
             KUUD[int(sel[i]['timestamp__month'])]
         )
-        sel_temp_averages.append(round(sel[i]['airtemperature__avg'], 1))
+        sel_temp_averages.append(round(float(sel[i]['airtemperature__avg']), 1))
         sel_temp_ranges.append(
             [
                 round(float(sel[i]['airtemperature__min']), 1),
@@ -645,7 +645,7 @@ def container_history_kuu(request):
             f"{hist[i]['timestamp__day']}.{str(bdi.kuu).zfill(2)}"
         )
         # Kogu ajaloo väärtused
-        hist_temp_averages.append(round(hist[i]['airtemperature__avg'], 1))
+        hist_temp_averages.append(round(float(hist[i]['airtemperature__avg']), 1))
         hist_temp_ranges.append(
             [
                 round(float(hist[i]['airtemperature__min']), 1),
@@ -655,7 +655,7 @@ def container_history_kuu(request):
         # Valitud kuu väärtused
         if sel[offset]['timestamp__day'] == hist[i]['timestamp__day']:
             # Valitud kuu päeva andmed olemas
-            sel_temp_averages.append(round(sel[offset]['airtemperature__avg'], 1))
+            sel_temp_averages.append(round(float(sel[offset]['airtemperature__avg']), 1))
             sel_temp_ranges.append(
                 [
                     round(float(sel[offset]['airtemperature__min']), 1),
