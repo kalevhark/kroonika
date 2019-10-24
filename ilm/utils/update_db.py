@@ -85,7 +85,7 @@ def check_timestamp(dt):
         d = pytz.timezone('Europe/Tallinn').localize(datetime.now())
 
         while row is not None:
-            print(row)
+            print(pytz.timezone('Europe/Tallinn').localize(row))
             # print((d - row[0]).seconds)
             row = cur.fetchone()
 
