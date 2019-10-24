@@ -1,6 +1,8 @@
 #!/usr/bin/python
 from datetime import datetime, timedelta
 import psycopg2
+
+from pytz import timezone
 import pytz
 
 from config import config
@@ -82,10 +84,14 @@ def check_timestamp(dt):
         print("Kandeid: ", cur.rowcount)
 
         row = cur.fetchone()
-        d = pytz.timezone('Europe/Tallinn').localize(datetime.now())
 
+        eesti_aeg = timezone('Europe/Tallinn')
+        print(dt)
         while row is not None:
-            print(pytz.timezone('Europe/Tallinn').localize(row[0]))
+            d = row[0]
+            print(f'PostgreSQL datetime          : {d}')
+            print(f'PostgreSQL timezone          : {d.tzname()}')
+            print(f'PostgreSQL offset UTC ajaga: {d.utcoffset()}')
             # print((d - row[0]).seconds)
             row = cur.fetchone()
 
@@ -100,3 +106,4 @@ def check_timestamp(dt):
 if __name__ == '__main__':
     get_maxtimestamp()
     check_timestamp(datetime.now() - timedelta(hours=1))
+    check_timestamp(datetime(2019, 9, 1, 12))
