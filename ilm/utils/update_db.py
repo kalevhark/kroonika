@@ -7,6 +7,11 @@ import pytz
 
 from config import config
 
+def utc2eesti_aeg(dt):
+    eesti_aeg = timezone('Europe/Tallinn')
+    return dt.astimezone(eesti_aeg)
+
+
 # The following connect() function connects to the suppliers database and prints out the PostgreSQL database version.
 def connect():
     """ Connect to the PostgreSQL database server """
@@ -39,7 +44,7 @@ def connect():
             conn.close()
             print('Database connection closed.')
 
-
+# Viimane mõõtmistulemus
 def get_maxtimestamp():
     """ query maxdate from the ilm_ilm table """
     conn = None
@@ -65,7 +70,8 @@ def get_maxtimestamp():
         if conn is not None:
             conn.close()
 
-def check_timestamp(dt):
+# Mõõtmistulemuse olemasolu kontroll aja järgi
+def check_observation_exists(dt):
     """ query if exists timestamp from the ilm_ilm table """
     conn = None
     try:
@@ -92,7 +98,7 @@ def check_timestamp(dt):
             print(f'PostgreSQL datetime          : {d}')
             print(f'PostgreSQL timezone          : {d.tzname()}')
             print(f'PostgreSQL offset UTC ajaga  : {d.utcoffset()}')
-            print(f'PostgreSQL Eesti aeg         : {d.astimezone(eesti_aeg)}')
+            print(f'PostgreSQL Eesti aeg         : {utc2eesti_aeg(d)}')
             # print((d - row[0]).seconds)
             row = cur.fetchone()
 
@@ -104,7 +110,37 @@ def check_timestamp(dt):
             conn.close()
     return cur.rowcount
 
+# Kustutab topeltkirjed
+def delete_duplicate_observations():
+    """ delete part by part id """
+    conn = None
+    rows_deleted = 0
+    try:
+        # read database configuration
+        params = config()
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor()
+        # execute the UPDATE  statement
+        cur.execute("DELETE FROM ilm_ilm a USING ilm_ilm b WHERE a.id < b.id AND a.timestamp = b.timestamp;")
+        # get the number of updated rows
+        rows_deleted = cur.rowcount
+        # Commit the changes to the database
+        conn.commit()
+        # Close communication with the PostgreSQL database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+    print(f'Kustutati: {rows_deleted}')
+    return rows_deleted
+
+
 if __name__ == '__main__':
     get_maxtimestamp()
-    check_timestamp(datetime.now() - timedelta(hours=1))
-    check_timestamp(datetime(2019, 9, 1, 12))
+    check_observation_exists(datetime.now() - timedelta(hours=1))
+    check_observation_exists(datetime(2019, 9, 1, 12))
+    delete_duplicate_observations()
