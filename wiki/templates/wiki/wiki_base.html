@@ -99,7 +99,7 @@
     <!-- Lingid erilehtedele -->
     <a
         href="{% url 'wiki:info' %}"
-        class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
+        class="w3-bar-item w3-button w3-hide-small w3-hover-white"
         title="Projektist">
       <i class="fa fa-info"></i>
     </a>
@@ -116,7 +116,13 @@
         title="Wikipedia">
       <i class="fa fa-wikipedia-w"></i>
     </a>
-	  <a href="https://www.facebook.com/valgalinn/" target="blank" class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white" title="Facebook"><i class="fa fa-facebook-official"></i></a>
+	  <a
+        href="https://www.facebook.com/valgalinn/"
+        target="blank"
+        class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
+        title="Facebook">
+      <i class="fa fa-facebook-official"></i>
+    </a>
 
     <!-- Kasutaja ja adminlingid -->
     {% if user.is_authenticated %}
@@ -161,9 +167,27 @@
   <!-- Navbar on small screens -->
   <div class="w3-row-padding w3-margin-bottom w3-hide-large">
     <div id="m-navbar" class="w3-bar-block w3-white w3-hide w3-hide-large w3-padding-16">
-      <a href={% url 'wiki:wiki_artikkel_filter' %} class="w3-bar-item w3-button"><i class="fa fa-search"></i>&nbsp;Otsi...</a>
-      <a href="https://et.wikipedia.org/wiki/Valga" target="blank" class="w3-bar-item w3-button"><i class="fa fa-wikipedia-w"></i>&nbsp;Valga Vikipeedias</a>
-      <a href={% url 'wiki:info' %} class="w3-bar-item w3-button"><i class="fa fa-info"></i>&nbsp;Projektist</a>
+      <a
+          href="{% url 'wiki:wiki_artikkel_filter' %}"
+          class="w3-bar-item w3-button w3-hover-white">
+        <i class="fa fa-search"></i>&nbsp;Otsi...
+      </a>
+      <a
+          href="{% url 'ilm:index' %}"
+          class="w3-bar-item w3-button w3-hover-white">
+        <i class="fa fa-thermometer"></i>
+      </a>
+      <a
+          href="https://et.wikipedia.org/wiki/Valga"
+          target="blank"
+          class="w3-bar-item w3-button w3-hover-white">
+        <i class="fa fa-wikipedia-w"></i>&nbsp;Valga Vikipeedias
+      </a>
+      <a
+          href="{% url 'wiki:info' %}"
+          class="w3-bar-item w3-button w3-hover-white">
+        <i class="fa fa-info"></i>&nbsp;Projektist
+      </a>
     </div>
   </div>
 
