@@ -44,7 +44,7 @@
     <p style="clear: left;">
       Parandatud on ilmsed vead. Vastukäivate andmete puhul on järjekord:
       <br>
-      Arhiivimaterjalid -> Teatmeteosed -> Uurimused -> Ajakirjandus -> Vikipeedia -> muud andmekogud
+      Arhiivimaterjalid -> Teatmeteosed -> Uurimused -> Ajakirjandus -> Vikipeedia -> muud andmeallikad
     </p>
 
     <p>Otsimiseks kasuta temaatilisi otsinguid:
@@ -67,7 +67,7 @@
 
     <p>
       ...või otseteed wiki/kroonika/aasta/kuu/päev,
-      näiteks <i>wiki/krono/1902/02/24</i>.
+      näiteks <i>wiki/kroonika/1902/02/24</i>.
     </p>
     <div>
       Andmebaasid:
@@ -78,7 +78,6 @@
       </ul>
     </div>
     Andmebaasi- ja veebilahenduse tegi {% kalev %}.<br>
-    Testserveri eest suured tänud: Margo Pärnaku, Siim Somma!<br>
 
     Abiks:
     <ul>
@@ -94,39 +93,27 @@
       <li><a href="https://github.com/jazzband/django-widget-tweaks">django-widget-tweaks</a></li>
       <li><a href="https://www.django-rest-framework.org/">Django REST framework</a></li>
     </ul>
-
-    <div>
-    {% render_logged_in_user_list %}
-    </div>
-    <div>
-      Revision: {{ revision_data.kroonika }}:{{ revision_data.revised }}?<br>
-      {% if revision_data.viiteta %}
-        Viiteta:
-        {% for obj in revision_data.viiteta %}
-          &nbsp;<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.pk slug=obj.slug %}">
-            {{ obj.pk }}
-          </a>
+    {% if user.is_authenticated %}
+      <div>
+      {% render_logged_in_user_list %}
+      </div>
+      <div>
+        Revision: {{ revision_data.kroonika }}:{{ revision_data.revised }}?<br>
+        {% if revision_data.viiteta %}
+          Viiteta:
+          {% for obj in revision_data.viiteta %}
+            &nbsp;<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.pk slug=obj.slug %}">
+              {{ obj.pk }}
+            </a>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div>
+        {% for item, value in meta_andmed.items %}
+          <small>{{ item }}:{{ value }}</small><br>
         {% endfor %}
-      {% endif %}
-    </div>
-    <div>
-      {% for item, value in meta_andmed.items %}
-        <small>{{ item }}:{{ value }}</small><br>
-      {% endfor %}
-    </div>
-
-<!--<script>-->
-<!--  grecaptcha.ready(function() {-->
-<!--    $('#form').submit(function(e){-->
-<!--      var form = this;-->
-<!--      e.preventDefault()-->
-<!--      grecaptcha.execute('{{recaptcha_key}}' , {action: '{% url 'wiki:mine_krono_kp' %}'}).then(function(token) {-->
-<!--        $('#recaptcha').val(token)-->
-<!--        form.submit()-->
-<!--      });-->
-<!--    })-->
-<!--  });-->
-<!--</script>-->
+      </div>
+    {% endif %}
   </div>
 
 {% endblock %}
