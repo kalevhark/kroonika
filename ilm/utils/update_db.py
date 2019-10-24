@@ -91,7 +91,8 @@ def check_timestamp(dt):
             d = row[0]
             print(f'PostgreSQL datetime          : {d}')
             print(f'PostgreSQL timezone          : {d.tzname()}')
-            print(f'PostgreSQL offset UTC ajaga: {d.utcoffset()}')
+            print(f'PostgreSQL offset UTC ajaga  : {d.utcoffset()}')
+            print(f'PostgreSQL Eesti aeg         : {d.astimezone(eesti_aeg)}')
             # print((d - row[0]).seconds)
             row = cur.fetchone()
 
