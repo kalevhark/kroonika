@@ -70,6 +70,33 @@ def get_maxtimestamp():
         if conn is not None:
             conn.close()
 
+# Viimase ööpäeva mõõtmistulemused
+def get_observations_24hours():
+    """ query maxdate from the ilm_ilm table """
+    conn = None
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+        cur.execute("SELECT timestamp FROM ilm_ilm WHERE timestamp > now() - interval '1 day' ORDER BY timestamp")
+        print("Kandeid: ", cur.rowcount)
+
+        row = cur.fetchone()
+
+        while row is not None:
+            # print(row)
+            d = row[0]
+            print(utc2eesti_aeg(d))
+            row = cur.fetchone()
+
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
+
 # Mõõtmistulemuse olemasolu kontroll aja järgi
 def check_observation_exists(dt):
     """ query if exists timestamp from the ilm_ilm table """

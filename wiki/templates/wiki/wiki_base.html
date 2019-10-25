@@ -55,12 +55,12 @@
 <!-- Navbar -->
 <div id="top" class="w3-top">
   <div class="w3-bar w3-left-align w3-large w3-padding">
-    <a
-        class="w3-bar-item w3-button w3-hide-large w3-right w3-hover-white w3-large w3-theme-d2"
-        href="javascript:void(0);"
-        onclick="myFunction()">
-      <i class="fa fa-bars"></i>
-    </a>
+<!--    <a-->
+<!--        class="w3-bar-item w3-button w3-hide-large w3-right w3-hover-white w3-large w3-theme-d2"-->
+<!--        href="javascript:void(0);"-->
+<!--        onclick="myFunction()">-->
+<!--      <i class="fa fa-bars"></i>-->
+<!--    </a>-->
     <a
         href="{% url 'algus' %}"
         class="w3-bar-item w3-button w3-theme-d4 w3-hover-white">
@@ -72,7 +72,10 @@
       </i>
       Valga linna kroonika
     </a>
-
+    <button
+        class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white"
+        onclick="openRightMenu()">&#9776;
+    </button>
     <!-- Search on large screens -->
     <form
         class="w3-hide-small"
@@ -99,7 +102,7 @@
     <!-- Lingid erilehtedele -->
     <a
         href="{% url 'wiki:info' %}"
-        class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+        class="w3-bar-item w3-button w3-hover-white"
         title="Projektist">
       <i class="fa fa-info"></i>
     </a>
@@ -147,6 +150,42 @@
     </a>
     {% endif %}
   </div>
+
+  <!-- Navbar on small screens -->
+  <div class="w3-sidebar w3-bar-block w3-card w3-animate-right" style="display:none;right:0;" id="rightMenu">
+    <button
+        onclick="closeRightMenu()"
+        class="w3-bar-item w3-button w3-large"><i class="fa fa-close"></i>
+    </button>
+    <a
+        href="{% url 'wiki:wiki_artikkel_filter' %}"
+        class="w3-bar-item w3-button"><i style="overflow: hidden" class="fa fa-search"></i>
+      <span style="margin-left: 15px;">Otsi...</span>
+    </a>
+    <a
+        href="{% url 'ilm:index' %}"
+        class="w3-bar-item w3-button"><i style="overflow: hidden" class="fa fa-thermometer"></i>
+      <span style="margin-left: 20px;">Valga linna ilm</span>
+    </a>
+    <a
+        href="https://et.wikipedia.org/wiki/Valga"
+        target="blank"
+        class="w3-bar-item w3-button"><i class="fa fa-wikipedia-w"></i>
+      <span style="margin-left: 15px;">Valga Vikipeedias</span>
+    </a>
+    <a
+        href="https://www.facebook.com/valgalinn/"
+        target="blank"
+        class="w3-bar-item w3-button"><i class="fa fa-facebook-official"></i>
+      <span style="margin-left: 15px;">Valga Facebook</span>
+    </a>
+    <a
+        href="{% url 'wiki:info' %}"
+        class="w3-bar-item w3-button"
+        title="Projektist"><i class="fa fa-info"></i>
+      <span style="margin-left: 20px;">Projektist</span>
+    </a>
+  </div>
 </div>
 
 <div class="w3-container" style="margin-top:60px;">
@@ -164,35 +203,34 @@
     {% endif %}
   </div>
 
-  <!-- Navbar on small screens -->
-  <div class="w3-row-padding w3-margin-bottom w3-hide-large">
-    <div id="m-navbar"
-         class="w3-bar-block w3-white w3-hide w3-hide-large w3-padding-16"
-         style="position:sticky"
-    >
-      <a
-          href="{% url 'wiki:wiki_artikkel_filter' %}"
-          class="w3-bar-item w3-button w3-hover-white">
-        <i class="fa fa-search"></i>&nbsp;Otsi...
-      </a>
-      <a
-          href="{% url 'ilm:index' %}"
-          class="w3-bar-item w3-button w3-hover-white">
-        <i class="fa fa-thermometer"></i>
-      </a>
-      <a
-          href="https://et.wikipedia.org/wiki/Valga"
-          target="blank"
-          class="w3-bar-item w3-button w3-hover-white">
-        <i class="fa fa-wikipedia-w"></i>&nbsp;Valga Vikipeedias
-      </a>
-      <a
-          href="{% url 'wiki:info' %}"
-          class="w3-bar-item w3-button w3-hover-white">
-        <i class="fa fa-info"></i>&nbsp;Projektist
-      </a>
-    </div>
-  </div>
+
+<!--  <div class="w3-row-padding w3-margin-bottom w3-hide-large">-->
+<!--    <div id="m-navbar"-->
+<!--         class="w3-bar-block w3-white w3-hide w3-hide-large w3-padding-16"-->
+<!--    >-->
+<!--      <a-->
+<!--          href="{% url 'wiki:wiki_artikkel_filter' %}"-->
+<!--          class="w3-bar-item w3-button w3-hover-white">-->
+<!--        <i class="fa fa-search"></i>&nbsp;Otsi...-->
+<!--      </a>-->
+<!--      <a-->
+<!--          href="{% url 'ilm:index' %}"-->
+<!--          class="w3-bar-item w3-button w3-hover-white">-->
+<!--        <i class="fa fa-thermometer"></i>-->
+<!--      </a>-->
+<!--      <a-->
+<!--          href="https://et.wikipedia.org/wiki/Valga"-->
+<!--          target="blank"-->
+<!--          class="w3-bar-item w3-button w3-hover-white">-->
+<!--        <i class="fa fa-wikipedia-w"></i>&nbsp;Valga Vikipeedias-->
+<!--      </a>-->
+<!--      <a-->
+<!--          href="{% url 'wiki:info' %}"-->
+<!--          class="w3-bar-item w3-button w3-hover-white">-->
+<!--        <i class="fa fa-info"></i>&nbsp;Projektist-->
+<!--      </a>-->
+<!--    </div>-->
+<!--  </div>-->
 
   <!-- Search on small screens -->
   <div class="w3-row-padding w3-margin-bottom w3-hide-medium w3-hide-large">
@@ -286,6 +324,14 @@ function myFunction() {
     } else { 
         x.className = x.className.replace(" w3-show", "");
     }
+}
+
+function openRightMenu() {
+  document.getElementById("rightMenu").style.display = "block";
+}
+
+function closeRightMenu() {
+  document.getElementById("rightMenu").style.display = "none";
 }
 </script>
 
