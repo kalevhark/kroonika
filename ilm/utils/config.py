@@ -1,13 +1,13 @@
-#!/usr/bin/python
+#!/home/ec2-user/django/kroonika_env/bin/python3
+import os
 from configparser import ConfigParser
 
-
 # The following config() function read the database.ini file and returns the connection parameters.
-def config(filename='database.ini', section='postgresql'):
+def config(path='', filename='database.ini', section='postgresql'):
     # create a parser
     parser = ConfigParser()
     # read config file
-    parser.read(filename)
+    parser.read(os.path.join(path, filename))
 
     # get section, default to postgresql
     db = {}

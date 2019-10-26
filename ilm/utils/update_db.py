@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/home/ec2-user/django/kroonika_env/bin/python3
 from datetime import datetime, timedelta
+import os
 import re
+import sys
 import xml.etree.ElementTree as ET
-
 
 from urllib.request import Request, urlopen
 
@@ -12,7 +13,6 @@ from psycopg2.extras import RealDictCursor
 from pytz import timezone
 import pytz
 import requests
-import urllib3
 
 from config import config
 
@@ -87,7 +87,6 @@ def ilmaandmed_veebist(dt):
     soup = BeautifulSoup(webpage, 'html.parser')
     kontroll_hour = soup.find(attrs={"name": "filter[hour]"})
     kontroll_date = soup.find(attrs={"name": "filter[date]"})
-    print(kontroll_date['value'], kontroll_hour['value'])
     andmed = dict()
     if kontroll_hour:
         if kontroll_hour['value'].zfill(2) != tund.zfill(2) or kontroll_date['value'] != p2ev:
@@ -153,11 +152,11 @@ def connect():
             print('Database connection closed.')
 
 # Viimane mõõtmistulemus
-def get_maxtimestamp():
+def get_maxtimestamp(path=''):
     """ query maxdate from the ilm_ilm table """
     conn = None
     try:
-        params = config()
+        params = config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
         cur.execute("SELECT max(timestamp) FROM ilm_ilm")
@@ -179,16 +178,15 @@ def get_maxtimestamp():
             conn.close()
 
 # Viimase ööpäeva mõõtmistulemused
-def get_observations_24hours():
+def get_observations_24hours(path=''):
     """ query maxdate from the ilm_ilm table """
     conn = None
     try:
-        params = config()
+        params = config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
         cur.execute("SELECT timestamp FROM ilm_ilm WHERE timestamp > now() - interval '1 day' ORDER BY timestamp")
         print("Kandeid: ", cur.rowcount)
-
         row = cur.fetchone()
 
         while row is not None:
@@ -206,13 +204,13 @@ def get_observations_24hours():
 
 
 # Mõõtmistulemuse olemasolu kontroll aja järgi
-def check_observation_exists(dt):
+def check_observation_exists(dt, path=''):
     """ query if exists timestamp from the ilm_ilm table """
     conn = None
     row = dict()
 
     try:
-        params = config()
+        params = config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor(cursor_factory=RealDictCursor)
         # cur = conn.cursor()
@@ -248,7 +246,7 @@ def check_observation_exists(dt):
     return row
 
 # Lisab uue vaatlusandmete kirje
-def insert_new_observations(observation_dict):
+def insert_new_observations(observation_dict, path=''):
     if not observation_dict:
         return
     # Eemaldame id, kui on
@@ -264,7 +262,7 @@ def insert_new_observations(observation_dict):
     obs_id = None
     try:
         # read database configuration
-        params = config()
+        params = config(path)
         # connect to the PostgreSQL database
         conn = psycopg2.connect(**params)
         # create a new cursor
@@ -285,13 +283,13 @@ def insert_new_observations(observation_dict):
     return obs_id
 
 # Kustutab topeltkirjed
-def delete_duplicate_observations():
+def delete_duplicate_observations(path=''):
     """ delete part by part id """
     conn = None
     rows_deleted = 0
     try:
         # read database configuration
-        params = config()
+        params = config(path)
         # connect to the PostgreSQL database
         conn = psycopg2.connect(**params)
         # create a new cursor
@@ -314,26 +312,18 @@ def delete_duplicate_observations():
 
 
 if __name__ == '__main__':
+    path = os.path.dirname(sys.argv[0])
     # get_maxtimestamp()
-    delete_duplicate_observations()
+    delete_duplicate_observations(path)
     for hour in range(23, -1, -1): # Viimase 24 tunni andmed
         observation_time = datetime.now() - timedelta(hours=hour)
-        observation = check_observation_exists(observation_time)
-        # print(observation)
-        # data = check_observation_exists(datetime(2019, 9, 1, 12))
-        # for key in data:
-        #      print(key, data[key])
-        #
-        # ilm = ilm_praegu()
-        # print(ilm)
-        # print(ilm_lasthour)
+        observation = check_observation_exists(observation_time, path)
+        print(observation_time, end=': ')
         if not observation:
-            print("Lisame")
             ilm_observation_veebist = ilmaandmed_veebist(observation_time)
             # print(ilm_observation_veebist)
-            id = insert_new_observations(ilm_observation_veebist)
-            print(id)
+            id = insert_new_observations(ilm_observation_veebist, path)
+            print(f'lisatud {id}')
         else:
-            print("Olemas")
-        # print([key for key in data])
+            print('olemas.')
 
