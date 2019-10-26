@@ -1,4 +1,10 @@
 #!/home/ec2-user/django/kroonika_env/bin/python3
+
+#
+# Ilmaandmete regulaarseks uuendamiseks andmebaasis
+# Käivitamiseks:
+# /python-env-path-to/python3 /path-to-ilm-app/utils/update.py
+
 from datetime import datetime, timedelta
 import os
 import re
@@ -163,12 +169,11 @@ def get_maxtimestamp(path=''):
         print("Viimane kanne: ", cur.rowcount)
 
         row = cur.fetchone()
-        d = pytz.timezone('Europe/Tallinn').localize(datetime.now())
+        # d = pytz.timezone('Europe/Tallinn').localize(datetime.now())
 
-        while row is not None:
-            # print(row)
-            print(row[0], (d - row[0]).seconds)
-            row = cur.fetchone()
+        # while row is not None:
+        #     # print(row[0], (d - row[0]).seconds)
+        #     row = cur.fetchone()
 
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
@@ -176,6 +181,7 @@ def get_maxtimestamp(path=''):
     finally:
         if conn is not None:
             conn.close()
+    return row[0]
 
 # Viimase ööpäeva mõõtmistulemused
 def get_observations_24hours(path=''):
@@ -222,11 +228,10 @@ def check_observation_exists(dt, path=''):
         query = f'SELECT * FROM ilm_ilm WHERE {condition}'
 
         cur.execute(query)
-        print("Kandeid: ", cur.rowcount)
+        # print("Kandeid: ", cur.rowcount)
 
         row = cur.fetchone()
 
-        print(dt)
         # while row is not None:
         #     # d = row[0]
         #     # print(f'PostgreSQL datetime          : {d}')
@@ -307,14 +312,16 @@ def delete_duplicate_observations(path=''):
     finally:
         if conn is not None:
             conn.close()
-    print(f'Kustutati: {rows_deleted}')
+    # print(f'Kustutati: {rows_deleted}')
     return rows_deleted
 
 
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
     # get_maxtimestamp()
-    delete_duplicate_observations(path)
+    rows_deleted = delete_duplicate_observations(path)
+    print(f'Kustutati: {rows_deleted} kirjet')
+
     for hour in range(23, -1, -1): # Viimase 24 tunni andmed
         observation_time = datetime.now() - timedelta(hours=hour)
         observation = check_observation_exists(observation_time, path)
