@@ -44,7 +44,7 @@ COLORS = [
     "#f45b5b", "#91e8e1"
 ]
 
-# Decimal ndmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
+# Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
 def float_or_none(value):
     try:
         return float(value)
