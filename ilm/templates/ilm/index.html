@@ -2,31 +2,11 @@
 {% load static %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href={% static "ilm/css/ilm_loader.css" %}>
+<link rel="stylesheet" href="{% static 'ilm/css/ilm_loader.css' %}">
 {% endblock %}
 
 {% block javascript %}
 <script src="{% static 'ilm/js/ilm_mixed_ilmateade.js' %}"></script>
-<script>
-// Järgnev käivitub kui leht laetud ja kutsub välja graafiku
-var chart,
-	obj, 
-	chartTitle;
-
-$(document).ready(function() {
-  mixed_ilmateade();
-});
-$(window).bind('resize', function(e)
-  {
-    if (window.RT) clearTimeout(window.RT);
-    window.RT = setTimeout(function()
-      {
-        mixed_ilmateade();
-<!--        this.location.reload(false);-->
-      }, 100);
-  }
-);
-</script>
 {% endblock %}
 
 {% block content %}

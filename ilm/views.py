@@ -1564,3 +1564,4 @@ def mixed_ilmateade(request):
 
     chart['yrno_symbols'] = andmed_eelnevad24h['symbols'] + andmed_j2rgnevad48h['forecast']['symbols']
     return JsonResponse(chart)
+

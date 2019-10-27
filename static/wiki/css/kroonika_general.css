@@ -6,6 +6,12 @@ a {
   text-decoration: none;
 }
 
+/* Kasutamiseks navbar submenns */
+.bar-item-text-with-icon {
+  position: absolute;
+  left: 40px;
+}
+
 /* Kasutamiseks objektivaates */
 .pilt-postkaart-medium {
 	max-height: 512px;
