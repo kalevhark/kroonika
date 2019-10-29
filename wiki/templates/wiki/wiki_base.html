@@ -13,7 +13,6 @@
   <meta name="author" content="Kalev Härk" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <!-- Kirjeldus -->
-<!--  <meta property="og:url"           content="http://18.196.203.237/" />-->
   <meta property="og:type"          content="website" />
   <meta property="og:title"         content="Valga linna kroonika" />
   <meta property="og:description"   content="Valga linna kroonika" />
@@ -41,6 +40,17 @@
   {% block css %}{% endblock %}
 
   <link rel="shortcut icon" href={% static "wiki/img/favicon.ico" %}>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-151102639-1');
+  </script>
+
 </head>
 
 <!-- Kroonika -->
@@ -55,12 +65,6 @@
 <!-- Navbar -->
 <div id="top" class="w3-top">
   <div class="w3-bar w3-left-align w3-large w3-padding">
-<!--    <a-->
-<!--        class="w3-bar-item w3-button w3-hide-large w3-right w3-hover-white w3-large w3-theme-d2"-->
-<!--        href="javascript:void(0);"-->
-<!--        onclick="myFunction()">-->
-<!--      <i class="fa fa-bars"></i>-->
-<!--    </a>-->
     <a
         href="{% url 'algus' %}"
         class="w3-bar-item w3-button w3-theme-d4 w3-hover-white">

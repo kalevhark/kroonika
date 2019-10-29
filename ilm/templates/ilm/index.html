@@ -1,4 +1,4 @@
-{% extends "ilm/base.html" %}
+{% extends "ilm/ilm_base.html" %}
 {% load static %}
 
 {% block stylesheet %}
@@ -7,10 +7,19 @@
 
 {% block javascript %}
 <script src="{% static 'ilm/js/ilm_mixed_ilmateade.js' %}"></script>
+
+<script>
+  if ($(window).width() < 480 || $(window).height() < 480) {
+    //small screen, load other JS files
+    $.getScript('https://www.yr.no/place/Estonia/Valgamaa/Valga/external_box_small.js', function () {
+      //the script has been added to the DOM, you can now use it's code
+    });
+  }
+</script>
 {% endblock %}
 
 {% block content %}
-  <div class="w3-row">
+  <div class="w3-row w3-hide-small">
     <div id="loader"></div>
     <div
         id="container_mixed_ilmateade"
@@ -18,5 +27,10 @@
         data-url="{% url 'ilm:mixed_ilmateade' %}"
         style="min-width: 400px; margin: 0 auto; display:none;">
     </div>
+  </div>
+  <div class="w3-row w3-hide-medium w3-hide-large" >
+    <noscript>
+      <a href="https://www.yr.no/place/Estonia/Valgamaa/Valga/">yr.no: Forecast for Valga</a>
+    </noscript>
   </div>
 {% endblock %}
