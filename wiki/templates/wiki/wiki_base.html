@@ -13,6 +13,7 @@
   <meta name="author" content="Kalev Härk" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <!-- Kirjeldus -->
+  <meta property="og:url" content="http://valgalinn.ee" />
   <meta property="og:type"          content="website" />
   <meta property="og:title"         content="Valga linna kroonika" />
   <meta property="og:description"   content="Valga linna kroonika" />
@@ -62,6 +63,7 @@
 
 <body class="w3-light-grey">
 
+<!--Facebook plugin-->
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/et_EE/sdk.js#xfbml=1&version=v5.0"></script>
 
@@ -331,21 +333,11 @@
   }
 </script>
 
-<!-- Väikese ekraani menüü (Collapsing the Navigation Bar) -->
+<!-- Väikese ekraani menüü (Opening and Collapsing the Navigation Bar) -->
 <script>
-function myFunction() {
-    var x = document.getElementById("m-navbar");
-    if (x.className.indexOf("w3-show") == -1) {
-        x.className += " w3-show";
-    } else { 
-        x.className = x.className.replace(" w3-show", "");
-    }
-}
-
 function openRightMenu() {
   document.getElementById("rightMenu").style.display = "block";
 }
-
 function closeRightMenu() {
   document.getElementById("rightMenu").style.display = "none";
 }
