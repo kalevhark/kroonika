@@ -1,8 +1,7 @@
 {% load static %}
 {% block fb_meta %}
-  <meta property="og:description" content="{{ object }}" />
   <meta property="og:image" content="http://valgalinn.ee{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
-{% endblock fb_meta %}
+{% endblock %}
 <div
     class="fb-share-button"
     data-href="{{ request.build_absolute_uri }}"
