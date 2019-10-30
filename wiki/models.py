@@ -956,11 +956,15 @@ class Artikkel(models.Model):
         objects = ArtikkelSajandTagasiManager() # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
-        tekst = self.body_text[:50]
-        if len(self.body_text) > 50:
-            tyhik = self.body_text.find(' ',50,70)
-            if tyhik > 0:
-                tekst = self.body_text[:tyhik] + '...'
+        # tekst = self.body_text[:50]
+        # if len(self.body_text) > 50:
+        #     tyhik = self.body_text.find(' ',50,70)
+        #     if tyhik > 0:
+        #         tekst = self.body_text[:tyhik] + '...'
+        splits = self.body_text.split(' ')
+        tekst = ' '.join(splits[:10]) # 10 esimest sõna
+        if len(tekst) < len(self.body_text):
+            tekst += '...'
         return tekst
 
     def __repr__(self):
