@@ -1,11 +1,6 @@
 {% load static %}
 <div class="w3-row">
   <small>
-    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-    <meta property="og:type"          content="article" />
-    <meta property="og:title"         content="{{ object }}" />
-    <meta property="og:description"   content="Valga linna kroonika" />
-    <meta property="og:image"         content="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
     <div
         class="fb-share-button"
         data-href="{{ request.build_absolute_uri }}"
