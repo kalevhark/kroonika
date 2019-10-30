@@ -2,7 +2,7 @@
 <html lang="et">
 
 <head>
-  {% load staticfiles %}
+  {% load static %}
   {% load crispy_forms_tags %}
   {% load wiki_extras %}
 
@@ -18,7 +18,7 @@
   <meta property="og:title"         content="{{ object }}" />
   <meta property="og:description"   content="Valga linna kroonika" />
 <!--  <meta property="og:image"         content="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />-->
-  <meta property="og:image"         content="{{ profiilipilt.pilt.url }}" />
+  <meta property="og:image"         content="{{ profiilipilt.pilt_icon.url }}" />
 
   <!--  Laetavad moodulid-->
   <!-- jQuery -->
