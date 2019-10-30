@@ -12,13 +12,12 @@
   <meta name="keywords" content="Valga, linn, kroonika, ajalugu" />
   <meta name="author" content="Kalev Härk" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <!-- Kirjeldus -->
+  <!-- Kirjeldus FB jaoks -->
   <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-  <meta property="og:type"          content="article" />
-  <meta property="og:title"         content="{{ object }}" />
-  <meta property="og:article:published_time"         content="{{ object.hist_date|date:'c' }}" />
-  <meta property="og:description"   content="Valga linna kroonika" />
-  <meta property="og:image"         content="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
+  <meta property="og:title" content="Valga linna kroonika" />
+  <meta property="og:type" content="article" />
+  {% block fb_meta %}
+  {% endblock fb_meta %}
 
   <!--  Laetavad moodulid-->
   <!-- jQuery -->

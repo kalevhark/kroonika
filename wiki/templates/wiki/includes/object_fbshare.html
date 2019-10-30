@@ -1,0 +1,16 @@
+{% load static %}
+{% block fb_meta %}
+  <meta property="og:description" content="{{ object }}" />
+  <meta property="og:image" content="http://valgalinn.ee{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
+{% endblock fb_meta %}
+<div
+    class="fb-share-button"
+    data-href="{{ request.build_absolute_uri }}"
+    data-layout="button"
+    data-size="small">
+  <a
+      target="_blank"
+      href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri | urlencode }}%2F&amp;src=sdkpreparse"
+      class="fb-xfbml-parse-ignore">Jaga
+  </a>
+</div>
