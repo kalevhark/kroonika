@@ -325,12 +325,13 @@ if __name__ == '__main__':
     for hour in range(23, -1, -1): # Viimase 24 tunni andmed
         observation_time = datetime.now() - timedelta(hours=hour)
         observation = check_observation_exists(observation_time, path)
-        print(observation_time, end=': ')
+        # print(observation_time, end=': ')
         if not observation:
             ilm_observation_veebist = ilmaandmed_veebist(observation_time)
             # print(ilm_observation_veebist)
             id = insert_new_observations(ilm_observation_veebist, path)
-            print(f'lisatud {id}')
+            print(f'{observation_time} lisatud {id}')
         else:
-            print('olemas.')
+            # print('olemas.')
+            pass
 
