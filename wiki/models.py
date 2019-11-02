@@ -150,8 +150,8 @@ class Viide(models.Model):
         on_delete=models.SET_NULL,
         verbose_name='Allikas',
         help_text='Allikas',
-        null=True,
-        blank=True
+        # null=True,
+        # blank=True
     )
     peatykk = models.CharField(
         'Peatükk',
@@ -207,15 +207,15 @@ class Viide(models.Model):
             for obj in self.allikas.autorid.all():
                 autorid = ', '.join([obj.lyhinimi])
         # Viite kohaviida andmed
-        if self.peatykk:
-            peatykk = self.peatykk
-        else:
-            peatykk = ''
         if self.allikas.nimi:
             allika_nimi = self.allikas.nimi
         else:
             allika_nimi = ''
         viit = ''
+        if self.peatykk:
+            peatykk = self.peatykk
+        else:
+            peatykk = ''
         if self.kohaviit: # kui on füüsiline asukoht
             viit = viit + ', ' + self.kohaviit
         else: # kui on ainult internetilink
