@@ -135,14 +135,15 @@ class VihjeForm(ModelForm):
         self.helper.form_action = 'wiki:feedback'
         self.helper.layout = Layout(
             Fieldset(
-                'Märkasid viga või oskad täiendada?',
+                'Olen tänulik, kui märkasid viga või oskad täiendada:',
                 'kirjeldus',
                 'kontakt',
                 HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >')
             ),
             ButtonHolder(
                 # HTML('<span class="hidden">✓ Saved data</span>'),
-                Submit('save', 'Saada')
+                Submit('save', 'Saada'),
+                Submit('cancel', 'Loobu', onclick='showFeedback()', css_class='btn-default')
             )
         )
 

@@ -427,7 +427,14 @@ def algus(request):
             andmed['objekt']['100_aastat_tagasi'],
         ]
     )
-    return render(request, 'wiki/wiki.html', {'andmed': andmed})
+    # Lisame vihjevormi
+    feedbackform = VihjeForm()
+    return render(
+        request, 'wiki/wiki.html', {
+            'andmed': andmed,
+            'feedbackform': feedbackform
+        }
+    )
 
 
 #

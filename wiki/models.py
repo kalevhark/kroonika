@@ -150,8 +150,8 @@ class Viide(models.Model):
         on_delete=models.SET_NULL,
         verbose_name='Allikas',
         help_text='Allikas',
-        # null=True,
-        # blank=True
+        null=True,
+        blank=True
     )
     peatykk = models.CharField(
         'Peatükk',

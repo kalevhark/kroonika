@@ -108,7 +108,13 @@
         <i class="fa fa-search"></i>
       </button>
     </form>
-
+    <!--		Tagasiside saatmiseks -->
+    <a
+        class="w3-bar-item w3-button w3-hover-white"
+        title="Märkasid viga või oskad täiendada?"
+        onclick="showFeedback()">
+      <i class="fa fa-bug"></i>
+    </a>
     <!-- Lingid erilehtedele -->
     <a
         href="{% url 'wiki:info' %}"
@@ -357,3 +363,15 @@ function closeRightMenu() {
 
 {% block javascript %} {% endblock %}
 </html>
+
+<script>
+	function showFeedback() {
+		var x = document.getElementById("panelFeedBack");
+		if (x.className.indexOf("w3-show-block") == -1) {
+			x.className += " w3-show-block";
+			document.getElementById("id_kirjeldus").focus();
+		} else {
+			x.className = x.className.replace(" w3-show-block", "");
+		}
+	}
+</script>
