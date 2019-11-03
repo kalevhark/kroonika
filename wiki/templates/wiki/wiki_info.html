@@ -13,6 +13,11 @@
 
 {% block content %}
   <div class="w3-row-padding w3-margin-bottom">
+    <!--		Tagasiside vorm -->
+    {% load crispy_forms_tags %}
+    <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">
+      {% crispy feedbackform %}
+    </div>
     <p>
       Valga linna kroonika seotuna isikute, organisatsioonide ja objektidega on kasutamiseks informatsioonilistel ja hariduslikel eesmärkidel. Kogutud ja esitatud materjalid võivad olla ebatäpsed, mistõttu nende kasutamine on iga kasutaja enda riskil.
     </p>
