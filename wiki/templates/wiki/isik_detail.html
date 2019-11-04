@@ -1,4 +1,5 @@
 {% extends "wiki/wiki_base.html" %}
+{% load wiki_extras %}
 
 {% block title %}{{ block.super }} - {{ object }}{% endblock %}
 
@@ -14,7 +15,7 @@
 	  </h4>
     <p class="w3-large">
       {% if object.hist_date %}
-        <b>{{ object.hist_date|date:"d.m.Y" }}</b>
+        <b>{{ object.hist_date|date:"d.m.Y" }}</b> {{ object.hist_date | ukj}}
       {% endif %}
       {% if object.synd_koht %}
         ({{ object.synd_koht }})

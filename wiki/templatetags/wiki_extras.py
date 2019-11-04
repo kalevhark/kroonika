@@ -29,6 +29,25 @@ def object_mainitud_artiklites(context, object, model):
         'artikkel_qs': artikkel_qs
     }
 
+from datetime import date, timedelta
+
+@register.filter
+def ukj(date_vkj):
+    if date(1918, 1, 31) >= date_vkj >= date(1582, 10, 5):
+        nihe = 0
+        if date(1918, 1, 31) >= date_vkj > date(1900, 2, 28):
+            nihe = 13
+        if date(1900, 2, 28) >= date_vkj > date(1800, 2, 28):
+            nihe = 12
+        if date(1800, 2, 28) >= date_vkj > date(1700, 2, 28):
+            nihe = 11
+        if date(1800, 2, 28) >= date_vkj >= date(1582, 10, 5):
+            nihe = 10
+        date_ukj = date_vkj + timedelta(days=nihe)
+        return f'(ukj: {date_ukj:%d.%m.%Y})'
+    else:
+        return ''
+
 @register.simple_tag
 def kalev():
     return 'Kalev Härk'

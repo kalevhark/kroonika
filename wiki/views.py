@@ -173,7 +173,8 @@ def info(request):
     ]
      # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
-
+    # tagasiside vorm
+    feedbackform = VihjeForm()
     return render(
         request,
         'wiki/wiki_info.html',
@@ -183,6 +184,7 @@ def info(request):
             'artikleid_kuus': artikleid_kuus,
             'artikleid_kuus_max': artikleid_kuus_max,
             'meta_andmed': request.META,
+            'feedbackform': feedbackform,
             # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         }
