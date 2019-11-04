@@ -289,7 +289,6 @@ def insert_new_observations(observation_dict, path=''):
 
 # Kustutab topeltkirjed
 def delete_duplicate_observations(path=''):
-    """ delete part by part id """
     conn = None
     rows_deleted = 0
     try:
@@ -320,7 +319,8 @@ if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
     # get_maxtimestamp()
     rows_deleted = delete_duplicate_observations(path)
-    print(f'Kustutati: {rows_deleted} kirjet')
+    if rows_deleted > 0:
+        print(f'Kustutati: {rows_deleted} kirjet')
 
     for hour in range(23, -1, -1): # Viimase 24 tunni andmed
         observation_time = datetime.now() - timedelta(hours=hour)

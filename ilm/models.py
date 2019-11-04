@@ -29,6 +29,10 @@ class Ilm(models.Model):
     def __str__(self):
         return str(self.timestamp)
 
+    class Meta:
+        ordering = ['-timestamp']
+        verbose_name_plural = "Ilmavaatlused"
+
 
 class Jaam(models.Model):
     name = models.CharField('Jaam', max_length=30)
@@ -42,3 +46,6 @@ class Jaam(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = "Jaamad"
