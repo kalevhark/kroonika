@@ -73,14 +73,15 @@
   <div class="w3-bar w3-left-align w3-large w3-padding">
     <a
         href="{% url 'algus' %}"
-        class="w3-bar-item w3-button w3-theme-d4 w3-hover-white">
-      <i class="fa w3-margin-right">
+        class="w3-bar-item w3-button w3-hover-white">
         <img
             src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}"
             style='max-height:22px;'
             alt="vapp">
-      </i>
-      Valga linna kroonika
+    </a>
+    <a
+      href="{% url 'algus' %}"
+      class="w3-bar-item w3-button w3-hover-white">Valga linna kroonika
     </a>
     <button
         class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white"
@@ -121,6 +122,12 @@
         class="w3-bar-item w3-button w3-hover-white"
         title="Projektist">
       <i class="fa fa-info"></i>
+    </a>
+    <a
+        href="{% url 'blog:blog_index' %}"
+        class="w3-bar-item w3-button w3-hover-white"
+        title="Blogi">
+      <i class="fa fa-comments-o"></i>
     </a>
     <a
         href="{% url 'ilm:index' %}"

@@ -42,6 +42,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'wiki.apps.WikiConfig',
     'ilm.apps.IlmConfig',
+    'blog.apps.BlogConfig',
     'django_filters',
     'widget_tweaks',
     'rest_framework',
