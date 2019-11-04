@@ -12,7 +12,14 @@
         </a>&nbsp;
         {% endfor %}
     </small>
-    <p>{{ post.body | slice:":400" }}...</p>
+    <p class="w3-hover-white">
+      <a
+          href="{% url 'blog:blog_detail' post.pk%}"
+          title="Loe edasi..."
+      >
+        {{ post.body | slice:":400" }}...
+      </a>
+    </p>
     {% endfor %}
 </div>
 {% endblock %}
