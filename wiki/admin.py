@@ -352,6 +352,7 @@ class IsikAdmin(admin.ModelAdmin):
         'eluaeg',
         'seotud_artikleid',
         'seotud_pilte',
+        'seotud_viiteid',
     )
     search_fields = [
         'id',
@@ -456,6 +457,10 @@ class IsikAdmin(admin.ModelAdmin):
         return obj.pilt_set.count()
     seotud_pilte.short_description = 'Pilte'
 
+    # Kui palju on objektiga seotud viiteid
+    def seotud_viiteid(self, obj):
+        return obj.viited.count()
+    seotud_viiteid.short_description = 'Viiteid'
 
 class OrganisatsioonAdmin(admin.ModelAdmin):
     form = OrganisatsioonForm
@@ -473,6 +478,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         'hist_endyear',
         'seotud_artikleid',
         'seotud_pilte',
+        'seotud_viiteid',
     ]
     fieldsets = [
         (None, {
@@ -519,6 +525,11 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         return obj.pilt_set.count()
     seotud_pilte.short_description = 'Pilte'
 
+    # Kui palju on objektiga seotud viiteid
+    def seotud_viiteid(self, obj):
+        return obj.viited.count()
+    seotud_viiteid.short_description = 'Viiteid'
+
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
     def save_model(self, request, obj, form, change):
         objekt = form.save(commit=False)
@@ -564,6 +575,7 @@ class ObjektAdmin(admin.ModelAdmin):
         'hist_month',
         'seotud_artikleid',
         'seotud_pilte',
+        'seotud_viiteid',
     ]
     search_fields = ['id', 'nimi']
     fieldsets = [
@@ -638,6 +650,11 @@ class ObjektAdmin(admin.ModelAdmin):
     def seotud_pilte(self, obj):
         return obj.pilt_set.count()
     seotud_pilte.short_description = 'Pilte'
+
+    # Kui palju on objektiga seotud viiteid
+    def seotud_viiteid(self, obj):
+        return obj.viited.count()
+    seotud_viiteid.short_description = 'Viiteid'
 
 
 class KroonikaAdmin(admin.ModelAdmin):
