@@ -470,7 +470,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         'nimi',
         'hist_date',
         'hist_year',
-        'hist_month',
+        'hist_endyear',
         'seotud_artikleid',
         'seotud_pilte',
     ]
