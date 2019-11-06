@@ -37,7 +37,7 @@ cs - lingi värv (näiteks: "primary", "white", "dark")
 {% if ed %}
 	&nbsp;-&nbsp;
 	<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_day_archive' year=ed|date:"Y" month=ed|date:"m" day=ed|date:"d" %}>
-	  {{ ed|date:"d." }}
+	  {{ ed|date:"j." }}
 	  <span class="tooltiptext">Mis juhtus {{ ed|date:"j.m.Y" }}?</span>
 	<a>
 	<a class="text-{{ cs }} hover-artikkel tooltip" href={% url 'wiki:artikkel_month_archive' year=ed|date:"Y" month=ed|date:"m" %}>
