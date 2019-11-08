@@ -26,12 +26,18 @@
 		<div class="w3-container w3-cell w3-cell-middle w3-mobile">
 			{% render_field filter.form.hist_year class+="w3-input w3-border-0" placeholder=filter.form.hist_year.label %}
 		</div>
+<!--		<div class="w3-container w3-cell w3-cell-middle w3-mobile">-->
+<!--			{% render_field filter.form.body_text__icontains class+="w3-input w3-border-0" placeholder="Fraas(id) loos..." %}-->
+<!--		</div>-->
 		<div class="w3-container w3-cell w3-cell-middle w3-mobile">
-			{% render_field filter.form.body_text__icontains class+="w3-input w3-border-0" placeholder="Fraas(id) loos..." %}
+			{% render_field filter.form.artikkel_sisaldab class+="w3-input w3-border-0" placeholder="Fraas(id) loos..." %}
 		</div>
 		<div class="w3-container w3-cell w3-cell-middle w3-mobile">
-			{% render_field filter.form.isikud__perenimi__icontains class+="w3-input w3-border-0" placeholder="Fraas isiku nimes..." %}
+			{% render_field filter.form.nimi_sisaldab class+="w3-input w3-border-0" placeholder="Fraas isiku nimes..." %}
 		</div>
+<!--		<div class="w3-container w3-cell w3-cell-middle w3-mobile">-->
+<!--			{% render_field filter.form.isikud__perenimi__icontains class+="w3-input w3-border-0" placeholder="Fraas isiku nimes..." %}-->
+<!--		</div>-->
 		<div class="w3-container w3-cell w3-cell-middle w3-mobile">
 			<button
 					class="w3-bar-item w3-button background-artikkel w3-text-white w3-hover-white"
@@ -58,18 +64,19 @@
 	{% include 'wiki/includes/pagination_next.html' with model="artikkel" %}
 {% else %}
 	<div class="w3-container w3-padding">
-	  {% if filter.form.hist_year.value or filter.form.perenimi__icontains.value or filter.form.eesnimi__icontains.value %}
-	    Otsinguga sissekandeid, milles
-		{% if filter.form.hist_year.value %}
-		  toimumisaasta on &#x0022;{{ filter.form.hist_year.value}}&#x0022;
-		{% endif %}
-		{% if filter.form.body_text__icontains.value %}
-		  sisutekst sisaldab fraasi &#x0022;{{ filter.form.body_text__icontains.value }}&#x0022;&nbsp;
-		{% endif %}
-		{% if filter.form.isikud__perenimi__icontains.value %}
-		  mainitud isiku nimi sisaldab fraasi&#x0022;{{ filter.form.isikud__perenimi__icontains.value }}&#x0022;
-		{% endif %}
-		, ei leitud
+	  {% if filter.form.hist_year.value or filter.form.artikkel_sisaldab.value or filter.form.nimi_sisaldab.value %}
+	    Otsinguga ei leitud sissekandeid, milles:
+			<ul>
+				{% if filter.form.hist_year.value %}
+					<li>toimumisaasta on &#x0022;{{ filter.form.hist_year.value}}&#x0022;</li>
+				{% endif %}
+				{% if filter.form.artikkel_sisaldab.value %}
+					<li>lugu sisaldab fraasi &#x0022;{{ filter.form.artikkel_sisaldab.value }}&#x0022;</li>
+				{% endif %}
+				{% if filter.form.nimi_sisaldab.value %}
+					<li>mainitud isiku nimi sisaldab fraasi &#x0022;{{ filter.form.nimi_sisaldab.value }}&#x0022;</li>
+				{% endif %}
+			</ul>
 	  {% else %}
 	    Valikut pole tehtud
 	  {% endif %}

@@ -8,7 +8,7 @@
     <div>
       <a
           style="text-decoration: none;"
-          href="?{% if filter.form %}{% for element in filter.form %}{{ element.name }}={{ element.value }}&{% endfor %}{% endif %}page={{ object_list.next_page_number }}"
+          href="?{% include 'wiki/includes/pagination_querystring.html' %}page={{ object_list.next_page_number }}"
           title="järgmisele leheküljele (lk {{ object_list.next_page_number }})"
       >
         <div class="w3-container background-{{ model }} w3-padding-16  w3-hover-white w3-center">

@@ -702,13 +702,15 @@ class ObjektUpdate(LoginRequiredMixin, UpdateView):
 # Artiklite otsimise/filtreerimise seaded
 #
 class ArtikkelFilter(django_filters.FilterSet):
-    
+    nimi_sisaldab = django_filters.CharFilter(method='nimi_sisaldab_filter')
+    artikkel_sisaldab = django_filters.CharFilter(method='artikkel_sisaldab_filter')
+
     class Meta:
         model = Artikkel
         fields = {
             'hist_year': ['exact'],
-            'body_text': ['icontains'],
-            'isikud__perenimi': ['icontains'],
+            # 'body_text': ['icontains'],
+            # 'isikud__perenimi': ['icontains'],
             }
 
     def __init__(self, *args, **kwargs):
@@ -717,31 +719,67 @@ class ArtikkelFilter(django_filters.FilterSet):
         if self.data == {}:
             self.queryset = self.queryset.none()
 
-    @property
-    def qs(self, *args, **kwargs):
-        # küsime algse päringu
-        # initial_qs = super(ArtikkelFilter, self).qs
-        # päringu parameetrid
-        fraasid = self.data.get('body_text__icontains', '').split(' ')
-        if len(fraasid) > 1:
-            # modified_qs = Artikkel.objects.all()
-            modified_qs = artikkel_qs_userfilter(self.request.user)
-            if self.data.get('hist_year__exact'):
-                modified_qs = modified_qs.filter(
-                    hist_year__exact=self.data['hist_year__exact']
-                )
-            if self.data.get('isikud__perenimi__icontains'):
-                modified_qs = modified_qs.filter(
-                    isikud__perenimi__icontains=self.data['isikud__perenimi__icontains']
-                )
+    def nimi_sisaldab_filter(self, queryset, name, value):
+        # päritud fraas nimes
+        if self.data.get('nimi_sisaldab'):
+            modified_qs = (
+                    queryset.filter(
+                        isikud__perenimi__icontains=self.data['nimi_sisaldab']
+                    ) |
+                    queryset.filter(
+                        isikud__eesnimi__icontains=self.data['nimi_sisaldab']
+                    )
+            )
+        return modified_qs
+
+    def artikkel_sisaldab_filter(self, queryset, name, value):
+        # päritud fraas(id) tekstis
+        fraasid = self.data.get('artikkel_sisaldab', '').split(' ')
+        if len(fraasid) > 0:
+            modified_qs = queryset
+            # modified_qs = artikkel_qs_userfilter(self.request.user)
             for fraas in fraasid:
+                print(fraas)
                 modified_qs = modified_qs.filter(
                     body_text__icontains=fraas
                 )
+            return modified_qs
         else:
-            modified_qs = super(ArtikkelFilter, self).qs
-        # author = getattr(self.request, 'user', None)
-        return modified_qs
+            return queryset
+
+
+    # @property
+    # def qs(self, *args, **kwargs):
+    #     # küsime algse päringu
+    #     # initial_qs = super(ArtikkelFilter, self).qs
+    #     modified_qs = super(ArtikkelFilter, self).qs
+    #     # päritud aasta
+    #     if self.data.get('hist_year__exact'):
+    #         modified_qs = modified_qs.filter(
+    #             hist_year__exact=self.data['hist_year__exact']
+    #         )
+    #     # päritud fraas nimes
+    #     # if self.data.get('isikud__perenimi__icontains'):
+    #     #     modified_qs = (
+    #     #             modified_qs.filter(
+    #     #                 isikud__perenimi__icontains=self.data['isikud__perenimi__icontains']
+    #     #             ) |
+    #     #             modified_qs.filter(
+    #     #                 isikud__eesnimi__icontains=self.data['isikud__perenimi__icontains']
+    #     #             )
+    #     #     )
+    #     # päritud fraas(id) tekstis
+    #     # fraasid = self.data.get('body_text__icontains', '').split(' ')
+    #     # if len(fraasid) > 0:
+    #     #     # modified_qs = artikkel_qs_userfilter(self.request.user)
+    #     #     for fraas in fraasid:
+    #     #         print(fraas)
+    #     #         modified_qs = modified_qs.filter(
+    #     #             body_text__icontains=fraas
+    #     #         )
+    #     # else:
+    #     #    modified_qs = super(ArtikkelFilter, self).qs
+    #     return modified_qs
 
 
 #
@@ -751,16 +789,18 @@ class ArtikkelFilterView(FilterView):
     model = Artikkel
     paginate_by = 20
     template_name = 'wiki/artikkel_filter.html'
-    filterset_fields = {
-            'hist_year',
-            'body_text',
-            'isikud__perenimi',
-            }
+    # filterset_fields = {
+    #         'hist_year',
+    #         'body_text',
+    #         'isikud__perenimi',
+    #         }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        list = artikkel_qs_userfilter(self.request.user)
-        filter = ArtikkelFilter(self.request.GET, queryset=list)
+        # filtreerime artiklid vastavalt kasutajatüübile
+        queryset = artikkel_qs_userfilter(self.request.user)
+        # filtreerime artiklid vastavalt filtrile
+        filter = ArtikkelFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 
         paginator = Paginator(list, self.paginate_by)
@@ -772,7 +812,6 @@ class ArtikkelFilterView(FilterView):
         except EmptyPage:
             artiklid = paginator.page(paginator.num_pages)
         context['object_list'] = artiklid
-        # context['kirjeid'] = len(list)
         context['filter'] = filter
         return context
             
@@ -781,7 +820,6 @@ class ArtikkelFilterView(FilterView):
 # Kronoloogia
 #
 class ArtikkelArchiveIndexView(ArchiveIndexView):
-    # queryset = Artikkel.objects.all()
     date_field = "hist_searchdate"
     make_object_list = True
     allow_future = True
@@ -1009,8 +1047,8 @@ class IsikFilterView(FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        list = Isik.objects.all().order_by('perenimi')
-        filter = IsikFilter(self.request.GET, queryset=list)
+        queryset = Isik.objects.all().order_by('perenimi')
+        filter = IsikFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 
         paginator = Paginator(list, self.paginate_by)
@@ -1106,9 +1144,9 @@ class OrganisatsioonFilterView(FilterView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        list = Organisatsioon.objects.all().annotate(
+        queryset = Organisatsioon.objects.all().annotate(
             nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField())).order_by('nimi')
-        filter = OrganisatsioonFilter(self.request.GET, queryset=list)
+        filter = OrganisatsioonFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 
         paginator = Paginator(list, self.paginate_by)
@@ -1200,9 +1238,11 @@ class ObjektFilterView(FilterView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        list = Objekt.objects.all().annotate(
-            nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField())).order_by('nimi')
-        filter = ObjektFilter(self.request.GET, queryset=list)
+        queryset = Objekt.objects.all().annotate(
+            nulliga=ExpressionWrapper(
+                (datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()
+            )).order_by('nimi')
+        filter = ObjektFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 
         paginator = Paginator(list, self.paginate_by)
