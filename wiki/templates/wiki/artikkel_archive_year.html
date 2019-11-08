@@ -53,12 +53,14 @@
 </div>
 
 <div class="w3-bar">
-  <button
-      class="w3-bar-item w3-button tablink background-artikkel"
-      onclick="openLinks(event, 'artiklid')"
-    >
-      <i class="fa fa-comment"></i> {{ year|date:"Y" }} ({{ page_obj.paginator.count }})
-  </button>
+  {% if object_list %}
+    <button
+        class="w3-bar-item w3-button tablink background-artikkel"
+        onclick="openLinks(event, 'artiklid')"
+      >
+        <i class="fa fa-comment"></i> {{ year|date:"Y" }} ({{ page_obj.paginator.count }})
+    </button>
+  {% endif %}
   {% if syndinud_isikud %}
     <button
         class="w3-bar-item w3-button tablink"
@@ -103,7 +105,8 @@
       {% include 'wiki/includes/pagination_next.html' with object_list=page_obj model="artikkel" %}
     {% endif %}
   {% else %}
-    Valitud aasta ({{ year|date:"Y" }}) kohta sissekanded puuduvad! Proovige <a href="{% url 'wiki:wiki_artikkel_filter' %}"> uuesti</a>.
+    Valitud aasta ({{ year|date:"Y" }}) kohta sissekanded puuduvad!
+    <a class="w3-button background-artikkel tablink" href="{% url 'wiki:wiki_artikkel_filter' %}">Proovige uuesti</a>
   {% endif %}
 </div>
 

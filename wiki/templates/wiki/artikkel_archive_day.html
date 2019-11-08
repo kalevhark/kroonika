@@ -106,7 +106,8 @@
     {% include 'wiki/includes/object_list.html' %}
   {% else %}
     <div class="w3-container w3-padding-16">
-      <strong>{{ day|date:"d.m.Y" }}</strong> sissekandeid veel pole! Mõnda teist päeva saate vaadata  <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_filter' %}> siit</a>.
+      <strong>{{ day|date:"d.m.Y" }}</strong> sissekandeid veel pole!
+      <a class="w3-button background-artikkel tablink" href="{% url 'wiki:wiki_artikkel_filter' %}">Proovige uuesti</a>
     </div>
   {% endif %}
 </div>

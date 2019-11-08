@@ -96,7 +96,8 @@
     {% include 'wiki/includes/object_list.html' %}
   {% else %}
     <div class="w3-container w3-padding-16">
-      Valitud kuu ja aasta ({% include "wiki/includes/kuu.html" with kuu=month|date:"m" %}{{ month|date:'Y' }}) kohta andmed puuduvad! Proovige <a class="hover-artikkel" href={% url 'wiki:wiki_artikkel_filter' %}> uuesti</a>.
+      Valitud kuu ja aasta ({% include "wiki/includes/kuu.html" with kuu=month|date:"m" %}{{ month|date:'Y' }}) kohta andmed puuduvad!
+      <a class="w3-button background-artikkel tablink" href="{% url 'wiki:wiki_artikkel_filter' %}">Proovige uuesti</a>
     </div>
   {% endif %}
 </div>

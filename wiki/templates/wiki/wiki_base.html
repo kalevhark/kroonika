@@ -62,14 +62,15 @@
   {% endblock %}
 </title>
 
-<body class="w3-light-grey">
+<body class="Site w3-light-grey">
+
 
 <!--Facebook plugin-->
 <div id="fb-root"></div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/et_EE/sdk.js#xfbml=1&version=v5.0"></script>
-
+<header>
 <!-- Navbar -->
-<div id="top" class="w3-top">
+<nav>
   <div class="w3-bar w3-left-align w3-large w3-padding">
     <a
         href="{% url 'algus' %}"
@@ -227,10 +228,10 @@
       <span class="bar-item-text-with-icon">Projektist</span>
     </a>
   </div>
-</div>
-
-<div class="w3-container" style="margin-top:60px;">
-
+</nav>
+</header>
+<main class="Site-content">
+  <div class="w3-container">
   <!-- Süsteemiteadete näitamiseks -->
   <div>
     {% if messages %}
@@ -243,35 +244,6 @@
       </ul>
     {% endif %}
   </div>
-
-
-<!--  <div class="w3-row-padding w3-margin-bottom w3-hide-large">-->
-<!--    <div id="m-navbar"-->
-<!--         class="w3-bar-block w3-white w3-hide w3-hide-large w3-padding-16"-->
-<!--    >-->
-<!--      <a-->
-<!--          href="{% url 'wiki:wiki_artikkel_filter' %}"-->
-<!--          class="w3-bar-item w3-button w3-hover-white">-->
-<!--        <i class="fa fa-search"></i>&nbsp;Otsi...-->
-<!--      </a>-->
-<!--      <a-->
-<!--          href="{% url 'ilm:index' %}"-->
-<!--          class="w3-bar-item w3-button w3-hover-white">-->
-<!--        <i class="fa fa-thermometer"></i>-->
-<!--      </a>-->
-<!--      <a-->
-<!--          href="https://et.wikipedia.org/wiki/Valga"-->
-<!--          target="blank"-->
-<!--          class="w3-bar-item w3-button w3-hover-white">-->
-<!--        <i class="fa fa-wikipedia-w"></i>&nbsp;Valga Vikipeedias-->
-<!--      </a>-->
-<!--      <a-->
-<!--          href="{% url 'wiki:info' %}"-->
-<!--          class="w3-bar-item w3-button w3-hover-white">-->
-<!--        <i class="fa fa-info"></i>&nbsp;Projektist-->
-<!--      </a>-->
-<!--    </div>-->
-<!--  </div>-->
 
   <!-- Search on small screens -->
   <div class="w3-row-padding w3-margin-bottom w3-hide-medium w3-hide-large">
@@ -305,10 +277,9 @@
     </form>
   </div>
 
-{% block content %} {% endblock %}
-</div>
-</body>
-
+  {% block content %} {% endblock %}
+  </div>
+</main>
 <footer>
   <div class="w3-bar w3-padding">
     <a href="#">
@@ -347,6 +318,24 @@
     </a>
   </div>
 </footer>
+
+</body>
+
+<script>
+/* ==========================================
+scrollTop() >= 60
+Should be equal the the height of the header
+========================================== */
+
+$(window).scroll(function(){
+    if ($(window).scrollTop() >= 60) {
+        $('nav').addClass('fixed-header');
+    }
+    else {
+        $('nav').removeClass('fixed-header');
+    }
+});
+</script>
 
 <!-- Töötleb kõik reCAPTCHAga varustatud vormid -->
 <script>
