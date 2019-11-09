@@ -254,12 +254,15 @@
 				{% if forloop.counter > 1 %}
 					<br>
 				{% endif %}
-				<a class="hover-isik"
-				href={% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:"Y" month=obj.hist_date|date:"m" day=obj.hist_date|date:"d" %}>
+				<a
+						class="hover-isik"
+						href="{% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:'Y' month=obj.hist_date|date:'m' day=obj.hist_date|date:'d' %}">
 					<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
 				</a>
 				&nbsp;
-				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}>
+				<a
+						class="hover-isik"
+						href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
 					{{ obj }}
 					{% if obj.vanus|divisibleby:"5" %}
 						&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
