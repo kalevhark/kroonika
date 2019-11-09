@@ -245,6 +245,7 @@
 	<div class="w3-quarter">
 	  <div class="w3-container w3-padding-16 w3-hover-white">
 	  {% if andmed.isik.sel_p2eval %}
+			<hr>
 			<h5>
 				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_syndinud">
 					{% now "j.m." %} sündinud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_kirjeid }}</span>
@@ -288,7 +289,7 @@
 				<strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
 				</a>
 				&nbsp;
-				<a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}>
+				<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
 					{{ obj }}
 				</a>
 				{% if obj.vanus|divisibleby:"5" %}
@@ -322,15 +323,10 @@
 					&nbsp;&nbsp;<b>{{ obj.vanus }}</b>
         	{% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
 				</a>
-				<!--{% if obj.profiilipilt %}
-					<div class="w3-row" >
-						<img class="pilt-portree-small" src="{{ obj.profiilipilt.pilt.url }}" alt="{{ obj.profiilipilt }}" title="{{ obj.profiilipilt }}"/>
-						<small>{{ obj.kirjeldus|truncatewords:8 }}</small>
-					</div>
-				{% endif %}-->
 			{% endfor %}
 	  {% endif %}
 	  {% if andmed.isik.sel_p2eval_surnud %}
+			<hr>
 	    <h5>
 				<a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_surnud">
 					{% now "j.m." %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_surnud_kirjeid }}</span>

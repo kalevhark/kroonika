@@ -1,5 +1,5 @@
 {% if obj.profiilipilt %}
-  <div class="pilt-wiki-algus" >
+  <div class="pilt-wiki-algus w3-hide-medium" >
 		<img
         class="pilt-{{ tyyp }}-small"
         src="{{ obj.profiilipilt.pilt_thumbnail.url }}"
@@ -7,9 +7,18 @@
         title="{{ obj.profiilipilt }}"
     />
 		{% if tyyp == "portree" %}
-      <small>
-        {{ obj.kirjeldus|truncatewords:10 }}
-      </small>
+        <small>
+          {{ obj.kirjeldus|truncatewords:10 }}
+        </small>
     {% endif %}
 	</div>
+  <div class="w3-hide-small w3-hide-large">
+    <img
+        style="display: block; margin-left: auto; margin-right: auto; width: 100%;"
+        class="pilt-{{ tyyp }}-small"
+        src="{{ obj.profiilipilt.pilt_thumbnail.url }}"
+        alt="{{ obj.profiilipilt }}"
+        title="{{ obj.profiilipilt }}"
+    />
+  </div>
 {% endif %}
