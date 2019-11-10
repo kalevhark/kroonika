@@ -31,8 +31,6 @@ function onScroll() {
   }
 }
 
-window.addEventListener('scroll', throttle(onScroll, 25));
-
 // Töötleb kõik reCAPTCHAga varustatud vormid
 function grecaptcha_onload() {
   $('.g-recaptcha-response').each(function( k, v ) {
@@ -75,3 +73,48 @@ function showFeedback() {
     x.className = x.className.replace(" w3-show-block", "");
   }
 }
+
+function hoverDate(x) {
+  const newClassName = 'text-artikkel'
+  let selectedId = x.parentElement.id;
+  let selectedDateClass = x.className;
+  let selectedDateField = document.getElementById(selectedId)
+  $(selectedDateField.getElementsByClassName('year')).addClass(newClassName);
+    if (selectedDateClass.includes('month')) {
+      $(selectedDateField.getElementsByClassName('month')).addClass(newClassName);
+  }
+  if (selectedDateClass.includes('day')) {
+    $(selectedDateField.getElementsByClassName('month')).addClass(newClassName);
+    $(selectedDateField.getElementsByClassName('day')).addClass(newClassName);
+  }
+}
+
+function normalDate(x) {
+  const oldClassName = 'text-artikkel'
+  let selectedId = x.parentElement.id;
+  let selectedDateField = document.getElementById(selectedId);
+  let selectedDateFieldElements = selectedDateField.querySelectorAll("a");
+
+  selectedDateFieldElements.forEach(element => {
+    $(element).removeClass(oldClassName);
+  });
+  // $(selected_date_field.getElementsByClassName('year')).removeClass('hover');
+  // $(selected_date_field.getElementsByClassName('month')).removeClass('hover');
+  // $(selected_date_field.getElementsByClassName('day')).removeClass('hover');
+
+}
+
+$( document ).ready(function() {
+  // console.log( "ready!" );
+  // Navigatsiooniriba asukoha kontrollimiseks
+  window.addEventListener('scroll', throttle(onScroll, 25));
+  // Kuupäevaväljade unikaalsete id-de lisamine
+  let dates = document.body.getElementsByClassName('date');
+  // console.dir(dates);
+  let counter = 0;
+  for (let i = 0; i < dates.length; i++) {
+    if (!dates[i].id) {
+      dates[i].id = "_date_" + counter++;
+    }
+  }
+});

@@ -8,104 +8,113 @@ ey - lõppaasta
 cs - lingi värv (näiteks: "primary", "white", "dark")
  -->
 {% if sd %}
-	<a
-			class="text-{{ cs }} hover-artikkel tooltip"
-			href="{% url 'wiki:artikkel_day_archive' year=sd|date:'Y' month=sd|date:'m' day=sd|date:'j' %}"
-	>
-	  {{ sd|date:"j." }}
-	  <span
-				class="tooltiptext">
-			Mis juhtus {{ sd|date:"j.m.Y" }}?
-		</span>
-	<a>
-	<a
-			class="text-{{ cs }} hover-artikkel tooltip"
-			href="{% url 'wiki:artikkel_month_archive' year=sd|date:'Y' month=sd|date:'m' %}"
-	>
-	  {{ sd|date:"m." }}
-	  <span
-				class="tooltiptext">
-			Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=sd|date:'m' %} {{ sd|date:'Y' }}?
-		</span>
-	</a>
-	<a
-			class="text-{{ cs }} hover-artikkel tooltip"
-			href="{% url 'wiki:artikkel_year_archive' year=sd|date:'Y' %}"
-	>
-	  {{ sd|date:"Y" }}
-	  <span
-				class="tooltiptext">
-			Mis juhtus {{ sd|date:"Y" }}?
-		</span>
-	</a>
+	<div class="date">
+		<a
+				class="text-{{ cs }} day"
+				href="{% url 'wiki:artikkel_day_archive' year=sd|date:'Y' month=sd|date:'m' day=sd|date:'j' %}"
+				onmouseover="hoverDate(this)"
+				onmouseout="normalDate(this)"
+				title="Mis juhtus {{ sd|date:'j.m.Y' }}?"
+		>
+			{{ sd|date:"j." }}
+		</a>
+		<a
+				class="text-{{ cs }} month"
+				href="{% url 'wiki:artikkel_month_archive' year=sd|date:'Y' month=sd|date:'m' %}"
+				onmouseover="hoverDate(this)"
+				onmouseout="normalDate(this)"
+				title="Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=sd|date:'m' %} {{ sd|date:'Y' }}?"
+		>
+			{{ sd|date:"m." }}
+		</a>
+		<a
+				class="text-{{ cs }} year"
+				href="{% url 'wiki:artikkel_year_archive' year=sd|date:'Y' %}"
+				onmouseover="hoverDate(this)"
+				onmouseout="normalDate(this)"
+				title="Mis juhtus {{ sd|date:'Y' }}?"
+		>
+			{{ sd|date:"Y" }}
+		</a>
+	</div>
 {% else %}
 	{% if m %}
-		<a
-				class="text-{{ cs }} hover-artikkel tooltip"
-				href="{% url 'wiki:artikkel_month_archive' year=y month=m %}"
-		>
-		  {% include "wiki/includes/kuu.html" with kuu=m|stringformat:"02i" %}
-		  <span
-					class="tooltiptext">
-				Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=m|stringformat:"02i" %} {{ y }}?
-			</span>
-		</a>
-	{% endif %}
-	{% if y %}
-		<a
-				class="text-{{ cs }} hover-artikkel tooltip"
-				href="{% url 'wiki:artikkel_year_archive' year=y %}"
-		>
-		  {{ y }}
-		  <span
-					class="tooltiptext">
-				Mis juhtus {{ y }}?
-			</span>
-		</a>
+		<div class="date">
+			<a
+					class="text-{{ cs }} month"
+					href="{% url 'wiki:artikkel_month_archive' year=y month=m %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=m|stringformat:'02i' %} {{ y }}?"
+			>
+				{% include "wiki/includes/kuu.html" with kuu=m|stringformat:"02i" %}&nbsp;
+			</a>
+			<a
+					class="text-{{ cs }} year"
+					href="{% url 'wiki:artikkel_year_archive' year=y %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {{ y }}?"
+			>
+				{{ y }}
+			</a>
+		</div>
+	{% else %}
+		<div class="date">
+			<a
+					class="text-{{ cs }} year"
+					href="{% url 'wiki:artikkel_year_archive' year=y %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {{ y }}?"
+			>
+				{{ y }}
+			</a>
+		</div>
 	{% endif %}
 {% endif %}
 {% if ed %}
 	&nbsp;-&nbsp;
-	<a
-			class="text-{{ cs }} hover-artikkel tooltip"
-			href="{% url 'wiki:artikkel_day_archive' year=ed|date:'Y' month=ed|date:'m' day=ed|date:'d' %}"
-	>
-	  {{ ed|date:"j." }}
-	  <span
-				class="tooltiptext">
-			Mis juhtus {{ ed|date:"j.m.Y" }}?
-		</span>
-	</a>
-	<a
-			class="text-{{ cs }} hover-artikkel tooltip"
-			href="{% url 'wiki:artikkel_month_archive' year=ed|date:'Y' month=ed|date:'m' %}"
+	<div class="date">
+		<a
+				class="text-{{ cs }} day"
+				href="{% url 'wiki:artikkel_day_archive' year=ed|date:'Y' month=ed|date:'m' day=ed|date:'d' %}"
+				onmouseover="hoverDate(this)"
+				onmouseout="normalDate(this)"
+				title="Mis juhtus {{ ed|date:'j.m.Y' }}?"
 		>
-	  {{ ed|date:"m." }}
-	  <span
-				class="tooltiptext">
-			Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=ed|date:"m" %} {{ ed|date:"Y" }}?
-		</span>
-	</a>
-	<a
-			class="text-{{ cs }} hover-artikkel tooltip"
-			href="{% url 'wiki:artikkel_year_archive' year=ed|date:'Y' %}"
-	>
-	  {{ ed|date:"Y" }}
-	  <span
-				class="tooltiptext">
-			Mis juhtus {{ ed|date:"Y" }}?
-		</span>
-	</a>
+			{{ ed|date:"j." }}
+		</a>
+		<a
+				class="text-{{ cs }} month"
+				href="{% url 'wiki:artikkel_month_archive' year=ed|date:'Y' month=ed|date:'m' %}"
+				onmouseover="hoverDate(this)"
+				onmouseout="normalDate(this)"
+				title="Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=ed|date:'m' %} {{ ed|date:'Y' }}?"
+			>
+			{{ ed|date:"m." }}
+		</a>
+		<a
+				class="text-{{ cs }} year"
+				href="{% url 'wiki:artikkel_year_archive' year=ed|date:'Y' %}"
+				onmouseover="hoverDate(this)"
+				onmouseout="normalDate(this)"
+				title="Mis juhtus {{ ed|date:'Y' }}?"
+		>
+			{{ ed|date:"Y" }}
+		</a>
+	</div>
 {% elif ey %}
 	&nbsp;-&nbsp;
-	<a
-			class="text-{{ cs }} hover-artikkel tooltip"
-			href="{% url 'wiki:artikkel_year_archive' year=ey %}"
-	>
-	  {{ ey }}
-	  <span
-				class="tooltiptext">
-			Mis juhtus {{ ey }}?
-		</span>
-	</a>
+	<div class="date">
+		<a
+				class="text-{{ cs }} year"
+				href="{% url 'wiki:artikkel_year_archive' year=ey %}"
+				onmouseover="hoverDate(this)"
+				onmouseout="normalDate(this)"
+				title="Mis juhtus {{ ey }}?"
+		>
+	  	{{ ey }}
+		</a>
+	</div>
 {% endif %}

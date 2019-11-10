@@ -15,33 +15,64 @@
 <div class="w3-cell-row w3-container w3-padding-16">
 
 	<!-- Kronoloogiliselt eelnev artikkel -->
-  <div class="w3-container w3-padding-16 w3-cell w3-cell-middle w3-hover-white">
-		{% if prev_obj %}
-			{% include 'wiki/includes/kp.html' with sd=prev_obj.hist_date ed=prev_obj.hist_enddate y=prev_obj.hist_year m=prev_obj.hist_month cs="dark" %}
-			<br>
-			<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}">
-				<i class="fa fa-angle-left"></i>&nbsp;{{ prev_obj }}
-			</a>
-		{% endif %}
-  </div>
-	<!-- Valitud artikkel -->
-	<div class="w3-container w3-cell w3-center w3-cell-middle w3-xlarge  w3-hover-white text-artikkel">
-<!--    <i class="fa fa-comment">	</i>-->
-		{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="white" %}
-  </div>
+	<div class="w3-third w3-cell w3-hover-white">
+		<div class="w3-container w3-padding-16">
+			{% if prev_obj %}
+				<strong>
+					{% include 'wiki/includes/kp.html' with sd=prev_obj.hist_date ed=prev_obj.hist_enddate y=prev_obj.hist_year m=prev_obj.hist_month cs="dark" %}
+				</strong>
+				<br>
+				<a
+						class="hover-artikkel"
+						href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}"
+				>
+					<i class="fa fa-angle-left"></i>&nbsp;{{ prev_obj }}
+				</a>
+			{% endif %}
+		</div>
+	</div>
+	<!-- Valitud artikkel viewport: large, medium -->
+	<div class="w3-third w3-cell w3-hide-small">
+		<div
+				class="w3-container w3-padding-16 w3-xlarge text-artikkel layout-row layout-align-center-center w3-hover-white"
+		>
+			<strong>
+				{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="white" %}
+			</strong>
+		</div>
+	</div>
   <!-- Kronoloogiliselt järgnev artikkel -->
-  <div class="w3-container w3-padding-16 w3-right-align w3-cell w3-cell-middle w3-hover-white">
-		{% if next_obj %}
-		{% include 'wiki/includes/kp.html' with sd=next_obj.hist_date ed=next_obj.hist_enddate y=next_obj.hist_year m=next_obj.hist_month cs="dark" %}
-			<br>
-		<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}">
-			{{ next_obj }}&nbsp;<i class="fa fa-angle-right"></i>
-		</a>
-		{% endif %}
-  </div>
+	<div class="w3-third w3-cell w3-hover-white">
+		<div class="w3-container w3-padding-16 w3-right-align">
+			{% if next_obj %}
+				<strong>
+				{% include 'wiki/includes/kp.html' with sd=next_obj.hist_date ed=next_obj.hist_enddate y=next_obj.hist_year m=next_obj.hist_month cs="dark" %}
+				</strong>
+				<br>
+				<a
+						class="hover-artikkel"
+						href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}"
+				>
+					{{ next_obj }}&nbsp;<i class="fa fa-angle-right"></i>
+				</a>
+			{% endif %}
+		</div>
+	</div>
 </div>
 
 <div class="w3-panel w3-card-4 w3-light-grey" >
+	<div class="w3-cell-row w3-hide-large w3-hide-medium">
+		<!-- Valitud artikkel viewport: small -->
+		<div class="w3-third w3-cell">
+			<div
+					class="w3-container w3-padding-16 w3-xlarge text-artikkel layout-row layout-align-center-center"
+			>
+				<strong>
+					{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="white" %}
+				</strong>
+			</div>
+		</div>
+	</div>
   <div class="w3-twothird w3-padding" >
     <!-- Artikkel -->
 		<div>
