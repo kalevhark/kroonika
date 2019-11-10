@@ -110,6 +110,7 @@ def container_history_aastad(request):
         # X-telje väärtused
         categories.append(f"{sel[i]['timestamp__year']}")
         # Valitud kuu päeva andmed
+        print(i, sel[i])
         sel_temp_averages.append([i, round(float(sel[i]['airtemperature__avg']), 1)])
         sel_temp_ranges.append(
             [

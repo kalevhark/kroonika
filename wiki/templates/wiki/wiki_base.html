@@ -257,8 +257,8 @@
       <input
           type="text"
           class="w3-bar-item w3-input w3-white w3-mobile"
-          name="body_text__icontains"
-          id="id_body_text__icontains"
+          name="artikkel_sisaldab"
+          id="id_artikkel_sisaldab"
           placeholder="Otsi.." />
       <button
           class="w3-bar-item w3-button w3-hide-small w3-hover-white"
@@ -322,6 +322,23 @@
 </body>
 
 <script src="{% static 'wiki/js/wiki.js'%}"></script>
+
+<script>
+// Töötleb kõik reCAPTCHAga varustatud vormid
+function grecaptcha_onload() {
+  $('.g-recaptcha-response').each(function( k, v ) {
+    var submit = $(v).closest("form").find('[type="submit"]');
+    grecaptcha.render( submit[0], {
+      'sitekey' : '{% recaptcha_public_key %}',
+      'callback' : function( token ) {
+        $(v).closest("form").find('.g-recaptcha-response').val( token );
+        $(v).closest("form").submit();
+      },
+      'size' : 'invisible',
+    });
+  });
+}
+</script>
 
 {% block javascript %} {% endblock %}
 </html>

@@ -154,6 +154,6 @@ class VihjeForm(ModelForm):
             'kontakt'
         )
         widgets = {
-            'kirjeldus': Textarea(attrs={'cols': 80, 'rows': 5}),
-            'kontakt': Textarea(attrs={'cols': 80, 'rows': 1})
+            'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
+            'kontakt': Textarea(attrs={'cols': 40, 'rows': 1})
         }

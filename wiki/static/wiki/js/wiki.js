@@ -31,25 +31,16 @@ function onScroll() {
   }
 }
 
-// Töötleb kõik reCAPTCHAga varustatud vormid
-function grecaptcha_onload() {
-  $('.g-recaptcha-response').each(function( k, v ) {
-    var submit = $(v).closest("form").find('[type="submit"]');
-    grecaptcha.render( submit[0], {
-      'sitekey' : '{% recaptcha_public_key %}',
-      'callback' : function( token ) {
-        $(v).closest("form").find('.g-recaptcha-response').val( token );
-        $(v).closest("form").submit();
-      },
-      'size' : 'invisible',
-    });
-  });
-}
-
 // Väikese ekraani menüü (Opening and Collapsing the Navigation Bar)
 function openRightMenu() {
-  document.getElementById("rightMenu").style.display = "block";
+  let openRightMenuDisplayStatus = document.getElementById("rightMenu").style.getPropertyValue('display');
+  if (openRightMenuDisplayStatus == "block") {
+    document.getElementById("rightMenu").style.display = "none";
+  } else {
+    document.getElementById("rightMenu").style.display = "block";
+  };
 }
+
 function closeRightMenu() {
   document.getElementById("rightMenu").style.display = "none";
 }
@@ -65,6 +56,12 @@ function closeRightMenu() {
 
 // Tagasisidevormi kuvamiseks
 function showFeedback() {
+  // Sulgeme navigatsioonimenüü, kui see on avatud
+  let openRightMenuDisplayStatus = document.getElementById("rightMenu").style.getPropertyValue('display');
+  if (openRightMenuDisplayStatus == "block") {
+    document.getElementById("rightMenu").style.display = "none";
+  };
+  // Avame tagasisidevormi
   var x = document.getElementById("panelFeedBack");
   if (x.className.indexOf("w3-show-block") == -1) {
     x.className += " w3-show-block";
@@ -98,10 +95,6 @@ function normalDate(x) {
   selectedDateFieldElements.forEach(element => {
     $(element).removeClass(oldClassName);
   });
-  // $(selected_date_field.getElementsByClassName('year')).removeClass('hover');
-  // $(selected_date_field.getElementsByClassName('month')).removeClass('hover');
-  // $(selected_date_field.getElementsByClassName('day')).removeClass('hover');
-
 }
 
 $( document ).ready(function() {
