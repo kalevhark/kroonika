@@ -106,8 +106,7 @@ def container_history_aastad(request):
     sel_temp_averages = []
     sel_temp_ranges = []
     sel_prec_sums = []
-    # for i in range(len(sel)):
-    for year in bdi.qs_years:
+    for i in range(len(sel)):
         # X-telje väärtused
         categories.append(f"{sel[i]['timestamp__year']}")
         # Valitud kuu päeva andmed
@@ -990,7 +989,7 @@ def container_history_p2evad(request):
                .filter(timestamp__month=bdi.kuu, timestamp__day=bdi.p2ev)
                .values('timestamp__year')
                .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature'), Sum('precipitations'))
-               # .order_by('timestamp__year')
+               .order_by('timestamp__year')
     )
     hist  = list(Ilm.objects \
         .filter(timestamp__month=bdi.kuu, timestamp__day=bdi.p2ev) \
