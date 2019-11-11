@@ -106,11 +106,12 @@ def container_history_aastad(request):
     sel_temp_averages = []
     sel_temp_ranges = []
     sel_prec_sums = []
-    for i in range(len(sel)):
+    # for i in range(len(sel)):
+    for year in bdi.qs_years:
         # X-telje väärtused
         categories.append(f"{sel[i]['timestamp__year']}")
         # Valitud kuu päeva andmed
-        print(i, sel[i])
+        # print(i, sel[i])
         sel_temp_averages.append([i, round(float(sel[i]['airtemperature__avg']), 1)])
         sel_temp_ranges.append(
             [

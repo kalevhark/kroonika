@@ -192,7 +192,7 @@ class IlmateenistusData():
             .filter(timestamp__year__gte = t2isaasta_min, timestamp__year__lte = t2isaasta_max) \
             .values('timestamp__year') \
             .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature'), Sum('precipitations')) \
-            # .order_by('timestamp__year')
+            .order_by('timestamp__year')
         # 12 kuud
         self.qs12 = Ilm.objects \
             .values('timestamp__month') \
@@ -207,7 +207,7 @@ class IlmateenistusData():
         self.qs8784 = Ilm.objects \
             .values('timestamp__month', 'timestamp__day', 'timestamp__hour') \
             .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
-            # .order_by('timestamp__month', 'timestamp__day', 'timestamp__hour')
+            .order_by('timestamp__month', 'timestamp__day', 'timestamp__hour')
 
     def bdi_startstopp(self):
         # Leian andmebaasi ajaliselt esimese ja viimase kande aja
