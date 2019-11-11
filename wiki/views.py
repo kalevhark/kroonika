@@ -174,7 +174,7 @@ def info(request):
      # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
     # tagasiside vorm
-    feedbackform = VihjeForm()
+    # feedbackform = VihjeForm()
     return render(
         request,
         'wiki/wiki_info.html',
@@ -184,7 +184,7 @@ def info(request):
             'artikleid_kuus': artikleid_kuus,
             'artikleid_kuus_max': artikleid_kuus_max,
             'meta_andmed': request.META,
-            'feedbackform': feedbackform,
+            # 'feedbackform': feedbackform,
             # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         }
@@ -430,11 +430,11 @@ def algus(request):
         ]
     )
     # Lisame vihjevormi
-    feedbackform = VihjeForm()
+    # feedbackform = VihjeForm()
     return render(
         request, 'wiki/wiki.html', {
             'andmed': andmed,
-            'feedbackform': feedbackform
+            # 'feedbackform': feedbackform
         }
     )
 
@@ -560,7 +560,7 @@ class ArtikkelDetailView(generic.DetailView):
                 context['prev_obj'] = artikkel_qs.get(id=loend[n - 1])
                 # context['prev_obj'] = artikkel_qs.get(id=loend[n-1]['id'])
         # Lisame vihjevormi
-        context['feedbackform'] = VihjeForm()
+        # context['feedbackform'] = VihjeForm()
         return context
 
     def get_object(self):
@@ -1112,7 +1112,7 @@ class IsikDetailView(generic.DetailView):
         context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
 
         # Lisame vihjevormi
-        context['feedbackform'] = VihjeForm()
+        # context['feedbackform'] = VihjeForm()
         return context
 
 
@@ -1206,7 +1206,7 @@ class OrganisatsioonDetailView(generic.DetailView):
         context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
 
         # Lisame vihjevormi
-        context['feedbackform'] = VihjeForm()
+        # context['feedbackform'] = VihjeForm()
         return context
 
 
@@ -1302,7 +1302,7 @@ class ObjektDetailView(generic.DetailView):
         context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
 
         # Lisame vihjevormi
-        context['feedbackform'] = VihjeForm()
+        # context['feedbackform'] = VihjeForm()
         return context
 
 
