@@ -246,34 +246,28 @@
   </div>
 
   <!-- Search on small screens -->
-  <div class="w3-row-padding w3-margin-bottom w3-hide-medium w3-hide-large">
+  <div class="w3-row-padding w3-hide-medium w3-hide-large">
     <form
-        class="w3-hide-medium w3-hide-large"
         role="search"
         method="get"
         id="searchform_small"
         action="{% url 'wiki:wiki_artikkel_filter' %}" >
       {% csrf_token %}
-      <input
-          type="text"
-          class="w3-bar-item w3-input w3-white w3-mobile"
-          name="artikkel_sisaldab"
-          id="id_artikkel_sisaldab"
-          placeholder="Otsi.." />
-      <button
-          class="w3-bar-item w3-button w3-hide-small w3-hover-white"
-          type="submit"
-          id="searchsubmit_small"
-          title="Otsi valitud fraasi järgi">
-        <i class="fa fa-search"></i>
-      </button>
-      <button
-          class="w3-bar-item w3-button w3-hide-small w3-hover-white"
-          type="reset"
-          id="searchreset"
-          title="Uus otsing">
-        <i class="fa fa-close"></i>
-      </button>
+
+        <input
+            type="text"
+            class="w3-bar-item w3-input w3-white w3-mobile"
+            name="artikkel_sisaldab"
+            id="id_artikkel_sisaldab"
+            placeholder="Otsi.." />
+        <button
+            class="w3-bar-item w3-button w3-mobile w3-hover-white w3-hide-small"
+            type="submit"
+            id="searchsubmit_small"
+            title="Otsi valitud fraasi järgi">
+          <i class="fa fa-search"></i>
+        </button>
+
     </form>
   </div>
 
