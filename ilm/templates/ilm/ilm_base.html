@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="et">
+	{% load static %}
+
 	<meta charset="utf-8">
 	<head>
 		<title>{% block title %}Valga linna ilm{% endblock %}</title>
-		{% load static %}
+
 		<!-- Required meta tags -->
 		<meta charset="utf-8" />
 		<meta name="description" content="Valga linna kroonika" />
 		<meta name="keywords" content="Valga, linn, kroonika, ajalugu" />
 		<meta name="author" content="Kalev Härk" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
 		<!-- Kirjeldus -->
 		<meta property="og:type"          content="website" />
 		<meta property="og:title"         content="Valga linna kroonika" />
@@ -18,82 +21,88 @@
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 		<!-- Custom CSS -->
 		<link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}">
 		{% block stylesheet %}{% endblock %}
-
 		<link rel="shortcut icon" href="{% static 'ilm/img/favicon.ico' %}">
+
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
-
 			gtag('config', 'UA-151102639-1');
 		</script>
   </head>
+
   <body class="w3-light-grey">
     <header>
     </header>
-	<!-- Navbar -->
-	<div id="top" class="w3-top">
-	  <div class="w3-bar w3-left-align w3-large w3-padding">
-			<a
-					href="{% url 'algus' %}"
-					title="Valga linna kroonika avalehele"
-					class="w3-bar-item w3-button w3-hover-white">
-					<img
-							src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}"
-							style='max-height:22px;'
-							alt="vapp">
-			</a>
-			<a
-					href="{% url 'ilm:index' %}"
-					class="w3-bar-item w3-button w3-theme-d4 w3-hover-white">
-				Valga linna ilm
-			</a>
-			<a
-					href="{% url 'ilm:history' %}"
-					class="w3-bar-item w3-button w3-hide-small w3-hover-white"
-					title="Ilmaandmete ajalugu">
-				<i class="fa fa-line-chart"></i>
-			</a>
-			<a
-					href="{% url 'algus' %}"
-					class="w3-bar-item w3-button w3-hide-small w3-hover-white"
-					title="Valga linna kroonika">
-				<i class="fa fa-leanpub"></i>
-			</a>
-	  </div> 
-	</div>
 
-    <div class="w3-container"  style="margin-top:60px;">
-	<main>
-      {% block content %}{% endblock %}
-    </main>
-	</div>
+		<!-- Navbar -->
+		<div id="top" class="w3-top">
+			<div class="w3-bar w3-left-align w3-large w3-padding">
+				<a
+						href="{% url 'algus' %}"
+						title="Valga linna kroonika avalehele"
+						class="w3-bar-item w3-button w3-hover-white">
+						<img
+								src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}"
+								style='max-height:22px;'
+								alt="vapp">
+				</a>
+				<a
+						href="{% url 'ilm:index' %}"
+						class="w3-bar-item w3-button w3-theme-d4 w3-hover-white">
+					Valga linna ilm
+				</a>
+				<a
+						href="{% url 'ilm:history' %}"
+						class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+						title="Ilmaandmete ajalugu">
+					<i class="fa fa-line-chart"></i>
+				</a>
+				<a
+						href="{% url 'algus' %}"
+						class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+						title="Valga linna kroonika">
+					<i class="fa fa-leanpub"></i>
+				</a>
+			</div>
+		</div>
+
+		<div class="w3-container"  style="margin-top:60px;">
+			<main>
+				{% block content %}{% endblock %}
+			</main>
+		</div>
     <footer>
-	  <div class="w3-bar w3-padding">
-        <a href="#">
-	      <button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
-	    </a>
-	    <a href={% url 'ilm:index' %}>
-          <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018 Kalev Härk</small></button>
-	    </a>
+			<div class="w3-bar w3-padding">
+					<a href="#">
+					<button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
+				</a>
+				<a href="{% url 'ilm:index' %}">
+						<button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018 Kalev Härk</small></button>
+				</a>
       </div>
-	</footer>
-	<!-- jQuery teek -->
+		</footer>
+
+		<!-- jQuery teek -->
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-	<!-- HighCharts skriptid -->
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-	<script src="https://code.highcharts.com/highcharts-more.js"></script>
-	<script src="https://code.highcharts.com/modules/exporting.js"></script>
-	<script src="https://code.highcharts.com/modules/export-data.js"></script>
-	<script src="https://code.highcharts.com/modules/windbarb.js"></script>
-	<script src="{% static 'ilm/js/highcharts-regression.js' %}"></script>
-	<!-- Äpi skriptid, kui vaja -->
-	<script src="{% static 'ilm/js/ilm.js' %}"></script>
-    {% block javascript %}{% endblock %}
+
+		<!-- HighCharts skriptid -->
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/highcharts-more.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+		<script src="https://code.highcharts.com/modules/export-data.js"></script>
+		<script src="https://code.highcharts.com/modules/windbarb.js"></script>
+		<script src="{% static 'ilm/js/highcharts-regression.js' %}"></script>
+
+		<!-- Äpi skriptid, kui vaja -->
+		<script src="{% static 'ilm/js/ilm.js' %}"></script>
+
+		{% block javascript %}{% endblock %}
 	</body>
 </html>
