@@ -72,7 +72,7 @@ function showFeedback() {
 }
 
 function hoverDate(x) {
-  const newClassName = 'text-artikkel'
+  const newClassName = 'date-highlighted'
   let selectedId = x.parentElement.id;
   let selectedDateClass = x.className;
   let selectedDateField = document.getElementById(selectedId)
@@ -87,7 +87,7 @@ function hoverDate(x) {
 }
 
 function normalDate(x) {
-  const oldClassName = 'text-artikkel'
+  const oldClassName = 'date-highlighted'
   let selectedId = x.parentElement.id;
   let selectedDateField = document.getElementById(selectedId);
   let selectedDateFieldElements = selectedDateField.querySelectorAll("a");

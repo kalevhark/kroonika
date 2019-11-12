@@ -39,6 +39,9 @@ var img = document.getElementById("profiiliPilt");
 var modalImg = document.getElementById("img01");
 var captionText = document.getElementById("caption");
 img.onclick = function(){
+  // Järgnev tagab, et navbar ei tuleks modal akna peale
+  document.getElementsByTagName("header")[0].style.zIndex = 0;
+  // Avatakse modal aken pildi näitamiseks
   modal.style.display = "block";
   modalImg.src = this.src;
   modalImg.alt = this.alt;

@@ -70,7 +70,7 @@
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/et_EE/sdk.js#xfbml=1&version=v5.0"></script>
 <header>
 <!-- Navbar -->
-<nav>
+<nav id="wiki_nav">
   <div class="w3-bar w3-left-align w3-large w3-padding">
     <a
         href="{% url 'algus' %}"
@@ -177,7 +177,10 @@
   </div>
 
   <!-- Navbar on small screens -->
-  <div class="w3-sidebar w3-bar-block w3-card w3-animate-right" style="display:none;right:0;" id="rightMenu">
+  <div
+      class="w3-sidebar w3-bar-block w3-card w3-animate-right"
+      style="display:none;right:0;"
+      id="rightMenu">
     <button
         onclick="closeRightMenu()"
         class="w3-bar-item w3-button w3-large">

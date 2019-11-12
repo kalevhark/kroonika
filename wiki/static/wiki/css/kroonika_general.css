@@ -29,11 +29,6 @@ a {
   padding: 0px;
 }
 
-.date-hover {
-  border-bottom: 3px dotted #000;
-  /* background-color: lightgray; */
-}
-
 /* Bloki sees tsentreerimiseks*/
 .layout-row {
   box-sizing: border-box;
