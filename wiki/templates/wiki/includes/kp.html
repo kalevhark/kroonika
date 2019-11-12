@@ -60,17 +60,19 @@ cs - lingi värv (näiteks: "primary", "white", "dark")
 			</a>
 		</div>
 	{% else %}
-		<div class="date">
-			<a
-					class="text-{{ cs }} year"
-					href="{% url 'wiki:artikkel_year_archive' year=y %}"
-					onmouseover="hoverDate(this)"
-					onmouseout="normalDate(this)"
-					title="Mis juhtus {{ y }}?"
-			>
-				{{ y }}
-			</a>
-		</div>
+		{% if y %}
+			<div class="date">
+				<a
+						class="text-{{ cs }} year"
+						href="{% url 'wiki:artikkel_year_archive' year=y %}"
+						onmouseover="hoverDate(this)"
+						onmouseout="normalDate(this)"
+						title="Mis juhtus {{ y }}?"
+				>
+					{{ y }}
+				</a>
+			</div>
+		{% endif %}
 	{% endif %}
 {% endif %}
 {% if ed %}
