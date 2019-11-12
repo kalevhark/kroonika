@@ -13,34 +13,37 @@
 {% load widget_tweaks %}
 <div class="w3-cell-row w3-container background-objekt w3-text-white w3-padding-16">
   <div class="w3-cell w3-cell-middle w3-large  w3-mobile">
-    <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_filter' %}">
-			<i class="fa fa-bank"></i>
-		</a>
-<!--    <i class="fa fa-bank"></i>-->
-		<b> {% model_name_objekt %} ({{ object_list.paginator.count }})
-	 {% if object_list.paginator.num_pages > 1 %}
-	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
-	 {% endif %}
-	 </b>
+		<div class="w3-center">
+			<a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_filter' %}">
+				<i class="fa fa-bank"></i>
+			</a>
+			<b> {% model_name_objekt %} ({{ object_list.paginator.count }})
+				{% if object_list.paginator.num_pages > 1 %}
+				 lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
+				{% endif %}
+			</b>
+		</div>
   </div>
   <form action="" method="get">
   <div class="w3-container w3-cell w3-cell-middle w3-mobile">
 		{% render_field filter.form.nimi__icontains class+="w3-input w3-border-0" placeholder=filter.form.nimi__icontains.label %}
   </div>
   <div class="w3-container w3-cell w3-cell-middle w3-mobile">
-  	<button
-				class="w3-bar-item w3-button background-objekt w3-text-white w3-hover-white"
-				type="submit"
-				value="Otsi">
-			<i class="fa fa-search"></i>
-		</button>
-		<button
-				class="w3-bar-item w3-button background-objekt w3-text-white w3-hover-white"
-				type="button"
-				title="Uus otsing"
-				onclick="goFilter()">
-			<i class="fa fa-close"></i>
-		</button>
+		<div class="w3-center">
+			<button
+					class="w3-bar-item w3-button background-objekt w3-text-white w3-hover-white"
+					type="submit"
+					value="Otsi">
+				<i class="fa fa-search"></i>
+			</button>
+			<button
+					class="w3-bar-item w3-button background-objekt w3-text-white w3-hover-white"
+					type="button"
+					title="Uus otsing"
+					onclick="goFilter()">
+				<i class="fa fa-close"></i>
+			</button>
+		</div>
   </div>
   </form>
 </div>

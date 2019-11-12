@@ -87,6 +87,68 @@ nav {
   left: 40px;
 }
 
+form#search * {
+  font-family: sans-serif;
+}
+
+form#search {
+  align-items: center;
+  display: flex;
+  max-width: 600px;
+  width: 100%;
+}
+
+form#search label {
+  display: none;
+  font-weight: 500;
+  margin: 0 10px 0 0;
+}
+
+form#search input {
+  border: solid #ccc;
+  border-width: 1px 0 1px 1px;
+  border-radius: 2px 0 0 2px;
+  flex: 1;
+  font-size: 16px;
+  font-weight: 200;
+  height: 33px;
+  margin: 0;
+  min-width: 90px;
+  padding: 5px;
+  -webkit-appearance: textfield;
+}
+
+form#search button {
+  border: none;
+  cursor: pointer;
+  height: 33px;
+  padding: 0;
+}
+
+form#search svg {
+  background-color: #26882e;
+  border-radius: 0 2px 2px 0;
+  fill: white;
+  height: 33px;
+  min-width: 24px;
+  padding: 0 7px;
+  width: 24px;
+}
+
+form#search svg:hover {
+  background-color: #1d6823;
+  fill: white;
+}
+
+@media all and (min-width: 500px) {
+  form#search label {
+    display: inline;
+  }
+  form#search input::placeholder {
+    opacity: 0;
+  }
+}
+
 /* Kasutamiseks objektivaates */
 .pilt-postkaart-medium {
 	max-height: 512px;

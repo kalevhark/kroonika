@@ -96,13 +96,6 @@
         method="get"
         id="searchform_large"
         action="{% url 'wiki:otsi' %}" >
-<!--      {% csrf_token %}-->
-      <!--<input
-          type="text"
-          class="w3-bar-item w3-input w3-white"
-          name="search"
-          id="search"
-          placeholder="Otsi.." />-->
       <button
           class="w3-bar-item w3-button w3-hide-small w3-hover-white"
           type="submit"
@@ -253,7 +246,39 @@
       {% crispy feedbackform %}
     </div>
   <!-- Search on small screens -->
-  <div class="w3-row-padding w3-hide-medium w3-hide-large">
+  <div class="w3-padding w3-hide-medium w3-hide-large">
+  <form
+      autocomplete="on"
+      id="search"
+      method="GET"
+      action="{% url 'wiki:wiki_artikkel_filter' %}"
+  >
+    {% csrf_token %}
+    <label for="search-input">Otsi:</label>
+    <input
+        aria-label="Otsi"
+        id="search-input"
+        name="artikkel_sisaldab"
+        placeholder="Lugude otsimiseks kirjuta sõna või fraas(id)..."
+        type="text"
+    >
+    <button
+        class="w3-button"
+        type="submit"
+        id="searchsubmit_small"
+        title="Otsi valitud fraasi järgi">
+<!--      <i class="fa fa-search"></i>-->
+      <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24">
+        <path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"/>
+      </svg>
+    </button>
+  </form>
+  </div>
+  <!--<div class="w3-row-padding w3-hide-medium w3-hide-large">
     <form
         role="search"
         method="get"
@@ -275,7 +300,7 @@
           <i class="fa fa-search"></i>
         </button>
 
-    </form>
+    </form>-->
   </div>
 
   {% block content %} {% endblock %}

@@ -426,7 +426,9 @@ class OrganisatsioonSajandTagasiManager(models.Manager):
 
 class Organisatsioon(models.Model):
     nimi = models.CharField(
-        max_length=200
+        'Asutise nimi',
+        max_length=200,
+        help_text='Asutise nimi/nimed'
     )
     slug = models.SlugField(
         default='',

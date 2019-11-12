@@ -13,16 +13,18 @@
 {% load widget_tweaks %}
 
 <div class="w3-cell-row w3-container background-isik w3-text-white w3-padding-16">
-  <div class="w3-cell w3-cell-middle w3-mobile  w3-large">
-    <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
-			<i class="fa fa-address-card-o"></i>
-		</a>
-<!--		<i class="fa fa-address-card-o"></i>-->
-		<b> Isikud (valitud {{ object_list.paginator.count }})
-	 {% if object_list.paginator.num_pages > 1 %}
-	   lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
-	 {% endif %}
-	 </b>
+  <div class="w3-cell w3-cell-middle w3-mobile w3-large">
+		<div class="w3-center">
+			<a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
+				<i class="fa fa-address-card-o"></i>
+			</a>
+	<!--		<i class="fa fa-address-card-o"></i>-->
+			<b> Isikud (valitud {{ object_list.paginator.count }})
+				{% if object_list.paginator.num_pages > 1 %}
+				 lk {{ object_list.number }}/{{ object_list.paginator.num_pages }}
+				{% endif %}
+		  </b>
+		</div>
   </div>
   <form id="formOtsi" action="" method="get">
 		<div class="w3-container w3-cell w3-cell-middle w3-mobile">
@@ -32,19 +34,21 @@
 			{% render_field filter.form.perenimi__icontains class+="w3-input w3-border-0" placeholder=filter.form.perenimi__icontains.label %}
 		</div>
 		<div class="w3-container w3-cell w3-cell-middle w3-mobile">
-			<button
-					class="w3-bar-item w3-button background-isik w3-text-white w3-hover-white"
-					type="submit"
-					value="Otsi">
-				<i class="fa fa-search"></i>
-			</button>
-			<button
-					class="w3-bar-item w3-button background-isik w3-text-white w3-hover-white"
-					type="button"
-					title="Uus otsing"
-					onclick="goFilter()">
-				<i class="fa fa-close"></i>
-			</button>
+			<div class="w3-center">
+				<button
+						class="w3-bar-item w3-button background-isik w3-text-white w3-hover-white"
+						type="submit"
+						value="Otsi">
+					<i class="fa fa-search"></i>
+				</button>
+				<button
+						class="w3-bar-item w3-button background-isik w3-text-white w3-hover-white"
+						type="button"
+						title="Uus otsing"
+						onclick="goFilter()">
+					<i class="fa fa-close"></i>
+				</button>
+			</div>
 		</div>
   </form>
 </div>
