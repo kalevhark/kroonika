@@ -31,6 +31,7 @@ class PiltForm(ModelForm):
 
 
 class ArtikkelForm(ModelForm):
+
     class Meta:
         model = Artikkel
         fields = ('body_text',
@@ -51,13 +52,12 @@ class ArtikkelForm(ModelForm):
         }
 
     def clean(self):
-        # start_date = self.cleaned_data.get('start_date')
-        # end_date = self.cleaned_data.get('end_date')
         if not any([self.cleaned_data.get('hist_date'), self.cleaned_data.get('hist_year')]):
             raise ValidationError("Alguskuupäev või -aasta peab olema")
         return self.cleaned_data
 
 class IsikForm(ModelForm):
+
     class Meta:
         model = Isik
         fields = ('eesnimi', 'perenimi',
@@ -76,6 +76,7 @@ class IsikForm(ModelForm):
         }
 
 class OrganisatsioonForm(ModelForm):
+
     class Meta:
         model = Organisatsioon
         fields = ('nimi', 'kirjeldus',
@@ -93,10 +94,6 @@ class OrganisatsioonForm(ModelForm):
 
 class ObjektForm(ModelForm):
 
-    # class Media:
-    #     css = {'all': ('admin/css/widgets.css',), }
-    #     js = ('/kroonika/admin/jsi18n/',)
-
     class Meta:
         model = Objekt
         fields = ('nimi', 'tyyp', 'asukoht', 'kirjeldus',
@@ -105,23 +102,11 @@ class ObjektForm(ModelForm):
                   'objektid',
                   'viited'
         )
-        # objektid = ModelMultipleChoiceField(
-        #     Objekt.objects.all(),
-        #     required=True,
-        #     widget = FilteredSelectMultiple(
-        #         "Seotud objektid",
-        #         is_stacked=False,
-        #         attrs={'rows': '10'}
-        #     )
-        # )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
             'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
             'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
         }
-
-    # def __init__(self, parents=None, *args, **kwargs):
-    #     super(ObjektForm, self).__init__(*args, **kwargs)
 
 
 class VihjeForm(ModelForm):

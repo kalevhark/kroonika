@@ -81,6 +81,7 @@
 				{% include 'wiki/includes/vigane.html' %}
 				{{ object.body_text | safe | linebreaksbr }}
 				{% include 'wiki/includes/seotud_viited.html' %}
+				{% include 'wiki/includes/object_updated_edit.html' with model='artikkel' %}
 			</div>
     </div>
   </div>
@@ -90,8 +91,9 @@
 		{% include 'wiki/includes/seotud_objektid.html' %}
 		{% include 'wiki/includes/seotud_pildid.html' %}
 	</div>
+
 </div>
-{% include 'wiki/includes/object_updated_edit.html' with model='artikkel' %}
+
 
 {% endblock %}
 
