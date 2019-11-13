@@ -12,11 +12,11 @@
 {% block content %}
 {% load widget_tweaks %}
 
-<div class="w3-cell-row w3-container w3-padding-16">
+<div class="w3-cell-row w3-padding-16">
 
 	<!-- Kronoloogiliselt eelnev artikkel -->
 	<div class="w3-third w3-cell w3-hover-white">
-		<div class="w3-container w3-padding-16">
+		<div class="w3-container">
 			{% if prev_obj %}
 				<strong>
 					{% include 'wiki/includes/kp.html' with sd=prev_obj.hist_date ed=prev_obj.hist_enddate y=prev_obj.hist_year m=prev_obj.hist_month cs="dark" %}
@@ -34,7 +34,7 @@
 	<!-- Valitud artikkel viewport: large, medium -->
 	<div class="w3-third w3-cell w3-hide-small">
 		<div
-				class="w3-container w3-padding-16 w3-xlarge text-artikkel layout-row layout-align-center-center w3-hover-white"
+				class="w3-xlarge text-artikkel layout-row layout-align-center-center w3-hover-white"
 		>
 			<strong>
 				{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="artikkel" %}
@@ -43,7 +43,7 @@
 	</div>
   <!-- Kronoloogiliselt järgnev artikkel -->
 	<div class="w3-third w3-cell w3-hover-white">
-		<div class="w3-container w3-padding-16 w3-right-align">
+		<div class="w3-container w3-right-align">
 			{% if next_obj %}
 				<strong>
 				  {% include 'wiki/includes/kp.html' with sd=next_obj.hist_date ed=next_obj.hist_enddate y=next_obj.hist_year m=next_obj.hist_month cs="artikkel" %}
@@ -65,7 +65,7 @@
 		<!-- Valitud artikkel viewport: small -->
 		<div class="w3-third w3-cell">
 			<div
-					class="w3-container w3-padding-16 w3-xlarge text-artikkel layout-row layout-align-center-center"
+					class="w3-xlarge text-artikkel layout-row layout-align-center-center"
 			>
 				<strong>
 					{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="artikkel" %}
@@ -73,25 +73,22 @@
 			</div>
 		</div>
 	</div>
-  <div class="w3-twothird w3-padding" >
+  <div class="w3-twothird w3-padding-16" >
     <!-- Artikkel -->
-		<div>
-			{% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
-			<div class="w3-twothird">
-				{% include 'wiki/includes/vigane.html' %}
-				{{ object.body_text | safe | linebreaksbr }}
-				{% include 'wiki/includes/seotud_viited.html' %}
-				{% include 'wiki/includes/object_updated_edit.html' with model='artikkel' %}
-			</div>
-    </div>
+		{% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
+		<div class="w3-twothird">
+			{% include 'wiki/includes/vigane.html' %}
+			{{ object.body_text | safe | linebreaksbr }}
+			{% include 'wiki/includes/seotud_viited.html' %}
+		</div>
+		{% include 'wiki/includes/object_updated_edit.html' with model='artikkel' %}
   </div>
-	<div class="w3-third w3-padding w3-cell w3-cell-middle" >
+	<div class="w3-third w3-padding-16" >
 		{% include 'wiki/includes/seotud_isikud.html' %}
 		{% include 'wiki/includes/seotud_organisatsioonid.html' %}
 		{% include 'wiki/includes/seotud_objektid.html' %}
 		{% include 'wiki/includes/seotud_pildid.html' %}
 	</div>
-
 </div>
 
 

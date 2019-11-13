@@ -39,11 +39,9 @@
 
   <body class="w3-light-grey">
     <header>
-    </header>
-
 		<!-- Navbar -->
 		<div id="top" class="w3-top">
-			<div class="w3-bar w3-left-align w3-large w3-padding">
+			<div class="w3-bar w3-left-align w3-large">
 				<a
 						href="{% url 'algus' %}"
 						title="Valga linna kroonika avalehele"
@@ -72,14 +70,14 @@
 				</a>
 			</div>
 		</div>
+		</header>
 
-		<div class="w3-container"  style="margin-top:60px;">
-			<main>
-				{% block content %}{% endblock %}
-			</main>
-		</div>
-    <footer>
-			<div class="w3-bar w3-padding">
+		<main>
+			{% block content %}{% endblock %}
+		</main>
+
+		<footer>
+			<div class="w3-bar">
 					<a href="#">
 					<button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
 				</a>

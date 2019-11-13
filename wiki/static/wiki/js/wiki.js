@@ -23,7 +23,7 @@ function throttle(fn, delay) {
 
 // Fikseeritud navigatsiooniriba tekitamiseks
 function onScroll() {
-  if ($(window).scrollTop() >= 60) {
+  if ($(window).scrollTop() >= 43) {
     $('nav').addClass('fixed-header');
   }
   else {

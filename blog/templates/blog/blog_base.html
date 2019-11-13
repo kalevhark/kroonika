@@ -39,54 +39,54 @@
   </head>
   <body class="w3-light-grey">
     <header>
-    </header>
-	<!-- Navbar -->
-	<div id="top" class="w3-top">
-	  <div class="w3-bar w3-left-align w3-large w3-padding">
-			<a
-				href="{% url 'algus' %}"
-				title="Valga linna kroonika avalehele"
-				class="w3-bar-item w3-button w3-hover-white">
-				<img
-						src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}"
-						style='max-height:22px;'
-						alt="vapp">
-			</a>
-			<a
-					href="{% url 'blog:blog_index' %}"
-					class="w3-bar-item w3-button w3-theme-d4 w3-hover-white">
-				Valga linna kroonika blogi
-			</a>
-			<a
-					href="{% url 'algus' %}"
-					class="w3-bar-item w3-button w3-hide-small w3-hover-white"
-					title="Valga linna kroonika">
-				<i class="fa fa-leanpub"></i>
-			</a>
-	  </div> 
-	</div>
+			<!-- Navbar -->
+			<div id="top" class="w3-top">
+				<div class="w3-bar w3-left-align w3-large">
+					<a
+						href="{% url 'algus' %}"
+						title="Valga linna kroonika avalehele"
+						class="w3-bar-item w3-button w3-hover-white">
+						<img
+								src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}"
+								style='max-height:22px;'
+								alt="vapp">
+					</a>
+					<a
+							href="{% url 'blog:blog_index' %}"
+							class="w3-bar-item w3-button w3-theme-d4 w3-hover-white">
+						Valga linna kroonika blogi
+					</a>
+					<a
+							href="{% url 'algus' %}"
+							class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+							title="Valga linna kroonika">
+						<i class="fa fa-leanpub"></i>
+					</a>
+				</div>
+			</div>
+		</header>
 
-    <div class="w3-container"  style="margin-top:60px;">
-	<main>
+		<main>
       {% block content %}{% endblock %}
     </main>
-	</div>
+
     <footer>
-	  <div class="w3-bar w3-padding">
+	  <div class="w3-bar">
         <a href="#">
 	      <button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
 	    </a>
-	    <a href={% url 'ilm:index' %}>
+	    <a href="{% url 'ilm:index' %}">
           <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018-2019 Kalev Härk</small></button>
 	    </a>
       </div>
-	</footer>
-	<!-- jQuery teek -->
+		</footer>
+
+		<!-- jQuery teek -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-	<!-- Äpi skriptid, kui vaja -->
+		<!-- Äpi skriptid, kui vaja -->
 	  {% block javascript %}{% endblock %}
 	</body>
 </html>
