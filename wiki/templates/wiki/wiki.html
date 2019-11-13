@@ -26,12 +26,11 @@
 					<div class="w3-hide-large w3-hide-small w3-left ">
 						<h6>{% model_name_artikkel %} ({{ andmed.artikkel.kirjeid }})</h6>
 					</div>
-<!--        	<div class="w3-clear"></div>-->
       	</div>
 	  	</a>
     </div>
     <div class="w3-quarter">
-      <a style="text-decoration: none;" href={% url 'wiki:wiki_isik_filter' %}>
+      <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
 	  		<div class="w3-container background-isik w3-padding-16 w3-hover-white">
         	<div class="w3-left">
 						<i class="fa fa-address-card-o w3-xxxlarge"></i>
@@ -47,7 +46,7 @@
 	  	</a>
     </div>
 		<div class="w3-quarter">
-			<a class="w3-tooltip" style="text-decoration: none;" href={% url 'wiki:wiki_organisatsioon_filter' %}>
+			<a class="w3-tooltip" style="text-decoration: none;" href="{% url 'wiki:wiki_organisatsioon_filter' %}">
 	  		<div class="w3-container background-organisatsioon w3-padding-16 w3-hover-white">
         	<div class="w3-left">
 						<i class="fa fa-group w3-xxxlarge"></i>

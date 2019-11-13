@@ -1,11 +1,9 @@
 {% load wiki_extras %}
-<div class="w3-padding-16">
-  {% if object.vigane %}
-	  <div>
-      <small>
-        <i class="fa fa-question w3-text-red" alt="Viga?"></i>
-        NB! Leiti ilmseid loogikavigu või kaheldavaid kohti, mis on tähistatud märkega {% viga_tekstis %}
-      </small>
-    </div>
-  {% endif %}
-</div>
+{% if object.vigane %}
+  <div class="w3-padding-16">
+    <small>
+      <i class="fa fa-question w3-text-red" alt="Viga?"></i>
+      NB! Leiti ilmseid loogikavigu või kaheldavaid kohti, mis on tähistatud märkega {% viga_tekstis %}
+    </small>
+  </div>
+{% endif %}

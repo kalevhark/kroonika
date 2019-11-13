@@ -4,9 +4,9 @@
 {% block title %}{{ block.super }} - {{ object }}{% endblock %}
 
 {% block content %}
-<div class="w3-panel w3-card-4 w3-light-grey">
+<div class="w3-container w3-card-4 w3-light-grey">
   <!-- Sisukaardi päis-->
-  <div class="w3-row text-isik" >
+  <div class="w3-panel w3-row text-isik" >
     <h4>
       <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
 	      <i class="fa fa-address-card-o"></i>
@@ -35,31 +35,28 @@
   </div>
 
   <!-- Sisukaardi kirjeldav osa-->
-  <div class="w3-twothird" >
-    <div>
-      {% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-portree-medium' %}
-      <!-- Sisukaardi tekstiosa-->
-      <div class="w3-twothird">
-        {% include 'wiki/includes/vigane.html' %}
-        <div>
-          {{ object.kirjeldus | safe | linebreaksbr }}
-        </div>
-        {% include 'wiki/includes/mainitud_aastatel.html' %}
-        {% include 'wiki/includes/seotud_special_links.html' %}
-        {% include 'wiki/includes/seotud_viited.html' %}
+  <div class="w3-container w3-twothird" >
+    {% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-portree-medium' %}
+    <!-- Sisukaardi tekstiosa-->
+    <div class="w3-twothird">
+      {% include 'wiki/includes/vigane.html' %}
+      <div>
+        {{ object.kirjeldus | safe | linebreaksbr }}
       </div>
+      {% include 'wiki/includes/mainitud_aastatel.html' %}
+      {% include 'wiki/includes/seotud_special_links.html' %}
+      {% include 'wiki/includes/seotud_viited.html' %}
     </div>
+    <!-- Andmete lisamise/muutmise andmed: -->
+    {% include 'wiki/includes/object_updated_edit.html' with model='isik' %}
   </div>
 
   <!--  Sisukaardi otseseosed-->
-  <div class="w3-third w3-padding" >
+  <div class="w3-third" >
     {% include 'wiki/includes/seotud_organisatsioonid.html' %}
     {% include 'wiki/includes/seotud_objektid.html' %}
     {% include 'wiki/includes/seotud_pildid.html' %}
   </div>
-
-  <!-- Andmete lisamise/muutmise andmed: -->
-  {% include 'wiki/includes/object_updated_edit.html' with model='isik' %}
 </div>
 
 {% include 'wiki/includes/seotud_artiklikaudu.html' with model='isik' %}
