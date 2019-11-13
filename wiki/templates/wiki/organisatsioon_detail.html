@@ -5,16 +5,16 @@
 {% block content %}
 <div class="w3-panel w3-card-4 w3-light-grey" >
 	<!-- Sisukaardi päis-->
-  <div class="w3-row w3-xlarge text-organisatsioon">
+  <div class="w3-row text-organisatsioon">
     <h4>
 			<a style="text-decoration: none;" href={% url 'wiki:wiki_organisatsioon_filter' %}>
 				<i class="fa fa-group"></i>
 			</a>
 			{{ object }}
 		</h4>
-    <p class="w3-large">
-	  	{% include 'wiki/includes/kp.html' with sd=object.hist_date y=object.hist_year m=object.hist_month ed=object.hist_enddate ey=object.hist_endyear cs="white" %}
-		</p>
+    <h5>
+	  	{% include 'wiki/includes/kp.html' with sd=object.hist_date y=object.hist_year m=object.hist_month ed=object.hist_enddate ey=object.hist_endyear cs="organisatsioon" %}
+		</h5>
   </div>
 
 	<!-- Sisukaardi kirjeldav osa-->
