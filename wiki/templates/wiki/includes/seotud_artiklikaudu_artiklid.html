@@ -1,10 +1,12 @@
 <!-- Loend seotud artiklite numbritest ja lühisisu -->
 {% for artikkel in obj.artiklid %}
-<a style="cursor: pointer;" onclick="document.getElementById('id{{ artikkel.id }}').style.display='block'" class="hover-artikkel tooltip">
+<a
+		style="cursor: pointer;"
+		onclick="document.getElementById('id{{ artikkel.id }}').style.display='block'"
+		class="hover-artikkel tooltip"
+>
 	{{ artikkel.hist_year }}
-	<span
-			class="tooltiptext w3-hide-small w3-hide-medium"
-	>
+	<span class="tooltiptext w3-hide-medium w3-hide-small">
 		{% if artikkel.hist_date %}
 			{{ artikkel.hist_date|date:"d.m.Y" }}
 		{% else %}
@@ -22,7 +24,7 @@
 					class="w3-button w3-display-topright">&#10060;
 			</span>
 			<h5>
-				{% include 'wiki/includes/kp.html' with sd=artikkel.hist_date ed=artikkel.hist_enddate y=artikkel.hist_year m=artikkel.hist_month cs="dark" %}
+				{% include 'wiki/includes/kp.html' with sd=artikkel.hist_date ed=artikkel.hist_enddate y=artikkel.hist_year m=artikkel.hist_month cs="artikkel" %}
 			</h5>
 	  </header>
 		<div class="w3-container w3-padding-16">
