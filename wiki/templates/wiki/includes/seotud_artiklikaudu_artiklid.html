@@ -19,7 +19,7 @@
 	  <header class="w3-container">
 			<span
 					onclick="document.getElementById('id{{ artikkel.id }}').style.display='none'"
-					class="w3-button w3-display-topright">&times;
+					class="w3-button w3-display-topright">&#10060;
 			</span>
 			<h5>
 				{% include 'wiki/includes/kp.html' with sd=artikkel.hist_date ed=artikkel.hist_enddate y=artikkel.hist_year m=artikkel.hist_month cs="dark" %}
@@ -31,9 +31,10 @@
 		<footer class="w3-container">
 			<a
 					style="text-decoration: none;"
-					class="hover-artikkel"
+					class="text-artikkel hover-artikkel"
 					href="{% url 'wiki:wiki_artikkel_detail' pk=artikkel.id slug=artikkel.slug %}"
 			>
+				<i class="fa fa-comment"> </i>
 				Sissekande juurde
 			</a>
 		</footer>
