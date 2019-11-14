@@ -32,17 +32,17 @@ function onScroll() {
 }
 
 // Väikese ekraani menüü (Opening and Collapsing the Navigation Bar)
-function openRightMenu() {
-  let openRightMenuDisplayStatus = document.getElementById("rightMenu").style.getPropertyValue('display');
-  if (openRightMenuDisplayStatus == "block") {
-    document.getElementById("rightMenu").style.display = "none";
+function toggleRightMenu() {
+  let x = document.getElementById("rightMenu");
+  const closeIcon = "&#10060;";
+  const openIcon  = "&#9776;";
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+    document.getElementById("rightMenuLink").innerHTML = closeIcon;
   } else {
-    document.getElementById("rightMenu").style.display = "block";
-  };
-}
-
-function closeRightMenu() {
-  document.getElementById("rightMenu").style.display = "none";
+    x.className = x.className.replace(" w3-show", "");
+    document.getElementById("rightMenuLink").innerHTML = openIcon;
+  }
 }
 
 // Load Facebook SDK for JavaScript

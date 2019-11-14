@@ -6,10 +6,217 @@ a {
   text-decoration: none;
 }
 
-/* Kasutamiseks navbar submenns */
+/* Üldised layout seaded */
+.Site {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.Site-content {
+  flex: 1;
+}
+
+/* Kuupäevavälja vorming */
+.date {
+  overflow: hidden; /* Clear floats */
+  display: inline-flex;
+}
+
+.date a {
+  text-decoration: none;
+  float: left;
+  padding: 0px;
+}
+
+/* Bloki sees tsentreerimiseks*/
+.layout-row {
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-direction: normal;
+  -webkit-box-orient: horizontal;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+}
+.layout-align-center-center{
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-grid-row-align: center;
+  align-items: center;
+  -webkit-align-content: center;
+  align-content: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+
+/* Ülemine navigatsiooniriba */
+header {
+    height: 43px;
+    z-index: 10;
+    -webkit-transition: all 0.6s ease-out;
+    -moz-transition: all 0.6s ease-out;
+    -o-transition: all 0.6s ease-out;
+    -ms-transition: all 0.6s ease-out;
+    transition: all 0.6s ease-out;
+}
+
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgb(200, 200, 200); /* IE */
+    background: rgba(0, 0, 0, 0.20); /* NON-IE */
+}
+
+/* Navbar*/
+nav {
+    width: 100%;
+    height: 43px;
+    postion: fixed;
+    z-index: 10;
+}
+
+/* Icon 1 */
+
+#nav-icon1 {
+  width: 20px;
+  height: 15px;
+  position: relative;
+  margin: 10px auto;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+  -webkit-transition: .5s ease-in-out;
+  -moz-transition: .5s ease-in-out;
+  -o-transition: .5s ease-in-out;
+  transition: .5s ease-in-out;
+  cursor: pointer;
+}
+
+#nav-icon1 span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: #d3531a;
+  border-radius: 3px;
+  opacity: 1;
+  left: 0;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+  -webkit-transition: .25s ease-in-out;
+  -moz-transition: .25s ease-in-out;
+  -o-transition: .25s ease-in-out;
+  transition: .25s ease-in-out;
+}
+
+#nav-icon1 span:nth-child(1) {
+  top: 0px;
+}
+
+#nav-icon1 span:nth-child(2) {
+  top: 6px;
+}
+
+#nav-icon1 span:nth-child(3) {
+  top: 12px;
+}
+
+#nav-icon1.open span:nth-child(1) {
+  top: 6px;
+  -webkit-transform: rotate(135deg);
+  -moz-transform: rotate(135deg);
+  -o-transform: rotate(135deg);
+  transform: rotate(135deg);
+}
+
+#nav-icon1.open span:nth-child(2) {
+  opacity: 0;
+  left: -20px;
+}
+
+#nav-icon1.open span:nth-child(3) {
+  top: 6px;
+  -webkit-transform: rotate(-135deg);
+  -moz-transform: rotate(-135deg);
+  -o-transform: rotate(-135deg);
+  transform: rotate(-135deg);
+}
+
+/* Kasutamiseks navbar submenus */
 .bar-item-text-with-icon {
   position: absolute;
   left: 40px;
+}
+
+form#search * {
+  font-family: sans-serif;
+}
+
+form#search {
+  align-items: center;
+  display: flex;
+  max-width: 600px;
+  width: 100%;
+}
+
+form#search label {
+  display: none;
+  font-weight: 500;
+  margin: 0 10px 0 0;
+}
+
+form#search input {
+  border: solid #ccc;
+  border-width: 1px 0 1px 1px;
+  border-radius: 2px 0 0 2px;
+  flex: 1;
+  font-size: 16px;
+  font-weight: 200;
+  height: 33px;
+  margin: 0;
+  min-width: 90px;
+  padding: 5px;
+  -webkit-appearance: textfield;
+}
+
+form#search button {
+  border: none;
+  cursor: pointer;
+  height: 33px;
+  padding: 0;
+}
+
+form#search svg {
+  background-color: #26882e;
+  border-radius: 0 2px 2px 0;
+  fill: white;
+  height: 33px;
+  min-width: 24px;
+  padding: 0 7px;
+  width: 24px;
+}
+
+form#search svg:hover {
+  background-color: #1d6823;
+  fill: white;
+}
+
+@media all and (min-width: 500px) {
+  form#search label {
+    display: inline;
+  }
+  form#search input::placeholder {
+    opacity: 0;
+  }
 }
 
 /* Kasutamiseks objektivaates */

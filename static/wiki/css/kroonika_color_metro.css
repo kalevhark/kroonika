@@ -42,7 +42,17 @@ background-color:#A9A9A9;
 color:white;
 }
 
-.text-artikkel {color:#1e7145;}
+.text-artikkel {
+  color:#1e7145;
+  margin-bottom: 1px;
+  }
+
+.date-highlighted {
+  color:#1e7145;
+  margin-bottom: 0px;
+  border-bottom: 1px dotted #000;
+  }
+
 .text-isik {color:#00aba9;}
 .text-organisatsioon {color:#2d89ef;}
 .text-objekt {color:#2b5797;}

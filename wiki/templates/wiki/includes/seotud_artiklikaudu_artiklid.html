@@ -2,7 +2,9 @@
 {% for artikkel in obj.artiklid %}
 <a style="cursor: pointer;" onclick="document.getElementById('id{{ artikkel.id }}').style.display='block'" class="hover-artikkel tooltip">
 	{{ artikkel.hist_year }}
-	<span class="tooltiptext">
+	<span
+			class="tooltiptext w3-hide-small w3-hide-medium"
+	>
 		{% if artikkel.hist_date %}
 			{{ artikkel.hist_date|date:"d.m.Y" }}
 		{% else %}
@@ -15,8 +17,13 @@
 <div id="id{{ artikkel.id }}" class="w3-modal">
   <div class="w3-modal-content w3-padding-16 w3-light-gray">
 	  <header class="w3-container">
-			<span onclick="document.getElementById('id{{ artikkel.id }}').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-			<h5>{% include 'wiki/includes/kp.html' with sd=artikkel.hist_date ed=artikkel.hist_enddate y=artikkel.hist_year m=artikkel.hist_month cs="dark" %}</h5>
+			<span
+					onclick="document.getElementById('id{{ artikkel.id }}').style.display='none'"
+					class="w3-button w3-display-topright">&times;
+			</span>
+			<h5>
+				{% include 'wiki/includes/kp.html' with sd=artikkel.hist_date ed=artikkel.hist_enddate y=artikkel.hist_year m=artikkel.hist_month cs="dark" %}
+			</h5>
 	  </header>
 		<div class="w3-container w3-padding-16">
 			{{ artikkel.body_text }}
