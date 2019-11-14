@@ -21,9 +21,9 @@
         {{ object.synd_koht }}
       {% endif %}
       {% if object.hist_enddate %}
-        - <strong>{% include 'wiki/includes/kp.html' with sd=object.hist_enddate cs="isik" %}</strong> {{ object.hist_enddate | ukj }}
+        <strong>&#9840;&nbsp;{% include 'wiki/includes/kp.html' with sd=object.hist_enddate cs="isik" %}</strong> {{ object.hist_enddate | ukj }}
       {% elif object.hist_endyear %}
-        - <strong>{% include 'wiki/includes/kp.html' with y=object.hist_endyear cs="isik" %}</strong>
+        <strong>&#9840;&nbsp;{% include 'wiki/includes/kp.html' with y=object.hist_endyear cs="isik" %}</strong>
       {% endif %}
       {% if object.surm_koht %}
         {{ object.surm_koht }}
