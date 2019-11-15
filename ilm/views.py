@@ -820,7 +820,8 @@ def container_history_p2ev(request):
     sel = list(
         Ilm.objects \
             .filter(timestamp__year=bdi.aasta, timestamp__month=bdi.kuu, timestamp__day=bdi.p2ev) \
-            .values('timestamp__hour', 'airtemperature', 'precipitations')
+            .values('timestamp__hour', 'airtemperature', 'precipitations') \
+            .order_by('timestamp__hour')
     )
     hist = list(bdi.qs8784.filter(timestamp__month=bdi.kuu, timestamp__day=bdi.p2ev))
     # Andmete ettevalmistamine
@@ -836,7 +837,7 @@ def container_history_p2ev(request):
             f"{str(hist[i]['timestamp__hour']).zfill(2)}:00"
         )
         # Kogu ajaloo väärtused
-        hist_temp_averages.append(round(hist[i]['airtemperature__avg'], 1))
+        hist_temp_averages.append(round(float(hist[i]['airtemperature__avg']), 1))
         hist_temp_ranges.append(
             [
                 round(float(hist[i]['airtemperature__min']), 1),
