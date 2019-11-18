@@ -71,8 +71,8 @@
     </p>
 
     <p>
-      ...või otseteed wiki/kroonika/aasta/kuu/päev,
-      näiteks <i>wiki/kroonika/1902/02/24</i>.
+      ...või otseteed https://valgalinn/wiki/kroonika/aasta/kuu/päev,
+      näiteks <i>https://valgalinn/wiki/kroonika/1902/02/24</i>.
     </p>
     <div>
       Andmebaasid:
@@ -150,6 +150,9 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
+        title: {
+            text: 'aastad'
+        },
         min: {{ andmed.hist_searchdate__min|date:"Y" }},
         max: {{ andmed.hist_searchdate__max|date:"Y" }},
         labels: {
