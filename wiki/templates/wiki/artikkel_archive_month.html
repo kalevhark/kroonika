@@ -20,7 +20,7 @@
 <!-- Lingid eelnevale ja järgnevale kuule -->
 <div class="w3-cell-row w3-margin-top">
   <div class="w3-half">
-    <a style="text-decoration: none;" href={% url 'wiki:artikkel_month_archive' month=previous_month|date:"n" year=previous_month|date:"Y" %}>
+    <a style="text-decoration: none;" href="{% url 'wiki:artikkel_month_archive' month=previous_month|date:'n' year=previous_month|date:'Y' %}">
 	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
         <b><i class="fa fa-angle-double-left w3-large"></i>
         &nbsp;{% include "wiki/includes/kuu.html" with kuu=previous_month|date:"m" %} {{ previous_month|date:"Y" }}</b>
@@ -28,7 +28,7 @@
 	</a>
   </div>	
   <div class="w3-half">
-    <a style="text-decoration: none;" href={% url 'wiki:artikkel_month_archive' month=next_month|date:"n" year=next_month|date:"Y" %}>
+    <a style="text-decoration: none;" href="{% url 'wiki:artikkel_month_archive' month=next_month|date:'n' year=next_month|date:'Y' %}">
 	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
         <b>{% include "wiki/includes/kuu.html" with kuu=next_month|date:"m" %} {{ next_month|date:"Y" }}
         &nbsp;<i class="fa fa-angle-double-right w3-large"></i></b>
@@ -42,7 +42,7 @@
         class="w3-bar-item w3-button tablink background-artikkel"
         onclick="openLinks(event, 'artiklid')"
     >
-    <i class="fa fa-comment"></i> {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %}{{ month|date:'Y' }} ({{ object_list.count }})
+    <i class="fa fa-comment"></i> {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:'Y' }} ({{ object_list.count }})
   </button>
   {% if sel_kuul %}
     <button
@@ -90,13 +90,13 @@
   {% if object_list %}
     <div class="w3-cell-row w3-container background-artikkel w3-text-white">
       <div class="w3-cell w3-cell-middle">
-        <h5><i class="fa fa-comment w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %}{{ month|date:'Y' }}</h5>
+        <h5><i class="fa fa-comment w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} {{ month|date:'Y' }}</h5>
       </div>
     </div>
     {% include 'wiki/includes/object_list.html' %}
   {% else %}
     <div class="w3-container w3-padding-16">
-      Valitud kuu ja aasta ({% include "wiki/includes/kuu.html" with kuu=month|date:"m" %}{{ month|date:'Y' }}) kohta andmed puuduvad!
+      Valitud kuu ja aasta ({% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:'Y' }}) kohta andmed puuduvad!
       <a class="w3-button background-artikkel tablink" href="{% url 'wiki:wiki_artikkel_filter' %}">Proovige uuesti</a>
     </div>
   {% endif %}
