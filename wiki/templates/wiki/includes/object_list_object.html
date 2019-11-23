@@ -20,13 +20,13 @@
 <!--  {% endif %}-->
 <!--{% endif %}-->
 <!-- Vanus -->
-{% if obj.vanus %}
-  {% if obj.vanus|divisibleby:"5" %}
-    <b class="text-{{model}}">{{ obj.vanus }}</b>
+{% if obj.vanus_gen and obj.vanus_gen > 0 %}
+  {% if obj.vanus_gen|divisibleby:"5" %}
+    <b class="text-{{model}}">
+      {{ obj.vanus_gen }}
+      {% if obj.vanus != obj.vanus_gen %}
+        <small> ({{ periood|date:'Y' }}) </small>
+      {% endif %}
+    </b>
   {% endif %}
 {% endif %}
-<!--{% if obj.vanus != obj.vanus_gen %}-->
-<!--  {% if obj.vanus_gen > 0 %}-->
-<!--    {{ periood|date:'Y' }}:{{ obj.vanus_gen }}-->
-<!--  {% endif %}-->
-<!--{% endif %}-->
