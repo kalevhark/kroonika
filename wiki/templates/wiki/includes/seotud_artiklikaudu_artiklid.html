@@ -2,7 +2,7 @@
 {% for artikkel in obj.artiklid %}
 <a
 		style="cursor: pointer;"
-		onclick="document.getElementById('id{{ artikkel.id }}').style.display='block'"
+		onclick="document.getElementById('{{ model_id }}-art{{ artikkel.id }}').style.display='block'"
 		class="hover-artikkel tooltip"
 >
 	{{ artikkel.hist_year }}
@@ -16,11 +16,11 @@
 		{{ artikkel.body_text|truncatewords:10 }}
 	</span>
 </a>
-<div id="id{{ artikkel.id }}" class="w3-modal">
+<div id="{{ model_id }}-art{{ artikkel.id }}" class="w3-modal">
   <div class="w3-modal-content w3-padding-16 w3-light-gray">
 	  <header class="w3-container">
 			<span
-					onclick="document.getElementById('id{{ artikkel.id }}').style.display='none'"
+					onclick="document.getElementById('{{ model_id }}-art{{ artikkel.id }}').style.display='none'"
 					class="w3-button w3-display-topright">&#10060;
 			</span>
 			<h5>

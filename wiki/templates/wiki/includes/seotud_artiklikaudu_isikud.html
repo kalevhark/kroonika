@@ -13,7 +13,7 @@
 				<strong>{{ obj.nimi }}</strong>
 			</a>
 			&nbsp;&ndash;&nbsp;
-			{% include 'wiki/includes/seotud_artiklikaudu_artiklid.html' %}
+			{% include 'wiki/includes/seotud_artiklikaudu_artiklid.html' with model_id='isik' %}
     {% endfor %}
   </div>
 {% endif %}
