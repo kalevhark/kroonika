@@ -1,0 +1,153 @@
+{% load static %}
+{% load wiki_extras %}
+
+
+
+  <!-- Sel päeval 100 aastat tagasi toimunud -->
+  {% if andmed.100_aastat_tagasi %}
+    <h5>
+      100 aastat tagasi...
+    </h5>
+    {% if andmed.artikkel.100_aastat_tagasi %}
+      {% for obj in andmed.artikkel.100_aastat_tagasi %}
+        {% if forloop.counter > 1 %}
+          <br>
+        {% endif %}
+        <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
+          ... {{ obj.body_text|truncatewords:10 }}
+          {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+        </a>
+      {% endfor %}
+    {% endif %}
+    {% if andmed.isik.100_aastat_tagasi %}
+      {% for obj in andmed.isik.100_aastat_tagasi %}
+        {% if forloop.counter > 1 %}
+          <br>
+        {% endif %}
+        <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+          sündis {{ obj }}
+          {% if obj.vanus|divisibleby:"5" %}
+            &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+          {% endif %}
+          {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
+        </a>
+      {% endfor %}
+    {% endif %}
+    {% if andmed.organisatsioon.100_aastat_tagasi %}
+      {% for obj in andmed.organisatsioon.100_aastat_tagasi %}
+        {% if forloop.counter > 1 %}
+          <br>
+        {% endif %}
+        <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
+          {{ obj }}
+          {% if obj.vanus|divisibleby:"5" %}
+            &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+          {% endif %}
+          {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+        </a>
+      {% endfor %}
+    {% endif %}
+    {% if andmed.objekt.100_aastat_tagasi %}
+      {% for obj in andmed.objekt.100_aastat_tagasi %}
+        {% if forloop.counter > 1 %}
+          <br>
+        {% endif %}
+        <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
+          {{ obj }}
+          {% if obj.vanus|divisibleby:"5" %}
+            &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+          {% endif %}
+          {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+        </a>
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+  <!-- Sel päeval toimunud -->
+  {% if andmed.artikkel.sel_p2eval %}
+    <h5>
+      <a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}">
+        {% now "j.m." %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_p2eval_kirjeid }}</span>
+      </a>
+    </h5>
+    {% for obj in andmed.artikkel.sel_p2eval %}
+      {% if forloop.counter > 1 %}
+        <br>
+      {% endif %}
+      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
+        <strong>{{ obj.hist_year }}</strong>:
+      </a>
+      <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
+        {{ obj.body_text|truncatewords:10 }}
+        {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+      </a>
+      <!-- Kui kirjed rohkem kui 5, siis hakime 2+1+2 -->
+      {% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
+        {% if forloop.counter == 2 and andmed.artikkel.sel_p2eval_kirjeid  > 6 %}
+          <br><span class="w3-tiny text-artikkel"> - - - </span>
+        {% endif %}
+        {% if forloop.counter == 3 %}
+          <br><span class="w3-tiny text-artikkel"> - - - </span>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    {% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
+      <p>
+        <a class="hover-artikkel" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}">
+          Näita kõiki <em>{% now "j.m." %} ajaloos</em> ({{ andmed.artikkel.sel_p2eval_kirjeid }})
+        </a>
+      </p>
+    {% endif %}
+  {% endif %}
+  <!-- Sel kuul toimunud -->
+  {% if andmed.artikkel.sel_kuul %}
+    <h5>
+      <a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}">
+        {% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_kuul_kirjeid }}</span>
+      </a>
+    </h5>
+    {% for obj in andmed.artikkel.sel_kuul %}
+      {% if forloop.counter > 1 %}
+        <br>
+      {% endif %}
+      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
+        <strong>{{ obj.hist_year }}</strong>:
+      </a>
+      <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
+        {{ obj.body_text|truncatewords:10 }}
+      </a>
+      <!-- Kui kirjed rohkem kui 9, siis hakime 4+1+4 -->
+      {% if andmed.artikkel.sel_kuul_kirjeid > 9 %}
+        {% if forloop.counter == 4 and andmed.artikkel.sel_kuul_kirjeid  > 10 %}
+          <br><span class="w3-tiny w3-text-artikkel"> - - - </span>
+        {% endif %}
+        {% if forloop.counter == 5 %}
+          <br><span class="w3-tiny w3-text-artikkel"> - - - </span>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    {% if andmed.artikkel.sel_kuul_kirjeid > 9 %}
+      <p>
+        <a class="hover-artikkel" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}">
+          Näita kõiki <em>{% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos</em> ({{ andmed.artikkel.sel_kuul_kirjeid }})
+        </a>
+      </p>
+    {% endif %}
+  {% endif %}
+  <!-- top10 -->
+  {% if andmed.artikkel.loetumad %}
+    <h5>
+      loetumad
+    </h5>
+    {% for obj in andmed.artikkel.loetumad %}
+      {% if forloop.counter > 1 %}
+        <br>
+      {% endif %}
+      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
+        <strong>{{ obj.hist_year }}</strong>:
+      </a>
+      <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
+        {{ obj.body_text|truncatewords:10 }}
+      </a>
+      <small>&nbsp;{{ obj.total_accessed }} vaatamist</small>
+    {% endfor %}
+  {% endif %}

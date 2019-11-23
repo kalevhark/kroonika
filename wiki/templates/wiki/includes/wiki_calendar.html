@@ -1,0 +1,38 @@
+<!-- Aasta ja kuu valikumenüü -->
+{% load static %}
+<div class="w3-hide-small w3-hide-medium">
+  <form
+      id="yearmonthform"
+      method="post"
+      action="{% url 'wiki:mine_krono_kuu' %}"
+  >
+    {% csrf_token %}
+    <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
+    <input
+        type="submit"
+        value="&#128269;"
+    />
+    <select
+        id="yearinput"
+        name="year"
+        onchange="getMonthArticles()">
+      {% for year in andmed.artikleid_aasta_kaupa %}
+        <option value="{{ year.hist_year }}" >
+          {{ year.hist_year }} ({{ year.hist_year__count }})
+        </option>
+      {% endfor %}
+    </select>
+    <select
+        id="monthinput"
+        name="month"
+    >
+    </select>
+  </form>
+</div>
+
+{% block javascript %}
+<script>
+  let artikleidKuudeKaupa = {{ andmed.artikleid_kuu_kaupa }};
+</script>
+<script src="{% static 'wiki/js/wiki_calendar.js'%}"></script>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% load wiki_extras %}
+<div class="w3-quarter">
+  <a
+      class="w3-tooltip"
+      style="text-decoration: none;"
+      href="{% url 'wiki:wiki_artikkel_filter' %}"
+  >
+    <div class="w3-container background-artikkel w3-padding-16  w3-hover-white">
+      <div class="w3-left">
+        <i class="fa fa-comment w3-xxxlarge"></i>
+      </div>
+      <div class="w3-hide-medium w3-right">
+        <h4>{% model_name_artikkel %} ({{ andmed.artikkel.kirjeid }})</h4>
+      </div>
+      <div class="w3-hide-large w3-hide-small w3-left ">
+        <h6>{% model_name_artikkel %} ({{ andmed.artikkel.kirjeid }})</h6>
+      </div>
+    </div>
+  </a>
+</div>
+<div class="w3-quarter">
+  <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
+    <div class="w3-container background-isik w3-padding-16 w3-hover-white">
+      <div class="w3-left">
+        <i class="fa fa-address-card-o w3-xxxlarge"></i>
+      </div>
+      <div class="w3-hide-medium w3-right">
+        <h4>{% model_name_isik %} ({{ andmed.isik.kirjeid }})</h4>
+      </div>
+      <div class="w3-hide-large w3-hide-small w3-left ">
+        <h6>{% model_name_isik %} ({{ andmed.isik.kirjeid }})</h6>
+      </div>
+    </div>
+  </a>
+</div>
+<div class="w3-quarter">
+  <a class="w3-tooltip" style="text-decoration: none;" href="{% url 'wiki:wiki_organisatsioon_filter' %}">
+    <div class="w3-container background-organisatsioon w3-padding-16 w3-hover-white">
+      <div class="w3-left">
+        <i class="fa fa-group w3-xxxlarge"></i>
+      </div>
+      <div class="w3-hide-medium w3-right">
+        <h4>{% model_name_organisatsioon %} ({{ andmed.organisatsioon.kirjeid }})</h4>
+      </div>
+      <div class="w3-hide-large w3-hide-small w3-left ">
+        <h6>{% model_name_organisatsioon %} ({{ andmed.organisatsioon.kirjeid }})</h6>
+      </div>
+    </div>
+  </a>
+</div>
+<div class="w3-quarter">
+  <a
+      class="w3-tooltip"
+      style="text-decoration: none;"
+      href="{% url 'wiki:wiki_objekt_filter' %}"
+  >
+    <div class="w3-container background-objekt w3-padding-16 w3-hover-white">
+      <div class="w3-left">
+        <i class="fa fa-bank w3-xxxlarge"></i>
+      </div>
+      <div class="w3-hide-medium w3-right">
+        <h4>{% model_name_objekt %} ({{ andmed.objekt.kirjeid }})</h4>
+      </div>
+      <div class="w3-hide-large w3-hide-small w3-left ">
+        <h6>{% model_name_objekt %} ({{ andmed.objekt.kirjeid }})</h6>
+      </div>
+    </div>
+  </a>
+</div>
