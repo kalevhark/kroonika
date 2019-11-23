@@ -14,26 +14,34 @@
 		
 	<div class="w3-rest w3-hide-small">
 		<div class="w3-bar">
-			<button
-					class="w3-bar-item w3-button tablink isik text-isik {{ obj.id }}"
-					onclick="openCity(event,'isik', {{ obj.id }})">
-				<i class="fa fa-address-card-o"></i> {{ obj.isikud.count }}
-			</button>
-			<button
-					class="w3-bar-item w3-button tablink organisatsioon {{ obj.id }}"
-					onclick="openCity(event,'organisatsioon', {{ obj.id }})">
-				<i class="fa fa-group"></i> {{ obj.organisatsioonid.count }}
-			</button>
-			<button
-					class="w3-bar-item w3-button tablink objekt {{ obj.id }}"
-					onclick="openCity(event,'objekt', {{ obj.id }})">
-				<i class="fa fa-bank"></i> {{ obj.objektid.count }}
-			</button>
-			<button
-					class="w3-bar-item w3-button tablink pilt {{ obj.id }}"
-					onclick="openCity(event,'pilt', {{ obj.id }})">
-				<i class="fa fa-camera-retro"></i> {{ obj.pilt_set.count }}
-			</button>
+			{% if obj.isikud.exists %}
+				<button
+						class="w3-bar-item w3-button tablink isik {{ obj.id }}"
+						onclick="openTab(event,'isik', {{ obj.id }})">
+					<i class="fa fa-address-card-o"></i> {{ obj.isikud.count }}
+				</button>
+			{% endif %}
+			{% if obj.organisatsioonid.exists %}
+				<button
+						class="w3-bar-item w3-button tablink organisatsioon {{ obj.id }}"
+						onclick="openTab(event,'organisatsioon', {{ obj.id }})">
+					<i class="fa fa-group"></i> {{ obj.organisatsioonid.count }}
+				</button>
+			{% endif %}
+			{% if obj.objektid.exists %}
+				<button
+						class="w3-bar-item w3-button tablink objekt {{ obj.id }}"
+						onclick="openTab(event,'objekt', {{ obj.id }})">
+					<i class="fa fa-bank"></i> {{ obj.objektid.count }}
+				</button>
+			{% endif %}
+			{% if obj.pilt_set.exists %}
+				<button
+						class="w3-bar-item w3-button tablink pilt {{ obj.id }}"
+						onclick="openTab(event,'pilt', {{ obj.id }})">
+					<i class="fa fa-camera-retro"></i> {{ obj.pilt_set.count }}
+				</button>
+			{% endif %}
 		</div>
 
 		<div id="isik{{ obj.id }}" class="w3-container sisu isik {{ obj.id }}">
@@ -89,15 +97,15 @@
 {% endfor %}
 
 <script>
-function openCity(evt, tyyp, obj) {
+function openTab(evt, tyyp, obj) {
   var i, x, tablinks;
   x = document.getElementsByClassName("sisu " + obj);
   for (i = 0; i < x.length; i++) {
       x[i].style.display = "none";
   }
   tablinks = document.getElementsByClassName("tablink " + obj);
-  for (i = 0; i < x.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" text-isik", "");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" text-isik", "");
 	  tablinks[i].className = tablinks[i].className.replace(" text-organisatsioon", "");
 	  tablinks[i].className = tablinks[i].className.replace(" text-objekt", "");
 	  tablinks[i].className = tablinks[i].className.replace(" text-pilt", "");
