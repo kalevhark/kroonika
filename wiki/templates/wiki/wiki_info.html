@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-  <div class="w3-row-padding w3-margin-bottom">
+  <div class="w3-container">
     <!--		Tagasiside vorm -->
     {% load crispy_forms_tags %}
     <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">
@@ -38,6 +38,12 @@
         </li>
       </ul>
     </p>
+    <p style="clear: left;">
+      Parandatud on ilmsed vead. Vastukäivate andmete puhul on järjekord:
+      <br>
+      Arhiivimaterjalid -> Teatmeteosed -> Uurimused -> Ajakirjandus -> Vikipeedia -> muud andmeallikad
+    </p>
+    <hr>
     {% if andmed.id__count > 0 %}
       <p>
         Andmebaasis on {{ andmed.id__count }} lugu aastatest {{ andmed.hist_searchdate__min|date:"Y" }} kuni {{ andmed.hist_searchdate__max|date:"Y" }}.
@@ -45,30 +51,91 @@
       <!--    Artiklite heatmap kuude kaupa-->
       <div id="container" style="float: left; height: 300px; min-width: 310px; max-width: 1000px; margin: 0 auto"></div>
     {% endif %}
-
-    <p style="clear: left;">
-      Parandatud on ilmsed vead. Vastukäivate andmete puhul on järjekord:
-      <br>
-      Arhiivimaterjalid -> Teatmeteosed -> Uurimused -> Ajakirjandus -> Vikipeedia -> muud andmeallikad
-    </p>
-
-    <p>Otsimiseks kasuta temaatilisi otsinguid:
-      <a href="{% url 'wiki:wiki_artikkel_filter' %}">{% model_name_artikkel %}</a>
-      <a href="{% url 'wiki:wiki_isik_filter' %}">{% model_name_isik %}</a>
-      <a href="{% url 'wiki:wiki_organisatsioon_filter' %}">{% model_name_organisatsioon %}</a>
-      <a href="{% url 'wiki:wiki_objekt_filter' %}">{% model_name_objekt %}</a>
-    </p>
-
+    <hr>
     <p>
-      <form id="form" method="post" action="{% url 'wiki:mine_krono_kp' %}">
-        {% csrf_token %}
-        ...või vali kuupäev:
-        <input type="date" name="kuup2ev" value="1902-02-24">
-        <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
-        <input type="submit" value="Vaata">
-      <!--    <input type="hidden" name="g-recaptcha-response" id='recaptcha'>-->
-      </form>
+      Otsimiseks kasuta temaatilisi otsinguid:
+      <ul>
+        <li>
+          <a
+            href="{% url 'wiki:wiki_artikkel_filter' %}"
+            class="text-artikkel"
+          >
+            {% model_name_artikkel %}
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'wiki:wiki_isik_filter' %}"
+            class="text-isik"
+          >
+            {% model_name_isik %}
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'wiki:wiki_organisatsioon_filter' %}"
+            class="text-organisatsioon"
+          >
+            {% model_name_organisatsioon %}
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'wiki:wiki_objekt_filter' %}"
+            class="text-objekt"
+          >
+            {% model_name_objekt %}
+          </a>
+        </li>
+      </ul>
     </p>
+    <div>
+      <form
+          id="yearmonthform"
+          method="post"
+          action="{% url 'wiki:mine_krono_kuu' %}"
+      >
+        {% csrf_token %}
+        <input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >
+        <input
+            type="submit"
+            value="... vali kuu:"
+        />
+        <select
+            id="yearinput"
+            name="year"
+            onchange="getMonthArticles()">
+          {% for year in a.artikleid_aasta_kaupa %}
+            <option value="{{ year.hist_year }}" >
+              {{ year.hist_year }} ({{ year.hist_year__count }})
+            </option>
+          {% endfor %}
+        </select>
+        <select
+            id="monthinput"
+            name="month"
+        >
+        </select>
+
+      </form>
+    </div>
+    <div>
+      <form
+          id="form"
+          method="post"
+          action="{% url 'wiki:mine_krono_kp' %}"
+      >
+        {% csrf_token %}
+        <input
+            type="hidden"
+            value=""
+            name="g-recaptcha-response"
+            class="g-recaptcha-response"
+        >
+        <input type="submit" value="... või päev:">
+        <input type="date" name="kuup2ev" value="1902-02-24">
+      </form>
+    </div>
 
     <p>
       ...või otseteed https://valgalinn/wiki/kroonika/aasta/kuu/päev,
@@ -120,10 +187,14 @@
       </div>
     {% endif %}
   </div>
-
 {% endblock %}
 
 {% block javascript %}
+<script>
+  let artikleidKuudeKaupa = {{ artikleid_kuus }};
+</script>
+<script src="{% static 'wiki/js/wiki_calendar.js'%}"></script>
+
 <script>
 // Artiklite heatmap aastate ja kuude kaupa
 Highcharts.chart('container', {

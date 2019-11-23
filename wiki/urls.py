@@ -27,6 +27,7 @@ urlpatterns = [
     path('kroonika/<int:year>/<int:month>/', ArtikkelMonthArchiveView.as_view(month_format='%m'), name='artikkel_month_archive'),
     path('kroonika/<int:year>/<int:month>/<int:day>/', ArtikkelDayArchiveView.as_view(month_format='%m'), name='artikkel_day_archive'),
     path('kroonika/mine_krono_kp', views.mine_krono_kp, name='mine_krono_kp'),
+    path('kroonika/mine_krono_kuu', views.mine_krono_kuu, name='mine_krono_kuu'),
     path('isik/', IsikFilterView.as_view(), name='wiki_isik_filter'),
     # path('isik/<int:pk>', IsikDetailView.as_view(), name='wiki_isik_detail'),
     path('isik/<int:pk>-<str:slug>/', IsikDetailView.as_view(), name='wiki_isik_detail'),

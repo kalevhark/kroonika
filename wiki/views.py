@@ -5,6 +5,7 @@ from typing import Dict, Any
 
 from django.conf import settings
 from django.contrib import messages
+from django.core import serializers
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import F, Q, Value, BooleanField, DecimalField, IntegerField, ExpressionWrapper
 from django.db.models import Count, Max, Min
@@ -157,7 +158,11 @@ def info(request):
         annotate(ct=Count('id')). \
         order_by('hist_searchdate__year', 'hist_searchdate__month')
     artikleid_kuus = [
-        [periood['hist_searchdate__year'], periood['hist_searchdate__month'], periood['ct']] for periood in perioodid
+        [
+            periood['hist_searchdate__year'],
+            periood['hist_searchdate__month'],
+            periood['ct']
+        ] for periood in perioodid
     ]
     if artikleid_kuus:
         artikleid_kuus_max = max([kuu_andmed[2] for kuu_andmed in artikleid_kuus])
@@ -173,8 +178,13 @@ def info(request):
     ]
      # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
-    # tagasiside vorm
-    # feedbackform = VihjeForm()
+    # Koondnäitajad aastate ja kuude kaupa
+    import json
+    a = dict()
+    artikleid_aasta_kaupa = artikkel_qs.filter(hist_searchdate__isnull=False).values('hist_year').annotate(Count('hist_year')).order_by('-hist_year')
+    a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
+    # artikleid_kuu_kaupa = Artikkel.objects.values('hist_year', 'hist_month').annotate(Count('hist_month')).order_by('hist_year', 'hist_month')
+
     return render(
         request,
         'wiki/wiki_info.html',
@@ -184,7 +194,7 @@ def info(request):
             'artikleid_kuus': artikleid_kuus,
             'artikleid_kuus_max': artikleid_kuus_max,
             'meta_andmed': request.META,
-            # 'feedbackform': feedbackform,
+            'a': a,
             # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         }
@@ -266,14 +276,7 @@ def algus(request):
     kirjeid = artikkel_qs.count()
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
-        # kp = Artikkel.objects.all().\
-        #     aggregate(
-        #     max_inp_date=Max('inp_date'),
-        #     max_mod_date=Max('mod_date')
-        # )
-        # a['viimane_lisatud'] = Artikkel.objects.filter(inp_date=kp['max_inp_date']).last()
         a['viimane_lisatud'] = artikkel_qs.latest('inp_date')
-        # a['viimane_muudetud'] = Artikkel.objects.filter(mod_date=kp['max_mod_date']).last()
         a['viimane_muudetud'] = artikkel_qs.latest('mod_date')
         # Samal kuupäeval erinevatel aastatel toimunud
         sel_p2eval_exactly = artikkel_qs.filter( # hist_date == KKPP
@@ -303,6 +306,11 @@ def algus(request):
         # 100 aastat tagasi toimunud
         a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(hist_date__year = (aasta-100))
         a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:20] # 20 loetumat artiklit
+        # Koondnäitajad aastate ja kuude kaupa
+        artikleid_aasta_kaupa = Artikkel.objects.values('hist_year').annotate(Count('hist_year')).order_by('hist_year')
+        a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
+        artikleid_kuu_kaupa = Artikkel.objects.values('hist_year', 'hist_month').annotate(Count('hist_month')).order_by('hist_year', 'hist_month')
+        a['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
     andmed['artikkel'] = a
 
     # Andmebaas Isik andmed veebi
@@ -429,12 +437,28 @@ def algus(request):
             andmed['objekt']['100_aastat_tagasi'],
         ]
     )
-    # Lisame vihjevormi
-    # feedbackform = VihjeForm()
+
+    # Andmed aasta ja kuu rippvalikumenüü jaoks
+    perioodid = artikkel_qs. \
+        filter(hist_searchdate__isnull=False). \
+        values('hist_searchdate__year', 'hist_searchdate__month'). \
+        annotate(ct=Count('id')). \
+        order_by('hist_searchdate__year', 'hist_searchdate__month')
+    artikleid_kuu_kaupa = [
+        [
+            periood['hist_searchdate__year'],
+            periood['hist_searchdate__month'],
+            periood['ct']
+        ] for periood in perioodid
+    ]
+    andmed['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
+    artikleid_aasta_kaupa = artikkel_qs.filter(hist_searchdate__isnull=False).values('hist_year').annotate(
+        Count('hist_year')).order_by('-hist_year')
+    andmed['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
+
     return render(
         request, 'wiki/wiki.html', {
             'andmed': andmed,
-            # 'feedbackform': feedbackform
         }
     )
 
@@ -471,6 +495,27 @@ def mine_krono_kp(request):
             'wiki:artikkel_day_archive',
             kwargs={'year': kuup2ev[0], 'month': kuup2ev[1], 'day': kuup2ev[2]})
         )
+
+#
+# Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse
+#
+def mine_krono_kuu(request):
+    http_referer = request.META['HTTP_REFERER']  # mis objektilt tuli päring
+    if request.method == 'POST' and check_recaptcha(request):
+        year = request.POST.get('year')
+        month = request.POST.get('month')
+        return HttpResponseRedirect(
+            reverse(
+                'wiki:artikkel_month_archive',
+                kwargs={
+                    'year': year,
+                    'month': month
+                }
+            )
+        )
+    else:
+        return HttpResponseRedirect(http_referer)
+
 
 def mis_kuul(kuu, l6pp='s'):
     kuud = ['jaanuari',

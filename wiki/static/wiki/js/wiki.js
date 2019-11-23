@@ -1,3 +1,14 @@
+// Tagastab eestikeelse kuunime
+var getEstonianMonthName = function(idx) {
+  var kuud = [
+    'jaanuar', 'veebruar', 'märts',
+    'aprill', 'mai', 'juuni',
+    'juuli', 'august', 'september',
+    'oktoober', 'november', 'detsember'
+  ];
+  return kuud[idx-1];
+}
+
 // Abifunktsioon viivituse tekitamiseks
 function throttle(fn, delay) {
   let last;

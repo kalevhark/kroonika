@@ -691,7 +691,7 @@ input[type=text], input[type=password], input[type=email], input[type=url],
 input[type=number], input[type=tel], textarea, select, .vTextField {
     border: 1px solid #ccc;
     border-radius: 4px;
-    padding: 5px 6px;
+    /* padding: 5px 6px; */
     margin-top: 0;
 }
 
@@ -713,7 +713,7 @@ select[multiple] {
 
 .button, input[type=submit], input[type=button], .submit-row input, a.button {
     background: #79aec8;
-    padding: 10px 15px;
+    padding: 5px 10px;
     border: none;
     border-radius: 4px;
     color: #fff;
