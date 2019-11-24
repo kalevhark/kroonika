@@ -1,5 +1,8 @@
 <!doctype html>
-<html lang="et">
+<html
+    lang="et"
+    prefix="og: https://valgalinn.ee/ns#"
+>
 
 <head>
   {% load static %}
@@ -12,13 +15,19 @@
   <meta name="keywords" content="Valga, linn, kroonika, ajalugu" />
   <meta name="author" content="Kalev Härk" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <!-- Kirjeldus FB jaoks -->
+  <!-- OGP kirjeldus -->
   <meta property="og:url" content="{{ request.build_absolute_uri }}" />
   <meta property="og:title" content="Valga linna kroonika" />
   <meta property="og:type" content="article" />
-  <meta property="og:description" content="{{ object }}" />
-  {% block fb_meta %}
-  {% endblock fb_meta %}
+  <meta property="og:image" content="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
+  {% if object %}
+    <meta property="og:description" content="{{ object }}" />
+  {% else %}
+    <meta property="og:description" content="Valga linna kroonika seotuna isikute, organisatsioonide ja objektidega on kasutamiseks informatsioonilistel ja hariduslikel eesmärkidel." />
+  {% endif %}
+  {% if profiilipilt %}
+    <meta property="og:image" content="{{ profiilipilt.pilt.url }}" />
+  {% endif %}
 
   <!--  Laetavad moodulid-->
   <!-- jQuery -->
