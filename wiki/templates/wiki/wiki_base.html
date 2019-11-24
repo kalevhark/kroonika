@@ -19,14 +19,14 @@
   <meta property="og:url" content="{{ request.build_absolute_uri }}" />
   <meta property="og:title" content="Valga linna kroonika" />
   <meta property="og:type" content="article" />
-  <meta property="og:image" content="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
+  <meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}" />
   {% if object %}
     <meta property="og:description" content="{{ object }}" />
   {% else %}
     <meta property="og:description" content="Valga linna kroonika seotuna isikute, organisatsioonide ja objektidega on kasutamiseks informatsioonilistel ja hariduslikel eesmärkidel." />
   {% endif %}
   {% if profiilipilt %}
-    <meta property="og:image" content="{{ profiilipilt.pilt.url }}" />
+    <meta property="og:image" content="https://valgalinn.ee{{ profiilipilt.pilt.url }}" />
   {% endif %}
 
   <!--  Laetavad moodulid-->
