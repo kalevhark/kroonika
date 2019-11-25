@@ -1,40 +1,48 @@
 {% extends "blog/blog_base.html" %}
 {% block content %}
 <div class="w3-container">
-    <h5>{{ post.title }}</h5>
-    <small>
-        {{ post.created_on | date:'d.m.Y' }} |&nbsp;
-        Teemad:&nbsp;
-        {% for category in post.categories.all %}
-        <a
-            class="w3-hover-white"
-            href="{% url 'blog:blog_category' category.name %}">
-            {{ category.name }}
-        </a>&nbsp;
-        {% endfor %}
-    </small>
-    <p>{{ post.body | linebreaks }}</p>
-    <h6>Kui tahad midagi öelda:</h6>
-    <form action="/blog/{{ post.pk }}/" method="post">
-        {% csrf_token %}
-        <div>
-            {{ form.author }}
-        </div>
-        <div>
-            {{ form.body }}
-        </div>
-        <input type="submit" value="Saada">
-    </form>
-    {% if comments %}
-        <h6>Arvamused:</h6>
-    {% endif %}
-    {% for comment in comments %}
-    <div class="w3-hover-white">
-        <p>
-            <small><b>{{ comment.author }}</b> kirjutas {{comment.created_on | date:'d.m.Y' }}:</small>
-        </p>
-        <p>{{ comment.body }}</p>
-    </div>
+  <h5>
+    <a
+        href="{% url 'blog:blog_index' %}"
+        class="w3-button w3-theme-d4 w3-hover-white"
+        title="Tagasi loetellu"
+    >
+      <i class="fa fa-list"></i>
+    </a> {{ post.title }}
+  </h5>
+  <small>
+    {{ post.created_on | date:'d.m.Y' }} |&nbsp;
+    Teemad:&nbsp;
+    {% for category in post.categories.all %}
+    <a
+        class="w3-hover-white"
+        href="{% url 'blog:blog_category' category.name %}">
+      {{ category.name }}
+    </a>&nbsp;
     {% endfor %}
+  </small>
+  <p>{{ post.body | linebreaks }}</p>
+  <h6>Kui tahad midagi öelda:</h6>
+  <form action="/blog/{{ post.pk }}/" method="post">
+    {% csrf_token %}
+    <div>
+      {{ form.author }}
+    </div>
+    <div>
+      {{ form.body }}
+    </div>
+    <input type="submit" value="Saada">
+  </form>
+  {% if comments %}
+  <h6>Arvamused:</h6>
+  {% endif %}
+  {% for comment in comments %}
+  <div class="w3-hover-white">
+    <p>
+      <small><b>{{ comment.author }}</b> kirjutas {{comment.created_on | date:'d.m.Y' }}:</small>
+    </p>
+    <p>{{ comment.body }}</p>
+  </div>
+  {% endfor %}
 </div>
 {% endblock %}

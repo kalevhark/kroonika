@@ -17,7 +17,7 @@
           href="{% url 'blog:blog_detail' post.pk%}"
           title="Loe edasi..."
       >
-        {{ post.body | slice:":400" }}...
+        {{ post.body | slice:":400" }}...<small> loe edasi</small>
       </a>
     </p>
     {% endfor %}
