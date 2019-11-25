@@ -1,7 +1,7 @@
 <!doctype html>
 <html
     lang="et"
-    prefix="og: https://valgalinn.ee/ns#"
+    prefix="og: http://ogp.me/ns#"
 >
 
 <head>
@@ -91,8 +91,15 @@
                 alt="vapp">
         </a>
         <a
-          href="{% url 'algus' %}"
-          class="w3-bar-item w3-button w3-hover-white">Valga linna kroonika
+            href="{% url 'algus' %}"
+            class="w3-bar-item w3-button w3-hover-white">
+          <i
+              id="wiki_start_icon"
+              style="display: inline-block; margin-right: 10px;"
+              class="text-artikkel fa fa-leanpub"
+          >
+          </i>
+          Valga linna kroonika
         </a>
 
         <!-- Search on large screens -->

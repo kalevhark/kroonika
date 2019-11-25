@@ -1565,5 +1565,7 @@ def mixed_ilmateade(request):
     }
 
     chart['yrno_symbols'] = andmed_eelnevad24h['symbols'] + andmed_j2rgnevad48h['forecast']['symbols']
+    # Hetketemperatuur
+    chart['airtemperatures'] = andmed_eelnevad24h['airtemperatures']
     return JsonResponse(chart)
 

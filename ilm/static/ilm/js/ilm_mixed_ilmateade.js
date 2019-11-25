@@ -3,6 +3,18 @@ var chart,
 	obj,
 	chartTitle;
 
+function changeIlmStartIconColor(data) {
+  elementIlmStartIcon = document.getElementById("ilm_start_icon");
+  if (elementIlmStartIcon !== undefined) {
+    temperatureNow = data.airtemperatures[data.airtemperatures.length - 1][1];
+        if (temperatureNow < 0) {
+          elementIlmStartIcon.style.color = '#48AFE8';
+        } else {
+          elementIlmStartIcon.style.color = '#FF3333';
+        };
+  };
+};
+
 $(document).ready(function() {
   mixed_ilmateade();
 });
@@ -19,8 +31,9 @@ $(window).bind('resize', function(e)
 // Kombineeritud ilmagraafiku joonistamine
 function mixed_ilmateade() {
 	// Automaatse värskenduse teated
-	var msg = '<span style="color:red"> Andmete värskendamine...</span>'
-	var errormsg = 'ebaõnnestus.'
+	var msg = '<span style="color:red"> Andmete värskendamine...</span>';
+	var errormsg = 'ebaõnnestus.';
+  var temperatureNow;
 
 	var obj=$('#container_mixed_ilmateade').highcharts();
 
@@ -39,7 +52,6 @@ function mixed_ilmateade() {
         document.getElementById("loader").style.display = "none";
         document.getElementById("container_mixed_ilmateade").style.display = "block";
         var chart = Highcharts.chart("container_mixed_ilmateade", data);
-
         // Täiendame eelneva 24h andmed ilmasümbolitega
         $.each(chart.series[1].data, function (i, point) {
           if (i < 24 && i % 2 === 0 && data.yrno_symbols[i] != null) {
@@ -100,10 +112,7 @@ function mixed_ilmateade() {
           }
         });
 
-        // Automaatne uuendamine akna suuruse muutumisel
-        //		$(window).resize(function() {
-        //			mixed_ilmateade();
-        //		});
+        changeIlmStartIconColor(data);
         // Automaatne uuendamine 5 minuti pärast
         window.setTimeout(mixed_ilmateade, 300000);
       },
