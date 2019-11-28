@@ -101,10 +101,10 @@ class ViideAdmin(admin.ModelAdmin):
         (None, {
             'fields': [
                 'allikas',
-                'peatykk',
+                'kohaviit',
                 'hist_date',
                 'hist_year',
-                'kohaviit',
+                'peatykk',
                 'marker',
                 'url'
             ]
