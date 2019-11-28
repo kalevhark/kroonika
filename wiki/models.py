@@ -1045,7 +1045,8 @@ class Artikkel(models.Model):
 class Pilt(models.Model):
     nimi = models.CharField(
         'Pealkiri',
-        max_length=100
+        max_length=100,
+        blank=True
     )
     autor = models.CharField(
         'Autor',
@@ -1201,6 +1202,10 @@ class Pilt(models.Model):
         return self.pilt.url
 
     def save(self, *args, **kwargs):
+        # Täidame tühja nimekoha failinimega ilma laiendita
+        if not self.nimi and self.pilt:
+            base = os.path.basename(self.pilt.name)
+            self.nimi = os.path.splitext(base)[0]
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
             self.hist_year = self.hist_date.year
