@@ -474,7 +474,7 @@ def container_history_kuud(request):
             sel_prec_sums.append(round(float(sel[i]['precipitations__sum']), 1))
         else:
             sel_prec_sums.append(0)  # Kui mõõtmistulemusi kogu kuu polnud
-        hist_temp_averages.append(round(hist[i + offset]['airtemperature__avg'], 1))
+        hist_temp_averages.append(round(float(hist[i + offset]['airtemperature__avg']), 1))
         hist_temp_ranges.append(
             [
                 round(float(hist[i + offset]['airtemperature__min']), 1),
