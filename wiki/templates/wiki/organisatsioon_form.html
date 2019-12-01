@@ -1,9 +1,20 @@
 {% extends "wiki/wiki_base.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}{{ block.super }} - {{ organisatsioon }} - muutmine{% endblock %}
 
 {% block content %}
+<div class="w3-container">
+  <form method="post" class="uniForm">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button href="{% url 'wiki:wiki_organisatsioon_detail' pk=object.pk  slug=object.slug %}" role="button">Loobu</button>
+    <button class="btn btn-info btn-sm btn-block" type="submit" value="Update">Muuda</button>
+    {% include 'wiki/includes/object_form_footer.html' %}
+  </form>
+</div>
 
+<!--
 <form method="post">
 {% csrf_token %}
 {{ form.nimi }}
@@ -52,4 +63,5 @@ või
 <button type="submit" value="Update">Muuda</button>
 {% include 'wiki/includes/object_form_footer.html' %}
 </form>
+-->
 {% endblock %}
