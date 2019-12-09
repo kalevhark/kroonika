@@ -1,5 +1,9 @@
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt, Allikas
 
+#
+# Funktsioon duplikaatkirjete koondamiseks
+# Kasutamine: join(Andmebaas, kirje_id_kust_kopeerida, kirje_id_kuhu_kopeerida)
+#
 def join(model_name, source_id, dest_id):
     if model_name == 'isik':
         model = Isik
