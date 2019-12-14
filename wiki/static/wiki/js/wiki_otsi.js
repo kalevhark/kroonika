@@ -10,6 +10,8 @@ var watchExampleVM = new Vue({
     wiki_organisatsioon_filter_url: '',
     wiki_objekt_filter_url: '',
     artikkel_message: '',
+    artikkel_results: [],
+    artikkel_results_count: 0,
     isik_results: [],
     isik_results_count: 0,
     isik_message: '',
