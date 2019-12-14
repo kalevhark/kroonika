@@ -9,7 +9,8 @@ function filterMonthItemsByYear(element) {
 
 // Valitud aasta kuuvalikute lisamine
 function addOption(item) {
-  $('#monthinput').append(`<option value=${item[1]}>${getEstonianMonthName(item[1])} (${item[2]})</option>`);
+  // $('#monthinput').append(`<option value=${item[1]}>${getEstonianMonthName(item[1])} (${item[2]})</option>`);
+  $('#monthinput').append("<option value=".concat(item[1], ">").concat(getEstonianMonthName(item[1]), " (").concat(item[2], ")</option>"));
 };
 
 // Valitud aasta jaoks kuude valiku seadmine
