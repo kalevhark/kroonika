@@ -11,16 +11,14 @@ var getEstonianMonthName = function(idx) {
 
 // Abifunktsioon viivituse tekitamiseks
 function throttle(fn, delay) {
-  let last;
-  let timer;
-
-  return () => {
-    const now = +new Date;
+  var last;
+  var timer;
+  return function () {
+    var now = +new Date();
 
     if (last && now < last + delay) {
       clearTimeout(timer);
-
-      timer = setTimeout(() => {
+      timer = setTimeout(function () {
         last = now;
         fn();
       }, delay);
@@ -28,7 +26,6 @@ function throttle(fn, delay) {
       last = now;
       fn();
     }
-
   };
 }
 
