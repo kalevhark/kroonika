@@ -38,7 +38,7 @@ var watchExampleVM = new Vue({
     // _.throttle), visit: https://lodash.com/docs#debounce
     this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
   },
-  mounted() {
+  mounted: function () {
     this.focusInput();
   },
   methods: {
