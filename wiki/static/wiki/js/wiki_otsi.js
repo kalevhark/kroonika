@@ -49,7 +49,9 @@ var watchExampleVM = new Vue({
     getAnswer: function () {
       // Kontrollime kas iga fraasi pikkus on vähemalt kolm tähemärki
       // var min_fraasipikkus = Math.min(...(this.question.trim().split(' ').map(fraas => fraas.length)));
-      let min_fraasipikkus = Math.min.apply(null, this.question.trim().split(' ').map(fraas => fraas.length));
+      let min_fraasipikkus = Math.min.apply(null, this.question.trim().split(' ').map(function (fraas) {
+        return fraas.length;
+      }));
       if (min_fraasipikkus < 3) {
         this.answer = 'Vähemalt kolm tähte igas fraasis palun !'
         return
