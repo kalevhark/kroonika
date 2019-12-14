@@ -100,7 +100,7 @@ function normalDate(x) {
   let selectedDateField = document.getElementById(selectedId);
   let selectedDateFieldElements = selectedDateField.querySelectorAll("a");
 
-  selectedDateFieldElements.forEach(element => {
+  selectedDateFieldElements.forEach(function (element) {
     $(element).removeClass(oldClassName);
   });
 }
