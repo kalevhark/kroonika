@@ -19,7 +19,8 @@
   <meta property="og:url" content="{{ request.build_absolute_uri }}" />
   <meta property="og:title" content="Valga linna kroonika" />
   <meta property="og:type" content="article" />
-  {% block og_image %}{% endblock %} <!-- FB piltide share piltide jaoks -->
+  <!-- FB piltide share piltide jaoks -->
+  {% block og_image %}{% endblock %}
   <meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/220px-Valga_coat_of_arms.png' %}" />
   {% if object %}
     <meta property="og:description" content="{{ object }}" />
