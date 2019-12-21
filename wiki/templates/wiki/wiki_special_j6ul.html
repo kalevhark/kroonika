@@ -1,0 +1,32 @@
+{% extends "wiki/wiki_base.html" %}
+{% load staticfiles %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block src %}
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+  <div class="w3-half">
+    <h4 style="color:red; text-align: center;">
+      Häid jõule ja rõõmsat aastavahetust!
+    </h4>
+    <img
+        src="{% static 'wiki/img/special/VaMF2299_4_1_pisipilt.jpg' %}"
+        alt="Jõulutervitus"
+        style="width:100%"
+    >
+    <p style="text-align: center;">
+    <small>
+      Valga jõulukaart 1920ndatest (Valga muuseum, VaM F 2299:4)
+    </small>
+    </p>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}

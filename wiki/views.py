@@ -462,7 +462,12 @@ def algus(request):
         }
     )
 
-
+def special_j6ul2019(request):
+    return render(
+        request,
+        'wiki/wiki_special_j6ul.html',
+        {}
+    )
 #
 # Tagastab kõik artiklid, kus hist_date < KKPP <= hist_enddate vahemikus
 #
