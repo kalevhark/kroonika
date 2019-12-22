@@ -467,7 +467,7 @@ def special_j6ul2019(request):
     # Kui tervituses on mitu osa
     tykid = tervitaja.split('&')
     # Filtreerime välja FB lisa
-    tervitaja = '&'.join([tykk for tykk in tykid if 'fbclid=' not in tykk])
+    tervitaja = '&'.join([tykk.replace('+', ' ') for tykk in tykid if 'fbclid=' not in tykk])
     if tervitaja:
         tervitaja = tervitaja[:30]
     else:
