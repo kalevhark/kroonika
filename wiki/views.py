@@ -464,6 +464,8 @@ def algus(request):
 
 def special_j6ul2019(request):
     tervitaja = request.META['QUERY_STRING']
+    if 'fbclid=' in tervitaja:
+        tervitaja = 'valgalinn.ee'
     if tervitaja:
         tervitaja = tervitaja[:30]
     else:
