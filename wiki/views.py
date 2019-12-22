@@ -464,8 +464,10 @@ def algus(request):
 
 def special_j6ul2019(request):
     tervitaja = request.META['QUERY_STRING']
-    if 'fbclid=' in tervitaja:
-        tervitaja = 'valgalinn.ee'
+    # Kui tervituses on mitu osa
+    tykid = tervitaja.split('&')
+    # Filtreerime välja FB lisa
+    tervitaja = '&'.join([tykk for tykk in tykid if 'fbclid=' not in tykk])
     if tervitaja:
         tervitaja = tervitaja[:30]
     else:
