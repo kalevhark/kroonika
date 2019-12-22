@@ -26,8 +26,16 @@ div.image-wrapper {
   display: block;
 }
 
-#test { position:absolute; left:0; top:65%; right:0; height:100px; margin: 0 auto; text-align:center;
-  width: 100%; font-family: 'Just Another Hand', cursive;
+#test {
+  position: relative;
+  left:0;
+  top:50%;
+  right:0;
+  height:100px;
+  margin: 0 auto;
+  text-align:center;
+  width: 100%;
+  font-family: 'Just Another Hand', cursive;
 }
 </style>
 {% endblock %}
@@ -38,27 +46,33 @@ div.image-wrapper {
 {% endblock %}
 
 {% block content %}
-  <div class="w3-half w3-container image-wrapper">
+  <div class="w3-container image-wrapper">
+    <h4 style="color:red; text-align: center;">
+      Häid jõule ja rõõmsat aastavahetust!
+    </h4>
 
-      <h4 style="color:red; text-align: center;">
-        Häid jõule ja rõõmsat aastavahetust!
-      </h4>
+    <img
+        src="{% static 'wiki/img/special/VaMF2299_4_1_pisipilt.jpg' %}"
+        alt="Jõulutervitus"
+        style="width:100%"
+    >
 
-      <img
-          src="{% static 'wiki/img/special/VaMF2299_4_1_pisipilt.jpg' %}"
-          alt="Jõulutervitus"
-          style="width:100%"
-      >
-      <p style="text-align: center;">
-        <small>
-          Valga jõulukaart 1920ndatest (Valga muuseum, VaM F 2299:4)
-        </small>
-      </p>
-    <div id="test" class="fancy_title">
-          <canvas width=640 height=100></canvas>
+    <div
+        style="font-family: 'Just Another Hand', cursive; text-align: center;"
+        id="txtHolder"
+        class="w3-hide-large"
+    >
     </div>
 
+    <p style="text-align: center;">
+      <small>
+        Valga jõulukaart 1920ndatest (Valga muuseum, VaM F 2299:4)
+      </small>
+    </p>
     {% include 'wiki/includes/object_fbshare.html' %}
+    <div id="test" class="w3-hide-small w3-hide-medium fancy_title">
+      <canvas width=640 height=100 style="position: relative; top: -170px;"></canvas>
+    </div>
   </div>
 {% endblock %}
 
@@ -83,7 +97,10 @@ div.image-wrapper {
 // get 2D context
 	var ctx = document.querySelector("canvas").getContext("2d"),
 
-	    // dash-length for off-range
+  // the text we will draw
+  txt = decodeURIComponent("Soovib: {{tervitaja}}".replace("amp;", "")),
+
+      // dash-length for off-range
         dashLen = 220,
 
 		// we'll update this, initialize
@@ -92,11 +109,12 @@ div.image-wrapper {
 		// some arbitrary speed
         speed = 10,
 
-		// the text we will draw
-        txt = decodeURIComponent("Soovib: {{tervitaja}}".replace("amp;", "")),
 
 		// start position for x and iterator
 		x = 350, i = 0;
+
+// text mobiiliseadmete jaoks
+  document.getElementById("txtHolder").innerHTML = txt;
 
 // Comic Sans?? Let's make it useful for something ;) w/ fallbacks
     ctx.font = "30px Just Another Hand";
