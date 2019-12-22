@@ -463,10 +463,17 @@ def algus(request):
     )
 
 def special_j6ul2019(request):
+    tervitaja = request.META['QUERY_STRING']
+    if tervitaja:
+        tervitaja = tervitaja[:30]
+    else:
+        tervitaja = 'valgalinn.ee'
     return render(
         request,
         'wiki/wiki_special_j6ul.html',
-        {}
+        {
+            'tervitaja': tervitaja,
+        }
     )
 #
 # Tagastab kõik artiklid, kus hist_date < KKPP <= hist_enddate vahemikus
