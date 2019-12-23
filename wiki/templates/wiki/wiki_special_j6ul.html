@@ -47,13 +47,18 @@ div.image-wrapper {
 
 {% block content %}
   <div class="w3-container image-wrapper">
+    {% now "Y" as current_year %}
     <h4 style="color:red; text-align: center;">
-      Häid jõule ja rõõmsat aastavahetust!
+      {% if current_year == '2019' %}
+        Häid jõule ja rõõmsat aastavahetust!
+      {% else %}
+        Head uut aastat!
+      {% endif %}
     </h4>
 
     <img
         src="{% static 'wiki/img/special/VaMF2299_4_1_pisipilt.jpg' %}"
-        alt="Jõulutervitus"
+        alt="Pühadetervitus"
         style="width:100%"
     >
 
