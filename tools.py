@@ -64,10 +64,10 @@ def join(model_name, source_id, dest_id):
             art.organisatsioonid.add(new)
             # art.organisatsioonid.remove(old)
         print('Objektid:')
-        objektid = old.organisatsioonid.all()
+        objektid = old.objektid.all()
         for objekt in objektid:
             print(objekt.id, objekt)
-            new.organisatsioonid.add(objekt)
+            new.objektid.add(objekt)
         print('Pildid:')
         pildid = Pilt.objects.filter(organisatsioonid=old)
         for pilt in pildid:
