@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'captcha',
     'crispy_forms',
-    # 'markdownx',
+    'markdownx',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

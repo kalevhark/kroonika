@@ -1,10 +1,9 @@
 from django.contrib import admin
-# from markdownx.admin import MarkdownxModelAdmin
+from markdownx.admin import MarkdownxModelAdmin
 
 from blog.models import Post, Category, Comment
 
-# class PostAdmin(MarkdownxModelAdmin):
-class PostAdmin(admin.ModelAdmin):
+class PostAdmin(MarkdownxModelAdmin):
     pass
 
 class CategoryAdmin(admin.ModelAdmin):
