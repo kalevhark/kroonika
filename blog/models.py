@@ -1,6 +1,6 @@
 from django.db import models
-from markdownx.models import MarkdownxField
-from markdownx.utils import markdownify
+# from markdownx.models import MarkdownxField
+# from markdownx.utils import markdownify
 
 class Category(models.Model):
     name = models.CharField(max_length=20)
@@ -14,8 +14,8 @@ class Category(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=255)
-    # body = models.TextField()
-    body = MarkdownxField()
+    body = models.TextField()
+    # body = MarkdownxField()
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField('Category', related_name='posts')
@@ -26,13 +26,15 @@ class Post(models.Model):
     # Create a property that returns the markdown instead
     @property
     def formatted_markdown(self):
-        return markdownify(self.body)
+        # return markdownify(self.body)
+        return self.body
 
-    def body_summary(self):
+    # def body_summary(self):
         summary = self.body
         if summary.find('\n') > 0:
             summary = summary[:summary.find('\n')]
-        return markdownify(summary[:300] + "...")
+        # return markdownify(summary[:300] + "...")
+        return summary[:300] + "..."
 
     class Meta:
         verbose_name_plural = "Postitused"
