@@ -29,7 +29,8 @@ class Post(models.Model):
         return markdownify(self.body)
         # return self.body
 
-    # def body_summary(self):
+    # lühendatud ja markdown lühikokkuvõte
+    def body_summary(self):
         summary = self.body
         if summary.find('\n') > 0:
             summary = summary[:summary.find('\n')]
