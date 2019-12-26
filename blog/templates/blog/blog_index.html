@@ -17,7 +17,7 @@
           href="{% url 'blog:blog_detail' post.pk%}"
           title="Loe edasi..."
       >
-        {{ post.body_summary | safe }}<small> loe edasi</small>
+        {{ post.formatted_markdown_summary | safe }}<small> loe edasi</small>
       </a>
     </p>
     {% endfor %}

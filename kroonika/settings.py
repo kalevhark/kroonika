@@ -188,6 +188,13 @@ SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 GOOGLE_RECAPTCHA_SECRET_KEY = config('GOOGLE_RECAPTCHA_SECRET_KEY')
 GOOGLE_RECAPTCHA_PUBLIC_KEY = config('GOOGLE_RECAPTCHA_PUBLIC_KEY')
 
+# Markdown settings https://python-markdown.github.io/extensions/index.html
+MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',
+    'markdown.extensions.nl2br',
+    'markdown.extensions.sane_lists'
+]
+
 # Kroonika üldised seaded
 KROONIKA = {
     'SAJAND_TAGASI': False # kui on vaja näidata kuni sajand tagasi True

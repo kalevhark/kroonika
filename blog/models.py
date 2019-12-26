@@ -1,6 +1,21 @@
+import re
+
 from django.db import models
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
+
+# Lisab numbri ja punkti vahele backslashi
+def add_escape(matchobj):
+    leiti = matchobj.group(0)
+    return "\\".join([leiti[:-1], "."])
+
+# Muudab teksti, et markdown ei märgistaks automaatselt nummerdatud liste
+def escape_numberdot(string):
+    # Otsime kas teksti alguses on arv ja punkt
+    string_modified = re.sub(r"(\A)(\d+)*\.", add_escape, string)
+    # Otsime kas lõigu alguses on arv ja punkt
+    string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
+    return string_modified
 
 class Category(models.Model):
     name = models.CharField(max_length=20)
@@ -26,16 +41,15 @@ class Post(models.Model):
     # Create a property that returns the markdown instead
     @property
     def formatted_markdown(self):
-        return markdownify(self.body)
-        # return self.body
+        return markdownify(escape_numberdot(self.body))
 
-    # lühendatud ja markdown lühikokkuvõte
-    def body_summary(self):
+    # Create a property that returns the summary markdown instead
+    @property
+    def formatted_markdown_summary(self):
         summary = self.body
         if summary.find('\n') > 0:
             summary = summary[:summary.find('\n')]
-        return markdownify(summary[:300] + "...")
-        # return summary[:300] + "..."
+        return markdownify(escape_numberdot(summary[:300]) + "...")
 
     class Meta:
         verbose_name_plural = "Postitused"
