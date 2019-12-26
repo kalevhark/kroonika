@@ -1,4 +1,9 @@
 import datetime
+from datetime import timedelta
+from io import BytesIO
+import os
+import os.path
+import re
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -9,10 +14,27 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
 
-import os
-import os.path
+from markdownx.models import MarkdownxField
+from markdownx.utils import markdownify
+
 from PIL import Image
-from io import BytesIO
+
+KUUD = (
+        (1, 'jaanuar'),
+        (2, 'veebruar'),
+        (3, 'märts'),
+        (4, 'aprill'),
+        (5, 'mai'),
+        (6, 'juuni'),
+        (7, 'juuli'),
+        (8, 'august'),
+        (9, 'september'),
+        (10, 'oktoober'),
+        (11, 'november'),
+        (12, 'detsember'),
+        )
+
+VIGA_TEKSTIS = '[?]'
 
 def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
     """
@@ -55,22 +77,18 @@ def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
         dst_image_field.save(dst_fname, ContentFile(dst_bytes.read()), save=False)
         dst_bytes.close()
 
-KUUD = (
-        (1, 'jaanuar'),
-        (2, 'veebruar'),
-        (3, 'märts'),
-        (4, 'aprill'),
-        (5, 'mai'),
-        (6, 'juuni'),
-        (7, 'juuli'),
-        (8, 'august'),
-        (9, 'september'),
-        (10, 'oktoober'),
-        (11, 'november'),
-        (12, 'detsember'),
-        )
+# Lisab numbri ja punkti vahele backslashi
+def add_escape(matchobj):
+    leiti = matchobj.group(0)
+    return "\\".join([leiti[:-1], "."])
 
-VIGA_TEKSTIS = '[?]'
+# Muudab teksti, et markdown ei märgistaks automaatselt nummerdatud liste
+def escape_numberdot(string):
+    # Otsime kas teksti alguses on arv ja punkt
+    string_modified = re.sub(r"(\A)(\d+)*\.", add_escape, string)
+    # Otsime kas lõigu alguses on arv ja punkt
+    string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
+    return string_modified
 
 class Allikas(models.Model):
     """
@@ -879,7 +897,8 @@ class Artikkel(models.Model):
         blank=True
     )
     # Sisu
-    body_text = models.TextField(
+    # body_text = models.TextField(
+    body_text = MarkdownxField(
         'Lugu',
         help_text='Tekst'
     )
@@ -958,12 +977,10 @@ class Artikkel(models.Model):
         objects = ArtikkelSajandTagasiManager() # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
-        # tekst = self.body_text[:50]
-        # if len(self.body_text) > 50:
-        #     tyhik = self.body_text.find(' ',50,70)
-        #     if tyhik > 0:
-        #         tekst = self.body_text[:tyhik] + '...'
-        splits = self.body_text.split(' ')
+        summary = self.body_text
+        if summary.find('\n') > 0:
+            summary = summary[:summary.find('\n')]
+        splits = summary.split(' ')
         tekst = ' '.join(splits[:10]) # 10 esimest sõna
         if len(tekst) < len(self.body_text):
             tekst += '...'
@@ -1005,12 +1022,24 @@ class Artikkel(models.Model):
         if all([self.hist_date, self.hist_enddate]):
             vahemik = (self.hist_enddate - self.hist_date).days
             if vahemik < 100: # kui on loogiline vahemik (max 100 päeva)
-                from datetime import timedelta
                 for n in range(vahemik):
                     vahemiku_p2ev = self.hist_date + timedelta(days=n+1)
                     vahemiku_p2eva_string = f' {str(vahemiku_p2ev.month).zfill(2)}{str(vahemiku_p2ev.day).zfill(2)}'
                     tekst += vahemiku_p2eva_string
         return tekst
+
+    # Create a property that returns the markdown instead
+    @property
+    def formatted_markdown(self):
+        return markdownify(escape_numberdot(self.body_text))
+
+    # Create a property that returns the summary markdown instead
+    @property
+    def formatted_markdown_summary(self):
+        summary = self.body_text
+        if summary.find('\n') > 0:
+            summary = summary[:summary.find('\n')]
+        return markdownify(escape_numberdot(summary[:100]) + "...")
 
     def save(self, *args, **kwargs):
         # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki

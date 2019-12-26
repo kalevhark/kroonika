@@ -78,7 +78,7 @@
 		{% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
 		<div class="w3-twothird">
 			{% include 'wiki/includes/vigane.html' %}
-			{{ object.body_text | safe | linebreaksbr }}
+			{{ object.formatted_markdown | safe }}
 			{% include 'wiki/includes/seotud_viited.html' %}
 		</div>
 		{% include 'wiki/includes/object_updated_edit.html' with model='artikkel' %}

@@ -1,7 +1,9 @@
+# import datetime
+
 from django.contrib import admin
 from django.contrib.admin.templatetags.admin_list import _boolean_icon
 # from django.db.models import Count
-import datetime
+from markdownx.admin import MarkdownxModelAdmin
 
 from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Objekt, Pilt, Vihje
 from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
@@ -194,7 +196,7 @@ class ViideAdmin(admin.ModelAdmin):
 
     short_url.short_description = 'Link'
 
-class ArtikkelAdmin(admin.ModelAdmin):
+class ArtikkelAdmin(MarkdownxModelAdmin):
     form = ArtikkelForm
     readonly_fields = [
         'hist_searchdate',
