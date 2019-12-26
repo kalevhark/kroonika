@@ -1057,7 +1057,7 @@ class Artikkel(models.Model):
                     m = self.hist_month
                 else:
                     m = 1
-                self.hist_searchdate = datetime.datetime(y, m, 1)
+                self.hist_searchdate = timezone.make_aware(datetime.datetime(y, m, 1))
             else:
                 self.hist_searchdate = None
         super().save(*args, **kwargs)
