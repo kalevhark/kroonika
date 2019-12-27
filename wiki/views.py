@@ -1388,11 +1388,11 @@ def get_all_logged_in_users():
 #
 def test(request):
     data = dict()
-    data['meta_server_addr'] = request.META['SERVER_ADDR']
+    # data['meta_server_addr'] = request.META['SERVER_ADDR']
     # Artiklite testandmed
     artikkel_qs = artikkel_qs_userfilter(request.user)
     data['test_url_artiklid_id'] = [
-        reverse('wiki:wiki_artikkel_detail', kwargs={'pk': obj.id})
+        reverse('wiki:wiki_artikkel_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
         for obj
         in artikkel_qs
     ]
