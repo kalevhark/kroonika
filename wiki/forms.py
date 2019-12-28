@@ -8,7 +8,6 @@ from django.forms import (
     ValidationError,
     CharField, ModelMultipleChoiceField
 )
-from django.forms.models import inlineformset_factory
 
 from .models import Artikkel, Isik, Organisatsioon, Objekt, Vihje, Pilt
 
@@ -18,16 +17,6 @@ class PiltForm(ModelForm):
     class Meta:
         model = Pilt
         exclude = ()
-
-
-# PiltFormSet = inlineformset_factory(
-#     Artikkel,
-#     Pilt,
-#     form=PiltForm,
-#     fields='__all__',
-#     extra=1,
-#     can_delete=True
-#     )
 
 
 class ArtikkelForm(ModelForm):
@@ -45,10 +34,22 @@ class ArtikkelForm(ModelForm):
         )
         widgets = {
             'body_text': Textarea(attrs={'cols': 80, 'rows': 10}),
-            'isikud': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud isikud'}),
-            'organisatsioonid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}),
-            'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
-            'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
+            # 'isikud': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud isikud'}),
+            'isikud': FilteredSelectMultiple(
+                'isikud',
+                is_stacked=False,
+                attrs={'size': 15, 'title': 'Vali seotud isikud'}
+            ),
+            # 'organisatsioonid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}),
+            'organisatsioonid': FilteredSelectMultiple(
+                'organisatsioonid',
+                is_stacked=False,
+                attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}
+            ),
+            # 'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
+            'objektid': FilteredSelectMultiple('objektid', is_stacked=False),
+            # 'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
+            'viited': FilteredSelectMultiple('viited', is_stacked=False),
         }
 
     def clean(self):

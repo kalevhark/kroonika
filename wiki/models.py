@@ -921,7 +921,7 @@ class Artikkel(models.Model):
     viited = models.ManyToManyField(
         Viide,
         blank=True,
-        verbose_name='Viited',
+        verbose_name='Seotud viited',
     )
     # Tehnilised väljad
     inp_date = models.DateTimeField(
