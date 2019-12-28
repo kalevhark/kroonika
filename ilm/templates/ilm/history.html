@@ -2,393 +2,91 @@
 {% load static %}
 
 {% block stylesheet %}
-<style>
-/* Center the loader */
-#loader {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 1;
-  width: 150px;
-  height: 150px;
-  margin: -75px 0 0 -75px;
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #3498db;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
-}
-
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Add animation to "page content" */
-.animate-bottom {
-  position: relative;
-  -webkit-animation-name: animatebottom;
-  -webkit-animation-duration: 1s;
-  animation-name: animatebottom;
-  animation-duration: 1s
-}
-
-@-webkit-keyframes animatebottom {
-  from { bottom:-100px; opacity:0 } 
-  to { bottom:0px; opacity:1 }
-}
-
-@keyframes animatebottom { 
-  from{ bottom:-100px; opacity:0 } 
-  to{ bottom:0; opacity:1 }
-}
-
-#myDiv {
-  display: none;
-  text-align: center;
-}
-</style>
+	<link rel="stylesheet" href="{% static 'ilm/css/ilm_loader.css' %}">
 {% endblock %}
 
 {% block javascript %}
-<script>
-function myResetFunction() {
-  document.getElementById("frm1").reset();
-}
-</script>
-
-<script>
-function container_history_andmed() {
-  var text = "";
-  // Küsime andmed ilmaajaloo parameetrite kohta
-  $.ajax({
-    url: $("#container_history_andmed").attr("data-url"),
-    dataType: 'json',
-    success: function (data) {
-	  console.log(data)
-	  text = data.parameetrid;
-    },
-    error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
-    },
-	complete: function () {
-	  document.getElementById("container_history_andmed").innerHTML = text;
-	}
-  });
-}
-</script>
-
-
-<script>
-function container_history_aasta() {
-  // Küsime andmed ja moodustame graafiku
-  $.ajax({
-    url: $("#container_history_aasta").attr("data-url"),
-    dataType: 'json',
-    timeout: 300000,
-	beforeSend: function() {
-      $("#loaderDiv1").show();
-    },
-    success: function (data) {
-	  if (data.tyhi) {
-	    document.getElementById("container_history_aasta").innerHTML = data.aasta + " kohta andmeid pole!";
-	    
-	  } else {
-	    var chart = Highcharts.chart("container_history_aasta", data);
-	  }
-    },
-    error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
-    },
-	complete: function () {
-	  $("#loaderDiv1").hide();
-	}
-  });
-}
-</script>
-
-<script>
-function container_history_kuud() {
-  // Küsime andmed ja moodustame graafiku
-  $.ajax({
-    url: $("#container_history_kuud").attr("data-url"),
-    dataType: 'json',
-    timeout: 300000,
-    beforeSend: function() {
-      $("#loaderDiv2").show();
-    },
-	success: function (data) {
-	  if (data.tyhi) {
-	    document.getElementById("container_history_kuud").innerHTML = data.aasta + " kohta andmeid pole!";
-	    
-	  } else {
-	    var chart = Highcharts.chart("container_history_kuud", data);
-	  }
-    },
-    error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
-    },
-	complete: function () {
-	  $("#loaderDiv2").hide();
-	}
-  });
-}
-</script>
-
-<script>
-function container_history_kuu() {
-  // Küsime andmed ja moodustame graafiku
-  $.ajax({
-    url: $("#container_history_kuu").attr("data-url"),
-    dataType: 'json',
-    timeout: 300000,
-	beforeSend: function() {
-      $("#loaderDiv3").show();
-    },
-    success: function (data) {
-	  if (data.tyhi) {
-	    document.getElementById("container_history_kuu").innerHTML = getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!";
-	    
-	  } else {
-	    var chart = Highcharts.chart("container_history_kuu", data);
-	  }
-    },
-    error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
-    },
-	complete: function () {
-	  $("#loaderDiv3").hide();
-	}
-  });
-}
-</script>
-
-<script>
-function container_history_p2ev() {
-  // Küsime andmed ja moodustame graafiku
-  $.ajax({
-    url: $("#container_history_p2ev").attr("data-url"),
-    dataType: 'json',
-    timeout: 300000,
-	beforeSend: function() {
-      $("#loaderDiv4").show();
-    },
-    success: function (data) {
-	  if (data.tyhi) {
-	    if (data.p2ev != undefined) {
-		  var text = '<p>' + data.p2ev + ". " + getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!</p>"
-		} else {var text = ""};
-	    document.getElementById("container_history_p2ev").innerHTML = text;
-	    
-	  } else {
-	    var chart = Highcharts.chart("container_history_p2ev", data);
-	  }
-    },
-    error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
-    },
-	complete: function () {
-	  $("#loaderDiv4").hide();
-	}
-  });
-}
-</script>
-
-<script>
-function container_history_p2evad() {
-  // Küsime andmed ja moodustame graafiku
-  $.ajax({
-    url: $("#container_history_p2evad").attr("data-url"),
-    dataType: 'json',
-    timeout: 300000,
-	beforeSend: function() {
-      $("#loaderDiv5").show();
-    },
-    success: function (data) {
-	  if (data.tyhi) {
-	    if (data.p2ev != undefined) {
-		  var text = '<p>' + data.p2ev + ". " + getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!</p>"
-		} else {var text = ""};
-		document.getElementById("container_history_p2evad").innerHTML = text;
-	  } else {
-	    var chart = Highcharts.chart("container_history_p2evad", data);
-		chart.series[0].update({
-			dataLabels: {
-				enabled: true,
-				formatter: function () { 
-					var color = (this.y<0?'#48AFE8':'#FF3333');
-					var temp = (this.y<0?"":"+") + this.y.toFixed(1) + '°C';
-					return '<span style="color:' + color + '">' + temp + '</span>';
-				}
-			}
-		});
-	  }
-    },
-    error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
-    },
-	complete: function () {
-	  $("#loaderDiv5").hide();
-	}
-  });
-}
-</script>
-
-<script>
-function container_history_aastad() {
-  // Küsime andmed ja moodustame graafiku
-  $.ajax({
-    url: $("#container_history_aastad").attr("data-url"),
-    dataType: 'json',
-    timeout: 300000,
-	beforeSend: function() {
-      $("#loaderDiv6").show();
-    },
-    success: function (data) {
-	  if (data.tyhi) {
-	    if (data.p2ev != undefined) {
-		  var text = data.p2ev + ". " + getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!"
-		} else {var text = ""};
-		document.getElementById("container_history_aastad").innerHTML = text;
-	  } else {
-	    var chart = Highcharts.chart("container_history_aastad", data);
-		chart.series[0].update({
-			dataLabels: {
-				enabled: true,
-				formatter: function () {
-					var color = (this.y<0?'#48AFE8':'#FF3333');
-					var temp = (this.y<0?"":"+") + this.y.toFixed(1) + '°C';
-					return '<span style="color:' + color + '">' + temp + '</span>';
-				}
-			}
-		});
-	  }
-    },
-    error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
-    },
-	complete: function () {
-	  $("#loaderDiv6").hide();
-	}
-  });
-}
-</script>
-
-<script>
-$(document)
-.ajaxStart(function(){
-  document.getElementById("loader").style.display = "block";
-  $("#submit").prop("disabled", true);
-  $("#submit").hide();
-  $("#submitLoader").show();
-})
-.ajaxStop(function(){
-  $("#submit").removeAttr('disabled');
-  $("#submitLoader").hide();
-  $("#submit").show();
-  document.getElementById("loader").style.display = "none";
-});
-
-$(document).ready(function() {
-  $("#submitLoader").hide();
-  container_history_andmed();
-  container_history_aasta();
-  container_history_kuud();
-  container_history_kuu();
-  container_history_p2ev();
-  container_history_p2evad();
-  container_history_aastad();
-});
-</script>
+	<script src="{% static 'ilm/js/ilm_history.js' %}"></script>
 {% endblock %}
 
 {% block content %}
   <div class="w3-row">
-    <div class="w3-container w3-half">
-	  <form id="frm1" action="{% url 'ilm:history' %}" method="post">
-		{% csrf_token %}
-		<table>
-		  <tr>
-		    <td>
-			  <div id="container_history_andmed" data-url="{% url 'ilm:container_history_andmed' %}"></div>
-			</td>
-				<td>
-				  {{ form.aasta }}
-				</td>
-				<td>
-				  {{ form.kuu }}
-				</td>
-				<td>
-				  {{ form.p2ev }}
-				</td>
-				<td>
-				  <button id="submit" type="submit"><i class="fa fa-search"></i></button>
-				  <image id="submitLoader" src="{% static 'ilm/img/ajax-loader.gif' %}"/>
-				</td>
-			  </tr>
-			  <tr>
-				<td>
-				  {{ form.non_field_errors }} {{ form.aasta.errors }} {{ form.kuu.errors }} {{ form.p2ev.errors }}
-				</td>
-			  </tr>
-			</table>
-		</form>
+    <div class="w3-half">
+			<form id="frm1" action="{% url 'ilm:history' %}" method="post">
+				{% csrf_token %}
+				<table>
+					<tr>
+						<td>
+							<div id="container_history_andmed" data-url="{% url 'ilm:container_history_andmed' %}"></div>
+						</td>
+						<td>
+							{{ form.aasta }}
+						</td>
+						<td>
+							{{ form.kuu }}
+						</td>
+						<td>
+							{{ form.p2ev }}
+						</td>
+						<td>
+							<button id="submit" type="submit"><i class="fa fa-search"></i></button>
+							<image id="submitLoader" src="{% static 'ilm/img/ajax-loader.gif' %}"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							{{ form.non_field_errors }} {{ form.aasta.errors }} {{ form.kuu.errors }} {{ form.p2ev.errors }}
+						</td>
+					</tr>
+				</table>
+			</form>
 		<div id="text"></div>
 	</div>
 
   <div class="w3-row">
   </div>
-  <div class="w3-row">
-    <div class="w3-container">
-      <div id="loader"></div>
-	  <div class="w3-center" id="loaderDiv1">
-	    <img src={% static "ilm/img/ajax-loader-bar.gif" %} >
-	  </div>
-      <div id="container_history_aasta" data-url="{% url 'ilm:container_history_aasta' %}" style="min-width: 200px; margin: 0 auto"></div>
-	</div>
-  </div>
-  <div class="w3-row">
-    <div class="w3-container w3-half">
-	  <div class="w3-center" id="loaderDiv2">
-	    <img src={% static "ilm/img/ajax-loader-bar.gif" %} >
-	  </div>
-	  <div id="container_history_kuud" data-url="{% url 'ilm:container_history_kuud' %}" style="min-width: 500px; margin: 0 auto"></div>
-	</div>
-	<div class="w3-container w3-half">
-	  <div class="w3-center" id="loaderDiv3">
-	    <img src={% static "ilm/img/ajax-loader-bar.gif" %} >
-	  </div>
-	  <div id="container_history_kuu" data-url="{% url 'ilm:container_history_kuu' %}" style="min-width: 500px; margin: 0 auto"></div>
-	</div>
-  </div>
-  <div class="w3-row">
-    <div class="w3-container w3-half">
-	  <div class="w3-center" id="loaderDiv4">
-	    <img src={% static "ilm/img/ajax-loader-bar.gif" %} >
-	  </div>
-	  <div id="container_history_p2ev" data-url="{% url 'ilm:container_history_p2ev' %}" style="min-width: 500px; margin: 0 auto"></div>
-	</div>
-	<div class="w3-container w3-half">
-	  <div class="w3-center" id="loaderDiv5">
-	    <img src={% static "ilm/img/ajax-loader-bar.gif" %} >
-	  </div>
-	  <div id="container_history_p2evad" data-url="{% url 'ilm:container_history_p2evad' %}" style="min-width: 500px; margin: 0 auto"></div>
-	</div>
-  </div>
-<div class="w3-row">
-	<div class="w3-container w3-half">
-	  <div class="w3-center" id="loaderDiv6">
-	    <img src={% static "ilm/img/ajax-loader-bar.gif" %} >
-	  </div>
-	  <div id="container_history_aastad" data-url="{% url 'ilm:container_history_aastad' %}" style="min-width: 500px; margin: 0 auto"></div>
-	</div>
-  </div>
 
+  <div class="w3-row">
+		<div id="loader"></div>
+		<div class="w3-center" id="loaderDiv1">
+			<img src={% static "ilm/img/ajax-loader-bar.gif" %} >
+		</div>
+		<div id="container_history_aasta" data-url="{% url 'ilm:container_history_aasta' %}" style="min-width: 300px; margin: 0 auto"></div>
+  </div>
+  <div class="w3-row">
+    <div class="w3-half w3-mobile">
+			<div class="w3-center" id="loaderDiv2">
+				<img src="{% static 'ilm/img/ajax-loader-bar.gif' %}" >
+			</div>
+	  	<div id="container_history_kuud" data-url="{% url 'ilm:container_history_kuud' %}" style="min-width: 300px; margin: 0 auto"></div>
+		</div>
+		<div class="w3-half w3-mobile">
+			<div class="w3-center" id="loaderDiv3">
+				<img src="{% static 'ilm/img/ajax-loader-bar.gif' %}" >
+			</div>
+			<div id="container_history_kuu" data-url="{% url 'ilm:container_history_kuu' %}" style="min-width: 300px; margin: 0 auto"></div>
+		</div>
+  </div>
+  <div class="w3-row">
+    <div class="w3-half">
+			<div class="w3-center" id="loaderDiv4">
+				<img src={% static "ilm/img/ajax-loader-bar.gif" %} >
+			</div>
+	  	<div id="container_history_p2ev" data-url="{% url 'ilm:container_history_p2ev' %}" style="min-width: 300px; margin: 0 auto"></div>
+		</div>
+		<div class="w3-half">
+			<div class="w3-center" id="loaderDiv5">
+				<img src={% static "ilm/img/ajax-loader-bar.gif" %} >
+			</div>
+			<div id="container_history_p2evad" data-url="{% url 'ilm:container_history_p2evad' %}" style="min-width: 300px; margin: 0 auto"></div>
+		</div>
+  </div>
+	<div class="w3-row">
+		<div class="w3-half">
+			<div class="w3-center" id="loaderDiv6">
+				<img src={% static "ilm/img/ajax-loader-bar.gif" %} >
+			</div>
+			<div id="container_history_aastad" data-url="{% url 'ilm:container_history_aastad' %}" style="min-width: 300px; margin: 0 auto"></div>
+		</div>
+  </div>
 {% endblock %}
