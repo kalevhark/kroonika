@@ -194,6 +194,7 @@ MARKDOWNX_MARKDOWN_EXTENSIONS = [
     'markdown.extensions.nl2br',
     'markdown.extensions.sane_lists'
 ]
+MARKDOWNX_SERVER_CALL_LATENCY = 1000 # kujundatud teksti värskendamise viivitus (ms)
 
 # Kroonika üldised seaded
 KROONIKA = {

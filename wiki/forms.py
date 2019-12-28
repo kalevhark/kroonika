@@ -33,7 +33,7 @@ class ArtikkelForm(ModelForm):
                   'kroonika', 'lehekylg',
         )
         widgets = {
-            'body_text': Textarea(attrs={'cols': 80, 'rows': 10}),
+            'body_text': Textarea(attrs={'rows': 10}),
             # 'isikud': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud isikud'}),
             'isikud': FilteredSelectMultiple(
                 'isikud',
