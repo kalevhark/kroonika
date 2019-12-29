@@ -10,7 +10,7 @@
 			<a style="text-decoration: none;" href="{% url 'wiki:wiki_organisatsioon_filter' %}">
 				<i class="fa fa-group"></i>
 			</a>
-			{{ object.formatted_markdown | safe }}
+			{{ object }}
 		</h4>
     <h5>
 	  	{% include 'wiki/includes/kp.html' with sd=object.hist_date y=object.hist_year m=object.hist_month ed=object.hist_enddate ey=object.hist_endyear cs="organisatsioon" %}
@@ -24,7 +24,7 @@
 		<div class="w3-twothird">
 			{% include 'wiki/includes/vigane.html' %}
 			<div>
-				{{ object.kirjeldus | safe | linebreaksbr }}
+				{{ object.formatted_markdown | safe }}
 			</div>
 			{% include 'wiki/includes/mainitud_aastatel.html' %}
 			{% include 'wiki/includes/seotud_special_links.html' %}

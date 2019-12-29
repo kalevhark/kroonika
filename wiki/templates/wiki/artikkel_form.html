@@ -2,23 +2,16 @@
 {% load crispy_forms_tags %}
 {% load i18n static %}
 
-{% block title %}{{ block.super }} - {{ artikkel.headline }} - muutmine{% endblock %}
 {% block src %}
-<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-
-<!--<script src="{% static 'wiki/js/admin/vendor/jquery/jquery.min.js' %}"></script>-->
-<!--<script src="{% static 'wiki/js/admin/jquery.init.js' %}"></script>-->
-<!--<script src="{% static 'wiki/js/admin/core.js' %}"></script>-->
-<!--<script src="{% static 'wiki/js/admin/actions.js' %}"></script>-->
-<!--<script src="{% static 'wiki/js/admin/SelectBox.js' %}"></script>-->
-<!--<script src="{% static 'wiki/js/admin/SelectFilter2.js' %}"></script>-->
-
-<link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/base.css' %}" >
-<!--<link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/responsive.css' %}" >-->
-<!--<link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/forms.css' %}" >-->
-<!--<link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/changelists.css' %}" >-->
-<link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/widgets.css' %}" >
+  <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
 {% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/base.css' %}" >
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/widgets.css' %}" >
+{% endblock %}
+
+{% block title %}{{ block.super }} - {{ artikkel.headline }} - muutmine{% endblock %}
 
 {% block content %}
 <div class="w3-container">

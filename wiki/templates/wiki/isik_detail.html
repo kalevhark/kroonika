@@ -11,7 +11,7 @@
       <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
 	      <i class="fa fa-address-card-o"></i>
       </a>
-      {{ object.formatted_markdown | safe }}
+      {{ object }}
 	  </h4>
     <h5>
       {% if object.hist_date %}
@@ -41,7 +41,7 @@
     <div class="w3-twothird">
       {% include 'wiki/includes/vigane.html' %}
       <div>
-        {{ object.kirjeldus | safe | linebreaksbr }}
+        {{ object.formatted_markdown | safe }}
       </div>
       {% include 'wiki/includes/mainitud_aastatel.html' %}
       {% include 'wiki/includes/seotud_special_links.html' %}

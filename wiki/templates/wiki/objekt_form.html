@@ -1,73 +1,27 @@
 {% extends "wiki/wiki_base.html" %}
 {% load crispy_forms_tags %}
+{% load i18n static %}
+
+{% block src %}
+  <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/base.css' %}" >
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/widgets.css' %}" >
+{% endblock %}
 
 {% block title %}{{ block.super }} - {{ object }} - muutmine{% endblock %}
 
 {% block content %}
-<div class="w3-container">
-  <form method="post" class="uniForm">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button href="{% url 'wiki:wiki_objekt_detail' pk=object.pk  slug=object.slug %}" role="button">Loobu</button>
-    <button class="btn btn-info btn-sm btn-block" type="submit" value="Update">Muuda</button>
-    {% include 'wiki/includes/object_form_footer.html' %}
-  </form>
-</div>
-
-<!--
-<form method="post">
-    {% csrf_token %}
-    {{ form.nimi }} {{ form.tyyp }}
-    <br>
-    {% if form.hist_date.help_text %}
-    <small>{{ form.asukoht.help_text }}</small>
-    {% endif %}
-    {{ form.asukoht }}
-    <br>
-    {{ form.kirjeldus }}
-    <br>
-    {% if form.hist_date.help_text %}
-    <small>{{ form.hist_date.help_text }}</small>
-    {% endif %}
-    {{ form.hist_date }}
-    või
-    {% if form.hist_year.help_text %}
-    <small>{{ form.hist_year.help_text }}</small>
-    {% endif %}
-    {{ form.hist_year }}
-    {% if form.hist_month.help_text %}
-    <small>{{ form.hist_month.help_text }}</small>
-    {% endif %}
-    {{ form.hist_month }}
-    <br>
-    {% if form.hist_enddate.help_text %}
-    <small>{{ form.hist_enddate.help_text }}</small>
-    {% endif %}
-    {{ form.hist_enddate }}
-    või
-    {% if form.hist_endyear.help_text %}
-    <small>{{ form.hist_endyear.help_text }}</small>
-    {% endif %}
-    {{ form.hist_endyear }}
-    <br>
-    <small>Seotud {{ form.objektid.name }} </small>
-    <br>
-    {{ form.objektid }}
-    <br>
-    {% if form.objektid.help_text %}
-    <small>{{ form.objektid.help_text }}</small>
-    {% endif %}
-    <br>
-    <small>Seotud {{ form.viited.name }}</small>
-    <br>
-    {{ form.viited }}
-    {% if form.viited.help_text %}
-    <small>{{ form.viited.help_text }}</small>
-    {% endif %}
-    <br>
-    <button href={% url 'wiki:wiki_objekt_detail' pk=object.pk  slug=object.slug %} role="button">Loobu</button>
-    <button type="submit" value="Update">Muuda</button>
-    {% include 'wiki/includes/object_form_footer.html' %}
-</form>
--->
+  <div class="w3-container">
+    <form method="post" class="uniForm">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button href="{% url 'wiki:wiki_objekt_detail' pk=object.pk  slug=object.slug %}" role="button">Loobu</button>
+      <button class="btn btn-info btn-sm btn-block" type="submit" value="Update">Muuda</button>
+      {% include 'wiki/includes/object_form_footer.html' %}
+    </form>
+    {{ form.media }}
+  </div>
 {% endblock %}

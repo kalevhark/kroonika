@@ -6,7 +6,8 @@ from django.forms import (
     Textarea,
     SelectMultiple,
     ValidationError,
-    CharField, ModelMultipleChoiceField
+    CharField,
+    ModelMultipleChoiceField,
 )
 
 from .models import Artikkel, Isik, Organisatsioon, Objekt, Vihje, Pilt
@@ -38,18 +39,22 @@ class ArtikkelForm(ModelForm):
             'isikud': FilteredSelectMultiple(
                 'isikud',
                 is_stacked=False,
-                attrs={'size': 15, 'title': 'Vali seotud isikud'}
             ),
             # 'organisatsioonid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}),
             'organisatsioonid': FilteredSelectMultiple(
                 'organisatsioonid',
                 is_stacked=False,
-                attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}
             ),
             # 'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
-            'objektid': FilteredSelectMultiple('objektid', is_stacked=False),
+            'objektid': FilteredSelectMultiple(
+                'objektid',
+                is_stacked=False
+            ),
             # 'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
-            'viited': FilteredSelectMultiple('viited', is_stacked=False),
+            'viited': FilteredSelectMultiple(
+                'viited',
+                is_stacked=False
+            ),
         }
 
     def clean(self):
@@ -71,9 +76,18 @@ class IsikForm(ModelForm):
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
-            'organisatsioonid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}),
-            'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
+            'organisatsioonid': FilteredSelectMultiple(
+                'organisatsioonid',
+                is_stacked=False,
+            ),
+            'objektid': FilteredSelectMultiple(
+                'objektid',
+                is_stacked=False
+            ),
+            'viited': FilteredSelectMultiple(
+                'viited',
+                is_stacked=False
+            ),
         }
 
 class OrganisatsioonForm(ModelForm):
@@ -88,8 +102,14 @@ class OrganisatsioonForm(ModelForm):
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
-            'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
+            'objektid': FilteredSelectMultiple(
+                'objektid',
+                is_stacked=False
+            ),
+            'viited': FilteredSelectMultiple(
+                'viited',
+                is_stacked=False
+            ),
         }
 
 
@@ -105,8 +125,14 @@ class ObjektForm(ModelForm):
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
-            'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
+            'objektid': FilteredSelectMultiple(
+                'objektid',
+                is_stacked=False
+            ),
+            'viited': FilteredSelectMultiple(
+                'viited',
+                is_stacked=False
+            ),
         }
 
 
