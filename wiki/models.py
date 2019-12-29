@@ -251,11 +251,11 @@ class Viide(models.Model):
                     aeg = str(self.allikas.hist_year)
         return ' '.join([autorid, peatykk, allika_nimi, viit, aeg])
 
-# Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-class ObjektSajandTagasiManager(models.Manager):
-    def get_queryset(self):
-        sajandtagasi = datetime.date.today().year - 100
-        return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
+# # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
+# class ObjektSajandTagasiManager(models.Manager):
+#     def get_queryset(self):
+#         sajandtagasi = datetime.date.today().year - 100
+#         return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
 
 
 class Objekt(models.Model):
@@ -323,7 +323,8 @@ class Objekt(models.Model):
         choices=OBJEKTITYYP,
         help_text='Mis liiki koht'
     )
-    kirjeldus = models.TextField(
+    # kirjeldus = models.TextField(
+    kirjeldus = MarkdownxField(
         'Kirjeldus',
         blank=True,
         help_text='Koha või objekti kirjeldus'
@@ -348,11 +349,6 @@ class Objekt(models.Model):
         'Muudetud',
         auto_now=True
     )
-    # hist_searchdate = models.DateField(
-    #     'Tuletatud kuupäev',
-    #     null=True,
-    #     blank=True
-    # ) # Kuupäevaotsinguteks, kui täpset kuupäeva pole teada
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -369,8 +365,8 @@ class Objekt(models.Model):
         verbose_name='Muutja'
     )
 
-    if settings.KROONIKA['SAJAND_TAGASI']:
-        objects = ObjektSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
+    # if settings.KROONIKA['SAJAND_TAGASI']:
+    #     objects = ObjektSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         if self.hist_date:
@@ -396,8 +392,10 @@ class Objekt(models.Model):
     def vigane(self):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
-    # def get_absolute_url(self):
-    #     return reverse('wiki:wiki_objekt_detail', kwargs={'pk': self.pk})
+    # Create a property that returns the markdown instead
+    @property
+    def formatted_markdown(self):
+        return markdownify(escape_numberdot(self.kirjeldus))
 
     def get_absolute_url(self):
         kwargs = {
@@ -435,11 +433,11 @@ class Objekt(models.Model):
         verbose_name_plural = "Kohad"
 
 
-# Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-class OrganisatsioonSajandTagasiManager(models.Manager):
-    def get_queryset(self):
-        sajandtagasi = datetime.date.today().year - 100
-        return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
+# # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
+# class OrganisatsioonSajandTagasiManager(models.Manager):
+#     def get_queryset(self):
+#         sajandtagasi = datetime.date.today().year - 100
+#         return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
 
 
 class Organisatsioon(models.Model):
@@ -489,7 +487,8 @@ class Organisatsioon(models.Model):
         default=False,
         help_text='Lõpetatud/likvideeritud'
     )
-    kirjeldus = models.TextField(
+    # kirjeldus = models.TextField(
+    kirjeldus=MarkdownxField(
         blank=True
     )
     # Seotud:
@@ -512,11 +511,6 @@ class Organisatsioon(models.Model):
         'Muudetud',
         auto_now=True
     )
-    # hist_searchdate = models.DateField( # Kuupäevaotsinguteks, kui täpset kuupäeva pole teada
-    #     'Tuletatud kuupäev',
-    #     null=True,
-    #     blank=True
-    # )
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -533,8 +527,8 @@ class Organisatsioon(models.Model):
         verbose_name='Muutja'
     )
 
-    if settings.KROONIKA['SAJAND_TAGASI']:
-        objects = OrganisatsioonSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
+    # if settings.KROONIKA['SAJAND_TAGASI']:
+    #     objects = OrganisatsioonSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         if self.hist_date:
@@ -560,8 +554,10 @@ class Organisatsioon(models.Model):
     def vigane(self):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
-    # def get_absolute_url(self):
-    #     return reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': self.pk})
+    # Create a property that returns the markdown instead
+    @property
+    def formatted_markdown(self):
+        return markdownify(escape_numberdot(self.kirjeldus))
 
     def get_absolute_url(self):
         kwargs = {
@@ -598,11 +594,11 @@ class Organisatsioon(models.Model):
         ordering = ['nimi']
         verbose_name_plural = "Asutised"
 
-# Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-class IsikSajandTagasiManager(models.Manager):
-    def get_queryset(self):
-        sajandtagasi = datetime.date.today().year - 100
-        return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
+# # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
+# class IsikSajandTagasiManager(models.Manager):
+#     def get_queryset(self):
+#         sajandtagasi = datetime.date.today().year - 100
+#         return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
 
 
 class Isik(models.Model):
@@ -671,7 +667,8 @@ class Isik(models.Model):
         help_text="Matmiskoht"
     )
     # Kirjeldus
-    kirjeldus = models.TextField(
+    # kirjeldus = models.TextField(
+    kirjeldus=MarkdownxField(
         blank=True,
         help_text="Elulugu"
     )
@@ -716,8 +713,8 @@ class Isik(models.Model):
         verbose_name='Muutja'
     )
 
-    if settings.KROONIKA['SAJAND_TAGASI']:
-        objects = IsikSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
+    # if settings.KROONIKA['SAJAND_TAGASI']:
+    #     objects = IsikSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         # Eesnimi
@@ -763,8 +760,10 @@ class Isik(models.Model):
     def vigane(self):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
-    # def get_absolute_url(self):
-    #     return reverse('wiki:wiki_isik_detail', kwargs={'pk': self.pk})
+    # Create a property that returns the markdown instead
+    @property
+    def formatted_markdown(self):
+        return markdownify(escape_numberdot(self.kirjeldus))
 
     def get_absolute_url(self):
         kwargs = {
@@ -848,16 +847,16 @@ class Kroonika(models.Model):
         verbose_name_plural = "Kroonikad"
 
 
-# Ajutine filtreeriv Manager kui vaja näidata ilma Kroonikata TODO: Kuni revisjoni lõpuni
-class ArtikkelKroonikataManager(models.Manager):
-    def get_queryset(self):
-       return super().get_queryset().filter(kroonika__isnull=True)
-
-# Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-class ArtikkelSajandTagasiManager(models.Manager):
-    def get_queryset(self):
-        sajandtagasi = datetime.date.today().year - 100
-        return super().get_queryset().filter(hist_year__lte=sajandtagasi)
+# # Ajutine filtreeriv Manager kui vaja näidata ilma Kroonikata TODO: Kuni revisjoni lõpuni
+# class ArtikkelKroonikataManager(models.Manager):
+#     def get_queryset(self):
+#        return super().get_queryset().filter(kroonika__isnull=True)
+#
+# # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
+# class ArtikkelSajandTagasiManager(models.Manager):
+#     def get_queryset(self):
+#         sajandtagasi = datetime.date.today().year - 100
+#         return super().get_queryset().filter(hist_year__lte=sajandtagasi)
 
 class Artikkel(models.Model):
     slug = models.SlugField(
@@ -973,8 +972,8 @@ class Artikkel(models.Model):
 
     # objects = models.Manager()  # The default manager
     # objects = ArtikkelKroonikataManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
-    if settings.KROONIKA['SAJAND_TAGASI']:
-        objects = ArtikkelSajandTagasiManager() # Kui on vaja näidata kuni sajand tagasi
+    # if settings.KROONIKA['SAJAND_TAGASI']:
+    #     objects = ArtikkelSajandTagasiManager() # Kui on vaja näidata kuni sajand tagasi
 
     def __str__(self):
         summary = self.body_text

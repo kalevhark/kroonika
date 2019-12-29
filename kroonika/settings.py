@@ -198,5 +198,5 @@ MARKDOWNX_SERVER_CALL_LATENCY = 1000 # kujundatud teksti värskendamise viivitus
 
 # Kroonika üldised seaded
 KROONIKA = {
-    'SAJAND_TAGASI': False # kui on vaja näidata kuni sajand tagasi True
+    # 'SAJAND_TAGASI': False # kui on vaja näidata kuni sajand tagasi True
 }

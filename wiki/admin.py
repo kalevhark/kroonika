@@ -345,7 +345,7 @@ class ArtikkelAdmin(MarkdownxModelAdmin):
         return objekt
 
     
-class IsikAdmin(admin.ModelAdmin):
+class IsikAdmin(MarkdownxModelAdmin):
     form = IsikForm
     list_display = (
         'id',
@@ -464,7 +464,7 @@ class IsikAdmin(admin.ModelAdmin):
         return obj.viited.count()
     seotud_viiteid.short_description = 'Viiteid'
 
-class OrganisatsioonAdmin(admin.ModelAdmin):
+class OrganisatsioonAdmin(MarkdownxModelAdmin):
     form = OrganisatsioonForm
     readonly_fields = [
         'inp_date',
@@ -562,7 +562,7 @@ class OrganisatsioonAdmin(admin.ModelAdmin):
         return objekt
 
 
-class ObjektAdmin(admin.ModelAdmin):
+class ObjektAdmin(MarkdownxModelAdmin):
     form = ObjektForm
     readonly_fields = [
         # 'hist_searchdate',
