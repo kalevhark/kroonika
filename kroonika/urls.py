@@ -38,7 +38,7 @@ urlpatterns = [
     path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('markdownx/', include('markdownx.urls')),
     path('schema/', schema_view),
-    # path('test/', views.test, name='test'), # linkide testimiseks
+    path('test/', views.test, name='test'), # linkide testimiseks
     path('wiki/', include('wiki.urls')),
     ]
 
