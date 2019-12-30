@@ -1,5 +1,5 @@
-import datetime
-from datetime import timedelta
+# import datetime
+from datetime import datetime, timedelta
 from io import BytesIO
 import os
 import os.path
@@ -9,7 +9,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.db import models
-from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
@@ -404,7 +403,7 @@ class Objekt(models.Model):
         }
         return reverse('wiki:wiki_objekt_detail', kwargs=kwargs)
 
-    def vanus(self, d=datetime.date.today()):
+    def vanus(self, d=timezone.now()):
         if self.hist_date:
             return d.year - self.hist_date.year
         elif self.hist_year:
@@ -566,7 +565,7 @@ class Organisatsioon(models.Model):
         }
         return reverse('wiki:wiki_organisatsioon_detail', kwargs=kwargs)
 
-    def vanus(self, d=datetime.date.today()):
+    def vanus(self, d=timezone.now()):
         if self.hist_date:
             return d.year - self.hist_date.year
         elif self.hist_year:
@@ -772,7 +771,7 @@ class Isik(models.Model):
         }
         return reverse('wiki:wiki_isik_detail', kwargs=kwargs)
 
-    def vanus(self, d=datetime.date.today()):
+    def vanus(self, d=timezone.now()):
         if self.hist_date:
             return d.year - self.hist_date.year
         elif self.hist_year:
@@ -1056,7 +1055,7 @@ class Artikkel(models.Model):
                     m = self.hist_month
                 else:
                     m = 1
-                self.hist_searchdate = timezone.make_aware(datetime.datetime(y, m, 1))
+                self.hist_searchdate = datetime(y, m, 1)
             else:
                 self.hist_searchdate = None
         super().save(*args, **kwargs)
