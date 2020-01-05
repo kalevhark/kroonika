@@ -462,23 +462,7 @@ def algus(request):
         }
     )
 
-def special_j6ul2019(request):
-    tervitaja = request.META['QUERY_STRING']
-    # Kui tervituses on mitu osa
-    tykid = tervitaja.split('&')
-    # Filtreerime välja FB lisa
-    tervitaja = '&'.join([tykk.replace('+', ' ') for tykk in tykid if 'fbclid=' not in tykk])
-    if tervitaja:
-        tervitaja = tervitaja[:30]
-    else:
-        tervitaja = 'valgalinn.ee'
-    return render(
-        request,
-        'wiki/wiki_special_j6ul.html',
-        {
-            'tervitaja': tervitaja,
-        }
-    )
+
 #
 # Tagastab kõik artiklid, kus hist_date < KKPP <= hist_enddate vahemikus
 #
@@ -1457,3 +1441,27 @@ def test(request):
         # if len(obj.pilt_thumbnail.name)==0
     ]
     return JsonResponse(data, safe=False)
+
+
+# Arhiiv taaskasutamise jaoks:
+
+#
+# Jõulutervituse lehekülg
+#
+def special_j6ul2019(request):
+    tervitaja = request.META['QUERY_STRING']
+    # Kui tervituses on mitu osa
+    tykid = tervitaja.split('&')
+    # Filtreerime välja FB lisa
+    tervitaja = '&'.join([tykk.replace('+', ' ') for tykk in tykid if 'fbclid=' not in tykk])
+    if tervitaja:
+        tervitaja = tervitaja[:30]
+    else:
+        tervitaja = 'valgalinn.ee'
+    return render(
+        request,
+        'wiki/wiki_special_j6ul.html',
+        {
+            'tervitaja': tervitaja,
+        }
+    )
