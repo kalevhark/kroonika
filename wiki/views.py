@@ -1373,6 +1373,7 @@ def get_all_logged_in_users():
 # JSON-vormis põhiobjektide lingid, et kontrollida kas töötavad
 #
 def test(request):
+    valik = request.META['QUERY_STRING']
     data = dict()
     # data['meta_server_addr'] = request.META['SERVER_ADDR']
     # Artiklite testandmed
@@ -1442,7 +1443,11 @@ def test(request):
         in queryset
         # if len(obj.pilt_thumbnail.name)==0
     ]
-    return JsonResponse(data, safe=False)
+    try:
+        urls = data[valik]
+    except:
+        urls = data
+    return JsonResponse(urls, safe=False)
 
 
 # Arhiiv taaskasutamise jaoks:
