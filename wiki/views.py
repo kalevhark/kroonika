@@ -955,7 +955,9 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         kuu = context['month'].month
         p2ev = context['month']
         # Leiame samal kuul teistel aastatel märgitud artiklid TODO: probleem kui hist_searchdate__month ja hist_enddate__month ei ole järjest
-        sel_kuul = artikkel_qs.exclude(hist_searchdate__year = aasta).filter(Q(hist_date__month = kuu) | Q(hist_enddate__month = kuu))
+        # sel_kuul = artikkel_qs.exclude(hist_searchdate__year = aasta).filter(Q(hist_date__month = kuu) | Q(hist_enddate__month = kuu))
+        sel_kuul = artikkel_qs.exclude(hist_searchdate__year=aasta).filter(
+            Q(hist_searchdate__month=kuu) | Q(hist_enddate__month=kuu))
         context['sel_kuul'] = sel_kuul
         # Leiame samal kuul sündinud isikud
         syndinud_isikud = Isik.objects.filter(
