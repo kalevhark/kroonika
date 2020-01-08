@@ -1374,6 +1374,7 @@ def get_all_logged_in_users():
 #
 def test(request):
     valik = request.META['QUERY_STRING']
+    # TODO: Saata tühi vastus, kui pole konkreetset valikut
     data = dict()
     # data['meta_server_addr'] = request.META['SERVER_ADDR']
     # Artiklite testandmed
