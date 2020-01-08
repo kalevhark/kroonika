@@ -938,7 +938,7 @@ class ArtikkelYearArchiveView(YearArchiveView):
 
 class ArtikkelMonthArchiveView(MonthArchiveView):
     # queryset = Artikkel.objects.all()
-    date_field = 'hist_date'
+    date_field = 'hist_searchdate'
     make_object_list = True
     allow_future = True
     allow_empty = True
