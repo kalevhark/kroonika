@@ -17,10 +17,23 @@
         </a>
       {% endwith %}
     {% endif %}
-    {% if object.updated_by.username %}
-      {{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
-    {% else %}
-      {{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
+    <div
+        class="w3-button w3-padding-bottom w3-hover-white"
+        title="Viimane läbivaatamise aeg ja läbivaataja"
+    >
+      {% if object.updated_by.username %}
+        {{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
+      {% else %}
+        {{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
+      {% endif %}
+    </div>
+    {% if object.total_accessed %}
+      <div
+          class="w3-button w3-padding-bottom w3-hover-white fa fa-eye"
+          title="Vaatamisi"
+      >
+        &nbsp;{{ object.total_accessed }}
+      </div>
     {% endif %}
   </small>
   <!--		Tagasiside vorm -->
