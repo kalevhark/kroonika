@@ -37,11 +37,16 @@ KUUD = [
 
 # Highcharts vaikevärvid
 COLORS = [
-    "#7cb5ec", "#434348",
-    "#90ed7d", "#f7a35c",
-    "#8085e9", "#f15c80",
-    "#e4d354", "#2b908f",
-    "#f45b5b", "#91e8e1"
+    "#7cb5ec", # helesinine
+    "#434348", # tumehall
+    "#90ed7d", # heleroheline
+    "#f7a35c", # oranzh
+    "#8085e9", # lillakas sinine
+    "#f15c80", # tumeroosa
+    "#e4d354", # murtud roheline
+    "#2b908f", # sinakas roheline
+    "#f45b5b", # kahvatu punane
+    "#91e8e1" # murtud heleroheline
 ]
 
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
@@ -323,7 +328,9 @@ def container_history_aasta(request):
         'zIndex': 1,
         'marker': {
             'lineWidth': 1,
-        }
+        },
+        'color': COLORS[5],
+        'negativeColor': '#48AFE8'
     }
     series_hist_temp_ranges = {
         'name': f'{bdi.start.year} - {bdi.stopp.year} min/max',
