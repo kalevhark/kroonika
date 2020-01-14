@@ -198,6 +198,11 @@ class IlmateenistusData():
             .values('timestamp__month') \
             .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
             .order_by('timestamp__month')
+        # 12 kuud aastate kaupa
+        self.qs_kuud = Ilm.objects \
+            .values('timestamp__year', 'timestamp__month') \
+            .annotate(Sum('precipitations')) \
+            .order_by('timestamp__year', 'timestamp__month')
         # 366 päeva
         self.qs366 = Ilm.objects \
             .values('timestamp__month', 'timestamp__day') \

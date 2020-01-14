@@ -446,12 +446,14 @@ def container_history_kuud(request):
     else:
         chart['tyhi'] = False
     # Andmete ettevalmistamine
-    categories = []
-    sel_temp_averages = []
-    sel_temp_ranges = []
-    sel_prec_sums = []
-    hist_temp_averages = []
-    hist_temp_ranges = []
+    categories = [] # kuud
+    sel_temp_averages = [] # valitud aasta kuude keskmised temperatuurid
+    sel_temp_ranges = [] # valitud aasta kuude temperatuuride vahemikud
+    sel_prec_sums = [] # valitud aasta kuude summaarsed sademed
+    hist_temp_averages = [] # ajaloo kuude keskmised sademed
+    hist_temp_ranges = [] # ajaloo kuude tempreratuuride vahemikud
+    hist_prec_averages = [] # ajaloo kuude summaarsete sademete keskmised
+    hist_prec_ranges = [] # ajaloo kuude sumaarsete sademete vahemikud
     sel = list(
         Ilm.objects
             .filter(timestamp__year=bdi.aasta)
@@ -487,6 +489,20 @@ def container_history_kuud(request):
                 round(float(hist[i + offset]['airtemperature__min']), 1),
                 round(float(hist[i + offset]['airtemperature__max']), 1)
             ]
+        )
+        hist_prec_monthly = bdi.qs_kuud \
+            .filter(timestamp__month=i + 1) \
+            .aggregate(Avg('precipitations__sum'), Min('precipitations__sum'), Max('precipitations__sum'))
+        hist_prec_monthly_avg = hist_prec_monthly['precipitations__sum__avg']
+        hist_prec_averages.append(
+            round(float(hist_prec_monthly_avg), 1)
+        )
+        hist_prec_monthly_range = [
+            round(float(hist_prec_monthly['precipitations__sum__min']), 1),
+            round(float(hist_prec_monthly['precipitations__sum__max']), 1)
+        ]
+        hist_prec_ranges.append(
+            hist_prec_monthly_range
         )
     # Graafiku andmeseeriate kirjeldamine
     series_sel_temp_averages = {
@@ -542,6 +558,23 @@ def container_history_kuud(request):
         'color': COLORS[0],
         'tooltip': {
             'valueSuffix': ' mm'
+        }
+    }
+    series_hist_prec_ranges = {
+        'name': f'{bdi.start.year} - {bdi.stopp.year} min/max',
+        'data': hist_prec_ranges,
+        'type': 'errorbar',
+        'yAxis': 1,
+        # 'color': COLORS[0],
+    }
+    series_hist_prec_averages = {
+        'name': f'{bdi.start.year} - {bdi.stopp.year} keskmised sademed',
+        'yAxis': 1,
+        'data': hist_prec_averages,
+        'dashStyle': 'ShortDot',
+        'zIndex': 1,
+        'marker': {
+            'lineWidth': 1,
         }
     }
     # Graafiku joonistamine
@@ -604,7 +637,9 @@ def container_history_kuud(request):
             series_hist_temp_averages,
             series_hist_temp_ranges,
             series_sel_temp_ranges,
-            series_sel_prec_sums
+            series_sel_prec_sums,
+            series_hist_prec_ranges,
+            series_hist_prec_averages
         ]
     }
 
