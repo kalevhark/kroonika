@@ -506,7 +506,7 @@ def container_history_kuud(request):
         )
     # Graafiku andmeseeriate kirjeldamine
     series_sel_temp_averages = {
-        'name': f'{bdi.aasta} keskmine',
+        'name': f'{bdi.aasta} keskmine temperatuur',
         'data': sel_temp_averages,
         'zIndex': 2,
         'marker': {
@@ -516,7 +516,7 @@ def container_history_kuud(request):
         'negativeColor': '#48AFE8'
     }
     series_hist_temp_averages = {
-        'name': f'{bdi.start.year} - {bdi.stopp.year} keskmine',
+        'name': f'{bdi.start.year} - {bdi.stopp.year} keskmine temperatuur',
         'data': hist_temp_averages,
         'dashStyle': 'ShortDot',
         'zIndex': 1,
@@ -525,7 +525,7 @@ def container_history_kuud(request):
         }
     }
     series_hist_temp_ranges = {
-        'name': f'{bdi.start.year} - {bdi.stopp.year} min/max',
+        'name': f'{bdi.start.year} - {bdi.stopp.year} min/max temperatuurid',
         'data': hist_temp_ranges,
         'type': 'arearange',
         'lineWidth': 0,
@@ -538,7 +538,7 @@ def container_history_kuud(request):
         }
     }
     series_sel_temp_ranges = {
-        'name': f'{bdi.aasta} min/max',
+        'name': f'{bdi.aasta} min/max temperatuurid',
         'data': sel_temp_ranges,
         'type': 'arearange',
         'lineWidth': 0,
@@ -561,11 +561,14 @@ def container_history_kuud(request):
         }
     }
     series_hist_prec_ranges = {
-        'name': f'{bdi.start.year} - {bdi.stopp.year} min/max',
+        'name': f'{bdi.start.year} - {bdi.stopp.year} min/max sademed',
         'data': hist_prec_ranges,
         'type': 'errorbar',
         'yAxis': 1,
         # 'color': COLORS[0],
+        'tooltip': {
+            'valueSuffix': ' mm'
+        }
     }
     series_hist_prec_averages = {
         'name': f'{bdi.start.year} - {bdi.stopp.year} keskmised sademed',
@@ -575,6 +578,9 @@ def container_history_kuud(request):
         'zIndex': 1,
         'marker': {
             'lineWidth': 1,
+        },
+        'tooltip': {
+            'valueSuffix': ' mm'
         }
     }
     # Graafiku joonistamine
