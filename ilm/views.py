@@ -62,9 +62,37 @@ def index(request):
 
 def history(request):
     # Ajalooliste ilmaandmete töötlused
-    valik_aasta = bdi.aasta # Salvestatud valikaasta
-    valik_kuu = bdi.kuu # Salvestatud valikkuu
-    valik_p2ev = bdi.p2ev # Salvestatud valikpäev
+    # saab ka küsida kujul /ilm/history/?aasta=2019&kuu=1&p2ev=1
+    params = request.GET # Kas on parameetrid, kui jah, siis kasutada neid v6i vaikimisi salvestatud
+    aasta = params.get('aasta')
+    if aasta:
+        try:
+            aasta = int(aasta)
+        except:
+            aasta = bdi.aasta
+        kuu = params.get('kuu')
+        if kuu:
+            try:
+                kuu = int(kuu)
+            except:
+                kuu = bdi.kuu
+            p2ev = params.get('p2ev')
+            try:
+                p2ev = int(p2ev)
+            except:
+                p2ev = 1
+        else:
+            kuu = 1
+            p2ev = 1
+    try:
+        testime_kuup2eva = datetime(int(aasta), int(kuu), int(p2ev)) # Kas küsitud kuupäev on loogiline
+        bdi.aasta = aasta
+        bdi.kuu = kuu
+        bdi.p2ev = p2ev
+        form = NameForm(initial={'aasta': aasta, 'kuu': kuu, 'p2ev': p2ev})
+    except:
+        form = NameForm(initial={'aasta': bdi.aasta, 'kuu': bdi.kuu, 'p2ev': bdi.p2ev})
+
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -74,13 +102,14 @@ def history(request):
             bdi.aasta = form.cleaned_data['aasta']
             bdi.kuu = form.cleaned_data['kuu']
             bdi.p2ev = form.cleaned_data['p2ev']
-    # if a GET (or any other method) we'll create a blank form
-    else:
-        form = NameForm(initial={'aasta': bdi.aasta, 'kuu': bdi.kuu, 'p2ev': bdi.p2ev})
 
-    return render(request, 'ilm/history.html', {
-        'form': form
-    })
+    return render(
+        request,
+        'ilm/history.html',
+        {
+            'form': form
+        }
+    )
 
 
 def sun_moon(dt):
@@ -848,15 +877,17 @@ def container_history_kuu(request):
 def container_history_p2ev(request):
     # Valitud päeva ilmaandmed graafikuna
     chart = dict()
-    if bdi.p2ev == None:
+    try:
+        # Kontroll
+        kontroll = pytz.timezone('utc').localize(datetime(bdi.aasta, bdi.kuu, bdi.p2ev))
+    except:
         chart['tyhi'] = True
         return JsonResponse(chart)
+
     chart['aasta'] = bdi.aasta
     chart['kuu'] = bdi.kuu
     chart['p2ev'] = bdi.p2ev
-    # Kontroll
-    kontroll = pytz.timezone('utc').localize(datetime(bdi.aasta, bdi.kuu, bdi.p2ev))
-    print(kontroll, bdi.stopp)
+
     if (
             (kontroll > bdi.stopp) or
             (kontroll < bdi.start.replace(hour=0))
@@ -1018,14 +1049,15 @@ def container_history_p2ev(request):
 def container_history_p2evad(request):
     # Valitud päeva ja kuu ilmaandmed graafikuna läbi aastate
     chart = dict()
-    if bdi.p2ev == None:
+    try:
+        # Kontroll
+        kontroll = pytz.timezone('utc').localize(datetime(bdi.aasta, bdi.kuu, bdi.p2ev))
+    except:
         chart['tyhi'] = True
         return JsonResponse(chart)
     chart['aasta'] = bdi.aasta
     chart['kuu'] = bdi.kuu
     chart['p2ev'] = bdi.p2ev
-    # Kontroll
-    kontroll = pytz.timezone('utc').localize(datetime(bdi.aasta, bdi.kuu, bdi.p2ev))
     if (
             (kontroll > bdi.stopp) or
             (kontroll < bdi.start.replace(hour=0))
