@@ -909,7 +909,7 @@ def container_history_p2ev(request):
     sel_precs = []
     hist_temp_averages = []
     hist_temp_ranges = []
-    offset = 0  # Kui valitud päevas ei ole kõigi päevade mõõtmistulemusi, siis arvutatakse vahe
+    offset = 0  # Kui valitud päevas ei ole kõigi tundide mõõtmistulemusi, siis arvutatakse vahe
     for i in range(len(hist)):
         # X-telje väärtused
         categories.append(
