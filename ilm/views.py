@@ -1340,20 +1340,15 @@ def container_history_kuud_aastatekaupa(request):
     chart = dict()
     chart['aasta'] = bdi.aasta
     chart['kuu'] = bdi.kuu
+    chart['tyhi'] = False
+
     try:
         # Kontroll
         kontroll = pytz.timezone('utc').localize(datetime(bdi.aasta, bdi.kuu, 1))
     except:
         chart['tyhi'] = True
         return JsonResponse(chart)
-    if (
-            (kontroll > bdi.stopp) or
-            (kontroll < bdi.start.replace(hour=0))
-    ):
-        chart['tyhi'] = True
-        return JsonResponse(chart)
-    else:
-        chart['tyhi'] = False
+
     sel = list(Ilm.objects
                .filter(timestamp__month=bdi.kuu)
                .values('timestamp__year')
