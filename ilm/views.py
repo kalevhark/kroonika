@@ -510,7 +510,10 @@ def container_history_kuud(request):
             kuu_airtemperature_avg = round(float(kuu_sel_data['airtemperature__avg']), 1)
             kuu_airtemperature_min = round(float(kuu_sel_data['airtemperature__min']), 1)
             kuu_airtemperature_max = round(float(kuu_sel_data['airtemperature__max']), 1)
-            kuu_precipitations_sum = round(float(kuu_sel_data['precipitations__sum']), 1)
+            try:
+                kuu_precipitations_sum = round(float(kuu_sel_data['precipitations__sum']), 1)
+            except:
+                kuu_precipitations_sum = None
         else:
             kuu_airtemperature_avg = None
             kuu_airtemperature_min = None
