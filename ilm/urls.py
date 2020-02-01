@@ -10,6 +10,7 @@ urlpatterns = [
     path('container_history_aasta/', views.container_history_aasta, name='container_history_aasta'),
     path('container_history_kuud/', views.container_history_kuud, name='container_history_kuud'),
     path('container_history_kuu/', views.container_history_kuu, name='container_history_kuu'),
+    path('container_history_kuud_aastatekaupa/', views.container_history_kuud_aastatekaupa, name='container_history_kuud_aastatekaupa'),
     path('container_history_p2ev/', views.container_history_p2ev, name='container_history_p2ev'),
     path('container_history_p2evad/', views.container_history_p2evad, name='container_history_p2evad'),
     path('container_history_aastad/', views.container_history_aastad, name='container_history_aastad'),

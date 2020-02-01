@@ -778,7 +778,7 @@ def container_history_kuu(request):
         return JsonResponse(chart)
     else:
         chart['tyhi'] = False
-    # Valitud kuu pärig
+    # Valitud kuu päring
     sel = list(
         Ilm.objects
             .filter(timestamp__year=bdi.aasta, timestamp__month=bdi.kuu)
@@ -1292,6 +1292,168 @@ def container_history_p2evad(request):
     }
     return JsonResponse(chart)
 
+def container_history_kuud_aastatekaupa(request):
+    # Valitud kuu ilmaandmed graafikuna läbi aastate
+    chart = dict()
+    chart['aasta'] = bdi.aasta
+    chart['kuu'] = bdi.kuu
+    try:
+        # Kontroll
+        kontroll = pytz.timezone('utc').localize(datetime(bdi.aasta, bdi.kuu, 1))
+    except:
+        chart['tyhi'] = True
+        return JsonResponse(chart)
+    if (
+            (kontroll > bdi.stopp) or
+            (kontroll < bdi.start.replace(hour=0))
+    ):
+        chart['tyhi'] = True
+        return JsonResponse(chart)
+    else:
+        chart['tyhi'] = False
+    sel = list(Ilm.objects
+               .filter(timestamp__month=bdi.kuu)
+               .values('timestamp__year')
+               .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature'), Sum('precipitations'))
+               .order_by('timestamp__year')
+    )
+    hist  = list(Ilm.objects \
+        .filter(timestamp__month=bdi.kuu) \
+        # .order_by('timestamp') \
+        .aggregate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
+        .values()
+    )
+    categories = []
+    sel_temp_averages = []
+    sel_temp_ranges = []
+    sel_prec_sums = []
+    hist_temp_average = round(float(hist[0]), 1)
+    hist_temp_min = round(float(hist[1]), 1)
+    hist_temp_max = round(float(hist[2]), 1)
+    for i in range(len(sel)):
+        # X-telje väärtused
+        categories.append(f"{sel[i]['timestamp__year']}")
+        # Valitud kuu päeva andmed
+        sel_temp_averages.append(round(float(sel[i]['airtemperature__avg']), 1))
+        sel_temp_ranges.append(
+            [
+                round(float(sel[i]['airtemperature__min']), 1),
+                round(float(sel[i]['airtemperature__max']), 1)
+            ]
+        )
+        if sel[i]['precipitations__sum']:
+            sel_prec_sums.append(round(float(sel[i]['precipitations__sum']), 1))
+        else:
+            sel_prec_sums.append(0)  # Kui mõõtmistulemusi kogu kuu polnud
+    # Graafiku andmeseeriate kirjeldamine
+    series_sel_temp_averages = {
+        'name': f'kuu keskmine',
+        'data': sel_temp_averages,
+        'zIndex': 2,
+        'marker': {
+            'lineWidth': 2,
+        },
+        'color': '#FF3333',
+        'negativeColor': '#48AFE8'
+    }
+    series_sel_temp_ranges = {
+        'name': f'kuu min/max',
+        'data': sel_temp_ranges,
+        'type': 'arearange',
+        'lineWidth': 0,
+        'linkedTo': ':previous',
+        'color': COLORS[0],
+        'fillOpacity': 0.3,
+        'zIndex': 0,
+        'marker': {
+            'enabled': False
+        }
+    }
+    series_sel_prec_sums = {
+        'name': f'kuu sademed',
+        'type': 'column',
+        'yAxis': 1,
+        'data': sel_prec_sums,
+        'color': COLORS[0],
+        'tooltip': {
+            'valueSuffix': ' mm'
+        }
+    }
+    # Graafiku joonistamine
+    chart = {
+        'title': {
+            'text': f'{KUUD[bdi.kuu]} Valga linnas läbi aastate'
+        },
+
+        'subtitle': {
+            'text': 'Allikas: <a href="https://www.ilmateenistus.ee/asukoha-prognoos/?id=8918" target="_blank">ilmateenistus.ee</a>',
+            'floating': True,
+            'align': 'left',
+            'x': 30,
+            'verticalAlign': 'bottom',
+            'y': 25
+        },
+
+        'xAxis': {
+            # 'type': 'datetime',
+            # 'dateTimeLabelFormats': {
+            #     'day': '%e of %b'
+            # },
+            # 'categories': json.dumps(categories, cls=DjangoJSONEncoder),
+            'categories': categories,
+            # 'labels': {
+            #     'format': '{value:%e. %b}'
+            # }
+        },
+
+        'yAxis': [
+            {
+                'title': {
+                    'text': 'Temperatuur'
+                },
+                'labels': {
+                    'format': '{value}°C'
+                },
+                'plotLines': [{
+                    'color': COLORS[0],
+                    'width': 2,
+                    'dashStyle': 'Dot',
+                    'value': hist_temp_average,
+                    'zIndex': 5,
+                    'label': {
+                        'text': f'{bdi.start.year}-{bdi.stopp.year} keskmine {hist_temp_average}°C',
+                        'align': 'right',
+                        'x': 0,
+                        'y': 20,
+                    }
+                }]
+            }, {
+                'title': {
+                    'text': 'Sademed'
+                },
+                'labels': {
+                    'format': '{value} mm'
+                },
+                'opposite': True
+            }
+        ],
+
+        'tooltip': {
+            'crosshairs': True,
+            'shared': True,
+            'valueSuffix': '°C'
+        },
+
+        'legend': {
+        },
+
+        'series': [
+            series_sel_temp_averages,
+            series_sel_temp_ranges,
+            series_sel_prec_sums
+        ]
+    }
+    return JsonResponse(chart)
 
 def yrno_48h():
     # Weather forecast from Yr, delivered by the Norwegian Meteorological Institute and the NRK

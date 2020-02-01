@@ -204,6 +204,32 @@ function container_history_aastad() {
   });
 }
 
+function container_history_kuud_aastatekaupa() {
+  // Küsime andmed ja moodustame graafiku
+  $.ajax({
+    url: $("#container_history_kuud_aastatekaupa").attr("data-url"),
+    dataType: 'json',
+    timeout: 300000,
+    beforeSend: function() {
+      $("#loaderDiv7").show();
+    },
+	success: function (data) {
+	  if (data.tyhi) {
+	    document.getElementById("container_history_kuud_aastatekaupa").innerHTML = data.aasta + " kohta andmeid pole!";
+
+	  } else {
+	    var chart = Highcharts.chart("container_history_kuud_aastatekaupa", data);
+	  }
+    },
+    error: function (XMLHttpRequest, textstatus, errorThrown) {
+	  alert(textstatus);
+    },
+	complete: function () {
+	  $("#loaderDiv7").hide();
+	}
+  });
+}
+
 $(document)
 .ajaxStart(function(){
   document.getElementById("loader").style.display = "block";
@@ -227,4 +253,5 @@ $(document).ready(function() {
   container_history_p2ev();
   container_history_p2evad();
   container_history_aastad();
+  container_history_kuud_aastatekaupa();
 });
