@@ -978,48 +978,91 @@ def container_history_p2ev(request):
         return JsonResponse(chart)
     else:
         chart['tyhi'] = False
-    sel = list(
-        Ilm.objects \
-            .filter(timestamp__year=bdi.aasta, timestamp__month=bdi.kuu, timestamp__day=bdi.p2ev) \
-            .values('timestamp__hour', 'airtemperature', 'precipitations') \
-            .order_by('timestamp__hour')
-    )
-    hist = list(bdi.qs8784.filter(timestamp__month=bdi.kuu, timestamp__day=bdi.p2ev))
+
     # Andmete ettevalmistamine
     categories = []
     sel_temps = []
     sel_precs = []
     hist_temp_averages = []
     hist_temp_ranges = []
-    offset = 0  # Kui valitud päevas ei ole kõigi tundide mõõtmistulemusi, siis arvutatakse vahe
-    for i in range(len(hist)):
+
+    # Valitud päeva ilmaandmed
+    qs_sel = Ilm.objects \
+        .filter(timestamp__year=bdi.aasta, timestamp__month=bdi.kuu, timestamp__day=bdi.p2ev) \
+        .values('timestamp__hour', 'airtemperature', 'precipitations') \
+        .order_by('timestamp__hour')
+    sel = dict((el['timestamp__hour'], el) for el in qs_sel)
+
+    # Ajaloolised ilmaandmed
+    qs_hist = bdi.qs8784.filter(timestamp__month=bdi.kuu, timestamp__day=bdi.p2ev)
+    hist = dict((el['timestamp__hour'], el) for el in qs_hist)
+
+    for tund in range(len(hist)):
         # X-telje väärtused
         categories.append(
-            f"{str(hist[i]['timestamp__hour']).zfill(2)}:00"
+            f"{str(hist[tund]['timestamp__hour']).zfill(2)}:00"
         )
+
         # Kogu ajaloo väärtused
-        hist_temp_averages.append(round(float(hist[i]['airtemperature__avg']), 1))
+        hist_temp_averages.append(round(float(hist[tund]['airtemperature__avg']), 1))
         hist_temp_ranges.append(
             [
-                round(float(hist[i]['airtemperature__min']), 1),
-                round(float(hist[i]['airtemperature__max']), 1)
+                round(float(hist[tund]['airtemperature__min']), 1),
+                round(float(hist[tund]['airtemperature__max']), 1)
             ]
         )
-        # Valitud kuu väärtused
+        # Valitud kuu päeva väärtused
+        tund_sel_data = sel.get(tund)
+        try:
+            sel_airtemperature = round(float(tund_sel_data['airtemperature']), 1)
+        except:
+            sel_airtemperature = None
+        try:
+            sel_precipitations = round(float(tund_sel_data['precipitations']), 1)
+        except:
+            sel_precipitations = None
 
-        if sel[offset]['timestamp__hour'] == hist[i]['timestamp__hour']:
-            # Valitud kuu päeva andmed olemas
-            sel_temps.append(round(float_or_none(sel[offset]['airtemperature']), 1))
-            if sel[offset]['precipitations']:
-                sel_precs.append(round(float(sel[offset]['precipitations']), 1))
-            else:
-                sel_precs.append(0)  # Kui mõõtmistulemusi kogu päev polnud
-            if offset < (len(sel) - 1):
-                offset += 1
-        else:
-            # Valitud kuu päeva andmeid ei ole
-            sel_temps.append(None)
-            sel_precs.append(None)
+        sel_temps.append(sel_airtemperature)
+        sel_precs.append(sel_precipitations)
+
+    # sel = list(
+    #     Ilm.objects \
+    #         .filter(timestamp__year=bdi.aasta, timestamp__month=bdi.kuu, timestamp__day=bdi.p2ev) \
+    #         .values('timestamp__hour', 'airtemperature', 'precipitations') \
+    #         .order_by('timestamp__hour')
+    # )
+    # hist = list(bdi.qs8784.filter(timestamp__month=bdi.kuu, timestamp__day=bdi.p2ev))
+    #
+    # offset = 0  # Kui valitud päevas ei ole kõigi tundide mõõtmistulemusi, siis arvutatakse vahe
+    # for i in range(len(hist)):
+    #     # X-telje väärtused
+    #     categories.append(
+    #         f"{str(hist[i]['timestamp__hour']).zfill(2)}:00"
+    #     )
+    #     # Kogu ajaloo väärtused
+    #     hist_temp_averages.append(round(float(hist[i]['airtemperature__avg']), 1))
+    #     hist_temp_ranges.append(
+    #         [
+    #             round(float(hist[i]['airtemperature__min']), 1),
+    #             round(float(hist[i]['airtemperature__max']), 1)
+    #         ]
+    #     )
+    #     # Valitud kuu väärtused
+    #
+    #     if sel[offset]['timestamp__hour'] == hist[i]['timestamp__hour']:
+    #         # Valitud kuu päeva andmed olemas
+    #         sel_temps.append(round(float_or_none(sel[offset]['airtemperature']), 1))
+    #         if sel[offset]['precipitations']:
+    #             sel_precs.append(round(float(sel[offset]['precipitations']), 1))
+    #         else:
+    #             sel_precs.append(0)  # Kui mõõtmistulemusi kogu päev polnud
+    #         if offset < (len(sel) - 1):
+    #             offset += 1
+    #     else:
+    #         # Valitud kuu päeva andmeid ei ole
+    #         sel_temps.append(None)
+    #         sel_precs.append(None)
+
     # Graafiku andmeseeriate kirjeldamine
     series_sel_temps = {
         'name': f'{KUUD[bdi.kuu]} {bdi.aasta}',
