@@ -481,46 +481,73 @@ def container_history_kuud(request):
     sel_prec_sums = [] # valitud aasta kuude summaarsed sademed
     hist_temp_averages = [] # ajaloo kuude keskmised sademed
     hist_temp_ranges = [] # ajaloo kuude tempreratuuride vahemikud
-    hist_prec_averages = [] # ajaloo kuude summaarsete sademete keskmised
     hist_prec_ranges = [] # ajaloo kuude sumaarsete sademete vahemikud
-    sel = list(
-        Ilm.objects
-            .filter(timestamp__year=bdi.aasta)
-            .values('timestamp__month')
-            .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature'), Sum('precipitations'))
-            .order_by('timestamp__month')
-    )
-    hist = list(bdi.qs12)
-    offset = 0  # Kui valitud aastas ei ole 12 kuu mõõtmistulemusi, siis arvutatakse vahe
-    for i in range(len(sel)):
-        while (
-                (sel[i]['timestamp__month'] != hist[i + offset]['timestamp__month'])
-        ):
-            offset += 1
+    hist_prec_averages = [] # ajaloo kuude summaarsete sademete keskmised
 
+    # Valitud aasta ilmaandmed
+    qs_sel = Ilm.objects \
+        .filter(timestamp__year=bdi.aasta) \
+        .values('timestamp__month') \
+        .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature'), Sum('precipitations')) \
+        .order_by('timestamp__month')
+    sel = dict((el['timestamp__month'], el) for el in qs_sel)
+
+    # Ajaloo ilmaandmed
+    qs_hist =  Ilm.objects \
+            .values('timestamp__month') \
+            .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
+            .order_by('timestamp__month')
+    hist = dict((el['timestamp__month'], el) for el in qs_hist)
+
+    for kuu in range(1, 13):
+        # X-telje v22rtused
         categories.append(
-            KUUD[int(sel[i]['timestamp__month'])]
+            KUUD[kuu]
         )
-        sel_temp_averages.append(round(float(sel[i]['airtemperature__avg']), 1))
+        # Valitud aasta ilmaandmed kuude kaupa
+        kuu_sel_data = sel.get(kuu)
+        if kuu_sel_data:
+            kuu_airtemperature_avg = round(float(kuu_sel_data['airtemperature__avg']), 1)
+            kuu_airtemperature_min = round(float(kuu_sel_data['airtemperature__min']), 1)
+            kuu_airtemperature_max = round(float(kuu_sel_data['airtemperature__max']), 1)
+            kuu_precipitations_sum = round(float(kuu_sel_data['precipitations__sum']), 1)
+        else:
+            kuu_airtemperature_avg = None
+            kuu_airtemperature_min = None
+            kuu_airtemperature_max = None
+            kuu_precipitations_sum = None
+
+        sel_temp_averages.append(kuu_airtemperature_avg)
         sel_temp_ranges.append(
             [
-                round(float(sel[i]['airtemperature__min']), 1),
-                round(float(sel[i]['airtemperature__max']), 1)
+                kuu_airtemperature_min,
+                kuu_airtemperature_max
             ]
         )
-        if sel[i]['precipitations__sum']:
-            sel_prec_sums.append(round(float(sel[i]['precipitations__sum']), 1))
+        sel_prec_sums.append(kuu_precipitations_sum)
+
+        # Ajaloo ilmaandmed
+        kuu_hist_data = hist.get(kuu)
+        if kuu_hist_data:
+            kuu_airtemperature_avg = round(float(kuu_hist_data['airtemperature__avg']), 1)
+            kuu_airtemperature_min = round(float(kuu_hist_data['airtemperature__min']), 1)
+            kuu_airtemperature_max = round(float(kuu_hist_data['airtemperature__max']), 1)
         else:
-            sel_prec_sums.append(0)  # Kui mõõtmistulemusi kogu kuu polnud
-        hist_temp_averages.append(round(float(hist[i + offset]['airtemperature__avg']), 1))
+            kuu_airtemperature_avg = None
+            kuu_airtemperature_min = None
+            kuu_airtemperature_max = None
+
+
+        hist_temp_averages.append(kuu_airtemperature_avg)
         hist_temp_ranges.append(
             [
-                round(float(hist[i + offset]['airtemperature__min']), 1),
-                round(float(hist[i + offset]['airtemperature__max']), 1)
+                kuu_airtemperature_min,
+                kuu_airtemperature_max
             ]
         )
+
         hist_prec_monthly = bdi.qs_kuud \
-            .filter(timestamp__month=i + 1) \
+            .filter(timestamp__month=kuu) \
             .aggregate(Avg('precipitations__sum'), Min('precipitations__sum'), Max('precipitations__sum'))
         hist_prec_monthly_avg = hist_prec_monthly['precipitations__sum__avg']
         hist_prec_averages.append(
@@ -533,6 +560,58 @@ def container_history_kuud(request):
         hist_prec_ranges.append(
             hist_prec_monthly_range
         )
+
+    # sel = list(
+    #     Ilm.objects
+    #         .filter(timestamp__year=bdi.aasta)
+    #         .values('timestamp__month')
+    #         .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature'), Sum('precipitations'))
+    #         .order_by('timestamp__month')
+    # )
+    # hist = list(bdi.qs12)
+    # offset = 0  # Kui valitud aastas ei ole 12 kuu mõõtmistulemusi, siis arvutatakse vahe
+    # for i in range(len(sel)):
+    #     while (
+    #             (sel[i]['timestamp__month'] != hist[i + offset]['timestamp__month'])
+    #     ):
+    #         offset += 1
+    #
+    #     categories.append(
+    #         KUUD[int(sel[i]['timestamp__month'])]
+    #     )
+    #     sel_temp_averages.append(round(float(sel[i]['airtemperature__avg']), 1))
+    #     sel_temp_ranges.append(
+    #         [
+    #             round(float(sel[i]['airtemperature__min']), 1),
+    #             round(float(sel[i]['airtemperature__max']), 1)
+    #         ]
+    #     )
+    #     if sel[i]['precipitations__sum']:
+    #         sel_prec_sums.append(round(float(sel[i]['precipitations__sum']), 1))
+    #     else:
+    #         sel_prec_sums.append(0)  # Kui mõõtmistulemusi kogu kuu polnud
+    #     hist_temp_averages.append(round(float(hist[i + offset]['airtemperature__avg']), 1))
+    #     hist_temp_ranges.append(
+    #         [
+    #             round(float(hist[i + offset]['airtemperature__min']), 1),
+    #             round(float(hist[i + offset]['airtemperature__max']), 1)
+    #         ]
+    #     )
+    #     hist_prec_monthly = bdi.qs_kuud \
+    #         .filter(timestamp__month=i + 1) \
+    #         .aggregate(Avg('precipitations__sum'), Min('precipitations__sum'), Max('precipitations__sum'))
+    #     hist_prec_monthly_avg = hist_prec_monthly['precipitations__sum__avg']
+    #     hist_prec_averages.append(
+    #         round(float(hist_prec_monthly_avg), 1)
+    #     )
+    #     hist_prec_monthly_range = [
+    #         round(float(hist_prec_monthly['precipitations__sum__min']), 1),
+    #         round(float(hist_prec_monthly['precipitations__sum__max']), 1)
+    #     ]
+    #     hist_prec_ranges.append(
+    #         hist_prec_monthly_range
+    #     )
+
     # Graafiku andmeseeriate kirjeldamine
     series_sel_temp_averages = {
         'name': f'{bdi.aasta} keskmine temperatuur',
