@@ -171,19 +171,26 @@ def info(request):
     # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
     revision_data['kroonika'] = artikkel_qs.filter(kroonika__isnull=False).count()
-    revision_data['revised'] = [
-        obj.id
-        for obj
-        in artikkel_qs.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1)
-    ]
+    revision_data['revised'] = artikkel_qs.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1)
+
      # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
     # Koondnäitajad aastate ja kuude kaupa
-    import json
+    # import json
     a = dict()
     artikleid_aasta_kaupa = artikkel_qs.filter(hist_searchdate__isnull=False).values('hist_year').annotate(Count('hist_year')).order_by('-hist_year')
     a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
     # artikleid_kuu_kaupa = Artikkel.objects.values('hist_year', 'hist_month').annotate(Count('hist_month')).order_by('hist_year', 'hist_month')
+
+    # Andmed süsteemi olukorra kohta
+    import shutil
+    from django.conf import settings
+    media_root = settings.MEDIA_ROOT
+    stat = shutil.disk_usage(media_root)
+    system_state = {
+        'media_root': media_root,
+        'disk_usage': stat[1]/stat[0]
+    }
 
     return render(
         request,
@@ -195,6 +202,7 @@ def info(request):
             'artikleid_kuus_max': artikleid_kuus_max,
             'meta_andmed': request.META,
             'a': a,
+            'system_state': system_state,
             # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
             'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         }

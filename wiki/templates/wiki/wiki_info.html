@@ -170,14 +170,26 @@
       {% render_logged_in_user_list %}
       </div>
       <div>
-        Revision: {{ revision_data.kroonika }}:{{ revision_data.revised }}?<br>
-        {% if revision_data.viiteta %}
-          Viiteta:
-          {% for obj in revision_data.viiteta %}
+        Seadme {{ system_state.media_root }} täituvus {{ system_state.disk_usage|stringformat:"1.2f" }}%
+      </div>
+      <div>
+        <div>
+          Revision: {{ revision_data.kroonika }}:
+          {% for obj in revision_data.revised %}
             &nbsp;<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.pk slug=obj.slug %}">
               {{ obj.pk }}
             </a>
           {% endfor %}
+        </div>
+        {% if revision_data.viiteta %}
+          <div>
+            Viiteta:
+            {% for obj in revision_data.viiteta %}
+              &nbsp;<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.pk slug=obj.slug %}">
+                {{ obj.pk }}
+              </a>
+            {% endfor %}
+          </div>
         {% endif %}
       </div>
       <div>
