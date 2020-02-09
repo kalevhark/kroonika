@@ -189,7 +189,7 @@ def info(request):
     stat = shutil.disk_usage(media_root)
     system_state = {
         'media_root': media_root,
-        'disk_usage': stat[1]/stat[0]
+        'disk_usage': stat[1]/stat[0]*100
     }
 
     return render(

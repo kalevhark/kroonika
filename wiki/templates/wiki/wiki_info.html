@@ -170,7 +170,7 @@
       {% render_logged_in_user_list %}
       </div>
       <div>
-        Seadme {{ system_state.media_root }} täituvus {{ system_state.disk_usage|stringformat:"1.2f" }}%
+        Seadme {{ system_state.media_root }} täituvus {{ system_state.disk_usage|stringformat:"1.1f" }}%
       </div>
       <div>
         <div>
@@ -193,6 +193,7 @@
         {% endif %}
       </div>
       <div>
+        Meta:<br>
         {% for item, value in meta_andmed.items %}
           <small>{{ item }}:{{ value }}</small><br>
         {% endfor %}
