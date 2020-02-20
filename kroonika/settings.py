@@ -114,6 +114,7 @@ DATABASES = {
         'PASSWORD': config('PSQL_PSWD'),
         'HOST':     'localhost',
         'PORT':     '5432',
+        'CONN_MAX_AGE': 600,
     }
 }
 
