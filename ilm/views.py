@@ -114,9 +114,6 @@ def history(request):
 
 def sun_moon(dt):
     # Tagastab konkreetese kuupäeva (ajavööndi väärtusega) päikese- ja kuuandmed
-##        a = Astral(GoogleGeocoder)
-##        location = a['Sulevi 9a/Valga'] # Kui annab veateate, tuleb enne GoogleMapsiga otsida (cache?)
-##    dt = pytz.timezone('Europe/Tallinn').localize(dt) # Vajalik, kui ajavöönd ei ole märgitud
     city_name = 'Tallinn'
     a = Astral()
     a.solar_depression = 'civil'
@@ -124,6 +121,20 @@ def sun_moon(dt):
     s = {}
     s['sun'] = city.sun(date=dt, local=True)
     s['moon'] = a.moon_phase(date=dt)
+    # Uus Astral
+    # from astral import LocationInfo
+    # city = LocationInfo("Valga", "Estonia", "Europe/Tallinn", 57.776944, 26.031111)
+    # s = {}
+    # from astral.sun import sun
+    # sun_states = sun(city.observer, date=dt)
+    # for state in sun_states.keys():
+    #     try:
+    #         sun_states[state] = pytz.timezone('Europe/Tallinn').localize(sun_states[state])
+    #     except:
+    #         pass
+    # s['sun'] = sun_states
+    # from astral import moon
+    # s['moon'] = moon.phase(date=dt)
     return s
 
 
@@ -1542,6 +1553,7 @@ def yrno_48h():
 
 def mitutundi(algus, l6pp):
     # Tagastab kahe kuupäeva vahe tundides
+    print(algus, l6pp)
     return (l6pp-algus).days * 24 + (l6pp-algus).seconds/3600
 
     
