@@ -29,10 +29,9 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = [
-    # '18.196.203.237',
-    '18.190.26.217',
+    '18.190.26.217', # t2.micro
+    '18.217.172.167', # a1.medium
     '127.0.0.1', 'localhost',
-    # '192.168.1.143', 'deb9server.lan',
     'valgalinn.ee', 'www.valgalinn.ee'
 ]
 
