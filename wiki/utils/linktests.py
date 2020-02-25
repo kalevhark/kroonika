@@ -1,6 +1,7 @@
 #
 # valgalinn.ee veebi testimiseks:
 # küsib temaatilised lingid ja teeb sinna proovipäringud sõltuvalt nädalapäevast
+# kroonika.urls peab path test olema sisse lülitatud
 #
 from datetime import datetime
 import os
