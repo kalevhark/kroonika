@@ -8,7 +8,10 @@ import pandas as pd
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
     def datestrings2date(rows):
-        t = ''.join([rows.time_str, rows.TZ_str])[1:-1]
+        try:
+            t = ''.join([rows.time_str, rows.TZ_str])[1:-1]
+        except:
+            return None
         return datetime.strptime(t, '%d/%b/%Y:%H:%M:%S%z')
 
     def intorzero(rows):
