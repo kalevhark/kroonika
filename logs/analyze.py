@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 import re
 import sys
@@ -57,6 +57,8 @@ if __name__ == '__main__':
         path = os.path.dirname(sys.argv[0])
         logfile = os.path.join(path, 'access_log')
     log_df = logfile2df(logfile)
+    time24hoursago = datetime.now() - timedelta(days=1)
+    log_df_filtered = log_df[log_df.time > time24hoursago]
     # IP aadressid allalaadimise mahu järgi
-    result = log_df.groupby(['agent']).sum().sort_values(by = ['resp_size'], ascending=[False])['resp_size']
+    result = log_df_filtered.groupby(['agent']).sum().sort_values(by = ['resp_size'], ascending=[False])['resp_size']
     print(result.head())
