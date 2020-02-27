@@ -1,3 +1,4 @@
+$( document ).ready(function() {
 // Vue otsimisäpp
 var watchExampleVM = new Vue({
   el: '#kroonika-api',
@@ -190,3 +191,4 @@ var watchExampleVM = new Vue({
     }
   }
 })
+});
