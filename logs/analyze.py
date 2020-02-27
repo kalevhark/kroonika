@@ -30,7 +30,7 @@ def logfile2df(logfile):
         'referer',
         'agent'
         ]
-    # Loeme faili datafreimiks
+    # Loeme logifaili datafreimiks
     df = pd.read_csv(
         logfile,
         sep='\s+',
