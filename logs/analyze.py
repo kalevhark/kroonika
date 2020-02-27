@@ -32,7 +32,7 @@ def logfile2df(logfile):
         ]
     # Loeme faili datafreimiks
     df = pd.read_csv(
-        'access_log',
+        logfile,
         sep='\s+',
         quotechar='"',
         doublequote=True,
