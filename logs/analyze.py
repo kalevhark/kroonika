@@ -36,7 +36,8 @@ def logfile2df(logfile):
         sep='\s+',
         quotechar='"',
         doublequote=True,
-        names=names
+        names=names,
+        error_bad_lines=False
         )
     # Teisendame kuup2evaveeruks
     df['time'] = df.apply(datestrings2date, axis=1)
