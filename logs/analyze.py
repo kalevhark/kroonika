@@ -62,6 +62,17 @@ if __name__ == '__main__':
     now = utc.localize(datetime.now())
     time24hoursago = now - timedelta(days=1)
     log_df_filtered = log_df[log_df.time > time24hoursago]
+    print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {log_df_filtered.resp_size.sum()} b')
     # IP aadressid allalaadimise mahu järgi
-    result = log_df_filtered.groupby(['agent']).sum().sort_values(by = ['resp_size'], ascending=[False])['resp_size']
-    print(result.head())
+    print('Downloader Agents')
+    result = result = log_df_filtered.groupby('agent')['resp_size']\
+        .agg(['sum','count'])\
+        .sort_values(by = ['sum'], ascending=[False])\
+        .head(10)
+    print(result)
+    print('IPaddresses')
+    result = log_df_filtered.groupby('IP_address')['resp_size']\
+        .agg(['sum','count'])\
+        .sort_values(by = ['sum'], ascending=[False])\
+        .head(10)
+    print(result)
