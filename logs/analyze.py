@@ -65,7 +65,7 @@ if __name__ == '__main__':
     print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {log_df_filtered.resp_size.sum()} b')
     # IP aadressid allalaadimise mahu järgi
     print('Downloader Agents')
-    result = result = log_df_filtered.groupby('agent')['resp_size']\
+    result = log_df_filtered.groupby('agent')['resp_size']\
         .agg(['sum','count'])\
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
