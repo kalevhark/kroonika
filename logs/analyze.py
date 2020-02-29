@@ -1,5 +1,3 @@
-#!/opt/python3/bin/python3.8
-# -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 import pytz
 import os
