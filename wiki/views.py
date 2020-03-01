@@ -950,7 +950,7 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
     make_object_list = True
     allow_future = True
     allow_empty = True
-    paginate_by = 20
+    # paginate_by = 20
     # ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
