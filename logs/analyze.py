@@ -63,16 +63,24 @@ if __name__ == '__main__':
     time24hoursago = now - timedelta(days=1)
     log_df_filtered = log_df[log_df.time > time24hoursago]
     print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {log_df_filtered.resp_size.sum()} b')
-    # IP aadressid allalaadimise mahu järgi
+    # Agendid aadressid allalaadimise mahu järgi
     print('Downloader Agents')
     result = log_df_filtered.groupby('agent')['resp_size']\
         .agg(['sum','count'])\
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
     print(result)
-    print('IPaddresses')
+    # IP aadressid allalaadimise mahu järgi
+    print('Downloader IPaddresses traffic')
     result = log_df_filtered.groupby('IP_address')['resp_size']\
         .agg(['sum','count'])\
         .sort_values(by = ['sum'], ascending=[False])\
+        .head(10)
+    print(result)
+    # IP aadressid allalaadimise kordade järgi
+    print('Downloader IPaddresses hits')
+    result = log_df_filtered.groupby('IP_address')['resp_size'] \
+        .agg(['sum', 'count']) \
+        .sort_values(by=['count'], ascending=[False]) \
         .head(10)
     print(result)
