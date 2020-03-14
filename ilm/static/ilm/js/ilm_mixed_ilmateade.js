@@ -57,8 +57,10 @@ function mixed_ilmateade() {
           if (i < 24 && i % 2 === 0 && data.yrno_symbols[i] != null) {
             chart.renderer
               .image(
-                'http://yr.github.io/weather-symbols/png/100/' +
-                data.yrno_symbols[i] + '.png',
+//                'http://yr.github.io/weather-symbols/png/100/' +
+//                data.yrno_symbols[i] + '.png',
+                https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/' +
+                data.yrno_symbols[i] + '.svg',
                 point.plotX + chart.plotLeft - 8,
                 point.plotY + chart.plotTop - 30,
                 30,
@@ -76,8 +78,10 @@ function mixed_ilmateade() {
           if (i > 23 && i % 2 === 0 && data.yrno_symbols[i] != null) {
             chart.renderer
               .image(
-                'http://yr.github.io/weather-symbols/png/100/' +
-                data.yrno_symbols[i] + '.png',
+//                'http://yr.github.io/weather-symbols/png/100/' +
+//                data.yrno_symbols[i] + '.png',
+                https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/' +
+                data.yrno_symbols[i] + '.svg',
                 point.plotX + chart.plotLeft - 8,
                 point.plotY + chart.plotTop - 30,
                 30,
