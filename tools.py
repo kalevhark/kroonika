@@ -110,11 +110,11 @@ def massikanne():
             eesnimi = isik_eesnimi,
             kirjeldus = isik_kirjeldus
         )
-        # uus_isik.save()
-        # print(uus_isik)
+        uus_isik.save()
+        print(uus_isik)
         # Lisame isikule seotud organisatsiooni
-        # uus_isik.organisatsioonid.add(org)
+        uus_isik.organisatsioonid.add(org)
         # Lisame isiku artiklile
-        # art.isikud.add(uus_isik)
+        art.isikud.add(uus_isik)
         # Lisame isiku pildile
-        # pilt.isikud.add(uus_isik)
+        pilt.isikud.add(uus_isik)
