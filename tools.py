@@ -101,7 +101,7 @@ def massikanne():
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
-        isik_nimi = isik.split(' ')
+        isik_nimi = isik.strip().split(' ')
         isik_eesnimi = isik_nimi[0].strip()
         isik_perenimi = isik_nimi[1].strip()
         print(isik_eesnimi, isik_perenimi)
