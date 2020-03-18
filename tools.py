@@ -88,3 +88,32 @@ def join(model_name, source_id, dest_id):
             pilt.objektid.add(new)
             # pilt.objektid.remove(old)
 
+
+def massikanne():
+    isik_str = 'Friedrich Kahro, Jaan Kokk, Ernst Kull, Hans Kuus, Aleksander Lehes, Karl Lehtmets, Hans Mahlapuu, Erwin Märtson, August Nielender, Arkadi Orgusaar, Edgar Pastarus, Karl Pehme, Moorits Puudersell, Jaan Pullerits, Elmar Päss, Werner Resschleger, Jaan Tallo, Hans Treu, Juhan Treu, Artur Täht, Emil Wellner, Paul Wiilop, Karl Wernik'
+    art = Artikkel.objects.get(id=6911)
+    print(art)
+    pilt = Pilt.objects.get(id=2054)
+    print(pilt)
+    org = Organisatsioon.object.get(id = 85)
+    print(org)
+    isik_kirjeldus = 'Poeglastegümnaasiumi lõpetaja 1922'
+    isikud = isik_str.split(',')
+    for isik in isikud:
+        # Loome uue isiku
+        isik_nimi = isik.split(' ')
+        isik_eesnimi = isik_nimi[0].strip()
+        isik_perenimi = isik_nimi[1].strip()
+        uus_isik = Isik(
+            perenimi = isik_perenimi,
+            eesnimi = isik_eesnimi,
+            kirjeldus = isik_kirjeldus
+        )
+        # uus_isik_obj = uus_isik.save()
+        # print(uus_isik_obj)
+        # Lisame isikule seotud organisatsiooni
+        # uus_isik_obj.organisatsioonid.add(org)
+        # Lisame isiku artiklile
+        # art.isikud.add(uus_isik_obj)
+        # Lisame isiku pildile
+        # pilt.isikud.add(uus_isik_obj)

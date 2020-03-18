@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta
-import pytz
+import json
 import os
 import re
 import sys
+import urllib.request
 
 import pandas as pd
+import pytz
 
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
@@ -49,6 +51,21 @@ def logfile2df(logfile):
     # Tagastame ainult vajalikud veerud
     return df.drop(['time_str'], axis=1)
 
+
+def ipinfo(ip_addr=''):
+    ip_locate_url = 'https://geolocation-db.com/jsonp/' + ip_addr
+    with urllib.request.urlopen(ip_locate_url) as url:
+        data = url.read().decode()
+        data = data.split("(")[1].strip(")")
+        print(data)
+
+# IP aadressi kohta WHOIS info
+# eeldus pip install --upgrade ipwhois
+def whoisinfo(ip_addr=''):
+    # from ipwhois import IPWhois
+    # obj = IPWhois(ip_addr)
+    # obj.lookup_rdap(asn_methods=["whois"])
+    pass
 
 if __name__ == '__main__':
     # path = os.path.dirname(sys.argv[0])
