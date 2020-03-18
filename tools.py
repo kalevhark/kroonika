@@ -95,7 +95,7 @@ def massikanne():
     print(art)
     pilt = Pilt.objects.get(id=2054)
     print(pilt)
-    org = Organisatsioon.object.get(id = 85)
+    org = Organisatsioon.objects.get(id=85)
     print(org)
     isik_kirjeldus = 'Poeglastegümnaasiumi lõpetaja 1922'
     isikud = isik_str.split(',')
@@ -104,6 +104,7 @@ def massikanne():
         isik_nimi = isik.split(' ')
         isik_eesnimi = isik_nimi[0].strip()
         isik_perenimi = isik_nimi[1].strip()
+        print(isik_eesnimi, isik_perenimi)
         uus_isik = Isik(
             perenimi = isik_perenimi,
             eesnimi = isik_eesnimi,
