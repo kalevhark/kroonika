@@ -1,4 +1,4 @@
-from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt, Allikas
+from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt, Allikas, Viide
 
 #
 # Funktsioon duplikaatkirjete koondamiseks
@@ -88,15 +88,25 @@ def join(model_name, source_id, dest_id):
             pilt.objektid.add(new)
             # pilt.objektid.remove(old)
 
-
+# Isikukirjete tekitamiseks artikli juurde
+# import tools
+# tools.massikanne()
 def massikanne():
+    # Millised isikud lisada artiklile
     isik_str = 'Lydia Arras, Emilie Hanny, Meeta Jänes, Hilda Juram, Emilie Kask, Amali Nõgene, Alwine Patte, Marie Püwi, Jenni Rebane, Margarethe Stahl, Helmi Tinn, Irmgard Trees, Lilli Tõra, Natalie Wellner, Linda Zirk'
+    # Millise artikliga siduda isik
     art = Artikkel.objects.get(id=6912)
     print(art)
+    # Millise pildiga siduda isik
     pilt = Pilt.objects.get(id=2055)
     print(pilt)
+    # Milline organisatsioon lisada isikule
     org = Organisatsioon.objects.get(id=33)
     print(org)
+    # Milline viide lisada isikule
+    viide = Viide.objects.get(id=7807)
+    print(viide)
+    # Isiku kirjeldus
     isik_kirjeldus = 'Tütarlastegümnaasiumi lõpetaja 1922'
     isikud = isik_str.split(',')
     for isik in isikud:
@@ -114,6 +124,8 @@ def massikanne():
         print(uus_isik)
         # Lisame isikule seotud organisatsiooni
         uus_isik.organisatsioonid.add(org)
+        # Lisame isikule seotud viite
+        uus_isik.viited.add(viide)
         # Lisame isiku artiklile
         art.isikud.add(uus_isik)
         # Lisame isiku pildile
