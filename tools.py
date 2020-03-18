@@ -90,14 +90,14 @@ def join(model_name, source_id, dest_id):
 
 
 def massikanne():
-    isik_str = 'Friedrich Kahro, Jaan Kokk, Ernst Kull, Hans Kuus, Aleksander Lehes, Karl Lehtmets, Hans Mahlapuu, Erwin Märtson, August Nielender, Arkadi Orgusaar, Edgar Pastarus, Karl Pehme, Moorits Puudersell, Jaan Pullerits, Elmar Päss, Werner Resschleger, Jaan Tallo, Hans Treu, Juhan Treu, Artur Täht, Emil Wellner, Paul Wiilop, Karl Wernik'
-    art = Artikkel.objects.get(id=6911)
+    isik_str = 'Lydia Arras, Emilie Hanny, Meeta Jänes, Hilda Juram, Emilie Kask, Amali Nõgene, Alwine Patte, Marie Püwi, Jenni Rebane, Margarethe Stahl, Helmi Tinn, Irmgard Trees, Lilli Tõra, Natalie Wellner, Linda Zirk'
+    art = Artikkel.objects.get(id=6912)
     print(art)
-    pilt = Pilt.objects.get(id=2054)
+    pilt = Pilt.objects.get(id=2055)
     print(pilt)
-    org = Organisatsioon.objects.get(id=85)
+    org = Organisatsioon.objects.get(id=33)
     print(org)
-    isik_kirjeldus = 'Poeglastegümnaasiumi lõpetaja 1922'
+    isik_kirjeldus = 'Tütarlastegümnaasiumi lõpetaja 1922'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
@@ -110,11 +110,11 @@ def massikanne():
             eesnimi = isik_eesnimi,
             kirjeldus = isik_kirjeldus
         )
-        uus_isik.save()
-        print(uus_isik)
+        # uus_isik.save()
+        # print(uus_isik)
         # Lisame isikule seotud organisatsiooni
-        uus_isik.organisatsioonid.add(org)
+        # uus_isik.organisatsioonid.add(org)
         # Lisame isiku artiklile
-        art.isikud.add(uus_isik)
+        # art.isikud.add(uus_isik)
         # Lisame isiku pildile
-        pilt.isikud.add(uus_isik)
+        # pilt.isikud.add(uus_isik)
