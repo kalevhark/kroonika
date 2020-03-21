@@ -253,16 +253,12 @@ class IlmateenistusData():
         # Loeme Ilmateenistuse viimase mõõtmise andmed veebist
         jaam = 'Valga'
         href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
-        # tree = etree.parse(href)
         r = requests.get(href)
-        # tree = ET.parse(r.text)
-        # root = tree.getroot()
         root = ET.fromstring(r.text)
         i = dict()
         # Mõõtmise aeg
         dt = datetime.fromtimestamp(int(root.attrib['timestamp']))
         i['timestamp'] = pytz.timezone('Europe/Tallinn').localize(dt)
-        # i['timestamp'] = int(root.attrib['timestamp']) * 1000
         station = root.findall("./station/[name='"+jaam+"']")
         for el in station:
             for it in el:

@@ -1553,7 +1553,7 @@ def yrno_48h():
 
 def mitutundi(algus, l6pp):
     # Tagastab kahe kuupäeva vahe tundides
-    print(algus, l6pp)
+    # print(algus, l6pp)
     return (l6pp-algus).days * 24 + (l6pp-algus).seconds/3600
 
     
