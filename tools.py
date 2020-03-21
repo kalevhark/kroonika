@@ -130,3 +130,17 @@ def massikanne():
         art.isikud.add(uus_isik)
         # Lisame isiku pildile
         pilt.isikud.add(uus_isik)
+
+# Ühe sisuga artiklite lisamiseks
+def lisa_artikkel_20200321():
+    hist_years = [1435, 1438, 1556]
+    body_text = 'Valgas toimus Liivimaa maapäev'
+    viide = Viide.objects.get(id=7841)
+    for hist_year in hist_years:
+        uus_art = Artikkel(
+            hist_year = hist_year,
+            body_text = body_text
+        )
+        uus_art.save()
+        uus_art.viited.add(viide)
+        print(uus_art.id, uus_art)
