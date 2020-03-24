@@ -62,10 +62,10 @@ def ipinfo(ip_addr=''):
 # IP aadressi kohta WHOIS info
 # eeldus pip install --upgrade ipwhois
 def whoisinfo(ip_addr=''):
-    # from ipwhois import IPWhois
-    # obj = IPWhois(ip_addr)
-    # obj.lookup_rdap(asn_methods=["whois"])
-    pass
+    from ipwhois import IPWhois
+    obj = IPWhois(ip_addr)
+    whois_data = obj.lookup_rdap(asn_methods=["whois"])
+    return whois_data
 
 if __name__ == '__main__':
     # path = os.path.dirname(sys.argv[0])
@@ -80,6 +80,7 @@ if __name__ == '__main__':
     time24hoursago = now - timedelta(days=1)
     log_df_filtered = log_df[log_df.time > time24hoursago]
     print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {log_df_filtered.resp_size.sum()} b')
+    print()
     # Agendid aadressid allalaadimise mahu järgi
     print('Downloader Agents')
     result = log_df_filtered.groupby('agent')['resp_size']\
@@ -87,6 +88,7 @@ if __name__ == '__main__':
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
     print(result)
+    print()
     # IP aadressid allalaadimise mahu järgi
     print('Downloader IPaddresses traffic')
     result = log_df_filtered.groupby('IP_address')['resp_size']\
@@ -94,10 +96,24 @@ if __name__ == '__main__':
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
     print(result)
+    print()
+    print('TOP downloaders:')
+    top_downloaders = result.index
+    for downloader in top_downloaders:
+        downloader_info = whoisinfo(downloader)
+        print(downloader, downloader_info['asn_description'])
     # IP aadressid allalaadimise kordade järgi
+    print()
     print('Downloader IPaddresses hits')
     result = log_df_filtered.groupby('IP_address')['resp_size'] \
         .agg(['sum', 'count']) \
         .sort_values(by=['count'], ascending=[False]) \
         .head(10)
     print(result)
+    print()
+    print('TOP hitters:')
+    top_hitters = result.index
+    for hitter in top_hitters:
+        hitter_info = whoisinfo(hitter)
+        print(hitter, hitter_info['asn_description'])
+    # print(whoisinfo(top_hitters[1]))
