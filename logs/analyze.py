@@ -67,6 +67,10 @@ def whoisinfo(ip_addr=''):
     whois_data = obj.lookup_rdap(asn_methods=["whois"])
     return whois_data
 
+# Tagastab IP aadressi alusel hosti kirjelduse
+def whoisinfo_asn_description(rows):
+    return whoisinfo(rows.name)['asn_description']
+
 if __name__ == '__main__':
     # path = os.path.dirname(sys.argv[0])
     path = '/usr/local/apache2/logs/'
@@ -79,41 +83,35 @@ if __name__ == '__main__':
     now = utc.localize(datetime.now())
     time24hoursago = now - timedelta(days=1)
     log_df_filtered = log_df[log_df.time > time24hoursago]
+
+    # Viimase 24h kogumaht
     print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {log_df_filtered.resp_size.sum()} b')
     print()
+
     # Agendid aadressid allalaadimise mahu järgi
-    print('Downloader Agents')
+    print('Downloader Agents:')
     result = log_df_filtered.groupby('agent')['resp_size']\
         .agg(['sum','count'])\
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
     print(result)
     print()
+
     # IP aadressid allalaadimise mahu järgi
-    print('Downloader IPaddresses traffic')
+    print('Downloader IPaddresses traffic:')
     result = log_df_filtered.groupby('IP_address')['resp_size']\
         .agg(['sum','count'])\
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
+    result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
     print(result)
     print()
-    print('TOP downloaders:')
-    top_downloaders = result.index
-    for downloader in top_downloaders:
-        downloader_info = whoisinfo(downloader)
-        print(downloader, downloader_info['asn_description'])
+
     # IP aadressid allalaadimise kordade järgi
-    print()
-    print('Downloader IPaddresses hits')
+    print('Downloader IPaddresses hits:')
     result = log_df_filtered.groupby('IP_address')['resp_size'] \
         .agg(['sum', 'count']) \
         .sort_values(by=['count'], ascending=[False]) \
         .head(10)
+    result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
     print(result)
-    print()
-    print('TOP hitters:')
-    top_hitters = result.index
-    for hitter in top_hitters:
-        hitter_info = whoisinfo(hitter)
-        print(hitter, hitter_info['asn_description'])
-    # print(whoisinfo(top_hitters[1]))
