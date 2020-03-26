@@ -42,8 +42,8 @@ urlpatterns = [
     path('wiki/', include('wiki.urls')),
     ]
 
-admin.site.site_header = 'valgalinn.ee administreerimine'
-admin.site.site_title = 'valgalinn.ee administreerimine'
+admin.site.site_header = 'valgalinn.ee sisuhaldus'
+admin.site.site_title = 'valgalinn.ee sisuhaldus'
 
 # Serve static files
 if settings.DEBUG:
