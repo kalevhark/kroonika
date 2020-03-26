@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 from django import template
 from django.conf import settings
 
@@ -29,7 +31,6 @@ def object_mainitud_artiklites(context, object, model):
         'artikkel_qs': artikkel_qs
     }
 
-from datetime import date, timedelta
 
 @register.filter
 def ukj(date_vkj):
