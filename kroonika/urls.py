@@ -42,7 +42,7 @@ urlpatterns = [
     path('wiki/', include('wiki.urls')),
     ]
 
-# Admin liidese pealkirjad
+# Haldusliidese pealkirjad
 admin.site.site_header = 'valgalinn.ee sisuhaldus'
 admin.site.site_title = 'valgalinn.ee sisuhaldus'
 
