@@ -5,8 +5,11 @@ import re
 import sys
 import urllib.request
 
+from ipwhois import IPWhois
 import pandas as pd
 import pytz
+
+from tools import whoisinfo
 
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
@@ -52,20 +55,21 @@ def logfile2df(logfile):
     return df.drop(['time_str'], axis=1)
 
 
-def ipinfo(ip_addr=''):
+# Geoinfo hankimine ip-aadressi järgi
+def ipggeoinfo(ip_addr=''):
     ip_locate_url = 'https://geolocation-db.com/jsonp/' + ip_addr
     with urllib.request.urlopen(ip_locate_url) as url:
         data = url.read().decode()
         data = data.split("(")[1].strip(")")
         print(data)
+    return data
 
 # IP aadressi kohta WHOIS info
 # eeldus pip install --upgrade ipwhois
-def whoisinfo(ip_addr=''):
-    from ipwhois import IPWhois
-    obj = IPWhois(ip_addr)
-    whois_data = obj.lookup_rdap(asn_methods=["whois"])
-    return whois_data
+# def whoisinfo(ip_addr=''):
+#     obj = IPWhois(ip_addr)
+#     whois_data = obj.lookup_rdap(asn_methods=["whois"])
+#     return whois_data
 
 # Tagastab IP aadressi alusel hosti kirjelduse
 def whoisinfo_asn_description(rows):

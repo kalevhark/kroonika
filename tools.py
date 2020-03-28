@@ -1,3 +1,5 @@
+from ipwhois import IPWhois
+
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt, Allikas, Viide
 
 #
@@ -144,3 +146,19 @@ def lisa_artikkel_20200321():
         uus_art.save()
         uus_art.viited.add(viide)
         print(uus_art.id, uus_art)
+
+# Geoinfo hankimine ip-aadressi järgi
+def ipggeoinfo(ip_addr=''):
+    ip_locate_url = 'https://geolocation-db.com/jsonp/' + ip_addr
+    with urllib.request.urlopen(ip_locate_url) as url:
+        data = url.read().decode()
+        data = data.split("(")[1].strip(")")
+        print(data)
+    return data
+
+# IP aadressi kohta WHOIS info
+# eeldus pip install --upgrade ipwhois
+def whoisinfo(ip_addr=''):
+    obj = IPWhois(ip_addr)
+    whois_data = obj.lookup_rdap(asn_methods=["whois"])
+    return whois_data
