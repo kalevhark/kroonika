@@ -9,8 +9,6 @@ from ipwhois import IPWhois
 import pandas as pd
 import pytz
 
-from tools import whoisinfo
-
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
     def datestrings2date(rows):
@@ -66,10 +64,10 @@ def ipggeoinfo(ip_addr=''):
 
 # IP aadressi kohta WHOIS info
 # eeldus pip install --upgrade ipwhois
-# def whoisinfo(ip_addr=''):
-#     obj = IPWhois(ip_addr)
-#     whois_data = obj.lookup_rdap(asn_methods=["whois"])
-#     return whois_data
+def whoisinfo(ip_addr=''):
+    obj = IPWhois(ip_addr)
+    whois_data = obj.lookup_rdap(asn_methods=["whois"])
+    return whois_data
 
 # Tagastab IP aadressi alusel hosti kirjelduse
 def whoisinfo_asn_description(rows):
