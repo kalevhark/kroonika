@@ -105,8 +105,40 @@ function normalDate(x) {
   });
 }
 
+function changeFeedbackIconColor(data) {
+  elementIlmStartIcon = document.getElementById("ilm_start_icon");
+  if (elementIlmStartIcon !== undefined) {
+    temperatureNow = data.airtemperatures[data.airtemperatures.length - 1][1];
+        if (temperatureNow < 0) {
+          elementIlmStartIcon.style.color = '#48AFE8';
+        } else {
+          elementIlmStartIcon.style.color = '#FF3333';
+        };
+  };
+};
+
+// Ikoonide värvi muutmine, kui on vihje või kommentaar
+function wiki_base_info() {
+  // Küsime andmed ja moodustame graafiku
+	$.ajax({
+	  url: $("#wiki_base_info").attr("data-url"),
+	  dataType: 'json',
+	  timeout: 300000,
+	  success: function (data)
+      {
+        console.log(data);
+      },
+	  error: function (XMLHttpRequest, textstatus, errorThrown)
+      {
+        window.setTimeout(wiki_base_info, 600000);
+      }
+	});
+}
+
 $( document ).ready(function() {
   // console.log( "ready!" );
+  // Navigatsiooniribal ikoonide värvimisega info andmine
+  wiki_base_info();
   // Navigatsiooniriba asukoha kontrollimiseks
   window.addEventListener('scroll', throttle(onScroll, 25));
   // Kuupäevaväljade unikaalsete id-de lisamine

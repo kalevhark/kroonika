@@ -74,6 +74,16 @@ def artikkel_qs_userfilter(user):
     else: # kasuta filtrit
         return Artikkel.objects.filter(kroonika__isnull=True)
 
+#
+# wiki_base info
+#
+def wiki_base_info(request):
+    data = {
+        feedbacks: 0,
+        comments: 1,
+        user: request.user
+    }
+    return JsonResponse(data)
 
 #
 # Avalehekülg

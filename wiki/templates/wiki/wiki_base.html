@@ -83,6 +83,8 @@
     <!-- Navbar -->
     <nav id="wiki_nav">
       <div class="w3-bar w3-left-align w3-large">
+        id="wiki_base_info"
+        data-url="{% url 'wiki:wiki_base_info' %}"
         <a
             href="{% url 'algus' %}"
             title="Valga linna kroonika avalehele"
@@ -122,6 +124,7 @@
         <!--		Tagasiside saatmiseks -->
         <a
             class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+            id="wiki_base_feedback"
             title="Märkasid viga või oskad täiendada?"
             onclick="showFeedback()">
           <i class="fa fa-bug"></i>
@@ -135,6 +138,7 @@
         </a>
         <a
             href="{% url 'blog:blog_index' %}"
+            id="wiki_base_blog"
             class="w3-bar-item w3-button w3-hide-small w3-hover-white"
             title="Blogi">
           <i class="fa fa-comments-o"></i>
