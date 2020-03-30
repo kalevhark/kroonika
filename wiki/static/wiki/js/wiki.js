@@ -105,7 +105,7 @@ function normalDate(x) {
   });
 }
 
-function changeFeedbackIconColor(data) {
+function changeIconColor(data) {
   elementIlmStartIcon = document.getElementById("ilm_start_icon");
   if (elementIlmStartIcon !== undefined) {
     temperatureNow = data.airtemperatures[data.airtemperatures.length - 1][1];
@@ -119,7 +119,8 @@ function changeFeedbackIconColor(data) {
 
 // Ikoonide värvi muutmine, kui on vihje või kommentaar
 function wiki_base_info() {
-  // Küsime andmed ja moodustame graafiku
+  console.log('wiki_base_info')
+  // Küsime andmed
 	$.ajax({
 	  url: $("#wiki_base_info").attr("data-url"),
 	  dataType: 'json',
@@ -127,6 +128,22 @@ function wiki_base_info() {
 	  success: function (data)
       {
         console.log(data);
+        // Värvime tagasiside ikooni, kui on perioodil tagasisidet
+        elementFeedbackIcon = document.getElementById("wiki_base_feedback");
+        if (elementFeedbackIcon !== undefined) {
+          if (data.feedbacks > 0) {
+            elementFeedbackIcon.style.color = '#48AFE8';
+            elementFeedbackIcon.title = data.feedbacks + ' tagasiside' + (data.feedbacks > 1 ? 't' : '') + ' viimase 24h jooksul';
+          };
+        };
+        // Värvime blogi ikooni, kui on perioodil kommentaare
+        elementBlogIcon = document.getElementById("wiki_base_blog");
+        if (elementBlogIcon !== undefined) {
+          if (data.comments > 0) {
+            elementBlogIcon.style.color = '#48AFE8';
+            elementBlogIcon.title = data.comments + ' kommentaar' + (data.comments > 1 ? 'i' : '') + ' viimase 24h jooksul';
+          };
+        };
       },
 	  error: function (XMLHttpRequest, textstatus, errorThrown)
       {

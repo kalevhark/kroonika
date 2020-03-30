@@ -1,5 +1,6 @@
 from collections import Counter, OrderedDict
-import datetime
+from datetime import date, datetime, timedelta
+# import datetime
 import requests
 from typing import Dict, Any
 
@@ -27,9 +28,10 @@ from django.views.generic.edit import UpdateView
 import django_filters
 from django_filters.views import FilterView
 
-from .models import Allikas, Viide, Artikkel, Isik, Objekt, Organisatsioon, Pilt, Vihje
-from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
-from .forms import VihjeForm
+from blog.models import Comment
+from wiki.models import Allikas, Viide, Artikkel, Isik, Objekt, Organisatsioon, Pilt, Vihje
+from wiki.forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
+from wiki.forms import VihjeForm
 
 #
 # reCAPTCHA kontrollifunktsioon
@@ -78,11 +80,18 @@ def artikkel_qs_userfilter(user):
 # wiki_base info
 #
 def wiki_base_info(request):
+    user = request.user
     data = {
-        feedbacks: 0,
-        comments: 1,
-        user: request.user
+        'feedbacks': 0,
+        'comments': 0,
+        # 'user': request.user.is_authenticated
     }
+    if user.is_authenticated and user.is_staff:
+        # Vaatame ainult viimase 24h kandeid
+        tagasi24h = timezone.now() - timedelta(days=1)
+        data['feedbacks'] = Vihje.objects.filter(inp_date__gt=tagasi24h).count()
+        data['comments'] = Comment.objects.filter(created_on__gt=tagasi24h).count()
+    print(data)
     return JsonResponse(data)
 
 #
@@ -285,9 +294,9 @@ def algus(request):
     # Filtreerime artiklite hulga kasutaja järgi
     artikkel_qs = artikkel_qs_userfilter(request.user)
     andmed = {} # Selle muutuja saadame veebi
-    p2ev = datetime.date.today().day # str(p2ev).zfill(2) -> PP
-    kuu = datetime.date.today().month # str(kuu).zfill(2) -> KK
-    aasta = datetime.date.today().year
+    p2ev = date.today().day # str(p2ev).zfill(2) -> PP
+    kuu = date.today().month # str(kuu).zfill(2) -> KK
+    aasta = date.today().year
     
     # Andmebaas Artikkel andmed veebi
     a = dict()
@@ -356,14 +365,14 @@ def algus(request):
         a['sel_kuul_surnud_kirjeid'] = len(a['sel_kuul_surnud'])
         # juubilarid = Isik.objects.exclude(hist_date=None).annotate(
         #     nulliga=ExpressionWrapper(
-        #         (datetime.date.today().year - ExtractYear('hist_date'))%5,
+        #         (date.today().year - ExtractYear('hist_date'))%5,
         #         output_field=IntegerField()),
         #     vanus_gen=ExpressionWrapper(
-        #         datetime.date.today().year - ExtractYear('hist_date'),
+        #         date.today().year - ExtractYear('hist_date'),
         #         output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
         # isikud_synniajaga = Isik.objects.exclude(hist_date=None).annotate(
         #     vanus_gen=ExpressionWrapper(
-        #         datetime.date.today().year - ExtractYear('hist_date'),
+        #         date.today().year - ExtractYear('hist_date'),
         #         output_field=IntegerField()
         #     )
         # )
@@ -398,8 +407,8 @@ def algus(request):
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         # juubilarid = Organisatsioon.objects.exclude(hist_year=None).annotate(
         #     nulliga=ExpressionWrapper(
-        #         (datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()), vanus_gen=ExpressionWrapper(
-        #             datetime.date.today().year - F('hist_year'), output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
+        #         (date.today().year - F('hist_year'))%5, output_field=IntegerField()), vanus_gen=ExpressionWrapper(
+        #             date.today().year - F('hist_year'), output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
         # a['juubilarid'] = juubilarid
         organisatsioonid_synniajaga = Organisatsioon.objects.exclude(
             hist_date__isnull=True,
@@ -432,9 +441,9 @@ def algus(request):
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         # juubilarid = Objekt.objects.exclude(hist_year=None).annotate(
         #     nulliga=ExpressionWrapper(
-        #         (datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
+        #         (date.today().year - F('hist_year'))%5, output_field=IntegerField()),
         #     vanus_gen=ExpressionWrapper(
-        #             datetime.date.today().year - (ExtractYear('hist_date') if 'hist_date' else F('hist_year')), output_field=IntegerField())).filter(nulliga=0).order_by('hist_year')
+        #             date.today().year - (ExtractYear('hist_date') if 'hist_date' else F('hist_year')), output_field=IntegerField())).filter(nulliga=0).order_by('hist_year')
         # a['juubilarid'] = juubilarid
         objektid_synniajaga = Objekt.objects.exclude(
             hist_date__isnull=True,
@@ -662,7 +671,7 @@ class ArtikkelUpdate(LoginRequiredMixin, UpdateView):
                     m = objekt.hist_month
                 else:
                     m = 1
-                objekt.hist_searchdate = datetime.datetime(y, m, 1)
+                objekt.hist_searchdate = datetime(y, m, 1)
             else:
                 objekt.hist_searchdate = None
         objekt.save()
@@ -718,7 +727,7 @@ class OrganisatsioonUpdate(LoginRequiredMixin, UpdateView):
                     m = objekt.hist_month
                 else:
                     m = 1
-                objekt.hist_searchdate = datetime.datetime(y, m, 1)
+                objekt.hist_searchdate = datetime(y, m, 1)
             else:
                 objekt.hist_searchdate = None
         if objekt.hist_enddate:
@@ -752,7 +761,7 @@ class ObjektUpdate(LoginRequiredMixin, UpdateView):
                     m = objekt.hist_month
                 else:
                     m = 1
-                objekt.hist_searchdate = datetime.datetime(y, m, 1)
+                objekt.hist_searchdate = datetime(y, m, 1)
             else:
                 objekt.hist_searchdate = None
         if objekt.hist_enddate:
@@ -914,7 +923,7 @@ class ArtikkelYearArchiveView(YearArchiveView):
         # Leiame samal aastal sündinud isikud
         syndinud_isikud = Isik.objects.filter(
             hist_date__year = aasta).annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['syndinud_isikud'] = syndinud_isikud
         context['syndinud_isikud_pealkiri'] = '{0}. aastal sündinud {1}'.format(
@@ -923,7 +932,7 @@ class ArtikkelYearArchiveView(YearArchiveView):
         )
         # Leiame samal aastal surnud isikud
         surnud_isikud = Isik.objects.filter(hist_enddate__year = aasta).annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['surnud_isikud'] = surnud_isikud
         context['surnud_isikud_pealkiri'] = '{0}. aastal surnud {1}'.format(
@@ -933,7 +942,7 @@ class ArtikkelYearArchiveView(YearArchiveView):
         # Leiame samal aastal loodud organisatsioonid
         loodud_organisatsioonid = (
             Organisatsioon.objects.filter(hist_date__year = aasta) | Organisatsioon.objects.filter(hist_year = aasta)).distinct().annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
         context['loodud_organisatsioonid_pealkiri'] = '{0}. aastal loodud {1}'.format(
@@ -943,7 +952,7 @@ class ArtikkelYearArchiveView(YearArchiveView):
         # Leiame samal aastal avatud objektid
         valminud_objektid = (
             Objekt.objects.filter(hist_date__year = aasta) | Objekt.objects.filter(hist_year = aasta)).distinct().annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid_pealkiri'] = '{0}. aastal valminud {1}'.format(
@@ -980,7 +989,7 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         # Leiame samal kuul sündinud isikud
         syndinud_isikud = Isik.objects.filter(
             hist_date__month = kuu).annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(p2ev.year - ExtractYear('hist_date'), output_field=IntegerField()))
         context['syndinud_isikud'] = syndinud_isikud
         context['syndinud_isikud_pealkiri'] = '{0} sündinud {1}'.format(
@@ -989,7 +998,7 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         )
         # Leiame samal kuul surnud isikud
         surnud_isikud = Isik.objects.filter(hist_enddate__month = kuu).annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(p2ev.year - ExtractYear('hist_date'), output_field=IntegerField()))
         context['surnud_isikud'] = surnud_isikud
         context['surnud_isikud_pealkiri'] = '{0} surnud {1}'.format(
@@ -998,7 +1007,7 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         )
         # Leiame samal kuul loodud organisatsioonid
         loodud_organisatsioonid = Organisatsioon.objects.filter(hist_date__month = kuu).annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
         context['loodud_organisatsioonid_pealkiri'] = '{0} loodud {1}'.format(
@@ -1007,7 +1016,7 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         )
         # Leiame samal kuul avatud objektid
         valminud_objektid = Objekt.objects.filter(hist_date__month = kuu).annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid_pealkiri'] = '{0} valminud {1}'.format(
@@ -1040,7 +1049,7 @@ class ArtikkelDayArchiveView(DayArchiveView):
         context['sel_p2eval'] = sel_p2eval
         # Leiame samal kuupäeval sündinud isikud
         syndinud_isikud = Isik.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['syndinud_isikud'] = syndinud_isikud
         context['syndinud_isikud_pealkiri'] = '{0}. {1} sündinud {2}'.format(
@@ -1050,7 +1059,7 @@ class ArtikkelDayArchiveView(DayArchiveView):
         )
         # Leiame samal kuupäeval surnud isikud
         surnud_isikud = Isik.objects.filter(hist_enddate__month = kuu, hist_enddate__day = p2ev).annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['surnud_isikud'] = surnud_isikud
         context['surnud_isikud_pealkiri'] = '{0}. {1} surnud {2}'.format(
@@ -1060,7 +1069,7 @@ class ArtikkelDayArchiveView(DayArchiveView):
         )
         # Leiame samal kuupäeval loodud organisatsioonid
         loodud_organisatsioonid = Organisatsioon.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
         context['loodud_organisatsioonid_pealkiri'] = '{0}. {1} loodud {2}'.format(
@@ -1070,7 +1079,7 @@ class ArtikkelDayArchiveView(DayArchiveView):
         )
         # Leiame samal kuupäeval loodud objektid
         valminud_objektid = Objekt.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
-                # nulliga=ExpressionWrapper((datetime.date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
+                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
                 vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
         context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid_pealkiri'] = '{0}. {1} valminud {2}'.format(
@@ -1210,7 +1219,7 @@ class OrganisatsioonFilterView(FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         queryset = Organisatsioon.objects.all().annotate(
-            nulliga=ExpressionWrapper((datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField())).order_by('nimi')
+            nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField())).order_by('nimi')
         filter = OrganisatsioonFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 
@@ -1305,7 +1314,7 @@ class ObjektFilterView(FilterView):
         context = super().get_context_data()
         queryset = Objekt.objects.all().annotate(
             nulliga=ExpressionWrapper(
-                (datetime.date.today().year - F('hist_year'))%5, output_field=IntegerField()
+                (date.today().year - F('hist_year'))%5, output_field=IntegerField()
             )).order_by('nimi')
         filter = ObjektFilter(self.request.GET, queryset=queryset)
         list = filter.qs
