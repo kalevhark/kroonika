@@ -42,7 +42,7 @@ def ukj(date_vkj):
             nihe = 12
         if date(1800, 2, 28) >= date_vkj > date(1700, 2, 28):
             nihe = 11
-        if date(1800, 2, 28) >= date_vkj >= date(1582, 10, 5):
+        if date(1700, 2, 28) >= date_vkj >= date(1582, 10, 5):
             nihe = 10
         date_ukj = date_vkj + timedelta(days=nihe)
         return f'(ukj: {date_ukj:%d.%m.%Y})'

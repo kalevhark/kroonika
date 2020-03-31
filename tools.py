@@ -1,6 +1,16 @@
+from datetime import date, datetime, timedelta
+
+from django.db.models import (
+    Case, F, Q, Value, When,
+    BooleanField, DateField, DateTimeField, DecimalField, IntegerField,
+    ExpressionWrapper
+)
+from django.db.models.functions import Extract, Trunc
+
 from ipwhois import IPWhois
 
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt, Allikas, Viide
+
 
 #
 # Funktsioon duplikaatkirjete koondamiseks
@@ -146,3 +156,21 @@ def lisa_artikkel_20200321():
         uus_art.save()
         uus_art.viited.add(viide)
         print(uus_art.id, uus_art)
+
+# Näide päringust uue kalendri kuupäeva järgi
+def query_by_ukj():
+    artiklid = Artikkel.objects.filter(hist_date__isnull=False)
+    artiklid_ukj_j2rgi = artiklid.annotate(
+        ukj=Case(
+            When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
+            When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
+            When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
+            When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
+            When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
+            default=F('hist_date'),
+            output_field=DateField()
+        )
+    )
+    # day = 15
+    # print(artiklid_ukj_j2rgi.filter(ukj__day=day).count())
+    return artiklid_ukj_j2rgi

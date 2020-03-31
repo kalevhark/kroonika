@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core import serializers
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import F, Q, Value, BooleanField, DecimalField, IntegerField, ExpressionWrapper
+from django.db.models import F, Q, Value, BooleanField, DateField, DecimalField, IntegerField, ExpressionWrapper
 from django.db.models import Count, Max, Min
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
