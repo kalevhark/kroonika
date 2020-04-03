@@ -91,7 +91,7 @@ def wiki_base_info(request):
         tagasi24h = timezone.now() - timedelta(days=1)
         data['feedbacks'] = Vihje.objects.filter(inp_date__gt=tagasi24h).count()
         data['comments'] = Comment.objects.filter(created_on__gt=tagasi24h).count()
-    print(data)
+    # print(data)
     return JsonResponse(data)
 
 #
