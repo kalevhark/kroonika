@@ -161,7 +161,7 @@ def lisa_artikkel_20200321():
 def query_by_ukj():
     artiklid = Artikkel.objects.filter(hist_date__isnull=False)
     artiklid_ukj_j2rgi = artiklid.annotate(
-        ukj=Case(
+        hist_date_ukj=Case(
             When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
             When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
             When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
@@ -172,5 +172,5 @@ def query_by_ukj():
         )
     )
     # day = 15
-    # print(artiklid_ukj_j2rgi.filter(ukj__day=day).count())
+    # print(artiklid_ukj_j2rgi.filter(hist_date_ukj__day=day).count())
     return artiklid_ukj_j2rgi
