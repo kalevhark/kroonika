@@ -676,6 +676,7 @@ class PiltAdmin(admin.ModelAdmin):
         'inp_date', 'created_by', 'mod_date', 'updated_by',
     ]
     list_display = [
+        'id',
         'nimi',
         'kasutatud',
         'profiilipilt',
