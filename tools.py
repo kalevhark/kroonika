@@ -135,7 +135,7 @@ def massikanne():
         uus_isik.save()
         print(uus_isik)
         # Lisame isikule seotud organisatsiooni
-        uus_isik.organisatsioonid.add(org)
+        # uus_isik.organisatsioonid.add(org)
         # Lisame isikule seotud viite
         uus_isik.viited.add(viide)
         # Lisame isiku artiklile
