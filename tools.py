@@ -157,6 +157,21 @@ def lisa_artikkel_20200321():
         uus_art.viited.add(viide)
         print(uus_art.id, uus_art)
 
+# Topeltviidete korrastus
+def topelt_viidete_kustutamine():
+    from django.db.models import Count
+    topelt_viited = Viide.objects.\
+        values('hist_date', 'kohaviit').\
+        annotate(kohaviit_num=Count('kohaviit')).\
+        filter(kohaviit_num__gt=1).\
+        order_by('hist_date')
+    for topelt_viide in topelt_viited:
+        hist_date = topelt_viide['hist_date']
+        kohaviit = topelt_viide['kohaviit']
+        topelt_viide_ids = [el.id for el in Viide.objects.filter(hist_date=hist_date, kohaviit=kohaviit)]
+        print(topelt_viide_ids)
+
+
 # Näide päringust uue kalendri kuupäeva järgi
 def query_by_ukj():
     artiklid = Artikkel.objects.filter(hist_date__isnull=False)
