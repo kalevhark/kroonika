@@ -105,21 +105,21 @@ def join(model_name, source_id, dest_id):
 # tools.massikanne()
 def massikanne():
     # Millised isikud lisada artiklile
-    isik_str = 'Märt Tamm, Peedu Illison, Jaan Maran'
+    isik_str = 'Adolf Mathiesen, Rosalie Warmann, Marie Sakatow, Liisa Lillmann, Minna Gudrit'
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=793)
+    art = Artikkel.objects.get(id=7243)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=2366)
+    pilt = Pilt.objects.get(id=2405)
     print(pilt)
     # Milline organisatsioon lisada isikule
     # org = Organisatsioon.objects.get(id=33)
     # print(org)
     # Milline viide lisada isikule
-    viide = Viide.objects.get(id=8082)
+    viide = Viide.objects.get(id=8112)
     print(viide)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Põlisele rendile maasaamise lepingu rikkujad'
+    isik_kirjeldus = 'Koeraomanik Valgas'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
