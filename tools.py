@@ -157,10 +157,14 @@ def lisa_artikkel_20200321():
         uus_art.viited.add(viide)
         print(uus_art.id, uus_art)
 
-# Topeltviidete korrastus
+# Topeltviidete korrastus TODO:Teha siis, kui kroonikaraamat on läbi
 def topelt_viidete_kustutamine():
     from django.db.models import Count
-    topelt_viited = Viide.objects.\
+    # Kroonikaraamatu viited
+    allikas = Allikas.objects.get(id=1)
+    # K6ik viited v2lja arvatud kroonikaraamatust
+    viited = Viide.objects.exclude(allikas=allikas)
+    topelt_viited = viited.\
         values('hist_date', 'kohaviit').\
         annotate(kohaviit_num=Count('kohaviit')).\
         filter(kohaviit_num__gt=1).\
@@ -168,8 +172,16 @@ def topelt_viidete_kustutamine():
     for topelt_viide in topelt_viited:
         hist_date = topelt_viide['hist_date']
         kohaviit = topelt_viide['kohaviit']
+        # Topeltviidete id
         topelt_viide_ids = [el.id for el in Viide.objects.filter(hist_date=hist_date, kohaviit=kohaviit)]
         print(topelt_viide_ids)
+        viide_esmane = Viide.objects.get(id=topelt_viide_ids[0])
+        # Artiklid, mis viitavad duplikaadile
+        viide_duplikaat = Viide.objects.get(id=topelt_viide_ids[1])
+        artiklid = viide_duplikaat.artikkel_set.all()
+        for artikkel in artiklid:
+            print(artikkel.id, artikkel)
+        print('- - -')
 
 
 # Näide päringust uue kalendri kuupäeva järgi

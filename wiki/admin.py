@@ -93,7 +93,9 @@ class ViideAdmin(admin.ModelAdmin):
         'seotud_objekte',
         'seotud_pilte',
     ]
+    ordering = ['-id']
     search_fields = [
+        'id',
         'allikas__nimi',
         'hist_date',
         'kohaviit',
