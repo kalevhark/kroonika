@@ -160,12 +160,24 @@ def lisa_artikkel_20200321():
 # Topeltviidete korrastus TODO:Teha siis, kui kroonikaraamat on läbi
 def topelt_viidete_kustutamine():
     from django.db.models import Count
+    # Kasutud viited
+    tyhjad_viited = Viide.objects.annotate(
+        num_art=Count('artikkel__id'),
+        num_isik=Count('isik__id'),
+        num_org=Count('organisatsioon__id'),
+        num_obj=Count('objekt__id'),
+        num_pilt=Count('pilt__id')
+    ).filter(
+        num_art=0, num_isik=0, num_org=0, num_obj=0, num_pilt=0
+    )
+    tyhjad_viited_ids = [viide.id for viide in tyhjad_viited]
+    print(len(tyhjad_viited_ids))
     # Kroonikaraamatu viited
     allikas = Allikas.objects.get(id=1)
     # K6ik viited v2lja arvatud kroonikaraamatust
-    viited = Viide.objects.exclude(allikas=allikas)
+    viited = Viide.objects.exclude(allikas=allikas).exclude(id__in=tyhjad_viited_ids)
     topelt_viited = viited.\
-        values('hist_date', 'kohaviit').\
+        values('peatykk', 'hist_date', 'kohaviit').\
         annotate(kohaviit_num=Count('kohaviit')).\
         filter(kohaviit_num__gt=1).\
         order_by('hist_date')
@@ -173,14 +185,28 @@ def topelt_viidete_kustutamine():
         hist_date = topelt_viide['hist_date']
         kohaviit = topelt_viide['kohaviit']
         # Topeltviidete id
-        topelt_viide_ids = [el.id for el in Viide.objects.filter(hist_date=hist_date, kohaviit=kohaviit)]
+        topelt_viide_ids = [el.id for el in viited.filter(hist_date=hist_date, kohaviit=kohaviit)]
         print(topelt_viide_ids)
         viide_esmane = Viide.objects.get(id=topelt_viide_ids[0])
-        # Artiklid, mis viitavad duplikaadile
-        viide_duplikaat = Viide.objects.get(id=topelt_viide_ids[1])
-        artiklid = viide_duplikaat.artikkel_set.all()
-        for artikkel in artiklid:
-            print(artikkel.id, artikkel)
+        for topelt_viide_id in topelt_viide_ids:
+            viide_duplikaat = Viide.objects.get(id=topelt_viide_id)
+            # objectid, mis viitavad duplikaadile
+            artiklid = viide_duplikaat.artikkel_set.all()
+            isikud = viide_duplikaat.isik_set.all()
+            organisatsioonid = viide_duplikaat.organisatsioon_set.all()
+            objektid = viide_duplikaat.objekt_set.all()
+            pildid = viide_duplikaat.pilt_set.all()
+            baasid = {
+                'art': artiklid,
+                'isik': isikud,
+                'org': organisatsioonid,
+                'obj': objektid,
+                'pilt': pildid
+            }
+            for baas in baasid:
+                for obj in baasid[baas]:
+                    print(topelt_viide_id, f'{baas}{obj.id}', obj)
+            print('-')
         print('- - -')
 
 

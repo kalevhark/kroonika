@@ -84,14 +84,16 @@ class ViideAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'seotud_allikas',
+        'peatykk',
         'hist_date',
         'kohaviit',
         'short_url',
-        'seotud_artikleid',
-        'seotud_isikuid',
-        'seotud_organisatsioone',
-        'seotud_objekte',
-        'seotud_pilte',
+        'seotud_objects',
+        # 'seotud_artikleid',
+        # 'seotud_isikuid',
+        # 'seotud_organisatsioone',
+        # 'seotud_objekte',
+        # 'seotud_pilte',
     ]
     ordering = ['-id']
     search_fields = [
@@ -186,6 +188,15 @@ class ViideAdmin(admin.ModelAdmin):
         id_list = list(obj.pilt_set.values_list('id', flat=True))
         return ', '.join([str(el) for el in id_list])
 
+    # Seotud andmebaasikirjeid kokku
+    def seotud_objects(self, obj):
+        return (
+                self.seotud_artikleid(obj) +
+                self.seotud_isikuid(obj) +
+                self.seotud_organisatsioone(obj) +
+                self.seotud_objekte(obj) +
+                self.seotud_pilte(obj)
+        )
     def short_url(self, obj):
         if obj.url:
             if len(obj.url) < 33:
