@@ -235,7 +235,7 @@ def update_peatykk_from_url():
     from bs4 import BeautifulSoup
     allikas = Allikas.objects.get(id=7) # Vikipeedia (geni=17)
     div_id = 'firstHeading'
-    peatykita_viited = Viide.objects.filter(allikas=allikas, peatykk__isnull=True, url__isnull=False)
+    peatykita_viited = Viide.objects.filter(allikas=allikas, peatykk='', url__isnull=False)
     for viide in peatykita_viited:
         href = viide.url
         # r = requests.get(href)
