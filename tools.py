@@ -234,8 +234,8 @@ def update_peatykk_from_url():
     from django.db.models import Q
     from urllib.request import Request, urlopen
     from bs4 import BeautifulSoup
-    allikas = Allikas.objects.get(id=7) # Vikipeedia (geni=17)
-    div_id = 'firstHeading'
+    allikas = Allikas.objects.get(id=17) # geni
+    # div_id = ''
     peatykita_viited = Viide.objects.filter(allikas=allikas, url__isnull=False).filter(Q(peatykk__isnull=True) | Q(peatykk__exact=''))
     print(len(peatykita_viited))
     for viide in peatykita_viited:
@@ -246,10 +246,15 @@ def update_peatykk_from_url():
         webpage = urlopen(req).read()
         # Struktueerime
         soup = BeautifulSoup(webpage, 'html.parser')
-        div = soup.find(id=div_id)
-        text = div.text
-        print(href, text)
-        if text:
-            viide.peatykk = text
-            viide.save()
-            pass
+        # div = soup.find(id=div_id)
+        div = soup.find('h1')
+        print(href, end=' ')
+        if div:
+            text = div.text.replace('*', '')
+            print(text)
+            if text:
+                # viide.peatykk = text
+                # viide.save()
+                pass
+        else:
+            print('-')
