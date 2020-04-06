@@ -227,3 +227,26 @@ def query_by_ukj():
     # day = 15
     # print(artiklid_ukj_j2rgi.filter(hist_date_ukj__day=day).count())
     return artiklid_ukj_j2rgi
+
+# Viidetele geni ja vikipeedia peatykinimed
+def update_peatykk_from_url():
+    # import requests
+    from urllib.request import Request, urlopen
+    from bs4 import BeautifulSoup
+    allikas = Allikas.objects.get(id=7) # Vikipeedia (geni=17)
+    div_id = 'firstHeading'
+    peatykita_viited = Viide.objects.filter(allikas=allikas, peatykk__isnull=True, url__isnull=False)
+    for viide in peatykita_viited:
+        href = viide.url
+        # r = requests.get(href)
+        # print(href)
+        req = Request(href, headers={'User-Agent': 'Mozilla/5.0'})
+        webpage = urlopen(req).read()
+        # Struktueerime
+        soup = BeautifulSoup(webpage, 'html.parser')
+        div = soup.find(id=div_id)
+        text = div.text
+        print(href, text)
+        if text:
+            viide.peatykk = text
+            viide.save()
