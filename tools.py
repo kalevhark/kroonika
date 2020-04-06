@@ -253,8 +253,8 @@ def update_peatykk_from_url():
             text = div.text.replace('*', '')
             print(text)
             if text:
-                # viide.peatykk = text
-                # viide.save()
+                viide.peatykk = text
+                viide.save()
                 pass
         else:
             print('-')
