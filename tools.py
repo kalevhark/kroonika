@@ -254,7 +254,7 @@ def update_peatykk_from_url():
             print(text)
             if text:
                 viide.peatykk = text
-                viide.save()
+                # viide.save()
                 pass
         else:
             print('-')
