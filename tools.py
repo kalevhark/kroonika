@@ -237,6 +237,7 @@ def update_peatykk_from_url():
     allikas = Allikas.objects.get(id=7) # Vikipeedia (geni=17)
     div_id = 'firstHeading'
     peatykita_viited = Viide.objects.filter(allikas=allikas, url__isnull=False).filter(Q(peatykk__isnull=True) | Q(peatykk__exact=''))
+    print(len(peatykita_viited))
     for viide in peatykita_viited:
         href = viide.url
         # r = requests.get(href)
@@ -249,6 +250,6 @@ def update_peatykk_from_url():
         text = div.text
         print(href, text)
         if text:
-            # viide.peatykk = text
-            # viide.save()
+            viide.peatykk = text
+            viide.save()
             pass
