@@ -106,28 +106,32 @@ def join(model_name, source_id, dest_id):
 def massikanne():
     # Millised isikud lisada artiklile
     isik_str = """
-    Herta Blum,
-    Elisabeth Edenberg,
-    Armanda Elken,
-    Lydia Hanschmidt,
-    Johanna Kurvits,
-    Linda Kurvits,
-    Rufina Kõiv,
-    Marta Kämbre,
-    Noora Laar,
-    Linda Lentso,
-    Anna Madisson,
-    Ljubov Must,
-    Linda Müllerson,
-    Hilda Needing,
-    Erika Padjas,
-    Alide Rebane,
-    Anna Rotberg,
-    Veronika Suija,
-    Minna Zirk,
-    Alice Trzeciak,
-    Linda Umalas,
-    Aniita Vassil
+    Gustav Felix Arras,
+    Aleksander Berg,
+    Orest Goertz,
+    Peeter Grabinsky,
+    Maksim Kruus,
+    Julius Elmar Kõivumägi,
+    Paul Erich Liivak,
+    Alfred Voldemar Müllerson,
+    Benhard Ploomipuu,
+    Hermann Aleksander Rull,
+    Hermann Sirk,
+    Vladimir Viilup,
+    Rudolf Keller,
+    Evald Altin,
+    August Egel,
+    Peeter Hiiop,
+    Voldemar Janson,
+    Oskar Järv,
+    Julius Laap,
+    Gustav Parv,
+    Richard Ploompuu,
+    Arthur Aleksander Rätsep,
+    Voldemar Schmidt,
+    Arnold Sollman,
+    Georg Säinas,
+    Eduard Viirok
     """
     # Millise artikliga siduda isik
     art = Artikkel.objects.get(id=7252)
@@ -136,14 +140,14 @@ def massikanne():
     pilt = Pilt.objects.get(id=2425)
     print(pilt)
     # Milline organisatsioon lisada isikule
-    org = Organisatsioon.objects.get(id=33) # 33=tüt gümn
+    org = Organisatsioon.objects.get(id=85) # 33=tüt gümn, 85=poeg gymn
     print(org)
     # Milline viide lisada isikule
     viited_ids = [8135, 8148]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Valga Linna Tütarlastegümnaasiumi lõpetaja 1923'
+    isik_kirjeldus = 'Valga Linna Poeglastegümnaasiumi lõpetaja 1923'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
