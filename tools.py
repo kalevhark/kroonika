@@ -163,7 +163,7 @@ def lisa_artikkel_20200321():
         print(uus_art.id, uus_art)
 
 # Topeltviidete korrastus TODO:Teha siis, kui kroonikaraamat on läbi
-def topelt_viidete_kustutamine():
+def tvk():
     from django.db.models import Count
     # Kasutud viited
     tyhjad_viited = Viide.objects.annotate(
@@ -182,37 +182,44 @@ def topelt_viidete_kustutamine():
     # K6ik viited v2lja arvatud kroonikaraamatust
     viited = Viide.objects.exclude(allikas=allikas).exclude(id__in=tyhjad_viited_ids)
     topelt_viited = viited.\
-        values('peatykk', 'hist_date', 'kohaviit').\
-        annotate(kohaviit_num=Count('kohaviit')).\
-        filter(kohaviit_num__gt=1).\
+        values('allikas__nimi', 'peatykk', 'hist_date', 'kohaviit').\
+        annotate(viited_num=Count('kohaviit')).\
+        filter(viited_num__gt=1).\
         order_by('hist_date')
-    for topelt_viide in topelt_viited:
-        hist_date = topelt_viide['hist_date']
-        kohaviit = topelt_viide['kohaviit']
-        # Topeltviidete id
-        topelt_viide_ids = [el.id for el in viited.filter(hist_date=hist_date, kohaviit=kohaviit)]
-        print(topelt_viide_ids)
-        viide_esmane = Viide.objects.get(id=topelt_viide_ids[0])
-        for topelt_viide_id in topelt_viide_ids:
-            viide_duplikaat = Viide.objects.get(id=topelt_viide_id)
-            # objectid, mis viitavad duplikaadile
-            artiklid = viide_duplikaat.artikkel_set.all()
-            isikud = viide_duplikaat.isik_set.all()
-            organisatsioonid = viide_duplikaat.organisatsioon_set.all()
-            objektid = viide_duplikaat.objekt_set.all()
-            pildid = viide_duplikaat.pilt_set.all()
-            baasid = {
-                'art': artiklid,
-                'isik': isikud,
-                'org': organisatsioonid,
-                'obj': objektid,
-                'pilt': pildid
-            }
-            for baas in baasid:
-                for obj in baasid[baas]:
-                    print(topelt_viide_id, f'{baas}{obj.id}', obj)
-            print('-')
-        print('- - -')
+    with open('topelt_viited.txt', 'w', encoding = 'UTF-8') as f:
+        for topelt_viide in topelt_viited:
+            hist_date = topelt_viide['hist_date']
+            kohaviit = topelt_viide['kohaviit']
+            # Topeltviidete id
+            topelt_viide_ids = [el.id for el in viited.filter(hist_date=hist_date, kohaviit=kohaviit)]
+            print(topelt_viide_ids)
+            for id in topelt_viide_ids:
+                f.write(f'V{id}:{Viide.objects.get(id=id)}\n')
+            viide_esmane = Viide.objects.get(id=topelt_viide_ids[0])
+            for topelt_viide_id in topelt_viide_ids:
+                viide_duplikaat = Viide.objects.get(id=topelt_viide_id)
+                # objectid, mis viitavad duplikaadile
+                artiklid = viide_duplikaat.artikkel_set.all()
+                isikud = viide_duplikaat.isik_set.all()
+                organisatsioonid = viide_duplikaat.organisatsioon_set.all()
+                objektid = viide_duplikaat.objekt_set.all()
+                pildid = viide_duplikaat.pilt_set.all()
+                baasid = {
+                    'art': artiklid,
+                    'isik': isikud,
+                    'org': organisatsioonid,
+                    'obj': objektid,
+                    'pilt': pildid
+                }
+                for baas in baasid:
+                    for obj in baasid[baas]:
+                        print(topelt_viide_id, f'{baas}{obj.id}', obj)
+                        f.write(f'{topelt_viide_id}  {baas}{obj.id} {obj}\n')
+                        if topelt_viide_id != viide_esmane.id:
+                            # obj.viited.add(viide_esmane)
+                            f.write(f'Lisame: V{viide_esmane.id}\n')
+                f.write('-\n')
+            f.write('- - -\n')
 
 
 # Näide päringust uue kalendri kuupäeva järgi
