@@ -105,43 +105,69 @@ def join(model_name, source_id, dest_id):
 # tools.massikanne()
 def massikanne():
     # Millised isikud lisada artiklile
-    isik_str = 'Adolf Mathiesen, Rosalie Warmann, Marie Sakatow, Liisa Lillmann, Minna Gudrit'
+    isik_str = """
+    Herta Blum,
+    Elisabeth Edenberg,
+    Armanda Elken,
+    Lydia Hanschmidt,
+    Johanna Kurvits,
+    Linda Kurvits,
+    Rufina Kõiv,
+    Marta Kämbre,
+    Noora Laar,
+    Linda Lentso,
+    Anna Madisson,
+    Ljubov Must,
+    Linda Müllerson,
+    Hilda Needing,
+    Erika Padjas,
+    Alide Rebane,
+    Anna Rotberg,
+    Veronika Suija,
+    Minna Zirk,
+    Alice Trzeciak,
+    Linda Umalas,
+    Aniita Vassil
+    """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=7243)
+    art = Artikkel.objects.get(id=7252)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=2405)
+    pilt = Pilt.objects.get(id=2425)
     print(pilt)
     # Milline organisatsioon lisada isikule
-    # org = Organisatsioon.objects.get(id=33)
-    # print(org)
+    org = Organisatsioon.objects.get(id=33) # 33=tüt gümn
+    print(org)
     # Milline viide lisada isikule
-    viide = Viide.objects.get(id=8112)
-    print(viide)
+    viited_ids = [8135, 8148]
+    viited = Viide.objects.filter(id__in=viited_ids)
+    print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Koeraomanik Valgas'
+    isik_kirjeldus = 'Valga Linna Tütarlastegümnaasiumi lõpetaja 1923'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
         isik_nimi = isik.strip().split(' ')
-        isik_eesnimi = isik_nimi[0].strip()
-        isik_perenimi = isik_nimi[1].strip()
-        print(isik_eesnimi, isik_perenimi)
-        uus_isik = Isik(
-            perenimi = isik_perenimi,
-            eesnimi = isik_eesnimi,
-            kirjeldus = isik_kirjeldus
-        )
-        uus_isik.save()
-        print(uus_isik)
-        # Lisame isikule seotud organisatsiooni
-        # uus_isik.organisatsioonid.add(org)
-        # Lisame isikule seotud viite
-        uus_isik.viited.add(viide)
-        # Lisame isiku artiklile
-        art.isikud.add(uus_isik)
-        # Lisame isiku pildile
-        pilt.isikud.add(uus_isik)
+        isik_eesnimi = ' '.join(isik_nimi[:-1]).strip()
+        isik_perenimi = isik_nimi[-1].strip()
+        if isik_eesnimi or isik_perenimi:
+            print(isik_eesnimi, isik_perenimi)
+            uus_isik = Isik(
+                perenimi = isik_perenimi,
+                eesnimi = isik_eesnimi,
+                kirjeldus = isik_kirjeldus
+            )
+            uus_isik.save()
+            print(uus_isik)
+            # Lisame isikule seotud organisatsiooni
+            uus_isik.organisatsioonid.add(org)
+            # Lisame isikule seotud viite(d)
+            for viide in viited:
+                uus_isik.viited.add(viide)
+            # Lisame isiku artiklile
+            art.isikud.add(uus_isik)
+            # Lisame isiku pildile
+            pilt.isikud.add(uus_isik)
 
 # Ühe sisuga artiklite lisamiseks
 def lisa_artikkel_20200321():
