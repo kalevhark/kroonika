@@ -1,14 +1,14 @@
 {% if users %}
-Sisse logitud kasutaja(d):
-<ul class="user-list">
+	Sisse logitud kasutaja(d):
+	<ul class="user-list">
     {% for logged_in_user in users %}
-    <li>
-	  {{ logged_in_user }}
-	  {% if logged_in_user.username == user.username %}
-	    &nbsp;&larr; Sina!
-	  {% endif %}
-	</li>
+			<li>
+				{{ logged_in_user }}
+				{% if logged_in_user.username == user.username %}
+					&nbsp;&larr; Sina!
+				{% endif %}
+			</li>
     {% endfor %}
-</ul>
-{{ user.username }}
+	</ul>
+	{{ user.username }}
 {% endif %}

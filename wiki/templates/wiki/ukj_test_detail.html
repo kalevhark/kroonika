@@ -1,0 +1,9 @@
+{% load wiki_extras %}
+{{ ukj }}
+<ul>
+  {% for isik in isikud %}
+    <li>
+      {{ isik }} {{ isik.hist_date }} {{ isik.hist_date | ukj }}
+    </li>
+  {% endfor %}
+</ul>

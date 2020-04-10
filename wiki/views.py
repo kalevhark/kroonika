@@ -1,14 +1,17 @@
 from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
-# import datetime
-import requests
+import shutil
 from typing import Dict, Any
 
 from django.conf import settings
 from django.contrib import messages
 from django.core import serializers
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import F, Q, Value, BooleanField, DateField, DecimalField, IntegerField, ExpressionWrapper
+from django.db.models import \
+    Count, Max, Min, \
+    Case, F, Q, When, \
+    Value, BooleanField, DateField, DecimalField, IntegerField, \
+    ExpressionWrapper
 from django.db.models import Count, Max, Min
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -27,6 +30,8 @@ from django.views.generic.edit import UpdateView
 
 import django_filters
 from django_filters.views import FilterView
+
+import requests
 
 from blog.models import Comment
 from wiki.models import Allikas, Viide, Artikkel, Isik, Objekt, Organisatsioon, Pilt, Vihje
@@ -202,8 +207,6 @@ def info(request):
     # artikleid_kuu_kaupa = Artikkel.objects.values('hist_year', 'hist_month').annotate(Count('hist_month')).order_by('hist_year', 'hist_month')
 
     # Andmed süsteemi olukorra kohta
-    import shutil
-    from django.conf import settings
     media_root = settings.MEDIA_ROOT
     stat = shutil.disk_usage(media_root)
     system_state = {
@@ -211,20 +214,27 @@ def info(request):
         'disk_usage': stat[1]/stat[0]*100
     }
 
+    # Number of visits to this view, as counted in the session variable.
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits + 1
+
+    context = {
+        'andmebaasid': andmebaasid,
+        'andmed': andmed,
+        'artikleid_kuus': artikleid_kuus,
+        'artikleid_kuus_max': artikleid_kuus_max,
+        'meta_andmed': request.META,
+        'a': a,
+        'system_state': system_state,
+        'num_visits': num_visits,
+        # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
+        'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
+    }
+
     return render(
         request,
         'wiki/wiki_info.html',
-        {
-            'andmebaasid': andmebaasid,
-            'andmed': andmed,
-            'artikleid_kuus': artikleid_kuus,
-            'artikleid_kuus_max': artikleid_kuus_max,
-            'meta_andmed': request.META,
-            'a': a,
-            'system_state': system_state,
-            # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
-            'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
-        }
+        context,
     )
 
 
@@ -1498,5 +1508,44 @@ def special_j6ul2019(request):
         'wiki/wiki_special_j6ul.html',
         {
             'tervitaja': tervitaja,
+        }
+    )
+
+def ukj_test(request):
+    return render(
+        request,
+        'wiki/ukj_test.html',
+        {
+            'ukj_state': request.session.get('ukj', 'false'),
+            # 'isikud': isikud,
+        }
+    )
+
+def ukj_test_detail(request, ukj=''):
+    from django.db.models.functions import ExtractDay
+    request.session['ukj'] = ukj
+    isikud_synnikuup2evaga = Isik.objects.filter(hist_date__isnull=False)
+    month = datetime.now().month
+    isikud_hist_date_ukj = isikud_synnikuup2evaga.annotate(
+        hist_date_vkj2ukj=Case(
+            When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
+            When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
+            When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
+            When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
+            When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
+            default=F('hist_date'),
+            output_field=DateField()
+        )
+    )
+    if ukj == 'true':
+        isikud = isikud_hist_date_ukj.filter(hist_date_vkj2ukj__month=month).order_by(ExtractDay('hist_date_vkj2ukj'))
+    else:
+        isikud = isikud_hist_date_ukj.filter(hist_date__month=month).order_by('hist_date__day')
+    return render(
+        request,
+        'wiki/ukj_test_detail.html',
+        {
+            'isikud': isikud,
+            'ukj': ukj,
         }
     )

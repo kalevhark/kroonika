@@ -1,3 +1,4 @@
+# See moodul pole kasutuses
 from django.core.files.base import ContentFile
 import os.path
 from PIL import Image

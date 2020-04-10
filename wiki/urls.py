@@ -42,6 +42,8 @@ urlpatterns = [
     path('update/organisatsioon/<int:pk>', OrganisatsioonUpdate.as_view(), name='organisatsioon_update'),
     path('update/objekt/<int:pk>', ObjektUpdate.as_view(), name='objekt_update'),
     path('wiki_base_info/', views.wiki_base_info, name='wiki_base_info'),
+    path('ukj_test/', views.ukj_test, name='ukj_test'),
+    path('ukj_test_detail/<str:ukj>/', views.ukj_test_detail, name='ukj_test_detail'),
     # path('j6ul2019/', views.special_j6ul2019, name='special_j6ul2019'),
     # path('users/', UserList.as_view()),
     # path('users/<int:pk>/', UserDetail.as_view()),

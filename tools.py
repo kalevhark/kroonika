@@ -166,15 +166,21 @@ def lisa_artikkel_20200321():
 def tvk():
     from django.db.models import Count
     # Kasutud viited
-    tyhjad_viited = Viide.objects.annotate(
+    tyhjad_viited = Viide.objects.\
+        annotate(
         num_art=Count('artikkel__id'),
         num_isik=Count('isik__id'),
         num_org=Count('organisatsioon__id'),
         num_obj=Count('objekt__id'),
         num_pilt=Count('pilt__id')
-    ).filter(
-        num_art=0, num_isik=0, num_org=0, num_obj=0, num_pilt=0
-    )
+        ).\
+        filter(
+        num_art=0,
+        num_isik=0,
+        num_org=0,
+        num_obj=0,
+        num_pilt=0
+        )
     tyhjad_viited_ids = [viide.id for viide in tyhjad_viited]
     print(len(tyhjad_viited_ids))
     # Kroonikaraamatu viited
@@ -182,10 +188,10 @@ def tvk():
     # K6ik viited v2lja arvatud kroonikaraamatust
     viited = Viide.objects.exclude(allikas=allikas).exclude(id__in=tyhjad_viited_ids)
     topelt_viited = viited.\
-        values('allikas__nimi', 'peatykk', 'hist_date', 'kohaviit').\
+        values('allikas__id', 'peatykk', 'hist_date', 'kohaviit').\
         annotate(viited_num=Count('kohaviit')).\
         filter(viited_num__gt=1).\
-        order_by('hist_date')
+        order_by('allikas__id', 'hist_date')
     with open('topelt_viited.txt', 'w', encoding = 'UTF-8') as f:
         for topelt_viide in topelt_viited:
             hist_date = topelt_viide['hist_date']
@@ -214,10 +220,13 @@ def tvk():
                 for baas in baasid:
                     for obj in baasid[baas]:
                         print(topelt_viide_id, f'{baas}{obj.id}', obj)
-                        f.write(f'{topelt_viide_id}  {baas}{obj.id} {obj}\n')
+                        f.write(f'V{topelt_viide_id}  {baas}{obj.id} {obj}\n')
                         if topelt_viide_id != viide_esmane.id:
-                            # obj.viited.add(viide_esmane)
+                            viide_kustutada = Viide.objects.get(id=topelt_viide_id)
                             f.write(f'Lisame: V{viide_esmane.id}\n')
+                            # obj.viited.add(viide_esmane)
+                            f.write(f'Kustutame: V{viide_kustutada.id}\n')
+                            # obj.viited.remove(viide_kustutada)
                 f.write('-\n')
             f.write('- - -\n')
 

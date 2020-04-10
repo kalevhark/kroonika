@@ -167,6 +167,7 @@
     </ul>
     {% if user.is_authenticated %}
       <div>
+        Oled siin käinud {{ num_visits }}{% if num_visits == 1 %} korra{% else %} korda{% endif %}.
       {% render_logged_in_user_list %}
       </div>
       <div>

@@ -119,7 +119,6 @@ function changeIconColor(data) {
 
 // Ikoonide värvi muutmine, kui on vihje või kommentaar
 function wiki_base_info() {
-  console.log('wiki_base_info')
   // Küsime andmed
 	$.ajax({
 	  url: $("#wiki_base_info").attr("data-url"),
@@ -127,7 +126,6 @@ function wiki_base_info() {
 	  timeout: 300000,
 	  success: function (data)
       {
-        console.log(data);
         // Värvime tagasiside ikooni, kui on perioodil tagasisidet
         elementFeedbackIcon = document.getElementById("wiki_base_feedback");
         if (elementFeedbackIcon !== undefined) {
