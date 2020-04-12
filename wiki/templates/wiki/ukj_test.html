@@ -316,7 +316,7 @@
 
   $( document ).ready(function() {
     $('#checkbox-value').text(document.getElementById("checkbox1").checked);
-    let ukj_state = ('{{ request.session.ukj }}'.length) > 0 ? {{ request.session.ukj }} : false
+    let ukj_state = ('{{ request.session.ukj }}'.length) > 0 ? Boolean({{ request.session.ukj }}) : false
 
     document.getElementById("checkbox1").checked = ukj_state;
     get_isik_data("{% url 'wiki:ukj_test_isik_detail' %}");
