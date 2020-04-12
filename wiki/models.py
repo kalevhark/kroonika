@@ -1,4 +1,13 @@
-# import datetime
+#
+# Andmebaaside kirjeldused
+# hist_date: algushetke originaalkuupäev kehtinud kalendri järgi
+# hist_year: algushetke aasta, kui ainult teada
+# hist_month: algushetke kuu, kui see on teada
+# hist_enddate: l6pphetke originaalkuup2ev kehtinud kalendri j2rgi
+# hist_endyear: l6pphetke aasta, kui ainult teada
+# dob = vastavalt valikule vkj v6i ukj hist_date j2rgi arvutatud kuup2ev
+# doe = vastavalt valikule vkj v6i ukj hist_enddate j2rgi arvutatd kuup2ev
+
 from datetime import date, datetime, timedelta
 from io import BytesIO
 import os
@@ -9,6 +18,12 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django.db import models
+from django.db.models import \
+    Count, Max, Min, \
+    Case, F, Q, When, \
+    Value, BooleanField, DateField, DecimalField, IntegerField, \
+    ExpressionWrapper
+
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.text import slugify
@@ -89,22 +104,57 @@ def escape_numberdot(string):
     string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
     return string_modified
 
-# Funktsioon vana kalendri kuupäeva teisendamiseks Gregoriuse kalendrisüsteemi
-# def vkj2ukj(date_vkj):
-#     date_ukj = date_vkj
-#     if date_vkj:
-#         if date(1918, 1, 31) >= date_vkj >= date(1582, 10, 5):
-#             nihe = 0
-#             if date(1918, 1, 31) >= date_vkj > date(1900, 2, 28):
-#                 nihe = 13
-#             if date(1900, 2, 28) >= date_vkj > date(1800, 2, 28):
-#                 nihe = 12
-#             if date(1800, 2, 28) >= date_vkj > date(1700, 2, 28):
-#                 nihe = 11
-#             if date(1800, 2, 28) >= date_vkj >= date(1582, 10, 5):
-#                 nihe = 10
-#             date_ukj = date_vkj + timedelta(days=nihe)
-#     return date_ukj
+# Tagastab andmebaasi kanded, millel on hist_date, hist_year, hist_enddate, hist_endyear andmed
+# koos ukj v6i vkj arvutamisega
+def filtered_queryset_with_dob_doe(initial_queryset, ukj_state):
+    if ukj_state == 'true': # ukj
+        filtered_queryset = initial_queryset. \
+            exclude(
+            hist_date__isnull=True,
+            hist_year__isnull=True,
+            hist_enddate__isnull=True,
+            hist_endyear__isnull=True,
+        ). \
+            annotate(
+            dob=Case(
+                When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
+                When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
+                When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
+                When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
+                When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
+                default=F('hist_date'),
+                output_field=DateField()
+            ), \
+            doe=Case(
+                When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
+                When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
+                When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
+                When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
+                When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
+                default=F('hist_enddate'),
+                output_field=DateField()
+            )
+        )
+    else: # vkj
+        filtered_queryset = initial_queryset. \
+            exclude(
+            hist_date__isnull=True,
+            hist_year__isnull=True,
+            hist_enddate__isnull = True,
+            hist_endyear__isnull = True
+        ). \
+            annotate(
+            dob=F('hist_date'),
+            doe=F('hist_enddate')
+        )
+    return filtered_queryset
+
+
+# Filtreerime isikud, kelle kohta on teada sünni/surmaaeg teada vastavalt valikule vkj/ukj
+class DaatumitegaManager(models.Manager):
+    def daatumitega(self, ukj_state='false'):
+        initial_queryset = super().get_queryset()
+        return filtered_queryset_with_dob_doe(initial_queryset, ukj_state)
 
 class Allikas(models.Model):
     """
@@ -274,6 +324,7 @@ class Viide(models.Model):
 #         return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
 
 
+
 class Objekt(models.Model):
     OBJEKTITYYP = (
         ('H', 'Hoone'),
@@ -339,7 +390,6 @@ class Objekt(models.Model):
         choices=OBJEKTITYYP,
         help_text='Mis liiki koht'
     )
-    # kirjeldus = models.TextField(
     kirjeldus = MarkdownxField(
         'Kirjeldus',
         blank=True,
@@ -381,8 +431,7 @@ class Objekt(models.Model):
         verbose_name='Muutja'
     )
 
-    # if settings.KROONIKA['SAJAND_TAGASI']:
-    #     objects = ObjektSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
+    objects = DaatumitegaManager()
 
     def __str__(self):
         if self.hist_date:
@@ -503,7 +552,6 @@ class Organisatsioon(models.Model):
         default=False,
         help_text='Lõpetatud/likvideeritud'
     )
-    # kirjeldus = models.TextField(
     kirjeldus=MarkdownxField(
         blank=True
     )
@@ -543,8 +591,7 @@ class Organisatsioon(models.Model):
         verbose_name='Muutja'
     )
 
-    # if settings.KROONIKA['SAJAND_TAGASI']:
-    #     objects = OrganisatsioonSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
+    objects = DaatumitegaManager()
 
     def __str__(self):
         if self.hist_date:
@@ -609,12 +656,6 @@ class Organisatsioon(models.Model):
     class Meta:
         ordering = ['nimi']
         verbose_name_plural = "Asutised"
-
-# # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-# class IsikSajandTagasiManager(models.Manager):
-#     def get_queryset(self):
-#         sajandtagasi = datetime.date.today().year - 100
-#         return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
 
 
 class Isik(models.Model):
@@ -682,8 +723,6 @@ class Isik(models.Model):
         blank=True,
         help_text="Matmiskoht"
     )
-    # Kirjeldus
-    # kirjeldus = models.TextField(
     kirjeldus=MarkdownxField(
         blank=True,
         help_text="Elulugu"
@@ -729,8 +768,8 @@ class Isik(models.Model):
         verbose_name='Muutja'
     )
 
-    # if settings.KROONIKA['SAJAND_TAGASI']:
-    #     objects = IsikSajandTagasiManager()  # Kui on vaja näidata kuni sajand tagasi
+    # objects = models.Manager()
+    objects = DaatumitegaManager()
 
     def __str__(self):
         # Eesnimi
@@ -796,6 +835,14 @@ class Isik(models.Model):
     def vanus(self, d=timezone.now()):
         if self.hist_date:
             return d.year - self.hist_date.year
+        elif self.hist_year:
+            return d.year - self.hist_year
+        else:
+            return None
+
+    def vanus_ukj(self, d=timezone.now()):
+        if self.hist_date_ukj:
+            return d.year - self.hist_date_ukj.year
         elif self.hist_year:
             return d.year - self.hist_year
         else:
@@ -917,7 +964,6 @@ class Artikkel(models.Model):
         blank=True
     )
     # Sisu
-    # body_text = models.TextField(
     body_text = MarkdownxField(
         'Lugu',
         help_text='Tekst'
@@ -992,9 +1038,7 @@ class Artikkel(models.Model):
     )
 
     # objects = models.Manager()  # The default manager
-    # objects = ArtikkelKroonikataManager() # Ajutine seade TODO: Kuni revisjoni lõpuni
-    # if settings.KROONIKA['SAJAND_TAGASI']:
-    #     objects = ArtikkelSajandTagasiManager() # Kui on vaja näidata kuni sajand tagasi
+    objects = DaatumitegaManager()
 
     def __str__(self):
         summary = self.body_text

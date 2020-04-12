@@ -194,8 +194,14 @@
         {% endif %}
       </div>
       <div>
+        session:<br>
+        {% for item, value in session_data.items %}
+          <small>{{ item }}:{{ value }}</small><br>
+        {% endfor %}
+      </div>
+      <div>
         Meta:<br>
-        {% for item, value in meta_andmed.items %}
+        {% for item, value in meta_data.items %}
           <small>{{ item }}:{{ value }}</small><br>
         {% endfor %}
       </div>

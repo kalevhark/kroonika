@@ -5,7 +5,7 @@ from django.db.models import (
     BooleanField, DateField, DateTimeField, DecimalField, IntegerField,
     ExpressionWrapper
 )
-from django.db.models.functions import Extract, Trunc
+from django.db.models.functions import Extract, Trunc, ExtractDay
 
 from ipwhois import IPWhois
 
@@ -279,3 +279,87 @@ def update_peatykk_from_url():
                 pass
         else:
             print('-')
+
+def isik_ukj_test():
+    p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
+    kuu = date.today().month  # str(kuu).zfill(2) -> KK
+    aasta = date.today().year
+
+    # Andmebaas Isik andmed veebi
+    isik = dict()
+    kirjeid = Isik.objects.count()
+    isik['kirjeid'] = kirjeid
+    if kirjeid > 0:
+
+        isik['viimane_lisatud'] = Isik.objects.latest('inp_date')
+        isik['viimane_muudetud'] = Isik.objects.latest('mod_date')
+        # Filtreerime isikud, kelle sünniaeg teada
+        isikud_synniajaga = Isik.objects.\
+            exclude(
+                hist_date__isnull=True,
+                hist_year__isnull=True
+            ).\
+            annotate(
+                dob=Case(
+                    When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
+                    When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
+                    When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
+                    When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
+                    When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
+                    default=F('hist_date'),
+                    output_field=DateField()
+                ),\
+                dod=Case(
+                    When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
+                    When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
+                    When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
+                    When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
+                    When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
+                    default=F('hist_enddate'),
+                    output_field=DateField()
+                )
+            )
+        # vkj andmed
+        vkj = dict()
+        vkj['100_aastat_tagasi'] = isikud_synniajaga.filter(
+            hist_date__day=p2ev,
+            hist_date__month=kuu,
+            hist_date__year=(aasta - 100)
+        )
+        vkj['sel_p2eval'] = isikud_synniajaga.filter(hist_date__day=p2ev, hist_date__month=kuu)
+        vkj['sel_p2eval_kirjeid'] = len(vkj['sel_p2eval'])
+        vkj['sel_kuul'] = isikud_synniajaga.filter(hist_date__month=kuu).order_by('hist_date__day')
+        vkj['sel_kuul_kirjeid'] = len(vkj['sel_kuul'])
+        vkj['sel_p2eval_surnud'] = isikud_synniajaga.filter(hist_enddate__day=p2ev, hist_enddate__month=kuu)
+        vkj['sel_p2eval_surnud_kirjeid'] = len(vkj['sel_p2eval_surnud'])
+        vkj['sel_kuul_surnud'] = isikud_synniajaga.filter(hist_enddate__month=kuu).order_by('hist_enddate__day')
+        vkj['sel_kuul_surnud_kirjeid'] = len(vkj['sel_kuul_surnud'])
+        juubilarid = [
+            isik.id for isik in isikud_synniajaga if isik.vanus() % 5 == 0
+        ]
+        vkj['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'hist_date')
+        isik['vkj'] = vkj
+
+        # ukj andmed
+        isik['100_aastat_tagasi'] = isikud_synniajaga.filter(
+            dob__day=p2ev,
+            dob__month=kuu,
+            dob__year=(aasta - 100)
+        )
+        isik['sel_p2eval'] = isikud_synniajaga.filter(dob__day=p2ev, dob__month=kuu)
+        isik['sel_p2eval_kirjeid'] = len(isik['sel_p2eval'])
+        isik['sel_kuul'] = isikud_synniajaga.filter(dob__month=kuu).order_by(ExtractDay('dob'))
+        isik['sel_kuul_kirjeid'] = len(isik['sel_kuul'])
+        isik['sel_p2eval_surnud'] = isikud_synniajaga.filter(dod__day=p2ev, dod__month=kuu)
+        isik['sel_p2eval_surnud_kirjeid'] = len(isik['sel_p2eval_surnud'])
+        isik['sel_kuul_surnud'] = isikud_synniajaga.filter(dod__month=kuu).order_by(ExtractDay('dod'))
+        isik['sel_kuul_surnud_kirjeid'] = len(isik['sel_kuul_surnud'])
+        juubilarid = [
+            isik.id for isik in isikud_synniajaga if isik.vanus() % 5 == 0
+        ]
+        isik['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'dob')
+        andmed = {
+            'isik' : isik
+        }
+
+    return andmed

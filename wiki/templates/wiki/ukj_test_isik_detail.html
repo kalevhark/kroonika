@@ -1,0 +1,128 @@
+{% now "d" as p2ev %}
+{% now "m" as kuu %}
+{% now "Y" as aasta %}
+{{ andmed.isik.kirjeid }}
+{% if andmed.isik.sel_p2eval %}
+  <h5>
+    <a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_syndinud">
+      {% now "j.m." %} sündinud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_kirjeid }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.isik.sel_p2eval %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    <a
+        class="hover-isik"
+        href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}">
+      <strong>{{ obj.dob|date:"d.m.Y" }}</strong>
+    </a>
+    &nbsp;
+    <a
+        class="hover-isik"
+        href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+      {{ obj }}
+      {% if obj.vanus|divisibleby:"5" %}
+        &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+      {% endif %}
+      {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
+    </a>
+  {% endfor %}
+{% endif %}
+{% if andmed.isik.sel_kuul %}
+  <h5>
+    <a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_isikud_syndinud">
+      {% include 'wiki/includes/kuul.html' with kuu=kuu %} sündinud <span class="w3-badge background-isik">{{ andmed.isik.sel_kuul_kirjeid }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.isik.sel_kuul %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    <a class="hover-isik"
+      href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
+    >
+    <strong>{{ obj.dob|date:"d.m.Y" }}</strong>
+    </a>
+    &nbsp;
+    <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+      {{ obj }}
+    </a>
+    {% if obj.vanus|divisibleby:"5" %}
+      &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% if andmed.isik.juubilarid %}
+  <h5>
+    <a style="text-decoration:none;" href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_isikud_syndinud">
+      {% now "Y" %} juubilarid <span class="w3-badge background-isik">{{ andmed.isik.juubilarid.count }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.isik.juubilarid %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    {% if obj.dob %}
+      <a class="hover-isik"
+        href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}">
+        <b>{{ obj.dob|date:"d.m.Y" }}</b>
+      </a>
+    {% else %}
+      <a class="hover-isik"
+        href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
+        <b>{{ obj.hist_year }}</b>
+      </a>
+    {% endif %}&nbsp;
+    <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+       {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
+      &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+      {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
+    </a>
+  {% endfor %}
+{% endif %}
+{% if andmed.isik.sel_p2eval_surnud %}
+  <hr>
+  <h5>
+    <a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_surnud">
+      {% now "j.m." %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_surnud_kirjeid }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.isik.sel_p2eval_surnud %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    <strong>&#9840;&nbsp;</strong>
+    <a
+        class="hover-isik"
+        href="{% url 'wiki:artikkel_day_archive' year=obj.doe|date:'Y' month=obj.doe|date:'m' day=obj.doe|date:'d' %}">
+      <b>{{ obj.doe|date:"d.m.Y" }}</b>
+    </a>
+    &nbsp;
+    <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+      {{ obj }}
+    </a>
+  {% endfor %}
+{% endif %}
+{% if andmed.isik.sel_kuul_surnud %}
+  <h5>
+    <a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_isikud_surnud">
+      {% include 'wiki/includes/kuul.html' with kuu=kuu %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_kuul_surnud_kirjeid }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.isik.sel_kuul_surnud %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    <strong>&#9840;&nbsp;</strong>
+    <a class="hover-isik"
+      href="{% url 'wiki:artikkel_day_archive' year=obj.doe|date:'Y' month=obj.doe|date:'m' day=obj.doe|date:'d' %}"
+    >
+      <strong>{{ obj.doe|date:"d.m.Y" }}</strong>
+    </a>
+    &nbsp;
+    <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+      {{ obj }}
+    </a>
+  {% endfor %}
+{% endif %}

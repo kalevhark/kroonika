@@ -172,15 +172,74 @@
 
 {% block content %}
 <div class="w3-container">
-  <h4>Katseline lehekülg, kus on võimalik vaadata jooksva kuu sünnipäevalapsi vkj <-> ukj</h4>
+  <h4>Katseline lehekülg, kus on võimalik vaadata vkj <-> ukj</h4>
   <div class="mid">
     <label class="rocker rocker-small" title="vana või uus kalender?"><input type="checkbox" id="checkbox1">
       <span class="switch-left">ukj</span>
       <span class="switch-right">vkj</span>
     </label>
   </div>
-  <!--<div id="checkbox-value"></div>-->
-  <div id="autoupdate">Siin ei ole alguses midagi</div>
+  <div id="checkbox-value"></div>
+  <div>
+    session:<br>
+    {% for item, value in request.session.items %}
+      <small>{{ item }}:{{ value }}</small><br>
+    {% endfor %}
+  </div>
+  <!-- Sisu algab siit -->
+  <div class="w3-row-padding w3-margin-bottom">
+    {% now "d" as p2ev %}
+    {% now "m" as kuu %}
+    {% now "Y" as aasta %}
+    <!-- Artiklite esitlus -->
+	  <div class="w3-quarter">
+      <!-- Teadete esitamiseks -->
+<!--      <div class="w3-container w3-hover-white">-->
+<!--        {% include 'wiki/includes/wiki_message.html' %}-->
+<!--      </div>-->
+      <div class="w3-container w3-padding-16 w3-hover-white">
+<!--        {% include 'wiki/includes/wiki_calendar.html' %}-->
+        <div id="algus_artikkel"></div>
+      </div>
+    </div>
+    <!-- Isikute esitlus -->
+    <div class="w3-quarter">
+      <div class="w3-container w3-padding-16 w3-hover-white">
+        <div id="algus_isik"></div>
+      </div>
+    </div>
+    <!-- Organisatsioonide esitlus -->
+    <div class="w3-quarter">
+      <div class="w3-container w3-padding-16 w3-hover-white">
+        <div id="algus_organisatsioon"></div>
+      </div>
+    </div>
+	  <!-- Objektide esitlus -->
+    <div class="w3-quarter">
+      <div class="w3-container w3-padding-16 w3-hover-white">
+        <div id="algus_objekt"></div>
+      </div>
+      <!-- Kaardid -->
+      <div class="w3-container background-objekt w3-padding-16">
+        <div class="w3-left">
+          <i class="fa fa-map w3-xxxlarge"></i>
+        </div>
+        <div class="w3-hide-medium w3-right">
+          <h4>Kaardid</h4>
+        </div>
+        <div class="w3-hide-large w3-hide-small w3-right ">
+          <h6>Kaardid</h6>
+        </div>
+      </div>
+
+      <div class="w3-margin-top">
+        {% include 'wiki/includes/kaart_slideshow.html' %}
+      </div>
+    </div>
+  </div>
+  <div class="w3-row-padding w3-margin-bottom w3-hide-small">
+<!--    {% include 'wiki/includes/algus_foot.html' %}-->
+  </div>
 </div>
 {% endblock %}
 
@@ -191,8 +250,7 @@
       {
         url: url,
         success: function(data) {
-<!--          console.log(data);-->
-          $('#autoupdate').html(data);
+          $('#algus_isik').html(data);
         },
         error: function (jqXHR, exception) {
           var msg = '';
@@ -211,7 +269,7 @@
           } else {
               msg = 'Uncaught Error.\n' + jqXHR.responseText;
           }
-          $('#autoupdate').html(msg);
+          $('#algus_isik').html(msg);
           <!-- Proovime 5 s pärast uuesti -->
           {
             window.setTimeout(get_isik_data(url), 5000);
@@ -221,23 +279,61 @@
     );
   };
 
+  function get_objekt_data(url) {
+    $.ajax(
+      {
+        url: url,
+        success: function(data) {
+<!--          console.log(data);-->
+          $('#algus_objekt').html(data);
+        },
+        error: function (jqXHR, exception) {
+          var msg = '';
+          if (jqXHR.status === 0) {
+              msg = 'Not connect.\n Verify Network.';
+          } else if (jqXHR.status == 404) {
+              msg = 'Requested page not found. [404]';
+          } else if (jqXHR.status == 500) {
+              msg = 'Internal Server Error [500].';
+          } else if (exception === 'parsererror') {
+              msg = 'Requested JSON parse failed.';
+          } else if (exception === 'timeout') {
+              msg = 'Time out error.';
+          } else if (exception === 'abort') {
+              msg = 'Ajax request aborted.';
+          } else {
+              msg = 'Uncaught Error.\n' + jqXHR.responseText;
+          }
+          $('#algus_objekt').html(msg);
+          <!-- Proovime 5 s pärast uuesti -->
+          {
+            window.setTimeout(get_objekt_data(url), 5000);
+          };
+        },
+      }
+    );
+  };
+
   $( document ).ready(function() {
-    <!-- Asetame valiku sessions salvestatud seisu ja näitame sisu -->
-    document.getElementById("checkbox1").checked = {{ ukj_state }};
-    get_isik_data("{% url 'wiki:ukj_test_detail' ukj_state %}");
+    $('#checkbox-value').text(document.getElementById("checkbox1").checked);
+    document.getElementById("checkbox1").checked = {{ request.session.ukj }};
+    get_isik_data("{% url 'wiki:ukj_test_isik_detail' %}");
+    get_objekt_data("{% url 'wiki:ukj_test_objekt_detail' %}");
 
     <!-- Loome triggeri, kui kalendrisüsteemi valik muutub -->
     $("#checkbox1").on('change', function() {
-      if ($(this).is(':checked')) {
-        $(this).attr('value', 'true');
-      } else {
-        $(this).attr('value', 'false');
-      }
-      let ukj = $(this).is(':checked');
-      let url = "{% url 'wiki:ukj_test_detail' 123 %}"
-      url = url.replace('123', ukj);
-      get_isik_data(url);
-      $('#checkbox-value').text($('#checkbox1').val());
+      let ukj = document.getElementById("checkbox1").checked;
+      switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
+      fetch(switch_url)
+        .then((response) => {
+          return response;
+        })
+        .then((data) => {
+          location.reload()
+<!--          get_isik_data("{% url 'wiki:ukj_test_isik_detail' %}");-->
+<!--          get_objekt_data("{% url 'wiki:ukj_test_objekt_detail' %}");-->
+        });
+      $('#checkbox-value').text(document.getElementById("checkbox1").checked);
     });
   });
 </script>

@@ -1,0 +1,102 @@
+{% now "d" as p2ev %}
+{% now "m" as kuu %}
+{% now "Y" as aasta %}
+
+{% if andmed.objekt.sel_p2eval %}
+  <h5>
+    <a
+        style="text-decoration:none;"
+        href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_objektid"
+    >
+      {% now "j.m." %} valminud <span class="w3-badge background-objekt">{{ andmed.objekt.sel_p2eval_kirjeid }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.objekt.sel_p2eval %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    <a
+        class="hover-objekt"
+        href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
+    >
+      <strong>{{ obj.dob|date:"d.m.Y" }}</strong>
+    </a>
+    &nbsp;
+    <a
+        class="hover-objekt"
+        href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}"
+    >
+      {{ obj }}
+      {% if obj.vanus|divisibleby:"5" %}
+        &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+      {% endif %}
+      {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+    </a>
+  {% endfor %}
+{% endif %}
+{% if andmed.objekt.sel_kuul %}
+  {% now "m" as kuu %}
+  <h5>
+    <a
+        style="text-decoration:none;"
+        href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_objektid"
+    >
+      {% include 'wiki/includes/kuul.html' with kuu=kuu %} valminud  <span class="w3-badge background-objekt">{{ andmed.objekt.sel_kuul.count }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.objekt.sel_kuul %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    <a
+        class="hover-objekt"
+        href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
+    >
+      <strong>{{ obj.dob|date:"d.m.Y" }}</strong>
+    </a>
+    &nbsp;
+    <a
+        class="hover-objekt"
+        href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}"
+    >
+      {{ obj }}
+    </a>
+    {% if obj.vanus|divisibleby:"5" %}
+      &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% if andmed.objekt.juubilarid %}
+  <h5>
+    <a
+        style="text-decoration:none;"
+        href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_objektid"
+    >
+      {% now "Y" %} juubilarid <span class="w3-badge background-objekt">{{ andmed.objekt.juubilarid.count }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.objekt.juubilarid %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    {% if obj.dob %}
+      <a class="hover-objekt"
+        href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
+      >
+        <b>{{ obj.dob|date:"d.m.Y" }}</b>
+      </a>
+    {% else %}
+      <a class="hover-objekt"
+        href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}"
+      >
+        <b>{{ obj.hist_year }}</b>
+      </a>
+    {% endif %}
+    &nbsp;
+    <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
+      {{ obj.nimi }}
+      &nbsp;<b>{{ obj.vanus }}</b>
+      {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+    </a>
+  {% endfor %}
+{% endif %}
