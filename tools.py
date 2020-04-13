@@ -100,10 +100,97 @@ def join(model_name, source_id, dest_id):
             pilt.objektid.add(new)
             # pilt.objektid.remove(old)
 
+# ühekordne fn lähteandmete korjamiseks massikande jaoks ariklitest
+def get_data4massikanne():
+    ids = [5080, 5268, 5273, 5277, 5274, 5278, 5399, 5400, 5402, 5545, 5546, 5609]
+    with open(f'20200413_massikanne.txt', 'w', encoding = 'UTF-8') as f:
+        for id in ids:
+            art = Artikkel.objects.get(id=id)
+
+            f.write(f'{art.hist_searchdate.year} {art.body_text}\n')
+            f.write(f'art {art.id}\n')
+            f.write(f'pil {[pilt.id for pilt in art.pilt_set.all()][0]}\n')
+            f.write(f'org {[org.id for org in art.organisatsioonid.all()][0]}\n')
+            f.write(f'vii {[viide.id for viide in art.viited.all()][0]}\n')
+            f.write('\n')
+
+
 # Isikukirjete tekitamiseks artikli juurde
 # import tools
 # tools.massikanne()
-def massikanne():
+def massikanne_from_dict(andmed):
+    # Millised isikud lisada artiklile
+    isik_str = andmed['isikud']
+    # Millise artikliga siduda isik
+    art_id = andmed['art']
+    art = Artikkel.objects.get(id=art_id)
+    print(art)
+    # Millise pildiga siduda isik
+    pilt_id = andmed['pil']
+    pilt = Pilt.objects.get(id=pilt_id)
+    print(pilt)
+    # Milline organisatsioon lisada isikule
+    org_id = andmed['org']
+    org = Organisatsioon.objects.get(id=org_id) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn
+    print(org)
+    # Milline viide lisada isikule
+    viited_ids = [andmed['vii']]
+    viited = Viide.objects.filter(id__in=viited_ids)
+    print(viited)
+    # Isiku kirjeldus
+    isik_kirjeldus = andmed['kir']
+    isikud = isik_str.split(',')
+    for isik in isikud:
+        # Loome uue isiku
+        isik_nimi = isik.strip().split(' ')
+        isik_eesnimi = ' '.join(isik_nimi[:-1]).strip()
+        isik_perenimi = isik_nimi[-1].strip()
+        if isik_eesnimi or isik_perenimi:
+            print(isik_eesnimi, isik_perenimi)
+            uus_isik = Isik(
+                perenimi = isik_perenimi,
+                eesnimi = isik_eesnimi,
+                kirjeldus = isik_kirjeldus
+            )
+            uus_isik.save()
+            print(uus_isik)
+            # Lisame isikule seotud organisatsiooni
+            uus_isik.organisatsioonid.add(org)
+            # Lisame isikule seotud viite(d)
+            for viide in viited:
+                uus_isik.viited.add(viide)
+            # Lisame isiku artiklile
+            art.isikud.add(uus_isik)
+            # Lisame isiku pildile
+            pilt.isikud.add(uus_isik)
+
+
+# Võtab andmed xml failist ja teeb isikute masskande ja sidumise artikli, organisatsiooni, pildi ja viitega
+# xml faili struktuur, mis asub samas kataloogis, kus tools.py
+# <data>
+# <kanne>
+# <kir></kir><isikud></isikud><pil></pil><org></org><vii></vii>
+# </kanne>
+# </data>
+def massikanne_from_xml():
+    f = '20200413_massikanne.xml'
+    import xml.etree.ElementTree as ET
+    tree = ET.parse(f)
+    root = tree.getroot()
+    # with open(f, 'r', encoding = 'UTF-8') as f:
+    #     data_as_string = f.read()
+    # root = ET.fromstring(data_as_string)
+    for kanne in root:
+        andmed = dict()
+        for el in kanne:
+            andmed[el.tag] = el.text.strip()
+        massikanne_from_dict(andmed)
+
+
+# Isikukirjete tekitamiseks artikli juurde
+# import tools
+# tools.massikanne()
+def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
     Helene Braun, Ernst Baltmischkis, Helene Dahlberg, Reinhold Dsennit, Ewa Lammas, Irma Pipirs, Aleksandra Schmidt, Erika Thal, Alfred Tilting, Johannes Wühner
@@ -231,24 +318,6 @@ def tvk():
             f.write('- - -\n')
 
 
-# Näide päringust uue kalendri kuupäeva järgi
-def query_by_ukj():
-    artiklid = Artikkel.objects.filter(hist_date__isnull=False)
-    artiklid_ukj_j2rgi = artiklid.annotate(
-        hist_date_ukj=Case(
-            When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
-            When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
-            When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
-            When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
-            When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
-            default=F('hist_date'),
-            output_field=DateField()
-        )
-    )
-    # day = 15
-    # print(artiklid_ukj_j2rgi.filter(hist_date_ukj__day=day).count())
-    return artiklid_ukj_j2rgi
-
 # Viidetele geni ja vikipeedia peatykinimed
 def update_peatykk_from_url():
     # import requests
@@ -279,87 +348,3 @@ def update_peatykk_from_url():
                 pass
         else:
             print('-')
-
-def isik_ukj_test():
-    p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
-    kuu = date.today().month  # str(kuu).zfill(2) -> KK
-    aasta = date.today().year
-
-    # Andmebaas Isik andmed veebi
-    isik = dict()
-    kirjeid = Isik.objects.count()
-    isik['kirjeid'] = kirjeid
-    if kirjeid > 0:
-
-        isik['viimane_lisatud'] = Isik.objects.latest('inp_date')
-        isik['viimane_muudetud'] = Isik.objects.latest('mod_date')
-        # Filtreerime isikud, kelle sünniaeg teada
-        isikud_synniajaga = Isik.objects.\
-            exclude(
-                hist_date__isnull=True,
-                hist_year__isnull=True
-            ).\
-            annotate(
-                dob=Case(
-                    When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
-                    When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
-                    When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
-                    When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
-                    When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
-                    default=F('hist_date'),
-                    output_field=DateField()
-                ),\
-                dod=Case(
-                    When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
-                    When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
-                    When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
-                    When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
-                    When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
-                    default=F('hist_enddate'),
-                    output_field=DateField()
-                )
-            )
-        # vkj andmed
-        vkj = dict()
-        vkj['100_aastat_tagasi'] = isikud_synniajaga.filter(
-            hist_date__day=p2ev,
-            hist_date__month=kuu,
-            hist_date__year=(aasta - 100)
-        )
-        vkj['sel_p2eval'] = isikud_synniajaga.filter(hist_date__day=p2ev, hist_date__month=kuu)
-        vkj['sel_p2eval_kirjeid'] = len(vkj['sel_p2eval'])
-        vkj['sel_kuul'] = isikud_synniajaga.filter(hist_date__month=kuu).order_by('hist_date__day')
-        vkj['sel_kuul_kirjeid'] = len(vkj['sel_kuul'])
-        vkj['sel_p2eval_surnud'] = isikud_synniajaga.filter(hist_enddate__day=p2ev, hist_enddate__month=kuu)
-        vkj['sel_p2eval_surnud_kirjeid'] = len(vkj['sel_p2eval_surnud'])
-        vkj['sel_kuul_surnud'] = isikud_synniajaga.filter(hist_enddate__month=kuu).order_by('hist_enddate__day')
-        vkj['sel_kuul_surnud_kirjeid'] = len(vkj['sel_kuul_surnud'])
-        juubilarid = [
-            isik.id for isik in isikud_synniajaga if isik.vanus() % 5 == 0
-        ]
-        vkj['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'hist_date')
-        isik['vkj'] = vkj
-
-        # ukj andmed
-        isik['100_aastat_tagasi'] = isikud_synniajaga.filter(
-            dob__day=p2ev,
-            dob__month=kuu,
-            dob__year=(aasta - 100)
-        )
-        isik['sel_p2eval'] = isikud_synniajaga.filter(dob__day=p2ev, dob__month=kuu)
-        isik['sel_p2eval_kirjeid'] = len(isik['sel_p2eval'])
-        isik['sel_kuul'] = isikud_synniajaga.filter(dob__month=kuu).order_by(ExtractDay('dob'))
-        isik['sel_kuul_kirjeid'] = len(isik['sel_kuul'])
-        isik['sel_p2eval_surnud'] = isikud_synniajaga.filter(dod__day=p2ev, dod__month=kuu)
-        isik['sel_p2eval_surnud_kirjeid'] = len(isik['sel_p2eval_surnud'])
-        isik['sel_kuul_surnud'] = isikud_synniajaga.filter(dod__month=kuu).order_by(ExtractDay('dod'))
-        isik['sel_kuul_surnud_kirjeid'] = len(isik['sel_kuul_surnud'])
-        juubilarid = [
-            isik.id for isik in isikud_synniajaga if isik.vanus() % 5 == 0
-        ]
-        isik['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'dob')
-        andmed = {
-            'isik' : isik
-        }
-
-    return andmed
