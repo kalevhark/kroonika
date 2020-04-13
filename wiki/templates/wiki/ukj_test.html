@@ -179,12 +179,8 @@
       <span class="switch-right">vkj</span>
     </label>
   </div>
-  <div id="checkbox-value"></div>
   <div>
-    session:<br>
-    {% for item, value in request.session.items %}
-      <small>{{ item }}:{{ value }}</small><br>
-    {% endfor %}
+    <small>ukj: {{ request.session.ukj }}</small><br>
   </div>
   <!-- Sisu algab siit -->
   <div class="w3-row-padding w3-margin-bottom">
@@ -279,12 +275,45 @@
     );
   };
 
+  function get_organisatsioon_data(url) {
+    $.ajax(
+      {
+        url: url,
+        success: function(data) {
+          $('#algus_organisatsioon').html(data);
+        },
+        error: function (jqXHR, exception) {
+          var msg = '';
+          if (jqXHR.status === 0) {
+              msg = 'Not connect.\n Verify Network.';
+          } else if (jqXHR.status == 404) {
+              msg = 'Requested page not found. [404]';
+          } else if (jqXHR.status == 500) {
+              msg = 'Internal Server Error [500].';
+          } else if (exception === 'parsererror') {
+              msg = 'Requested JSON parse failed.';
+          } else if (exception === 'timeout') {
+              msg = 'Time out error.';
+          } else if (exception === 'abort') {
+              msg = 'Ajax request aborted.';
+          } else {
+              msg = 'Uncaught Error.\n' + jqXHR.responseText;
+          }
+          $('#algus_organisatsioon').html(msg);
+          <!-- Proovime 5 s pärast uuesti -->
+          {
+            window.setTimeout(get_organisatsioon_data(url), 5000);
+          };
+        },
+      }
+    );
+  };
+
   function get_objekt_data(url) {
     $.ajax(
       {
         url: url,
         success: function(data) {
-<!--          console.log(data);-->
           $('#algus_objekt').html(data);
         },
         error: function (jqXHR, exception) {
@@ -315,11 +344,12 @@
   };
 
   $( document ).ready(function() {
-    $('#checkbox-value').text(document.getElementById("checkbox1").checked);
+<!--    $('#checkbox-value').text(document.getElementById("checkbox1").checked);-->
     let ukj_state = ('{{ request.session.ukj }}'.length) > 0 ? Boolean({{ request.session.ukj }}) : false
 
     document.getElementById("checkbox1").checked = ukj_state;
     get_isik_data("{% url 'wiki:ukj_test_isik_detail' %}");
+    get_organisatsioon_data("{% url 'wiki:ukj_test_organisatsioon_detail' %}");
     get_objekt_data("{% url 'wiki:ukj_test_objekt_detail' %}");
 
     <!-- Loome triggeri, kui kalendrisüsteemi valik muutub -->
@@ -333,9 +363,10 @@
         .then((data) => {
           location.reload()
 <!--          get_isik_data("{% url 'wiki:ukj_test_isik_detail' %}");-->
+<!--          get_organisatsioon_data("{% url 'wiki:ukj_test_organisatsioon_detail' %}");-->
 <!--          get_objekt_data("{% url 'wiki:ukj_test_objekt_detail' %}");-->
         });
-      $('#checkbox-value').text(document.getElementById("checkbox1").checked);
+<!--      $('#checkbox-value').text(document.getElementById("checkbox1").checked);-->
     });
   });
 </script>

@@ -46,6 +46,7 @@ urlpatterns = [
     path('ukj_test/', views.ukj_test, name='ukj_test'),
     # path('ukj_test_detail/<str:ukj>/', views.ukj_test_detail, name='ukj_test_detail'),
     path('ukj_test_isik_detail/', views.ukj_test_isik_detail, name='ukj_test_isik_detail'),
+    path('ukj_test_organisatsioon_detail/', views.ukj_test_organisatsioon_detail, name='ukj_test_organisatsioon_detail'),
     path('ukj_test_objekt_detail/', views.ukj_test_objekt_detail, name='ukj_test_objekt_detail'),
     # path('j6ul2019/', views.special_j6ul2019, name='special_j6ul2019'),
     # path('users/', UserList.as_view()),

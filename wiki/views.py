@@ -1614,6 +1614,62 @@ def ukj_test_isik_detail(request):
         }
     )
 
+def ukj_test_organisatsioon_detail(request):
+    ukj_state = request.session.get('ukj')
+    p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
+    kuu = date.today().month  # str(kuu).zfill(2) -> KK
+    aasta = date.today().year
+
+    # Andmebaas Objekt andmed veebi
+    organisatsioon = dict()
+    kirjeid = Organisatsioon.objects.count()
+    organisatsioon['kirjeid'] = kirjeid
+
+    if kirjeid > 0:
+        organisatsioon['viimane_lisatud'] = Organisatsioon.objects.latest('inp_date')
+        organisatsioon['viimane_muudetud'] = Organisatsioon.objects.latest('mod_date')
+        organisatsioonid_daatumitega = Organisatsioon.objects.daatumitega(ukj_state)
+        organisatsioonid_synniajaga = organisatsioonid_daatumitega. \
+            exclude(
+            hist_date__isnull=True,
+            hist_year__isnull=True,
+        )
+        organisatsioonid_surmaajaga = organisatsioonid_daatumitega. \
+            exclude(
+            hist_enddate__isnull=True,
+            hist_endyear__isnull=True,
+        )
+
+        organisatsioon['100_aastat_tagasi'] = organisatsioonid_synniajaga.filter(
+            dob__day=p2ev,
+            dob__month=kuu,
+            dob__year=(aasta - 100)
+        )
+        organisatsioon['sel_p2eval'] = organisatsioonid_synniajaga.filter(dob__day=p2ev, dob__month=kuu)
+        organisatsioon['sel_p2eval_kirjeid'] = len(organisatsioon['sel_p2eval'])
+        organisatsioon['sel_kuul'] = organisatsioonid_synniajaga.filter(dob__month=kuu).order_by(ExtractDay('dob'))
+        organisatsioon['sel_kuul_kirjeid'] = len(organisatsioon['sel_kuul'])
+        # isik['sel_p2eval_surnud'] = isikud_synniajaga.filter(dod__day=p2ev, dod__month=kuu)
+        # isik['sel_p2eval_surnud_kirjeid'] = len(isik['sel_p2eval_surnud'])
+        # isik['sel_kuul_surnud'] = isikud_synniajaga.filter(dod__month=kuu).order_by(ExtractDay('dod'))
+        # isik['sel_kuul_surnud_kirjeid'] = len(isik['sel_kuul_surnud'])
+        juubilarid = [
+            organisatsioon.id for organisatsioon in organisatsioonid_synniajaga if organisatsioon.vanus() % 5 == 0
+        ]
+        organisatsioon['juubilarid'] = organisatsioonid_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'dob')
+
+    andmed = {
+        'organisatsioon': organisatsioon
+    }
+
+    return render(
+        request,
+        'wiki/ukj_test_organisatsioon_detail.html',
+        {
+            'andmed': andmed,
+        }
+    )
+
 def ukj_test_objekt_detail(request):
     ukj_state = request.session.get('ukj')
     p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
@@ -1629,44 +1685,6 @@ def ukj_test_objekt_detail(request):
         objekt['viimane_lisatud'] = Objekt.objects.latest('inp_date')
         objekt['viimane_muudetud'] = Objekt.objects.latest('mod_date')
         objektid_daatumitega = Objekt.objects.daatumitega(ukj_state)
-        # if ukj_state == 'true':
-        #     # Filtreerime objektid, kelle sünniaeg teada ukj
-        #     objektid_synniajaga = Objekt.objects. \
-        #         exclude(
-        #         hist_date__isnull=True,
-        #         hist_year__isnull=True
-        #     ). \
-        #         annotate(
-        #         dob=Case(
-        #             When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
-        #             When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
-        #             When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
-        #             When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
-        #             When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
-        #             default=F('hist_date'),
-        #             output_field=DateField()
-        #         ), \
-        #         doe=Case(
-        #             When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
-        #             When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
-        #             When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
-        #             When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
-        #             When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
-        #             default=F('hist_enddate'),
-        #             output_field=DateField()
-        #         )
-        #     )
-        # else:
-        #     # Filtreerime objektid, mille sünniaeg teada vkj
-        #     objektid_synniajaga = Objekt.objects. \
-        #         exclude(
-        #             hist_date__isnull=True,
-        #             hist_year__isnull=True
-        #         ). \
-        #         annotate(
-        #             dob=F('hist_date'),
-        #             doe=F('hist_enddate')
-        #         )
         objektid_synniajaga = objektid_daatumitega. \
             exclude(
             hist_date__isnull=True,
@@ -1705,8 +1723,6 @@ def ukj_test_objekt_detail(request):
         'wiki/ukj_test_objekt_detail.html',
         {
             'andmed': andmed,
-            # 'session_data': request.session,
-            # 'ukj': ukj,
         }
     )
 
