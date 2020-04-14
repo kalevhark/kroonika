@@ -816,11 +816,11 @@ class VihjeAdmin(admin.ModelAdmin):
     ]
     list_display = [
         'id',
+        'done',
         'inp_date',
         'lyhi_kirjeldus',
-        'kontakt',
         'http_referer',
-        'done'
+        'kontakt',
     ]
 
     def lyhi_kirjeldus(self, obj):
