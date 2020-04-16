@@ -37,6 +37,28 @@ def join(model_name, source_id, dest_id):
     new = model.objects.get(id=dest_id)
     print(f'Sihtobjekt: {new.id} {new}')
 
+    # Kirjeldus
+    sep = '\n\n+++\n\n'
+    if old.kirjeldus:
+        uus_kirjeldus = sep.join([new.kirjeldus, old.kirjeldus])
+        new.kirjeldus = uus_kirjeldus
+
+    # Daatumid
+    if old.hist_date:
+        if new.hist_date == None:
+            new.hist_date = old.hist_date
+    else:
+        if old.hist_year:
+            if new.hist_year == None:
+                new.hist_year = old.hist_year
+    if old.hist_enddate:
+        if new.hist_enddate == None:
+            new.hist_enddate = old.hist_enddate
+    else:
+        if old.hist_endyear:
+            if new.hist_endyear == None:
+                new.hist_endyear = old.hist_endyear
+
     # Seotud viited
     viited = old.viited.all()
     print('Viited:')
@@ -44,8 +66,18 @@ def join(model_name, source_id, dest_id):
         print(viide.id, viide)
         new.viited.add(viide)
 
-    # Seotud andmebaasid
+    # Seotud andmebaasid ja parameetrid
     if model_name == 'isik':
+        if old.synd_koht:
+            if new.synd_koht == None:
+                new.synd_koht = old.synd_koht
+        if old.surm_koht:
+            if new.surm_koht == None:
+                new.surm_koht = old.surm_koht
+        if old.maetud:
+            if new.maetud == None:
+                new.maetud = old.maetud
+
         print('Artiklid:')
         artiklid = Artikkel.objects.filter(isikud=old)
         for art in artiklid:
@@ -69,6 +101,10 @@ def join(model_name, source_id, dest_id):
             pilt.isikud.add(new)
             # pilt.isikud.remove(old)
     elif model_name == 'organisatsioon':
+        if old.hist_date == None:
+            if old.hist_month:
+                if new.month == None:
+                    new.month = old.month
         print('Artiklid:')
         artiklid = Artikkel.objects.filter(organisatsioonid=old)
         for art in artiklid:
@@ -87,6 +123,13 @@ def join(model_name, source_id, dest_id):
             pilt.organisatsioonid.add(new)
             # pilt.organisatsioonid.remove(old)
     elif model_name == 'objekt':
+        if old.hist_date == None:
+            if old.hist_month:
+                if new.month == None:
+                    new.month = old.month
+        if old.asukoht:
+            if new.asukoht == None:
+                new.asukoht = old.asukoht
         print('Artiklid:')
         artiklid = Artikkel.objects.filter(objektid=old)
         for art in artiklid:
@@ -99,6 +142,8 @@ def join(model_name, source_id, dest_id):
             print(pilt.id, pilt)
             pilt.objektid.add(new)
             # pilt.objektid.remove(old)
+    # Salvestame muudatused
+    new.save()
 
 # ühekordne fn lähteandmete korjamiseks massikande jaoks ariklitest
 def get_data4massikanne():

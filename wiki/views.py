@@ -1505,18 +1505,115 @@ def switch_vkj_ukj(request, ukj):
     return HttpResponse(ukj)
 
 def ukj_test(request):
+    artikkel_qs = artikkel_qs_userfilter(request.user)
+    andmed = {}  # Selle muutuja saadame veebi
+    p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
+    kuu = date.today().month  # str(kuu).zfill(2) -> KK
+    aasta = date.today().year
+
+    artikkel = dict()
+    artikkel['kirjeid'] = artikkel_qs.count()
+    artikkel['viimane_lisatud'] = artikkel_qs.latest('inp_date')
+    artikkel['viimane_muudetud'] = artikkel_qs.latest('mod_date')
+
+    isik = dict()
+    isik['kirjeid'] = Isik.objects.count()
+    isik['viimane_lisatud'] = Isik.objects.latest('inp_date')
+    isik['viimane_muudetud'] = Isik.objects.latest('mod_date')
+
+    organisatsioon = dict()
+    organisatsioon['kirjeid'] = Organisatsioon.objects.count()
+    organisatsioon['viimane_lisatud'] = Organisatsioon.objects.latest('inp_date')
+    organisatsioon['viimane_muudetud'] = Organisatsioon.objects.latest('mod_date')
+
+    objekt = dict()
+    objekt['kirjeid'] = Objekt.objects.count()
+    objekt['viimane_lisatud'] = Objekt.objects.latest('inp_date')
+    objekt['viimane_muudetud'] = Objekt.objects.latest('mod_date')
+
+    andmed = {
+        'artikkel': artikkel,
+        'isik': isik,
+        'organisatsioon': organisatsioon,
+        'objekt': objekt
+    }
+
     return render(
         request,
         'wiki/ukj_test.html',
         {
             # 'ukj_state': request.session.get('ukj'),
             # 'session_data': request.session,
-            # 'isikud': isikud,
+            'andmed': andmed,
         }
     )
 
+def ukj_test_artikkel_detail(request):
+    # Filtreerime artiklite hulga kasutaja järgi
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+
+    p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
+    kuu = date.today().month  # str(kuu).zfill(2) -> KK
+    aasta = date.today().year
+
+    # Andmebaas Artikkel andmed veebi
+    a = dict()
+    kirjeid = artikkel_qs.count()
+    a['kirjeid'] = kirjeid
+    if kirjeid > 0:
+        a['viimane_lisatud'] = artikkel_qs.latest('inp_date')
+        a['viimane_muudetud'] = artikkel_qs.latest('mod_date')
+        # Samal kuupäeval erinevatel aastatel toimunud
+        sel_p2eval_exactly = artikkel_qs.filter(  # hist_date == KKPP
+            dob__day=p2ev,
+            dob__month=kuu
+        )
+        sel_p2eval_inrange = inrange_dates_artikkel(artikkel_qs, p2ev, kuu)  # hist_date < KKPP <= hist_enddate
+        sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
+        sel_p2eval_kirjeid = len(sel_p2eval)
+        if sel_p2eval_kirjeid > 5:  # Kui leiti rohkem kui viis kirjet võetakse 2 algusest + 1 keskelt + 2 lõpust
+            a['sel_p2eval'] = sel_p2eval[:2] + sel_p2eval[int(sel_p2eval_kirjeid / 2 - 1):int(
+                sel_p2eval_kirjeid / 2)] + sel_p2eval[sel_p2eval_kirjeid - 2:]
+        else:
+            a['sel_p2eval'] = sel_p2eval
+        a['sel_p2eval_kirjeid'] = sel_p2eval_kirjeid
+        # Samal kuul toimunud TODO: probleem kui hist_searchdate__month ja hist_enddate__month ei ole järjest
+        sel_kuul = artikkel_qs.filter(Q(dob__month=kuu) | Q(doe__month=kuu))
+        sel_kuul_kirjeid = len(sel_kuul)
+        if sel_kuul_kirjeid > 9:  # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
+            a['sel_kuul'] = (
+                    sel_kuul[:4] +
+                    sel_kuul[int(sel_kuul_kirjeid / 2 - 1):int(sel_kuul_kirjeid / 2)] +
+                    sel_kuul[sel_kuul_kirjeid - 4:]
+            )
+        else:
+            a['sel_kuul'] = sel_kuul
+        a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
+        # 100 aastat tagasi toimunud
+        a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(dob__year=(aasta - 100))
+        a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:20]  # 20 loetumat artiklit
+        # Koondnäitajad aastate ja kuude kaupa
+        artikleid_aasta_kaupa = Artikkel.objects.values('hist_year').annotate(Count('hist_year')).order_by('hist_year')
+        a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
+        artikleid_kuu_kaupa = Artikkel.objects.values('hist_year', 'hist_month').annotate(Count('hist_month')).order_by(
+            'hist_year', 'hist_month')
+        a['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
+
+    andmed = {
+        'artikkel': a
+    }
+
+    return render(
+        request,
+        'wiki/ukj_test_artikkel_detail.html',
+        {
+            'andmed': andmed,
+        }
+    )
+
+
 def ukj_test_isik_detail(request):
-    ukj_state = request.session.get('ukj', 'false')
+    # ukj_state = request.session.get('ukj', 'false')
     p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
     kuu = date.today().month  # str(kuu).zfill(2) -> KK
     aasta = date.today().year
@@ -1527,51 +1624,9 @@ def ukj_test_isik_detail(request):
     isik['kirjeid'] = kirjeid
 
     if kirjeid > 0:
+        isikud_daatumitega = Isik.objects.daatumitega(request)
         isik['viimane_lisatud'] = Isik.objects.latest('inp_date')
         isik['viimane_muudetud'] = Isik.objects.latest('mod_date')
-        isikud_daatumitega = Isik.objects.daatumitega(ukj_state)
-        # if ukj_state == 'true':
-        #     # Filtreerime isikud, kelle kohta on teada sünni/surmaaeg teada ukj
-        #     isikud_daatumitega = Isik.objects. \
-        #         exclude(
-        #         hist_date__isnull=True,
-        #         hist_year__isnull=True,
-        #         hist_enddate__isnull=True,
-        #         hist_endyear__isnull=True,
-        #     ). \
-        #         annotate(
-        #         dob=Case(
-        #             When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
-        #             When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
-        #             When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
-        #             When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
-        #             When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
-        #             default=F('hist_date'),
-        #             output_field=DateField()
-        #         ), \
-        #         dod=Case(
-        #             When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
-        #             When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
-        #             When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
-        #             When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
-        #             When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
-        #             default=F('hist_enddate'),
-        #             output_field=DateField()
-        #         )
-        #     )
-        # else:
-        #     # Filtreerime isikud, kelle sünniaeg teada vkj
-        #     isikud_daatumitega = Isik.objects. \
-        #         exclude(
-        #             hist_date__isnull=True,
-        #             hist_year__isnull=True,
-        #             hist_enddate__isnull=True,
-        #             hist_endyear__isnull=True,
-        #         ). \
-        #         annotate(
-        #             dob=F('hist_date'),
-        #             dod=F('hist_enddate')
-        #         )
         isikud_synniajaga = isikud_daatumitega. \
             exclude(
             hist_date__isnull=True,
@@ -1609,13 +1664,11 @@ def ukj_test_isik_detail(request):
         'wiki/ukj_test_isik_detail.html',
         {
             'andmed': andmed,
-            # 'session_data': request.session,
-            # 'ukj': ukj,
         }
     )
 
 def ukj_test_organisatsioon_detail(request):
-    ukj_state = request.session.get('ukj')
+    # ukj_state = request.session.get('ukj')
     p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
     kuu = date.today().month  # str(kuu).zfill(2) -> KK
     aasta = date.today().year
@@ -1628,7 +1681,7 @@ def ukj_test_organisatsioon_detail(request):
     if kirjeid > 0:
         organisatsioon['viimane_lisatud'] = Organisatsioon.objects.latest('inp_date')
         organisatsioon['viimane_muudetud'] = Organisatsioon.objects.latest('mod_date')
-        organisatsioonid_daatumitega = Organisatsioon.objects.daatumitega(ukj_state)
+        organisatsioonid_daatumitega = Organisatsioon.objects.daatumitega(request)
         organisatsioonid_synniajaga = organisatsioonid_daatumitega. \
             exclude(
             hist_date__isnull=True,
@@ -1671,7 +1724,7 @@ def ukj_test_organisatsioon_detail(request):
     )
 
 def ukj_test_objekt_detail(request):
-    ukj_state = request.session.get('ukj')
+    # ukj_state = request.session.get('ukj')
     p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
     kuu = date.today().month  # str(kuu).zfill(2) -> KK
     aasta = date.today().year
@@ -1684,7 +1737,7 @@ def ukj_test_objekt_detail(request):
     if kirjeid > 0:
         objekt['viimane_lisatud'] = Objekt.objects.latest('inp_date')
         objekt['viimane_muudetud'] = Objekt.objects.latest('mod_date')
-        objektid_daatumitega = Objekt.objects.daatumitega(ukj_state)
+        objektid_daatumitega = Objekt.objects.daatumitega(request)
         objektid_synniajaga = objektid_daatumitega. \
             exclude(
             hist_date__isnull=True,

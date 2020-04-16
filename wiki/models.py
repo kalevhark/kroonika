@@ -152,10 +152,60 @@ def filtered_queryset_with_dob_doe(initial_queryset, ukj_state):
 
 # Filtreerime isikud, kelle kohta on teada sünni/surmaaeg teada vastavalt valikule vkj/ukj
 class DaatumitegaManager(models.Manager):
-    def daatumitega(self, ukj_state='false'):
-        initial_queryset = super().get_queryset()
-        return filtered_queryset_with_dob_doe(initial_queryset, ukj_state)
 
+    def daatumitega(self, request):
+        ukj_state = request.session.get('ukj', 'false')
+        initial_queryset = super().get_queryset()
+        if initial_queryset.model.__name__ == 'Artikkel':
+            if not (request.user.is_authenticated and request.user.is_staff):
+                    initial_queryset = initial_queryset.filter(kroonika__isnull=True)
+            filtered_queryset = initial_queryset. \
+                exclude(
+                hist_date__isnull=True,
+                hist_year__isnull=True,
+                hist_enddate__isnull=True,
+            )
+        else:
+            filtered_queryset = initial_queryset. \
+                exclude(
+                hist_date__isnull=True,
+                hist_year__isnull=True,
+                hist_enddate__isnull=True,
+                hist_endyear__isnull=True,
+            )
+        if ukj_state == 'true':  # ukj
+            filtered_queryset = filtered_queryset. \
+                annotate(
+                dob=Case(
+                    When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
+                    When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
+                    When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
+                    When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
+                    When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
+                    default=F('hist_date'),
+                    output_field=DateField()
+                ), \
+                doe=Case(
+                    When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
+                    When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
+                    When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
+                    When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
+                    When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
+                    default=F('hist_enddate'),
+                    output_field=DateField()
+                )
+            )
+        else:  # vkj
+            filtered_queryset = filtered_queryset. \
+                annotate(
+                dob=F('hist_date'),
+                doe=F('hist_enddate')
+            )
+        return filtered_queryset
+
+#
+# Allikad: raamatud. ajakirjandusväljaanded, veebilehed, arhiivid jne
+#
 class Allikas(models.Model):
     """
     Raamatu, ajakirja, ajalehe, andmebaasi või fondi andmed

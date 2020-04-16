@@ -1,7 +1,6 @@
 {% now "d" as p2ev %}
 {% now "m" as kuu %}
 {% now "Y" as aasta %}
-{{ andmed.organisatsioon.kirjeid }}
 {% if andmed.organisatsioon.sel_p2eval %}
   <h5>
     <a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_organisatsioonid">

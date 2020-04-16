@@ -172,15 +172,20 @@
 
 {% block content %}
 <div class="w3-container">
-  <h4>Katseline lehekülg, kus on võimalik vaadata vkj <-> ukj</h4>
+  <h4>Katseline lehekülg, kus on võimalik vaadata vkj <-> ukj - ukj: {{ request.session.ukj }}</h4>
   <div class="mid">
     <label class="rocker rocker-small" title="vana või uus kalender?"><input type="checkbox" id="checkbox1">
       <span class="switch-left">ukj</span>
       <span class="switch-right">vkj</span>
     </label>
   </div>
-  <div>
-    <small>ukj: {{ request.session.ukj }}</small><br>
+  {% load crispy_forms_tags %}
+  <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">
+    {% crispy feedbackform %}
+  </div>
+	<!-- Lingid teemalehtedele -->
+	<div class="w3-row-padding w3-margin-bottom">
+    {% include 'wiki/includes/algus_head.html' %}
   </div>
   <!-- Sisu algab siit -->
   <div class="w3-row-padding w3-margin-bottom">
@@ -233,13 +238,47 @@
     </div>
   </div>
   <div class="w3-row-padding w3-margin-bottom w3-hide-small">
-<!--    {% include 'wiki/includes/algus_foot.html' %}-->
+    {% include 'wiki/includes/algus_foot.html' %}
   </div>
 </div>
 {% endblock %}
 
 {% block javascript %}
 <script>
+  function get_artikkel_data(url) {
+    $.ajax(
+      {
+        url: url,
+        success: function(data) {
+          $('#algus_artikkel').html(data);
+        },
+        error: function (jqXHR, exception) {
+          var msg = '';
+          if (jqXHR.status === 0) {
+              msg = 'Not connect.\n Verify Network.';
+          } else if (jqXHR.status == 404) {
+              msg = 'Requested page not found. [404]';
+          } else if (jqXHR.status == 500) {
+              msg = 'Internal Server Error [500].';
+          } else if (exception === 'parsererror') {
+              msg = 'Requested JSON parse failed.';
+          } else if (exception === 'timeout') {
+              msg = 'Time out error.';
+          } else if (exception === 'abort') {
+              msg = 'Ajax request aborted.';
+          } else {
+              msg = 'Uncaught Error.\n' + jqXHR.responseText;
+          }
+          $('#algus_artikkel').html(msg);
+          <!-- Proovime 5 s pärast uuesti -->
+          {
+            window.setTimeout(get_artikkel_data(url), 50000);
+          };
+        },
+      }
+    );
+  };
+
   function get_isik_data(url) {
     $.ajax(
       {
@@ -267,7 +306,7 @@
           $('#algus_isik').html(msg);
           <!-- Proovime 5 s pärast uuesti -->
           {
-            window.setTimeout(get_isik_data(url), 5000);
+            window.setTimeout(get_isik_data(url), 50000);
           };
         },
       }
@@ -301,7 +340,7 @@
           $('#algus_organisatsioon').html(msg);
           <!-- Proovime 5 s pärast uuesti -->
           {
-            window.setTimeout(get_organisatsioon_data(url), 5000);
+            window.setTimeout(get_organisatsioon_data(url), 50000);
           };
         },
       }
@@ -335,7 +374,7 @@
           $('#algus_objekt').html(msg);
           <!-- Proovime 5 s pärast uuesti -->
           {
-            window.setTimeout(get_objekt_data(url), 5000);
+            window.setTimeout(get_objekt_data(url), 50000);
           };
         },
       }
@@ -347,6 +386,7 @@
     let ukj_state = ('{{ request.session.ukj }}'.length) > 0 ? Boolean({{ request.session.ukj }}) : false
 
     document.getElementById("checkbox1").checked = ukj_state;
+    get_artikkel_data("{% url 'wiki:ukj_test_artikkel_detail' %}");
     get_isik_data("{% url 'wiki:ukj_test_isik_detail' %}");
     get_organisatsioon_data("{% url 'wiki:ukj_test_organisatsioon_detail' %}");
     get_objekt_data("{% url 'wiki:ukj_test_objekt_detail' %}");
