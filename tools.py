@@ -393,3 +393,13 @@ def update_peatykk_from_url():
                 pass
         else:
             print('-')
+
+def task7414():
+    art = Artikkel.objects.get(id=7414)
+    pil = Pilt.objects.get(id=2612)
+    for isik in art.isikud.all():
+        print(isik)
+        # pil.isikud.add(isik)
+    for obj in art.objektid.all():
+        print(obj)
+        # pil.objektid.add(obj)

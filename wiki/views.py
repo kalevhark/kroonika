@@ -1548,8 +1548,6 @@ def ukj_test(request):
         request,
         'wiki/ukj_test.html',
         {
-            # 'ukj_state': request.session.get('ukj'),
-            # 'session_data': request.session,
             'andmed': andmed,
         }
     )
@@ -1606,8 +1604,40 @@ def ukj_test_artikkel_detail(request):
         a['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
 
     andmed = {
-        'artikkel': a
+        'artikkel': a,
+        'isik' : {
+            '100_aastat_tagasi': Isik.objects.daatumitega(request).filter(
+                dob__day=p2ev,
+                dob__month=kuu,
+                dob__year=(aasta - 100)
+            )
+        },
+        'organisatsioon': {
+            '100_aastat_tagasi': Organisatsioon.objects.daatumitega(request).filter(
+                dob__day=p2ev,
+                dob__month=kuu,
+                dob__year=(aasta - 100)
+            )
+        },
+        'objekt': {
+            '100_aastat_tagasi': Objekt.objects.daatumitega(request).filter(
+                dob__day=p2ev,
+                dob__month=kuu,
+                dob__year=(aasta - 100)
+            )
+        },
     }
+
+
+    # Kas on 100 aastat tagasi toimunud asju?
+    andmed['100_aastat_tagasi'] = any(
+        [
+            andmed['artikkel']['100_aastat_tagasi'],
+            andmed['isik']['100_aastat_tagasi'],
+            andmed['organisatsioon']['100_aastat_tagasi'],
+            andmed['objekt']['100_aastat_tagasi'],
+        ]
+    )
 
     return render(
         request,
