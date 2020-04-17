@@ -490,16 +490,22 @@ def algus(request):
 # Tagastab kõik artiklid, kus hist_date < KKPP <= hist_enddate vahemikus
 #
 def inrange_dates_artikkel(qs, p2ev, kuu):
-    # Vaatleme ainult algus ja lõpuajaga ridasid
-    q = qs.filter(
-        hist_date__isnull=False,
-        hist_enddate__isnull=False
-    )
-    # Jätame välja read, kus hist_date == KKPP
-    q = q.exclude(
-        hist_date__month=kuu,
-        hist_date__day=p2ev
-    )
+    try:
+        q = qs.filter(  # Vaatleme ainult algus ja lõpuajaga ridasid1
+            dob__isnull=False,
+            doe__isnull=False
+        ).exclude(  # Jätame välja read, kus hist_date == KKPP
+            dob__month=kuu,
+            dob__day=p2ev
+        )
+    except:
+        q = qs.filter( # Vaatleme ainult algus ja lõpuajaga ridasid1
+            hist_date__isnull=False,
+            hist_enddate__isnull=False
+        ).exclude( # Jätame välja read, kus hist_date == KKPP
+            hist_date__month=kuu,
+            hist_date__day=p2ev
+        )
     kkpp_string = str(kuu).zfill(2)+str(p2ev).zfill(2)
     id_list = [art.id for art in q if kkpp_string in art.hist_dates_string]
     return qs.filter(id__in=id_list) # queryset

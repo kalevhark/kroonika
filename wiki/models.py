@@ -1132,12 +1132,18 @@ class Artikkel(models.Model):
 
     @property # TODO: Selleks et otsida kuupäeva, mis jääb alguse ja lõpu vahele [str in hist_dates_string]
     def hist_dates_string(self):
-        tekst = f'{str(self.hist_date.month).zfill(2)}{str(self.hist_date.day).zfill(2)}'
-        if all([self.hist_date, self.hist_enddate]):
-            vahemik = (self.hist_enddate - self.hist_date).days
+        try:
+            dob = self.dob
+            doe = self.doe
+        except:
+            dob = self.hist_date
+            doe = self.hist_enddate
+        tekst = f'{str(dob.month).zfill(2)}{str(dob.day).zfill(2)}'
+        if all([dob, doe]):
+            vahemik = (doe - dob).days
             if vahemik < 100: # kui on loogiline vahemik (max 100 päeva)
                 for n in range(vahemik):
-                    vahemiku_p2ev = self.hist_date + timedelta(days=n+1)
+                    vahemiku_p2ev = dob + timedelta(days=n+1)
                     vahemiku_p2eva_string = f' {str(vahemiku_p2ev.month).zfill(2)}{str(vahemiku_p2ev.day).zfill(2)}'
                     tekst += vahemiku_p2eva_string
         return tekst
