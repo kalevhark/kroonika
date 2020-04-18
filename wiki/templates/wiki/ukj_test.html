@@ -51,8 +51,8 @@
   }
 
   .rocker-small {
-    font-size: 0.75em; /* Sizes the switch */
-    margin: 1em;
+    font-size: 0.5em; /* Sizes the switch */
+    /* margin: 1em; */
   }
 
   .rocker::before {
@@ -172,13 +172,13 @@
 
 {% block content %}
 <div class="w3-container">
-  <h4>Katseline lehekülg, kus on võimalik vaadata vkj <-> ukj - ukj: {{ request.session.ukj }}</h4>
-  <div class="mid">
+  <h4>Katseline lehekülg, kus on võimalik vaadata vkj <-> ukj</h4>
+  <!--<div id="checkbox_ukjvkj" style="visibility:hidden;">
     <label class="rocker rocker-small" title="vana või uus kalender?"><input type="checkbox" id="checkbox1">
       <span class="switch-left">ukj</span>
       <span class="switch-right">vkj</span>
     </label>
-  </div>
+  </div>-->
   {% load crispy_forms_tags %}
   <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">
     {% crispy feedbackform %}
@@ -194,6 +194,7 @@
     {% now "Y" as aasta %}
     <!-- Artiklite esitlus -->
 	  <div class="w3-quarter">
+      <small>ukj: {{ request.session.ukj }}</small><br>
       <!-- Teadete esitamiseks -->
 <!--      <div class="w3-container w3-hover-white">-->
 <!--        {% include 'wiki/includes/wiki_message.html' %}-->
@@ -204,18 +205,21 @@
     </div>
     <!-- Isikute esitlus -->
     <div class="w3-quarter">
+      <small>ukj: {{ request.session.ukj }}</small><br>
       <div class="w3-container w3-padding-16 w3-hover-white">
         <div id="algus_isik"></div>
       </div>
     </div>
     <!-- Organisatsioonide esitlus -->
     <div class="w3-quarter">
+      <small>ukj: {{ request.session.ukj }}</small><br>
       <div class="w3-container w3-padding-16 w3-hover-white">
         <div id="algus_organisatsioon"></div>
       </div>
     </div>
 	  <!-- Objektide esitlus -->
     <div class="w3-quarter">
+      <small>ukj: {{ request.session.ukj }}</small><br>
       <div class="w3-container w3-padding-16 w3-hover-white">
         <div id="algus_objekt"></div>
       </div>
@@ -384,8 +388,12 @@
   $( document ).ready(function() {
 <!--    $('#checkbox-value').text(document.getElementById("checkbox1").checked);-->
     let ukj_state = ('{{ request.session.ukj }}'.length) > 0 ? Boolean({{ request.session.ukj }}) : false
-
+    <!-- näitame kalendrivahetuse nuppu ja valime salvetatud seisu -->
+    let checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
+    checkboxUkjVkj.style.visibility = 'visible';
     document.getElementById("checkbox1").checked = ukj_state;
+
+    <!-- näitame sisu -->
     get_artikkel_data("{% url 'wiki:ukj_test_artikkel_detail' %}");
     get_isik_data("{% url 'wiki:ukj_test_isik_detail' %}");
     get_organisatsioon_data("{% url 'wiki:ukj_test_organisatsioon_detail' %}");
