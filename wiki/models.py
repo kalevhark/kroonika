@@ -106,66 +106,69 @@ def escape_numberdot(string):
 
 # Tagastab andmebaasi kanded, millel on hist_date, hist_year, hist_enddate, hist_endyear andmed
 # koos ukj v6i vkj arvutamisega
-def filtered_queryset_with_dob_doe(initial_queryset, ukj_state):
-    if ukj_state == 'true': # ukj
-        filtered_queryset = initial_queryset. \
-            exclude(
-            hist_date__isnull=True,
-            hist_year__isnull=True,
-            hist_enddate__isnull=True,
-            hist_endyear__isnull=True,
-        ). \
-            annotate(
-            dob=Case(
-                When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
-                When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
-                When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
-                When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
-                When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
-                default=F('hist_date'),
-                output_field=DateField()
-            ), \
-            doe=Case(
-                When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
-                When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
-                When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
-                When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
-                When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
-                default=F('hist_enddate'),
-                output_field=DateField()
-            )
-        )
-    else: # vkj
-        filtered_queryset = initial_queryset. \
-            exclude(
-            hist_date__isnull=True,
-            hist_year__isnull=True,
-            hist_enddate__isnull = True,
-            hist_endyear__isnull = True
-        ). \
-            annotate(
-            dob=F('hist_date'),
-            doe=F('hist_enddate')
-        )
-    return filtered_queryset
+# def filtered_queryset_with_dob_doe(initial_queryset, ukj_state):
+#     if ukj_state == 'true': # ukj
+#         filtered_queryset = initial_queryset. \
+#             exclude(
+#             hist_date__isnull=True,
+#             hist_year__isnull=True,
+#             hist_enddate__isnull=True,
+#             hist_endyear__isnull=True,
+#         ). \
+#             annotate(
+#             dob=Case(
+#                 When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
+#                 When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
+#                 When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
+#                 When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
+#                 When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
+#                 default=F('hist_date'),
+#                 output_field=DateField()
+#             ), \
+#             doe=Case(
+#                 When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
+#                 When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
+#                 When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
+#                 When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
+#                 When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
+#                 default=F('hist_enddate'),
+#                 output_field=DateField()
+#             )
+#         )
+#     else: # vkj
+#         filtered_queryset = initial_queryset. \
+#             exclude(
+#             hist_date__isnull=True,
+#             hist_year__isnull=True,
+#             hist_enddate__isnull = True,
+#             hist_endyear__isnull = True
+#         ). \
+#             annotate(
+#             dob=F('hist_date'),
+#             doe=F('hist_enddate')
+#         )
+#     return filtered_queryset
 
 
-# Filtreerime isikud, kelle kohta on teada sünni/surmaaeg teada vastavalt valikule vkj/ukj
+# Filtreerime kanded, mille kohta on teada daatumid vastavalt valikule vkj/ukj
 class DaatumitegaManager(models.Manager):
 
     def daatumitega(self, request):
         ukj_state = request.session.get('ukj', 'false')
         initial_queryset = super().get_queryset()
         if initial_queryset.model.__name__ == 'Artikkel':
+            # Kui andmebaas on Artikkel, siis filtreerime kasutaja järgi
             if not (request.user.is_authenticated and request.user.is_staff):
-                    initial_queryset = initial_queryset.filter(kroonika__isnull=True)
+                initial_queryset = initial_queryset.filter(kroonika__isnull=True)
+            # Filtreerime välja ilma daatumiteta kirjed
             filtered_queryset = initial_queryset. \
                 exclude(
                 hist_date__isnull=True,
                 hist_year__isnull=True,
                 hist_enddate__isnull=True,
             )
-        else:
+        else: # Kui andmebaas on Isik, Organisatsioon, Objekt
+            # Filtreerime välja ilma daatumiteta kirjed
             filtered_queryset = initial_queryset. \
                 exclude(
                 hist_date__isnull=True,
@@ -173,9 +176,11 @@ class DaatumitegaManager(models.Manager):
                 hist_enddate__isnull=True,
                 hist_endyear__isnull=True,
             )
+        # Arvutame abiväljad vastavalt kasutaja kalendrieelistusele
+        # dob: day of begin|birth
+        # dow: day of end
         if ukj_state == 'true':  # ukj
-            filtered_queryset = filtered_queryset. \
-                annotate(
+            filtered_queryset = filtered_queryset.annotate(
                 dob=Case(
                     When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
                     When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
@@ -184,7 +189,7 @@ class DaatumitegaManager(models.Manager):
                     When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
                     default=F('hist_date'),
                     output_field=DateField()
-                ), \
+                ),
                 doe=Case(
                     When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
                     When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
@@ -196,8 +201,7 @@ class DaatumitegaManager(models.Manager):
                 )
             )
         else:  # vkj
-            filtered_queryset = filtered_queryset. \
-                annotate(
+            filtered_queryset = filtered_queryset.annotate(
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )

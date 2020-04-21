@@ -94,7 +94,7 @@ def wiki_base_info(request):
     if user.is_authenticated and user.is_staff:
         # Vaatame ainult viimase 24h kandeid
         tagasi24h = timezone.now() - timedelta(days=1)
-        data['feedbacks'] = Vihje.objects.filter(inp_date__gt=tagasi24h).count()
+        data['feedbacks'] = Vihje.objects.filter(end_date__isnull=True, inp_date__gt=tagasi24h).count()
         data['comments'] = Comment.objects.filter(created_on__gt=tagasi24h).count()
     # print(data)
     return JsonResponse(data)
@@ -104,7 +104,8 @@ def wiki_base_info(request):
 #
 def info(request):
     # Filtreerime artiklite hulga kasutaja järgi
-    artikkel_qs = artikkel_qs_userfilter(request.user)
+    # artikkel_qs = artikkel_qs_userfilter(request.user)
+    artikkel_qs = Artikkel.objects.daatumitega(request)
     andmebaasid = []
     # Allikad ja viited
     tyhjad_viited = Viide.objects.annotate(
@@ -114,7 +115,11 @@ def info(request):
         num_obj=Count('objekt__id'),
         num_pilt=Count('pilt__id')
     ).filter(
-        num_art=0, num_isik=0, num_org=0, num_obj=0, num_pilt=0
+        num_art=0,
+        num_isik=0,
+        num_org=0,
+        num_obj=0,
+        num_pilt=0
     ).count()
     andmebaasid.append(
         ' '.join(
@@ -194,17 +199,25 @@ def info(request):
         artikleid_kuus_max = 1 # kui ei ole artikleid sisestatud
     # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
-    revision_data['kroonika'] = artikkel_qs.filter(kroonika__isnull=False).count()
-    revision_data['revised'] = artikkel_qs.filter(kroonika__isnull=False).annotate(num_viited=Count('viited')).filter(num_viited__gt=1)
+    revision_data['kroonika'] = artikkel_qs.\
+        filter(kroonika__isnull=False).\
+        count()
+    revision_data['revised'] = artikkel_qs.\
+        filter(kroonika__isnull=False).\
+        annotate(num_viited=Count('viited')).\
+        filter(num_viited__gt=1)
 
      # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
     # Koondnäitajad aastate ja kuude kaupa
     # import json
     a = dict()
-    artikleid_aasta_kaupa = artikkel_qs.filter(hist_searchdate__isnull=False).values('hist_year').annotate(Count('hist_year')).order_by('-hist_year')
+    artikleid_aasta_kaupa = artikkel_qs.\
+        filter(hist_searchdate__isnull=False).\
+        values('hist_year').\
+        annotate(Count('hist_year')).\
+        order_by('-hist_year')
     a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
-    # artikleid_kuu_kaupa = Artikkel.objects.values('hist_year', 'hist_month').annotate(Count('hist_month')).order_by('hist_year', 'hist_month')
 
     # Andmed süsteemi olukorra kohta
     media_root = settings.MEDIA_ROOT
@@ -228,7 +241,6 @@ def info(request):
         'a': a,
         'system_state': system_state,
         'num_visits': num_visits,
-        # 'recaptcha_key': settings.GOOGLE_RECAPTCHA_PUBLIC_KEY,
         'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
     }
 
@@ -303,7 +315,8 @@ def feedback(request):
 #
 def algus(request):
     # Filtreerime artiklite hulga kasutaja järgi
-    artikkel_qs = artikkel_qs_userfilter(request.user)
+    # artikkel_qs = artikkel_qs_userfilter(request.user)
+    artikkel_qs = Artikkel.objects.daatumitega(request)
     andmed = {} # Selle muutuja saadame veebi
     p2ev = date.today().day # str(p2ev).zfill(2) -> PP
     kuu = date.today().month # str(kuu).zfill(2) -> KK
@@ -324,8 +337,12 @@ def algus(request):
         sel_p2eval_inrange = inrange_dates_artikkel(artikkel_qs, p2ev, kuu) # hist_date < KKPP <= hist_enddate
         sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
         sel_p2eval_kirjeid = len(sel_p2eval)
-        if sel_p2eval_kirjeid > 5: # Kui leiti rohkem kui viis kirjet võetakse 2 algusest + 1 keskelt + 2 lõpust
-            a['sel_p2eval'] = sel_p2eval[:2] + sel_p2eval[int(sel_p2eval_kirjeid/2-1):int(sel_p2eval_kirjeid/2)] + sel_p2eval[sel_p2eval_kirjeid-2:]
+        if sel_p2eval_kirjeid > 7: # Kui leiti rohkem kui 7 kirjet võetakse 3 algusest + 1 keskelt + 3 lõpust
+            a['sel_p2eval'] = (
+                sel_p2eval[:3] +
+                sel_p2eval[int(sel_p2eval_kirjeid/2-1):int(sel_p2eval_kirjeid/2)] +
+                sel_p2eval[sel_p2eval_kirjeid-3:]
+            )
         else:
             a['sel_p2eval'] = sel_p2eval
         a['sel_p2eval_kirjeid'] = sel_p2eval_kirjeid
@@ -334,9 +351,9 @@ def algus(request):
         sel_kuul_kirjeid = len(sel_kuul)
         if sel_kuul_kirjeid > 9: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
             a['sel_kuul'] = (
-                    sel_kuul[:4] +
-                    sel_kuul[int(sel_kuul_kirjeid/2-1):int(sel_kuul_kirjeid/2)] +
-                    sel_kuul[sel_kuul_kirjeid-4:]
+                sel_kuul[:4] +
+                sel_kuul[int(sel_kuul_kirjeid/2-1):int(sel_kuul_kirjeid/2)] +
+                sel_kuul[sel_kuul_kirjeid-4:]
             )
         else:
             a['sel_kuul'] = sel_kuul
@@ -621,20 +638,15 @@ class ArtikkelDetailView(generic.DetailView):
         # Järjestame artiklid kronoloogiliselt
         loend = list(artikkel_qs.values_list('id', flat=True))
         # Leiame valitud artikli järjekorranumbri
-        # n = next((i for i, x in enumerate(loend) if x['id'] == obj_id), -1)
         n = loend.index(obj_id)
         context['n'] = n
         if n > -1:
             # Leiame ajaliselt järgneva artikli
             if n < (len(loend) - 1):
                 context['next_obj'] = artikkel_qs.get(id=loend[n + 1])
-                # context['next_obj'] = artikkel_qs.get(id=loend[n+1]['id'])
             # Leiame ajaliselt eelneva artikli
             if n > 0:
                 context['prev_obj'] = artikkel_qs.get(id=loend[n - 1])
-                # context['prev_obj'] = artikkel_qs.get(id=loend[n-1]['id'])
-        # Lisame vihjevormi
-        # context['feedbackform'] = VihjeForm()
         return context
 
     def get_object(self):
@@ -966,7 +978,6 @@ class ArtikkelYearArchiveView(YearArchiveView):
 
 
 class ArtikkelMonthArchiveView(MonthArchiveView):
-    # queryset = Artikkel.objects.all()
     date_field = 'hist_searchdate'
     make_object_list = True
     allow_future = True

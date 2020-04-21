@@ -394,7 +394,8 @@ def update_peatykk_from_url():
         else:
             print('-')
 
-def task7358():
+# Lisab artiklile lisatud pildile isikud ja objektid
+def task_art7358():
     art = Artikkel.objects.get(id=7358)
     pil = Pilt.objects.get(id=2625)
     for isik in art.isikud.all():
@@ -403,3 +404,27 @@ def task7358():
     for obj in art.objektid.all():
         print(obj)
         # pil.objektid.add(obj)
+
+# Kannab object andmed obj -> org
+def task_org3050:
+    obj = Objekt.objects.get(id=119)
+    org = Organisatsioon.objects.get(id=3050)
+    print(f'{obj} -> {org}')
+    # Artiklid
+    artiklid = Artikkel.objects.filter(objektid__in=obj)
+    for artikkel in artiklid:
+        print(artikkel)
+        # artikkel.organisatsioonid.add(org)
+    # Pildid
+    for pilt in obj.pildid.all():
+        print(pilt)
+        # pilt.organisatsioonid.add(org)
+    # Isikud
+    isikud = Isik.objects.filter(objektid__in=obj)
+    for isik in isikud:
+        print(isik)
+        # isik.organisatsioonid.add(org)
+
+
+
+
