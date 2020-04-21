@@ -406,7 +406,7 @@ def task_art7358():
         # pil.objektid.add(obj)
 
 # Kannab object andmed obj -> org
-def task_org3050:
+def task_org3050():
     obj = Objekt.objects.get(id=119)
     org = Organisatsioon.objects.get(id=3050)
     print(f'{obj} -> {org}')
@@ -416,7 +416,8 @@ def task_org3050:
         print(artikkel)
         # artikkel.organisatsioonid.add(org)
     # Pildid
-    for pilt in obj.pildid.all():
+    pildid = Pilt.objects.filter(objektid__in=obj)
+    for pilt in pildid:
         print(pilt)
         # pilt.organisatsioonid.add(org)
     # Isikud
