@@ -72,7 +72,7 @@ def check_recaptcha(request):
         return False
 
 #
-# Kontrollitakse kasutajat
+# Kontrollitakse kasutajat TODO: See on ülearune
 #
 def artikkel_qs_userfilter(user):
     if user.is_authenticated:
@@ -94,7 +94,9 @@ def wiki_base_info(request):
     if user.is_authenticated and user.is_staff:
         # Vaatame ainult viimase 24h kandeid
         tagasi24h = timezone.now() - timedelta(days=1)
-        data['feedbacks'] = Vihje.objects.filter(end_date__isnull=True, inp_date__gt=tagasi24h).count()
+        data['feedbacks'] = Vihje.objects.\
+            exclude(end_date__isnull=False).\
+            filter(inp_date__gt=tagasi24h).count()
         data['comments'] = Comment.objects.filter(created_on__gt=tagasi24h).count()
     # print(data)
     return JsonResponse(data)
