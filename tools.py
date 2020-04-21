@@ -411,17 +411,17 @@ def task_org3050():
     org = Organisatsioon.objects.get(id=3050)
     print(f'{obj} -> {org}')
     # Artiklid
-    artiklid = Artikkel.objects.filter(objektid__in=obj)
+    artiklid = Artikkel.objects.filter(objektid=obj)
     for artikkel in artiklid:
         print(artikkel)
         # artikkel.organisatsioonid.add(org)
     # Pildid
-    pildid = Pilt.objects.filter(objektid__in=obj)
+    pildid = Pilt.objects.filter(objektid=obj)
     for pilt in pildid:
         print(pilt)
         # pilt.organisatsioonid.add(org)
     # Isikud
-    isikud = Isik.objects.filter(objektid__in=obj)
+    isikud = Isik.objects.filter(objektid=obj)
     for isik in isikud:
         print(isik)
         # isik.organisatsioonid.add(org)
