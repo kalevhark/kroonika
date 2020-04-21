@@ -625,10 +625,13 @@ class ArtikkelDetailView(generic.DetailView):
     template_name = 'wiki/artikkel_detail.html'
 
     def get_queryset(self):
-        return artikkel_qs_userfilter(self.request.user)
+        # return artikkel_qs_userfilter(self.request.user)
+        return Artikkel.objects.daatumitega(self.request)
+
 
     def get_context_data(self, **kwargs):
-        artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas artiklile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
@@ -884,7 +887,8 @@ class ArtikkelFilterView(FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # filtreerime artiklid vastavalt kasutajatüübile
-        queryset = artikkel_qs_userfilter(self.request.user)
+        # queryset = artikkel_qs_userfilter(self.request.user)
+        queryset = Artikkel.objects.daatumitega(self.request)
         # filtreerime artiklid vastavalt filtrile
         filter = ArtikkelFilter(self.request.GET, queryset=queryset)
         list = filter.qs
@@ -913,7 +917,8 @@ class ArtikkelArchiveIndexView(ArchiveIndexView):
     # ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
-        return artikkel_qs_userfilter(self.request.user)
+        # return artikkel_qs_userfilter(self.request.user)
+        return Artikkel.objects.daatumitega(self.request)
 
 class ArtikkelYearArchiveView(YearArchiveView):
     date_field = "hist_searchdate"
@@ -924,10 +929,12 @@ class ArtikkelYearArchiveView(YearArchiveView):
     ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
-        return artikkel_qs_userfilter(self.request.user)
+        # return artikkel_qs_userfilter(self.request.user)
+        return Artikkel.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
-        artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         aasta = context['year'].year
         # Eelnev ja järgnev artikleid sisaldav aasta
@@ -986,10 +993,12 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
     # ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
-        return artikkel_qs_userfilter(self.request.user)
+        # return artikkel_qs_userfilter(self.request.user)
+        return Artikkel.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
-        artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         aasta = context['month'].year
         kuu = context['month'].month
@@ -1047,10 +1056,12 @@ class ArtikkelDayArchiveView(DayArchiveView):
     allow_empty = True
 
     def get_queryset(self):
-        return artikkel_qs_userfilter(self.request.user)
+        # return artikkel_qs_userfilter(self.request.user)
+        return Artikkel.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
-        artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         aasta = context['day'].year
         kuu = context['day'].month
@@ -1181,7 +1192,8 @@ class IsikDetailView(generic.DetailView):
     query_pk_and_slug = True
 
     def get_context_data(self, **kwargs):
-        artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
 
         # Kas isikule on määratud profiilipilt
@@ -1275,7 +1287,8 @@ class OrganisatsioonDetailView(generic.DetailView):
     model = Organisatsioon
 
     def get_context_data(self, **kwargs):
-        artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas organisatsioonile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
@@ -1371,7 +1384,8 @@ class ObjektDetailView(generic.DetailView):
     model = Objekt
 
     def get_context_data(self, **kwargs):
-        artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
+        artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
 
         # Kas objektile on määratud profiilipilt
@@ -1418,7 +1432,8 @@ def test(request):
     data = dict()
     # data['meta_server_addr'] = request.META['SERVER_ADDR']
     # Artiklite testandmed
-    artikkel_qs = artikkel_qs_userfilter(request.user)
+    # artikkel_qs = artikkel_qs_userfilter(request.user)
+    artikkel_qs = Artikkel.objects.daatumitega(request)
     data['test_url_artiklid_id'] = [
         reverse('wiki:wiki_artikkel_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
         for obj
@@ -1515,18 +1530,19 @@ def special_j6ul2019(request):
     )
 
 def switch_vkj_ukj(request, ukj):
-    print('switch2:', ukj)
-    print('before switch', request.session.get('ukj'))
+    # print('switch2:', ukj)
+    # print('before switch', request.session.get('ukj'))
     request.session['ukj'] = ukj
-    print('after switch', request.session.get('ukj'))
+    # print('after switch', request.session.get('ukj'))
     return HttpResponse(ukj)
 
 def ukj_test(request):
-    artikkel_qs = artikkel_qs_userfilter(request.user)
-    andmed = {}  # Selle muutuja saadame veebi
-    p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
-    kuu = date.today().month  # str(kuu).zfill(2) -> KK
-    aasta = date.today().year
+    # artikkel_qs = artikkel_qs_userfilter(request.user)
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    # andmed = {}  # Selle muutuja saadame veebi
+    # p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
+    # kuu = date.today().month  # str(kuu).zfill(2) -> KK
+    # aasta = date.today().year
 
     artikkel = dict()
     artikkel['kirjeid'] = artikkel_qs.count()
