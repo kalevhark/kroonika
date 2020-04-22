@@ -20,7 +20,7 @@ from django.core.files.base import ContentFile
 from django.db import models
 from django.db.models import \
     Count, Max, Min, \
-    Case, F, Q, When, \
+    Case, F, Func, Q, When, \
     Value, BooleanField, DateField, DecimalField, IntegerField, \
     ExpressionWrapper
 
@@ -205,6 +205,14 @@ class DaatumitegaManager(models.Manager):
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )
+        # from django.db.models.functions import ExtractYear, Extract
+        # from django.db.models import ExpressionWrapper
+        # calc_qs = filtered_queryset.annotate(ymd=
+        #     datetime(
+        #         ExpressionWrapper(Extract('hist_searchdate', 'year')), 1, 1
+        #     )
+        # )
+        # print(calc_qs[0].y)
         return filtered_queryset
 
 #
@@ -1136,12 +1144,8 @@ class Artikkel(models.Model):
 
     @property # TODO: Selleks et otsida kuupäeva, mis jääb alguse ja lõpu vahele [str in hist_dates_string]
     def hist_dates_string(self):
-        try:
-            dob = self.dob
-            doe = self.doe
-        except:
-            dob = self.hist_date
-            doe = self.hist_enddate
+        dob = self.dob
+        doe = self.doe
         tekst = f'{str(dob.month).zfill(2)}{str(dob.day).zfill(2)}'
         if all([dob, doe]):
             vahemik = (doe - dob).days

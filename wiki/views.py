@@ -86,19 +86,21 @@ def artikkel_qs_userfilter(user):
 #
 def wiki_base_info(request):
     user = request.user
-    data = {
-        'feedbacks': 0,
-        'comments': 0,
-        # 'user': request.user.is_authenticated
-    }
     if user.is_authenticated and user.is_staff:
         # Vaatame ainult viimase 24h kandeid
         tagasi24h = timezone.now() - timedelta(days=1)
-        data['feedbacks'] = Vihje.objects.\
+        feedbacks = Vihje.objects.\
             exclude(end_date__isnull=False).\
             filter(inp_date__gt=tagasi24h).count()
-        data['comments'] = Comment.objects.filter(created_on__gt=tagasi24h).count()
-    # print(data)
+        comments = Comment.objects.filter(created_on__gt=tagasi24h).count()
+    else:
+         feedbacks = 0
+         comments = 0
+
+    data = {
+        'feedbacks': feedbacks,
+        'comments': comments,
+    }
     return JsonResponse(data)
 
 #
@@ -254,7 +256,7 @@ def info(request):
 
 
 #
-# Avalehekülg
+# Avalehekülje otsing
 #
 def otsi(request):
     try:
@@ -337,7 +339,8 @@ def algus(request):
             hist_date__month = kuu
         )
         sel_p2eval_inrange = inrange_dates_artikkel(artikkel_qs, p2ev, kuu) # hist_date < KKPP <= hist_enddate
-        sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
+        # sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
+        sel_p2eval = sel_p2eval_inrange
         sel_p2eval_kirjeid = len(sel_p2eval)
         if sel_p2eval_kirjeid > 7: # Kui leiti rohkem kui 7 kirjet võetakse 3 algusest + 1 keskelt + 3 lõpust
             a['sel_p2eval'] = (
@@ -349,7 +352,7 @@ def algus(request):
             a['sel_p2eval'] = sel_p2eval
         a['sel_p2eval_kirjeid'] = sel_p2eval_kirjeid
         # Samal kuul toimunud TODO: probleem kui hist_searchdate__month ja hist_enddate__month ei ole järjest
-        sel_kuul = artikkel_qs.filter(Q(hist_searchdate__month = kuu) | Q(hist_enddate__month = kuu))
+        sel_kuul = artikkel_qs.filter(Q(hist_date__month=kuu) | Q(hist_month=kuu) | Q(hist_enddate__month=kuu))
         sel_kuul_kirjeid = len(sel_kuul)
         if sel_kuul_kirjeid > 9: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
             a['sel_kuul'] = (
@@ -364,9 +367,15 @@ def algus(request):
         a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(hist_date__year = (aasta-100))
         a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:20] # 20 loetumat artiklit
         # Koondnäitajad aastate ja kuude kaupa
-        artikleid_aasta_kaupa = Artikkel.objects.values('hist_year').annotate(Count('hist_year')).order_by('hist_year')
+        artikleid_aasta_kaupa = artikkel_qs.\
+            values('hist_year').\
+            annotate(Count('hist_year')).\
+            order_by('hist_year')
         a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
-        artikleid_kuu_kaupa = Artikkel.objects.values('hist_year', 'hist_month').annotate(Count('hist_month')).order_by('hist_year', 'hist_month')
+        artikleid_kuu_kaupa = artikkel_qs.\
+            values('hist_year', 'hist_month').\
+            annotate(Count('hist_month')).\
+            order_by('hist_year', 'hist_month')
         a['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
     andmed['artikkel'] = a
 
@@ -513,17 +522,17 @@ def inrange_dates_artikkel(qs, p2ev, kuu):
         q = qs.filter(  # Vaatleme ainult algus ja lõpuajaga ridasid1
             dob__isnull=False,
             doe__isnull=False
-        ).exclude(  # Jätame välja read, kus hist_date == KKPP
-            dob__month=kuu,
-            dob__day=p2ev
+        # ).exclude(  # Jätame välja read, kus hist_date == KKPP
+        #     dob__month=kuu,
+        #     dob__day=p2ev
         )
     except:
         q = qs.filter( # Vaatleme ainult algus ja lõpuajaga ridasid1
             hist_date__isnull=False,
             hist_enddate__isnull=False
-        ).exclude( # Jätame välja read, kus hist_date == KKPP
-            hist_date__month=kuu,
-            hist_date__day=p2ev
+        # ).exclude( # Jätame välja read, kus hist_date == KKPP
+        #     hist_date__month=kuu,
+        #     hist_date__day=p2ev
         )
     kkpp_string = str(kuu).zfill(2)+str(p2ev).zfill(2)
     id_list = [art.id for art in q if kkpp_string in art.hist_dates_string]
@@ -1069,9 +1078,10 @@ class ArtikkelDayArchiveView(DayArchiveView):
         kuu = context['day'].month
         p2ev = context['day'].day
         # Leiame samal kuupäeval teistel aastatel märgitud artiklid
-        sel_p2eval_exactly = artikkel_qs.exclude(hist_searchdate__year = aasta).filter(hist_date__month = kuu, hist_date__day = p2ev)
+        # sel_p2eval_exactly = artikkel_qs.exclude(hist_searchdate__year = aasta).filter(hist_date__month = kuu, hist_date__day = p2ev)
         sel_p2eval_inrange = inrange_dates_artikkel(artikkel_qs, p2ev, kuu)  # hist_date < KKPP <= hist_enddate
-        sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
+        # sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
+        sel_p2eval = sel_p2eval_inrange
         context['sel_p2eval'] = sel_p2eval
         # Leiame samal kuupäeval sündinud isikud
         syndinud_isikud = Isik.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
@@ -1602,7 +1612,8 @@ def ukj_test_artikkel_detail(request):
             dob__month=kuu
         )
         sel_p2eval_inrange = inrange_dates_artikkel(artikkel_qs, p2ev, kuu)  # hist_date < KKPP <= hist_enddate
-        sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
+        # sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
+        sel_p2eval = sel_p2eval_inrange
         sel_p2eval_kirjeid = len(sel_p2eval)
         if sel_p2eval_kirjeid > 5:  # Kui leiti rohkem kui viis kirjet võetakse 2 algusest + 1 keskelt + 2 lõpust
             a['sel_p2eval'] = sel_p2eval[:2] + sel_p2eval[int(sel_p2eval_kirjeid / 2 - 1):int(
