@@ -1193,7 +1193,6 @@ def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
         # kirje['eesnimi'] = seotud_isik.eesnimi
         kirje['artiklid'] = seotud_artiklid.\
             filter(isikud=seotud_isik).\
-            order_by('hist_searchdate').\
             values('id', 'slug', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
         andmed[seotud_isik.id] = kirje
     return andmed
@@ -1289,7 +1288,6 @@ def seotud_organisatsioonid_artiklikaudu(seotud_artiklid, organisatsiooni_ise):
         kirje['nimi'] = seotud_organisatsioon.nimi
         kirje['artiklid'] = seotud_artiklid.\
             filter(organisatsioonid=seotud_organisatsioon).\
-            order_by('hist_searchdate').\
             values('id', 'slug', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
         andmed[seotud_organisatsioon.id] = kirje
     return andmed
@@ -1386,7 +1384,6 @@ def seotud_objektid_artiklikaudu(seotud_artiklid, objekt_ise):
         kirje['nimi'] = seotud_objekt.nimi
         kirje['artiklid'] = seotud_artiklid.\
             filter(objektid=seotud_objekt).\
-            order_by('hist_searchdate').\
             values('id', 'slug', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
         andmed[seotud_objekt.id] = kirje
     return andmed

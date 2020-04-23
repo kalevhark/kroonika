@@ -1,4 +1,5 @@
 <!-- Loend seotud artiklite numbritest ja lühisisu -->
+{% load wiki_extras %}
 {% for artikkel in obj.artiklid %}
 <a
 		style="cursor: pointer;"
@@ -10,7 +11,8 @@
 		{% if artikkel.hist_date %}
 			{{ artikkel.hist_date|date:"d.m.Y" }}
 		{% else %}
-			{{ artikkel.hist_year }}
+			{% if artikkel.hist_month %}{% include 'wiki/includes/kuu.html' with kuu=artikkel.hist_month|stringformat:"02d" %} {% endif %}{{ artikkel.hist_year }}
+
 		{% endif %}
 		:
 		{{ artikkel.body_text|truncatewords:10 }}
