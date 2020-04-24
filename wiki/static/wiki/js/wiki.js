@@ -65,7 +65,10 @@ function toggleRightMenu() {
 // Tagasisidevormi kuvamiseks
 function showFeedback() {
   // Sulgeme navigatsioonimenüü, kui see on avatud
-  toggleRightMenu();
+  let rightMenu = document.getElementById("rightMenu");
+  if (rightMenu.className.indexOf("w3-show") != -1) {
+    toggleRightMenu();
+  };
   // Avame tagasisidevormi
   var x = document.getElementById("panelFeedBack");
   if (x.className.indexOf("w3-show-block") == -1) {
