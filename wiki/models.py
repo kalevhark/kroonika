@@ -1199,8 +1199,8 @@ class Artikkel(models.Model):
 
     class Meta:
         ordering = [
-            'hist_year',
             'hist_date',
+            'hist_year',
             'hist_month',
             'id'
         ]
