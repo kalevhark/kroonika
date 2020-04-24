@@ -848,40 +848,6 @@ class ArtikkelFilter(django_filters.FilterSet):
             return queryset
 
 
-    # @property
-    # def qs(self, *args, **kwargs):
-    #     # küsime algse päringu
-    #     # initial_qs = super(ArtikkelFilter, self).qs
-    #     modified_qs = super(ArtikkelFilter, self).qs
-    #     # päritud aasta
-    #     if self.data.get('hist_year__exact'):
-    #         modified_qs = modified_qs.filter(
-    #             hist_year__exact=self.data['hist_year__exact']
-    #         )
-    #     # päritud fraas nimes
-    #     # if self.data.get('isikud__perenimi__icontains'):
-    #     #     modified_qs = (
-    #     #             modified_qs.filter(
-    #     #                 isikud__perenimi__icontains=self.data['isikud__perenimi__icontains']
-    #     #             ) |
-    #     #             modified_qs.filter(
-    #     #                 isikud__eesnimi__icontains=self.data['isikud__perenimi__icontains']
-    #     #             )
-    #     #     )
-    #     # päritud fraas(id) tekstis
-    #     # fraasid = self.data.get('body_text__icontains', '').split(' ')
-    #     # if len(fraasid) > 0:
-    #     #     # modified_qs = artikkel_qs_userfilter(self.request.user)
-    #     #     for fraas in fraasid:
-    #     #         print(fraas)
-    #     #         modified_qs = modified_qs.filter(
-    #     #             body_text__icontains=fraas
-    #     #         )
-    #     # else:
-    #     #    modified_qs = super(ArtikkelFilter, self).qs
-    #     return modified_qs
-
-
 #
 # Artiklite otsimise/filtreerimise vaade
 #
@@ -925,10 +891,8 @@ class ArtikkelArchiveIndexView(ArchiveIndexView):
     make_object_list = True
     allow_future = True
     paginate_by = 20
-    # ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
-        # return artikkel_qs_userfilter(self.request.user)
         return Artikkel.objects.daatumitega(self.request)
 
 class ArtikkelYearArchiveView(YearArchiveView):
@@ -937,7 +901,7 @@ class ArtikkelYearArchiveView(YearArchiveView):
     allow_future = True
     allow_empty = True
     paginate_by = 20
-    ordering = ('hist_searchdate', 'id')
+    # ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
         # return artikkel_qs_userfilter(self.request.user)

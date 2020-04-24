@@ -65,15 +65,15 @@ function toggleRightMenu() {
 // Tagasisidevormi kuvamiseks
 function showFeedback() {
   // Sulgeme navigatsioonimenüü, kui see on avatud
-  let openRightMenuDisplayStatus = document.getElementById("rightMenu").style.getPropertyValue('display');
-  if (openRightMenuDisplayStatus == "block") {
-    document.getElementById("rightMenu").style.display = "none";
-  };
+  toggleRightMenu();
   // Avame tagasisidevormi
   var x = document.getElementById("panelFeedBack");
   if (x.className.indexOf("w3-show-block") == -1) {
     x.className += " w3-show-block";
-    document.getElementById("id_kirjeldus").focus();
+    kirjeldusField = document.getElementById("id_kirjeldus");
+    if (kirjeldusField) {
+      kirjeldusField.focus();
+    };
   } else {
     x.className = x.className.replace(" w3-show-block", "");
   }

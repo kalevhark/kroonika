@@ -205,14 +205,21 @@ class DaatumitegaManager(models.Manager):
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )
-        # from django.db.models.functions import ExtractYear, Extract
-        # from django.db.models import ExpressionWrapper
-        # calc_qs = filtered_queryset.annotate(ymd=
-        #     datetime(
-        #         ExpressionWrapper(Extract('hist_searchdate', 'year')), 1, 1
-        #     )
+        filtered_queryset = filtered_queryset.annotate(
+            calc_searchdate=Case(
+                When(dob=None, then=F('hist_searchdate')),
+                default=F('dob'),
+                output_field=DateField()
+            )
+        )
+        from django.db.models.functions import ExtractYear, Extract, Cast
+        from django.db.models import ExpressionWrapper
+        # calc_qs = filtered_queryset.annotate(
+        #     y = Extract('dob', 'year', output_field=IntegerField()),
+        #     m = Extract('dob', 'month', output_field=IntegerField()),
+        #     d = Extract('dob', 'day', output_field=IntegerField())
         # )
-        # print(calc_qs[0].y)
+        # print(calc_qs[2000].calc_searchdate)
         return filtered_queryset
 
 #

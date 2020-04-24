@@ -15,9 +15,9 @@
 	  </h4>
     <h5>
       {% if object.hist_date %}
-        <strong>{% include 'wiki/includes/kp.html' with sd=object.hist_date cs='isik' %}</strong> {{ object.hist_date | ukj }}
+        <strong><i class="fa fa-asterisk"></i>{% include 'wiki/includes/kp.html' with sd=object.hist_date cs='isik' %}</strong> {{ object.hist_date | ukj }}
       {% elif object.hist_year %}
-        <strong>{% include 'wiki/includes/kp.html' with y=object.hist_year cs="isik" %}</strong>
+        <strong><i class="fa fa-asterisk"></i>{% include 'wiki/includes/kp.html' with y=object.hist_year cs="isik" %}</strong>
       {% endif %}
       {% if object.synd_koht %}
         {{ object.synd_koht }}
