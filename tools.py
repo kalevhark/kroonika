@@ -238,23 +238,23 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-    Helene Braun, Ernst Baltmischkis, Helene Dahlberg, Reinhold Dsennit, Ewa Lammas, Irma Pipirs, Aleksandra Schmidt, Erika Thal, Alfred Tilting, Johannes Wühner
+    Andres Sikk, Johan Soolamees, Julius Karawits, Karl Pikk, Kusta Münning, Johann Kukk, Aleks. Nepp, Aleks. Penno, Jaan Mutso, Aug. Reismann, Mats Baut, Willem Johanson, Jaan Reinup
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=7252)
+    art = Artikkel.objects.get(id=7518)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=2431)
-    print(pilt)
+    # pilt = Pilt.objects.get(id=2431)
+    # print(pilt)
     # Milline organisatsioon lisada isikule
-    org = Organisatsioon.objects.get(id=2737) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn
-    print(org)
+    # org = Organisatsioon.objects.get(id=2737) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn
+    # print(org)
     # Milline viide lisada isikule
-    viited_ids = [8138]
+    viited_ids = [8384]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Valga saksa eragümnaasiumi lõpetaja 1923'
+    isik_kirjeldus = 'Põlisele rendile maasaaja 1924'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
@@ -271,14 +271,14 @@ def massikanne_from_data():
             uus_isik.save()
             print(uus_isik)
             # Lisame isikule seotud organisatsiooni
-            uus_isik.organisatsioonid.add(org)
+            # uus_isik.organisatsioonid.add(org)
             # Lisame isikule seotud viite(d)
             for viide in viited:
                 uus_isik.viited.add(viide)
             # Lisame isiku artiklile
             art.isikud.add(uus_isik)
             # Lisame isiku pildile
-            pilt.isikud.add(uus_isik)
+            # pilt.isikud.add(uus_isik)
 
 # Ühe sisuga artiklite lisamiseks
 def lisa_artikkel_20200321():
