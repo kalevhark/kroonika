@@ -1200,8 +1200,8 @@ class Artikkel(models.Model):
     class Meta:
         ordering = [
             'hist_year',
-            'hist_month',
             'hist_date',
+            'hist_month',
             'id'
         ]
         verbose_name = "Lugu"
