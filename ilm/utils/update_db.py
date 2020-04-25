@@ -330,7 +330,7 @@ if __name__ == '__main__':
             ilm_observation_veebist = ilmaandmed_veebist(observation_time)
             # print(ilm_observation_veebist)
             id = insert_new_observations(ilm_observation_veebist, path)
-            print(f'{observation_time} lisatud {id}')
+            print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
         else:
             # print('olemas.')
             pass
