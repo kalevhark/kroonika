@@ -11,7 +11,7 @@
           <br>
         {% endif %}
         <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
-          ... {{ obj.body_text|truncatewords:10 }}
+          <strong>... </strong>{{ obj.body_text|truncatewords:10 }}
           {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
         </a>
       {% endfor %}
@@ -77,17 +77,17 @@
         {{ obj.body_text|truncatewords:10 }}
         {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
       </a>
-      <!-- Kui kirjed rohkem kui 5, siis hakime 2+1+2 -->
-      {% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
-        {% if forloop.counter == 2 and andmed.artikkel.sel_p2eval_kirjeid  > 6 %}
+      <!-- Kui kirjed rohkem kui artikleid_max_split, siis hakime artikleid_max_split_half+1+artikleid_max_split_half -->
+      {% if andmed.artikkel.sel_p2eval_kirjeid > andmed.artikkel.artikleid_max_split %}
+        {% if forloop.counter == andmed.artikkel.artikleid_max_split_half %}
           <br><span class="w3-tiny text-artikkel"> - - - </span>
         {% endif %}
-        {% if forloop.counter == 3 %}
+        {% if forloop.counter == andmed.artikkel.artikleid_max_split_half|add:"1" %}
           <br><span class="w3-tiny text-artikkel"> - - - </span>
         {% endif %}
       {% endif %}
     {% endfor %}
-    {% if andmed.artikkel.sel_p2eval_kirjeid > 5 %}
+    {% if andmed.artikkel.sel_p2eval_kirjeid > andmed.artikkel.artikleid_max_split %}
       <p>
         <a class="hover-artikkel" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}">
           Näita kõiki <em>{% now "j.m." %} ajaloos</em> ({{ andmed.artikkel.sel_p2eval_kirjeid }})
@@ -112,17 +112,17 @@
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
       </a>
-      <!-- Kui kirjed rohkem kui 9, siis hakime 4+1+4 -->
-      {% if andmed.artikkel.sel_kuul_kirjeid > 9 %}
-        {% if forloop.counter == 4 and andmed.artikkel.sel_kuul_kirjeid  > 10 %}
+      <!-- Kui kirjed rohkem kui artikleid_max_split, siis hakime artikleid_max_split_half+1+artikleid_max_split_half -->
+      {% if andmed.artikkel.sel_kuul_kirjeid > andmed.artikkel.artikleid_max_split %}
+        {% if forloop.counter == andmed.artikkel.artikleid_max_split_half %}
           <br><span class="w3-tiny w3-text-artikkel"> - - - </span>
         {% endif %}
-        {% if forloop.counter == 5 %}
+        {% if forloop.counter == andmed.artikkel.artikleid_max_split_half|add:"1" %}
           <br><span class="w3-tiny w3-text-artikkel"> - - - </span>
         {% endif %}
       {% endif %}
     {% endfor %}
-    {% if andmed.artikkel.sel_kuul_kirjeid > 9 %}
+    {% if andmed.artikkel.sel_kuul_kirjeid > andmed.artikkel.artikleid_max_split %}
       <p>
         <a class="hover-artikkel" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}">
           Näita kõiki <em>{% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos</em> ({{ andmed.artikkel.sel_kuul_kirjeid }})

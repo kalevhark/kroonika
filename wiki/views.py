@@ -330,6 +330,10 @@ def algus(request):
     a = dict()
     kirjeid = artikkel_qs.count()
     a['kirjeid'] = kirjeid
+    artikleid_max_split = 9 # Kui mitmest artiklist alates teha splittimine (esimese ... viimased)
+    artikleid_max_split_half = artikleid_max_split//2
+    a['artikleid_max_split'] = artikleid_max_split
+    a['artikleid_max_split_half'] = artikleid_max_split_half
     if kirjeid > 0:
         a['viimane_lisatud'] = artikkel_qs.latest('inp_date')
         a['viimane_muudetud'] = artikkel_qs.latest('mod_date')
@@ -342,11 +346,11 @@ def algus(request):
         # sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
         sel_p2eval = sel_p2eval_inrange
         sel_p2eval_kirjeid = len(sel_p2eval)
-        if sel_p2eval_kirjeid > 7: # Kui leiti rohkem kui 7 kirjet võetakse 3 algusest + 1 keskelt + 3 lõpust
+        if sel_p2eval_kirjeid > artikleid_max_split: # Kui leiti rohkem kui 7 kirjet võetakse 3 algusest + 1 keskelt + 3 lõpust
             a['sel_p2eval'] = (
-                sel_p2eval[:3] +
+                sel_p2eval[:artikleid_max_split_half] +
                 sel_p2eval[int(sel_p2eval_kirjeid/2-1):int(sel_p2eval_kirjeid/2)] +
-                sel_p2eval[sel_p2eval_kirjeid-3:]
+                sel_p2eval[sel_p2eval_kirjeid-artikleid_max_split_half:]
             )
         else:
             a['sel_p2eval'] = sel_p2eval
@@ -354,11 +358,11 @@ def algus(request):
         # Samal kuul toimunud TODO: probleem kui hist_searchdate__month ja hist_enddate__month ei ole järjest
         sel_kuul = artikkel_qs.filter(Q(hist_date__month=kuu) | Q(hist_month=kuu) | Q(hist_enddate__month=kuu))
         sel_kuul_kirjeid = len(sel_kuul)
-        if sel_kuul_kirjeid > 9: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
+        if sel_kuul_kirjeid > artikleid_max_split: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
             a['sel_kuul'] = (
-                sel_kuul[:4] +
+                sel_kuul[:artikleid_max_split_half] +
                 sel_kuul[int(sel_kuul_kirjeid/2-1):int(sel_kuul_kirjeid/2)] +
-                sel_kuul[sel_kuul_kirjeid-4:]
+                sel_kuul[sel_kuul_kirjeid-artikleid_max_split_half:]
             )
         else:
             a['sel_kuul'] = sel_kuul

@@ -214,12 +214,12 @@ class DaatumitegaManager(models.Manager):
         )
         from django.db.models.functions import ExtractYear, Extract, Cast
         from django.db.models import ExpressionWrapper
-        # calc_qs = filtered_queryset.annotate(
-        #     y = Extract('dob', 'year', output_field=IntegerField()),
-        #     m = Extract('dob', 'month', output_field=IntegerField()),
-        #     d = Extract('dob', 'day', output_field=IntegerField())
-        # )
-        # print(calc_qs[2000].calc_searchdate)
+        calc_qs = filtered_queryset.annotate(
+            y = Extract('dob', 'year', output_field=IntegerField()),
+            m = Extract('dob', 'month', output_field=IntegerField()),
+            d = Extract('dob', 'day', output_field=IntegerField())
+        ).annotate(calc_searchdate=Func(F('y'), F('m'), F('d'), function='CONCAT'))
+        print(calc_qs[2000].calc_searchdate)
         return filtered_queryset
 
 #
