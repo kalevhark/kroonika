@@ -238,10 +238,10 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-    Andres Sikk, Johan Soolamees, Julius Karawits, Karl Pikk, Kusta Münning, Johann Kukk, Aleks. Nepp, Aleks. Penno, Jaan Mutso, Aug. Reismann, Mats Baut, Willem Johanson, Jaan Reinup
+    Peeter Rimm, Jaan Premse, Jaan Kurg, Joh. Riik, Jaak Saar, Joh. Siirak, Jaak Pudersell, Joh. Dars
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=7518)
+    art = Artikkel.objects.get(id=830)
     print(art)
     # Millise pildiga siduda isik
     # pilt = Pilt.objects.get(id=2431)
@@ -250,7 +250,7 @@ def massikanne_from_data():
     # org = Organisatsioon.objects.get(id=2737) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn
     # print(org)
     # Milline viide lisada isikule
-    viited_ids = [8384]
+    viited_ids = [8401]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
