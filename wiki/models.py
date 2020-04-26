@@ -397,7 +397,8 @@ class Viide(models.Model):
             else: # kui viite ilmumisaastat pole, siis allika ilmumisaasta
                 if self.allikas.hist_year:
                     aeg = str(self.allikas.hist_year)
-        return ' '.join([autorid, peatykk, allika_nimi, viit, aeg])
+        viide = ' '.join([autorid, peatykk, allika_nimi, viit, aeg])
+        return viide.strip()
 
 # # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
 # class ObjektSajandTagasiManager(models.Manager):
