@@ -443,6 +443,9 @@ def obj2org(**kwargs):
         pildid = Pilt.objects.filter(objektid=obj)
         for pilt in pildid:
             print(f'pilt{pilt.id}:{pilt}')
+            if pilt.profiilipilt_objekt==True:
+                pilt.profiilipilt_organisatsioon=True
+                pilt.save()
             pilt.organisatsioonid.add(org)
         # Isikud
         isikud = Isik.objects.filter(objektid=obj)
