@@ -406,26 +406,49 @@ def task_art7358():
         # pil.objektid.add(obj)
 
 # Kannab object andmed obj -> org
-def task_org3050():
-    obj = Objekt.objects.get(id=119)
-    org = Organisatsioon.objects.get(id=3050)
-    print(f'{obj} -> {org}')
-    # Artiklid
-    artiklid = Artikkel.objects.filter(objektid=obj)
-    for artikkel in artiklid:
-        print(artikkel)
-        artikkel.organisatsioonid.add(org)
-    # Pildid
-    pildid = Pilt.objects.filter(objektid=obj)
-    for pilt in pildid:
-        print(pilt)
-        pilt.organisatsioonid.add(org)
-    # Isikud
-    isikud = Isik.objects.filter(objektid=obj)
-    for isik in isikud:
-        print(isik)
-        isik.organisatsioonid.add(org)
-
+def obj2org(**kwargs):
+    src_obj = kwargs.get('obj', None)
+    if src_obj:
+        obj = Objekt.objects.get(id=src_obj)
+        dst_org = kwargs.get('org', None)
+        if dst_org:
+            org = Organisatsioon.objects.get(id=dst_org)
+        else:
+            org = Organisatsioon.objects.create(
+                nimi=obj.nimi,
+                hist_date=obj.hist_date,
+                hist_year=obj.hist_year,
+                hist_month=obj.hist_month,
+                hist_enddate=obj.hist_enddate,
+                hist_endyear=obj.hist_endyear,
+                gone=obj.gone,
+                kirjeldus=obj.kirjeldus
+            )
+            org.save()
+        print(f'{obj.id}:{obj}->{org.id}:{org}')
+        # Objektid
+        for objekt in obj.objektid.all():
+            print(f'{objekt.id}:{objekt}')
+            org.viited.add(objekt)
+        # Viited
+        for viide in obj.viited.all():
+            print(f'{viide.id}:{viide}')
+            org.viited.add(viide)
+        # Artiklid
+        artiklid = Artikkel.objects.filter(objektid=obj)
+        for artikkel in artiklid:
+            print(f'{artikkel.id}:{artikkel}')
+            artikkel.organisatsioonid.add(org)
+        # Pildid
+        pildid = Pilt.objects.filter(objektid=obj)
+        for pilt in pildid:
+            print(f'{pilt.id}:{pilt}')
+            pilt.organisatsioonid.add(org)
+        # Isikud
+        isikud = Isik.objects.filter(objektid=obj)
+        for isik in isikud:
+            print(f'{isik.id}:{isik}')
+            isik.organisatsioonid.add(org)
 
 
 
