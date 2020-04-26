@@ -205,20 +205,33 @@ class DaatumitegaManager(models.Manager):
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )
-        filtered_queryset = filtered_queryset.annotate(
-            calc_searchdate=Case(
-                When(dob=None, then=F('hist_searchdate')),
-                default=F('dob'),
-                output_field=DateField()
-            )
-        )
-        # from django.db.models.functions import ExtractYear, Extract, Cast
+        # filtered_queryset = filtered_queryset.annotate(
+        #     calc_searchdate=Case(
+        #         When(dob=None, then=F('hist_searchdate')),
+        #         default=F('dob'),
+        #         output_field=DateField()
+        #     )
+        # )
+        from django.db.models.functions import ExtractYear, Extract, Cast
         # from django.db.models import ExpressionWrapper
         # calc_qs = filtered_queryset.annotate(
         #     y = Extract('dob', 'year', output_field=IntegerField()),
         #     m = Extract('dob', 'month', output_field=IntegerField()),
         #     d = Extract('dob', 'day', output_field=IntegerField())
         # ).annotate(calc_searchdate=Func(F('y'), F('m'), F('d'), function='CONCAT'))
+        # print(calc_qs[2000].calc_searchdate)
+        class Epoch(Func):
+            function = 'EXTRACT'
+            template = "%(function)s('epoch' from %(expressions)s)"
+
+        class MakeDate(Func):
+            template = "make_date(%(expressions)s)"
+
+        # calc_qs = filtered_queryset.annotate(
+        #     # calc_searchdate=Epoch(F('hist_date'))
+        #     calc_searchdate=MakeDate(1971, 1, 1), output_field=DateField()
+        # )
+        #
         # print(calc_qs[2000].calc_searchdate)
         return filtered_queryset
 
