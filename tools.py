@@ -428,26 +428,26 @@ def obj2org(**kwargs):
         print(f'{obj.id}:{obj}->{org.id}:{org}')
         # Objektid
         for objekt in obj.objektid.all():
-            print(f'{objekt.id}:{objekt}')
-            org.viited.add(objekt)
+            print(f'obj{objekt.id}:{objekt}')
+            org.objektid.add(objekt)
         # Viited
         for viide in obj.viited.all():
-            print(f'{viide.id}:{viide}')
+            print(f'vii{viide.id}:{viide}')
             org.viited.add(viide)
         # Artiklid
         artiklid = Artikkel.objects.filter(objektid=obj)
         for artikkel in artiklid:
-            print(f'{artikkel.id}:{artikkel}')
+            print(f'art{artikkel.id}:{artikkel}')
             artikkel.organisatsioonid.add(org)
         # Pildid
         pildid = Pilt.objects.filter(objektid=obj)
         for pilt in pildid:
-            print(f'{pilt.id}:{pilt}')
+            print(f'pilt{pilt.id}:{pilt}')
             pilt.organisatsioonid.add(org)
         # Isikud
         isikud = Isik.objects.filter(objektid=obj)
         for isik in isikud:
-            print(f'{isik.id}:{isik}')
+            print(f'isik{isik.id}:{isik}')
             isik.organisatsioonid.add(org)
 
 
