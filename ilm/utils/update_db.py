@@ -11,7 +11,8 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
-from urllib.request import Request, urlopen
+# from urllib.request import Request, urlopen
+import urllib
 
 from bs4 import BeautifulSoup
 import psycopg2
@@ -87,8 +88,12 @@ def ilmaandmed_veebist(dt):
          tund]
     )
     # Loeme veebist andmed
-    req = Request(p2ring, headers={'User-Agent': 'Mozilla/5.0'})
-    webpage = urlopen(req).read()
+    try:
+        req = urllib.request.Request(p2ring, headers={'User-Agent': 'Mozilla/5.0'})
+        webpage = urllib.request.urlopen(req).read()
+    except urllib.error.URLError as e:
+        print(e.reason)
+        return None
     # Struktueerime
     soup = BeautifulSoup(webpage, 'html.parser')
     kontroll_hour = soup.find(attrs={"name": "filter[hour]"})
@@ -96,7 +101,7 @@ def ilmaandmed_veebist(dt):
     andmed = dict()
     if kontroll_hour:
         if kontroll_hour['value'].zfill(2) != tund.zfill(2) or kontroll_date['value'] != p2ev:
-            print(d, 'Vale!')
+            print(dt, 'Vale!')
             # Kui vastus vale kellaajaga või kuupäevaga, saadame tagasi tühja tabeli
             return andmed
     # Leiame lehelt tabeli
@@ -329,8 +334,11 @@ if __name__ == '__main__':
         if not observation:
             ilm_observation_veebist = ilmaandmed_veebist(observation_time)
             # print(ilm_observation_veebist)
-            id = insert_new_observations(ilm_observation_veebist, path)
-            print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+            if ilm_observation_veebist:
+                id = insert_new_observations(ilm_observation_veebist, path)
+                print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+            else:
+                print(f'{observation_time} uuendamine ebaõnnestus')
         else:
             # print('olemas.')
             pass
