@@ -59,6 +59,9 @@ color:white;
 .text-pilt {color:#008CBA;}
 .text-viide {color:#A9A9A9;}
 
+.text-ukj {color:purple;}
+.text-ukj:hover {color:#1e7145;}
+
 .hover-artikkel:hover {
   color:#1e7145;
 /*  text-decoration: underline;

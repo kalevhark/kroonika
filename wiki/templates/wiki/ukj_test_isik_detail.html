@@ -14,7 +14,9 @@
     <a
         class="hover-isik"
         href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}">
-      <strong>{{ obj.dob|date:"d.m.Y" }}</strong>
+      <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+        {{ obj.dob|date:"d.m.Y" }}
+      </strong>
     </a>
     &nbsp;
     <a
@@ -41,7 +43,9 @@
     <a class="hover-isik"
       href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
     >
-    <strong>{{ obj.dob|date:"d.m.Y" }}</strong>
+    <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+      {{ obj.dob|date:"d.m.Y" }}
+    </strong>
     </a>
     &nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
@@ -65,12 +69,14 @@
     {% if obj.dob %}
       <a class="hover-isik"
         href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}">
-        <b>{{ obj.dob|date:"d.m.Y" }}</b>
+        <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+          {{ obj.dob|date:"d.m.Y" }}
+        </strong>
       </a>
     {% else %}
       <a class="hover-isik"
         href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <b>{{ obj.hist_year }}</b>
+        <strong class="hover-artikkel">{{ obj.hist_year }}</strong>
       </a>
     {% endif %}&nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
@@ -95,7 +101,9 @@
     <a
         class="hover-isik"
         href="{% url 'wiki:artikkel_day_archive' year=obj.doe|date:'Y' month=obj.doe|date:'m' day=obj.doe|date:'d' %}">
-      <b>{{ obj.doe|date:"d.m.Y" }}</b>
+      <strong class="{% if obj.doe|date:'d.m.Y' != obj.hist_enddate|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+        {{ obj.doe|date:"d.m.Y" }}
+      </strong>
     </a>
     &nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
@@ -117,7 +125,9 @@
     <a class="hover-isik"
       href="{% url 'wiki:artikkel_day_archive' year=obj.doe|date:'Y' month=obj.doe|date:'m' day=obj.doe|date:'d' %}"
     >
-      <strong>{{ obj.doe|date:"d.m.Y" }}</strong>
+      <strong class="{% if obj.doe|date:'d.m.Y' != obj.hist_enddate|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+        {{ obj.doe|date:"d.m.Y" }}
+      </strong>
     </a>
     &nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">

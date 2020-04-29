@@ -75,7 +75,7 @@
         <br>
       {% endif %}
       <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <strong>{{ obj.hist_year }}</strong>:
+        <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% endif %}">{{ obj.hist_year }}</strong>:
       </a>
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
@@ -111,7 +111,7 @@
         <br>
       {% endif %}
       <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <strong>{{ obj.hist_year }}</strong>:
+        <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% endif %}">{{ obj.hist_year }}</strong>:
       </a>
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
@@ -144,7 +144,7 @@
         <br>
       {% endif %}
       <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <strong>{{ obj.hist_year }}</strong>:
+        <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% endif %}">{{ obj.hist_year }}</strong>:
       </a>
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
