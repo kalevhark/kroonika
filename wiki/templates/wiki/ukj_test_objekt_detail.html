@@ -18,7 +18,9 @@
         class="hover-objekt"
         href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
     >
-      <strong>{{ obj.dob|date:"d.m.Y" }}</strong>
+      <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+        {{ obj.dob|date:"d.m.Y" }}
+      </strong>
     </a>
     &nbsp;
     <a
@@ -40,7 +42,7 @@
         style="text-decoration:none;"
         href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_objektid"
     >
-      {% include 'wiki/includes/kuul.html' with kuu=kuu %} valminud  <span class="w3-badge background-objekt">{{ andmed.objekt.sel_kuul.count }}</span>
+      {% include 'wiki/includes/kuul.html' with kuu=kuu %} valminud <span class="w3-badge background-objekt">{{ andmed.objekt.sel_kuul.count }}</span>
     </a>
   </h5>
   {% for obj in andmed.objekt.sel_kuul %}
@@ -51,7 +53,9 @@
         class="hover-objekt"
         href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
     >
-      <strong>{{ obj.dob|date:"d.m.Y" }}</strong>
+      <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+        {{ obj.dob|date:"d.m.Y" }}
+      </strong>
     </a>
     &nbsp;
     <a
@@ -82,13 +86,17 @@
       <a class="hover-objekt"
         href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
       >
-        <b>{{ obj.dob|date:"d.m.Y" }}</b>
+        <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+          {{ obj.dob|date:"d.m.Y" }}
+        </strong>
       </a>
     {% else %}
       <a class="hover-objekt"
         href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}"
       >
-        <b>{{ obj.hist_year }}</b>
+        <strong class="hover-artikkel">
+          {{ obj.hist_year }}
+        </strong>
       </a>
     {% endif %}
     &nbsp;
