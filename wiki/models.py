@@ -1148,17 +1148,23 @@ class Artikkel(models.Model):
     headline.short_description = 'Lugu'
 
     def profiilipilt(self):
-        return Pilt.objects.filter(artiklid=self.id, profiilipilt_artikkel=True).first()
+        return Pilt.objects.filter(
+            artiklid=self.id,
+            profiilipilt_artikkel=True
+        ).first()
 
     # Kui tekstis on vigase koha märge
     @property
     def vigane(self):
         return VIGA_TEKSTIS in self.body_text
 
-    @property # TODO: Selleks et otsida kuupäeva, mis jääb alguse ja lõpu vahele [str in hist_dates_string]
+    @property
     def hist_dates_string(self):
         dob = self.dob
-        doe = self.doe
+        if self.doe:
+            doe = self.doe
+        else:
+            doe = dob
         tekst = f'{str(dob.month).zfill(2)}{str(dob.day).zfill(2)}'
         if all([dob, doe]):
             vahemik = (doe - dob).days
