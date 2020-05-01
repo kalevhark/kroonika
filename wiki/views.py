@@ -1125,7 +1125,7 @@ class IsikFilterView(FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        queryset = Isik.objects.all().order_by('perenimi')
+        queryset = Isik.objects.all() # .order_by('perenimi')
         filter = IsikFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 
@@ -1223,7 +1223,7 @@ class OrganisatsioonFilterView(FilterView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         queryset = Organisatsioon.objects.all().annotate(
-            nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField())).order_by('nimi')
+            nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField())) # .order_by('nimi')
         filter = OrganisatsioonFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 
@@ -1319,7 +1319,7 @@ class ObjektFilterView(FilterView):
         queryset = Objekt.objects.all().annotate(
             nulliga=ExpressionWrapper(
                 (date.today().year - F('hist_year'))%5, output_field=IntegerField()
-            )).order_by('nimi')
+            )) # .order_by('nimi')
         filter = ObjektFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 

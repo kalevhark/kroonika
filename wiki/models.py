@@ -947,7 +947,10 @@ class Isik(models.Model):
 
 
     class Meta:
-        ordering = ['perenimi', 'eesnimi']
+        ordering = [
+            'perenimi',
+            'eesnimi'
+        ]
         verbose_name_plural = "Isikud"
 
 
@@ -997,17 +1000,6 @@ class Kroonika(models.Model):
         verbose_name = "Kroonika"
         verbose_name_plural = "Kroonikad"
 
-
-# # Ajutine filtreeriv Manager kui vaja näidata ilma Kroonikata TODO: Kuni revisjoni lõpuni
-# class ArtikkelKroonikataManager(models.Manager):
-#     def get_queryset(self):
-#        return super().get_queryset().filter(kroonika__isnull=True)
-#
-# # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-# class ArtikkelSajandTagasiManager(models.Manager):
-#     def get_queryset(self):
-#         sajandtagasi = datetime.date.today().year - 100
-#         return super().get_queryset().filter(hist_year__lte=sajandtagasi)
 
 class Artikkel(models.Model):
     slug = models.SlugField(
@@ -1213,9 +1205,10 @@ class Artikkel(models.Model):
 
     class Meta:
         ordering = [
-            'hist_year',
-            'hist_month',
-            'hist_date',
+            'hist_searchdate',
+            # 'hist_year',
+            # 'hist_month',
+            # 'hist_date',
             'id'
         ]
         verbose_name = "Lugu"
