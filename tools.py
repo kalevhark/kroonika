@@ -238,46 +238,44 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-    Johannes Haugas (Augas),
-    August-Johannes Horn,
-    Voldemar Horn,
-    Aleksander Kitsnik,
-    Hans Kukk,
-    Karl Kustavus,
-    Eduard Aleksander Kõomägi,
-    Arnold Laanso,
-    Aleksander Lilje,
-    Elmar Lugus,
-    Konrad Madisson,
-    Verner Helmuth Neumann,
-    Nikolai Oberst,
-    Voldemar Pihap,
-    Paul Poola,
-    August Rakso,
-    Albert Sokk,
-    Ferdinand Osvald Sööt,
-    Oskar Tomberg,
-    Robert Tuudelepp,
-    Evald Eduard Upser,
-    Johannes Vallner,
-    August Evald Vellner,
-    Nikolai Vellner,
+    Maimo Inn, 
+    Helmi Ilisson, 
+    Klaudie Järlik, 
+    Wiktor Jõgi, 
+    Juulius Karu, 
+    Aleksander Karawits, 
+    Elwiire Kelt, 
+    Aug. Krahw, Nadeshda Kütt, 
+    Robert Lillimägi, 
+    Joh. Lippert, 
+    Ella Miller, 
+    Anna Noorkõiw, 
+    Anna Paawes, 
+    Olga Pettai, 
+    Ellen Särm, 
+    Aliide Sõjamägi, 
+    Jaan Schaurup, 
+    Leo Teder, 
+    Wiktor Teder, 
+    Leida Ruubel, 
+    Lydia Roose, 
+    Wiktor Rosenstok
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=7625)
+    art = Artikkel.objects.get(id=7627)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=2847)
+    pilt = Pilt.objects.get(id=2849)
     print(pilt)
     # Milline organisatsioon lisada isikule
-    org = Organisatsioon.objects.get(id=85) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn
+    org = Organisatsioon.objects.get(id=19) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [8503, 8507]
+    viited_ids = [8504]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Poeglastegümnaasiumi reaalharu lõpetaja 1924'
+    isik_kirjeldus = '6. algkooli kuuenda klassi lõpetaja 1924'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
