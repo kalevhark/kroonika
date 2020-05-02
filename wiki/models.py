@@ -159,14 +159,16 @@ class DaatumitegaManager(models.Manager):
         if initial_queryset.model.__name__ == 'Artikkel':
             # Kui andmebaas on Artikkel, siis filtreerime kasutaja järgi
             if not (request.user.is_authenticated and request.user.is_staff):
-                initial_queryset = initial_queryset.filter(kroonika__isnull=True)
+                filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
+            else:
+                filtered_queryset = initial_queryset
             # Filtreerime välja ilma daatumiteta kirjed
-            filtered_queryset = initial_queryset. \
-                exclude(
-                hist_date__isnull=True,
-                hist_year__isnull=True,
-                hist_enddate__isnull=True,
-            )
+            # filtered_queryset = filtered_queryset. \
+            #     exclude(
+            #     hist_date__isnull=True,
+            #     hist_year__isnull=True,
+            #     hist_enddate__isnull=True,
+            # )
         else: # Kui andmebaas on Isik, Organisatsioon, Objekt
             if not (request.user.is_authenticated and request.user.is_staff):
                 artikkel_qs = Artikkel.objects.daatumitega(request)
@@ -213,34 +215,6 @@ class DaatumitegaManager(models.Manager):
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )
-        # filtered_queryset = filtered_queryset.annotate(
-        #     calc_searchdate=Case(
-        #         When(dob=None, then=F('hist_searchdate')),
-        #         default=F('dob'),
-        #         output_field=DateField()
-        #     )
-        # )
-        from django.db.models.functions import ExtractYear, Extract, Cast
-        # from django.db.models import ExpressionWrapper
-        # calc_qs = filtered_queryset.annotate(
-        #     y = Extract('dob', 'year', output_field=IntegerField()),
-        #     m = Extract('dob', 'month', output_field=IntegerField()),
-        #     d = Extract('dob', 'day', output_field=IntegerField())
-        # ).annotate(calc_searchdate=Func(F('y'), F('m'), F('d'), function='CONCAT'))
-        # print(calc_qs[2000].calc_searchdate)
-        # class Epoch(Func):
-        #     function = 'EXTRACT'
-        #     template = "%(function)s('epoch' from %(expressions)s)"
-        #
-        # class MakeDate(Func):
-        #     template = "make_date(%(expressions)s)"
-
-        # calc_qs = filtered_queryset.annotate(
-        #     # calc_searchdate=Epoch(F('hist_date'))
-        #     calc_searchdate=MakeDate(1971, 1, 1), output_field=DateField()
-        # )
-        #
-        # print(calc_qs[2000].calc_searchdate)
         return filtered_queryset
 
 #
