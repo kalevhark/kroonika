@@ -170,10 +170,12 @@ class DaatumitegaManager(models.Manager):
         else: # Kui andmebaas on Isik, Organisatsioon, Objekt
             if not (request.user.is_authenticated and request.user.is_staff):
                 artikkel_qs = Artikkel.objects.daatumitega(request)
-                initial_queryset = initial_queryset.filter(
+                filtered_queryset = initial_queryset.filter(
                     Q(viited__isnull=False) |
                     Q(artikkel__in=artikkel_qs)
                 ).distinct()
+            else:
+                filtered_queryset = initial_queryset
             # Filtreerime välja ilma daatumiteta kirjed
             # filtered_queryset = initial_queryset. \
             #     exclude(
