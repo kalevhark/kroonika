@@ -198,7 +198,7 @@ class DaatumitegaManager(models.Manager):
                     When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
                     When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
                     default=F('hist_date'),
-                    output_field=DateTimeField()
+                    output_field=DateField()
                 ),
                 doe=Case(
                     When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
@@ -207,7 +207,7 @@ class DaatumitegaManager(models.Manager):
                     When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
                     When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
                     default=F('hist_enddate'),
-                    output_field=DateTimeField()
+                    output_field=DateField()
                 )
             )
         else:  # vkj

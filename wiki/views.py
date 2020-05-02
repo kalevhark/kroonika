@@ -1676,7 +1676,6 @@ def ukj_test_isik_detail(request):
     p2ev = date.today().day  # str(p2ev).zfill(2) -> PP
     kuu = date.today().month  # str(kuu).zfill(2) -> KK
     aasta = date.today().year
-
     # Andmebaas Isik andmed veebi
     isik = dict()
     isikud_daatumitega = Isik.objects.daatumitega(request)
@@ -1703,7 +1702,8 @@ def ukj_test_isik_detail(request):
             dob__year=(aasta - 100)
         )
         isik['sel_p2eval'] = isikud_daatumitega.\
-            filter(dob__day=p2ev, dob__month=kuu)
+            filter(dob__day=p2ev, dob__month=kuu).\
+            order_by(ExtractYear('dob'))
         isik['sel_p2eval_kirjeid'] = len(isik['sel_p2eval'])
         isik['sel_kuul'] = isikud_daatumitega.\
             filter(dob__month=kuu).\
