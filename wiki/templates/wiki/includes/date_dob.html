@@ -1,0 +1,73 @@
+<!-- 
+cs - lingi värv ("artikkel", "isik", "organisatsioon", "objekt")
+-->
+{% with sd=obj.dob y=obj.hist_year m=obj.hist_month %}
+	{% if sd %}
+		<div class="date {% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+			<a
+					class="text-{{ cs }} day"
+					href="{% url 'wiki:artikkel_day_archive' year=sd|date:'Y' month=sd|date:'m' day=sd|date:'j' %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {{ sd|date:'j.m.Y' }}?"
+			>
+				{{ sd|date:"j." }}
+			</a>
+			<a
+					class="text-{{ cs }} month"
+					href="{% url 'wiki:artikkel_month_archive' year=sd|date:'Y' month=sd|date:'m' %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=sd|date:'m' %} {{ sd|date:'Y' }}?"
+			>
+				{{ sd|date:"m." }}
+			</a>
+			<a
+					class="text-{{ cs }} year"
+					href="{% url 'wiki:artikkel_year_archive' year=sd|date:'Y' %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {{ sd|date:'Y' }}?"
+			>
+				{{ sd|date:"Y" }}
+			</a>
+		</div>
+	{% else %}
+		{% if m %}
+			<div class="date">
+				<a
+						class="text-{{ cs }} month"
+						href="{% url 'wiki:artikkel_month_archive' year=y month=m %}"
+						onmouseover="hoverDate(this)"
+						onmouseout="normalDate(this)"
+						title="Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=m|stringformat:'02i' %} {{ y }}?"
+				>
+					{% include "wiki/includes/kuu.html" with kuu=m|stringformat:"02i" %}&nbsp;
+				</a>
+				<a
+						class="text-{{ cs }} year"
+						href="{% url 'wiki:artikkel_year_archive' year=y %}"
+						onmouseover="hoverDate(this)"
+						onmouseout="normalDate(this)"
+						title="Mis juhtus {{ y }}?"
+				>
+					{{ y }}
+				</a>
+			</div>
+		{% else %}
+			{% if y %}
+				<div class="date">
+					<a
+							class="text-{{ cs }} year"
+							href="{% url 'wiki:artikkel_year_archive' year=y %}"
+							onmouseover="hoverDate(this)"
+							onmouseout="normalDate(this)"
+							title="Mis juhtus {{ y }}?"
+					>
+						{{ y }}
+					</a>
+				</div>
+			{% endif %}
+		{% endif %}
+	{% endif %}
+{% endwith %}

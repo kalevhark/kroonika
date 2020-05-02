@@ -1,0 +1,5 @@
+{% include 'wiki/includes/date_dob.html' with obj=obj %}
+{% if obj.doe or obj.hist_endyear %}
+-
+{% endif %}
+{% include 'wiki/includes/date_doe.html' with obj=obj %}

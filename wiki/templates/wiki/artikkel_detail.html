@@ -19,7 +19,7 @@
 		<div class="w3-container">
 			{% if prev_obj %}
 				<strong>
-					{% include 'wiki/includes/kp.html' with sd=prev_obj.hist_date ed=prev_obj.hist_enddate y=prev_obj.hist_year m=prev_obj.hist_month cs="artikkel" %}
+					{% include 'wiki/includes/date_range.html' with obj=prev_obj cs="artikkel" %}
 				</strong>
 				<br>
 				<a
@@ -37,7 +37,7 @@
 				class="w3-xlarge text-artikkel layout-row layout-align-center-center w3-hover-white"
 		>
 			<strong>
-				{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="artikkel" %}
+				{% include 'wiki/includes/date_range.html' with obj=object cs="artikkel" %}
 			</strong>
 		</div>
 	</div>
@@ -46,7 +46,7 @@
 		<div class="w3-container w3-right-align">
 			{% if next_obj %}
 				<strong>
-				  {% include 'wiki/includes/kp.html' with sd=next_obj.hist_date ed=next_obj.hist_enddate y=next_obj.hist_year m=next_obj.hist_month cs="artikkel" %}
+				  {% include 'wiki/includes/date_range.html' with obj=next_obj cs="artikkel" %}
 				</strong>
 				<br>
 				<a

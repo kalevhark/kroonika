@@ -1,0 +1,48 @@
+<!-- 
+cs - lingi värv ("artikkel", "isik", "organisatsioon", "objekt")
+-->
+{% with ed=obj.doe ey=obj.hist_endyear %}
+	{% if ed %}
+		<div class="date {% if obj.doe|date:'d.m.Y' != obj.hist_enddate|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+			<a
+					class="text-{{ cs }} day {% if obj.doe|date:'d.m.Y' != obj.hist_enddate|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}"
+					href="{% url 'wiki:artikkel_day_archive' year=ed|date:'Y' month=ed|date:'m' day=ed|date:'d' %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {{ ed|date:'j.m.Y' }}?"
+			>
+				{{ ed|date:"j." }}
+			</a>
+			<a
+					class="text-{{ cs }} month"
+					href="{% url 'wiki:artikkel_month_archive' year=ed|date:'Y' month=ed|date:'m' %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=ed|date:'m' %} {{ ed|date:'Y' }}?"
+				>
+				{{ ed|date:"m." }}
+			</a>
+			<a
+					class="text-{{ cs }} year"
+					href="{% url 'wiki:artikkel_year_archive' year=ed|date:'Y' %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {{ ed|date:'Y' }}?"
+			>
+				{{ ed|date:"Y" }}
+			</a>
+		</div>
+	{% elif ey %}
+		<div class="date">
+			<a
+					class="text-{{ cs }} year"
+					href="{% url 'wiki:artikkel_year_archive' year=ey %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {{ ey }}?"
+			>
+				{{ ey }}
+			</a>
+		</div>
+	{% endif %}
+{% endwith %}

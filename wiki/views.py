@@ -235,6 +235,14 @@ def info(request):
     num_visits = request.session.get('num_visits', 0)
     request.session['num_visits'] = num_visits + 1
 
+    # testimiseks kuup2evad
+    dates = {
+        'date_today': date.today(),
+        'datetime_now': datetime.now(),
+        'timezone_now': timezone.now(),
+        'timezone_now_tz': timezone.localtime(timezone.now())  # .date()
+    }
+
     context = {
         'andmebaasid': andmebaasid,
         'andmed': andmed,
@@ -246,6 +254,7 @@ def info(request):
         'system_state': system_state,
         'num_visits': num_visits,
         'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
+        'dates': dates,
     }
 
     return render(

@@ -11,13 +11,7 @@
     {% if forloop.counter > 1 %}
       <br>
     {% endif %}
-    <a
-        class="hover-isik"
-        href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}">
-      <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
-        {{ obj.dob|date:"d.m.Y" }}
-      </strong>
-    </a>
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
     <a
         class="hover-isik"
@@ -40,13 +34,7 @@
     {% if forloop.counter > 1 %}
       <br>
     {% endif %}
-    <a class="hover-isik"
-      href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
-    >
-    <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
-      {{ obj.dob|date:"d.m.Y" }}
-    </strong>
-    </a>
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
       {{ obj }}
@@ -66,19 +54,7 @@
     {% if forloop.counter > 1 %}
       <br>
     {% endif %}
-    {% if obj.dob %}
-      <a class="hover-isik"
-        href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}">
-        <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
-          {{ obj.dob|date:"d.m.Y" }}
-        </strong>
-      </a>
-    {% else %}
-      <a class="hover-isik"
-        href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <strong class="hover-artikkel">{{ obj.hist_year }}</strong>
-      </a>
-    {% endif %}&nbsp;
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>&nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
        {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
       &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
@@ -98,13 +74,7 @@
       <br>
     {% endif %}
     <strong>&#9840;&nbsp;</strong>
-    <a
-        class="hover-isik"
-        href="{% url 'wiki:artikkel_day_archive' year=obj.doe|date:'Y' month=obj.doe|date:'m' day=obj.doe|date:'d' %}">
-      <strong class="{% if obj.doe|date:'d.m.Y' != obj.hist_enddate|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
-        {{ obj.doe|date:"d.m.Y" }}
-      </strong>
-    </a>
+    <strong>{% include 'wiki/includes/date_doe.html' with obj=obj %}</strong>
     &nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
       {{ obj }}
@@ -122,13 +92,7 @@
       <br>
     {% endif %}
     <strong>&#9840;&nbsp;</strong>
-    <a class="hover-isik"
-      href="{% url 'wiki:artikkel_day_archive' year=obj.doe|date:'Y' month=obj.doe|date:'m' day=obj.doe|date:'d' %}"
-    >
-      <strong class="{% if obj.doe|date:'d.m.Y' != obj.hist_enddate|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
-        {{ obj.doe|date:"d.m.Y" }}
-      </strong>
-    </a>
+    <strong>{% include 'wiki/includes/date_doe.html' with obj=obj %}</strong>
     &nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
       {{ obj }}
