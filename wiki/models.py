@@ -175,13 +175,13 @@ class DaatumitegaManager(models.Manager):
                     Q(artikkel__in=artikkel_qs)
                 ).distinct()
             # Filtreerime välja ilma daatumiteta kirjed
-            filtered_queryset = initial_queryset. \
-                exclude(
-                hist_date__isnull=True,
-                hist_year__isnull=True,
-                hist_enddate__isnull=True,
-                hist_endyear__isnull=True,
-            )
+            # filtered_queryset = initial_queryset. \
+            #     exclude(
+            #     hist_date__isnull=True,
+            #     hist_year__isnull=True,
+            #     hist_enddate__isnull=True,
+            #     hist_endyear__isnull=True,
+            # )
         # Arvutame abiväljad vastavalt kasutaja kalendrieelistusele
         # dob: day of begin|birth
         # dow: day of end
@@ -226,12 +226,12 @@ class DaatumitegaManager(models.Manager):
         #     d = Extract('dob', 'day', output_field=IntegerField())
         # ).annotate(calc_searchdate=Func(F('y'), F('m'), F('d'), function='CONCAT'))
         # print(calc_qs[2000].calc_searchdate)
-        class Epoch(Func):
-            function = 'EXTRACT'
-            template = "%(function)s('epoch' from %(expressions)s)"
-
-        class MakeDate(Func):
-            template = "make_date(%(expressions)s)"
+        # class Epoch(Func):
+        #     function = 'EXTRACT'
+        #     template = "%(function)s('epoch' from %(expressions)s)"
+        #
+        # class MakeDate(Func):
+        #     template = "make_date(%(expressions)s)"
 
         # calc_qs = filtered_queryset.annotate(
         #     # calc_searchdate=Epoch(F('hist_date'))
