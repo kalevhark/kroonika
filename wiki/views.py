@@ -1520,6 +1520,25 @@ def ukj_test(request):
     artikkel['viimane_lisatud'] = artikkel_qs.latest('inp_date')
     artikkel['viimane_muudetud'] = artikkel_qs.latest('mod_date')
 
+    # Andmed aasta ja kuu rippvalikumenüü jaoks
+    perioodid = artikkel_qs. \
+        filter(hist_searchdate__isnull=False). \
+        values('hist_searchdate__year', 'hist_searchdate__month'). \
+        annotate(ct=Count('id')). \
+        order_by('hist_searchdate__year', 'hist_searchdate__month')
+    artikleid_kuu_kaupa = [
+        [
+            periood['hist_searchdate__year'],
+            periood['hist_searchdate__month'],
+            periood['ct']
+        ] for periood in perioodid
+    ]
+    artikleid_aasta_kaupa = artikkel_qs.\
+        filter(hist_searchdate__isnull=False).\
+        values('hist_year').\
+        annotate(Count('hist_year')).\
+        order_by('-hist_year')
+
     isik = dict()
     isik_qs = Isik.objects.daatumitega(request)
     isik['kirjeid'] = isik_qs.count()
@@ -1540,6 +1559,8 @@ def ukj_test(request):
 
     andmed = {
         'artikkel': artikkel,
+        'artikleid_aasta_kaupa': artikleid_aasta_kaupa,
+        'artikleid_kuu_kaupa': artikleid_kuu_kaupa,
         'isik': isik,
         'organisatsioon': organisatsioon,
         'objekt': objekt
@@ -1547,7 +1568,7 @@ def ukj_test(request):
 
     return render(
         request,
-        'wiki/ukj_test.html',
+        'wiki/algus.html',
         {
             'andmed': andmed,
         }
@@ -1643,7 +1664,7 @@ def ukj_test_artikkel_detail(request):
 
     return render(
         request,
-        'wiki/ukj_test_artikkel_detail.html',
+        'wiki/algus_artikkel_detail.html',
         {
             'andmed': andmed,
         }
@@ -1658,40 +1679,49 @@ def ukj_test_isik_detail(request):
 
     # Andmebaas Isik andmed veebi
     isik = dict()
-    kirjeid = Isik.objects.count()
-    isik['kirjeid'] = kirjeid
+    isikud_daatumitega = Isik.objects.daatumitega(request)
+    kirjeid = isikud_daatumitega.count()
+    # isik['kirjeid'] = kirjeid
 
     if kirjeid > 0:
-        isikud_daatumitega = Isik.objects.daatumitega(request)
-        isik['viimane_lisatud'] = Isik.objects.latest('inp_date')
-        isik['viimane_muudetud'] = Isik.objects.latest('mod_date')
-        isikud_synniajaga = isikud_daatumitega. \
-            exclude(
-            hist_date__isnull=True,
-            hist_year__isnull=True,
-        )
-        isikud_surmaajaga = isikud_daatumitega. \
-            exclude(
-            hist_enddate__isnull=True,
-            hist_endyear__isnull=True,
-        )
-        isik['100_aastat_tagasi'] = isikud_synniajaga.filter(
+        # isikud_daatumitega = Isik.objects.daatumitega(request)
+        isik['viimane_lisatud'] = isikud_daatumitega.latest('inp_date')
+        isik['viimane_muudetud'] = isikud_daatumitega.latest('mod_date')
+        # isikud_synniajaga = isikud_daatumitega. \
+        #     exclude(
+        #     hist_date__isnull=True,
+        #     hist_year__isnull=True,
+        # )
+        # isikud_surmaajaga = isikud_daatumitega. \
+        #     exclude(
+        #     hist_enddate__isnull=True,
+        #     hist_endyear__isnull=True,
+        # )
+        isik['100_aastat_tagasi'] = isikud_daatumitega.filter(
             dob__day=p2ev,
             dob__month=kuu,
             dob__year=(aasta - 100)
         )
-        isik['sel_p2eval'] = isikud_synniajaga.filter(dob__day=p2ev, dob__month=kuu)
+        isik['sel_p2eval'] = isikud_daatumitega.\
+            filter(dob__day=p2ev, dob__month=kuu)
         isik['sel_p2eval_kirjeid'] = len(isik['sel_p2eval'])
-        isik['sel_kuul'] = isikud_synniajaga.filter(dob__month=kuu).order_by(ExtractDay('dob'))
+        isik['sel_kuul'] = isikud_daatumitega.\
+            filter(dob__month=kuu).\
+            order_by(ExtractDay('dob'))
         isik['sel_kuul_kirjeid'] = len(isik['sel_kuul'])
-        isik['sel_p2eval_surnud'] = isikud_surmaajaga.filter(doe__day=p2ev, doe__month=kuu)
+        isik['sel_p2eval_surnud'] = isikud_daatumitega.\
+            filter(doe__day=p2ev, doe__month=kuu)
         isik['sel_p2eval_surnud_kirjeid'] = len(isik['sel_p2eval_surnud'])
-        isik['sel_kuul_surnud'] = isikud_surmaajaga.filter(doe__month=kuu).order_by(ExtractDay('doe'))
+        isik['sel_kuul_surnud'] = isikud_daatumitega.\
+            filter(doe__month=kuu).\
+            order_by(ExtractDay('doe'))
         isik['sel_kuul_surnud_kirjeid'] = len(isik['sel_kuul_surnud'])
         juubilarid = [
-            isik.id for isik in isikud_synniajaga if isik.vanus() % 5 == 0
+            isik.id for isik in isikud_daatumitega if (isik.vanus() and (isik.vanus() % 5 == 0))
         ]
-        isik['juubilarid'] = isikud_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'dob')
+        isik['juubilarid'] = isikud_daatumitega.\
+            filter(id__in=juubilarid).\
+            order_by('hist_year', 'dob')
 
     andmed = {
         'isik': isik
@@ -1699,7 +1729,7 @@ def ukj_test_isik_detail(request):
 
     return render(
         request,
-        'wiki/ukj_test_isik_detail.html',
+        'wiki/algus_isik_detail.html',
         {
             'andmed': andmed,
         }
@@ -1713,41 +1743,48 @@ def ukj_test_organisatsioon_detail(request):
 
     # Andmebaas Objekt andmed veebi
     organisatsioon = dict()
-    kirjeid = Organisatsioon.objects.count()
-    organisatsioon['kirjeid'] = kirjeid
+    organisatsioonid_daatumitega = Organisatsioon.objects.daatumitega(request)
+    kirjeid = organisatsioonid_daatumitega.count()
+    # organisatsioon['kirjeid'] = kirjeid
 
     if kirjeid > 0:
-        organisatsioon['viimane_lisatud'] = Organisatsioon.objects.latest('inp_date')
-        organisatsioon['viimane_muudetud'] = Organisatsioon.objects.latest('mod_date')
-        organisatsioonid_daatumitega = Organisatsioon.objects.daatumitega(request)
-        organisatsioonid_synniajaga = organisatsioonid_daatumitega. \
-            exclude(
-            hist_date__isnull=True,
-            hist_year__isnull=True,
-        )
-        organisatsioonid_surmaajaga = organisatsioonid_daatumitega. \
-            exclude(
-            hist_enddate__isnull=True,
-            hist_endyear__isnull=True,
-        )
+        organisatsioon['viimane_lisatud'] = organisatsioonid_daatumitega.latest('inp_date')
+        organisatsioon['viimane_muudetud'] = organisatsioonid_daatumitega.latest('mod_date')
+        # organisatsioonid_daatumitega = Organisatsioon.objects.daatumitega(request)
+        # organisatsioonid_synniajaga = organisatsioonid_daatumitega. \
+        #     exclude(
+        #     hist_date__isnull=True,
+        #     hist_year__isnull=True,
+        # )
+        # organisatsioonid_surmaajaga = organisatsioonid_daatumitega. \
+        #     exclude(
+        #     hist_enddate__isnull=True,
+        #     hist_endyear__isnull=True,
+        # )
 
-        organisatsioon['100_aastat_tagasi'] = organisatsioonid_synniajaga.filter(
+        organisatsioon['100_aastat_tagasi'] = organisatsioonid_daatumitega.filter(
             dob__day=p2ev,
             dob__month=kuu,
             dob__year=(aasta - 100)
         )
-        organisatsioon['sel_p2eval'] = organisatsioonid_synniajaga.filter(dob__day=p2ev, dob__month=kuu)
+        organisatsioon['sel_p2eval'] = organisatsioonid_daatumitega.\
+            filter(dob__day=p2ev, dob__month=kuu)
         organisatsioon['sel_p2eval_kirjeid'] = len(organisatsioon['sel_p2eval'])
-        organisatsioon['sel_kuul'] = organisatsioonid_synniajaga.filter(dob__month=kuu).order_by(ExtractDay('dob'))
+        organisatsioon['sel_kuul'] = organisatsioonid_daatumitega.\
+            filter(dob__month=kuu).\
+            order_by(ExtractDay('dob'))
         organisatsioon['sel_kuul_kirjeid'] = len(organisatsioon['sel_kuul'])
-        # isik['sel_p2eval_surnud'] = isikud_synniajaga.filter(dod__day=p2ev, dod__month=kuu)
-        # isik['sel_p2eval_surnud_kirjeid'] = len(isik['sel_p2eval_surnud'])
-        # isik['sel_kuul_surnud'] = isikud_synniajaga.filter(dod__month=kuu).order_by(ExtractDay('dod'))
-        # isik['sel_kuul_surnud_kirjeid'] = len(isik['sel_kuul_surnud'])
         juubilarid = [
-            organisatsioon.id for organisatsioon in organisatsioonid_synniajaga if organisatsioon.vanus() % 5 == 0
+            organisatsioon.id
+            for organisatsioon
+            in organisatsioonid_daatumitega
+            if (
+                    organisatsioon.vanus() and (organisatsioon.vanus() % 5 == 0)
+            )
         ]
-        organisatsioon['juubilarid'] = organisatsioonid_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'dob')
+        organisatsioon['juubilarid'] = organisatsioonid_daatumitega.\
+            filter(id__in=juubilarid).\
+            order_by('hist_year', 'dob')
 
     andmed = {
         'organisatsioon': organisatsioon
@@ -1755,7 +1792,7 @@ def ukj_test_organisatsioon_detail(request):
 
     return render(
         request,
-        'wiki/ukj_test_organisatsioon_detail.html',
+        'wiki/algus_organisatsioon_detail.html',
         {
             'andmed': andmed,
         }
@@ -1769,41 +1806,48 @@ def ukj_test_objekt_detail(request):
 
     # Andmebaas Objekt andmed veebi
     objekt = dict()
-    kirjeid = Objekt.objects.count()
-    objekt['kirjeid'] = kirjeid
+    objektid_daatumitega = Objekt.objects.daatumitega(request)
+    kirjeid = objektid_daatumitega.count()
+    # objekt['kirjeid'] = kirjeid
 
     if kirjeid > 0:
-        objekt['viimane_lisatud'] = Objekt.objects.latest('inp_date')
-        objekt['viimane_muudetud'] = Objekt.objects.latest('mod_date')
-        objektid_daatumitega = Objekt.objects.daatumitega(request)
-        objektid_synniajaga = objektid_daatumitega. \
-            exclude(
-            hist_date__isnull=True,
-            hist_year__isnull=True,
-        )
-        objektid_surmaajaga = objektid_daatumitega. \
-            exclude(
-            hist_enddate__isnull=True,
-            hist_endyear__isnull=True,
-        )
+        objekt['viimane_lisatud'] = objektid_daatumitega.latest('inp_date')
+        objekt['viimane_muudetud'] = objektid_daatumitega.latest('mod_date')
+        # objektid_daatumitega = Objekt.objects.daatumitega(request)
+        # objektid_synniajaga = objektid_daatumitega. \
+        #     exclude(
+        #     hist_date__isnull=True,
+        #     hist_year__isnull=True,
+        # )
+        # objektid_surmaajaga = objektid_daatumitega. \
+        #     exclude(
+        #     hist_enddate__isnull=True,
+        #     hist_endyear__isnull=True,
+        # )
 
-        objekt['100_aastat_tagasi'] = objektid_synniajaga.filter(
+        objekt['100_aastat_tagasi'] = objektid_daatumitega.filter(
             dob__day=p2ev,
             dob__month=kuu,
             dob__year=(aasta - 100)
         )
-        objekt['sel_p2eval'] = objektid_synniajaga.filter(dob__day=p2ev, dob__month=kuu)
+        objekt['sel_p2eval'] = objektid_daatumitega.\
+            filter(dob__day=p2ev, dob__month=kuu)
         objekt['sel_p2eval_kirjeid'] = len(objekt['sel_p2eval'])
-        objekt['sel_kuul'] = objektid_synniajaga.filter(dob__month=kuu).order_by(ExtractDay('dob'))
+        objekt['sel_kuul'] = objektid_daatumitega.\
+            filter(dob__month=kuu).\
+            order_by(ExtractDay('dob'))
         objekt['sel_kuul_kirjeid'] = len(objekt['sel_kuul'])
-        # isik['sel_p2eval_surnud'] = isikud_synniajaga.filter(dod__day=p2ev, dod__month=kuu)
-        # isik['sel_p2eval_surnud_kirjeid'] = len(isik['sel_p2eval_surnud'])
-        # isik['sel_kuul_surnud'] = isikud_synniajaga.filter(dod__month=kuu).order_by(ExtractDay('dod'))
-        # isik['sel_kuul_surnud_kirjeid'] = len(isik['sel_kuul_surnud'])
         juubilarid = [
-            objekt.id for objekt in objektid_synniajaga if objekt.vanus() % 5 == 0
+            objekt.id
+            for objekt
+            in objektid_daatumitega
+            if (
+                    objekt.vanus() and (objekt.vanus() % 5 == 0)
+            )
         ]
-        objekt['juubilarid'] = objektid_synniajaga.filter(id__in=juubilarid).order_by('hist_year', 'dob')
+        objekt['juubilarid'] = objektid_daatumitega.\
+            filter(id__in=juubilarid).\
+            order_by('hist_year', 'dob')
 
     andmed = {
         'objekt': objekt
@@ -1811,7 +1855,7 @@ def ukj_test_objekt_detail(request):
 
     return render(
         request,
-        'wiki/ukj_test_objekt_detail.html',
+        'wiki/algus_objekt_detail.html',
         {
             'andmed': andmed,
         }

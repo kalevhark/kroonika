@@ -74,9 +74,7 @@
       {% if forloop.counter > 1 %}
         <br>
       {% endif %}
-      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% endif %}">{{ obj.hist_year }}</strong>:
-      </a>
+      <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
         {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
@@ -103,16 +101,17 @@
   {% if andmed.artikkel.sel_kuul %}
     <h5>
       <a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}">
-        {% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_kuul_kirjeid }}</span>
+        {% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos
+        <span class="w3-badge background-artikkel">
+          {{ andmed.artikkel.sel_kuul_kirjeid }}
+        </span>
       </a>
     </h5>
     {% for obj in andmed.artikkel.sel_kuul %}
       {% if forloop.counter > 1 %}
         <br>
       {% endif %}
-      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% endif %}">{{ obj.hist_year }}</strong>:
-      </a>
+      <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
       </a>
@@ -143,9 +142,7 @@
       {% if forloop.counter > 1 %}
         <br>
       {% endif %}
-      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% endif %}">{{ obj.hist_year }}</strong>:
-      </a>
+      <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
       </a>

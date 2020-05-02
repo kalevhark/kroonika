@@ -189,32 +189,29 @@
     {% now "Y" as aasta %}
     <!-- Artiklite esitlus -->
 	  <div class="w3-quarter">
-      <small>ukj: {{ request.session.ukj }}</small><br>
       <!-- Teadete esitamiseks -->
 <!--      <div class="w3-container w3-hover-white">-->
 <!--        {% include 'wiki/includes/wiki_message.html' %}-->
 <!--      </div>-->
       <div class="w3-container w3-padding-16 w3-hover-white">
+        {% include 'wiki/includes/wiki_calendar.html' %}
         <div id="algus_artikkel"></div>
       </div>
     </div>
     <!-- Isikute esitlus -->
     <div class="w3-quarter">
-      <small>ukj: {{ request.session.ukj }}</small><br>
       <div class="w3-container w3-padding-16 w3-hover-white">
         <div id="algus_isik"></div>
       </div>
     </div>
     <!-- Organisatsioonide esitlus -->
     <div class="w3-quarter">
-      <small>ukj: {{ request.session.ukj }}</small><br>
       <div class="w3-container w3-padding-16 w3-hover-white">
         <div id="algus_organisatsioon"></div>
       </div>
     </div>
 	  <!-- Objektide esitlus -->
     <div class="w3-quarter">
-      <small>ukj: {{ request.session.ukj }}</small><br>
       <div class="w3-container w3-padding-16 w3-hover-white">
         <div id="algus_objekt"></div>
       </div>

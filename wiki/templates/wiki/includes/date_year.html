@@ -1,0 +1,32 @@
+<!-- 
+cs - lingi värv ("artikkel", "isik", "organisatsioon", "objekt")
+-->
+{% with sd=obj.dob y=obj.hist_year %}
+	{% if sd %}
+		<div class="date {% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+			<a
+					class="text-{{ cs }} year"
+					href="{% url 'wiki:artikkel_year_archive' year=sd|date:'Y' %}"
+					onmouseover="hoverDate(this)"
+					onmouseout="normalDate(this)"
+					title="Mis juhtus {{ sd|date:'Y' }}?"
+			>
+				{{ sd|date:"Y" }}
+			</a>
+		</div>
+	{% else %}
+		{% if y %}
+			<div class="date">
+				<a
+						class="text-{{ cs }} year"
+						href="{% url 'wiki:artikkel_year_archive' year=y %}"
+						onmouseover="hoverDate(this)"
+						onmouseout="normalDate(this)"
+						title="Mis juhtus {{ y }}?"
+				>
+					{{ y }}
+				</a>
+			</div>
+		{% endif %}
+	{% endif %}
+{% endwith %}

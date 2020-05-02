@@ -11,13 +11,7 @@
     {% if forloop.counter > 1 %}
         <br>
     {% endif %}
-    <a class="hover-organisatsioon"
-    href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
-    >
-      <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
-        {{ obj.dob|date:"d.m.Y" }}
-      </strong>
-    </a>
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
     <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
       {{ obj }}
@@ -32,20 +26,17 @@
   {% now "m" as kuu %}
   <h5>
     <a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_organisatsioonid">
-      {% include 'wiki/includes/kuul.html' with kuu=kuu %} asutatud  <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.sel_kuul_kirjeid }}</span>
+      {% include 'wiki/includes/kuul.html' with kuu=kuu %} asutatud
+      <span class="w3-badge background-organisatsioon">
+        {{ andmed.organisatsioon.sel_kuul_kirjeid }}
+      </span>
     </a>
   </h5>
   {% for obj in andmed.organisatsioon.sel_kuul %}
     {% if forloop.counter > 1 %}
         <br>
     {% endif %}
-    <a class="hover-organisatsioon"
-    href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
-    >
-      <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
-        {{ obj.dob|date:"d.m.Y" }}
-      </strong>
-    </a>
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
     <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
       {{ obj }}
@@ -58,30 +49,17 @@
 {% if andmed.organisatsioon.juubilarid %}
   <h5>
     <a style="text-decoration:none;" href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_organisatsioonid">
-      {% now "Y" %} juubilarid <span class="w3-badge background-organisatsioon">{{ andmed.organisatsioon.juubilarid.count }}</span>
+      {% now "Y" %} juubilarid
+      <span class="w3-badge background-organisatsioon">
+        {{ andmed.organisatsioon.juubilarid.count }}
+      </span>
     </a>
   </h5>
   {% for obj in andmed.organisatsioon.juubilarid %}
     {% if forloop.counter > 1 %}
       <br>
     {% endif %}
-    {% if obj.dob %}
-      <a class="hover-organisatsioon"
-        href="{% url 'wiki:artikkel_day_archive' year=obj.dob|date:'Y' month=obj.dob|date:'m' day=obj.dob|date:'d' %}"
-      >
-        <strong class="{% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
-          {{ obj.dob|date:"d.m.Y" }}
-        </strong>
-      </a>
-    {% else %}
-      <a class="hover-organisatsioon"
-        href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}"
-      >
-        <strong class="hover-artikkel">
-          {{ obj.hist_year }}
-        </strong>
-      </a>
-    {% endif %}
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
     <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.nimi }}
