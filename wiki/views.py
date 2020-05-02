@@ -1521,19 +1521,22 @@ def ukj_test(request):
     artikkel['viimane_muudetud'] = artikkel_qs.latest('mod_date')
 
     isik = dict()
-    isik['kirjeid'] = Isik.objects.count()
-    isik['viimane_lisatud'] = Isik.objects.latest('inp_date')
-    isik['viimane_muudetud'] = Isik.objects.latest('mod_date')
+    isik_qs = Isik.objects.daatumitega(request)
+    isik['kirjeid'] = isik_qs.count()
+    isik['viimane_lisatud'] = isik_qs.latest('inp_date')
+    isik['viimane_muudetud'] = isik_qs.latest('mod_date')
 
     organisatsioon = dict()
-    organisatsioon['kirjeid'] = Organisatsioon.objects.count()
-    organisatsioon['viimane_lisatud'] = Organisatsioon.objects.latest('inp_date')
-    organisatsioon['viimane_muudetud'] = Organisatsioon.objects.latest('mod_date')
+    organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
+    organisatsioon['kirjeid'] = organisatsioon_qs.count()
+    organisatsioon['viimane_lisatud'] = organisatsioon_qs.latest('inp_date')
+    organisatsioon['viimane_muudetud'] = organisatsioon_qs.latest('mod_date')
 
     objekt = dict()
-    objekt['kirjeid'] = Objekt.objects.count()
-    objekt['viimane_lisatud'] = Objekt.objects.latest('inp_date')
-    objekt['viimane_muudetud'] = Objekt.objects.latest('mod_date')
+    objekt_qs = Objekt.objects.daatumitega(request)
+    objekt['kirjeid'] = objekt_qs.count()
+    objekt['viimane_lisatud'] = objekt_qs.latest('inp_date')
+    objekt['viimane_muudetud'] = objekt_qs.latest('mod_date')
 
     andmed = {
         'artikkel': artikkel,
