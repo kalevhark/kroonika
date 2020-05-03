@@ -8,24 +8,6 @@
 
 {% block css %}
 <style>
-  html {
-    box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
-    font-size: 100%;
-  }
-  *, *:before, *:after {
-    box-sizing: inherit;
-    margin:0;
-    padding:0;
-  }
-  .mid {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top:1em;
-  }
-
-
   /* Switch starts here */
   /* Idea from Marcus Connor https://codepen.io/marcusconnor/pen/QJNvMa */
   .rocker {
@@ -47,7 +29,9 @@
     width: 7em;
     height: 4em;
     overflow: hidden;
-    border-bottom: 0.5em solid #eee;
+    border-bottom: 0.5em rgba(0, 0, 0, .9);
+    -webkit-background-clip: padding-box; /* for Safari */
+    background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
   }
 
   .rocker-small {
@@ -58,12 +42,12 @@
   .rocker::before {
     content: "";
     position: absolute;
-    top: 0.5em;
+    /* top: 0.5em; */
     left: 0;
     right: 0;
     bottom: 0;
     background-color: #999;
-    border: 0.5em solid #eee;
+    /* border: 0.5em solid #eee; */
     border-bottom: 0;
   }
 
