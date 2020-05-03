@@ -241,12 +241,13 @@
 
 {% block javascript %}
 <script>
-  function get_artikkel_data(url) {
+  function getModelData(value) {
+    let divId = '#algus_' + value['model'];
     $.ajax(
       {
-        url: url,
+        url: value['url'],
         success: function(data) {
-          $('#algus_artikkel').html(data);
+          $(divId).html(data);
         },
         error: function (jqXHR, exception) {
           var msg = '';
@@ -265,120 +266,153 @@
           } else {
               msg = 'Uncaught Error.\n' + jqXHR.responseText;
           }
-          $('#algus_artikkel').html(msg);
+          $(divId).html(msg);
           <!-- Proovime 5 s pärast uuesti -->
           {
-            window.setTimeout(get_artikkel_data(url), 50000);
+            window.setTimeout(get_model_data(url), 50000);
           };
         },
       }
     );
   };
 
-  function get_isik_data(url) {
-    $.ajax(
-      {
-        url: url,
-        success: function(data) {
-          $('#algus_isik').html(data);
-        },
-        error: function (jqXHR, exception) {
-          var msg = '';
-          if (jqXHR.status === 0) {
-              msg = 'Not connect.\n Verify Network.';
-          } else if (jqXHR.status == 404) {
-              msg = 'Requested page not found. [404]';
-          } else if (jqXHR.status == 500) {
-              msg = 'Internal Server Error [500].';
-          } else if (exception === 'parsererror') {
-              msg = 'Requested JSON parse failed.';
-          } else if (exception === 'timeout') {
-              msg = 'Time out error.';
-          } else if (exception === 'abort') {
-              msg = 'Ajax request aborted.';
-          } else {
-              msg = 'Uncaught Error.\n' + jqXHR.responseText;
-          }
-          $('#algus_isik').html(msg);
-          <!-- Proovime 5 s pärast uuesti -->
-          {
-            window.setTimeout(get_isik_data(url), 50000);
-          };
-        },
-      }
-    );
-  };
+<!--  function get_artikkel_data(url) {-->
+<!--    $.ajax(-->
+<!--      {-->
+<!--        url: url,-->
+<!--        success: function(data) {-->
+<!--          $('#algus_artikkel').html(data);-->
+<!--        },-->
+<!--        error: function (jqXHR, exception) {-->
+<!--          var msg = '';-->
+<!--          if (jqXHR.status === 0) {-->
+<!--              msg = 'Not connect.\n Verify Network.';-->
+<!--          } else if (jqXHR.status == 404) {-->
+<!--              msg = 'Requested page not found. [404]';-->
+<!--          } else if (jqXHR.status == 500) {-->
+<!--              msg = 'Internal Server Error [500].';-->
+<!--          } else if (exception === 'parsererror') {-->
+<!--              msg = 'Requested JSON parse failed.';-->
+<!--          } else if (exception === 'timeout') {-->
+<!--              msg = 'Time out error.';-->
+<!--          } else if (exception === 'abort') {-->
+<!--              msg = 'Ajax request aborted.';-->
+<!--          } else {-->
+<!--              msg = 'Uncaught Error.\n' + jqXHR.responseText;-->
+<!--          }-->
+<!--          $('#algus_artikkel').html(msg);-->
+<!--          &lt;!&ndash; Proovime 5 s pärast uuesti &ndash;&gt;-->
+<!--          {-->
+<!--            window.setTimeout(get_artikkel_data(url), 50000);-->
+<!--          };-->
+<!--        },-->
+<!--      }-->
+<!--    );-->
+<!--  };-->
 
-  function get_organisatsioon_data(url) {
-    $.ajax(
-      {
-        url: url,
-        success: function(data) {
-          $('#algus_organisatsioon').html(data);
-        },
-        error: function (jqXHR, exception) {
-          var msg = '';
-          if (jqXHR.status === 0) {
-              msg = 'Not connect.\n Verify Network.';
-          } else if (jqXHR.status == 404) {
-              msg = 'Requested page not found. [404]';
-          } else if (jqXHR.status == 500) {
-              msg = 'Internal Server Error [500].';
-          } else if (exception === 'parsererror') {
-              msg = 'Requested JSON parse failed.';
-          } else if (exception === 'timeout') {
-              msg = 'Time out error.';
-          } else if (exception === 'abort') {
-              msg = 'Ajax request aborted.';
-          } else {
-              msg = 'Uncaught Error.\n' + jqXHR.responseText;
-          }
-          $('#algus_organisatsioon').html(msg);
-          <!-- Proovime 5 s pärast uuesti -->
-          {
-            window.setTimeout(get_organisatsioon_data(url), 50000);
-          };
-        },
-      }
-    );
-  };
+<!--  function get_isik_data(url) {-->
+<!--    $.ajax(-->
+<!--      {-->
+<!--        url: url,-->
+<!--        success: function(data) {-->
+<!--          $('#algus_isik').html(data);-->
+<!--        },-->
+<!--        error: function (jqXHR, exception) {-->
+<!--          var msg = '';-->
+<!--          if (jqXHR.status === 0) {-->
+<!--              msg = 'Not connect.\n Verify Network.';-->
+<!--          } else if (jqXHR.status == 404) {-->
+<!--              msg = 'Requested page not found. [404]';-->
+<!--          } else if (jqXHR.status == 500) {-->
+<!--              msg = 'Internal Server Error [500].';-->
+<!--          } else if (exception === 'parsererror') {-->
+<!--              msg = 'Requested JSON parse failed.';-->
+<!--          } else if (exception === 'timeout') {-->
+<!--              msg = 'Time out error.';-->
+<!--          } else if (exception === 'abort') {-->
+<!--              msg = 'Ajax request aborted.';-->
+<!--          } else {-->
+<!--              msg = 'Uncaught Error.\n' + jqXHR.responseText;-->
+<!--          }-->
+<!--          $('#algus_isik').html(msg);-->
+<!--          &lt;!&ndash; Proovime 5 s pärast uuesti &ndash;&gt;-->
+<!--          {-->
+<!--            window.setTimeout(get_isik_data(url), 50000);-->
+<!--          };-->
+<!--        },-->
+<!--      }-->
+<!--    );-->
+<!--  };-->
 
-  function get_objekt_data(url) {
-    $.ajax(
-      {
-        url: url,
-        success: function(data) {
-          $('#algus_objekt').html(data);
-        },
-        error: function (jqXHR, exception) {
-          var msg = '';
-          if (jqXHR.status === 0) {
-              msg = 'Not connect.\n Verify Network.';
-          } else if (jqXHR.status == 404) {
-              msg = 'Requested page not found. [404]';
-          } else if (jqXHR.status == 500) {
-              msg = 'Internal Server Error [500].';
-          } else if (exception === 'parsererror') {
-              msg = 'Requested JSON parse failed.';
-          } else if (exception === 'timeout') {
-              msg = 'Time out error.';
-          } else if (exception === 'abort') {
-              msg = 'Ajax request aborted.';
-          } else {
-              msg = 'Uncaught Error.\n' + jqXHR.responseText;
-          }
-          $('#algus_objekt').html(msg);
-          <!-- Proovime 5 s pärast uuesti -->
-          {
-            window.setTimeout(get_objekt_data(url), 50000);
-          };
-        },
-      }
-    );
-  };
+<!--  function get_organisatsioon_data(url) {-->
+<!--    $.ajax(-->
+<!--      {-->
+<!--        url: url,-->
+<!--        success: function(data) {-->
+<!--          $('#algus_organisatsioon').html(data);-->
+<!--        },-->
+<!--        error: function (jqXHR, exception) {-->
+<!--          var msg = '';-->
+<!--          if (jqXHR.status === 0) {-->
+<!--              msg = 'Not connect.\n Verify Network.';-->
+<!--          } else if (jqXHR.status == 404) {-->
+<!--              msg = 'Requested page not found. [404]';-->
+<!--          } else if (jqXHR.status == 500) {-->
+<!--              msg = 'Internal Server Error [500].';-->
+<!--          } else if (exception === 'parsererror') {-->
+<!--              msg = 'Requested JSON parse failed.';-->
+<!--          } else if (exception === 'timeout') {-->
+<!--              msg = 'Time out error.';-->
+<!--          } else if (exception === 'abort') {-->
+<!--              msg = 'Ajax request aborted.';-->
+<!--          } else {-->
+<!--              msg = 'Uncaught Error.\n' + jqXHR.responseText;-->
+<!--          }-->
+<!--          $('#algus_organisatsioon').html(msg);-->
+<!--          &lt;!&ndash; Proovime 5 s pärast uuesti &ndash;&gt;-->
+<!--          {-->
+<!--            window.setTimeout(get_organisatsioon_data(url), 50000);-->
+<!--          };-->
+<!--        },-->
+<!--      }-->
+<!--    );-->
+<!--  };-->
+
+<!--  function get_objekt_data(url) {-->
+<!--    $.ajax(-->
+<!--      {-->
+<!--        url: url,-->
+<!--        success: function(data) {-->
+<!--          $('#algus_objekt').html(data);-->
+<!--        },-->
+<!--        error: function (jqXHR, exception) {-->
+<!--          var msg = '';-->
+<!--          if (jqXHR.status === 0) {-->
+<!--              msg = 'Not connect.\n Verify Network.';-->
+<!--          } else if (jqXHR.status == 404) {-->
+<!--              msg = 'Requested page not found. [404]';-->
+<!--          } else if (jqXHR.status == 500) {-->
+<!--              msg = 'Internal Server Error [500].';-->
+<!--          } else if (exception === 'parsererror') {-->
+<!--              msg = 'Requested JSON parse failed.';-->
+<!--          } else if (exception === 'timeout') {-->
+<!--              msg = 'Time out error.';-->
+<!--          } else if (exception === 'abort') {-->
+<!--              msg = 'Ajax request aborted.';-->
+<!--          } else {-->
+<!--              msg = 'Uncaught Error.\n' + jqXHR.responseText;-->
+<!--          }-->
+<!--          $('#algus_objekt').html(msg);-->
+<!--          &lt;!&ndash; Proovime 5 s pärast uuesti &ndash;&gt;-->
+<!--          {-->
+<!--            window.setTimeout(get_objekt_data(url), 50000);-->
+<!--          };-->
+<!--        },-->
+<!--      }-->
+<!--    );-->
+<!--  };-->
 
   $( document ).ready(function() {
-<!--    $('#checkbox-value').text(document.getElementById("checkbox1").checked);-->
     let ukj_state = ('{{ request.session.ukj }}'.length) > 0 ? Boolean({{ request.session.ukj }}) : false
     <!-- näitame kalendrivahetuse nuppu ja valime salvetatud seisu -->
     let checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
@@ -386,10 +420,17 @@
     document.getElementById("checkbox1").checked = ukj_state;
 
     <!-- näitame sisu -->
-    get_artikkel_data("{% url 'wiki:ukj_test_artikkel_detail' %}");
-    get_isik_data("{% url 'wiki:ukj_test_isik_detail' %}");
-    get_organisatsioon_data("{% url 'wiki:ukj_test_organisatsioon_detail' %}");
-    get_objekt_data("{% url 'wiki:ukj_test_objekt_detail' %}");
+    let models = [
+      {'model': 'artikkel', 'url': "{% url 'wiki:ukj_test_artikkel_detail' %}"},
+      {'model': 'isik', 'url': "{% url 'wiki:ukj_test_isik_detail' %}"},
+      {'model': 'organisatsioon', 'url': "{% url 'wiki:ukj_test_organisatsioon_detail' %}"},
+      {'model': 'objekt', 'url': "{% url 'wiki:ukj_test_objekt_detail' %}"}
+    ];
+    models.forEach(getModelData);
+<!--    get_artikkel_data("{% url 'wiki:ukj_test_artikkel_detail' %}");-->
+<!--    get_isik_data("{% url 'wiki:ukj_test_isik_detail' %}");-->
+<!--    get_organisatsioon_data("{% url 'wiki:ukj_test_organisatsioon_detail' %}");-->
+<!--    get_objekt_data("{% url 'wiki:ukj_test_objekt_detail' %}");-->
 
     <!-- Loome triggeri, kui kalendrisüsteemi valik muutub -->
     $("#checkbox1").on('change', function() {
@@ -401,11 +442,7 @@
         })
         .then((data) => {
           location.reload()
-<!--          get_isik_data("{% url 'wiki:ukj_test_isik_detail' %}");-->
-<!--          get_organisatsioon_data("{% url 'wiki:ukj_test_organisatsioon_detail' %}");-->
-<!--          get_objekt_data("{% url 'wiki:ukj_test_objekt_detail' %}");-->
         });
-<!--      $('#checkbox-value').text(document.getElementById("checkbox1").checked);-->
     });
   });
 </script>
