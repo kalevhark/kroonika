@@ -4,7 +4,7 @@ from django import template
 from django.conf import settings
 
 from wiki.models import VIGA_TEKSTIS, Artikkel, Isik, Organisatsioon, Objekt
-from wiki.views import get_all_logged_in_users, artikkel_qs_userfilter
+from wiki.views import get_all_logged_in_users #, artikkel_qs_userfilter
 
 register = template.Library()
 
@@ -19,7 +19,8 @@ def render_logged_in_user_list(context):
 @register.inclusion_tag('wiki/includes/object_mainitud_artiklites.html', takes_context=True)
 def object_mainitud_artiklites(context, object, model):
     # Filtreerime kasutajatüübi järgi
-    artikkel_qs = artikkel_qs_userfilter(context['user'])
+    # artikkel_qs = artikkel_qs_userfilter(context['user'])
+    artikkel_qs = Artikkel.objects.daatumitega(context['request'])
     if model == 'isik':
         artikkel_qs = artikkel_qs.filter(isikud__in=[object])
     elif model == 'organisatsioon':
@@ -78,5 +79,3 @@ def model_name_objekt():
 @register.simple_tag
 def recaptcha_public_key():
     return settings.GOOGLE_RECAPTCHA_PUBLIC_KEY
-
-

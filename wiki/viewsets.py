@@ -27,7 +27,7 @@ from .serializers import (
     ViideSerializer
 )
 
-from .views import artikkel_qs_userfilter
+# from .views import artikkel_qs_userfilter
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -69,7 +69,8 @@ class ArtikkelViewSet(viewsets.ModelViewSet):
     filter_class = ArtikkelFilter
 
     def get_queryset(self):
-        return artikkel_qs_userfilter(self.request.user)
+        # return artikkel_qs_userfilter(self.request.user)
+        return Artikkel.objects.daatumitega(self.request)
 
 class IsikFilter(filters.FilterSet):
     perenimi = django_filters.CharFilter(field_name='perenimi', lookup_expr='icontains')
@@ -123,6 +124,8 @@ class IsikViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = IsikFilter
 
+    def get_queryset(self):
+        return Isik.objects.daatumitega(self.request)
 
 class ObjektFilter(filters.FilterSet):
     nimi = django_filters.CharFilter(field_name='nimi', lookup_expr='icontains')
@@ -136,6 +139,8 @@ class ObjektViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = ObjektFilter
 
+    def get_queryset(self):
+        return Objekt.objects.daatumitega(self.request)
 
 class OrganisatsioonFilter(filters.FilterSet):
     nimi = django_filters.CharFilter(field_name='nimi', lookup_expr='icontains')
@@ -149,6 +154,8 @@ class OrganisatsioonViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = OrganisatsioonFilter
 
+    def get_queryset(self):
+        return Organisatsioon.objects.daatumitega(self.request)
 
 class PiltViewSet(viewsets.ModelViewSet):
     queryset = Pilt.objects.all()

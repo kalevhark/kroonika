@@ -13,7 +13,7 @@ from django.db.models import \
     Value, BooleanField, DateField, DecimalField, IntegerField, \
     ExpressionWrapper
 from django.db.models import Count, Max, Min
-from django.db.models.functions import ExtractYear, ExtractDay
+from django.db.models.functions import ExtractYear, ExtractMonth, ExtractDay
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -74,12 +74,12 @@ def check_recaptcha(request):
 #
 # Kontrollitakse kasutajat TODO: See on ülearune
 #
-def artikkel_qs_userfilter(user):
-    if user.is_authenticated:
-        if user.is_staff: # näita kõike
-            return Artikkel.objects.all()
-    else: # kasuta filtrit
-        return Artikkel.objects.filter(kroonika__isnull=True)
+# def artikkel_qs_userfilter(user):
+#     if user.is_authenticated:
+#         if user.is_staff: # näita kõike
+#             return Artikkel.objects.all()
+#     else: # kasuta filtrit
+#         return Artikkel.objects.filter(kroonika__isnull=True)
 
 #
 # wiki_base info
@@ -107,9 +107,11 @@ def wiki_base_info(request):
 # Avalehekülg
 #
 def info(request):
-    # Filtreerime artiklite hulga kasutaja järgi
-    # artikkel_qs = artikkel_qs_userfilter(request.user)
+    # Filtreerime kasutaja järgi
     artikkel_qs = Artikkel.objects.daatumitega(request)
+    isik_qs = Isik.objects.daatumitega(request)
+    organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
+    objekt_qs = Objekt.objects.daatumitega(request)
     andmebaasid = []
     # Allikad ja viited
     tyhjad_viited = Viide.objects.annotate(
@@ -148,9 +150,9 @@ def info(request):
         ' '.join(
             [
                 'Isik: ',
-                f'kirjeid {Isik.objects.count()} ',
-                f'viidatud {Isik.objects.filter(viited__isnull=False).distinct().count()} ',
-                f'pildiga {Isik.objects.filter(pilt__isnull=False).distinct().count()} '
+                f'kirjeid {isik_qs.count()} ',
+                f'viidatud {isik_qs.filter(viited__isnull=False).distinct().count()} ',
+                f'pildiga {isik_qs.filter(pilt__isnull=False).distinct().count()} '
             ]
         )
     )
@@ -158,9 +160,9 @@ def info(request):
         ' '.join(
             [
                 'Objekt: ',
-                f'kirjeid {Objekt.objects.count()} ',
-                f'viidatud {Objekt.objects.filter(viited__isnull=False).distinct().count()} ',
-                f'pildiga {Objekt.objects.filter(pilt__isnull=False).distinct().count()} '
+                f'kirjeid {objekt_qs.count()} ',
+                f'viidatud {objekt_qs.filter(viited__isnull=False).distinct().count()} ',
+                f'pildiga {objekt_qs.filter(pilt__isnull=False).distinct().count()} '
             ]
         )
     )
@@ -168,9 +170,9 @@ def info(request):
         ' '.join(
             [
                 'Organisatsioon: ',
-                f'kirjeid {Organisatsioon.objects.count()} ',
-                f'viidatud {Organisatsioon.objects.filter(viited__isnull=False).distinct().count()} ',
-                f'pildiga {Organisatsioon.objects.filter(pilt__isnull=False).distinct().count()} '
+                f'kirjeid {organisatsioon_qs.count()} ',
+                f'viidatud {organisatsioon_qs.filter(viited__isnull=False).distinct().count()} ',
+                f'pildiga {organisatsioon_qs.filter(pilt__isnull=False).distinct().count()} '
             ]
         )
     )
@@ -394,13 +396,14 @@ def algus(request):
 
     # Andmebaas Isik andmed veebi
     a = dict()
-    kirjeid = Isik.objects.count()
+    isik_qs = Isik.objects.daatumitega(request)
+    kirjeid = isik_qs.count()
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
-        a['viimane_lisatud'] = Isik.objects.latest('inp_date')
-        a['viimane_muudetud'] = Isik.objects.latest('mod_date')
+        a['viimane_lisatud'] = isik_qs.latest('inp_date')
+        a['viimane_muudetud'] = isik_qs.latest('mod_date')
         # Filtreerime isikud, kelle sünniaeg teada
-        isikud_synniajaga = Isik.objects.exclude(
+        isikud_synniajaga = isik_qs.exclude(
             hist_date__isnull=True,
             hist_year__isnull=True
         )
@@ -425,29 +428,30 @@ def algus(request):
 
     # Andmebaas Organisatsioon andmed veebi
     a = dict()
-    kirjeid = Organisatsioon.objects.count()
+    organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
+    kirjeid = organisatsioon_qs.count()
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
         # kp = Organisatsioon.objects.all().aggregate(max_inp_date=Max('inp_date'), max_mod_date=Max('mod_date'))
         # a['viimane_lisatud'] = Organisatsioon.objects.filter(inp_date=kp['max_inp_date']).last()
-        a['viimane_lisatud'] = Organisatsioon.objects.latest('inp_date')
-        # a['viimane_muudetud'] = Organisatsioon.objects.filter(mod_date=kp['max_mod_date']).last()
-        a['viimane_muudetud'] = Organisatsioon.objects.latest('mod_date')
-        a['100_aastat_tagasi'] = Organisatsioon.objects.filter(
+        a['viimane_lisatud'] = organisatsioon_qs.latest('inp_date')
+        # a['viimane_muudetud'] = organisatsioon_qs.filter(mod_date=kp['max_mod_date']).last()
+        a['viimane_muudetud'] = organisatsioon_qs.latest('mod_date')
+        a['100_aastat_tagasi'] = organisatsioon_qs.filter(
             hist_date__day=p2ev,
             hist_date__month=kuu,
             hist_date__year=(aasta - 100)
         )
-        a['sel_p2eval'] = Organisatsioon.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
+        a['sel_p2eval'] = organisatsioon_qs.filter(hist_date__day = p2ev, hist_date__month = kuu)
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
-        a['sel_kuul'] = Organisatsioon.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
+        a['sel_kuul'] = organisatsioon_qs.filter(hist_date__month = kuu).order_by('hist_date__day')
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         # juubilarid = Organisatsioon.objects.exclude(hist_year=None).annotate(
         #     nulliga=ExpressionWrapper(
         #         (date.today().year - F('hist_year'))%5, output_field=IntegerField()), vanus_gen=ExpressionWrapper(
         #             date.today().year - F('hist_year'), output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
         # a['juubilarid'] = juubilarid
-        organisatsioonid_synniajaga = Organisatsioon.objects.exclude(
+        organisatsioonid_synniajaga = organisatsioon_qs.exclude(
             hist_date__isnull=True,
             hist_year__isnull=True
         )
@@ -459,22 +463,23 @@ def algus(request):
     
     # Andmebaas Objekt andmed veebi
     a = dict()
-    kirjeid = Objekt.objects.count()
+    objekt_qs = Objekt.objects.daatumitega(request)
+    kirjeid = objekt_qs.count()
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
         # kp = Objekt.objects.all().aggregate(max_inp_date=Max('inp_date'), max_mod_date=Max('mod_date'))
         # a['viimane_lisatud'] = Objekt.objects.filter(inp_date=kp['max_inp_date']).last()
-        a['viimane_lisatud'] = Objekt.objects.latest('inp_date')
+        a['viimane_lisatud'] = objekt_qs.latest('inp_date')
         # a['viimane_muudetud'] = Objekt.objects.filter(mod_date=kp['max_mod_date']).last()
-        a['viimane_muudetud'] = Objekt.objects.latest('mod_date')
-        a['100_aastat_tagasi'] = Objekt.objects.filter(
+        a['viimane_muudetud'] = objekt_qs.latest('mod_date')
+        a['100_aastat_tagasi'] = objekt_qs.filter(
             hist_date__day=p2ev,
             hist_date__month=kuu,
             hist_date__year=(aasta - 100)
         )
-        a['sel_p2eval'] = Objekt.objects.filter(hist_date__day = p2ev, hist_date__month = kuu)
+        a['sel_p2eval'] = objekt_qs.filter(hist_date__day = p2ev, hist_date__month = kuu)
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
-        a['sel_kuul'] = Objekt.objects.filter(hist_date__month = kuu).order_by('hist_date__day')
+        a['sel_kuul'] = objekt_qs.filter(hist_date__month = kuu).order_by('hist_date__day')
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         # juubilarid = Objekt.objects.exclude(hist_year=None).annotate(
         #     nulliga=ExpressionWrapper(
@@ -482,7 +487,7 @@ def algus(request):
         #     vanus_gen=ExpressionWrapper(
         #             date.today().year - (ExtractYear('hist_date') if 'hist_date' else F('hist_year')), output_field=IntegerField())).filter(nulliga=0).order_by('hist_year')
         # a['juubilarid'] = juubilarid
-        objektid_synniajaga = Objekt.objects.exclude(
+        objektid_synniajaga = objekt_qs.exclude(
             hist_date__isnull=True,
             hist_year__isnull=True
         )
@@ -598,20 +603,22 @@ def mainitud_aastatel(qs, model, obj):
         filter = qs.filter(organisatsioonid__id=obj.id)
 
     aastad = list(filter.all().values_list('hist_year', flat=True).distinct())
-    if obj.hist_date:
-        synniaasta = obj.hist_date.year
-    elif obj.hist_year:
-        synniaasta = obj.hist_year
-    else:
-        synniaasta = None
+    # if obj.dob:
+    #     synniaasta = obj.dob.year
+    # elif obj.hist_year:
+    #     synniaasta = obj.hist_year
+    # else:
+    #     synniaasta = None
+    synniaasta = obj.dob.year if obj.dob else obj.hist_year
     if synniaasta:
         aastad.append(synniaasta)
-    if obj.hist_enddate:
-        surmaaasta = obj.hist_enddate.year
-    elif obj.hist_year:
-        surmaaasta = obj.hist_endyear
-    else:
-        surmaaasta = None
+    # if obj.doe:
+    #     surmaaasta = obj.doe.year
+    # elif obj.hist_year:
+    #     surmaaasta = obj.hist_endyear
+    # else:
+    #     surmaaasta = None
+    surmaaasta = obj.doe.year if obj.doe else obj.hist_endyear
     if surmaaasta:
         aastad.append(surmaaasta)
     aastad = Counter(aastad)  # loetleme kõik aastad ja mainimised
@@ -624,6 +631,112 @@ def mainitud_aastatel(qs, model, obj):
         )
     )
 
+def seotud_artiklikaudu(request, model, seotud_artiklid, object_self):
+    queryset = model.objects.daatumitega(request)
+    objects = queryset. \
+        filter(artikkel__pk__in=seotud_artiklid). \
+        distinct(). \
+        exclude(pk=object_self)
+    andmed = {}
+    for seotud_object in objects:
+        kirje = {}
+        kirje['id'] = seotud_object.id
+        kirje['slug'] = seotud_object.slug
+        kirje['nimi'] = seotud_object
+        # kirje['perenimi'] = seotud_isik.perenimi
+        # kirje['eesnimi'] = seotud_isik.eesnimi
+        if model.__name__ == 'Isik':
+            filter_map = {'isikud': seotud_object}
+        if model.__name__ == 'Organisatsioon':
+            filter_map = {'organisatsioonid': seotud_object}
+        if model.__name__ == 'Objekt':
+            filter_map = {'objektid': seotud_object}
+        kirje['artiklid'] = seotud_artiklid. \
+            filter(**filter_map). \
+            values(
+            'id', 'slug',
+            'body_text',
+            'hist_date', 'dob', 'hist_year', 'hist_month',
+            'hist_enddate', 'doe'
+        )
+        andmed[seotud_object.id] = kirje
+    return andmed
+
+# def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
+#     # Isikuga artiklite kaudu seotud teised isikud
+#     queryset = Isik.objects.daatumitega(self.request)
+#     isikud = queryset.\
+#         filter(artikkel__pk__in=seotud_artiklid).\
+#         distinct().\
+#         exclude(pk=isik_ise)
+#     andmed = {}
+#     for seotud_isik in isikud:
+#         kirje = {}
+#         kirje['id'] = seotud_isik.id
+#         kirje['slug'] = seotud_isik.slug
+#         kirje['nimi'] = seotud_isik
+#         # kirje['perenimi'] = seotud_isik.perenimi
+#         # kirje['eesnimi'] = seotud_isik.eesnimi
+#         kirje['artiklid'] = seotud_artiklid.\
+#             filter(isikud=seotud_isik).\
+#             values(
+#                 'id', 'slug',
+#                 'body_text',
+#                 'hist_date', 'dob', 'hist_year', 'hist_month',
+#                 'hist_enddate', 'doe'
+#             )
+#         andmed[seotud_isik.id] = kirje
+#     return andmed
+#
+#
+#
+# def seotud_organisatsioonid_artiklikaudu(seotud_artiklid, organisatsiooni_ise):
+#     # Isikuga artiklite kaudu seotud organisatsioonid
+#     organisatsioon_qs =  Organisatsioon.objects.daatumitega(self.request)
+#     organisatsioonid = organisatsioon_qs.\
+#         filter(artikkel__pk__in=seotud_artiklid).\
+#         distinct().\
+#         exclude(pk=organisatsiooni_ise)
+#     andmed = {}
+#     for seotud_organisatsioon in organisatsioonid:
+#         kirje = {}
+#         kirje['id'] = seotud_organisatsioon.id
+#         kirje['slug'] = seotud_organisatsioon.slug
+#         kirje['nimi'] = seotud_organisatsioon.nimi
+#         kirje['artiklid'] = seotud_artiklid.\
+#             filter(organisatsioonid=seotud_organisatsioon).\
+#                 values(
+#                 'id', 'slug',
+#                 'body_text',
+#                 'dob', 'hist_date', 'hist_year', 'hist_month',
+#                 'doe', 'hist_enddate'
+#             )
+#         andmed[seotud_organisatsioon.id] = kirje
+#     return andmed
+#
+# def seotud_objektid_artiklikaudu(seotud_artiklid, objekt_ise):
+#     # Objektiga artiklite kaudu seotud organisatsioonid
+#     objekt_qs = Objekt.objects.daatumitega(self.request)
+#     objektid = objekt_qs.\
+#         filter(artikkel__pk__in=seotud_artiklid).\
+#         distinct().\
+#         exclude(pk=objekt_ise)
+#     andmed = {}
+#     for seotud_objekt in objektid:
+#         kirje = {}
+#         kirje['id'] = seotud_objekt.id
+#         kirje['slug'] = seotud_objekt.slug
+#         kirje['nimi'] = seotud_objekt.nimi
+#         kirje['artiklid'] = seotud_artiklid.\
+#             filter(objektid=seotud_objekt).\
+#             values(
+#                 'id', 'slug',
+#                'body_text',
+#                'dob', 'hist_date', 'hist_year', 'hist_month',
+#                'doe', 'hist_enddate'
+#             )
+#         andmed[seotud_objekt.id] = kirje
+#     return andmed
 
 #
 # Artikli vaatamiseks
@@ -818,6 +931,7 @@ class ArtikkelFilter(django_filters.FilterSet):
             self.queryset = self.queryset.none()
 
     def nimi_sisaldab_filter(self, queryset, name, value):
+        # modified_qs = Artikkel.objects.daatumitega(self.request)
         # päritud fraas nimes
         if self.data.get('nimi_sisaldab'):
             modified_qs = (
@@ -893,20 +1007,19 @@ class ArtikkelArchiveIndexView(ArchiveIndexView):
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
 
+
 class ArtikkelYearArchiveView(YearArchiveView):
     date_field = "hist_searchdate"
     make_object_list = True
     allow_future = True
     allow_empty = True
-    paginate_by = 20
+    # paginate_by = 20
     # ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
-        # return artikkel_qs_userfilter(self.request.user)
         return Artikkel.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
-        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         aasta = context['year'].year
@@ -915,45 +1028,48 @@ class ArtikkelYearArchiveView(YearArchiveView):
         context['aasta_j2rgmine'] = artikkel_qs.filter(hist_year__gt=aasta).aggregate(Min('hist_year'))['hist_year__min']
         
         # Leiame samal aastal sündinud isikud
-        syndinud_isikud = Isik.objects.filter(
-            hist_date__year = aasta).annotate(
-                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
+        isik_qs = Isik.objects.daatumitega(self.request)
+        syndinud_isikud = isik_qs.\
+            filter(dob__year = aasta).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField())).\
+            order_by(ExtractMonth('dob'), ExtractDay('dob'))
         context['syndinud_isikud'] = syndinud_isikud
         context['syndinud_isikud_pealkiri'] = '{0}. aastal sündinud {1}'.format(
             aasta,
             Isik._meta.verbose_name_plural.lower()
         )
         # Leiame samal aastal surnud isikud
-        surnud_isikud = Isik.objects.filter(hist_enddate__year = aasta).annotate(
-                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
+        surnud_isikud = isik_qs.\
+            filter(doe__year = aasta).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField())). \
+            order_by(ExtractMonth('doe'), ExtractDay('doe'))
         context['surnud_isikud'] = surnud_isikud
         context['surnud_isikud_pealkiri'] = '{0}. aastal surnud {1}'.format(
             aasta,
             Isik._meta.verbose_name_plural.lower()
         )
         # Leiame samal aastal loodud organisatsioonid
-        loodud_organisatsioonid = (
-            Organisatsioon.objects.filter(hist_date__year = aasta) | Organisatsioon.objects.filter(hist_year = aasta)).distinct().annotate(
-                # nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
+        organisatsioon_qs = Organisatsioon.objects.daatumitega(self.request)
+        loodud_organisatsioonid = organisatsioon_qs. \
+            filter(Q(dob__year = aasta) | Q(hist_year = aasta)).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+            order_by(ExtractMonth('dob'), ExtractDay('dob'))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
         context['loodud_organisatsioonid_pealkiri'] = '{0}. aastal loodud {1}'.format(
             aasta,
             Organisatsioon._meta.verbose_name_plural.lower()
         )
         # Leiame samal aastal avatud objektid
-        valminud_objektid = (
-            Objekt.objects.filter(hist_date__year = aasta) | Objekt.objects.filter(hist_year = aasta)).distinct().annotate(
-                # nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
+        objekt_qs = Objekt.objects.daatumitega(self.request)
+        valminud_objektid = objekt_qs. \
+            filter(Q(dob__year = aasta) | Q(hist_year = aasta)). \
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField())). \
+            order_by(ExtractMonth('dob'), ExtractDay('dob'))
         context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid_pealkiri'] = '{0}. aastal valminud {1}'.format(
             aasta,
             Objekt._meta.verbose_name_plural.lower()
         )
-        
         return context
 
 
@@ -976,43 +1092,50 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         aasta = context['month'].year
         kuu = context['month'].month
         p2ev = context['month']
-        # Leiame samal kuul teistel aastatel märgitud artiklid TODO: probleem kui hist_searchdate__month ja hist_enddate__month ei ole järjest
-        # sel_kuul = artikkel_qs.exclude(hist_searchdate__year = aasta).filter(Q(hist_date__month = kuu) | Q(hist_enddate__month = kuu))
-        sel_kuul = artikkel_qs.exclude(hist_searchdate__year=aasta).filter(
-            Q(hist_searchdate__month=kuu) | Q(hist_enddate__month=kuu))
+        # Leiame samal kuul teistel aastatel märgitud artiklid
+        # TODO: 1) hist_year != dob.year ja 2) kui dob ja doe ei ole samal kuul
+        sel_kuul = artikkel_qs.\
+            exclude(hist_year=aasta).\
+            filter(Q(dob__month=kuu)| Q(doe__month=kuu) | Q(hist_month=kuu))
         context['sel_kuul'] = sel_kuul
         # Leiame samal kuul sündinud isikud
-        syndinud_isikud = Isik.objects.filter(
-            hist_date__month = kuu).annotate(
-                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(p2ev.year - ExtractYear('hist_date'), output_field=IntegerField()))
+        isik_qs = Isik.objects.daatumitega(self.request)
+        syndinud_isikud = isik_qs.\
+            filter(dob__month = kuu).\
+            annotate(vanus_gen=ExpressionWrapper(p2ev.year - ExtractYear('dob'), output_field=IntegerField())). \
+            order_by(ExtractDay('dob'))
         context['syndinud_isikud'] = syndinud_isikud
         context['syndinud_isikud_pealkiri'] = '{0} sündinud {1}'.format(
             mis_kuul(kuu),
             Isik._meta.verbose_name_plural.lower()
         )
         # Leiame samal kuul surnud isikud
-        surnud_isikud = Isik.objects.filter(hist_enddate__month = kuu).annotate(
-                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(p2ev.year - ExtractYear('hist_date'), output_field=IntegerField()))
+        surnud_isikud = isik_qs.\
+            filter(doe__month = kuu).\
+            annotate(vanus_gen=ExpressionWrapper(p2ev.year - ExtractYear('dob'), output_field=IntegerField())). \
+            order_by(ExtractDay('doe'))
         context['surnud_isikud'] = surnud_isikud
         context['surnud_isikud_pealkiri'] = '{0} surnud {1}'.format(
             mis_kuul(kuu),
             Isik._meta.verbose_name_plural.lower()
         )
         # Leiame samal kuul loodud organisatsioonid
-        loodud_organisatsioonid = Organisatsioon.objects.filter(hist_date__month = kuu).annotate(
-                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
+        organisatsioon_qs = Organisatsioon.objects.daatumitega(self.request)
+        loodud_organisatsioonid = organisatsioon_qs.\
+            filter(dob__month = kuu).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())). \
+            order_by(ExtractDay('dob'))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
         context['loodud_organisatsioonid_pealkiri'] = '{0} loodud {1}'.format(
             mis_kuul(kuu),
             Organisatsioon._meta.verbose_name_plural.lower()
         )
         # Leiame samal kuul avatud objektid
-        valminud_objektid = Objekt.objects.filter(hist_date__month = kuu).annotate(
-                # nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
+        objekt_qs = Objekt.objects.daatumitega(self.request)
+        valminud_objektid = objekt_qs.\
+            filter(dob__month = kuu).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())). \
+            order_by(ExtractDay('dob'))
         context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid_pealkiri'] = '{0} valminud {1}'.format(
             mis_kuul(kuu),
@@ -1046,9 +1169,11 @@ class ArtikkelDayArchiveView(DayArchiveView):
         sel_p2eval = sel_p2eval_inrange
         context['sel_p2eval'] = sel_p2eval
         # Leiame samal kuupäeval sündinud isikud
-        syndinud_isikud = Isik.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
-                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
+        isik_qs = Isik.objects.daatumitega(self.request)
+        syndinud_isikud = isik_qs.\
+            filter(dob__month = kuu, dob__day = p2ev).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())).\
+            order_by(ExtractYear('dob'))
         context['syndinud_isikud'] = syndinud_isikud
         context['syndinud_isikud_pealkiri'] = '{0}. {1} sündinud {2}'.format(
             p2ev,
@@ -1056,9 +1181,10 @@ class ArtikkelDayArchiveView(DayArchiveView):
             Isik._meta.verbose_name_plural.lower()
         )
         # Leiame samal kuupäeval surnud isikud
-        surnud_isikud = Isik.objects.filter(hist_enddate__month = kuu, hist_enddate__day = p2ev).annotate(
-                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
+        surnud_isikud = isik_qs.\
+            filter(doe__month = kuu, doe__day = p2ev).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField())). \
+            order_by(ExtractYear('doe'))
         context['surnud_isikud'] = surnud_isikud
         context['surnud_isikud_pealkiri'] = '{0}. {1} surnud {2}'.format(
             p2ev,
@@ -1066,9 +1192,11 @@ class ArtikkelDayArchiveView(DayArchiveView):
             Isik._meta.verbose_name_plural.lower()
         )
         # Leiame samal kuupäeval loodud organisatsioonid
-        loodud_organisatsioonid = Organisatsioon.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
-                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
+        organisatsioon_qs = Organisatsioon.objects.daatumitega(self.request)
+        loodud_organisatsioonid = organisatsioon_qs.\
+            filter(dob__month = kuu, dob__day = p2ev).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())). \
+            order_by(ExtractYear('dob'))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
         context['loodud_organisatsioonid_pealkiri'] = '{0}. {1} loodud {2}'.format(
             p2ev,
@@ -1076,16 +1204,17 @@ class ArtikkelDayArchiveView(DayArchiveView):
             Organisatsioon._meta.verbose_name_plural.lower()
         )
         # Leiame samal kuupäeval loodud objektid
-        valminud_objektid = Objekt.objects.filter(hist_date__month = kuu, hist_date__day = p2ev).annotate(
-                # nulliga=ExpressionWrapper((date.today().year - ExtractYear('hist_date'))%5, output_field=IntegerField()),
-                vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField()))
+        objekt_qs = Objekt.objects.daatumitega(self.request)
+        valminud_objektid = objekt_qs.\
+            filter(dob__month = kuu, dob__day = p2ev).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())). \
+            order_by(ExtractYear('dob'))
         context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid_pealkiri'] = '{0}. {1} valminud {2}'.format(
             p2ev,
             mis_kuul(kuu, 'l'),
             Objekt._meta.verbose_name_plural.lower()
         )
-        
         return context
 
 
@@ -1119,7 +1248,8 @@ class IsikFilterView(FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        queryset = Isik.objects.all() # .order_by('perenimi')
+        # queryset = Isik.objects.all() # .order_by('perenimi')
+        queryset = Isik.objects.daatumitega(self.request)
         filter = IsikFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 
@@ -1140,51 +1270,54 @@ class IsikFilterView(FilterView):
         #         artikkel_qs_dict[obj.id] = artikkel_qs.filter(isikud__in=[obj])
         #     context['artikkel_qs_dict'] = artikkel_qs_dict
         return context
-    
 
-def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
-    # Isikuga artiklite kaudu seotud teised isikud
-    isikud = Isik.objects.filter(artikkel__pk__in=seotud_artiklid).distinct().exclude(pk=isik_ise)
-    andmed = {}
-    for seotud_isik in isikud:
-        kirje = {}
-        kirje['id'] = seotud_isik.id
-        kirje['slug'] = seotud_isik.slug
-        kirje['nimi'] = seotud_isik
-        # kirje['perenimi'] = seotud_isik.perenimi
-        # kirje['eesnimi'] = seotud_isik.eesnimi
-        kirje['artiklid'] = seotud_artiklid.\
-            filter(isikud=seotud_isik).\
-            values('id', 'slug', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
-        andmed[seotud_isik.id] = kirje
-    return andmed
-        
 
 class IsikDetailView(generic.DetailView):
     model = Isik
     query_pk_and_slug = True
 
+    def get_queryset(self):
+        return Isik.objects.daatumitega(self.request)
+
     def get_context_data(self, **kwargs):
         # artikkel_qs = artikkel_qs_userfilter(self.request.user)
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
-
+        # context['opts'] = Isik._meta
         # Kas isikule on määratud profiilipilt
-        context['profiilipilt'] = Pilt.objects.filter(
-            isikud__id=self.object.id).filter(profiilipilt_isik=True).first()
+        context['profiilipilt'] = Pilt.objects.\
+            filter(isikud__id=self.object.id).\
+            filter(profiilipilt_isik=True).\
+            first()
 
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Isik', self.object)
 
         # Isikuga seotud artiklid
-        seotud_artiklid = artikkel_qs.filter(isikud__id=self.object.id)
+        seotud_artiklid = artikkel_qs.\
+            filter(isikud__id=self.object.id)
         context['seotud_artiklid'] = seotud_artiklid
-        context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
-        context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
-        context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
-
-        # Lisame vihjevormi
-        # context['feedbackform'] = VihjeForm()
+        # context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(self.request, seotud_artiklid, self.object.id)
+        # context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
+        # context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
+        context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
+            self.request,
+            Isik,
+            seotud_artiklid,
+            self.object.id
+        )
+        context['seotud_organisatsioonid_artiklikaudu'] = seotud_artiklikaudu(
+            self.request,
+            Organisatsioon,
+            seotud_artiklid,
+            self.object.id
+        )
+        context['seotud_objektid_artiklikaudu'] = seotud_artiklikaudu(
+            self.request,
+            Objekt,
+            seotud_artiklid,
+            self.object.id
+        )
         return context
 
 
@@ -1216,8 +1349,8 @@ class OrganisatsioonFilterView(FilterView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        queryset = Organisatsioon.objects.all().annotate(
-            nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField())) # .order_by('nimi')
+        queryset = Organisatsioon.objects.daatumitega(self.request). \
+            annotate(nulliga=ExpressionWrapper((date.today().year - F('hist_year'))%5, output_field=IntegerField()))
         filter = OrganisatsioonFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 
@@ -1238,25 +1371,14 @@ class OrganisatsioonFilterView(FilterView):
         #         artikkel_qs_dict[obj.id] = artikkel_qs.filter(organisatsioonid__in=[obj])
         #     context['artikkel_qs_dict'] = artikkel_qs_dict
         return context
-    
-def seotud_organisatsioonid_artiklikaudu(seotud_artiklid, organisatsiooni_ise):
-    # Isikuga artiklite kaudu seotud organisatsioonid
-    organisatsioonid = Organisatsioon.objects.filter(artikkel__pk__in=seotud_artiklid).distinct().exclude(pk=organisatsiooni_ise)
-    andmed = {}
-    for seotud_organisatsioon in organisatsioonid:
-        kirje = {}
-        kirje['id'] = seotud_organisatsioon.id
-        kirje['slug'] = seotud_organisatsioon.slug
-        kirje['nimi'] = seotud_organisatsioon.nimi
-        kirje['artiklid'] = seotud_artiklid.\
-            filter(organisatsioonid=seotud_organisatsioon).\
-            values('id', 'slug', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
-        andmed[seotud_organisatsioon.id] = kirje
-    return andmed
 
 
 class OrganisatsioonDetailView(generic.DetailView):
     model = Organisatsioon
+    query_pk_and_slug = True
+
+    def get_queryset(self):
+        return Organisatsioon.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
         # artikkel_qs = artikkel_qs_userfilter(self.request.user)
@@ -1273,12 +1395,27 @@ class OrganisatsioonDetailView(generic.DetailView):
         seotud_artiklid = artikkel_qs.filter(organisatsioonid__id=self.object.id)
 
         context['seotud_artiklid'] = seotud_artiklid
-        context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
-        context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
-        context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
-
-        # Lisame vihjevormi
-        # context['feedbackform'] = VihjeForm()
+        # context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
+        # context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
+        # context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
+        context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
+            self.request,
+            Isik,
+            seotud_artiklid,
+            self.object.id
+        )
+        context['seotud_organisatsioonid_artiklikaudu'] = seotud_artiklikaudu(
+            self.request,
+            Organisatsioon,
+            seotud_artiklid,
+            self.object.id
+        )
+        context['seotud_objektid_artiklikaudu'] = seotud_artiklikaudu(
+            self.request,
+            Objekt,
+            seotud_artiklid,
+            self.object.id
+        )
         return context
 
 
@@ -1310,10 +1447,10 @@ class ObjektFilterView(FilterView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        queryset = Objekt.objects.all().annotate(
-            nulliga=ExpressionWrapper(
+        queryset = Objekt.objects.daatumitega(self.request).\
+            annotate(nulliga=ExpressionWrapper(
                 (date.today().year - F('hist_year'))%5, output_field=IntegerField()
-            )) # .order_by('nimi')
+            ))
         filter = ObjektFilter(self.request.GET, queryset=queryset)
         list = filter.qs
 
@@ -1334,25 +1471,14 @@ class ObjektFilterView(FilterView):
         #         artikkel_qs_dict[obj.id] = artikkel_qs.filter(objektid__in=[obj])
         #     context['artikkel_qs_dict'] = artikkel_qs_dict
         return context
-    
-def seotud_objektid_artiklikaudu(seotud_artiklid, objekt_ise):
-    # Objektiga artiklite kaudu seotud organisatsioonid
-    objektid = Objekt.objects.filter(artikkel__pk__in=seotud_artiklid).distinct().exclude(pk=objekt_ise)
-    andmed = {}
-    for seotud_objekt in objektid:
-        kirje = {}
-        kirje['id'] = seotud_objekt.id
-        kirje['slug'] = seotud_objekt.slug
-        kirje['nimi'] = seotud_objekt.nimi
-        kirje['artiklid'] = seotud_artiklid.\
-            filter(objektid=seotud_objekt).\
-            values('id', 'slug', 'body_text', 'hist_date', 'hist_year', 'hist_month', 'hist_enddate')
-        andmed[seotud_objekt.id] = kirje
-    return andmed
 
 
 class ObjektDetailView(generic.DetailView):
     model = Objekt
+    query_pk_and_slug = True
+
+    def get_queryset(self):
+        return Objekt.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
         # artikkel_qs = artikkel_qs_userfilter(self.request.user)
@@ -1369,12 +1495,28 @@ class ObjektDetailView(generic.DetailView):
         # Objektiga seotud artiklid
         seotud_artiklid = artikkel_qs.filter(objektid__id=self.object.id)
         context['seotud_artiklid'] = seotud_artiklid
-        context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
-        context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
-        context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
+        # context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
+        # context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
+        # context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
 
-        # Lisame vihjevormi
-        # context['feedbackform'] = VihjeForm()
+        context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
+            self.request,
+            Isik,
+            seotud_artiklid,
+            self.object.id
+        )
+        context['seotud_organisatsioonid_artiklikaudu'] = seotud_artiklikaudu(
+            self.request,
+            Organisatsioon,
+            seotud_artiklid,
+            self.object.id
+        )
+        context['seotud_objektid_artiklikaudu'] = seotud_artiklikaudu(
+            self.request,
+            Objekt,
+            seotud_artiklid,
+            self.object.id
+        )
         return context
 
 
@@ -1620,9 +1762,9 @@ def ukj_test_artikkel_detail(request):
         a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(dob__year=(aasta - 100))
         a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:20]  # 20 loetumat artiklit
         # Koondnäitajad aastate ja kuude kaupa
-        artikleid_aasta_kaupa = Artikkel.objects.values('hist_year').annotate(Count('hist_year')).order_by('hist_year')
+        artikleid_aasta_kaupa = artikkel_qs.values('hist_year').annotate(Count('hist_year')).order_by('hist_year')
         a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
-        artikleid_kuu_kaupa = Artikkel.objects.values('hist_year', 'hist_month').annotate(Count('hist_month')).order_by(
+        artikleid_kuu_kaupa = artikkel_qs.values('hist_year', 'hist_month').annotate(Count('hist_month')).order_by(
             'hist_year', 'hist_month')
         a['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
 

@@ -156,36 +156,25 @@ class DaatumitegaManager(models.Manager):
     def daatumitega(self, request):
         ukj_state = request.session.get('ukj', 'false')
         initial_queryset = super().get_queryset()
+        # Filtreerime kasutaja järgi
         if initial_queryset.model.__name__ == 'Artikkel':
-            # Kui andmebaas on Artikkel, siis filtreerime kasutaja järgi
+            # Kui andmebaas on Artikkel
             if not (request.user.is_authenticated and request.user.is_staff):
                 filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
             else:
                 filtered_queryset = initial_queryset
-            # Filtreerime välja ilma daatumiteta kirjed
-            # filtered_queryset = filtered_queryset. \
-            #     exclude(
-            #     hist_date__isnull=True,
-            #     hist_year__isnull=True,
-            #     hist_enddate__isnull=True,
-            # )
-        else: # Kui andmebaas on Isik, Organisatsioon, Objekt
+        else:
+            # Kui andmebaas on Isik, Organisatsioon, Objekt
             if not (request.user.is_authenticated and request.user.is_staff):
                 artikkel_qs = Artikkel.objects.daatumitega(request)
                 filtered_queryset = initial_queryset.filter(
                     Q(viited__isnull=False) |
+                    Q(viited__isnull=True, artikkel__isnull=True) |
                     Q(artikkel__in=artikkel_qs)
                 ).distinct()
             else:
                 filtered_queryset = initial_queryset
-            # Filtreerime välja ilma daatumiteta kirjed
-            # filtered_queryset = initial_queryset. \
-            #     exclude(
-            #     hist_date__isnull=True,
-            #     hist_year__isnull=True,
-            #     hist_enddate__isnull=True,
-            #     hist_endyear__isnull=True,
-            # )
+
         # Arvutame abiväljad vastavalt kasutaja kalendrieelistusele
         # dob: day of begin|birth
         # dow: day of end

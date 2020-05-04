@@ -16,6 +16,13 @@
         >
         </a>
       {% endwith %}
+      {% with change_url='admin:wiki_'|add:model|add:'_change' %}
+        <a
+            class="w3-button w3-padding-bottom w3-hover-white fa fa-adn"
+            href="{% url change_url object.id %}"
+        >
+        </a>
+      {% endwith %}
     {% endif %}
     <div
         class="w3-button w3-padding-bottom w3-hover-white"

@@ -8,7 +8,6 @@
 
 {% block content %}
 
-
 <div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
   <div class="w3-large">
     <a style="text-decoration: none;" href="{% url 'wiki:wiki_artikkel_filter' %}">
@@ -97,7 +96,7 @@
     class="seotud w3-cell-row">
   {% if object_list %}
     {% if page_obj.paginator.num_pages > 1 %}
-      {% include 'wiki/includes/pagination.html'  with object_list=page_obj model="artikkel" %}
+      {% include 'wiki/includes/pagination.html' with object_list=page_obj model="artikkel" %}
     {% endif %}
     <!-- Loend valitud aasta artiklitest -->
     {% include 'wiki/includes/object_list.html' %}

@@ -11,6 +11,7 @@
 
 {% for obj in object_list %}
   <div class="w3-cell-row w3-hover-white w3-padding-small">
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
 		{% include 'wiki/includes/object_list_object.html' with model='organisatsioon' %}
 		<!-- Lingid seotud artiklitele -->
     {% object_mainitud_artiklites obj 'organisatsioon' %}
