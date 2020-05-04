@@ -59,12 +59,12 @@
     >
     <i class="fa fa-comment"></i> {{ day|date:"d.m.Y" }} ({{ object_list.count }})
   </button>
-  {% if sel_kuul %}
+  {% if sel_p2eval %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'artiklid_teistel')"
     >
-      <i class="fa fa-comment"></i> Teistel aastatel ({{ sel_kuul.count }})
+      <i class="fa fa-comment"></i> Teistel aastatel ({{ sel_p2eval.count }})
     </button>
   {% endif %}
   {% if syndinud_isikud %}

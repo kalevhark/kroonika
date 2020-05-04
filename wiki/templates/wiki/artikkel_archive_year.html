@@ -57,7 +57,7 @@
         class="w3-bar-item w3-button tablink background-artikkel"
         onclick="openLinks(event, 'artiklid')"
       >
-        <i class="fa fa-comment"></i> {{ year|date:"Y" }} ({{ page_obj.paginator.count }})
+        <i class="fa fa-comment"></i> {{ year|date:"Y" }} ({{ object_list.count }})
     </button>
   {% endif %}
   {% if syndinud_isikud %}
