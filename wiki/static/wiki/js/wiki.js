@@ -1,5 +1,5 @@
 // Tagastab eestikeelse kuunime
-var getEstonianMonthName = function(idx) {
+function getEstonianMonthName(idx) {
   var kuud = [
     'jaanuar', 'veebruar', 'märts',
     'aprill', 'mai', 'juuni',
@@ -121,7 +121,7 @@ function changeIconColor(data) {
 };
 
 // Ikoonide värvi muutmine, kui on vihje või kommentaar
-function wiki_base_info() {
+function showFeedBackInfo() {
   // Küsime andmed
 	$.ajax({
 	  url: $("#wiki_base_info").attr("data-url"),
@@ -151,21 +151,5 @@ function wiki_base_info() {
         window.setTimeout(wiki_base_info, 600000);
       }
 	});
-}
+};
 
-$( document ).ready(function() {
-  // console.log( "ready!" );
-  // Navigatsiooniribal ikoonide värvimisega info andmine
-  wiki_base_info();
-  // Navigatsiooniriba asukoha kontrollimiseks
-  window.addEventListener('scroll', throttle(onScroll, 25));
-  // Kuupäevaväljade unikaalsete id-de lisamine
-  let dates = document.body.getElementsByClassName('date');
-  // console.dir(dates);
-  let counter = 0;
-  for (let i = 0; i < dates.length; i++) {
-    if (!dates[i].id) {
-      dates[i].id = "_date_" + counter++;
-    }
-  }
-});

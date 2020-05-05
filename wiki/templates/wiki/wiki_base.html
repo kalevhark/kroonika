@@ -370,7 +370,49 @@ function grecaptcha_onload() {
     });
   });
 }
+
+function showCalendarTypeSwitch() {
+  let ukj_state = ('{{ request.session.ukj }}'.length) > 0 ? Boolean({{ request.session.ukj }}) : false;
+
+  <!-- näitame kalendrivahetuse nuppu ja valime salvetatud seisu -->
+  let checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
+  checkboxUkjVkj.style.visibility = 'visible';
+  document.getElementById("checkbox1").checked = ukj_state;
+
+  <!-- Loome triggeri, kui kalendrisüsteemi valik muutub -->
+  $("#checkbox1").on('change', function() {
+    let ukj = document.getElementById("checkbox1").checked;
+    switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
+    fetch(switch_url)
+      .then((response) => {
+        return response;
+      })
+      .then((data) => {
+        location.reload()
+      });
+  });
+};
+
+
+$( document ).ready(function() {
+  // Navigatsiooniribal kalendrivalikute lyliti
+  showCalendarTypeSwitch();
+  // Navigatsiooniribal ikoonide värvimisega info andmine
+  showFeedBackInfo();
+  // Navigatsiooniriba asukoha kontrollimiseks
+  window.addEventListener('scroll', throttle(onScroll, 25));
+  // Kuupäevaväljade unikaalsete id-de lisamine
+  let dates = document.body.getElementsByClassName('date');
+  // console.dir(dates);
+  let counter = 0;
+  for (let i = 0; i < dates.length; i++) {
+    if (!dates[i].id) {
+      dates[i].id = "_date_" + counter++;
+    }
+  }
+});
 </script>
+
 
 {% block javascript %}{% endblock %}
 </html>
