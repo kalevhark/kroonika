@@ -2,7 +2,7 @@
 <div class="w3-cell-row w3-hover-white w3-padding-small">
 	<div class="w3-third">
 		<div class="w3-cell w3-cell-middle w3-mobile">
-			<strong>{% include 'wiki/includes/kp.html' with sd=obj.hist_date y=obj.hist_year m=obj.hist_month cs="artikkel" %}</strong>
+			<strong>{% include 'wiki/includes/date_range.html' with obj=obj %}</strong>
 			&nbsp;<a
 				class="hover-artikkel"
 				href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}"
