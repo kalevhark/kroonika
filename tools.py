@@ -238,44 +238,33 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-    Maimo Inn, 
-    Helmi Ilisson, 
-    Klaudie Järlik, 
-    Wiktor Jõgi, 
-    Juulius Karu, 
-    Aleksander Karawits, 
-    Elwiire Kelt, 
-    Aug. Krahw, Nadeshda Kütt, 
-    Robert Lillimägi, 
-    Joh. Lippert, 
-    Ella Miller, 
-    Anna Noorkõiw, 
-    Anna Paawes, 
-    Olga Pettai, 
-    Ellen Särm, 
-    Aliide Sõjamägi, 
-    Jaan Schaurup, 
-    Leo Teder, 
-    Wiktor Teder, 
-    Leida Ruubel, 
-    Lydia Roose, 
-    Wiktor Rosenstok
+    M. Pragi,
+    Andres Lillipuu,
+    K. Plotnik,
+    Kusta Kimask,
+    P. Köster,
+    Juhan Mölder,
+    Jüri Mölder,
+    Jaak Hanson,
+    Jaan Keernik,
+    Jaan Kornel,
+    Ernst Kornel
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=7627)
+    art = Artikkel.objects.get(id=2530)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=2849)
+    pilt = Pilt.objects.get(id=2909)
     print(pilt)
     # Milline organisatsioon lisada isikule
-    org = Organisatsioon.objects.get(id=19) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn, 19=6.algkool
+    org = Organisatsioon.objects.get(id=2) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [8504]
+    viited_ids = [8549]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = '6. algkooli kuuenda klassi lõpetaja 1924'
+    isik_kirjeldus = 'Valga Eesti Karskuse Seltsi asutaja'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
