@@ -8,9 +8,7 @@
       {% if forloop.counter > 1 %}
         <br>
       {% endif %}
-      <strong>
-        {% include 'wiki/includes/kp.html' with sd=obj.hist_date ed=obj.hist_enddate y=obj.hist_year m=obj.hist_month cs="primary" %}
-      </strong>
+      <strong>{% include 'wiki/includes/date_range.html' with obj=obj %}</strong>
       &nbsp;
       <a
         class="hover-artikkel"

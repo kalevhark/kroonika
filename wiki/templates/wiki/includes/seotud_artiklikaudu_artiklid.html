@@ -8,8 +8,8 @@
 >
 	{{ artikkel.hist_year }}
 	<span class="tooltiptext w3-hide-medium w3-hide-small">
-		{% if artikkel.hist_date %}
-			{{ artikkel.hist_date|date:"d.m.Y" }}
+		{% if artikkel. %}dob
+			{{ artikkel.dob|date:"d.m.Y" }}
 		{% else %}
 			{% if artikkel.hist_month %}{% include 'wiki/includes/kuu.html' with kuu=artikkel.hist_month|stringformat:"02d" %} {% endif %}{{ artikkel.hist_year }}
 
@@ -25,9 +25,7 @@
 					onclick="document.getElementById('{{ model_id }}-art{{ artikkel.id }}').style.display='none'"
 					class="w3-button w3-display-topright">&#10060;
 			</span>
-			<h5>
-				{% include 'wiki/includes/kp.html' with sd=artikkel.hist_date ed=artikkel.hist_enddate y=artikkel.hist_year m=artikkel.hist_month cs="artikkel" %}
-			</h5>
+			<strong>{% include 'wiki/includes/date_range.html' with obj=artikkel %}</strong>
 	  </header>
 		<div class="w3-container w3-padding-16">
 			{{ artikkel.body_text }}
