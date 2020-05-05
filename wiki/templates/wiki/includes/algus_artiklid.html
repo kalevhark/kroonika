@@ -22,10 +22,7 @@
           <br>
         {% endif %}
         <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-          sündis {{ obj }}
-          {% if obj.vanus|divisibleby:"5" %}
-            &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-          {% endif %}
+          sündis {{ obj }} <strong>{{ obj.vanus }}</strong>
           {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
         </a>
       {% endfor %}
@@ -36,10 +33,7 @@
           <br>
         {% endif %}
         <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
-          {{ obj }}
-          {% if obj.vanus|divisibleby:"5" %}
-            &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-          {% endif %}
+          {{ obj }}&nbsp;<strong>{{ obj.vanus }}</strong>
           {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
         </a>
       {% endfor %}
@@ -50,10 +44,7 @@
           <br>
         {% endif %}
         <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
-          {{ obj }}
-          {% if obj.vanus|divisibleby:"5" %}
-            &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-          {% endif %}
+          {{ obj }} <strong>{{ obj.vanus }}</strong>
           {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
         </a>
       {% endfor %}
@@ -70,9 +61,10 @@
       {% if forloop.counter > 1 %}
         <br>
       {% endif %}
-      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <strong>{{ obj.hist_year }}</strong>:
-      </a>
+      <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
+<!--      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">-->
+<!--        <strong>{{ obj.hist_year }}</strong>:-->
+<!--      </a>-->
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
         {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
@@ -106,9 +98,10 @@
       {% if forloop.counter > 1 %}
         <br>
       {% endif %}
-      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <strong>{{ obj.hist_year }}</strong>:
-      </a>
+      <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
+<!--      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">-->
+<!--        <strong>{{ obj.hist_year }}</strong>:-->
+<!--      </a>-->
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
       </a>
@@ -139,9 +132,10 @@
       {% if forloop.counter > 1 %}
         <br>
       {% endif %}
-      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <strong>{{ obj.hist_year }}</strong>:
-      </a>
+      <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
+<!--      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">-->
+<!--        <strong>{{ obj.hist_year }}</strong>:-->
+<!--      </a>-->
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
       </a>

@@ -8,11 +8,12 @@
     {% if forloop.counter > 1 %}
       <br>
     {% endif %}
-    <a
-        class="hover-isik"
-        href="{% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:'Y' month=obj.hist_date|date:'m' day=obj.hist_date|date:'d' %}">
-      <strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
-    </a>
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
+<!--    <a-->
+<!--        class="hover-isik"-->
+<!--        href="{% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:'Y' month=obj.hist_date|date:'m' day=obj.hist_date|date:'d' %}">-->
+<!--      <strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>-->
+<!--    </a>-->
     &nbsp;
     <a
         class="hover-isik"
@@ -35,11 +36,12 @@
     {% if forloop.counter > 1 %}
       <br>
     {% endif %}
-    <a class="hover-isik"
-      href="{% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:'Y' month=obj.hist_date|date:'m' day=obj.hist_date|date:'d' %}"
-    >
-    <strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>
-    </a>
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
+<!--    <a class="hover-isik"-->
+<!--      href="{% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:'Y' month=obj.hist_date|date:'m' day=obj.hist_date|date:'d' %}"-->
+<!--    >-->
+<!--    <strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>-->
+<!--    </a>-->
     &nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
       {{ obj }}
@@ -59,17 +61,19 @@
     {% if forloop.counter > 1 %}
       <br>
     {% endif %}
-    {% if obj.hist_date %}
-      <a class="hover-isik"
-        href="{% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:'Y' month=obj.hist_date|date:'m' day=obj.hist_date|date:'d' %}">
-        <b>{{ obj.hist_date|date:"d.m.Y" }}</b>
-      </a>
-    {% else %}
-      <a class="hover-isik"
-        href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">
-        <b>{{ obj.hist_year }}</b>
-      </a>
-    {% endif %}&nbsp;
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
+<!--    {% if obj.hist_date %}-->
+<!--      <a class="hover-isik"-->
+<!--        href="{% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:'Y' month=obj.hist_date|date:'m' day=obj.hist_date|date:'d' %}">-->
+<!--        <b>{{ obj.hist_date|date:"d.m.Y" }}</b>-->
+<!--      </a>-->
+<!--    {% else %}-->
+<!--      <a class="hover-isik"-->
+<!--        href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">-->
+<!--        <b>{{ obj.hist_year }}</b>-->
+<!--      </a>-->
+<!--    {% endif %}-->
+    &nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
        {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
       &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
@@ -89,11 +93,12 @@
       <br>
     {% endif %}
     <strong>&#9840;&nbsp;</strong>
-    <a
-        class="hover-isik"
-        href="{% url 'wiki:artikkel_day_archive' year=obj.hist_enddate|date:'Y' month=obj.hist_enddate|date:'m' day=obj.hist_enddate|date:'d' %}">
-      <b>{{ obj.hist_enddate|date:"d.m.Y" }}</b>
-    </a>
+    <strong>{% include 'wiki/includes/date_doe.html' with obj=obj %}</strong>
+<!--    <a-->
+<!--        class="hover-isik"-->
+<!--        href="{% url 'wiki:artikkel_day_archive' year=obj.hist_enddate|date:'Y' month=obj.hist_enddate|date:'m' day=obj.hist_enddate|date:'d' %}">-->
+<!--      <b>{{ obj.hist_enddate|date:"d.m.Y" }}</b>-->
+<!--    </a>-->
     &nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
       {{ obj }}
@@ -111,11 +116,12 @@
       <br>
     {% endif %}
     <strong>&#9840;&nbsp;</strong>
-    <a class="hover-isik"
-      href="{% url 'wiki:artikkel_day_archive' year=obj.hist_enddate|date:'Y' month=obj.hist_enddate|date:'m' day=obj.hist_enddate|date:'d' %}"
-    >
-      <strong>{{ obj.hist_enddate|date:"d.m.Y" }}</strong>
-    </a>
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
+<!--    <a class="hover-isik"-->
+<!--      href="{% url 'wiki:artikkel_day_archive' year=obj.hist_enddate|date:'Y' month=obj.hist_enddate|date:'m' day=obj.hist_enddate|date:'d' %}"-->
+<!--    >-->
+<!--      <strong>{{ obj.hist_enddate|date:"d.m.Y" }}</strong>-->
+<!--    </a>-->
     &nbsp;
     <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
       {{ obj }}

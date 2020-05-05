@@ -2,6 +2,155 @@
 {% load static %}
 {% load wiki_extras %}
 
+{% block css %}
+<style>
+  /* Switch starts here */
+  /* Idea from Marcus Connor https://codepen.io/marcusconnor/pen/QJNvMa */
+  .rocker {
+    display: inline-block;
+    position: relative;
+    /*
+    SIZE OF SWITCH
+    ==============
+    All sizes are in em - therefore
+    changing the font-size here
+    will change the size of the switch.
+    See .rocker-small below as example.
+    */
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    /* text-transform: uppercase; */
+    color: #888;
+    width: 7em;
+    height: 4em;
+    overflow: hidden;
+    border-bottom: 0.5em rgba(0, 0, 0, .9);
+    -webkit-background-clip: padding-box; /* for Safari */
+    background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+  }
+
+  .rocker-small {
+    font-size: 0.5em; /* Sizes the switch */
+    /* margin: 1em; */
+  }
+
+  .rocker::before {
+    content: "";
+    position: absolute;
+    /* top: 0.5em; */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #999;
+    /* border: 0.5em solid #eee; */
+    border-bottom: 0;
+  }
+
+  .rocker input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .switch-left,
+  .switch-right {
+    cursor: pointer;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5em;
+    width: 3em;
+    transition: 0.2s;
+  }
+
+  .switch-left {
+    height: 2.4em;
+    width: 2.75em;
+    left: 0.85em;
+    bottom: 0.4em;
+    background-color: #ddd;
+    transform: rotate(15deg) skewX(15deg);
+  }
+
+  .switch-right {
+    right: 0.5em;
+    bottom: 0;
+    background-color: #337257;
+    color: #fff;
+  }
+
+  .switch-left::before,
+  .switch-right::before {
+    content: "";
+    position: absolute;
+    width: 0.4em;
+    height: 2.45em;
+    bottom: -0.45em;
+    background-color: #ccc;
+    transform: skewY(-65deg);
+  }
+
+  .switch-left::before {
+    left: -0.4em;
+  }
+
+  .switch-right::before {
+    right: -0.375em;
+    background-color: transparent;
+    transform: skewY(65deg);
+  }
+
+  input:checked + .switch-left {
+    /* background-color: #337257; */ /* roheline */
+    background-color: purple; /* ukj valiku eristamiseks */
+    color: #fff;
+    bottom: 0px;
+    left: 0.5em;
+    height: 2.5em;
+    width: 3em;
+    transform: rotate(0deg) skewX(0deg);
+  }
+
+  input:checked + .switch-left::before {
+    background-color: transparent;
+    width: 3.0833em;
+  }
+
+  input:checked + .switch-left + .switch-right {
+    background-color: #ddd;
+    color: #888;
+    bottom: 0.4em;
+    right: 0.8em;
+    height: 2.4em;
+    width: 2.75em;
+    transform: rotate(-15deg) skewX(-15deg);
+  }
+
+  input:checked + .switch-left + .switch-right::before {
+    background-color: #ccc;
+  }
+
+  /* Keyboard Users */
+  input:focus + .switch-left {
+    color: #333;
+  }
+
+  input:checked:focus + .switch-left {
+    color: #fff;
+  }
+
+  input:focus + .switch-left + .switch-right {
+    color: #fff;
+  }
+
+  input:checked:focus + .switch-left + .switch-right {
+    color: #333;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 	<!--		Tagasiside vorm -->
   {% load crispy_forms_tags %}
@@ -66,4 +215,30 @@
   <div class="w3-row-padding w3-margin-bottom w3-hide-small">
     {% include 'wiki/includes/algus_foot.html' %}
   </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+  $( document ).ready(function() {
+    let ukj_state = ('{{ request.session.ukj }}'.length) > 0 ? Boolean({{ request.session.ukj }}) : false
+
+    <!-- näitame kalendrivahetuse nuppu ja valime salvetatud seisu -->
+    let checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
+    checkboxUkjVkj.style.visibility = 'visible';
+    document.getElementById("checkbox1").checked = ukj_state;
+
+    <!-- Loome triggeri, kui kalendrisüsteemi valik muutub -->
+    $("#checkbox1").on('change', function() {
+      let ukj = document.getElementById("checkbox1").checked;
+      switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
+      fetch(switch_url)
+        .then((response) => {
+          return response;
+        })
+        .then((data) => {
+          location.reload()
+        });
+    });
+  });
+</script>
 {% endblock %}
