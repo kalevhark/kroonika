@@ -35,8 +35,11 @@ def object_mainitud_artiklites(context, object, model):
 
 @register.filter
 def ukj(date_vkj):
-    nihe=0
-    date2compare = date(date_vkj.year, date_vkj.month, date_vkj.day) # et tekiks kindlasti date() tyyp
+    try:
+        date2compare = date(date_vkj.year, date_vkj.month, date_vkj.day) # et tekiks kindlasti date() tyyp
+    except:
+        return date_vkj
+    nihe = 0
     if date(1918, 1, 31) >= date2compare >= date(1582, 10, 5):
         if date(1918, 1, 31) >= date2compare > date(1900, 2, 28):
             nihe = 13
