@@ -19,7 +19,7 @@
 		<div class="w3-container">
 			{% if prev_obj %}
 				<strong>
-					{% include 'wiki/includes/date_range.html' with obj=prev_obj cs="artikkel" %}
+					{% include 'wiki/includes/date_range.html' with obj=prev_obj %}
 				</strong>
 				<br>
 				<a
@@ -34,11 +34,22 @@
 	<!-- Valitud artikkel viewport: large, medium -->
 	<div class="w3-third w3-cell w3-hide-small">
 		<div
-				class="w3-xlarge text-artikkel layout-row layout-align-center-center w3-hover-white"
+				class="w3-xlarge layout-row layout-align-center-center w3-hover-white"
 		>
-			<strong>
-				{% include 'wiki/includes/date_range.html' with obj=object cs="artikkel" %}
-			</strong>
+			<strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
+		</div>
+		<div class="layout-row layout-align-center-center">
+			{% if object.hist_date and object.hist_date|vkj %}
+			<small>
+				{% if request.session.ukj  == true %}
+					vkj: {{ object.hist_date|date:'j.m.Y' }}
+					{% if object.hist_enddate %} - {{ object.hist_enddate|date:'j.m.Y' }}{% endif %}
+				{% else %}
+					ukj: {{ object.dob|ukj|date:'j.m.Y' }}
+					{% if object.doe %} - {{ object.doe|ukj|date:'j.m.Y' }}{% endif %}
+				{% endif %}
+			</small>
+			{% endif %}
 		</div>
 	</div>
   <!-- Kronoloogiliselt järgnev artikkel -->
@@ -46,7 +57,7 @@
 		<div class="w3-container w3-right-align">
 			{% if next_obj %}
 				<strong>
-				  {% include 'wiki/includes/date_range.html' with obj=next_obj cs="artikkel" %}
+				  {% include 'wiki/includes/date_range.html' with obj=next_obj %}
 				</strong>
 				<br>
 				<a
@@ -65,11 +76,9 @@
 		<!-- Valitud artikkel viewport: small -->
 		<div class="w3-third w3-cell">
 			<div
-					class="w3-xlarge text-artikkel layout-row layout-align-center-center"
+					class="w3-xlarge layout-row layout-align-center-center"
 			>
-				<strong>
-					{% include 'wiki/includes/kp.html' with sd=object.hist_date ed=object.hist_enddate y=object.hist_year m=object.hist_month cs="artikkel" %}
-				</strong>
+				<strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
 			</div>
 		</div>
 	</div>
