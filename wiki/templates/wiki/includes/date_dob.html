@@ -45,7 +45,7 @@ cs - lingi värv ("artikkel", "isik", "organisatsioon", "objekt")
 					{% include "wiki/includes/kuu.html" with kuu=m|stringformat:"02i" %}&nbsp;
 				</a>
 				<a
-						class="text-{{ cs }} year"
+						class="year"
 						href="{% url 'wiki:artikkel_year_archive' year=y %}"
 						onmouseover="hoverDate(this)"
 						onmouseout="normalDate(this)"
@@ -58,7 +58,7 @@ cs - lingi värv ("artikkel", "isik", "organisatsioon", "objekt")
 			{% if y %}
 				<div class="date">
 					<a
-							class="text-{{ cs }} year"
+							class="year"
 							href="{% url 'wiki:artikkel_year_archive' year=y %}"
 							onmouseover="hoverDate(this)"
 							onmouseout="normalDate(this)"
