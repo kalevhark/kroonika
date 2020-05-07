@@ -369,7 +369,7 @@ function grecaptcha_onload() {
       'size' : 'invisible',
     });
   });
-}
+};
 
 function showCalendarTypeSwitch() {
   let ukj_state = ('{{ request.session.ukj }}'.length) > 0 ? Boolean({{ request.session.ukj }}) : false;
