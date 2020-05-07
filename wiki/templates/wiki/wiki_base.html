@@ -394,19 +394,22 @@ function showCalendarTypeSwitch() {
 };
 
 document.onreadystatechange = function () {
-  // Navigatsiooniribal kalendrivalikute lyliti
-  showCalendarTypeSwitch();
-  // Navigatsiooniribal ikoonide värvimisega info andmine
-  showFeedBackInfo();
-  // Navigatsiooniriba asukoha kontrollimiseks
-  window.addEventListener('scroll', throttle(onScroll, 25));
-  // Kuupäevaväljade unikaalsete id-de lisamine
-  let dates = document.body.getElementsByClassName('date');
-  // console.dir(dates);
-  let counter = 0;
-  for (let i = 0; i < dates.length; i++) {
-    if (!dates[i].id) {
-      dates[i].id = "_date_" + counter++;
+  if (document.readyState == "interactive") {
+    console.log('init js');
+    // Navigatsiooniribal kalendrivalikute lyliti
+    showCalendarTypeSwitch();
+    // Navigatsiooniribal ikoonide värvimisega info andmine
+    showFeedBackInfo();
+    // Navigatsiooniriba asukoha kontrollimiseks
+    window.addEventListener('scroll', throttle(onScroll, 25));
+    // Kuupäevaväljade unikaalsete id-de lisamine
+    let dates = document.body.getElementsByClassName('date');
+    // console.dir(dates);
+    let counter = 0;
+    for (let i = 0; i < dates.length; i++) {
+      if (!dates[i].id) {
+        dates[i].id = "_date_" + counter++;
+      }
     }
   }
 };
