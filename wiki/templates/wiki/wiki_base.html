@@ -393,8 +393,7 @@ function showCalendarTypeSwitch() {
   });
 };
 
-
-$( document ).ready(function() {
+document.onreadystatechange = function () {
   // Navigatsiooniribal kalendrivalikute lyliti
   showCalendarTypeSwitch();
   // Navigatsiooniribal ikoonide värvimisega info andmine
@@ -410,7 +409,7 @@ $( document ).ready(function() {
       dates[i].id = "_date_" + counter++;
     }
   }
-});
+};
 </script>
 
 
