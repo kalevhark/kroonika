@@ -86,6 +86,7 @@ function hoverDate(x) {
   const newClassName = 'date-highlighted'
   let selectedId = x.parentElement.id;
   let selectedDateClass = x.className;
+  console.log(selectedDateClass);
   let selectedDateField = document.getElementById(selectedId)
   if (selectedDateClass.includes('year')) {
     $(selectedDateField.getElementsByClassName('year')).addClass(newClassName);
