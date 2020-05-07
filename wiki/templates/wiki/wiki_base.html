@@ -36,6 +36,8 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <!-- Google reCAPTCHA -->
   <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=grecaptcha_onload"></script>
+  <!-- wiki teegid -->
+  <script src="{% static 'wiki/js/wiki.js'%}"></script>
 
   {% block src %}{% endblock %}
 
@@ -64,14 +66,14 @@
     gtag('config', 'UA-151102639-1');
   </script>
 
+  <title>
+    {% block title %}
+      Valga linna kroonika
+    {% endblock %}
+  </title>
+
 </head>
 
-<!-- Kroonika -->
-<title>
-  {% block title %}
-    Valga linna kroonika
-  {% endblock %}
-</title>
 
 <body class="Site w3-light-grey">
 
@@ -352,8 +354,6 @@
   </footer>
 
 </body>
-
-<script src="{% static 'wiki/js/wiki.js'%}"></script>
 
 <script>
 // Töötleb kõik reCAPTCHAga varustatud vormid
