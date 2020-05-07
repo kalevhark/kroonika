@@ -383,11 +383,17 @@ function showCalendarTypeSwitch() {
   $("#checkbox1").on('change', function() {
     let ukj = document.getElementById("checkbox1").checked;
     switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
-    window.fetch(switch_url).then(function (response) {
-      return response;
-    }).then(function (data) {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function(e) {
       location.reload();
-    });
+    }
+    oReq.open("GET", switch_url);
+    oReq.send();
+    // window.fetch(switch_url).then(function (response) {
+    //   return response;
+    // }).then(function (data) {
+    //   location.reload();
+    // });
   });
 };
 
