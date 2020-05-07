@@ -83,11 +83,10 @@ function showFeedback() {
 }
 
 function hoverDate(x) {
-  const newClassName = 'date-highlighted'
+  const newClassName = 'date-highlighted';
   let selectedId = x.parentElement.id;
   let selectedDateClass = x.className;
-  console.log(selectedDateClass);
-  let selectedDateField = document.getElementById(selectedId)
+  let selectedDateField = document.getElementById(selectedId);
   if (selectedDateClass.includes('year')) {
     $(selectedDateField.getElementsByClassName('year')).addClass(newClassName);
   }
@@ -101,7 +100,7 @@ function hoverDate(x) {
 }
 
 function normalDate(x) {
-  const oldClassName = 'date-highlighted'
+  const oldClassName = 'date-highlighted';
   let selectedId = x.parentElement.id;
   let selectedDateField = document.getElementById(selectedId);
   let selectedDateFieldElements = selectedDateField.querySelectorAll("a");
