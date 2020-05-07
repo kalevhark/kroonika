@@ -1,7 +1,9 @@
 {% extends "wiki/wiki_base.html" %}
 {% load wiki_extras %}
 
-{% block title %}{{ block.super }} - {{ day|date:"d.m.Y" }}{% endblock %}
+{% block title %}
+  {{ block.super }} - {{ day|date:"d.m.Y" }}{% if day|vkj %} ({% if request.session.ukj == 'true' %}ukj{% else %}vkj{% endif %}){% endif %}
+{% endblock %}
 
 {% block breadcrumb %}
 {% endblock %}
@@ -12,7 +14,10 @@
     <a style="text-decoration: none;" href="{% url 'wiki:wiki_artikkel_filter' %}">
       <i class="fa fa-comment"></i>
     </a>
-    <b> {% model_name_artikkel %} {{ day|date:"j." }} {% include "wiki/includes/kuu.html" with kuu=day|date:"m" %} {{ day|date:"Y" }} {{ month|date:"Y" }} kohta</b>
+    <strong> {% model_name_artikkel %} {{ day|date:"j." }}
+      {% include "wiki/includes/kuu.html" with kuu=day|date:"m" %} {{ day|date:"Y" }} {{ month|date:"Y" }}
+      {% if day|vkj %}({% if request.session.ukj == 'true' %}ukj{% else %}vkj{% endif %}){% endif %}
+      kohta</strong>
   </div>
 </div>
 
