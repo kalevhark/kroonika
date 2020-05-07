@@ -87,9 +87,7 @@ function hoverDate(x) {
   let selectedId = x.parentElement.id;
   let selectedDateClass = x.className;
   let selectedDateField = document.getElementById(selectedId);
-  if (selectedDateClass.includes('year')) {
-    $(selectedDateField.getElementsByClassName('year')).addClass(newClassName);
-  }
+  $(selectedDateField.getElementsByClassName('year')).addClass(newClassName);
   if (selectedDateClass.includes('month')) {
     $(selectedDateField.getElementsByClassName('month')).addClass(newClassName);
   }
