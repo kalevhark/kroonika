@@ -383,7 +383,7 @@ function showCalendarTypeSwitch() {
   $("#checkbox1").on('change', function() {
     let ukj = document.getElementById("checkbox1").checked;
     switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
-    fetch(switch_url).then(function (response) {
+    window.fetch(switch_url).then(function (response) {
       return response;
     }).then(function (data) {
       location.reload();
