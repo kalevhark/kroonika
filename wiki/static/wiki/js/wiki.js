@@ -103,7 +103,7 @@ function normalDate(x) {
   const oldClassName = 'date-highlighted';
   let selectedId = x.parentElement.id;
   let selectedDateField = document.getElementById(selectedId);
-  let selectedDateFieldElements = selectedDateField.querySelectorAll("a");
+  let Array.from(selectedDateFieldElements = selectedDateField.querySelectorAll("a"));
 
   selectedDateFieldElements.forEach(function (element) {
     $(element).removeClass(oldClassName);
