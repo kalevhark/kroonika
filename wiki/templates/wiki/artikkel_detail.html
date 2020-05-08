@@ -39,7 +39,7 @@
 			<strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
 		</div>
 		<div class="layout-row layout-align-center-center">
-			{% if object.hist_date and object.hist_date|vkj %}
+			{% if object.hist_date and object.hist_date|vkj == true %}
 			<small>
 				{% if request.session.ukj  == true %}
 					vkj: {{ object.hist_date|date:'j.m.Y' }}
