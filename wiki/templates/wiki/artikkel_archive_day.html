@@ -111,8 +111,10 @@
     {% include 'wiki/includes/object_list.html' %}
   {% else %}
     <div class="w3-container w3-padding-16">
-      <strong>{{ day|date:"d.m.Y" }}</strong> sissekandeid veel pole!
-      <a class="w3-button background-artikkel tablink" href="{% url 'wiki:wiki_artikkel_filter' %}">Proovige uuesti</a>
+
+      <a class="w3-button w3-round background-artikkel tablink" href="{% url 'wiki:wiki_artikkel_filter' %}">
+        <strong>{{ day|date:"d.m.Y" }}</strong> sissekandeid veel pole! Otsime midagi muud?
+      </a>
     </div>
   {% endif %}
 </div>
