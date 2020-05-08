@@ -181,7 +181,7 @@ class DaatumitegaManager(models.Manager):
         if ukj_state == 'true':  # ukj
             filtered_queryset = filtered_queryset.annotate(
                 dob=Case(
-                    When(hist_date__gt=date(1919, 1, 31), then=F('hist_date')),
+                    When(hist_date__gt=date(1918, 1, 31), then=F('hist_date')),
                     When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
                     When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
                     When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
@@ -190,7 +190,7 @@ class DaatumitegaManager(models.Manager):
                     output_field=DateField()
                 ),
                 doe=Case(
-                    When(hist_enddate__gt=date(1919, 1, 31), then=F('hist_enddate')),
+                    When(hist_enddate__gt=date(1918, 1, 31), then=F('hist_enddate')),
                     When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
                     When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
                     When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
