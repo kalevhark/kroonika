@@ -1,5 +1,5 @@
 <div class="w3-quarter">
-  <div class="w3-container w3-padding-16 w3-hover-white">
+  <div class="w3-container w3-round w3-padding-16 w3-hover-white">
     {% if andmed.artikkel.kirjeid > 0 %}
       <h5>Viimasena lisatud:</h5>
       <strong>{% include 'wiki/includes/date_year.html' with obj=andmed.artikkel.viimane_lisatud %}</strong>
@@ -21,7 +21,7 @@
   </div>
 </div>
 <div class="w3-quarter">
-  <div class="w3-container w3-padding-16 w3-hover-white">
+  <div class="w3-container w3-round w3-padding-16 w3-hover-white">
     {% if andmed.isik.kirjeid > 0 %}
       <h5>Viimasena lisatud:</h5>
       <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=andmed.isik.viimane_lisatud.id slug=andmed.isik.viimane_lisatud.slug %}">
@@ -38,7 +38,7 @@
   </div>
 </div>
 <div class="w3-quarter">
-  <div class="w3-container w3-padding-16 w3-hover-white">
+  <div class="w3-container w3-round w3-padding-16 w3-hover-white">
     {% if andmed.organisatsioon.kirjeid > 0 %}
       <h5>Viimasena lisatud:</h5>
       <a
@@ -58,7 +58,7 @@
   </div>
 </div>
 <div class="w3-quarter">
-  <div class="w3-container w3-padding-16 w3-hover-white">
+  <div class="w3-container w3-round w3-padding-16 w3-hover-white">
     {% if andmed.objekt.kirjeid > 0 %}
       <h5>Viimasena lisatud:</h5>
       <a
