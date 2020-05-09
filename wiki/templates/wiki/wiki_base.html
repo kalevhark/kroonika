@@ -372,16 +372,26 @@ function grecaptcha_onload() {
 };
 
 function showCalendarTypeSwitch() {
-  let ukj_state = ('{{ request.session.ukj }}'.length) > 0 ? Boolean({{ request.session.ukj }}) : false;
+  let ukj_state = '{{ request.session.ukj }}'
 
   <!-- näitame kalendrivahetuse nuppu ja valime salvetatud seisu -->
   let checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
   checkboxUkjVkj.style.visibility = 'visible';
-  document.getElementById("checkbox1").checked = ukj_state;
-
+  if (ukj_state == 'on') {
+    document.getElementById("checkbox1").checked = true;
+    } else {
+    document.getElementById("checkbox1").checked = false;
+  };
   <!-- Loome triggeri, kui kalendrisüsteemi valik muutub -->
   $("#checkbox1").on('change', function() {
-    let ukj = document.getElementById("checkbox1").checked;
+    let ukj_state = document.getElementById("checkbox1").checked;
+    console.log(ukj_state);
+    if (ukj_state) {
+        ukj = 'on';
+      } else {
+        ukj = 'off';
+    };
+    console.log(ukj);
     switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
     var oReq = new XMLHttpRequest();
     oReq.onload = function(e) {

@@ -39,17 +39,30 @@
 			<strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
 		</div>
 		<div class="layout-row layout-align-center-center">
-			{% if object.hist_date and object.hist_date|vkj == true %}
-			<small>
-				{% if request.session.ukj  == true %}
-					vkj: {{ object.hist_date|date:'j.m.Y' }}
-					{% if object.hist_enddate %} - {{ object.hist_enddate|date:'j.m.Y' }}{% endif %}
-				{% else %}
-					ukj: {{ object.dob|ukj|date:'j.m.Y' }}
-					{% if object.doe %} - {{ object.doe|ukj|date:'j.m.Y' }}{% endif %}
+			{% if object.hist_date %}
+				<small>
+				{% if object.hist_date|vkj == True %}
+					{% if request.session.ukj == 'on' %}
+						vkj: {{ object.hist_date|date:'j.m.Y' }}
+					{% else %}
+						ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}
+					{% endif %}
+					{% if object.hist_enddate %}
+						-
+						{% if object.hist_enddate|vkj == True %}
+							{% if request.session.ukj == 'on' %}
+								{{ object.hist_enddate|date:'j.m.Y' }}
+							{% else %}
+								{{ object.hist_enddate|ukj|date:'j.m.Y' }}
+							{% endif %}
+						{% else %}
+							{{ object.hist_enddate|date:'j.m.Y' }}
+						{% endif %}
+					{% endif %}
 				{% endif %}
-			</small>
+				</small>
 			{% endif %}
+
 		</div>
 	</div>
   <!-- Kronoloogiliselt järgnev artikkel -->

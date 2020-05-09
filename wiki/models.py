@@ -154,7 +154,7 @@ def escape_numberdot(string):
 class DaatumitegaManager(models.Manager):
 
     def daatumitega(self, request):
-        ukj_state = request.session.get('ukj', 'false')
+        ukj_state = request.session.get('ukj', 'off')
         initial_queryset = super().get_queryset()
         # Filtreerime kasutaja järgi
         if initial_queryset.model.__name__ == 'Artikkel':
@@ -178,7 +178,7 @@ class DaatumitegaManager(models.Manager):
         # Arvutame abiväljad vastavalt kasutaja kalendrieelistusele
         # dob: day of begin|birth
         # dow: day of end
-        if ukj_state == 'true':  # ukj
+        if ukj_state == 'on':  # ukj
             filtered_queryset = filtered_queryset.annotate(
                 dob=Case(
                     When(hist_date__gt=date(1918, 1, 31), then=F('hist_date')),
