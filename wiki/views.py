@@ -108,6 +108,9 @@ def wiki_base_info(request):
 #
 def info(request):
     # Filtreerime kasutaja järgi
+    time = datetime.now()
+    time_log = {}
+    time_log['0'] = (datetime.now() - time).seconds
     artikkel_qs = Artikkel.objects.daatumitega(request)
     isik_qs = Isik.objects.daatumitega(request)
     organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
@@ -127,6 +130,7 @@ def info(request):
         num_obj=0,
         num_pilt=0
     ).count()
+    time_log['1'] = (datetime.now() - time).seconds
     andmebaasid.append(
         ' '.join(
             [
@@ -136,6 +140,7 @@ def info(request):
             ]
         )
     )
+    time_log['1a'] = (datetime.now() - time).seconds
     andmebaasid.append(
         ' '.join(
             [
@@ -146,6 +151,7 @@ def info(request):
             ]
         )
     )
+    time_log['1b'] = (datetime.now() - time).seconds
     andmebaasid.append(
         ' '.join(
             [
@@ -156,6 +162,7 @@ def info(request):
             ]
         )
     )
+    time_log['1c'] = (datetime.now() - time).seconds
     andmebaasid.append(
         ' '.join(
             [
@@ -166,16 +173,18 @@ def info(request):
             ]
         )
     )
-    andmebaasid.append(
-        ' '.join(
-            [
-                'Organisatsioon: ',
-                f'kirjeid {organisatsioon_qs.count()} ',
-                f'viidatud {organisatsioon_qs.filter(viited__isnull=False).distinct().count()} ',
-                f'pildiga {organisatsioon_qs.filter(pilt__isnull=False).distinct().count()} '
-            ]
-        )
-    )
+    time_log['1d'] = (datetime.now() - time).seconds
+    # andmebaasid.append(
+    #     ' '.join(
+    #         [
+    #             'Organisatsioon: ',
+    #             f'kirjeid {organisatsioon_qs.count()} ',
+    #             f'viidatud {organisatsioon_qs.filter(viited__isnull=False).distinct().count()} ',
+    #             f'pildiga {organisatsioon_qs.filter(pilt__isnull=False).distinct().count()} '
+    #         ]
+    #     )
+    # )
+    time_log['1e'] = (datetime.now() - time).seconds
     andmebaasid.append(
         ' '.join(
             [
@@ -185,6 +194,7 @@ def info(request):
             ]
         )
     )
+    time_log['2'] = (datetime.now() - time).seconds
     # Artiklite ülevaade
     andmed = artikkel_qs.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
     perioodid = artikkel_qs. \
@@ -203,6 +213,7 @@ def info(request):
         artikleid_kuus_max = max([kuu_andmed[2] for kuu_andmed in artikleid_kuus])
     else:
         artikleid_kuus_max = 1 # kui ei ole artikleid sisestatud
+    time_log['3'] = (datetime.now() - time).seconds
     # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
     revision_data['kroonika'] = artikkel_qs.\
@@ -212,8 +223,9 @@ def info(request):
         filter(kroonika__isnull=False).\
         annotate(num_viited=Count('viited')).\
         filter(num_viited__gt=1)
+    time_log['4'] = (datetime.now() - time).seconds
 
-     # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
+    # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
     # Koondnäitajad aastate ja kuude kaupa
     # import json
@@ -224,7 +236,7 @@ def info(request):
         annotate(Count('hist_year')).\
         order_by('-hist_year')
     a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
-
+    time_log['5'] = (datetime.now() - time).seconds
     # Andmed süsteemi olukorra kohta
     media_root = settings.MEDIA_ROOT
     stat = shutil.disk_usage(media_root)
@@ -257,6 +269,7 @@ def info(request):
         'num_visits': num_visits,
         'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         'dates': dates,
+        'time_log': time_log,
     }
 
     return render(
