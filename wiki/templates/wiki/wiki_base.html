@@ -385,13 +385,11 @@ function showCalendarTypeSwitch() {
   <!-- Loome triggeri, kui kalendrisüsteemi valik muutub -->
   $("#checkbox1").on('change', function() {
     let ukj_state = document.getElementById("checkbox1").checked;
-    console.log(ukj_state);
     if (ukj_state) {
         ukj = 'on';
       } else {
         ukj = 'off';
     };
-    console.log(ukj);
     switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
     var oReq = new XMLHttpRequest();
     oReq.onload = function(e) {
@@ -399,11 +397,6 @@ function showCalendarTypeSwitch() {
     }
     oReq.open("GET", switch_url);
     oReq.send();
-    // window.fetch(switch_url).then(function (response) {
-    //   return response;
-    // }).then(function (data) {
-    //   location.reload();
-    // });
   });
 };
 
