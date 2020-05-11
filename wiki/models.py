@@ -129,7 +129,6 @@ class DaatumitegaManager(models.Manager):
                 ).distinct()
             else:
                 filtered_queryset = initial_queryset
-
         # Arvutame abiväljad vastavalt kasutaja kalendrieelistusele
         # dob: day of begin|birth
         # dow: day of end

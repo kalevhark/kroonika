@@ -174,16 +174,16 @@ def info(request):
         )
     )
     time_log['1d'] = (datetime.now() - time).seconds
-    # andmebaasid.append(
-    #     ' '.join(
-    #         [
-    #             'Organisatsioon: ',
-    #             f'kirjeid {organisatsioon_qs.count()} ',
-    #             f'viidatud {organisatsioon_qs.filter(viited__isnull=False).distinct().count()} ',
-    #             f'pildiga {organisatsioon_qs.filter(pilt__isnull=False).distinct().count()} '
-    #         ]
-    #     )
-    # )
+    andmebaasid.append(
+        ' '.join(
+            [
+                'Organisatsioon: ',
+                f'kirjeid {organisatsioon_qs.count()} ',
+                f'viidatud {organisatsioon_qs.filter(viited__isnull=False).distinct().count()} ',
+                f'pildiga {organisatsioon_qs.filter(pilt__isnull=False).distinct().count()} '
+            ]
+        )
+    )
     time_log['1e'] = (datetime.now() - time).seconds
     andmebaasid.append(
         ' '.join(
