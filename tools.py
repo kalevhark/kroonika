@@ -464,5 +464,39 @@ def obj2org(**kwargs):
             print(f'isik{isik.id}:{isik}')
             isik.organisatsioonid.add(org)
 
-
-
+def db_test():
+    for model in (Isik, Organisatsioon, Objekt):
+        print(model.__name__)
+        for i in range(1, 13):
+            time = datetime.now()
+            artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
+            filtered_queryset = model.objects.filter(hist_date__month=i).filter(
+                Q(viited__isnull=False) |
+                Q(viited__isnull=True, artikkel__isnull=True) |
+                Q(artikkel__in=artikkel_qs)
+            ).distinct()
+            filtered_queryset = filtered_queryset.annotate(
+                dob=Case(
+                    When(hist_date__gt=date(1918, 1, 31), then=F('hist_date')),
+                    When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
+                    When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
+                    When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
+                    When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
+                    default=F('hist_date'),
+                    output_field=DateField()
+                ),
+                doe=Case(
+                    When(hist_enddate__gt=date(1918, 1, 31), then=F('hist_enddate')),
+                    When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
+                    When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
+                    When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
+                    When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
+                    default=F('hist_enddate'),
+                    output_field=DateField()
+                )
+            ).count()
+            print(
+                i,
+                filtered_queryset,
+                f'{(datetime.now() - time).seconds}.{(datetime.now() - time).microseconds}'
+            )
