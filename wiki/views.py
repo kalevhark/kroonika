@@ -350,10 +350,6 @@ def algus(request):
     kuu = date.today().month # str(kuu).zfill(2) -> KK
     aasta = date.today().year
 
-    time = datetime.now()
-    time_log = {}
-    time_log['0'] =f'{(datetime.now() - time).seconds}.{ (datetime.now() - time).microseconds}'
-
     # Andmebaas Artikkel andmed veebi
     a = dict()
     kirjeid = artikkel_qs.count()
@@ -410,7 +406,6 @@ def algus(request):
             order_by('hist_year', 'hist_month')
         a['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
     andmed['artikkel'] = a
-    time_log['1'] = f'{(datetime.now() - time).seconds}.{(datetime.now() - time).microseconds}'
 
     # Andmebaas Isik andmed veebi
     a = dict()
@@ -458,7 +453,6 @@ def algus(request):
             filter(id__in=juubilarid).\
             order_by('hist_year', 'dob')
     andmed['isik'] = a
-    time_log['2'] = f'{(datetime.now() - time).seconds}.{(datetime.now() - time).microseconds}'
 
     # Andmebaas Organisatsioon andmed veebi
     a = dict()
@@ -504,7 +498,6 @@ def algus(request):
             filter(id__in=juubilarid).\
             order_by('hist_year', 'dob')
     andmed['organisatsioon'] = a
-    time_log['3'] = f'{(datetime.now() - time).seconds}.{(datetime.now() - time).microseconds}'
 
     # Andmebaas Objekt andmed veebi
     a = dict()
@@ -551,7 +544,6 @@ def algus(request):
             filter(id__in=juubilarid).\
             order_by('hist_year', 'dob')
     andmed['objekt'] = a
-    time_log['4'] = f'{(datetime.now() - time).seconds}.{(datetime.now() - time).microseconds}'
 
     # Kas on 100 aastat tagasi toimunud asju?
     andmed['100_aastat_tagasi'] = any(
@@ -583,12 +575,10 @@ def algus(request):
         annotate(Count('hist_year')).\
         order_by('-hist_year')
     andmed['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
-    time_log['5'] = f'{(datetime.now() - time).seconds}.{(datetime.now() - time).microseconds}'
 
     return render(
         request, 'wiki/wiki.html', {
             'andmed': andmed,
-            'time_log': time_log,
         }
     )
 
