@@ -9,7 +9,9 @@
 # doe = vastavalt valikule vkj v6i ukj hist_enddate j2rgi arvutatd kuup2ev
 
 from datetime import date, datetime, timedelta
+from functools import reduce
 from io import BytesIO
+from operator import or_
 import os
 import os.path
 import re
@@ -122,11 +124,24 @@ class DaatumitegaManager(models.Manager):
             # Kui andmebaas on Isik, Organisatsioon, Objekt
             if not (request.user.is_authenticated and request.user.is_staff):
                 artikkel_qs = Artikkel.objects.daatumitega(request)
-                filtered_queryset = initial_queryset.filter(
-                    Q(viited__isnull=False) |
-                    Q(viited__isnull=True, artikkel__isnull=True) |
-                    Q(artikkel__in=artikkel_qs)
-                ).distinct()
+                # Algne aeglane päring, mis tekitas Organisatsioon tabeliga 5000+ ms päringuid
+                # filtered_queryset = initial_queryset.filter(
+                #     Q(viited__isnull=False) |
+                #     Q(viited__isnull=True, artikkel__isnull=True) |
+                #     Q(artikkel__in=artikkel_qs)
+                # ).distinct()
+                # Asendus eelmisele päringule, mis on kiirem
+                artikliga = initial_queryset.\
+                    filter(artikkel__in=artikkel_qs).\
+                    values_list('id', flat=True)
+                viitega = initial_queryset.\
+                    filter(viited__isnull=False).\
+                    values_list('id', flat=True)
+                viiteta_artiklita = initial_queryset.\
+                    filter(viited__isnull=True, artikkel__isnull=True).\
+                    values_list('id', flat=True)
+                model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
+                filtered_queryset = initial_queryset.filter(id__in=model_ids)
             else:
                 filtered_queryset = initial_queryset
         # Arvutame abiväljad vastavalt kasutaja kalendrieelistusele
