@@ -4,7 +4,6 @@ import json
 # from lxml import etree
 import xml.etree.ElementTree as ET
 
-from astral import *
 from django.db.models import Sum, Count, Avg, Min, Max
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -110,18 +109,6 @@ def history(request):
             'form': form
         }
     )
-
-
-# def sun_moon(dt):
-#     # Tagastab konkreetese kuupäeva (ajavööndi väärtusega) päikese- ja kuuandmed
-#     city_name = 'Tallinn'
-#     a = Astral()
-#     a.solar_depression = 'civil'
-#     city = a[city_name]
-#     s = {}
-#     s['sun'] = city.sun(date=dt, local=True)
-#     s['moon'] = a.moon_phase(date=dt)
-#     return s
 
 
 def container_history_andmed(request):

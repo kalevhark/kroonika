@@ -2,13 +2,15 @@ from datetime import datetime, timedelta
 import re
 from urllib.request import Request, urlopen
 
-from astral import *
+from astral import LocationInfo, moon
+from astral.sun import sun
 from bs4 import BeautifulSoup
 from django.db import connection
 from django.db.models import Sum, Count, Avg, Min, Max
 # from lxml import etree
 import xml.etree.ElementTree as ET
 import pytz
+from pytz import timezone
 import requests
 
 from .models import Ilm, Jaam
@@ -31,17 +33,13 @@ def sun_moon(dt):
     # s['sun'] = city.sun(date=dt, local=True)
     # s['moon'] = a.moon_phase(date=dt)
     # Uus Astral
-    from astral import LocationInfo
-    from pytz import timezone
     tallinn_tz = timezone('Europe/Tallinn')
     city = LocationInfo("Valga", "Estonia", "Europe/Tallinn", 57.776944, 26.031111)
     s = {}
-    from astral.sun import sun
     sun_states = sun(city.observer, dt)
     for state in sun_states.keys():
         sun_states[state] = sun_states[state].astimezone(tallinn_tz)
     s['sun'] = sun_states
-    from astral import moon
     s['moon'] = moon.phase(date=dt)
     return s
 
