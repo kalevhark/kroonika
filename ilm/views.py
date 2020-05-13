@@ -112,30 +112,16 @@ def history(request):
     )
 
 
-def sun_moon(dt):
-    # Tagastab konkreetese kuupäeva (ajavööndi väärtusega) päikese- ja kuuandmed
-    city_name = 'Tallinn'
-    a = Astral()
-    a.solar_depression = 'civil'
-    city = a[city_name]
-    s = {}
-    s['sun'] = city.sun(date=dt, local=True)
-    s['moon'] = a.moon_phase(date=dt)
-    # Uus Astral
-    # from astral import LocationInfo
-    # city = LocationInfo("Valga", "Estonia", "Europe/Tallinn", 57.776944, 26.031111)
-    # s = {}
-    # from astral.sun import sun
-    # sun_states = sun(city.observer, date=dt)
-    # for state in sun_states.keys():
-    #     try:
-    #         sun_states[state] = pytz.timezone('Europe/Tallinn').localize(sun_states[state])
-    #     except:
-    #         pass
-    # s['sun'] = sun_states
-    # from astral import moon
-    # s['moon'] = moon.phase(date=dt)
-    return s
+# def sun_moon(dt):
+#     # Tagastab konkreetese kuupäeva (ajavööndi väärtusega) päikese- ja kuuandmed
+#     city_name = 'Tallinn'
+#     a = Astral()
+#     a.solar_depression = 'civil'
+#     city = a[city_name]
+#     s = {}
+#     s['sun'] = city.sun(date=dt, local=True)
+#     s['moon'] = a.moon_phase(date=dt)
+#     return s
 
 
 def container_history_andmed(request):
@@ -1570,7 +1556,7 @@ def nighttime2(algus, l6pp):
     
     d = algus
     while d <= l6pp + timedelta(days=1): # Kõigi prognoosis esinevate kuupäevade päikeseandmed
-        sun = sun_moon(d)['sun']
+        sun = IlmateenistusValga.sun_moon(d)['sun']
         jada.append({
             'from': d.replace(hour=0),
             'to': sun['dawn'],
