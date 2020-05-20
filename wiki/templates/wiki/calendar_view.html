@@ -1,0 +1,66 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'wiki/css/wiki_calendar2.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-quarter">
+      <div class="w3-container w3-display-container">
+        <!-- Aasta ja kuu valikumenüü -->
+        <div class="w3-hide-small">
+          <form
+              id="formYearMonth"
+              method="post"
+              action="{% url 'wiki:mine_krono_kuu' %}"
+              class="form-inline"
+          >
+            {% csrf_token %}
+            <input id="rec" type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" />
+            <select
+                id="yearinput"
+                name="year"
+                onchange="getMonthArticles()"
+            >
+              {% for year in artikleid_aasta_kaupa %}
+                <option value="{{ year.hist_year }}" >
+                  {{ year.hist_year }} ({{ year.hist_year__count }})
+                </option>
+              {% endfor %}
+            </select>
+            <button id="yearsubmit" class="fa fa-search"></button>
+            <select
+                id="monthinput"
+                name="month"
+                onchange="getMonthCalendar()"
+            >
+            </select>
+            <button
+                type="submit"
+                id="monthsubmit"
+                class="fa fa-search"
+            ></button>
+          </form>
+        </div>
+        <!-- Kalendrividin -->
+        <div id="calendar_widget"></div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'wiki/js/wiki_calendar2.js'%}"></script>
+<script>
+let artikleidKuudeKaupa = {{ artikleid_kuu_kaupa }};
+let calendarWidgetUrl = "{% url 'wiki:calendar_widget' %}";
+let userCalendarViewLast = "{{ request.session.user_calendar_view_last }}";
+
+$( document ).ready(function() {
+  initYearMonthMenu(userCalendarViewLast);
+});
+</script>
+{% endblock %}

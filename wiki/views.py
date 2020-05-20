@@ -46,15 +46,16 @@ def check_recaptcha(request):
 
     # get the token submitted in the form
     recaptcha_response = data.get('g-recaptcha-response')
-    # print(settings.GOOGLE_RECAPTCHA_SECRET_KEY)
     # captcha verification
-    url = 'https://www.google.com/recaptcha/api/siteverify'
+    url = f'https://www.google.com/recaptcha/api/siteverify'
+    headers = {"Content-Type": "application/x-www-form-urlencoded; charset=utf-8"}
     payload = {
         'secret': settings.GOOGLE_RECAPTCHA_SECRET_KEY,
         'response': recaptcha_response
     }
     resp = requests.post(
         url,
+        headers=headers,
         data=payload
     )
     result_json = resp.json()
@@ -608,7 +609,7 @@ def mine_krono_kp(request):
         )
 
 #
-# Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse
+# Kuupäeva väljalt võetud andmete põhjal suunatakse kuuvaatesse
 #
 def mine_krono_kuu(request):
     http_referer = request.META['HTTP_REFERER']  # mis objektilt tuli päring
@@ -627,6 +628,22 @@ def mine_krono_kuu(request):
     else:
         return HttpResponseRedirect(http_referer)
 
+#
+# Kuupäeva väljalt võetud andmete põhjal suunatakse aastavaatesse
+#
+def mine_krono_aasta(request):
+    url = request.META['HTTP_REFERER']  # mis objektilt tuli päring
+    if request.method == 'POST': # and check_recaptcha(request):
+        year = request.POST.get('year')
+        month = request.POST.get('month')
+        url = reverse(
+            'wiki:artikkel_year_archive',
+            kwargs={
+                'year': year,
+                # 'month': month
+            }
+        )
+    return HttpResponseRedirect(url)
 
 def mis_kuul(kuu, l6pp='s'):
     kuud = ['jaanuari',
@@ -1133,11 +1150,9 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
     # ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
-        # return artikkel_qs_userfilter(self.request.user)
         return Artikkel.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
-        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         aasta = context['month'].year
@@ -1213,6 +1228,8 @@ class ArtikkelDayArchiveView(DayArchiveView):
         aasta = context['day'].year
         kuu = context['day'].month
         p2ev = context['day'].day
+        # Salvestame kasutaja viimase kuupäevavaliku
+        self.request.session['user_calendar_view_last'] = f'{aasta}-{kuu}'
         # Leiame samal kuupäeval teistel aastatel märgitud artiklid
         # sel_p2eval_exactly = artikkel_qs.exclude(hist_searchdate__year = aasta).filter(hist_date__month = kuu, hist_date__day = p2ev)
         sel_p2eval_inrange = inrange_dates_artikkel(artikkel_qs, p2ev, kuu)  # hist_date < KKPP <= hist_enddate
@@ -2054,3 +2071,78 @@ def ukj_test_objekt_detail(request):
         }
     )
 
+import calendar
+from django.views import generic
+from django.views.generic.dates import MonthArchiveView
+from wiki.utils import Calendar, get_date, prev_month, next_month
+from django.utils.safestring import mark_safe
+
+def calendar_view(request):
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    # Andmed aasta ja kuu rippvalikumenüü jaoks
+    perioodid = artikkel_qs. \
+        filter(hist_searchdate__isnull=False). \
+        values('hist_searchdate__year', 'hist_searchdate__month'). \
+        annotate(ct=Count('id')). \
+        order_by('hist_searchdate__year', 'hist_searchdate__month')
+    artikleid_kuu_kaupa = [
+        [
+            periood['hist_searchdate__year'],
+            periood['hist_searchdate__month'],
+            periood['ct']
+        ] for periood in perioodid
+    ]
+    artikleid_aasta_kaupa = artikkel_qs. \
+        filter(hist_searchdate__isnull=False). \
+        values('hist_year'). \
+        annotate(Count('hist_year')). \
+        order_by('-hist_year')
+
+    context = {
+        'artikleid_aasta_kaupa': artikleid_aasta_kaupa,
+        'artikleid_kuu_kaupa': artikleid_kuu_kaupa
+    }
+
+    return render(
+        request,
+        'wiki/calendar_view.html',
+        context
+    )
+
+def calendar_widget(request):
+    # Kas kasutaja tegi ajavaliku
+    user_calendar_view_choice = request.GET.get('user_calendar_view_last', None)
+    if user_calendar_view_choice:
+        user_calendar_view_last = user_calendar_view_choice
+    else:
+        # Küsitakse kas eelmine ajavalik on salvestatud
+        # kui ei ole võetakse 100 aastat tagasi
+        user_calendar_view_last = request.session.get('user_calendar_view_last')
+        if not user_calendar_view_last:
+            t2na = timezone.now()
+            user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
+
+    # Salvestame uue kasutaja ajavaliku
+    request.session['user_calendar_view_last'] = user_calendar_view_last
+
+    user_calendar_view_last_date = get_date(user_calendar_view_last)
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    cal = Calendar(
+        artikkel_qs,
+        user_calendar_view_last_date.year,
+        user_calendar_view_last_date.month
+    )
+    html_cal = cal.formatmonth(withyear=True)
+
+    context = {
+        'calendar': mark_safe(html_cal),
+    }
+
+    # context['prev_month'] = prev_month(user_calendar_view_last_date)
+    # context['next_month'] = next_month(user_calendar_view_last_date)
+
+    return render(
+        request,
+        'wiki/calendar_widget.html',
+        context
+    )

@@ -1,0 +1,121 @@
+/* rippmenüüde css */
+/* Style the form - display items horizontally */
+.form-inline {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+
+/* Style the submit button */
+.form-inline button {
+  padding: 7px 7px;
+  transition-duration: 0.4s;
+  border: none; /* 1px solid #ddd; */
+  border-radius: 2px;
+  color: darkgrey;
+}
+
+.form-inline button:hover {
+  background-color: #009688;
+  color: white;
+  cursor: pointer;
+}
+
+/* Add responsiveness - display the form controls vertically instead of horizontally on screens that are less than 800px wide */
+@media (max-width: 800px) {
+  .form-inline input {
+    margin: 10px 0;
+  }
+
+  .form-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.form-inline select {
+  width: auto;
+  padding: 1px 3px;
+  border: none;
+  border-radius: 2px;
+  background-color: #f1f1f1;
+  transition-duration: 0.4s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.form-inline select:hover {
+    background-color: white;
+    cursor: pointer;
+}
+
+/* CAUTION: Internet Explorer hackery ahead */
+.form-inline select::-ms-expand {
+    display: none; /* Remove default arrow in Internet Explorer 10 and 11 */
+}
+
+/* Target Internet Explorer 9 to undo the custom arrow */
+@media screen and (min-width:0\0) {
+    .form-inline select {
+        background: none\9;
+        padding: 5px\9;
+    }
+}
+
+/* kalendri css */
+.calendar {
+  height: auto;
+  width: auto;
+  position: absolute;
+  box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.5);
+}
+
+.selector {
+  padding: 14px;
+  font-size: .9em;
+}
+
+i.fa-chevron-right,
+i.fa-chevron-left {
+  padding: 7px;
+  color: darkgrey;
+}
+
+i.fa-chevron-right:hover,
+i.fa-chevron-left:hover {
+  background-color: #009688;
+  color: white;
+  cursor: pointer;
+}
+
+.days {
+  margin: 0px;
+  font-size: 2rem;
+  border="0";
+  border-collapse: collapse;
+  border-spacing: 0;
+  cellpadding="0";
+  cellspacing="0";
+}
+
+.days a {
+  border-radius: 100%;
+  cursor: pointer;
+  padding: 0px;
+}
+
+td.day-this-month {
+  text-align: center;
+  font-weight: bold;
+  transition-duration: 0.4s;
+}
+
+td.day-this-month:hover {
+  background: #009688;
+  color: white;
+}
+
+.day-with-events {
+  background: rgba(00, 96, 88, 0.4);
+}

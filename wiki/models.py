@@ -1069,8 +1069,34 @@ class Artikkel(models.Model):
         tekst = str(self.hist_year) + ':' + self.body_text
         return tekst
 
-    # def get_absolute_url(self):
-    #     return reverse('wiki:wiki_artikkel_detail', kwargs={'pk': self.pk})
+    def save(self, *args, **kwargs):
+        # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
+        value = ' '.join(self.body_text.split(' ')[:10])[:200]
+        self.slug = slugify(value, allow_unicode=True)
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+        if self.hist_date:
+            self.hist_year = self.hist_date.year
+            self.hist_month = self.hist_date.month
+            self.hist_searchdate = self.hist_date
+        else:
+            if self.hist_year:
+                y = self.hist_year
+                if self.hist_month:
+                    m = self.hist_month
+                else:
+                    m = 1
+                self.hist_searchdate = datetime(y, m, 1)
+            else:
+                self.hist_searchdate = None
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = [
+            'hist_searchdate',
+            'id'
+        ]
+        verbose_name = "Lugu"
+        verbose_name_plural = "Lood"
 
     def get_absolute_url(self):
         kwargs = {
@@ -1127,38 +1153,6 @@ class Artikkel(models.Model):
         if summary.find('\n') > 0:
             summary = summary[:summary.find('\n')]
         return markdownify(escape_numberdot(summary[:100]) + "...")
-
-    def save(self, *args, **kwargs):
-        # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
-        value = ' '.join(self.body_text.split(' ')[:10])[:200]
-        self.slug = slugify(value, allow_unicode=True)
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if self.hist_date:
-            self.hist_year = self.hist_date.year
-            self.hist_month = self.hist_date.month
-            self.hist_searchdate = self.hist_date
-        else:
-            if self.hist_year:
-                y = self.hist_year
-                if self.hist_month:
-                    m = self.hist_month
-                else:
-                    m = 1
-                self.hist_searchdate = datetime(y, m, 1)
-            else:
-                self.hist_searchdate = None
-        super().save(*args, **kwargs)
-
-    class Meta:
-        ordering = [
-            'hist_searchdate',
-            # 'hist_year',
-            # 'hist_month',
-            # 'hist_date',
-            'id'
-        ]
-        verbose_name = "Lugu"
-        verbose_name_plural = "Lood"
 
 
 class Pilt(models.Model):
