@@ -1,0 +1,137 @@
+@charset "UTF-8";
+
+#date-container {
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+#gw--datetimepicker {
+  margin-top: 20px;
+  width: 214px;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 5px;
+  position: absolute;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+  font-size: .9rem;
+  text-align: center;
+  -webkit-user-select: none;
+  /* Chrome all / Safari all */
+  -moz-user-select: none;
+  /* Firefox all */
+  -ms-user-select: none;
+  /* IE 10+ */
+  user-select: none;
+  /* Likely future */ }
+
+#gw--datetimepicker-header {
+  font-family: Raleway;
+  font-weight: bold; }
+#gw--datetimepicker-header ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
+#gw--datetimepicker-header ul li {
+  width: 30%;
+  display: inline-block;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s; }
+
+#gw--datetimepicker-header ul li:hover {
+  background: #009688;
+  color: white;
+}
+
+#gw--datetimepicker-header ul li:not(:first-child) {
+  margin-left: -4px; }
+#gw--datetimepicker-header ul li:first-child, #gw--datetimepicker-header ul li:last-child {
+  width: 17%; }
+
+#gw--datetimepicker-body {
+  height: 208px; }
+#gw--datetimepicker-body table {
+  table-layout: fixed;
+  border-collapse: collapse; }
+#gw--datetimepicker-body table thead {
+  font-family: Raleway; }
+#gw--datetimepicker-body table tbody {
+  font-family: Arial; }
+#gw--datetimepicker-body table tbody td {
+  border-radius: 4px;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s;
+  cursor: pointer; }
+/* #gw--datetimepicker-body table tbody td:hover {
+  background-color: #eee; } */
+
+#gw--datetimepicker-year,
+#gw--datetimepicker-month {
+  padding-top: 14px;
+  padding-bottom: 14px;
+  }
+
+#gw--datetimepicker-year-body td,
+#gw--datetimepicker-month-body td {
+  width: 62px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-size: .8rem; }
+
+#gw--datetimepicker-year-body td:hover,
+#gw--datetimepicker-month-body td:hover {
+  background: #009688;
+  color: white;
+}
+
+
+#gw--datetimepicker-day thead th,
+#gw--datetimepicker-day-body td {
+  padding: 6px 7px; }
+
+#gw--datetimepicker-day-body td.prev, #gw--datetimepicker-day-body td.next {
+  color: #999; }
+
+#gw--datetimepicker-day-body td.selected:hover {
+  background: #009688;
+  color: white; }
+
+#gw--now {
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+#gw--now:hover {
+  background-color: #eee; }
+
+#gw--now:active, #gw--now:focus {
+  outline: none; }
+
+.day-with-events,
+.month-with-events,
+.year-with-events {
+  background: rgba(00, 96, 88, 0.4);
+  -webkit-transition: all 0.2s;
+  -moz-transition: all 0.2s;
+  transition: all 0.2s;
+  cursor: pointer;
+}

@@ -1,0 +1,90 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'wiki/css/wiki_calendar3.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-quarter">
+      <div class="w3-container w3-display-container">
+        <div id="gw--datetimepicker">
+          <header id="gw--datetimepicker-header">
+            <ul>
+              <li id="gw--datetimepicker-prev">&lt;</li>
+              <li id="gw--datetimepicker-selected-year">0000</li>
+              <li id="gw--datetimepicker-selected-month">00</li>
+              <li id="gw--datetimepicker-next">&gt;</li>
+            </ul>
+          </header>
+          <div id="gw--datetimepicker-body" data-selected="day">
+            <div id="gw--datetimepicker-year" class="gw--datetimepicker-box" style="display: none;">
+              <table>
+                <tbody id="gw--datetimepicker-year-body"></tbody>
+              </table>
+            </div>
+            <div id="gw--datetimepicker-month" class="gw--datetimepicker-box" style="display: none;">
+              <table>
+                <tbody id="gw--datetimepicker-month-body">
+                  <tr>
+                    <td class="gw--month" id="gw--month-choice-id_1">jaanuar</td>
+                    <td class="gw--month" id="gw--month-choice-id_2">veebruar</td>
+                    <td class="gw--month" id="gw--month-choice-id_3">märts</td>
+                  </tr>
+                  <tr>
+                    <td class="gw--month" id="gw--month-choice-id_4">aprill</td>
+                    <td class="gw--month" id="gw--month-choice-id_5">mai</td>
+                    <td class="gw--month" id="gw--month-choice-id_6">juuni</td>
+                  </tr>
+                  <tr>
+                    <td class="gw--month" id="gw--month-choice-id_7">juuli</td>
+                    <td class="gw--month" id="gw--month-choice-id_8">august</td>
+                    <td class="gw--month" id="gw--month-choice-id_9">september</td>
+                  </tr>
+                  <tr>
+                    <td class="gw--month" id="gw--month-choice-id_10">oktoober</td>
+                    <td class="gw--month" id="gw--month-choice-id_11">november</td>
+                    <td class="gw--month" id="gw--month-choice-id_12">detsember</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="gw--datetimepicker-day" class="gw--datetimepicker-box" style="display: block;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>E</th>
+                    <th>T</th>
+                    <th>K</th>
+                    <th>N</th>
+                    <th>R</th>
+                    <th>L</th>
+                    <th>P</th>
+                  </tr>
+                </thead>
+                <tbody id="gw--datetimepicker-day-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'wiki/js/wiki_calendar3.js'%}"></script>
+<script>
+  var calendar_days_with_events_in_month_url = "{% url 'wiki:calendar_days_with_events_in_month' %}"
+  var yearsWithEvents = {{ years_with_events }}
+  var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"
+  var userCalendarViewLast = '{{ user_calendar_view_last }}'
+
+  $( document ).ready(function() {
+    GWDateTimePicker.init({
+      targetId: "date-container"
+    });
+  });
+</script>
+{% endblock %}

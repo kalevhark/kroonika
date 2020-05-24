@@ -34,7 +34,7 @@
 }
 
 .form-inline select {
-  width: auto;
+  /* width: auto; */
   padding: 1px 3px;
   border: none;
   border-radius: 2px;
@@ -72,18 +72,20 @@
 }
 
 .selector {
-  padding: 14px;
-  font-size: .9em;
+  padding: 20px;
+  font-size: .8em;
 }
 
 i.fa-chevron-right,
-i.fa-chevron-left {
+i.fa-chevron-left,
+.month-field {
   padding: 7px;
-  color: darkgrey;
+  /* color: darkgrey; */
 }
 
 i.fa-chevron-right:hover,
-i.fa-chevron-left:hover {
+i.fa-chevron-left:hover,
+.month-field:hover {
   background-color: #009688;
   color: white;
   cursor: pointer;

@@ -13,7 +13,7 @@ from django.db.models import \
     Value, BooleanField, DateField, DecimalField, IntegerField, \
     ExpressionWrapper
 from django.db.models import Count, Max, Min
-from django.db.models.functions import ExtractYear, ExtractMonth, ExtractDay
+from django.db.models.functions import Extract, ExtractYear, ExtractMonth, ExtractDay
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -2071,78 +2071,136 @@ def ukj_test_objekt_detail(request):
         }
     )
 
-import calendar
-from django.views import generic
-from django.views.generic.dates import MonthArchiveView
-from wiki.utils import Calendar, get_date, prev_month, next_month
-from django.utils.safestring import mark_safe
+# import calendar
+# from django.views import generic
+# from django.views.generic.dates import MonthArchiveView
+# from wiki.utils import Calendar, get_date, prev_month, next_month
+# from django.utils.safestring import mark_safe
+#
+# def calendar_view(request):
+#     artikkel_qs = Artikkel.objects.daatumitega(request)
+#     # Andmed aasta ja kuu rippvalikumenüü jaoks
+#     perioodid = artikkel_qs. \
+#         filter(hist_searchdate__isnull=False). \
+#         values('hist_searchdate__year', 'hist_searchdate__month'). \
+#         annotate(ct=Count('id')). \
+#         order_by('hist_searchdate__year', 'hist_searchdate__month')
+#     artikleid_kuu_kaupa = [
+#         [
+#             periood['hist_searchdate__year'],
+#             periood['hist_searchdate__month'],
+#             periood['ct']
+#         ] for periood in perioodid
+#     ]
+#     artikleid_aasta_kaupa = artikkel_qs. \
+#         filter(hist_searchdate__isnull=False). \
+#         values('hist_year'). \
+#         annotate(Count('hist_year')). \
+#         order_by('-hist_year')
+#
+#     context = {
+#         'artikleid_aasta_kaupa': artikleid_aasta_kaupa,
+#         'artikleid_kuu_kaupa': artikleid_kuu_kaupa
+#     }
+#
+#     return render(
+#         request,
+#         'wiki/calendar_view.html',
+#         context
+#     )
+#
+# def calendar_widget(request):
+#     # Kas kasutaja tegi ajavaliku
+#     user_calendar_view_choice = request.GET.get('user_calendar_view_last', None)
+#     if user_calendar_view_choice:
+#         user_calendar_view_last = user_calendar_view_choice
+#     else:
+#         # Küsitakse kas eelmine ajavalik on salvestatud
+#         # kui ei ole võetakse 100 aastat tagasi
+#         user_calendar_view_last = request.session.get('user_calendar_view_last')
+#         if not user_calendar_view_last:
+#             t2na = timezone.now()
+#             user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
+#
+#     # Salvestame uue kasutaja ajavaliku
+#     request.session['user_calendar_view_last'] = user_calendar_view_last
+#
+#     user_calendar_view_last_date = get_date(user_calendar_view_last)
+#     artikkel_qs = Artikkel.objects.daatumitega(request)
+#     cal = Calendar(
+#         artikkel_qs,
+#         user_calendar_view_last_date.year,
+#         user_calendar_view_last_date.month
+#     )
+#     html_cal = cal.formatmonth(withyear=True)
+#
+#     context = {
+#         'calendar': mark_safe(html_cal),
+#     }
+#
+#     # context['prev_month'] = prev_month(user_calendar_view_last_date)
+#     # context['next_month'] = next_month(user_calendar_view_last_date)
+#
+#     return render(
+#         request,
+#         'wiki/calendar_widget.html',
+#         context
+#     )
 
-def calendar_view(request):
+def calendar_view2(request):
+    user_calendar_view_last = request.session.get('user_calendar_view_last')
+    if not user_calendar_view_last:
+        t2na = timezone.now()
+        user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
+        request.session['user_calendar_view_last'] = user_calendar_view_last
+
+    # Millistel kuude kohta valitud aastal on kirjeid
     artikkel_qs = Artikkel.objects.daatumitega(request)
-    # Andmed aasta ja kuu rippvalikumenüü jaoks
-    perioodid = artikkel_qs. \
-        filter(hist_searchdate__isnull=False). \
-        values('hist_searchdate__year', 'hist_searchdate__month'). \
-        annotate(ct=Count('id')). \
-        order_by('hist_searchdate__year', 'hist_searchdate__month')
-    artikleid_kuu_kaupa = [
-        [
-            periood['hist_searchdate__year'],
-            periood['hist_searchdate__month'],
-            periood['ct']
-        ] for periood in perioodid
-    ]
-    artikleid_aasta_kaupa = artikkel_qs. \
-        filter(hist_searchdate__isnull=False). \
-        values('hist_year'). \
-        annotate(Count('hist_year')). \
-        order_by('-hist_year')
-
-    context = {
-        'artikleid_aasta_kaupa': artikleid_aasta_kaupa,
-        'artikleid_kuu_kaupa': artikleid_kuu_kaupa
-    }
+    years_with_events_set = set(
+        artikkel_qs.values_list('hist_year', flat=True)
+    )
+    years_with_events = [day for day in years_with_events_set]
 
     return render(
         request,
-        'wiki/calendar_view.html',
-        context
+        'wiki/calendar_view2.html',
+        {
+            'user_calendar_view_last': user_calendar_view_last,
+            'calendar_days_with_events_in_month_url': reverse('wiki:calendar_days_with_events_in_month'),
+            'years_with_events': years_with_events
+        }
     )
 
-def calendar_widget(request):
-    # Kas kasutaja tegi ajavaliku
-    user_calendar_view_choice = request.GET.get('user_calendar_view_last', None)
-    if user_calendar_view_choice:
-        user_calendar_view_last = user_calendar_view_choice
-    else:
-        # Küsitakse kas eelmine ajavalik on salvestatud
-        # kui ei ole võetakse 100 aastat tagasi
-        user_calendar_view_last = request.session.get('user_calendar_view_last')
-        if not user_calendar_view_last:
-            t2na = timezone.now()
-            user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
 
-    # Salvestame uue kasutaja ajavaliku
+def calendar_days_with_events_in_month(request):
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    t2na = timezone.now()
+    # Kasutaja kuuvalik
+    year = request.GET.get('year', t2na.year - 100)
+    month = request.GET.get('month', t2na.month)
+    # Salvestame kasutaja kuuvaliku
+    user_calendar_view_last = date(int(year), int(month), t2na.day).strftime("%Y-%m")
     request.session['user_calendar_view_last'] = user_calendar_view_last
-
-    user_calendar_view_last_date = get_date(user_calendar_view_last)
-    artikkel_qs = Artikkel.objects.daatumitega(request)
-    cal = Calendar(
-        artikkel_qs,
-        user_calendar_view_last_date.year,
-        user_calendar_view_last_date.month
+    # Millistel päevade kohta valitud kuu ja aasta on kirjeid
+    days_with_events_set = set(
+        artikkel_qs.
+            filter(hist_date__year=year, hist_date__month=month).
+            annotate(day=Extract('hist_date', 'day')).
+            values_list('day', flat=True)
     )
-    html_cal = cal.formatmonth(withyear=True)
-
-    context = {
-        'calendar': mark_safe(html_cal),
-    }
-
-    # context['prev_month'] = prev_month(user_calendar_view_last_date)
-    # context['next_month'] = next_month(user_calendar_view_last_date)
-
-    return render(
-        request,
-        'wiki/calendar_widget.html',
-        context
+    days_with_events = [day for day in days_with_events_set]
+    # Millistel kuude kohta valitud aastal on kirjeid
+    months_with_events_set = set(
+        artikkel_qs.
+            filter(hist_date__year=year).
+            annotate(day=Extract('hist_date', 'month')).
+            values_list('day', flat=True)
+    )
+    months_with_events = [day for day in months_with_events_set]
+    return JsonResponse(
+        {
+            'days_with_events': days_with_events,
+            'months_with_events': months_with_events
+        },
+        safe=False
     )

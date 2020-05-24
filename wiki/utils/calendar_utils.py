@@ -85,16 +85,30 @@ class Calendar(HTMLCalendar):
         return day_abbrs_row
 
     def formatmonthname(self, theyear, themonth, withyear=True):
-        monthfield = f'<span <div class="w3-display-topmiddle">{calendar.month_name[themonth]} {theyear}</span>'
+        kwargs = {
+            'year': theyear,
+            # 'month': themonth,
+        }
+        year_href = reverse('wiki:artikkel_year_archive', kwargs=kwargs)
+        year_title = f'Mis juhtus {theyear}?'
+        year_link = f'<a href="{year_href}" title="{year_title}" class="month-field">{theyear}</a>'
+        kwargs = {
+            'year': theyear,
+            'month': themonth,
+        }
+        month_href = reverse('wiki:artikkel_month_archive', kwargs=kwargs)
+        month_title = f'Mis juhtus {calendar.month_name[themonth]} {theyear}?'
+        month_link = f'<a href="{month_href}" title="{month_title}" class="month-field">{calendar.month_name[themonth]}</a>'
+        # monthfield = f'<span <div class="w3-display-topmiddle">{calendar.month_name[themonth]} {theyear}</span>'
         # monthfield = f'{calendar.month_name[themonth]} {theyear}'
+        month_field = f'<div class="w3-display-topmiddle">{month_link} {year_link}</div>'
         d = date(theyear, themonth, 1)
         prev_month_action = f"getCalendar('{prev_month(d)}')"
         next_month_action = f"getCalendar('{next_month(d)}')"
         month_prev_button = f'<i class="fa fa-chevron-left w3-display-topleft" onclick="{prev_month_action}"></i>'
         month_next_button = f'<i class="fa fa-chevron-right w3-display-topright" onclick="{next_month_action}"></i>'
-        monthrow = f'<div class="month">{month_prev_button}{monthfield}{month_next_button}</div>'
         # monthrow = f'{month_prev_button}<span>{monthfield}</span>{month_next_button}'
-        return f'<div class="selector">{monthrow}</div>'
+        return f'<div class="selector">{month_prev_button}{month_field}{month_next_button}</div>'
 
     def formatmonth(self, withyear=True):
         events = self.qs.filter(dob__year=self.year, dob__month=self.month)

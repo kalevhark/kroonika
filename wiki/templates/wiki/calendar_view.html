@@ -17,12 +17,14 @@
               action="{% url 'wiki:mine_krono_kuu' %}"
               class="form-inline"
           >
+            <div>
             {% csrf_token %}
             <input id="rec" type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" />
             <select
                 id="yearinput"
                 name="year"
                 onchange="getMonthArticles()"
+
             >
               {% for year in artikleid_aasta_kaupa %}
                 <option value="{{ year.hist_year }}" >
@@ -30,18 +32,20 @@
                 </option>
               {% endfor %}
             </select>
-            <button id="yearsubmit" class="fa fa-search"></button>
+<!--            <button id="yearsubmit" class="fa fa-search"></button>-->
             <select
                 id="monthinput"
                 name="month"
                 onchange="getMonthCalendar()"
+                style="float: right;"
             >
             </select>
-            <button
+            <!--<button
                 type="submit"
                 id="monthsubmit"
                 class="fa fa-search"
-            ></button>
+            ></button>-->
+            </div>
           </form>
         </div>
         <!-- Kalendrividin -->
@@ -55,8 +59,8 @@
 {% block javascript %}
 <script src="{% static 'wiki/js/wiki_calendar2.js'%}"></script>
 <script>
-let artikleidKuudeKaupa = {{ artikleid_kuu_kaupa }};
-let calendarWidgetUrl = "{% url 'wiki:calendar_widget' %}";
+const artikleidKuudeKaupa = {{ artikleid_kuu_kaupa }};
+const calendarWidgetUrl = "{% url 'wiki:calendar_widget' %}";
 let userCalendarViewLast = "{{ request.session.user_calendar_view_last }}";
 
 $( document ).ready(function() {
