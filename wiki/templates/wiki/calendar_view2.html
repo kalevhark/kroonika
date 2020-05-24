@@ -80,6 +80,7 @@
   var yearsWithEvents = {{ years_with_events }}
   var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"
   var userCalendarViewLast = '{{ user_calendar_view_last }}'
+  var calendarSystem = '{{ request.session.ukj }}'
 
   $( document ).ready(function() {
     GWDateTimePicker.init({

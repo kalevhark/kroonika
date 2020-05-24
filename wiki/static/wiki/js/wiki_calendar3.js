@@ -208,27 +208,33 @@ var GWDateTimePicker = {
       firstDateWeek = 6;
     }
 
-    // Kalendrimuudatuse parandused
-    if (year < 1918 || (year === 1918 && month === 0)) {
-      --firstDateWeek;
-      if (firstDateWeek < 0) {
-        firstDateWeek = 6;
-      }
-    }
-    if (month === 1 && year === 1918) {
-        day = 14;
-        firstDateWeek = 3;
-    }
-
     // Liigaasta parandused
-    if (month === 1 && ((year === 1900) || (year % 4 == 0 && year % 100 != 0) || year % 400 == 0)) {
+    if (month === 1 && ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)) {
       totalDays++;
     }
-    // Parandus, sest 1900 ebareeglipäraselt liigaasta
-    if (year < 1900 || (year === 1900 && month < 2)) {
-      --firstDateWeek;
-      if (firstDateWeek < 0) {
-        firstDateWeek = 6;
+
+    // Kalendrisysteemide erinevused
+    if (calendarSystem != 'on') {
+      // Kalendrimuudatuse parandused
+      if (year < 1918 || (year === 1918 && month === 0)) {
+        --firstDateWeek;
+        if (firstDateWeek < 0) {
+          firstDateWeek = 6;
+        }
+      }
+      if (month === 1 && year === 1918) {
+        day = 14;
+        firstDateWeek = 3;
+      }
+      // Parandus, sest 1900 ebareeglipäraselt liigaasta
+      if (month === 1 && year === 1900) {
+        totalDays++;
+      }
+      if (year < 1900 || (year === 1900 && month < 2)) {
+        --firstDateWeek;
+        if (firstDateWeek < 0) {
+          firstDateWeek = 6;
+        }
       }
     }
 
@@ -249,27 +255,33 @@ var GWDateTimePicker = {
         week = firstDateWeek;
 
         while (week++ < 7) {
-          dayThisMonthId = 'gw--day-this-month-id_' + day
-          dayTitle = 'title="' + 'Mis juhtus ' + day + '. ' + KUUL[month] + '?' + '"'
-          dayHref = '<a href="' + kroonikaUrl  + year + '/' + (month+1) + '/' + day + '/"'+ dayTitle + '>' + day++ + '</a>'
+          dayThisMonthId = 'gw--day-this-month-id_' + day;
+          dayTitle = 'title="' + 'Mis juhtus ' + day + '. ' + KUUL[month] + '?' + '"';
+          dayHref = '<a href="' + kroonikaUrl  + year + '/' + (month+1) + '/' + day + '/"'+ dayTitle + '>' + day++ + '</a>';
           innerHTML += '<td class="selected gw--day" id="' +  dayThisMonthId + '">' + dayHref + '</td>';
         }
 
-        if (month === 0 && year === 1918) {
-          daysNotThisMonth = 14;
-        } else {
-          daysNotThisMonth = 1;
-        }
+        daysNotThisMonth = 1;
+        if (calendarSystem != 'on') { // Juhul kui vana kalendri järgi, siis üleminek 31.01 -> 14.02
+          if (month === 0 && year === 1918) {
+            daysNotThisMonth = 14;
+          };
+        };
 
         week = 0;
         line++;
         continue;
       } else {
         if (day <= totalDays) {
-          dayThisMonthId = 'gw--day-this-month-id_' + day
-          dayTitle = 'title="' + 'Mis juhtus ' + day + '. ' + KUUL[month] + '?' + '"'
-          dayHref = '<a href="' + kroonikaUrl  + year + '/' + (month+1) + '/' + day + '/"'+ dayTitle + '>' + day++ + '</a>'
-          innerHTML += '<td class="selected gw--day" id="' +  dayThisMonthId + '">' + dayHref + '</td>';
+          if (calendarSystem == 'on' && (new Date(year, month, day ) < new Date(1918, 1, 14))) {
+            calendarSystemClass = ' text-ukj';
+          } else {
+            calendarSystemClass = '';
+          }
+          dayThisMonthId = 'gw--day-this-month-id_' + day;
+          dayTitle = 'title="' + 'Mis juhtus ' + day + '. ' + KUUL[month] + '?' + '"';
+          dayHref = '<a href="' + kroonikaUrl  + year + '/' + (month+1) + '/' + day + '/"'+ dayTitle + '>' + day++ + '</a>';
+          innerHTML += '<td class="selected gw--day' + calendarSystemClass + '" id="' +  dayThisMonthId + '">' + dayHref + '</td>';
         } else {
           innerHTML += '<td class="next gw--day">' + daysNotThisMonth++ + '</td>';
         }
