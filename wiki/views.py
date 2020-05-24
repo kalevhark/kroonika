@@ -2184,15 +2184,15 @@ def calendar_days_with_events_in_month(request):
     # Millistel päevade kohta valitud kuu ja aasta on kirjeid
     days_with_events_set = set(
         artikkel_qs.
-            filter(hist_date__year=year, hist_date__month=month).
-            annotate(day=Extract('hist_date', 'day')).
+            filter(dob__year=year, dob__month=month).
+            annotate(day=Extract('dob', 'day')).
             values_list('day', flat=True)
     )
     days_with_events = [day for day in days_with_events_set]
     # Millistel kuude kohta valitud aastal on kirjeid
     months_with_events_set = set(
         artikkel_qs.
-            filter(hist_date__year=year).
+            filter(dob__year=year).
             # annotate(day=Extract('hist_date', 'month')).
             values_list('hist_month', flat=True)
     )
