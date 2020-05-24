@@ -110,10 +110,12 @@ var GWDateTimePicker = {
       switch (target.className) {
         case "gw--year":
           $elements.selectedYear.innerHTML = target.innerHTML;
+          getCalendar(target.innerHTML, 1);
           GWDateTimePicker.showMonths($elements);
           break;
         case "gw--year year-with-events":
           $elements.selectedYear.innerHTML = target.innerHTML;
+          getCalendar(target.innerHTML, 1);
           GWDateTimePicker.showMonths($elements);
           break;
         case "gw--month":

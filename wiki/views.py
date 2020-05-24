@@ -2193,10 +2193,10 @@ def calendar_days_with_events_in_month(request):
     months_with_events_set = set(
         artikkel_qs.
             filter(hist_date__year=year).
-            annotate(day=Extract('hist_date', 'month')).
-            values_list('day', flat=True)
+            # annotate(day=Extract('hist_date', 'month')).
+            values_list('hist_month', flat=True)
     )
-    months_with_events = [day for day in months_with_events_set]
+    months_with_events = [month for month in months_with_events_set]
     return JsonResponse(
         {
             'days_with_events': days_with_events,
