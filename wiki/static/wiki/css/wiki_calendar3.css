@@ -1,15 +1,15 @@
 @charset "UTF-8";
 
 #gw--datetimepicker {
-  margin-top: 20px;
-  width: 214px;
+  margin-top: 0px;
+  width: 200px;
   box-sizing: border-box;
   overflow: hidden;
-  padding: 5px;
+  /* padding: 5px; */
   /* position: absolute; */
-  border-radius: 4px;
+  /* border-radius: 4px;
   border: 1px solid #ccc;
-  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2); */
   font-size: 1em;
   text-align: center;
   -webkit-user-select: none;
@@ -46,12 +46,12 @@
 }
 
 #gw--datetimepicker-header ul li:not(:first-child) {
-  margin-left: -4px; }
+  margin-left: -4px;}
 #gw--datetimepicker-header ul li:first-child, #gw--datetimepicker-header ul li:last-child {
   width: 10%; }
 
 #gw--datetimepicker-body {
-  height: 208px;
+  height: auto;
   }
 #gw--datetimepicker-body table {
   table-layout: fixed;
@@ -77,9 +77,9 @@
 
 #gw--datetimepicker-year-body td,
 #gw--datetimepicker-month-body td {
-  width: 62px;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  width: 58px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   font-size: .8rem; }
 
 #gw--datetimepicker-year-body td:hover,
@@ -114,6 +114,9 @@
   -moz-transition: all 0.2s;
   transition: all 0.2s;
   cursor: pointer;
+}
+td.gw--month {
+  padding: 6px;
 }
 
 #gw--now:hover {

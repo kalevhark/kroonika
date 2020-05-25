@@ -2,7 +2,7 @@
 {% load wiki_extras %}
 
 {% block title %}
-  {{ block.super }} - {{ day|date:"d.m.Y" }}{% if day|vkj %} ({% if request.session.ukj == 'true' %}ukj{% else %}vkj{% endif %}){% endif %}
+  {{ block.super }} - {{ day|date:"d.m.Y" }}{% if day|vkj %} ({% if request.session.ukj == 'on' %}ukj{% else %}vkj{% endif %}){% endif %}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -16,7 +16,7 @@
     </a>
     <strong> {% model_name_artikkel %} {{ day|date:"j." }}
       {% include "wiki/includes/kuu.html" with kuu=day|date:"m" %} {{ day|date:"Y" }} {{ month|date:"Y" }}
-      {% if day|vkj %}({% if request.session.ukj == 'true' %}ukj{% else %}vkj{% endif %}){% endif %}
+      {% if day|vkj %}({% if request.session.ukj == 'on' %}ukj{% else %}vkj{% endif %}){% endif %}
       kohta</strong>
   </div>
 </div>
@@ -125,7 +125,7 @@
       class="seotud">
     <div class="w3-cell-row w3-container background-artikkel w3-text-white">
       <div class="w3-cell w3-cell-middle">
-        <h5><i class="fa fa-comment w3-large"></i>&nbsp;{{ day|date:"j." }}{% include "wiki/includes/kuu.html" with kuu=day|date:"m" %} teistel aastatel:</h5>
+        <h5><i class="fa fa-comment w3-large"></i>&nbsp;{{ day|date:"j." }} {% include "wiki/includes/kuu.html" with kuu=day|date:"m" %} teistel aastatel:</h5>
       </div>
     </div>
     {% include 'wiki/includes/object_list.html' with object_list=sel_p2eval %}

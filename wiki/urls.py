@@ -55,7 +55,7 @@ urlpatterns = [
     # path('heatmap/', views.heatmap, name='heatmap'),
     # path('calendar/', views.calendar_view, name='calendar_view'),
     # path('calendar_widget/', views.calendar_widget, name='calendar_widget'),
-    path('calendar/', views.calendar_view2, name='calendar_view2'),
+    # path('calendar/', views.calendar_view2, name='calendar_view2'),
     path('calendar_days_with_events_in_month/', views.calendar_days_with_events_in_month, name='calendar_days_with_events_in_month'),
     ]
 

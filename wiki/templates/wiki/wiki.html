@@ -2,6 +2,11 @@
 {% load static %}
 {% load wiki_extras %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static 'wiki/css/wiki_calendar3.css' %}">
+{% endblock %}
+
+
 {% block content %}
 	<!--		Tagasiside vorm -->
   {% load crispy_forms_tags %}
@@ -9,7 +14,7 @@
     {% crispy feedbackform %}
   </div>
 	<!-- Lingid teemalehtedele -->
-	<div class="w3-row-padding w3-margin-bottom">
+  <div class="w3-row-padding w3-margin-bottom">
     {% include 'wiki/includes/algus_head.html' %}
   </div>
   <!-- Sisu algab siit -->
@@ -19,12 +24,13 @@
     {% now "Y" as aasta %}
     <!-- Artiklite esitlus -->
 	  <div class="w3-quarter">
+      {% include 'wiki/includes/wiki_calendar2.html' %}
       <!-- Teadete esitamiseks -->
 <!--      <div class="w3-container w3-hover-white">-->
 <!--        {% include 'wiki/includes/wiki_message.html' %}-->
 <!--      </div>-->
       <div class="w3-container w3-round w3-padding-16 w3-hover-white">
-        {% include 'wiki/includes/wiki_calendar.html' %}
+
         {% include 'wiki/includes/algus_artiklid.html' %}
       </div>
     </div>
@@ -69,8 +75,23 @@
 {% endblock %}
 
 {% block javascript %}
+<!--<script>-->
+<!--  let artikleidKuudeKaupa = {{ andmed.artikleid_kuu_kaupa }};-->
+<!--</script>-->
+<!--<script src="{% static 'wiki/js/wiki_calendar.js'%}"></script>-->
+
+<script src="{% static 'wiki/js/wiki_calendar3.js'%}"></script>
 <script>
-  let artikleidKuudeKaupa = {{ andmed.artikleid_kuu_kaupa }};
+  var calendar_days_with_events_in_month_url = "{% url 'wiki:calendar_days_with_events_in_month' %}"
+  var yearsWithEvents = {{ kalender.years_with_events }}
+  var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"
+  var userCalendarViewLast = '{{ kalender.user_calendar_view_last }}'
+  var calendarSystem = '{{ request.session.ukj }}'
+
+  $( document ).ready(function() {
+    GWDateTimePicker.init({
+      targetId: "date-container"
+    });
+  });
 </script>
-<script src="{% static 'wiki/js/wiki_calendar.js'%}"></script>
 {% endblock %}
