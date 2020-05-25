@@ -1,17 +1,12 @@
 @charset "UTF-8";
 
-#date-container {
-  border: 1px solid #ccc;
-  padding: 5px;
-}
-
 #gw--datetimepicker {
   margin-top: 20px;
   width: 214px;
   box-sizing: border-box;
   overflow: hidden;
   padding: 5px;
-  position: absolute;
+  /* position: absolute; */
   border-radius: 4px;
   border: 1px solid #ccc;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
@@ -56,7 +51,8 @@
   width: 10%; }
 
 #gw--datetimepicker-body {
-  height: 208px; }
+  height: 208px;
+  }
 #gw--datetimepicker-body table {
   table-layout: fixed;
   border-collapse: collapse; }

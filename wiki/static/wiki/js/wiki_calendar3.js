@@ -273,7 +273,10 @@ var GWDateTimePicker = {
         continue;
       } else {
         if (day <= totalDays) {
-          if (calendarSystem == 'on' && (new Date(year, month, day ) < new Date(1918, 1, 14))) {
+          let startNewCalendar = new Date(1582, 9, 4);
+          let stopNewCalendar = new Date(1918, 1, 14);
+          let theDate = new Date(year, month, day);
+          if (calendarSystem == 'on' && theDate < stopNewCalendar && theDate > startNewCalendar) {
             calendarSystemClass = ' text-ukj';
           } else {
             calendarSystemClass = '';
