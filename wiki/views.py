@@ -2206,7 +2206,6 @@ def calendar_days_with_events_in_month(request):
     # Kasutaja kuuvalik
     year = request.GET.get('year', t2na.year - 100)
     month = request.GET.get('month', t2na.month)
-    print(year, month)
     # Salvestame kasutaja kuuvaliku
     user_calendar_view_last = date(int(year), int(month), t2na.day).strftime("%Y-%m")
     request.session['user_calendar_view_last'] = user_calendar_view_last
@@ -2217,7 +2216,6 @@ def calendar_days_with_events_in_month(request):
             annotate(day=Extract('dob', 'day')).
             values_list('day', flat=True)
     )
-    print(days_with_events_set)
     days_with_events = [day for day in days_with_events_set]
     # Millistel kuude kohta valitud aastal on kirjeid
     months_with_events_set = set(

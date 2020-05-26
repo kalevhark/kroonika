@@ -251,7 +251,7 @@ class IlmateenistusData():
         # Loeme Ilmateenistuse viimase mõõtmise andmed veebist
         jaam = 'Valga'
         href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
-        r = requests.get(href)
+        r = requests.get(href) # TODO: Siia kirjutada tegevus, kui ei saada andmeid online
         root = ET.fromstring(r.text)
         i = dict()
         # Mõõtmise aeg
