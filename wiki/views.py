@@ -1902,7 +1902,7 @@ def switch_vkj_ukj(request, ukj):
 #
 #     return render(
 #         request,
-#         'wiki/algus_artikkel_detail.html',
+#         'wiki/del_algus_artikkel_detail.html',
 #         {
 #             'andmed': andmed,
 #         }
