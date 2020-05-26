@@ -53,9 +53,9 @@ function getCalendar(theYear, theMonth) {
 
 var GWDateTimePicker = {
   init: function(param) {
-    var [CYEAR, CMONTH] = userCalendarViewLast.split('-');
-    CYEAR = parseInt(CYEAR);
-    CMONTH = parseInt(CMONTH);
+    var array = userCalendarViewLast.split('-'),
+        CYEAR = parseInt(array[0]),
+        CMONTH = parseInt(array[1]);
     var now = new Date,
       // CYEAR = now.getFullYear() - 100,
       // CMONTH = now.getMonth() + 1,
