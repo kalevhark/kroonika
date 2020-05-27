@@ -1,0 +1,228 @@
+{% load wiki_extras %}
+<div class="w3-quarter">
+  <div
+          class="card w3-round"
+          id="card-artikkel"
+  >
+    <a
+      class="w3-tooltip"
+      style="text-decoration: none;"
+      href="{% url 'wiki:wiki_artikkel_filter' %}"
+    >
+      <div
+              class="w3-container w3-round background-artikkel w3-padding-16 icon"
+              id="icon-artikkel"
+      >
+        <div class="w3-left">
+            <i class="fa fa-comment w3-xxxlarge"></i>
+        </div>
+        <div class="w3-hide-medium w3-right">
+          <h4>{% model_name_artikkel %} ({{ andmed.artikkel.kirjeid }})</h4>
+        </div>
+        <div class="w3-hide-large w3-hide-small w3-right ">
+          <h6>{% model_name_artikkel %} ({{ andmed.artikkel.kirjeid }})</h6>
+        </div>
+      </div>
+    </a>
+    <div
+            class="w3-round background-artikkel icon-dropdown"
+            id="icon-artikkel-dropdown"
+    >
+      <form
+              id="form-search-artikkel"
+              name="form-search-artikkel"
+              action="{% url 'wiki:wiki_artikkel_filter' %}"
+              class="search-form"
+      >
+        <label for="artikkel_sisaldab" class="screen-reader-text">Otsi</label>
+        <input
+                id="artikkel_sisaldab"
+                name="artikkel_sisaldab"
+                type="search"
+                class="search-input"
+                placeholder="Otsi lugudest sõna või fraasi..."
+                autocomplete="off"
+        >
+        <button
+                class="background-artikkel search-button fa fa-search"
+        ></button>
+        {% csrf_token %}
+        <input
+            type="hidden"
+            value=""
+            name="g-recaptcha-response"
+            class="g-recaptcha-response"
+        >
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="w3-quarter">
+  <div
+          class="card w3-round"
+          id="card-isik"
+  >
+    <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
+      <div
+              class="w3-container w3-round background-isik w3-padding-16 icon"
+              id="icon-isik"
+      >
+        <div class="w3-left">
+            <i class="fa fa-address-card-o w3-xxxlarge"></i>
+        </div>
+        <div class="w3-hide-medium w3-right">
+          <h4>{% model_name_isik %} ({{ andmed.isik.kirjeid }})</h4>
+        </div>
+        <div class="w3-hide-large w3-hide-small w3-right ">
+          <h6>{% model_name_isik %} ({{ andmed.isik.kirjeid }})</h6>
+        </div>
+      </div>
+    </a>
+    <div
+            class="w3-round background-isik icon-dropdown"
+            id="icon-isik-dropdown"
+    >
+      <form
+              id="form-search-isik"
+              name="form-search-isik"
+              action="{% url 'wiki:wiki_isik_filter' %}"
+              class="search-form"
+      >
+        <label for="perenimi__icontains" class="screen-reader-text">Otsi</label>
+        <input
+                id="perenimi__icontains"
+                name="perenimi__icontains"
+                type="search"
+                class="search-input"
+                placeholder="Otsi perekonnanimest fraasi..."
+                autocomplete="off"
+        >
+        <button
+                class="background-isik search-button fa fa-search"
+        ></button>
+        {% csrf_token %}
+        <input
+            type="hidden"
+            value=""
+            name="g-recaptcha-response"
+            class="g-recaptcha-response"
+        >
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="w3-quarter">
+  <div
+          class="card w3-round"
+          id="card-organisatsioon"
+  >
+    <a class="w3-tooltip" style="text-decoration: none;" href="{% url 'wiki:wiki_organisatsioon_filter' %}">
+      <div
+              class="w3-container w3-round background-organisatsioon w3-padding-16 icon"
+              id="icon-organisatsioon"
+      >
+        <div class="w3-left">
+            <i class="fa fa-group w3-xxxlarge"></i>
+        </div>
+        <div class="w3-hide-medium w3-right">
+          <h4>{% model_name_organisatsioon %} ({{ andmed.organisatsioon.kirjeid }})</h4>
+        </div>
+        <div class="w3-hide-large w3-hide-small w3-right ">
+          <h6>{% model_name_organisatsioon %} ({{ andmed.organisatsioon.kirjeid }})</h6>
+        </div>
+      </div>
+    </a>
+    <div
+            class="w3-round background-organisatsioon icon-dropdown"
+            id="icon-organisatsioon-dropdown"
+    >
+      <form
+              id="form-search-organisatsioon"
+              name="form-search-organisatsioon"
+              action="{% url 'wiki:wiki_organisatsioon_filter' %}"
+              class="search-form"
+      >
+        <label for="nimi__icontains" class="screen-reader-text">Otsi</label>
+        <input
+                id="nimi__icontains_organisatsioon"
+                name="nimi__icontains"
+                type="search"
+                class="search-input"
+                placeholder="Otsi asutise nimest fraasi..."
+                autocomplete="off"
+        >
+        <button
+                class="background-organisatsioon search-button fa fa-search"
+        ></button>
+        {% csrf_token %}
+        <input
+            type="hidden"
+            value=""
+            name="g-recaptcha-response"
+            class="g-recaptcha-response"
+        >
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="w3-quarter">
+  <div
+          class="card w3-round"
+          id="card-objekt"
+  >
+    <a
+      class="w3-tooltip"
+      style="text-decoration: none;"
+      href="{% url 'wiki:wiki_objekt_filter' %}"
+    >
+      <div
+              class="w3-container w3-round background-objekt w3-padding-16 icon"
+              id="icon-objekt"
+      >
+        <div class="w3-left">
+            <i class="fa fa-bank w3-xxxlarge"></i>
+        </div>
+        <div class="w3-hide-medium w3-right">
+          <h4>{% model_name_objekt %} ({{ andmed.objekt.kirjeid }})</h4>
+        </div>
+        <div class="w3-hide-large w3-hide-small w3-right ">
+          <h6>{% model_name_objekt %} ({{ andmed.objekt.kirjeid }})</h6>
+        </div>
+      </div>
+    </a>
+    <div
+            class="w3-round background-objekt icon-dropdown"
+            id="icon-objekt-dropdown"
+    >
+      <form
+              id="form-search-objekt"
+              name="form-search-objekt"
+              action="{% url 'wiki:wiki_objekt_filter' %}"
+              class="search-form"
+      >
+        <label for="nimi__icontains" class="screen-reader-text">Otsi</label>
+        <input
+                id="nimi__icontains_objekt"
+                name="nimi__icontains"
+                type="search"
+                class="search-input"
+                placeholder="Otsi kohanimest fraasi..."
+                autocomplete="off"
+        >
+        <button
+                class="background-objekt search-button fa fa-search"
+        ></button>
+        {% csrf_token %}
+        <input
+            type="hidden"
+            value=""
+            name="g-recaptcha-response"
+            class="g-recaptcha-response"
+        >
+      </form>
+    </div>
+  </div>
+</div>

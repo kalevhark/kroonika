@@ -2232,3 +2232,234 @@ def calendar_days_with_events_in_month(request):
         },
         safe=False
     )
+
+#
+# Avakuva
+#
+def algus2(request):
+    # Filtreerime artiklite hulga kasutaja järgi
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    andmed = {} # Selle muutuja saadame veebi
+    p2ev = date.today().day # str(p2ev).zfill(2) -> PP
+    kuu = date.today().month # str(kuu).zfill(2) -> KK
+    aasta = date.today().year
+
+    # Andmebaas Artikkel andmed veebi
+    a = dict()
+    kirjeid = artikkel_qs.count()
+    a['kirjeid'] = kirjeid
+    artikleid_max_split = 9 # Kui mitmest artiklist alates teha splittimine (esimesed ... viimased)
+    artikleid_max_split_half = artikleid_max_split//2
+    a['artikleid_max_split'] = artikleid_max_split
+    a['artikleid_max_split_half'] = artikleid_max_split_half
+    if kirjeid > 0:
+        a['viimane_lisatud'] = artikkel_qs.latest('inp_date')
+        a['viimane_muudetud'] = artikkel_qs.latest('mod_date')
+        # Samal kuupäeval erinevatel aastatel toimunud
+        sel_p2eval_exactly = artikkel_qs.filter( # hist_date == KKPP
+            dob__day = p2ev,
+            dob__month = kuu
+        )
+        sel_p2eval = inrange_dates_artikkel(artikkel_qs, p2ev, kuu) # hist_date < KKPP <= hist_enddate
+        sel_p2eval_kirjeid = len(sel_p2eval)
+        if sel_p2eval_kirjeid > artikleid_max_split: # Kui leiti palju artikleid, teeme splitid
+            a['sel_p2eval'] = (
+                sel_p2eval[:artikleid_max_split_half] +
+                sel_p2eval[int(sel_p2eval_kirjeid/2-1):int(sel_p2eval_kirjeid/2)] +
+                sel_p2eval[sel_p2eval_kirjeid-artikleid_max_split_half:]
+            )
+        else:
+            a['sel_p2eval'] = sel_p2eval
+        a['sel_p2eval_kirjeid'] = sel_p2eval_kirjeid
+        # Samal kuul toimunud TODO: probleem kui dob__month ja doe__month ei ole järjest
+        sel_kuul = artikkel_qs.filter(Q(dob__month=kuu) | Q(hist_month=kuu) | Q(doe__month=kuu))
+        sel_kuul_kirjeid = len(sel_kuul)
+        if sel_kuul_kirjeid > artikleid_max_split: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
+            a['sel_kuul'] = (
+                sel_kuul[:artikleid_max_split_half] +
+                sel_kuul[int(sel_kuul_kirjeid/2-1):int(sel_kuul_kirjeid/2)] +
+                sel_kuul[sel_kuul_kirjeid-artikleid_max_split_half:]
+            )
+        else:
+            a['sel_kuul'] = sel_kuul
+        a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
+        # 100 aastat tagasi toimunud
+        a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(dob__year = (aasta-100))
+        a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:20] # 20 loetumat artiklit
+        # Koondnäitajad aastate ja kuude kaupa
+        artikleid_aasta_kaupa = artikkel_qs.\
+            values('hist_year').\
+            annotate(Count('hist_year')).\
+            order_by('hist_year')
+        a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
+        artikleid_kuu_kaupa = artikkel_qs.\
+            values('hist_year', 'hist_month').\
+            annotate(Count('hist_month')).\
+            order_by('hist_year', 'hist_month')
+        a['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
+    andmed['artikkel'] = a
+
+    # Andmebaas Isik andmed veebi
+    a = dict()
+    isik_qs = Isik.objects.daatumitega(request)
+    kirjeid = isik_qs.count()
+    a['kirjeid'] = kirjeid
+    if kirjeid > 0:
+        a['viimane_lisatud'] = isik_qs.latest('inp_date')
+        a['viimane_muudetud'] = isik_qs.latest('mod_date')
+        a['100_aastat_tagasi'] = isik_qs.filter(
+            dob__day = p2ev,
+            dob__month = kuu,
+            dob__year = (aasta-100)
+        )
+        a['sel_p2eval'] = isik_qs.filter(
+            dob__day = p2ev,
+            dob__month = kuu
+        )
+        a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
+        a['sel_kuul'] = isik_qs.\
+            filter(dob__month = kuu).\
+            order_by(ExtractDay('dob'))
+        a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
+        a['sel_p2eval_surnud'] = isik_qs.filter(
+            doe__day = p2ev,
+            doe__month = kuu
+        )
+        a['sel_p2eval_surnud_kirjeid'] = len(a['sel_p2eval_surnud'])
+        a['sel_kuul_surnud'] = isik_qs.\
+            filter(doe__month = kuu).\
+            order_by(ExtractDay('doe'))
+        a['sel_kuul_surnud_kirjeid'] = len(a['sel_kuul_surnud'])
+        juubilarid = [
+            isik.id
+            for isik
+            in isik_qs
+            if (isik.vanus() and (isik.vanus()%5==0))
+        ]
+        a['juubilarid'] = isik_qs.\
+            filter(id__in=juubilarid).\
+            order_by('hist_year', 'dob')
+    andmed['isik'] = a
+
+    # Andmebaas Organisatsioon andmed veebi
+    a = dict()
+    organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
+    kirjeid = organisatsioon_qs.count()
+    a['kirjeid'] = kirjeid
+    if kirjeid > 0:
+        a['viimane_lisatud'] = organisatsioon_qs.latest('inp_date')
+        a['viimane_muudetud'] = organisatsioon_qs.latest('mod_date')
+        a['100_aastat_tagasi'] = organisatsioon_qs.filter(
+            dob__day=p2ev,
+            dob__month=kuu,
+            dob__year=(aasta - 100)
+        )
+        a['sel_p2eval'] = organisatsioon_qs.filter(
+            dob__day = p2ev,
+            dob__month = kuu
+        )
+        a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
+        a['sel_kuul'] = organisatsioon_qs.\
+            filter(dob__month = kuu).\
+            order_by(ExtractDay('dob'))
+        a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
+        juubilarid = [
+            organisatsioon.id
+            for organisatsioon
+            in organisatsioon_qs
+            if (organisatsioon.vanus() and (organisatsioon.vanus() % 5 == 0))
+        ]
+        a['juubilarid'] = organisatsioon_qs.\
+            filter(id__in=juubilarid).\
+            order_by('hist_year', 'dob')
+    andmed['organisatsioon'] = a
+
+    # Andmebaas Objekt andmed veebi
+    a = dict()
+    objekt_qs = Objekt.objects.daatumitega(request)
+    kirjeid = objekt_qs.count()
+    a['kirjeid'] = kirjeid
+    if kirjeid > 0:
+        a['viimane_lisatud'] = objekt_qs.latest('inp_date')
+        a['viimane_muudetud'] = objekt_qs.latest('mod_date')
+        a['100_aastat_tagasi'] = objekt_qs.filter(
+            dob__day=p2ev,
+            dob__month=kuu,
+            dob__year=(aasta - 100)
+        )
+        a['sel_p2eval'] = objekt_qs.filter(
+            dob__day = p2ev,
+            dob__month = kuu
+        )
+        a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
+        a['sel_kuul'] = objekt_qs.\
+            filter(dob__month = kuu).\
+            order_by(ExtractDay('dob'))
+        a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
+        juubilarid = [
+            objekt.id
+            for objekt
+            in objekt_qs
+            if (objekt.vanus() and (objekt.vanus() % 5 == 0))
+        ]
+        a['juubilarid'] = objekt_qs.\
+            filter(id__in=juubilarid).\
+            order_by('hist_year', 'dob')
+    andmed['objekt'] = a
+
+    # Kas on 100 aastat tagasi toimunud asju?
+    andmed['100_aastat_tagasi'] = any(
+        [
+            andmed['artikkel']['100_aastat_tagasi'],
+            andmed['isik']['100_aastat_tagasi'],
+            andmed['organisatsioon']['100_aastat_tagasi'],
+            andmed['objekt']['100_aastat_tagasi'],
+        ]
+    )
+
+    # Andmed aasta ja kuu rippvalikumenüü jaoks
+    perioodid = artikkel_qs. \
+        filter(hist_searchdate__isnull=False). \
+        values('hist_searchdate__year', 'hist_searchdate__month'). \
+        annotate(ct=Count('id')). \
+        order_by('hist_searchdate__year', 'hist_searchdate__month')
+    artikleid_kuu_kaupa = [
+        [
+            periood['hist_searchdate__year'],
+            periood['hist_searchdate__month'],
+            periood['ct']
+        ] for periood in perioodid
+    ]
+    andmed['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
+    artikleid_aasta_kaupa = artikkel_qs.\
+        filter(hist_searchdate__isnull=False).\
+        values('hist_year').\
+        annotate(Count('hist_year')).\
+        order_by('-hist_year')
+    andmed['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
+
+    # Kalendriandmed
+    user_calendar_view_last = request.session.get('user_calendar_view_last')
+    if not user_calendar_view_last:
+        t2na = timezone.now()
+        user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
+        request.session['user_calendar_view_last'] = user_calendar_view_last
+
+    # Millistel kuude kohta valitud aastal on kirjeid
+    years_with_events_set = set(
+        artikkel_qs.values_list('hist_year', flat=True)
+    )
+    years_with_events = [day for day in years_with_events_set]
+
+    kalender = {
+        'user_calendar_view_last': user_calendar_view_last,
+        'calendar_days_with_events_in_month_url': reverse('wiki:calendar_days_with_events_in_month'),
+        'years_with_events': years_with_events
+    }
+
+    return render(
+        request, 'wiki/wiki2.html', {
+            'kalender': kalender,
+            'andmed': andmed,
+        }
+    )
