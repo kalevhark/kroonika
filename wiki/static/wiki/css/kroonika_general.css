@@ -351,6 +351,109 @@ form#search svg:hover {
   }
 }
 
+/* Avakuva ikoonide dropdown css */
+.card {
+	 position: relative;
+	 display: block;
+}
+
+#card-artikkel.card:hover #icon-artikkel-dropdown.icon-dropdown {
+	 height: auto;
+	 display: block;
+}
+
+#card-isik.card:hover #icon-isik-dropdown.icon-dropdown {
+	 height: auto;
+	 display: block;
+}
+
+#card-organisatsioon.card:hover #icon-organisatsioon-dropdown.icon-dropdown {
+	 height: auto;
+	 display: block;
+}
+
+#card-objekt.card:hover #icon-objekt-dropdown.icon-dropdown {
+	 height: auto;
+	 display: block;
+}
+
+.card .icon {
+	 height: auto;
+	 transition: all 0.3s ease-in-out;
+}
+
+.card .icon-dropdown {
+   position: absolute;
+   margin-top: -5px;
+   width: 100%;
+	 box-sizing: border-box;
+	 height: 0px;
+	 overflow: hidden;
+	 transition: all 0.3s ease-in-out;
+	 z-index: 1;
+}
+
+/* Otsinguriba */
+.search-form {
+  --searchButtonWidth: 32px;
+
+  margin: 8px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 16px;
+}
+
+.search-input {
+  border: 0;
+  margin: 0;
+  padding: 0.5rem calc(var(--searchButtonWidth) + 0.5rem) 0.5rem 0.5rem;
+  border-radius: 2px;
+  width: 100%;
+  -webkit-appearance: none;
+  font-size: 0.8rem;
+}
+.search-input:focus {
+  outline: 0;
+  background: white;
+}
+.search-input:not(:placeholder-shown) ~ .search-button {
+  /* transform: translateX(calc(-1 * var(--searchButtonWidth))); */
+}
+
+.search-input:focus ~ .search-button {
+  left: calc(100% - var(--searchButtonWidth));
+}
+
+.search-button {
+  border: 0;
+  padding: 0.5rem;
+  border-radius: 2px;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: var(--searchButtonWidth);
+  transition: 0.2s;
+  color: white;
+  height: 100%;
+}
+.search-button:focus {
+  outline: 0;
+  background: #222;
+  opacity: 0.5;
+}
+
+.search-button:hover {
+  outline: 0;
+  background: #222;
+  opacity: 0.5;
+}
+
+.screen-reader-text {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+
 /* Järgnev on pärit admin/base.css */
 /* GLOBAL DEFAULTS */
 

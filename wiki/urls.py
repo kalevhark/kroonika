@@ -44,6 +44,5 @@ urlpatterns = [
     # path('users/', UserList.as_view()),
     # path('users/<int:pk>/', UserDetail.as_view()),
     path('calendar_days_with_events_in_month/', views.calendar_days_with_events_in_month, name='calendar_days_with_events_in_month'),
-    path('algus2/', views.algus2, name='algus2'),
     ]
 
