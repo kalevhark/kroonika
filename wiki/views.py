@@ -1174,6 +1174,10 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         p2ev = context['month']
         # Salvestame kasutaja viimase kuupäevavaliku
         self.request.session['user_calendar_view_last'] = f'{aasta}-{kuu}'
+        # Samal kuul toimunud
+        context['object_list'] = artikkel_qs.\
+            filter(hist_year=aasta).\
+            filter(Q(dob__month=kuu) | Q(doe__month=kuu) | Q(hist_month=kuu))
         # Leiame samal kuul teistel aastatel märgitud artiklid
         # TODO: 1) hist_year != dob.year ja 2) kui dob ja doe ei ole samal kuul
         sel_kuul = artikkel_qs.\
