@@ -1,3 +1,4 @@
+// ver 2020.5
 // Tagastab eestikeelse kuunime
 function getEstonianMonthName(idx) {
   var kuud = [
@@ -153,3 +154,31 @@ function showFeedBackInfo() {
 	});
 };
 
+// Avab perioodivaadete alamvalikud
+function openLinks(evt, linkName) {
+  let modelName = 'artikkel';
+  if (linkName.indexOf("isik") >= 0) {
+    modelName = 'isik';
+  };
+  if (linkName.indexOf("organisatsioon") >= 0) {
+    modelName = 'organisatsioon';
+  };
+  if (linkName.indexOf("objekt") >= 0) {
+    modelName = 'objekt';
+  };
+  let newClassName = 'background-' + modelName;
+  var i, x, tablinks;
+  x = document.getElementsByClassName("seotud");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < x.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(/\bbackground-artikkel\b/g, "");
+    tablinks[i].className = tablinks[i].className.replace(/\bbackground-isik\b/g, "");
+    tablinks[i].className = tablinks[i].className.replace(/\bbackground-organisatsioon\b/g, "");
+    tablinks[i].className = tablinks[i].className.replace(/\bbackground-objekt\b/g, "");
+  }
+  document.getElementById(linkName).style.display = "block";
+  evt.currentTarget.className += " " + newClassName;
+}
