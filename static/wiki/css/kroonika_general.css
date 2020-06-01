@@ -1,5 +1,7 @@
 html, body, p, h1, h2, h3, h4, h5 {
   font-family: "Raleway", sans-serif
+  max-width: 1140px;
+    margin: 0 auto;
 }
 
 a {
@@ -8,7 +10,7 @@ a {
 
 /* Üldised layout seaded */
 .Site {
-  display: flex;
+  /* display: flex; */
   min-height: 100vh;
   flex-direction: column;
 }

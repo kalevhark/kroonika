@@ -15,6 +15,13 @@ a {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+  margin: 0 auto;
+}
+
+@media (min-width: 1400px) {
+  .Site {
+    max-width: 1340px;
+  }
 }
 
 .Site-content {
