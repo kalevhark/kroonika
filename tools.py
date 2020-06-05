@@ -179,7 +179,7 @@ def massikanne_from_dict(andmed):
     org = Organisatsioon.objects.get(id=org_id) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [andmed['vii']]
+    viited_ids = [int(viite_id.strip()) for viite_id in andmed['vii'].split(',')]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
