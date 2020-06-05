@@ -197,17 +197,18 @@ def massikanne_from_dict(andmed):
                 eesnimi = isik_eesnimi,
                 kirjeldus = isik_kirjeldus
             )
-            uus_isik.save()
-            print(uus_isik)
+            # uus_isik.save()
+            # print(uus_isik)
             # Lisame isikule seotud organisatsiooni
-            uus_isik.organisatsioonid.add(org)
+            # uus_isik.organisatsioonid.add(org)
             # Lisame isikule seotud viite(d)
             for viide in viited:
-                uus_isik.viited.add(viide)
+                # uus_isik.viited.add(viide)
+                pass
             # Lisame isiku artiklile
-            art.isikud.add(uus_isik)
+            # art.isikud.add(uus_isik)
             # Lisame isiku pildile
-            pilt.isikud.add(uus_isik)
+            # pilt.isikud.add(uus_isik)
 
 
 # Võtab andmed xml failist ja teeb isikute masskande ja sidumise artikli, organisatsiooni, pildi ja viitega
@@ -218,7 +219,7 @@ def massikanne_from_dict(andmed):
 # </kanne>
 # </data>
 def massikanne_from_xml():
-    f = '20200413_massikanne.xml'
+    f = '20200605_massikanne.xml'
     import xml.etree.ElementTree as ET
     tree = ET.parse(f)
     root = tree.getroot()
