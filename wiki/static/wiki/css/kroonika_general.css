@@ -438,7 +438,7 @@ form#search svg:hover {
   border-radius: 2px;
   position: absolute;
   top: 0;
-  left: 100%;
+  left: 99%;
   width: var(--searchButtonWidth);
   transition: 0.2s;
   color: white;
