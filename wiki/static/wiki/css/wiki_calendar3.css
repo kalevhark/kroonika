@@ -2,7 +2,7 @@
 
 #gw--datetimepicker {
   margin-top: 0px;
-  width: 200px;
+  width: auto;
   box-sizing: border-box;
   overflow: hidden;
   /* padding: 5px; */
@@ -24,6 +24,7 @@
 #gw--datetimepicker-header {
   font-family: Raleway;
   font-weight: bold; }
+
 #gw--datetimepicker-header ul {
   margin: 0;
   padding: 0;
@@ -53,13 +54,16 @@
 #gw--datetimepicker-body {
   height: auto;
   }
+
 #gw--datetimepicker-body table {
   table-layout: fixed;
   border-collapse: collapse; }
-#gw--datetimepicker-body table thead {
+
+/* #gw--datetimepicker-body table thead {
   font-family: Raleway; }
 #gw--datetimepicker-body table tbody {
-  font-family: Arial; }
+  font-family: Arial; } */
+
 #gw--datetimepicker-body table tbody td {
   border-radius: 4px;
   -webkit-transition: all 0.2s;
@@ -88,9 +92,10 @@
   color: white;
 }
 
-
 #gw--datetimepicker-day thead th,
 #gw--datetimepicker-day-body td {
+  font-size: 1em;
+  line-height: 1em;
   padding: 6px 7px; }
 
 #gw--datetimepicker-day-body td.prev, #gw--datetimepicker-day-body td.next {
