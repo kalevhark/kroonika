@@ -41,6 +41,7 @@ urlpatterns = [
     path('wiki_base_info/', views.wiki_base_info, name='wiki_base_info'),
     path('switch_vkj_ukj/<str:ukj>/', views.switch_vkj_ukj, name='switch_vkj_ukj'),
     # path('j6ul2019/', views.special_j6ul2019, name='special_j6ul2019'),
+    path('valga436/', views.special_valga436, name='special_valga436'),
     # path('users/', UserList.as_view()),
     # path('users/<int:pk>/', UserDetail.as_view()),
     path('calendar_days_with_events_in_month/', views.calendar_days_with_events_in_month, name='calendar_days_with_events_in_month'),

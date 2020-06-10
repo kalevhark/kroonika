@@ -24,13 +24,14 @@
     {% now "Y" as aasta %}
     <!-- Artiklite esitlus -->
 	  <div class="w3-quarter">
+      <!-- Teadete esitamiseks -->
+      <div class="w3-container w3-hover-white w3-padding-16 w3-center">
+        {% include 'wiki/includes/wiki_message.html' %}
+      </div>
       <div class="w3-hide-medium">
         {% include 'wiki/includes/wiki_calendar3.html' %}
       </div>
-      <!-- Teadete esitamiseks -->
-<!--      <div class="w3-container w3-hover-white">-->
-<!--        {% include 'wiki/includes/wiki_message.html' %}-->
-<!--      </div>-->
+
       <div class="w3-container w3-round w3-padding-16 w3-hover-white">
 
         {% include 'wiki/includes/algus_artiklid.html' %}

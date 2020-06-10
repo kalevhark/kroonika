@@ -1718,6 +1718,16 @@ def special_j6ul2019(request):
         }
     )
 
+#
+# Linna sünnipäevatervituse lehekülg
+#
+def special_valga436(request):
+    return render(
+        request,
+        'wiki/wiki_special_valga436.html',
+        {}
+    )
+
 def switch_vkj_ukj(request, ukj):
     # print('switch2:', ukj)
     # print('before switch', request.session.get('ukj'))
