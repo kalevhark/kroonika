@@ -74,14 +74,15 @@ function showFeedback() {
   var x = document.getElementById("panelFeedBack");
   if (x.className.indexOf("w3-show-block") == -1) {
     x.className += " w3-show-block";
-    kirjeldusField = document.getElementById("id_kirjeldus");
-    if (kirjeldusField) {
+//    kirjeldusField = document.getElementById("id_kirjeldus");
+    kirjeldusField = $("#id_kirjeldus");
+    if (kirjeldusField.is(":visible")) {
       kirjeldusField.focus();
     };
   } else {
     x.className = x.className.replace(" w3-show-block", "");
-  }
-}
+  };
+};
 
 function hoverDate(x) {
   const newClassName = 'date-highlighted';
