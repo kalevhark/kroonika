@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -201,3 +202,6 @@ MARKDOWNX_SERVER_CALL_LATENCY = 1000 # kujundatud teksti värskendamise viivitus
 KROONIKA = {
     # 'SAJAND_TAGASI': False # kui on vaja näidata kuni sajand tagasi True
 }
+
+# sites framework: django.contrib.sites
+SITE_ID = 1
