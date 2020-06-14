@@ -22,7 +22,7 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
 
-from .sitemaps import StaticViewSitemap, ArtikkelSitemap
+from .sitemaps import StaticViewSitemap, ArtikkelSitemap, IsikSitemap, OrganisatsioonSitemap, ObjektSitemap
 from .routers import router
 from wiki import views
 
@@ -30,6 +30,9 @@ from wiki import views
 sitemaps = {
     'static': StaticViewSitemap,
     'lood': ArtikkelSitemap,
+    'isikud': IsikSitemap,
+    'asutised': OrganisatsioonSitemap,
+    'kohad': ObjektSitemap
 }
 
 # API
