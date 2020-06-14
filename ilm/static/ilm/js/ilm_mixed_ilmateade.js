@@ -52,6 +52,7 @@ function mixed_ilmateade() {
         document.getElementById("loader").style.display = "none";
         document.getElementById("container_mixed_ilmateade").style.display = "block";
         var chart = Highcharts.chart("container_mixed_ilmateade", data);
+
         // Täiendame eelneva 24h andmed ilmasümbolitega
         $.each(chart.series[1].data, function (i, point) {
           if (i < 24 && i % 2 === 0 && data.yrno_symbols[i] != null) {

@@ -1856,14 +1856,12 @@ def mixed_ilmateade(request):
                 'valueSuffix': ' mm'
             }
 	    }, {
-            'name': 'Sademed (prognoos)',
-            'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['precipitations'][2],
             'type': 'column',
-            'color': '#68CFE8',
-            'yAxis': 1,
-            'groupPadding': 0,
-            'pointPadding': 0,
-            'grouping': False,
+            'plotOptions': {
+                'column': {
+                    'stacking': 'normal',
+                }
+            },
             'dataLabels': {
                 'enabled': True,
                 'style': {
@@ -1871,7 +1869,14 @@ def mixed_ilmateade(request):
                     'color': 'gray'
                 }
             },
-            'lineWidth' : 2, 
+            'name': 'Sademed (prognoos)',
+            'data': 24 * [None] + [el[2] for el in andmed_j2rgnevad48h['forecast']['precipitations']],
+            'color': '#68CFE8',
+            'yAxis': 1,
+            'groupPadding': 0,
+            'pointPadding': 0,
+            'grouping': False,
+            'lineWidth' : 2,
             'tooltip': {
                 'valueSuffix': ' mm'
             }
