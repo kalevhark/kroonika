@@ -22,13 +22,14 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
 
-from .sitemaps import StaticViewSitemap
+from .sitemaps import StaticViewSitemap, ArtikkelSitemap
 from .routers import router
 from wiki import views
 
 # sitemaps.xml
 sitemaps = {
     'static': StaticViewSitemap,
+    'lood': ArtikkelSitemap,
 }
 
 # API
