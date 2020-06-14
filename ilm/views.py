@@ -1506,7 +1506,15 @@ def yrno_48h():
         if date.hour == 0:
             dateticks.append(n)
         cat.append(date) # Aeg
-        prec.append(float(data.find("precipitation").attrib['value'])) # Sademed
+        # Sademed
+        prec_value = float(data.find("precipitation").attrib['value'])
+        try:
+            prec_maxvalue = float(data.find("precipitation").attrib['maxvalue'])
+            prec_minvalue = float(data.find("precipitation").attrib['minvalue'])
+        except:
+            prec_minvalue = prec_maxvalue = prec_value
+
+        prec.append([prec_value, prec_minvalue, prec_maxvalue]) # Sademed
         wind.append(
             [float(data.find("windSpeed").attrib['mps']),
             float(data.find("windDirection").attrib['deg'])]
@@ -1849,7 +1857,7 @@ def mixed_ilmateade(request):
             }
 	    }, {
             'name': 'Sademed (prognoos)',
-            'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['precipitations'],
+            'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['precipitations'][2],
             'type': 'column',
             'color': '#68CFE8',
             'yAxis': 1,
