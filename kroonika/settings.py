@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.PersistentRemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware', # site info lisamiseks
 ]
 
 ROOT_URLCONF = 'kroonika.urls'
