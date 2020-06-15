@@ -5,6 +5,8 @@
 {% block breadcrumb %}
 {% endblock %}
 
+{% block title %}{{ block.super }} info{% endblock %}
+
 {% block src %}
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <script src="https://code.highcharts.com/modules/heatmap.js"></script>
