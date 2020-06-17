@@ -305,7 +305,8 @@ def otsi(request):
 #
 def feedback(request):
     # if this is a POST request we need to process the form data
-    http_referer = request.META['HTTP_REFERER'] # mis objektilt tuli vihje
+    a = request.META
+    http_referer = request.META.get('HTTP_REFERER', reverse('algus')) # mis objektilt tuli vihje
     remote_addr = request.META['REMOTE_ADDR'] # kasutaja IP aadress
     http_user_agent = request.META['HTTP_USER_AGENT'] # kasutaja veebilehitseja
     if request.method == 'POST' and check_recaptcha(request):
@@ -334,9 +335,9 @@ def feedback(request):
                 'wiki/wiki_feedback.html',
                 context
             )
-
-    # Kui on GET või tühi vorm, siis laeme algse lehe
-    messages.add_message(request, messages.WARNING, 'Tühja vormi ei saadetud.')
+        else:
+            # Kui on tühi vorm, siis laeme algse lehe
+            messages.add_message(request, messages.WARNING, 'Tühja vormi ei saadetud.')
     return HttpResponseRedirect(http_referer)
 
 #
