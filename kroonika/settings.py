@@ -42,12 +42,12 @@ INSTALLED_APPS = [
     'wiki.apps.WikiConfig',
     'ilm.apps.IlmConfig',
     'blog.apps.BlogConfig',
-    'django_filters',
-    'widget_tweaks',
-    'rest_framework',
-    'captcha',
-    'crispy_forms',
-    'markdownx',
+    'django_filters', # Laiendatud filtrite jaoks
+    'widget_tweaks', # Lisavidinad sisestusvormidele
+    'rest_framework', # API liidese jaoks
+    'captcha', # Robot vs inimene sisestuse kontroll
+    'crispy_forms', # Vormide kujundamiseks
+    'markdownx', # MarkDown teksti kasutamiseks
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
