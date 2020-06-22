@@ -85,3 +85,8 @@ def model_name_objekt():
 @register.simple_tag
 def recaptcha_public_key():
     return settings.GOOGLE_RECAPTCHA_PUBLIC_KEY
+
+# Sektsiooni nimi objectist
+@register.filter
+def verbose_name_plural(obj):
+    return obj._meta.verbose_name_plural

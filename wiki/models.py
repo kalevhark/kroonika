@@ -521,13 +521,6 @@ class Objekt(models.Model):
         verbose_name_plural = "Kohad"
 
 
-# # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-# class OrganisatsioonSajandTagasiManager(models.Manager):
-#     def get_queryset(self):
-#         sajandtagasi = datetime.date.today().year - 100
-#         return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
-
-
 class Organisatsioon(models.Model):
     nimi = models.CharField(
         'Asutise nimi',

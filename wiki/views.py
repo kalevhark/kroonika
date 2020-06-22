@@ -38,6 +38,7 @@ from wiki.models import Allikas, Viide, Artikkel, Isik, Objekt, Organisatsioon, 
 from wiki.forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 from wiki.forms import VihjeForm
 
+
 #
 # reCAPTCHA kontrollifunktsioon
 #
@@ -1549,7 +1550,6 @@ class ObjektFilterView(FilterView):
         context['filter'] = filter
         return context
 
-
 class ObjektDetailView(generic.DetailView):
     model = Objekt
     query_pk_and_slug = True
@@ -1558,14 +1558,11 @@ class ObjektDetailView(generic.DetailView):
         return Objekt.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
-        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
-
         # Kas objektile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
             objektid__id=self.object.id).filter(profiilipilt_objekt=True).first()
-
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
 

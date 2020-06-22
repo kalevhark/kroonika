@@ -202,6 +202,13 @@ MARKDOWNX_SERVER_CALL_LATENCY = 1000 # kujundatud teksti värskendamise viivitus
 
 # Kroonika üldised seaded
 KROONIKA = {
+    'TITLE': 'Valga linna kroonika',
+    'DESCRIPTION':
+        """
+        Valga linna kroonika. Lood Valga linna ajaloost seotuna isikute, asutiste ja kohtadega. 
+        Kasutamiseks informatsioonilistel ja hariduslikel eesmärkidel.
+        """.strip(),
+    'KEYWORDS': ['Valga', 'linn', 'Valga linn', 'kroonika', 'ajalugu']
     # 'SAJAND_TAGASI': False # kui on vaja näidata kuni sajand tagasi True
 }
 
