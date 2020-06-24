@@ -135,7 +135,7 @@
   <script async defer crossorigin="anonymous" src="https://connect.facebook.net/et_EE/sdk.js#xfbml=1&version=v5.0"></script>
 
   <header>
-    <!-- Navbar -->
+    <!-- Navbar large-->
     <nav id="wiki_nav">
       <div
           class="w3-bar w3-left-align w3-large"
@@ -163,20 +163,30 @@
         </a>
 
         <!-- Search on large screens -->
-        <form
-            class="w3-hide-small"
-            role="search"
-            method="get"
-            id="searchform_large"
-            action="{% url 'wiki:otsi' %}" >
-          <button
-              class="w3-bar-item w3-button w3-hide-small w3-hover-white"
-              type="submit"
-              id="searchsubmit_large"
-              title="Otsi valitud fraasi järgi">
-            <i class="fa fa-search"></i>
-          </button>
-        </form>
+        <a
+            href="{% url 'wiki:otsi' %}"
+            title="Otsi valitud fraasi järgi"
+            class="w3-bar-item w3-button w3-hide-small w3-hover-white">
+          <i
+              id="wiki_search_icon"
+              class="fa fa-search"
+          >
+          </i>
+        </a>
+<!--        <form-->
+<!--            class="w3-hide-small"-->
+<!--            role="search"-->
+<!--            method="get"-->
+<!--            id="searchform_large"-->
+<!--            action="{% url 'wiki:otsi' %}" >-->
+<!--          <button-->
+<!--              class="w3-bar-item w3-button w3-hide-small w3-hover-white"-->
+<!--              type="submit"-->
+<!--              id="searchsubmit_large"-->
+<!--              title="Otsi valitud fraasi järgi">-->
+<!--            <i class="fa fa-search"></i>-->
+<!--          </button>-->
+<!--        </form>-->
         <!--		Tagasiside saatmiseks -->
         <a
             class="w3-bar-item w3-button w3-hide-small w3-hover-white"
@@ -231,7 +241,7 @@
         {% if user.is_authenticated %}
           <a
               href="{% url 'admin:index' %}"
-              class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
+              class="w3-bar-item w3-button w3-hide-small w3-text-grey w3-hover-white w3-right"
               title="Admin">
             <i class="fa fa-cog"></i>
           </a>
