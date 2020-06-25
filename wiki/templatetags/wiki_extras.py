@@ -65,6 +65,11 @@ def kalev():
 def viga_tekstis():
     return VIGA_TEKSTIS
 
+# Vaikimisi märksõnad
+@register.simple_tag
+def keywords():
+    return ','.join(settings.KROONIKA['KEYWORDS'])
+
 # Sektsioonide nimetused
 @register.simple_tag
 def model_name_artikkel():

@@ -17,8 +17,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="description" content="Valga linna kroonika. Lood, inimesed, asutised ja kohad Valga linna ajaloost." />
-  <meta name="keywords" content="Valga, linn, Valga linn, kroonika, ajalugu" />
-  <meta name="author" content="Kalev Härk" />
+  <meta name="keywords" content="{% if object %}{{ object.keywords }}{% else %}{% keywords %}{% endif %}" />
+  <meta name="author" content="{% kalev %}" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <!-- OGP kirjeldus -->
   <meta property="og:locale" content="et_EE" />
@@ -411,7 +411,7 @@
         </a>" alla.
       </small>
       <a href="{% url 'wiki:info' %}">
-          <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018-2020 Kalev Härk</small></button>
+          <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018-2020 {% kalev %}</small></button>
       </a>
     </div>
   </footer>

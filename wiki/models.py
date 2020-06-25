@@ -15,6 +15,7 @@ from operator import or_
 import os
 import os.path
 import re
+import string
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -106,8 +107,20 @@ def escape_numberdot(string):
     string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
     return string_modified
 
+# map punctuation to space
+translator = str.maketrans(string.punctuation, ' ' * len(string.punctuation))
 
-# Filtreerime kanded, mille kohta on teada daatumid vastavalt valikule vkj/ukj
+# Moodustab objecti nimest märksõnad
+def object2keywords(obj):
+    object_string = str(obj)
+    translation = re.sub(' +', ' ', object_string.translate(translator))
+    words = translation.split(' ')
+    keywords = [word for word in words if len(word) > 2]
+    return ','.join(settings.KROONIKA['KEYWORDS'] + [object_string] + keywords)
+
+
+# Filtreerime kanded, mille kohta on teada daatumid, vastavalt valikule vkj/ukj
+# vastavalt kasutajaõigustele
 class DaatumitegaManager(models.Manager):
 
     def daatumitega(self, request):
@@ -146,7 +159,7 @@ class DaatumitegaManager(models.Manager):
                 filtered_queryset = initial_queryset
         # Arvutame abiväljad vastavalt kasutaja kalendrieelistusele
         # dob: day of begin|birth
-        # dow: day of end
+        # doe: day of end
         if ukj_state == 'on':  # ukj
             filtered_queryset = filtered_queryset.annotate(
                 dob=Case(
@@ -174,6 +187,7 @@ class DaatumitegaManager(models.Manager):
                 doe=F('hist_enddate')
             )
         return filtered_queryset
+
 
 #
 # Allikad: raamatud. ajakirjandusväljaanded, veebilehed, arhiivid jne
@@ -485,6 +499,11 @@ class Objekt(models.Model):
     def formatted_markdown(self):
         return markdownify(escape_numberdot(self.kirjeldus))
 
+    # Keywords
+    @property
+    def keywords(self):
+        return object2keywords(self)
+
     def get_absolute_url(self):
         kwargs = {
             'pk': self.id,
@@ -644,6 +663,11 @@ class Organisatsioon(models.Model):
             'slug': self.slug
         }
         return reverse('wiki:wiki_organisatsioon_detail', kwargs=kwargs)
+
+    # Keywords
+    @property
+    def keywords(self):
+        return object2keywords(self)
 
     def vanus(self, d=timezone.now()):
         if self.hist_date:
@@ -836,17 +860,17 @@ class Isik(models.Model):
     def formatted_markdown(self):
         return markdownify(escape_numberdot(self.kirjeldus))
 
-    # Sünnikuupäev uue kalendri järgi #TODO hetkel ei kasuta!
-    # @property
-    # def hist_date_ukj(self):
-    #     return vkj2ukj(self.hist_date)
-
     def get_absolute_url(self):
         kwargs = {
             'pk': self.id,
             'slug': self.slug
         }
         return reverse('wiki:wiki_isik_detail', kwargs=kwargs)
+
+    # Keywords
+    @property
+    def keywords(self):
+        return object2keywords(self)
 
     def vanus(self, d=timezone.now()):
         if self.hist_date:
@@ -1090,6 +1114,11 @@ class Artikkel(models.Model):
         ]
         verbose_name = "Lugu"
         verbose_name_plural = "Lood"
+
+    # Keywords
+    @property
+    def keywords(self):
+        return object2keywords(self)
 
     def get_absolute_url(self):
         kwargs = {
