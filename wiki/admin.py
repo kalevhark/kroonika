@@ -837,6 +837,7 @@ class VihjeAdmin(admin.ModelAdmin):
             obj.end_date != None
         )
 
+
 admin.site.register(Allikas, AllikasAdmin)
 admin.site.register(Viide, ViideAdmin)
 admin.site.register(Kroonika, KroonikaAdmin)
@@ -846,3 +847,22 @@ admin.site.register(Organisatsioon, OrganisatsioonAdmin)
 admin.site.register(Objekt, ObjektAdmin)
 admin.site.register(Pilt, PiltAdmin)
 admin.site.register(Vihje, VihjeAdmin)
+
+# Funktsiooni erinevate admin vaadete tegemiseks samale modelile
+def create_modeladmin(modeladmin, model, name = None):
+    class Meta:
+        proxy = True
+        app_label = model._meta.app_label
+        verbose_name = model._meta.verbose_name + " piltideta"
+        verbose_name_plural = model._meta.verbose_name_plural + " piltideta"
+
+    attrs = {'__module__': '', 'Meta': Meta}
+    newmodel = type(name, (model,), attrs)
+    admin.site.register(newmodel, modeladmin)
+    return modeladmin
+
+
+class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
+    inlines = []
+
+create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-piltideta', model=Organisatsioon)
