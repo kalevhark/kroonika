@@ -535,12 +535,12 @@ class OrganisatsioonAdmin(MarkdownxModelAdmin):
         return obj.artikkel_set.count()
     seotud_artikleid.short_description = 'Artikleid'
 
-    # Kui palju on objektiga seotud pilte
+    # Kui palju on organisatsiooniga seotud pilte
     def seotud_pilte(self, obj):
         return obj.pilt_set.count()
     seotud_pilte.short_description = 'Pilte'
 
-    # Kui palju on objektiga seotud viiteid
+    # Kui palju on organisatsiooniga seotud viiteid
     def seotud_viiteid(self, obj):
         return obj.viited.count()
     seotud_viiteid.short_description = 'Viiteid'
@@ -553,23 +553,6 @@ class OrganisatsioonAdmin(MarkdownxModelAdmin):
             objekt.created_by = request.user
         else:
             objekt.updated_by = request.user
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        # if objekt.hist_date:
-        #     objekt.hist_year = objekt.hist_date.year
-        #     objekt.hist_month = objekt.hist_date.month
-        #     objekt.hist_searchdate = objekt.hist_date
-        # else:
-        #     if objekt.hist_year:
-        #         y = objekt.hist_year
-        #         if objekt.hist_month:
-        #             m = objekt.hist_month
-        #         else:
-        #             m = 1
-        #         objekt.hist_searchdate = datetime.datetime(y, m, 1)
-        #     else:
-        #         objekt.hist_searchdate = None
-        # if objekt.hist_enddate:
-        #     objekt.hist_endyear = objekt.hist_enddate.year
         objekt.save()
         form.save_m2m()
         return objekt
@@ -853,8 +836,8 @@ def create_modeladmin(modeladmin, model, name = None):
     class Meta:
         proxy = True
         app_label = model._meta.app_label
-        verbose_name = model._meta.verbose_name + " piltideta"
-        verbose_name_plural = model._meta.verbose_name_plural + " piltideta"
+        verbose_name = model._meta.verbose_name + " kiirparandusteks"
+        verbose_name_plural = model._meta.verbose_name_plural + " kiirparandusteks"
 
     attrs = {'__module__': '', 'Meta': Meta}
     newmodel = type(name, (model,), attrs)
@@ -865,4 +848,8 @@ def create_modeladmin(modeladmin, model, name = None):
 class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
     inlines = []
 
-create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-piltideta', model=Organisatsioon)
+    # Seotud pildid TODO: pole kasutuses
+    def seotud_pildid(self, obj):
+        return obj.pilt_set
+
+create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-kiirparandusteks', model=Organisatsioon)
