@@ -218,7 +218,8 @@ class ArtikkelAdmin(MarkdownxModelAdmin):
         'last_accessed', 'total_accessed'
     ]
     list_display = (
-        'id',
+        # 'id',
+        'colored_id', # punane, kui läbi vaatamata
         'headline',
         'hist_year',
         'hist_month',
@@ -361,7 +362,8 @@ class ArtikkelAdmin(MarkdownxModelAdmin):
 class IsikAdmin(MarkdownxModelAdmin):
     form = IsikForm
     list_display = (
-        'id',
+        # 'id',
+        'colored_id',
         'perenimi',
         'eesnimi',
         'eluaeg',
@@ -486,7 +488,8 @@ class OrganisatsioonAdmin(MarkdownxModelAdmin):
         'updated_by'
     ]
     list_display = [
-        'id',
+        # 'id',
+        'colored_id',
         'nimi',
         'hist_date',
         'hist_year',
@@ -566,7 +569,8 @@ class ObjektAdmin(MarkdownxModelAdmin):
         'mod_date', 'updated_by',
     ]
     list_display = [
-        'id',
+        # 'id',
+        'colored_id',
         'nimi',
         'hist_date',
         'hist_year',

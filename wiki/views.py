@@ -1507,7 +1507,8 @@ class OrganisatsioonDetailView(generic.DetailView):
 # Objektide otsimiseks/filtreerimiseks
 #
 class ObjektFilter(django_filters.FilterSet):
-    
+    nimi_sisaldab = django_filters.CharFilter(method='nimi_sisaldab_filter')
+
     class Meta:
         model = Objekt
         fields = {
@@ -1520,6 +1521,15 @@ class ObjektFilter(django_filters.FilterSet):
 ##        if self.data == {}:
 ##            self.queryset = self.queryset.none()
 
+    def nimi_sisaldab_filter(self, queryset, name, value):
+        # päritud fraas nimes
+        fraas = self.data.get('nimi_sisaldab')
+        if fraas:
+            fragmendid = fraas.split(' ')
+            regex_fill = r'\w*\s+\w*'
+            otsi_fraas = fill.join([r'({})'.format(fragment) for fragment in fragmendid])
+            queryset = queryset.filter(nimi__iregex=r'{}'.format(otsi_fraas))
+        return queryset
 
 class ObjektFilterView(FilterView):
     model = Objekt

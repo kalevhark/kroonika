@@ -29,6 +29,7 @@ from django.db.models import \
 
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import format_html
 from django.utils.text import slugify
 
 from markdownx.models import MarkdownxField
@@ -489,6 +490,21 @@ class Objekt(models.Model):
         daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
 
+    # Kui objectil puudub viide, siis punane
+    def colored_id(self):
+        if self.viited.count() != 0:
+            color = ''
+        elif not all(el.kroonika for el in self.artikkel_set.all()):
+            color = ''
+        else:
+            color = 'red'
+        return format_html(
+            '<strong><span style="color: {};">{}</span></strong>',
+            color,
+            self.id
+        )
+    colored_id.short_description = 'ID'
+
     # Kui kirjelduses on vigase koha märge
     @property
     def vigane(self):
@@ -646,6 +662,21 @@ class Organisatsioon(models.Model):
             su = ''
         daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
+
+    # Kui objectil puudub viide, siis punane
+    def colored_id(self):
+        if self.viited.count() != 0:
+            color = ''
+        elif not all(el.kroonika for el in self.artikkel_set.all()):
+            color = ''
+        else:
+            color = 'red'
+        return format_html(
+            '<strong><span style="color: {};">{}</span></strong>',
+            color,
+            self.id
+        )
+    colored_id.short_description = 'ID'
 
     # Kui kirjelduses on vigase koha märge
     @property
@@ -842,6 +873,21 @@ class Isik(models.Model):
         if self.eesnimi:
             lyhinimi += ', ' + self.eesnimi[0] + '.'
         return lyhinimi
+
+    # Kui objectil puudub viide, siis punane
+    def colored_id(self):
+        if self.viited.count() != 0:
+            color = ''
+        elif not all(el.kroonika for el in self.artikkel_set.all()):
+            color = ''
+        else:
+            color = 'red'
+        return format_html(
+            '<strong><span style="color: {};">{}</span></strong>',
+            color,
+            self.id
+        )
+    colored_id.short_description = 'ID'
 
     @property
     def lyhinimi(self):
@@ -1085,6 +1131,18 @@ class Artikkel(models.Model):
     def __repr__(self):
         tekst = str(self.hist_year) + ':' + self.body_text
         return tekst
+
+    def colored_id(self):
+        if self.kroonika:
+            color = 'red'
+        else:
+            color = ''
+        return format_html(
+            '<strong><span style="color: {};">{}</span></strong>',
+            color,
+            self.id
+        )
+    colored_id.short_description = 'ID'
 
     def save(self, *args, **kwargs):
         # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
