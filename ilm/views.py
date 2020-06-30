@@ -1,5 +1,5 @@
 import calendar
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
 import json
 # from lxml import etree
 import xml.etree.ElementTree as ET
@@ -57,7 +57,49 @@ def float_or_none(value):
 
 def index(request):
     # Avalehekülg, kus näidatakse 24h ilmaajalugu + 48h prognoos
-    return render(request, 'ilm/index.html', {})
+    context = dict()
+    api_key = 'edfaf478de444f7de7b2e0003fce3d16'
+    city_id = 587876  # Valga
+    lon = '26.05'
+    lat = '57.78'
+    owm_url = 'https://api.openweathermap.org/data/2.5/'
+
+    # Hetkeandmed ja prognoos
+    params = {
+        'lat': lat,
+        'lon': lon,
+        'appid': api_key,
+        'units': 'metric',
+    }
+    resp = requests.get(
+        owm_url + 'onecall',
+        # headers=headers,
+        params=params
+    )
+    weather = json.loads(resp.text)
+
+    # Ajalugu
+    now = datetime.now()
+    dt = int(datetime.timestamp(datetime(now.year, now.month, now.day, now.hour)))
+    params['dt'] = dt
+    resp = requests.get(
+        owm_url + 'onecall/timemachine',
+        # headers=headers,
+        params=params
+    )
+    weather['history'] = json.loads(resp.text)
+
+    if weather:
+        weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
+        for hour in weather['hourly']:
+            hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+        for day in weather['daily']:
+            day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
+        weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
+        for hour in weather['history']['hourly']:
+            hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+    context['weather'] = weather
+    return render(request, 'ilm/index.html', context)
 
 def history(request):
     # Ajalooliste ilmaandmete töötlused

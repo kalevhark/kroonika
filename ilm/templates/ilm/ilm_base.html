@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="et">
+<html lang="et" class="container mx-auto bg-gray-100">
 	{% load static %}
 
 	<meta charset="utf-8">
@@ -24,6 +24,7 @@
 
 		<!-- Custom CSS -->
 		<link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}">
+		<link rel="stylesheet" href="{% static 'ilm/css/ilm_loader.css' %}">
 		{% block stylesheet %}{% endblock %}
 		<link rel="shortcut icon" href="{% static 'ilm/img/favicon.ico' %}">
 
@@ -77,9 +78,7 @@
 		</div>
 		</header>
 
-		<main>
 			{% block content %}{% endblock %}
-		</main>
 
 		<footer>
 			<div class="w3-bar">

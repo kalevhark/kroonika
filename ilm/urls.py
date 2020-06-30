@@ -4,6 +4,7 @@ from . import views
 app_name = 'ilm'
 urlpatterns = [
     path('', views.index, name='index'),
+    # path('mobile/', views.index_mobile, name='index_mobile'),
     path('history/', views.history, name='history'),
     path('mixed_ilmateade/', views.mixed_ilmateade, name='mixed_ilmateade'),
     path('container_history_andmed/', views.container_history_andmed, name='container_history_andmed'),
