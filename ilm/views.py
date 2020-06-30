@@ -150,26 +150,26 @@ def index(request):
     weather['history'] = json.loads(resp.text)
 
     if weather:
-        weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
+        # weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
         weather['current']['kirjeldus'] = OWM_CODES.get(
                 str(weather['current']['weather'][0]['id']),
                 weather['current']['weather'][0]['description']
             )
         for hour in weather['hourly']:
-            hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+            # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
             hour['kirjeldus'] = OWM_CODES.get(
                 str(hour['weather'][0]['id']),
                 hour['weather'][0]['description']
             )
         for day in weather['daily']:
-            day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
+            # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
             day['kirjeldus'] = OWM_CODES.get(
                 str(day['weather'][0]['id']),
                 day['weather'][0]['description']
             )
         weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
         for hour in weather['history']['hourly']:
-            hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+            # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
             hour['kirjeldus'] = OWM_CODES.get(
                 str(hour['weather'][0]['id']),
                 hour['weather'][0]['description']

@@ -1,11 +1,30 @@
 {% extends "ilm/ilm_base.html" %}
 {% load static %}
+{% load ilm_extras %}
 
 {% block stylesheet %}
 <link rel="stylesheet" href="https://unpkg.com/tailwindcss@next/dist/tailwind.min.css">
 <style>
 td {
   vertical-align: middle;
+}
+
+.sunrise::before {
+  display: block;
+	opacity: 0.6;
+	width: 1.3em;
+	height: 1.3em;
+	margin-right: 0.5em;
+	content: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22%3E %3Cg fill=%22currentColor%22 fill-rule=%22nonzero%22%3E %3Cpath d=%22M 13 0 C 12.9 3.7007434e-17 12.7875 0.0875 12.6875 0.1875 C 12.5875 0.1875 10.49375 2.1875 9.09375 4.1875 C 8.99375 4.2875 8.99375 4.4875 9.09375 4.6875 C 9.19375 4.8875 9.39375 5 9.59375 5 L 11.3125 5 C 11.3125 5 11.6125 9.29375 11.8125 9.59375 C 11.9125 9.79375 12.5 10 13 10 C 13.5 10 14.1125 9.8 14.3125 9.5 C 14.5125 9.4 14.6875 5 14.6875 5 L 16.5 5 C 16.7 5 16.80625 4.89375 16.90625 4.59375 C 17.00625 4.49375 17.00625 4.29375 16.90625 4.09375 C 15.50625 2.09375 13.4125 0.19375 13.3125 0.09375 C 13.2125 -0.00625 13.1 0 13 0 z M 12.90625 11.96875 A 1.0001 1.0001 0 0 0 12.78125 12 A 1.0001 1.0001 0 0 0 12 13 L 12 16 A 1.0001 1.0001 0 1 0 14 16 L 14 13 A 1.0001 1.0001 0 0 0 12.90625 11.96875 z M 18.9375 13.5625 A 1.0001 1.0001 0 0 0 18.8125 13.59375 A 1.0001 1.0001 0 0 0 18.125 14.09375 L 16.625 16.6875 A 1.0077822 1.0077822 0 0 0 18.375 17.6875 L 19.875 15.09375 A 1.0001 1.0001 0 0 0 18.9375 13.5625 z M 6.84375 13.59375 A 1.0001 1.0001 0 0 0 6.125 15.09375 L 7.625 17.6875 A 1.0077822 1.0077822 0 0 0 9.375 16.6875 L 7.875 14.09375 A 1.0001 1.0001 0 0 0 6.84375 13.59375 z M 23.34375 17.96875 A 1.0001 1.0001 0 0 0 23.25 18 A 1.0001 1.0001 0 0 0 22.90625 18.125 L 20.3125 19.625 A 1.0077822 1.0077822 0 0 0 21.3125 21.375 L 23.90625 19.875 A 1.0001 1.0001 0 0 0 23.34375 17.96875 z M 2.4375 18 A 1.0001 1.0001 0 0 0 2.09375 19.875 L 4.6875 21.375 A 1.0077822 1.0077822 0 0 0 5.6875 19.625 L 3.09375 18.125 A 1.0001 1.0001 0 0 0 2.4375 18 z M 13 18 C 9.4939069 18 6.583898 20.622584 6.09375 24 L 0 24 L 0 26 L 26 26 L 26 24 L 19.90625 24 C 19.416102 20.622584 16.506094 18 13 18 z M 13 20 C 15.410227 20 17.438796 21.724876 17.90625 24 L 8.09375 24 C 8.5612039 21.724876 10.589773 20 13 20 z%22/%3E %3C/g%3E %3C/svg%3E');
+}
+
+.sunset::before {
+  display: block;
+	opacity: 0.6;
+	width: 1.3em;
+	height: 1.3em;
+	margin-right: 0.5em;
+	content: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22%3E %3Cg fill=%22currentColor%22 fill-rule=%22nonzero%22%3E %3Cpath d=%22M 13.09375 0.09375 C 12.59375 0.09375 12.0125 0.2 11.8125 0.5 C 11.6125 0.6 11.40625 5 11.40625 5 L 9.59375 5 C 9.39375 5 9.19375 5.2125 9.09375 5.3125 C 8.99375 5.5125 8.99375 5.70625 9.09375 5.90625 C 10.49375 7.90625 12.5875 9.80625 12.6875 9.90625 C 12.7875 10.00625 12.9 10 13 10 C 13.1 10 13.2125 9.90625 13.3125 9.90625 C 13.4125 9.80625 15.50625 7.8125 16.90625 5.8125 C 17.00625 5.7125 17.00625 5.5125 16.90625 5.3125 C 16.90625 5.1125 16.7 5 16.5 5 L 14.6875 5 C 14.6875 5 14.4125 0.7 14.3125 0.5 C 14.2125 0.3 13.59375 0.09375 13.09375 0.09375 z M 12.90625 11.96875 A 1.0001 1.0001 0 0 0 12.78125 12 A 1.0001 1.0001 0 0 0 12 13 L 12 16 A 1.0001 1.0001 0 1 0 14 16 L 14 13 A 1.0001 1.0001 0 0 0 12.90625 11.96875 z M 18.9375 13.5625 A 1.0001 1.0001 0 0 0 18.8125 13.59375 A 1.0001 1.0001 0 0 0 18.125 14.09375 L 16.625 16.6875 A 1.0077822 1.0077822 0 0 0 18.375 17.6875 L 19.875 15.09375 A 1.0001 1.0001 0 0 0 18.9375 13.5625 z M 6.84375 13.59375 A 1.0001 1.0001 0 0 0 6.125 15.09375 L 7.625 17.6875 A 1.0077822 1.0077822 0 0 0 9.375 16.6875 L 7.875 14.09375 A 1.0001 1.0001 0 0 0 6.84375 13.59375 z M 23.34375 17.96875 A 1.0001 1.0001 0 0 0 23.25 18 A 1.0001 1.0001 0 0 0 22.90625 18.125 L 20.3125 19.625 A 1.0077822 1.0077822 0 0 0 21.3125 21.375 L 23.90625 19.875 A 1.0001 1.0001 0 0 0 23.34375 17.96875 z M 2.4375 18 A 1.0001 1.0001 0 0 0 2.09375 19.875 L 4.6875 21.375 A 1.0077822 1.0077822 0 0 0 5.6875 19.625 L 3.09375 18.125 A 1.0001 1.0001 0 0 0 2.4375 18 z M 13 18 C 9.4939069 18 6.583898 20.622584 6.09375 24 L 0 24 L 0 26 L 26 26 L 26 24 L 19.90625 24 C 19.416102 20.622584 16.506094 18 13 18 z M 13 20 C 15.410227 20 17.438796 21.724876 17.90625 24 L 8.09375 24 C 8.5612039 21.724876 10.589773 20 13 20 z%22/%3E %3C/g%3E %3C/svg%3E');
 }
 
 .wind::before {
@@ -59,7 +78,7 @@ td {
         <table>
         {% for hour in weather.history.hourly3h %}
           <tr>
-            <td>{{ hour.datetime|time:"H:i" }}</td>
+            <td>{{ hour.dt|timestamp_to_time|time:"H:i" }}</td>
             <td style="text-align: right;">{{ hour.temp|floatformat:1 }}°C</td>
             <td style="text-align: right;">{{ hour.rain.1h|floatformat:1 }}</td>
             <td>{{ hour.kirjeldus }}</td>
@@ -74,8 +93,13 @@ td {
         {% endfor %}
         </table>
       </section>
+      <section class="mt-5 py-3 px-2 flex justify-around">
+        <p class="sunrise flex items-center">{{ weather.current.sunrise|timestamp_to_time|date:"H:i" }}
+        <p class="text-sm text-center text-gray-600">{{ weather.current.dt|timestamp_to_time|date:"d.m H:i" }}</p>
+        <p class="sunset flex items-center">{{ weather.current.sunset|timestamp_to_time|date:"H:i" }}
+      </section>
       <p class="mt-1 text-lg text-gray-700 font-medium text-center">{{ weather.current.kirjeldus }}</p>
-      <p class="text-sm text-center text-gray-600">{{ weather.current.datetime|date:"d.m H:i" }}</p>
+
       <section class="flex items-center justify-center">
         <img
             src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{weather.current.weather.0.icon}}.png"
@@ -95,7 +119,7 @@ td {
         {% for hour in weather.hourly %}
           {% if forloop.counter > 1 and forloop.counter < 8 %}
           <tr>
-            <td>{{ hour.datetime|time:"H:i" }}</td>
+            <td>{{ hour.dt|timestamp_to_time|time:"H:i" }}</td>
             <td style="text-align: right;">{{ hour.temp|floatformat:1 }}°C</td>
             <td style="text-align: right;">{{ hour.rain.1h|floatformat:1 }}</td>
             <td>{{ hour.kirjeldus }}</td>
