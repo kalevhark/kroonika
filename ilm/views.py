@@ -48,6 +48,65 @@ COLORS = [
     "#91e8e1" # murtud heleroheline
 ]
 
+# OpenWeatherMaps ilmakoodid
+OWM_CODES = {
+    "200": "nõrk äikesevihm", # thunderstorm with light rain;Thunderstorm
+    "201": "äikesevihm", # thunderstorm with rain;Thunderstorm
+    "202": "tugev äikesevihm", # thunderstorm with heavy rain;Thunderstorm
+    "210": "nõrk äike", # light thunderstorm;Thunderstorm
+    "211": "äike", # thunderstorm;Thunderstorm
+    "212": "tugev äike", # heavy thunderstorm;Thunderstorm
+    "221": "äge äike", # ragged thunderstorm;Thunderstorm
+    "230": "nõrk äikesevihm", # thunderstorm with light drizzle;Thunderstorm
+    "231": "äikesevihm", # thunderstorm with drizzle;Thunderstorm
+    "232": "tugev äikesevihm", # thunderstorm with heavy drizzle;Thunderstorm
+    "300": "nõrk uduvihm", # light intensity drizzle;Drizzle
+    "301": "uduvihm", # drizzle;Drizzle
+    "302": "tugev uduvihm", # heavy intensity drizzle;Drizzle
+    "310": "kerge uduvihm", # light intensity drizzle rain;Drizzle
+    "311": "uduvihm", # drizzle rain;Drizzle
+    "312": "tugev uduvihm", # heavy intensity drizzle rain;Drizzle
+    "313": "tugev uduvihm", # shower rain and drizzle;Drizzle
+    "314": "tugev uduvihm", # heavy shower rain and drizzle;Drizzle
+    "321": "tugev uduvihm", # shower drizzle;Drizzle
+    "500": "nõrk vihm", # light rain;Rain
+    "501": "vihm", # moderate rain;Rain
+    "502": "tugev vihm", # heavy intensity rain;Rain
+    "503": "väga tugev vihm", # very heavy rain;Rain
+    "504": "ekstreemne vihmasadu", # extreme rain;Rain
+    "511": "külmuv vihm", # freezing rain;Rain
+    "520": "nõrk paduvihm", # light intensity shower rain;Rain
+    "521": "paduvihm", # shower rain;Rain
+    "522": "tugev paduvihm", # heavy intensity shower rain;Rain
+    "531": "väga tugev paduvihm", # ragged shower rain;Rain
+    "600": "kerge lumesadu", # light snow;Snow
+    "601": "lumesadu", # Snow;Snow
+    "602": "tugev lumesadu", # Heavy snow;Snow
+    "611": "lörts", # Sleet;Snow
+    "612": "kerge lörtsisadu", # Light shower sleet;Snow
+    "613": "tugev lörtsisadu", # Shower sleet;Snow
+    "615": "kerge lörtsisadu", # Light rain and snow;Snow
+    "616": "lörts", # Rain and snow;Snow
+    "620": "kerge lumesadu", # Light shower snow;Snow
+    "621": "lumesadu", # Shower snow;Snow
+    "622": "tugev lumesadu", # Heavy shower snow;Snow
+    "701": "uduvine", # mist;Mist
+    "711": "suits", # Smoke;Smoke
+    "721": "vine", # Haze;Haze
+    "731": "liiva-/tolmupöörised", # sand/ dust whirls;Dust
+    "741": "udu", # fog;Fog
+    "751": "liiv", # sand;Sand
+    "761": "tolm", # dust;Dust
+    "762": "vulkaaniline tuhk", # volcanic ash;Ash
+    "771": "tuulepuhangud", # squalls;Squall
+    "781": "tornaado", # tornado;Tornado
+    "800": "selge", # clear sky;Clear
+    "801": "õrn pilvisus", # few clouds: 11-25%;Clouds
+    "802": "vahelduv pilvisus", # scattered clouds: 25-50%;Clouds
+    "803": "vahelduv pilvisus", # broken clouds: 51-84%;Clouds
+    "804": "pilvine", # overcast clouds: 85-100%;Clouds
+}
+
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
 def float_or_none(value):
     try:
@@ -91,13 +150,29 @@ def index(request):
 
     if weather:
         weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
+        weather['current']['kirjeldus'] = OWM_CODES.get(
+                str(weather['current']['weather'][0]['id']),
+                weather['current']['weather'][0]['description']
+            )
         for hour in weather['hourly']:
             hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+            hour['kirjeldus'] = OWM_CODES.get(
+                str(hour['weather'][0]['id']),
+                hour['weather'][0]['description']
+            )
         for day in weather['daily']:
             day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
+            day['kirjeldus'] = OWM_CODES.get(
+                str(day['weather'][0]['id']),
+                day['weather'][0]['description']
+            )
         weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
         for hour in weather['history']['hourly']:
             hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+            hour['kirjeldus'] = OWM_CODES.get(
+                str(hour['weather'][0]['id']),
+                hour['weather'][0]['description']
+            )
     context['weather'] = weather
     return render(request, 'ilm/index.html', context)
 
