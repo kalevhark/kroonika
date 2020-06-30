@@ -214,3 +214,5 @@ KROONIKA = {
 
 # sites framework: django.contrib.sites
 SITE_ID = 1
+
+OWM_APIKEY = config('OWM_APIKEY')

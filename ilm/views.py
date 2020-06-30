@@ -4,6 +4,7 @@ import json
 # from lxml import etree
 import xml.etree.ElementTree as ET
 
+from django.conf import settings
 from django.db.models import Sum, Count, Avg, Min, Max
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -117,7 +118,7 @@ def float_or_none(value):
 def index(request):
     # Avalehekülg, kus näidatakse 24h ilmaajalugu + 48h prognoos
     context = dict()
-    api_key = 'edfaf478de444f7de7b2e0003fce3d16'
+    api_key = settings.OWM_APIKEY
     city_id = 587876  # Valga
     lon = '26.05'
     lat = '57.78'
