@@ -117,64 +117,9 @@ def float_or_none(value):
 
 def index(request):
     # Avalehekülg, kus näidatakse 24h ilmaajalugu + 48h prognoos
-    context = dict()
-    api_key = settings.OWM_APIKEY
-    city_id = 587876  # Valga
-    lon = '26.05'
-    lat = '57.78'
-    owm_url = 'https://api.openweathermap.org/data/2.5/'
-
-    # Hetkeandmed ja prognoos
-    params = {
-        'lat': lat,
-        'lon': lon,
-        'appid': api_key,
-        'units': 'metric',
+    context = {
+        'weather': owm_onecall()
     }
-    resp = requests.get(
-        owm_url + 'onecall',
-        # headers=headers,
-        params=params
-    )
-    weather = json.loads(resp.text)
-
-    # Ajalugu
-    now = datetime.now()
-    dt = int(datetime.timestamp(datetime(now.year, now.month, now.day, now.hour)))
-    params['dt'] = dt
-    resp = requests.get(
-        owm_url + 'onecall/timemachine',
-        # headers=headers,
-        params=params
-    )
-    weather['history'] = json.loads(resp.text)
-
-    if weather:
-        # weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
-        weather['current']['kirjeldus'] = OWM_CODES.get(
-                str(weather['current']['weather'][0]['id']),
-                weather['current']['weather'][0]['description']
-            )
-        for hour in weather['hourly']:
-            # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
-            hour['kirjeldus'] = OWM_CODES.get(
-                str(hour['weather'][0]['id']),
-                hour['weather'][0]['description']
-            )
-        for day in weather['daily']:
-            # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
-            day['kirjeldus'] = OWM_CODES.get(
-                str(day['weather'][0]['id']),
-                day['weather'][0]['description']
-            )
-        weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
-        for hour in weather['history']['hourly']:
-            # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
-            hour['kirjeldus'] = OWM_CODES.get(
-                str(hour['weather'][0]['id']),
-                hour['weather'][0]['description']
-            )
-    context['weather'] = weather
     return render(request, 'ilm/index.html', context)
 
 def history(request):
@@ -1609,8 +1554,9 @@ def yrno_48h():
     yr['meta'] = {}
     yr['meta']['lastupdate'] = datetime.strptime(tag_meta.find("lastupdate").text, '%Y-%m-%dT%H:%M:%S')
     yr['meta']['nextupdate'] = datetime.strptime(tag_meta.find("nextupdate").text, '%Y-%m-%dT%H:%M:%S')
-    yr['forecast'] = {}
+    # yr['forecast'] = {}
     cat = []
+    dt = []
     prec = []
     wind = []
     temp = []
@@ -1621,6 +1567,7 @@ def yrno_48h():
     for n in range(len(tag_forecast)):
         data = tag_forecast[n]
         date = pytz.timezone('Europe/Tallinn').localize(datetime.strptime(data.attrib['from'], '%Y-%m-%dT%H:%M:%S'))
+        dt.append(datetime.timestamp(date))
         if date.hour == 0:
             dateticks.append(n)
         cat.append(date) # Aeg
@@ -1640,15 +1587,75 @@ def yrno_48h():
         temp.append(float(data.find("temperature").attrib['value'])) # Temperatuur
         pres.append(float(data.find("pressure").attrib['value'])) # Õhurõhk
         symb.append(data.find("symbol").attrib['var']) # Ilmasümboli kood (YR)
-    yr['forecast'] = {}
-    yr['forecast']['start'] = cat[0] # Mis kellast prognoos algab
-    yr['forecast']['temperatures'] = temp
-    yr['forecast']['windbarbs'] = wind
-    yr['forecast']['airpressures'] = pres
-    yr['forecast']['precipitations'] = prec
-    yr['forecast']['symbols'] = symb
+    yr['forecast'] = {
+        'start': cat[0], # Mis kellast prognoos algab
+        'temperatures': temp,
+        'windbarbs': wind,
+        'airpressures': pres,
+        'precipitations': prec,
+        'symbols': symb,
+        'dt': dt,
+    }
     return yr
 
+def owm_onecall():
+    api_key = settings.OWM_APIKEY
+    city_id = 587876  # Valga
+    lon = '26.05'
+    lat = '57.78'
+    owm_url = 'https://api.openweathermap.org/data/2.5/'
+
+    # Hetkeandmed ja prognoos
+    params = {
+        'lat': lat,
+        'lon': lon,
+        'appid': api_key,
+        'units': 'metric',
+    }
+    resp = requests.get(
+        owm_url + 'onecall',
+        # headers=headers,
+        params=params
+    )
+    weather = json.loads(resp.text)
+
+    # Ajalugu
+    now = datetime.now()
+    dt = int(datetime.timestamp(datetime(now.year, now.month, now.day, now.hour)))
+    params['dt'] = dt
+    resp = requests.get(
+        owm_url + 'onecall/timemachine',
+        # headers=headers,
+        params=params
+    )
+    weather['history'] = json.loads(resp.text)
+
+    if weather:
+        # weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
+        weather['current']['kirjeldus'] = OWM_CODES.get(
+            str(weather['current']['weather'][0]['id']),
+            weather['current']['weather'][0]['description']
+        )
+        for hour in weather['hourly']:
+            # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+            hour['kirjeldus'] = OWM_CODES.get(
+                str(hour['weather'][0]['id']),
+                hour['weather'][0]['description']
+            )
+        for day in weather['daily']:
+            # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
+            day['kirjeldus'] = OWM_CODES.get(
+                str(day['weather'][0]['id']),
+                day['weather'][0]['description']
+            )
+        weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
+        for hour in weather['history']['hourly']:
+            # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+            hour['kirjeldus'] = OWM_CODES.get(
+                str(hour['weather'][0]['id']),
+                hour['weather'][0]['description']
+            )
+    return weather
 
 def mitutundi(algus, l6pp):
     # Tagastab kahe kuupäeva vahe tundides
