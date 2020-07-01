@@ -248,7 +248,7 @@ if __name__ == '__main__':
         try:
             o_prec = o['hourly'][hour]['rain']['1h']
         except:
-            o_prec = None
+            o_prec = '0.0'
         line = ';'.join([str(y_dt), str(y_temp), str(y_prec), str(o_dt), str(o_temp), str(o_prec)])
         with open(f'logs/forecast_{hour}h.log', 'a') as f:
             f.write(line + '\n')
