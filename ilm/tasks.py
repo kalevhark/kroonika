@@ -247,36 +247,44 @@ if __name__ == '__main__':
         ref_dt = int(datetime.timestamp(fore_dt))
 
         # yr.no
-        # y_dt = None
         y_temp = None
         y_prec = None
-        for hour in range(len(y['forecast']['dt'])):
-            if int(y['forecast']['dt'][hour]) == ref_dt:
-                # y_dt = y['forecast']['dt'][hour]
-                y_temp = y['forecast']['temperatures'][hour]
-                y_prec = y['forecast']['precipitations'][hour]
-                break
+        # for hour in range(len(y['forecast']['dt'])):
+        #     if int(y['forecast']['dt'][hour]) == ref_dt:
+        #         # y_dt = y['forecast']['dt'][hour]
+        #         y_temp = y['forecast']['temperatures'][hour]
+        #         y_prec = y['forecast']['precipitations'][hour]
+        #         break
+        y_data = y['forecast'].get(str(ref_dt), None)
+        if y_data:
+            # i_dt = ref_dt
+            y_temp = y_data['temperature']
+            y_prec = y_data['precipitation']
 
         # openweathermaps.org
-        # o_dt = None
         o_temp = None
         o_prec = None
-        for hour in o['hourly']:
-            if int(hour['dt']) == ref_dt:
-                # o_dt = int(hour['dt'])
-                o_temp = hour['temp']
-                try:
-                    o_prec = hour['rain']['1h']
-                except:
-                    o_prec = '0.0'
+        # for hour in o['hourly']:
+        #     if int(hour['dt']) == ref_dt:
+        #         # o_dt = int(hour['dt'])
+        #         o_temp = hour['temp']
+        #         try:
+        #             o_prec = hour['rain']['1h']
+        #         except:
+        #             o_prec = '0.0'
+        o_data = o['forecast'].get(str(ref_dt), None)
+        if o_data:
+            o_temp = o_data['temp']
+            try:
+                o_prec = o_data['rain']['1h']
+            except:
+                o_prec = '0.0'
 
         # ilmateenistus.ee
-        # i_dt = None
         i_temp = None
         i_prec = None
         i_data = i['forecast'].get(str(ref_dt), None)
         if i_data:
-            # i_dt = ref_dt
             i_temp = i_data['temperature']
             i_prec = i_data['precipitation']
 

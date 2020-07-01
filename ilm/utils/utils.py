@@ -222,7 +222,7 @@ def yrno_48h():
     yr['meta'] = {}
     yr['meta']['lastupdate'] = datetime.strptime(tag_meta.find("lastupdate").text, '%Y-%m-%dT%H:%M:%S')
     yr['meta']['nextupdate'] = datetime.strptime(tag_meta.find("nextupdate").text, '%Y-%m-%dT%H:%M:%S')
-    # yr['forecast'] = {}
+    yr['forecast'] = {}
     cat = []
     dt = []
     prec = []
@@ -234,11 +234,11 @@ def yrno_48h():
     tag_forecast = root.find("forecast").find("tabular") # Otsime XML puu prognoosi tabeliga
     for n in range(len(tag_forecast)):
         data = tag_forecast[n]
-        date = pytz.timezone('Europe/Tallinn').localize(datetime.strptime(data.attrib['from'], '%Y-%m-%dT%H:%M:%S'))
-        dt.append(datetime.timestamp(date))
-        if date.hour == 0:
+        time = pytz.timezone('Europe/Tallinn').localize(datetime.strptime(data.attrib['from'], '%Y-%m-%dT%H:%M:%S'))
+        dt.append(datetime.timestamp(time))
+        if time.hour == 0:
             dateticks.append(n)
-        cat.append(date) # Aeg
+        cat.append(time) # Aeg
         # Sademed
         prec_value = float(data.find("precipitation").attrib['value'])
         try:
@@ -246,16 +246,29 @@ def yrno_48h():
             prec_minvalue = float(data.find("precipitation").attrib['minvalue'])
         except:
             prec_minvalue = prec_maxvalue = prec_value
-
-        prec.append([prec_value, prec_minvalue, prec_maxvalue]) # Sademed
+        prec.append([prec_value, prec_minvalue, prec_maxvalue])
+        # Tuul
+        windspeed_value = float(data.find("windSpeed").attrib['mps'])
+        winddirection_value = float(data.find("windDirection").attrib['deg'])
         wind.append(
-            [float(data.find("windSpeed").attrib['mps']),
-            float(data.find("windDirection").attrib['deg'])]
+            [windspeed_value, winddirection_value]
         )
-        temp.append(float(data.find("temperature").attrib['value'])) # Temperatuur
-        pres.append(float(data.find("pressure").attrib['value'])) # Õhurõhk
+        # Temperatuur
+        temp_value = float(data.find("temperature").attrib['value'])
+        temp.append(temp_value)
+        # Õhurõhk
+        pres_value = float(data.find("pressure").attrib['value'])
+        pres.append(pres_value)
         symb.append(data.find("symbol").attrib['var']) # Ilmasümboli kood (YR)
-    yr['forecast'] = {
+        yr[str(int(dt))] = {
+            'time': time,
+            'precipitation': [prec_value, prec_minvalue, prec_maxvalue],
+            'temperature': temp_value,
+            'pressure': pres_value,
+            'windSpeed': windspeed_value,
+            'windDirection': winddirection_value
+        }
+    yr['series'] = {
         'start': cat[0], # Mis kellast prognoos algab
         'temperatures': temp,
         'windbarbs': wind,
@@ -300,6 +313,7 @@ def owm_onecall():
     )
     weather['history'] = json.loads(resp.text)
 
+    weather['forecast'] = dict()
     if weather:
         # weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
         weather['current']['kirjeldus'] = OWM_CODES.get(
@@ -312,6 +326,7 @@ def owm_onecall():
                 str(hour['weather'][0]['id']),
                 hour['weather'][0]['description']
             )
+            weather['forecast'][hour['dt']] = hour
         for day in weather['daily']:
             # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
             day['kirjeldus'] = OWM_CODES.get(
