@@ -94,6 +94,7 @@ def config(path='', filename='utils/database.ini', section='postgresql'):
     # create a parser
     parser = ConfigParser()
     # read config file
+    print(os.getcwd())
     parser.read(os.path.join(path, filename))
     # get section, default to postgresql
     db_config = {}
