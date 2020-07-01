@@ -239,6 +239,8 @@ if __name__ == '__main__':
 
     y = utils.yrno_48h()
     o = utils.owm_onecall()
+    i = utils.ilmateenistus_forecast()
+
     for forecast_hour in [6, 12, 24]:
         now = datetime.now()
         fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(seconds=forecast_hour*3600)
@@ -265,6 +267,23 @@ if __name__ == '__main__':
                     o_prec = hour['rain']['1h']
                 except:
                     o_prec = '0.0'
-        line = ';'.join([str(ref_dt), str(y_dt), str(y_temp), str(y_prec), str(o_dt), str(o_temp), str(o_prec)])
+
+        i_dt = None
+        i_temp = None
+        i_prec = None
+        i_data = i.get(str(ref_dt), None)
+        if i_data:
+            i_dt = i_data['timestamp']
+            i_temp = i_data['temperature']
+            i_prec = i_data['precipitation']
+
+        line = ';'.join(
+            [
+                str(ref_dt),
+                str(y_dt), str(y_temp), str(y_prec),
+                str(o_dt), str(o_temp), str(o_prec),
+                str(i_dt), str(i_temp), str(i_prec),
+            ]
+        )
         with open(f'logs/forecast_{forecast_hour}h.log', 'a') as f:
             f.write(line + '\n')

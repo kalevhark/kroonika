@@ -326,3 +326,29 @@ def owm_onecall():
                 hour['weather'][0]['description']
             )
     return weather
+
+def ilmateenistus_forecast():
+    url = "http://www.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php?locationId=8918&lang=et"
+    soup = BeautifulSoup(requests.get(url).content, "html.parser")
+
+    pattern = re.compile(r"callback\((.*)\);", re.DOTALL)
+    matches = pattern.search(soup.text)
+    data = json.loads(matches.group(1))
+
+    hours = [hour for hour in data['forecast']['tabular']['time']]
+
+    forecast = dict()
+    for hour in hours:
+        time = pytz.timezone('Europe/Tallinn').localize(
+            datetime.strptime(hour['@attributes']['from'], '%Y-%m-%dT%H:%M:%S'))
+        timestamp = int(datetime.timestamp(time))
+        forecast[str(timestamp)] = {
+            'time': time,
+            'phenomen': hour['phenomen']['@attributes'],
+            'windDirection': hour['windDirection']['@attributes'],
+            'windSpeed': hour['windSpeed']['@attributes']['mps'],
+            'temperature': hour['temperature']['@attributes']['value'],
+            'precipitation': hour['precipitation']['@attributes']['value'],
+            'pressure': hour['pressure']['@attributes']['value']
+        }
+    return {'forecast': forecast}
