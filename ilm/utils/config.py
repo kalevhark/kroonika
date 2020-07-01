@@ -3,7 +3,7 @@ import os
 from configparser import ConfigParser
 
 # The following config() function read the database.ini file and returns the connection parameters.
-def config(path='', filename='database.ini', section='postgresql'):
+def config(path='', filename='utils/database.ini', section='postgresql'):
     # create a parser
     parser = ConfigParser()
     # read config file
