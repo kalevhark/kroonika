@@ -238,16 +238,17 @@ if __name__ == '__main__':
             pass
 
     y = utils.yrno_48h()
-    y_dt = y['forecast']['dt'][6]
-    y_temp = y['forecast']['temperatures'][6]
-    y_prec = y['forecast']['precipitations'][6]
     o = utils.owm_onecall()
-    o_dt = o['hourly'][6]['dt']
-    o_temp = o['hourly'][6]['temp']
-    try:
-        o_prec = o['hourly'][6]['rain']['1h']
-    except:
-        o_prec = None
-    line = ';'.join([str(y_dt), str(y_temp), str(y_prec), str(o_dt), str(o_temp), str(o_prec)])
-    with open('forecast_6h.log', 'a') as f:
-        f.write(line + '\n')
+    for hour in [6, 12, 24]:
+        y_dt = y['forecast']['dt'][hour]
+        y_temp = y['forecast']['temperatures'][hour]
+        y_prec = y['forecast']['precipitations'][hour]
+        o_dt = o['hourly'][hour]['dt']
+        o_temp = o['hourly'][hour]['temp']
+        try:
+            o_prec = o['hourly'][hour]['rain']['1h']
+        except:
+            o_prec = None
+        line = ';'.join([str(y_dt), str(y_temp), str(y_prec), str(o_dt), str(o_temp), str(o_prec)])
+        with open(f'logs/forecast_{hour}h.log', 'a') as f:
+            f.write(line + '\n')
