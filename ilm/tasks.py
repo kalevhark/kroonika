@@ -192,7 +192,7 @@ def delete_duplicate_observations(path=''):
     rows_deleted = 0
     try:
         # read database configuration
-        params = config(path)
+        params = config.config(path)
         # connect to the PostgreSQL database
         conn = psycopg2.connect(**params)
         # create a new cursor
@@ -217,7 +217,7 @@ def delete_duplicate_observations(path=''):
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
     # get_maxtimestamp()
-    rows_deleted = delete_duplicate_observations(path)
+    rows_deleted = delete_duplicate_observations()
     if rows_deleted > 0:
         print(f'Kustutati: {rows_deleted} kirjet')
 
