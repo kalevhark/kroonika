@@ -266,5 +266,5 @@ if __name__ == '__main__':
                 except:
                     o_prec = '0.0'
         line = ';'.join([str(ref_dt), str(y_dt), str(y_temp), str(y_prec), str(o_dt), str(o_temp), str(o_prec)])
-        with open(f'logs/forecast_{hour}h.log', 'a') as f:
+        with open(f'logs/forecast_{forecast_hour}h.log', 'a') as f:
             f.write(line + '\n')
