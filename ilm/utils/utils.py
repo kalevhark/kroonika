@@ -11,8 +11,6 @@ from urllib.error import URLError
 
 from bs4 import BeautifulSoup
 
-from django.conf import settings
-
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from pytz import timezone
@@ -269,7 +267,8 @@ def yrno_48h():
 
 def owm_onecall():
     # api_key = settings.OWM_APIKEY
-    api_key = 'edfaf478de444f7de7b2e0003fce3d16'
+    api_config = config('', 'owm.ini', 'OWM')
+    api_key = api_config['OWM_APIKEY']
     city_id = 587876  # Valga
     lon = '26.05'
     lat = '57.78'
