@@ -235,7 +235,7 @@ def yrno_48h():
     for n in range(len(tag_forecast)):
         data = tag_forecast[n]
         time = pytz.timezone('Europe/Tallinn').localize(datetime.strptime(data.attrib['from'], '%Y-%m-%dT%H:%M:%S'))
-        time_stamp = datetime.timestamp(time)
+        time_stamp = int(datetime.timestamp(time))
         dt.append(time_stamp)
         if time.hour == 0:
             dateticks.append(n)
@@ -261,7 +261,7 @@ def yrno_48h():
         pres_value = float(data.find("pressure").attrib['value'])
         pres.append(pres_value)
         symb.append(data.find("symbol").attrib['var']) # Ilmasümboli kood (YR)
-        yr[str(int(time_stamp))] = {
+        yr['forecast'][str(time_stamp)] = {
             'time': time,
             'precipitation': [prec_value, prec_minvalue, prec_maxvalue],
             'temperature': temp_value,
@@ -327,7 +327,7 @@ def owm_onecall():
                 str(hour['weather'][0]['id']),
                 hour['weather'][0]['description']
             )
-            weather['forecast'][hour['dt']] = hour
+            weather['forecast'][str(hour['dt'])] = hour
         for day in weather['daily']:
             # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
             day['kirjeldus'] = OWM_CODES.get(
