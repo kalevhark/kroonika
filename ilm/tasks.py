@@ -243,10 +243,10 @@ if __name__ == '__main__':
         y_dt = y['forecast']['dt'][hour]
         y_temp = y['forecast']['temperatures'][hour]
         y_prec = y['forecast']['precipitations'][hour]
-        o_dt = o['hourly'][hour]['dt']
-        o_temp = o['hourly'][hour]['temp']
+        o_dt = o['hourly'][hour+1]['dt']
+        o_temp = o['hourly'][hour+1]['temp']
         try:
-            o_prec = o['hourly'][hour]['rain']['1h']
+            o_prec = o['hourly'][hour+1]['rain']['1h']
         except:
             o_prec = '0.0'
         line = ';'.join([str(y_dt), str(y_temp), str(y_prec), str(o_dt), str(o_temp), str(o_prec)])
