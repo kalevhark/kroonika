@@ -30,7 +30,7 @@ def connect():
     conn = None
     try:
         # read connection parameters
-        params = config()
+        params = config.config()
 
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
@@ -61,7 +61,7 @@ def get_maxtimestamp(path=''):
     """ query maxdate from the ilm_ilm table """
     conn = None
     try:
-        params = config(path)
+        params = config.config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
         cur.execute("SELECT max(timestamp) FROM ilm_ilm")
@@ -87,7 +87,7 @@ def get_observations_24hours(path=''):
     """ query maxdate from the ilm_ilm table """
     conn = None
     try:
-        params = config(path)
+        params = config.config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
         cur.execute("SELECT timestamp FROM ilm_ilm WHERE timestamp > now() - interval '1 day' ORDER BY timestamp")
