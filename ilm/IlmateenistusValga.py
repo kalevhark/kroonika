@@ -13,7 +13,7 @@ import pytz
 from pytz import timezone
 import requests
 
-from .models import Ilm, Jaam
+from ilm.models import Ilm, Jaam
 
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
 def float_or_none(value):
