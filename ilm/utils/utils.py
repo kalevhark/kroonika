@@ -235,7 +235,8 @@ def yrno_48h():
     for n in range(len(tag_forecast)):
         data = tag_forecast[n]
         time = pytz.timezone('Europe/Tallinn').localize(datetime.strptime(data.attrib['from'], '%Y-%m-%dT%H:%M:%S'))
-        dt.append(datetime.timestamp(time))
+        time_stamp = datetime.timestamp(time)
+        dt.append(time_stamp)
         if time.hour == 0:
             dateticks.append(n)
         cat.append(time) # Aeg
@@ -260,7 +261,7 @@ def yrno_48h():
         pres_value = float(data.find("pressure").attrib['value'])
         pres.append(pres_value)
         symb.append(data.find("symbol").attrib['var']) # Ilmasümboli kood (YR)
-        yr[str(int(dt))] = {
+        yr[str(int(time_stamp))] = {
             'time': time,
             'precipitation': [prec_value, prec_minvalue, prec_maxvalue],
             'temperature': temp_value,
