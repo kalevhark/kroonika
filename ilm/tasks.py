@@ -115,7 +115,7 @@ def check_observation_exists(dt, path=''):
     row = dict()
 
     try:
-        params = config(path)
+        params = config.config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor(cursor_factory=RealDictCursor)
         # cur = conn.cursor()
@@ -166,7 +166,7 @@ def insert_new_observations(observation_dict, path=''):
     obs_id = None
     try:
         # read database configuration
-        params = config(path)
+        params = config.config(path)
         # connect to the PostgreSQL database
         conn = psycopg2.connect(**params)
         # create a new cursor
