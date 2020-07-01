@@ -1156,7 +1156,7 @@ def container_history_p2ev(request):
     # Graafiku joonistamine
     chart = {
         'title': {
-            'text': f'{bdi.p2ev}.{KUUD[bdi.kuu]} {bdi.aasta}'
+            'text': f'{bdi.p2ev}. {KUUD[bdi.kuu]} {bdi.aasta}'
         },
 
         'subtitle': {
