@@ -21,7 +21,7 @@ from pytz import timezone
 import pytz
 import requests
 
-from .utils import config, utils
+from .utils import utils
 # from ilm.views import yrno_48h, owm_onecall
 
 # The following connect() function connects to the suppliers database and prints out the PostgreSQL database version.
@@ -30,7 +30,7 @@ def connect():
     conn = None
     try:
         # read connection parameters
-        params = config.config()
+        params = utils.config()
 
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
@@ -61,7 +61,7 @@ def get_maxtimestamp(path=''):
     """ query maxdate from the ilm_ilm table """
     conn = None
     try:
-        params = config.config(path)
+        params = utils.config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
         cur.execute("SELECT max(timestamp) FROM ilm_ilm")
@@ -87,7 +87,7 @@ def get_observations_24hours(path=''):
     """ query maxdate from the ilm_ilm table """
     conn = None
     try:
-        params = config.config(path)
+        params = utils.config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
         cur.execute("SELECT timestamp FROM ilm_ilm WHERE timestamp > now() - interval '1 day' ORDER BY timestamp")
@@ -115,7 +115,7 @@ def check_observation_exists(dt, path=''):
     row = dict()
 
     try:
-        params = config.config(path)
+        params = utils.config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor(cursor_factory=RealDictCursor)
         # cur = conn.cursor()
@@ -166,7 +166,7 @@ def insert_new_observations(observation_dict, path=''):
     obs_id = None
     try:
         # read database configuration
-        params = config.config(path)
+        params = utils.config(path)
         # connect to the PostgreSQL database
         conn = psycopg2.connect(**params)
         # create a new cursor
@@ -192,7 +192,7 @@ def delete_duplicate_observations(path=''):
     rows_deleted = 0
     try:
         # read database configuration
-        params = config.config(path)
+        params = utils.config(path)
         # connect to the PostgreSQL database
         conn = psycopg2.connect(**params)
         # create a new cursor
@@ -237,17 +237,17 @@ if __name__ == '__main__':
             # print('olemas.')
             pass
 
-    # y = yrno_48h()
-    # y_dt = y['forecast']['dt'][6]
-    # y_temp = y['forecast']['temperatures'][6]
-    # y_prec = y['forecast']['precipitations'][6]
-    # o = owm_onecall()
-    # o_dt = o['hourly'][6]['dt']
-    # o_temp = o['hourly'][6]['temp']
-    # try:
-    #     o_prec = o['hourly'][6]['rain']['1h']
-    # except:
-    #     o_prec = None
-    # line = ';'.join([str(y_dt), str(y_temp), str(y_prec), str(o_dt), str(o_temp), str(o_prec)])
-    # with open('forecast_6h.log', 'a') as f:
-    #     f.write(line + '\n')
+    y = utils.yrno_48h()
+    y_dt = y['forecast']['dt'][6]
+    y_temp = y['forecast']['temperatures'][6]
+    y_prec = y['forecast']['precipitations'][6]
+    o = utils.owm_onecall()
+    o_dt = o['hourly'][6]['dt']
+    o_temp = o['hourly'][6]['temp']
+    try:
+        o_prec = o['hourly'][6]['rain']['1h']
+    except:
+        o_prec = None
+    line = ';'.join([str(y_dt), str(y_temp), str(y_prec), str(o_dt), str(o_temp), str(o_prec)])
+    with open('forecast_6h.log', 'a') as f:
+        f.write(line + '\n')
