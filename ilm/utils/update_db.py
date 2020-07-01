@@ -21,7 +21,7 @@ from pytz import timezone
 import pytz
 import requests
 
-from .config import config
+from config import config
 from ilm.views import yrno_48h, owm_onecall
 
 def utc2eesti_aeg(dt):
