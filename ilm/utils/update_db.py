@@ -23,7 +23,7 @@ import pytz
 import requests
 
 from . import config
-from .. import views
+from ilm.views import yrno_48h, owm_onecall
 
 def utc2eesti_aeg(dt):
     eesti_aeg = timezone('Europe/Tallinn')
@@ -350,11 +350,11 @@ if __name__ == '__main__':
             # print('olemas.')
             pass
 
-    y = views.yrno_48h()
+    y = yrno_48h()
     y_dt = y['forecast']['dt'][6]
     y_temp = y['forecast']['temperatures'][6]
     y_prec = y['forecast']['precipitations'][6]
-    o = views.owm_onecall()
+    o = owm_onecall()
     o_dt = o['hourly'][6]['dt']
     o_temp = o['hourly'][6]['temp']
     try:
