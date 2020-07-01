@@ -22,7 +22,7 @@ from pytz import timezone
 import pytz
 import requests
 
-from .config import config
+from . import config
 from ..views import yrno_48h, owm_onecall
 
 def utc2eesti_aeg(dt):
