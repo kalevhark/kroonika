@@ -105,6 +105,7 @@ def config(path='', filename='utils/database.ini', section='postgresql'):
         raise Exception('Section {0} not found in the {1} file'.format(section, filename))
     return db_config
 
+
 # Ilmateenistuse viimase mõõtmise andmed veebist
 def ilm_praegu():
     jaam = 'Valga'

@@ -239,16 +239,32 @@ if __name__ == '__main__':
 
     y = utils.yrno_48h()
     o = utils.owm_onecall()
-    for hour in [6, 12, 24]:
-        y_dt = y['forecast']['dt'][hour]
-        y_temp = y['forecast']['temperatures'][hour]
-        y_prec = y['forecast']['precipitations'][hour]
-        o_dt = o['hourly'][hour+1]['dt']
-        o_temp = o['hourly'][hour+1]['temp']
-        try:
-            o_prec = o['hourly'][hour+1]['rain']['1h']
-        except:
-            o_prec = '0.0'
-        line = ';'.join([str(y_dt), str(y_temp), str(y_prec), str(o_dt), str(o_temp), str(o_prec)])
+    for forecast_hour in [6, 12, 24]:
+        now = datetime.now()
+        fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(seconds=forecast_hour*3600)
+        ref_dt = int(datetime.timestamp(fore_dt))
+
+        y_dt = None
+        y_temp = None
+        y_prec = None
+        for hour in range(len(y['forecast']['dt'])):
+            if int(y['forecast']['dt'][hour]) == ref_dt:
+                y_dt = y['forecast']['dt'][hour]
+                y_temp = y['forecast']['temperatures'][hour]
+                y_prec = y['forecast']['precipitations'][hour]
+                break
+
+        o_dt = None
+        o_temp = None
+        o_prec = None
+        for hour in o['hourly']:
+            if int(hour['dt']) == ref_dt:
+                o_dt = int(hour['dt']) == ref_dt
+                o_temp = hour['temp']
+                try:
+                    o_prec = hour['rain']['1h']
+                except:
+                    o_prec = '0.0'
+        line = ';'.join([str(ref_dt), str(y_dt), str(y_temp), str(y_prec), str(o_dt), str(o_temp), str(o_prec)])
         with open(f'logs/forecast_{hour}h.log', 'a') as f:
             f.write(line + '\n')
