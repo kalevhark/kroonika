@@ -247,23 +247,23 @@ if __name__ == '__main__':
         ref_dt = int(datetime.timestamp(fore_dt))
 
         # yr.no
-        y_dt = None
+        # y_dt = None
         y_temp = None
         y_prec = None
         for hour in range(len(y['forecast']['dt'])):
             if int(y['forecast']['dt'][hour]) == ref_dt:
-                y_dt = y['forecast']['dt'][hour]
+                # y_dt = y['forecast']['dt'][hour]
                 y_temp = y['forecast']['temperatures'][hour]
                 y_prec = y['forecast']['precipitations'][hour]
                 break
 
         # openweathermaps.org
-        o_dt = None
+        # o_dt = None
         o_temp = None
         o_prec = None
         for hour in o['hourly']:
             if int(hour['dt']) == ref_dt:
-                o_dt = int(hour['dt'])
+                # o_dt = int(hour['dt'])
                 o_temp = hour['temp']
                 try:
                     o_prec = hour['rain']['1h']
@@ -271,12 +271,12 @@ if __name__ == '__main__':
                     o_prec = '0.0'
 
         # ilmateenistus.ee
-        i_dt = None
+        # i_dt = None
         i_temp = None
         i_prec = None
         i_data = i['forecast'].get(str(ref_dt), None)
         if i_data:
-            i_dt = ref_dt
+            # i_dt = ref_dt
             i_temp = i_data['temperature']
             i_prec = i_data['precipitation']
 
