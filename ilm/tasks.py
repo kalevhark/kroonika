@@ -259,7 +259,7 @@ if __name__ == '__main__':
         o_prec = None
         for hour in o['hourly']:
             if int(hour['dt']) == ref_dt:
-                o_dt = int(hour['dt']) == ref_dt
+                o_dt = int(hour['dt'])
                 o_temp = hour['temp']
                 try:
                     o_prec = hour['rain']['1h']
