@@ -271,7 +271,7 @@ if __name__ == '__main__':
         i_dt = None
         i_temp = None
         i_prec = None
-        i_data = i.get(str(ref_dt), None)
+        i_data = i['forecast'].get(str(ref_dt), None)
         if i_data:
             i_dt = i_data['timestamp']
             i_temp = i_data['temperature']
