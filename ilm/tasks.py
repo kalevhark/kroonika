@@ -246,6 +246,7 @@ if __name__ == '__main__':
         fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(seconds=forecast_hour*3600)
         ref_dt = int(datetime.timestamp(fore_dt))
 
+        # yr.no
         y_dt = None
         y_temp = None
         y_prec = None
@@ -256,6 +257,7 @@ if __name__ == '__main__':
                 y_prec = y['forecast']['precipitations'][hour]
                 break
 
+        # openweathermaps.org
         o_dt = None
         o_temp = None
         o_prec = None
@@ -268,6 +270,7 @@ if __name__ == '__main__':
                 except:
                     o_prec = '0.0'
 
+        # ilmateenistus.ee
         i_dt = None
         i_temp = None
         i_prec = None
@@ -280,9 +283,9 @@ if __name__ == '__main__':
         line = ';'.join(
             [
                 str(ref_dt),
-                str(y_dt), str(y_temp), str(y_prec),
-                str(o_dt), str(o_temp), str(o_prec),
-                str(i_dt), str(i_temp), str(i_prec),
+                str(y_temp), str(y_prec),
+                str(o_temp), str(o_prec),
+                str(i_temp), str(i_prec),
             ]
         )
         with open(f'logs/forecast_{forecast_hour}h.log', 'a') as f:
