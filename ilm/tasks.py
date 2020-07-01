@@ -217,7 +217,7 @@ def delete_duplicate_observations(path=''):
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
     # get_maxtimestamp()
-    rows_deleted = delete_duplicate_observations()
+    rows_deleted = delete_duplicate_observations(path)
     if rows_deleted > 0:
         print(f'Kustutati: {rows_deleted} kirjet')
 
