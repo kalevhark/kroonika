@@ -22,7 +22,7 @@ import pytz
 import requests
 
 from config import config
-from ilm.views import yrno_48h, owm_onecall
+from ..views import yrno_48h, owm_onecall
 
 def utc2eesti_aeg(dt):
     eesti_aeg = timezone('Europe/Tallinn')
