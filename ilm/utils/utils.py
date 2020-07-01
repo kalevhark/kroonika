@@ -267,7 +267,7 @@ def yrno_48h():
 
 def owm_onecall():
     # api_key = settings.OWM_APIKEY
-    api_config = config('', 'owm.ini', 'OWM')
+    api_config = config('.', 'owm.ini', 'OWM')
     api_key = api_config['OWM_APIKEY']
     city_id = 587876  # Valga
     lon = '26.05'
