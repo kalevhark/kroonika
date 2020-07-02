@@ -259,7 +259,7 @@ class ArtikkelAdmin(admin.ModelAdmin):
         # }
         #  ),
         ('Seotud', {
-            'fields': [('viited', 'isikud', 'organisatsioonid', 'objektid')]
+            'fields': [('viited'), ('isikud', 'organisatsioonid', 'objektid')]
             }
          ),
         ('Kroonika', {
