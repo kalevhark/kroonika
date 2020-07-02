@@ -74,7 +74,8 @@ class ArtikkelForm(ModelForm):
         return self.cleaned_data
 
 class IsikForm(ModelForm):
-
+    organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
+    objektid = AutoCompleteSelectMultipleField('objektid', required=False)
     viited = AutoCompleteSelectMultipleField('viited', required=False)
 
     class Meta:
@@ -89,14 +90,14 @@ class IsikForm(ModelForm):
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            'organisatsioonid': FilteredSelectMultiple(
-                'organisatsioonid',
-                is_stacked=False,
-            ),
-            'objektid': FilteredSelectMultiple(
-                'objektid',
-                is_stacked=False
-            ),
+            # 'organisatsioonid': FilteredSelectMultiple(
+            #     'organisatsioonid',
+            #     is_stacked=False,
+            # ),
+            # 'objektid': FilteredSelectMultiple(
+            #     'objektid',
+            #     is_stacked=False
+            # ),
             # 'viited': FilteredSelectMultiple(
             #     'viited',
             #     is_stacked=False

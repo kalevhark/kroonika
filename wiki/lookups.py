@@ -46,7 +46,7 @@ class IsikLookup(LookupChannel):
         )
         for split in splits:
             queryset = queryset.filter(nimi__icontains=split)
-        return queryset[:20]
+        return queryset[:50]
 
 
 @ajax_select.register('organisatsioonid')

@@ -405,12 +405,15 @@ class IsikAdmin(AjaxSelectAdmin):
             'fields': [('kirjeldus')]
             }
          ),
-        ('Viited', {
-            'fields': [('viited')]
-        }
-         ),
+        # ('Viited', {
+        #     'fields': [('viited')]
+        # }
+        #  ),
         ('Seotud', {
-            'fields': [('organisatsioonid', 'objektid')]
+            'fields': [
+                ('viited'),
+                ('organisatsioonid', 'objektid')
+            ]
             }
          ),
 
@@ -513,12 +516,15 @@ class OrganisatsioonAdmin(AjaxSelectAdmin):
             'fields': ['hist_enddate', 'hist_endyear', 'gone']
         }
          ),
-        ('Viited', {
-            'fields': [('viited')]
-        }
-         ),
+        # ('Viited', {
+        #     'fields': [('viited')]
+        # }
+        #  ),
         ('Seotud', {
-            'fields': ['objektid']
+            'fields': [
+                ('viited'),
+                ('objektid')
+            ]
         }
          ),
         (None, {
