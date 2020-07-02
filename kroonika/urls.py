@@ -13,6 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from ajax_select import urls as ajax_select_urls
+
 # from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -43,6 +45,7 @@ urlpatterns = [
     path('', views.algus, name='algus'),
     # path('accounts/login/', auth_views.LoginView.as_view()),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('ajax_select/', include(ajax_select_urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 	path('api/', include(router.urls)),
     path('blog/', include('blog.urls'), name='blog'),

@@ -1,0 +1,31 @@
+{% extends "ilm/ilm_base.html" %}
+{% load static %}
+{% load ilm_extras %}
+
+{% block stylesheet %}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
+
+{% block title %}
+  {{ block.super }} - 48 ilmaennustuste võrdlus
+{% endblock %}
+
+{% block content %}
+  <div class="w3-row">
+		<table>
+		{% for timestamp, data in forecast.items %}
+			<tr>
+				<td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
+				<td>{{ data.0 }}</td>
+				<td>{{ data.2 }}</td>
+				<td>{{ data.4 }}</td>
+				<td>{{ data.1 }}</td>
+				<td>{{ data.3 }}</td>
+				<td>{{ data.5 }}</td>
+			</tr>
+		{% endfor %}
+			</table>
+  </div>
+{% endblock %}

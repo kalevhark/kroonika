@@ -1,3 +1,4 @@
+from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, HTML, ButtonHolder
 from django.contrib.admin.widgets import FilteredSelectMultiple
@@ -21,6 +22,10 @@ class PiltForm(ModelForm):
 
 
 class ArtikkelForm(ModelForm):
+    isikud = AutoCompleteSelectMultipleField('isikud')
+    organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid')
+    objektid = AutoCompleteSelectMultipleField('objektid')
+    viited = AutoCompleteSelectMultipleField('viited')
 
     class Meta:
         model = Artikkel
@@ -36,11 +41,11 @@ class ArtikkelForm(ModelForm):
         widgets = {
             'body_text': Textarea(attrs={'rows': 10}),
             # 'isikud': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud isikud'}),
-            'isikud': FilteredSelectMultiple(
-                'isikud',
-                is_stacked=False,
-            ),
-            # 'organisatsioonid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}),
+            # 'isikud': FilteredSelectMultiple(
+            #     'isikud',
+            #     is_stacked=False,
+            # ),
+            # # 'organisatsioonid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}),
             'organisatsioonid': FilteredSelectMultiple(
                 'organisatsioonid',
                 is_stacked=False,
@@ -51,10 +56,10 @@ class ArtikkelForm(ModelForm):
                 is_stacked=False
             ),
             # 'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
-            'viited': FilteredSelectMultiple(
-                'viited',
-                is_stacked=False
-            ),
+            # 'viited': FilteredSelectMultiple(
+            #     'viited',
+            #     is_stacked=False
+            # ),
         }
 
     def clean(self):
@@ -115,6 +120,9 @@ class OrganisatsioonForm(ModelForm):
 
 class ObjektForm(ModelForm):
 
+    objektid = AutoCompleteSelectMultipleField('objektid')
+    viited = AutoCompleteSelectMultipleField('viited')
+
     class Meta:
         model = Objekt
         fields = ('nimi', 'tyyp', 'asukoht', 'kirjeldus',
@@ -125,14 +133,14 @@ class ObjektForm(ModelForm):
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            'objektid': FilteredSelectMultiple(
-                'objektid',
-                is_stacked=False
-            ),
-            'viited': FilteredSelectMultiple(
-                'viited',
-                is_stacked=False
-            ),
+            # 'objektid': FilteredSelectMultiple(
+            #     'objektid',
+            #     is_stacked=False
+            # ),
+            # 'viited': FilteredSelectMultiple(
+            #     'viited',
+            #     is_stacked=False
+            # ),
         }
 
 

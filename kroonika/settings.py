@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'captcha', # Robot vs inimene sisestuse kontroll
     'crispy_forms', # Vormide kujundamiseks
     'markdownx', # MarkDown teksti kasutamiseks
+    'ajax_select', # ajax selectväljad
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -216,3 +217,14 @@ KROONIKA = {
 SITE_ID = 1
 
 OWM_APIKEY = config('OWM_APIKEY')
+
+# DEFINE THE SEARCH CHANNELS:
+
+# AJAX_LOOKUP_CHANNELS = {
+#     # simplest way, automatically construct a search channel by passing a dict
+#     # 'label': {'model': 'example.label', 'search_field': 'name'},
+#
+#     # Custom channels are specified with a tuple
+#     # channel: ( module.where_lookup_is, ClassNameOfLookup )
+#     'objektid': ('wiki.lookups', 'ObjektLookup'),
+# }

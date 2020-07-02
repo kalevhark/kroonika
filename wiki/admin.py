@@ -1,5 +1,6 @@
 # import datetime
 
+from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
 from django.contrib.admin.templatetags.admin_list import _boolean_icon
 # from django.db.models import Count
@@ -209,7 +210,8 @@ class ViideAdmin(admin.ModelAdmin):
 
     short_url.short_description = 'Link'
 
-class ArtikkelAdmin(MarkdownxModelAdmin):
+# class ArtikkelAdmin(MarkdownxModelAdmin):
+class ArtikkelAdmin(admin.ModelAdmin):
     form = ArtikkelForm
     readonly_fields = [
         'hist_searchdate',
@@ -238,10 +240,10 @@ class ArtikkelAdmin(MarkdownxModelAdmin):
         'id'
     ]
     filter_horizontal = [
-        'viited',
-        'isikud',
-        'organisatsioonid',
-        'objektid',
+        # 'viited',
+        # 'isikud',
+        # 'organisatsioonid',
+        # 'objektid',
     ]
     fieldsets = [
         (None, {
@@ -252,12 +254,12 @@ class ArtikkelAdmin(MarkdownxModelAdmin):
             'fields': [('hist_date', 'hist_year', 'hist_month', 'hist_enddate')]
             }
          ),
-        ('Viited', {
-            'fields': [('viited')]
-        }
-         ),
+        # ('Viited', {
+        #     'fields': [('viited')]
+        # }
+        #  ),
         ('Seotud', {
-            'fields': [('isikud', 'organisatsioonid', 'objektid')]
+            'fields': [('viited', 'isikud', 'organisatsioonid', 'objektid')]
             }
          ),
         ('Kroonika', {
@@ -561,7 +563,9 @@ class OrganisatsioonAdmin(MarkdownxModelAdmin):
         return objekt
 
 
-class ObjektAdmin(MarkdownxModelAdmin):
+# class ObjektAdmin(MarkdownxModelAdmin):
+class ObjektAdmin(AjaxSelectAdmin):
+
     form = ObjektForm
     readonly_fields = [
         # 'hist_searchdate',
@@ -607,8 +611,8 @@ class ObjektAdmin(MarkdownxModelAdmin):
          ),
     ]
     filter_horizontal = [
-        'viited',
-        'objektid',
+        # 'viited',
+        # 'objektid',
     ]
     inlines = [
         PiltObjektInline,

@@ -2054,3 +2054,66 @@ def mixed_ilmateade(request):
     chart['airtemperatures'] = andmed_eelnevad24h['airtemperatures']
     return JsonResponse(chart)
 
+from .utils import utils
+def forecasts(request):
+    y = utils.yrno_48h()
+    o = utils.owm_onecall()
+    i = utils.ilmateenistus_forecast()
+    now = datetime.now()
+    forecast = dict()
+
+    for forecast_hour in range(1, 48):
+        fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(hours=forecast_hour)
+        ref_dt = int(datetime.timestamp(fore_dt))
+
+        # yr.no
+        y_temp = None
+        y_prec = None
+        # for hour in range(len(y['forecast']['dt'])):
+        #     if int(y['forecast']['dt'][hour]) == ref_dt:
+        #         # y_dt = y['forecast']['dt'][hour]
+        #         y_temp = y['forecast']['temperatures'][hour]
+        #         y_prec = y['forecast']['precipitations'][hour]
+        #         break
+        y_data = y['forecast'].get(str(ref_dt), None)
+        if y_data:
+            # i_dt = ref_dt
+            y_temp = y_data['temperature']
+            y_prec = y_data['precipitation']
+
+        # openweathermaps.org
+        o_temp = None
+        o_prec = None
+        # for hour in o['hourly']:
+        #     if int(hour['dt']) == ref_dt:
+        #         # o_dt = int(hour['dt'])
+        #         o_temp = hour['temp']
+        #         try:
+        #             o_prec = hour['rain']['1h']
+        #         except:
+        #             o_prec = '0.0'
+        o_data = o['forecast'].get(str(ref_dt), None)
+        if o_data:
+            o_temp = o_data['temp']
+            try:
+                o_prec = o_data['rain']['1h']
+            except:
+                o_prec = '0.0'
+
+        # ilmateenistus.ee
+        i_temp = None
+        i_prec = None
+        i_data = i['forecast'].get(str(ref_dt), None)
+        if i_data:
+            i_temp = i_data['temperature']
+            i_prec = i_data['precipitation']
+
+        forecast[str(ref_dt)] = [
+            str(y_temp), str(y_prec),
+            str(o_temp), str(o_prec),
+            str(i_temp), str(i_prec)
+        ]
+    context = {
+        'forecast': forecast
+    }
+    return render(request, 'ilm/forecasts.html', context)
