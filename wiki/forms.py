@@ -15,6 +15,7 @@ from .models import Artikkel, Isik, Organisatsioon, Objekt, Vihje, Pilt
 
 
 class PiltForm(ModelForm):
+    viited = AutoCompleteSelectMultipleField('viited', required=False)
 
     class Meta:
         model = Pilt
@@ -22,10 +23,10 @@ class PiltForm(ModelForm):
 
 
 class ArtikkelForm(ModelForm):
-    isikud = AutoCompleteSelectMultipleField('isikud')
-    organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid')
-    objektid = AutoCompleteSelectMultipleField('objektid')
-    viited = AutoCompleteSelectMultipleField('viited')
+    isikud = AutoCompleteSelectMultipleField('isikud', required=False)
+    organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
+    objektid = AutoCompleteSelectMultipleField('objektid', required=False)
+    viited = AutoCompleteSelectMultipleField('viited', required=False)
 
     class Meta:
         model = Artikkel
@@ -120,8 +121,8 @@ class OrganisatsioonForm(ModelForm):
 
 class ObjektForm(ModelForm):
 
-    objektid = AutoCompleteSelectMultipleField('objektid')
-    viited = AutoCompleteSelectMultipleField('viited')
+    objektid = AutoCompleteSelectMultipleField('objektid', required=False)
+    viited = AutoCompleteSelectMultipleField('viited', required=False)
 
     class Meta:
         model = Objekt

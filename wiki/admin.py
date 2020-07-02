@@ -7,7 +7,7 @@ from django.contrib.admin.templatetags.admin_list import _boolean_icon
 from markdownx.admin import MarkdownxModelAdmin
 
 from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Objekt, Pilt, Vihje
-from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
+from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, PiltForm
 
 
 #
@@ -688,14 +688,14 @@ class PiltAdmin(admin.ModelAdmin):
         'pildi_suurus']
     search_fields = ['nimi']
     filter_horizontal = (
-        'viited',
+        # 'viited',
         'allikad',
         'artiklid',
         'isikud',
         'organisatsioonid',
         'objektid'
     )
-    # form = PiltForm
+    form = PiltForm
     fieldsets = [
         (None, {
             'fields': ['nimi', 'autor', 'kirjeldus', 'pilt']
@@ -705,17 +705,19 @@ class PiltAdmin(admin.ModelAdmin):
             'fields': ['hist_date', 'hist_year', 'hist_month']
             }
          ),
-        ('Viited', {
-            'fields': [('viited')]
-        }
-         ),
+        # ('Viited', {
+        #     'fields': [('viited')]
+        # }
+        #  ),
         ('Seotud', {
             'fields': [
-                ('allikad',
-                'artiklid',
+                ('viited'),
+                (
                 'isikud',
                 'organisatsioonid',
                 'objektid',
+                'allikad',
+                'artiklid',
                  )
             ]
         }
@@ -839,7 +841,7 @@ admin.site.register(Objekt, ObjektAdmin)
 admin.site.register(Pilt, PiltAdmin)
 admin.site.register(Vihje, VihjeAdmin)
 
-# Funktsiooni erinevate admin vaadete tegemiseks samale modelile
+# Funktsiooni erinevate admin vaadete tegemiseks samale modelile TODO: ei ole kasutuses
 def create_modeladmin(modeladmin, model, name = None):
     class Meta:
         proxy = True
@@ -853,11 +855,11 @@ def create_modeladmin(modeladmin, model, name = None):
     return modeladmin
 
 
-class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
-    inlines = []
-
-    # Seotud pildid TODO: pole kasutuses
-    def seotud_pildid(self, obj):
-        return obj.pilt_set
-
-create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-kiirparandusteks', model=Organisatsioon)
+# class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
+#     inlines = []
+#
+#     # Seotud pildid TODO: pole kasutuses
+#     def seotud_pildid(self, obj):
+#         return obj.pilt_set
+#
+# create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-kiirparandusteks', model=Organisatsioon)
