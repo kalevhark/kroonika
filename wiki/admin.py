@@ -838,7 +838,7 @@ admin.site.register(Objekt, ObjektAdmin)
 admin.site.register(Pilt, PiltAdmin)
 admin.site.register(Vihje, VihjeAdmin)
 
-# Funktsiooni erinevate admin vaadete tegemiseks samale modelile TODO: ei ole kasutuses
+# Funktsiooni erinevate admin vaadete tegemiseks samale modelile
 def create_modeladmin(modeladmin, model, name = None):
     class Meta:
         proxy = True
