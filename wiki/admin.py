@@ -852,11 +852,11 @@ def create_modeladmin(modeladmin, model, name = None):
     return modeladmin
 
 
-# class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
-#     inlines = []
-#
-#     # Seotud pildid TODO: pole kasutuses
-#     def seotud_pildid(self, obj):
-#         return obj.pilt_set
-#
-# create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-kiirparandusteks', model=Organisatsioon)
+class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
+    inlines = []
+
+    # Seotud pildid TODO: pole kasutuses
+    def seotud_pildid(self, obj):
+        return obj.pilt_set
+
+create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-kiirparandusteks', model=Organisatsioon)
