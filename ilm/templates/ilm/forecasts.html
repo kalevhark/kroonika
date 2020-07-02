@@ -18,12 +18,12 @@
 		{% for timestamp, data in forecast.items %}
 			<tr>
 				<td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
-				<td>{{ data.0 }}</td>
-				<td>{{ data.2 }}</td>
-				<td>{{ data.4 }}</td>
+				<td>{{ data.0|floatformat:1 }}</td>
+				<td>{{ data.2|floatformat:1 }}</td>
+				<td>{{ data.4|floatformat:1 }}</td>
 				<td>{{ data.1 }}</td>
-				<td>{{ data.3 }}</td>
-				<td>{{ data.5 }}</td>
+				<td>{{ data.3 }}|floatformat:1</td>
+				<td>{{ data.5 }}|floatformat:1</td>
 			</tr>
 		{% endfor %}
 			</table>
