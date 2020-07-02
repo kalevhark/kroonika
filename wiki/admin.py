@@ -361,7 +361,7 @@ class ArtikkelAdmin(AjaxSelectAdmin):
         return objekt
 
     
-class IsikAdmin(MarkdownxModelAdmin):
+class IsikAdmin(AjaxSelectAdmin):
     form = IsikForm
     list_display = (
         # 'id',
@@ -420,9 +420,9 @@ class IsikAdmin(MarkdownxModelAdmin):
          ),
     ]
     filter_horizontal = [
-        'viited',
-        'organisatsioonid',
-        'objektid',
+        # 'viited',
+        # 'organisatsioonid',
+        # 'objektid',
     ]
     inlines = [
         PiltIsikInline,
@@ -481,7 +481,7 @@ class IsikAdmin(MarkdownxModelAdmin):
         return obj.viited.count()
     seotud_viiteid.short_description = 'Viiteid'
 
-class OrganisatsioonAdmin(MarkdownxModelAdmin):
+class OrganisatsioonAdmin(AjaxSelectAdmin):
     form = OrganisatsioonForm
     readonly_fields = [
         'inp_date',
@@ -527,8 +527,8 @@ class OrganisatsioonAdmin(MarkdownxModelAdmin):
          ),
     ]
     filter_horizontal = [
-        'viited',
-        'objektid',
+        # 'viited',
+        # 'objektid',
     ]
     inlines = [
         PiltOrganisatsioonInline,
@@ -690,11 +690,11 @@ class PiltAdmin(AjaxSelectAdmin):
     search_fields = ['nimi']
     filter_horizontal = (
         # 'viited',
-        'allikad',
-        'artiklid',
-        'isikud',
-        'organisatsioonid',
-        'objektid'
+        # 'allikad',
+        # 'artiklid',
+        # 'isikud',
+        # 'organisatsioonid',
+        # 'objektid'
     )
     form = PiltForm
     fieldsets = [
@@ -736,10 +736,6 @@ class PiltAdmin(AjaxSelectAdmin):
             }
          ),
     ]
-    # inlines = [
-    #     PiltInline,
-    # ]
-
 
     def link(self, obj):
         if obj.pilt:

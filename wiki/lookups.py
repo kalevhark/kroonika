@@ -4,7 +4,30 @@ from ajax_select import LookupChannel
 from django.db.models.functions import Concat
 from django.db.models import F, Value, CharField
 
-from .models import Isik, Organisatsioon, Objekt, Viide
+from .models import Artikkel, Isik, Organisatsioon, Objekt, Allikas, Viide
+
+
+@ajax_select.register('artiklid')
+class ArtikkelLookup(LookupChannel):
+
+    model = Artikkel
+
+    def get_query(self, q, request):
+        splits = q.split(' ')
+        queryset = self.model.objects.annotate(
+            full_viide=Concat(
+                F('body_text'),
+                Value(' '),
+                F('hist_date'),
+                Value(' '),
+                F('hist_year'),
+                output_field=CharField()
+            )
+        )
+        for split in splits:
+            queryset = queryset.filter(full_viide__icontains=split)
+        return queryset[:50]
+
 
 @ajax_select.register('isikud')
 class IsikLookup(LookupChannel):
@@ -23,7 +46,7 @@ class IsikLookup(LookupChannel):
         )
         for split in splits:
             queryset = queryset.filter(nimi__icontains=split)
-        return queryset[:50]
+        return queryset[:20]
 
 
 @ajax_select.register('organisatsioonid')
@@ -36,7 +59,7 @@ class OrganisatsioonLookup(LookupChannel):
         queryset = self.model.objects.all()
         for split in splits:
             queryset = queryset.filter(nimi__icontains=split)
-        return queryset[:50]
+        return queryset[:20]
 
 
 @ajax_select.register('objektid')
@@ -49,7 +72,7 @@ class ObjektLookup(LookupChannel):
         queryset = self.model.objects.all()
         for split in splits:
             queryset = queryset.filter(nimi__icontains=split)
-        return queryset[:50]
+        return queryset[:20]
 
 
 @ajax_select.register('viited')
@@ -75,4 +98,17 @@ class ViideLookup(LookupChannel):
         )
         for split in splits:
             queryset = queryset.filter(full_viide__icontains=split)
-        return queryset[:50]
+        return queryset[:20]
+
+
+@ajax_select.register('allikad')
+class AllikasLookup(LookupChannel):
+
+    model = Allikas
+
+    def get_query(self, q, request):
+        splits = q.split(' ')
+        queryset = self.model.objects.all()
+        for split in splits:
+            queryset = queryset.filter(nimi__icontains=split)
+        return queryset[:20]
