@@ -211,7 +211,7 @@ class ViideAdmin(admin.ModelAdmin):
     short_url.short_description = 'Link'
 
 # class ArtikkelAdmin(MarkdownxModelAdmin):
-class ArtikkelAdmin(admin.ModelAdmin):
+class ArtikkelAdmin(AjaxSelectAdmin):
     form = ArtikkelForm
     readonly_fields = [
         'hist_searchdate',
@@ -673,7 +673,8 @@ class KroonikaAdmin(admin.ModelAdmin):
     ]
     
 
-class PiltAdmin(admin.ModelAdmin):
+# class PiltAdmin(admin.ModelAdmin):
+class PiltAdmin(AjaxSelectAdmin):
     readonly_fields = [
         'pilt_height_field',
         'pilt_width_field',
