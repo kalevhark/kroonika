@@ -318,7 +318,8 @@ class Viide(models.Model):
     )
 
     class Meta:
-        ordering = ['hist_date', 'hist_year']
+        # ordering = ['hist_date', 'hist_year']
+        ordering = ['-id']
         verbose_name_plural = "Viited"
 
     def __str__(self):
