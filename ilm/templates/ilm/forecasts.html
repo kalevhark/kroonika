@@ -3,9 +3,122 @@
 {% load ilm_extras %}
 
 {% block stylesheet %}
+<link rel="stylesheet" href="{% static 'ilm/img/Climacons-Font/webfont/climacons-font.css' %}" />
+<style>
+/* hoverable table rows + columns https://codepen.io/chriscoyier/pen/pvwmaR */
+table {
+  overflow: hidden;
+}
+
+td, th {
+  vertical-align: middle;
+  padding: 10px;
+  position: relative;
+  outline: 0;
+}
+
+body:not(.nohover) tbody tr:hover {
+  background-color: #ffa;
+}
+
+td:hover::after,
+thead th:not(:empty):hover::after,
+td:focus::after,
+thead th:not(:empty):focus::after {
+  content: '';
+  height: 10000px;
+  left: 0;
+  position: absolute;
+  top: -5000px;
+  width: 100%;
+  z-index: -1;
+}
+
+td:hover::after,
+th:hover::after {
+  background-color: #ffa;
+}
+
+td:focus::after,
+th:focus::after {
+  background-color: lightblue;
+}
+
+/* Focus stuff for mobile */
+td:focus::before,
+tbody th:focus::before {
+  background-color: lightblue;
+  content: '';
+  height: 100%;
+  top: 0;
+  left: -5000px;
+  position: absolute;
+  width: 10000px;
+  z-index: -1;
+}
+
+/* Tabeliseaded näitajatele */
+.rain,
+.temperature {
+  text-align: right;
+}
+
+td.rain.light {
+  background-color: lightblue;
+}
+td.rain.light::before {
+  content: '';
+  position: relative;
+  background:url('https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/05d.svg');
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+td.rain.moderate {
+  background-color: lightskyblue;
+}
+td.rain.moderate::before {
+  content: '';
+  position: relative;
+  background:url('https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/09.svg');
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+td.rain.heavy {
+  background-color: blue;
+  color: white;
+}
+td.rain.heavy::before {
+  content: '';
+  position: relative;
+  background:url('https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/10.svg');
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+/* Climacon */
+.fs1 {
+	font-size: 2em;
+}
+</style>
 {% endblock %}
 
 {% block javascript %}
+<script>
+// whatever kind of mobile test you wanna do.
+if (screen.width < 500) {
+  $("body").addClass("nohover");
+  $("td, th")
+    .attr("tabindex", "1")
+    .on("touchstart", function() {
+      $(this).focus();
+    });
+}
+</script>
 {% endblock %}
 
 {% block title %}
@@ -14,18 +127,70 @@
 
 {% block content %}
   <div class="w3-row">
+
 		<table>
-		{% for timestamp, data in forecast.items %}
+			<thead>
 			<tr>
+    		<th>Aeg</th>
+    		<th colspan="3">yr.no</th>
+				<th colspan="3">openweathermaps.org</th>
+				<th colspan="2">ilmateenistus.ee</th>
+  		</tr>
+			<tr>
+				<th class="col"></th>
+				<th class="col temperature">
+					<span class="fs1 climacon thermometer" aria-hidden="true"></span>
+				</th>
+				<th class="col">
+					<span class="fs1 climacon" aria-hidden="true"></span>
+				</th>
+				<th class="col rain">
+					<span class="fs1 climacon umbrella" aria-hidden="true"></span>
+				</th>
+				<th class="temperature">
+					<span class="fs1 climacon thermometer" aria-hidden="true"></span>
+				</th>
+				<th class="col">
+					<span class="fs1 climacon" aria-hidden="true"></span>
+				</th>
+				<th class="col rain">
+					<span class="fs1 climacon umbrella" aria-hidden="true"></span>
+				</th>
+				<th class="col temperature">
+					<span class="fs1 climacon thermometer" aria-hidden="true"></span>
+				</th>
+				<th class="col rain">
+					<span class="fs1 climacon umbrella" aria-hidden="true"></span>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+		{% for timestamp, data in forecast.items %}
+			<tr class="row">
 				<td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
-				<td>{{ data.0|floatformat:1 }}</td>
-				<td>{{ data.2|floatformat:1 }}</td>
-				<td>{{ data.4|floatformat:1 }}</td>
-				<td>{{ data.1 }}</td>
-				<td>{{ data.3|floatformat:1 }}</td>
-				<td>{{ data.5|floatformat:1 }}</td>
+				<td class="temperature">{{ data.y_temp|floatformat:1 }}</td>
+				<td>
+					<img
+						src="https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/{{ data.y_icon }}.svg"
+						alt="{{ data.y_icon }}"
+						width="32" height="32"
+          />
+				</td>
+				<td class="rain {{ data.y_prec_color }}">{{ data.y_prec }}</td>
+				<td class="temperature">{{ data.o_temp|floatformat:1 }}</td>
+				<td>
+					<img
+						src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ data.o_icon }}.png"
+						alt="{{ data.o_icon }}"
+						width="32" height="32"
+          />
+				</td>
+				<td class="rain {{ data.o_prec_color }}">{{ data.o_prec|floatformat:1 }}</td>
+				<td class="temperature">{{ data.i_temp|floatformat:1 }}</td>
+				<td class="rain {{ data.i_prec_color }}">{{ data.i_prec|floatformat:1 }}</td>
 			</tr>
 		{% endfor %}
+			</tbody>
 			</table>
   </div>
 {% endblock %}

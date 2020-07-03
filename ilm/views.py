@@ -2069,6 +2069,8 @@ def forecasts(request):
         # yr.no
         y_temp = None
         y_prec = None
+        y_prec_color = ''
+        y_icon = ''
         # for hour in range(len(y['forecast']['dt'])):
         #     if int(y['forecast']['dt'][hour]) == ref_dt:
         #         # y_dt = y['forecast']['dt'][hour]
@@ -2079,11 +2081,14 @@ def forecasts(request):
         if y_data:
             # i_dt = ref_dt
             y_temp = y_data['temperature']
+            y_icon = y_data['symbol']
             y_prec = y_data['precipitation']
-
+            y_prec_color = y_data['precipitation_color']
         # openweathermaps.org
         o_temp = None
         o_prec = None
+        o_prec_color = ''
+        o_icon = ''
         # for hour in o['hourly']:
         #     if int(hour['dt']) == ref_dt:
         #         # o_dt = int(hour['dt'])
@@ -2095,24 +2100,36 @@ def forecasts(request):
         o_data = o['forecast'].get(str(ref_dt), None)
         if o_data:
             o_temp = o_data['temp']
+            o_icon = o_data['weather'][0]['icon']
             try:
                 o_prec = o_data['rain']['1h']
             except:
                 o_prec = '0.0'
+            o_prec_color = o_data['precipitation_color']
 
         # ilmateenistus.ee
         i_temp = None
         i_prec = None
+        i_prec_color = ''
         i_data = i['forecast'].get(str(ref_dt), None)
         if i_data:
             i_temp = i_data['temperature']
             i_prec = i_data['precipitation']
+            i_prec_color = i_data['precipitation_color']
 
-        forecast[str(ref_dt)] = [
-            str(y_temp), str(y_prec),
-            str(o_temp), str(o_prec),
-            str(i_temp), str(i_prec)
-        ]
+        forecast[str(ref_dt)] = {
+            'y_temp': str(y_temp),
+            'y_icon': y_icon,
+            'y_prec': str(y_prec),
+            'y_prec_color': y_prec_color,
+            'o_temp': str(o_temp),
+            'o_icon': o_icon,
+            'o_prec': str(o_prec),
+            'o_prec_color': o_prec_color,
+            'i_temp': str(i_temp),
+            'i_prec': str(i_prec),
+            'i_prec_color': i_prec_color,
+        }
     context = {
         'forecast': forecast
     }

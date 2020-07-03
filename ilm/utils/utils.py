@@ -247,6 +247,14 @@ def yrno_48h():
             prec_minvalue = float(data.find("precipitation").attrib['minvalue'])
         except:
             prec_minvalue = prec_maxvalue = prec_value
+        if prec_maxvalue > 2:
+            prec_color = 'heavy'
+        elif prec_maxvalue > 1:
+            prec_color = 'moderate'
+        elif prec_maxvalue > 0:
+            prec_color = 'light'
+        else:
+            prec_color = 'none'
         prec.append([prec_value, prec_minvalue, prec_maxvalue])
         # Tuul
         windspeed_value = float(data.find("windSpeed").attrib['mps'])
@@ -260,14 +268,23 @@ def yrno_48h():
         # Õhurõhk
         pres_value = float(data.find("pressure").attrib['value'])
         pres.append(pres_value)
-        symb.append(data.find("symbol").attrib['var']) # Ilmasümboli kood (YR)
+        # Sümbolid
+        symb_value = data.find("symbol").attrib['var']
+        symb.append(symb_value) # Ilmasümboli kood (YR)
         yr['forecast'][str(time_stamp)] = {
             'time': time,
-            'precipitation': [prec_value, prec_minvalue, prec_maxvalue],
+            'precipitation': f'{prec_value}' if prec_value==prec_maxvalue else f'{prec_minvalue}-{prec_maxvalue}',
+            # 'precipitation': {
+            #     'value': prec_value,
+            #     'minvalue': prec_minvalue,
+            #     'maxvalue': prec_maxvalue
+            # },
+            'precipitation_color': prec_color,
             'temperature': temp_value,
             'pressure': pres_value,
             'windSpeed': windspeed_value,
-            'windDirection': winddirection_value
+            'windDirection': winddirection_value,
+            'symbol': symb_value
         }
     yr['series'] = {
         'start': cat[0], # Mis kellast prognoos algab
@@ -330,6 +347,19 @@ def owm_onecall():
                 str(hour['weather'][0]['id']),
                 hour['weather'][0]['description']
             )
+            try:
+                prec_maxvalue = float(hour['rain']['1h'])
+            except:
+                prec_maxvalue = 0
+            if prec_maxvalue > 2:
+                prec_color = 'heavy'
+            elif prec_maxvalue > 1:
+                prec_color = 'moderate'
+            elif prec_maxvalue > 0:
+                prec_color = 'light'
+            else:
+                prec_color = 'none'
+            hour['precipitation_color'] = prec_color
             weather['forecast'][str(hour['dt'])] = hour
         for day in weather['daily']:
             # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
@@ -361,6 +391,18 @@ def ilmateenistus_forecast():
         time = pytz.timezone('Europe/Tallinn').localize(
             datetime.strptime(hour['@attributes']['from'], '%Y-%m-%dT%H:%M:%S'))
         timestamp = int(datetime.timestamp(time))
+        try:
+            prec_maxvalue = float(hour['precipitation']['@attributes']['value'])
+        except:
+            prec_maxvalue = 0
+        if prec_maxvalue > 2:
+            prec_color = 'heavy'
+        elif prec_maxvalue > 1:
+            prec_color = 'moderate'
+        elif prec_maxvalue > 0:
+            prec_color = 'light'
+        else:
+            prec_color = 'none'
         forecast[str(timestamp)] = {
             'time': time,
             'phenomen': hour['phenomen']['@attributes'],
@@ -368,6 +410,7 @@ def ilmateenistus_forecast():
             'windSpeed': hour['windSpeed']['@attributes']['mps'],
             'temperature': hour['temperature']['@attributes']['value'],
             'precipitation': hour['precipitation']['@attributes']['value'],
+            'precipitation_color': prec_color,
             'pressure': hour['pressure']['@attributes']['value']
         }
     return {'forecast': forecast}
