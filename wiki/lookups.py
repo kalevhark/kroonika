@@ -72,7 +72,7 @@ class ObjektLookup(LookupChannel):
         queryset = self.model.objects.all()
         for split in splits:
             queryset = queryset.filter(nimi__icontains=split)
-        return queryset[:20]
+        return queryset[:50]
 
 
 @ajax_select.register('viited')

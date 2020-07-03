@@ -866,3 +866,12 @@ class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
         return obj.pilt_set
 
 create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-kiirparandusteks', model=Organisatsioon)
+
+class ObjektPiltidetaAdmin(ObjektAdmin):
+    inlines = []
+
+    # Seotud pildid TODO: pole kasutuses
+    def seotud_pildid(self, obj):
+        return obj.pilt_set
+
+create_modeladmin(ObjektPiltidetaAdmin, name='kohad-kiirparandusteks', model=Objekt)
