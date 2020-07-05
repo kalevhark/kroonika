@@ -22,15 +22,14 @@ import pytz
 import requests
 
 from .utils import utils
-# from ilm.views import yrno_48h, owm_onecall
 
 # The following connect() function connects to the suppliers database and prints out the PostgreSQL database version.
-def connect():
+def connect(path=''):
     """ Connect to the PostgreSQL database server """
     conn = None
     try:
         # read connection parameters
-        params = utils.config()
+        params = utils.config(path)
 
         # connect to the PostgreSQL server
         print('Connecting to the PostgreSQL database...')
@@ -217,10 +216,12 @@ def delete_duplicate_observations(path=''):
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
     # get_maxtimestamp()
+    # Kustutame duplikaatread
     rows_deleted = delete_duplicate_observations(path)
     if rows_deleted > 0:
         print(f'Kustutati: {rows_deleted} kirjet')
 
+    # Kontrollime 48 tunni andmete olemasolu, vajadusel lisame
     for hour in range(47, -1, -1): # Viimase 48 tunni andmed
         observation_time = datetime.now() - timedelta(hours=hour)
         observation = check_observation_exists(observation_time, path)
@@ -237,11 +238,12 @@ if __name__ == '__main__':
             # print('olemas.')
             pass
 
+    # Ilmaennustuste logi jaoks andmete küsimine
     y = utils.yrno_48h()
     o = utils.owm_onecall()
     i = utils.ilmateenistus_forecast()
 
-    for forecast_hour in [6, 12, 24]:
+    for forecast_hour in [6, 12, 24]: # Salvestame 6, 12, 24 h prognoosid
         now = datetime.now()
         fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(seconds=forecast_hour*3600)
         ref_dt = int(datetime.timestamp(fore_dt))
@@ -249,29 +251,14 @@ if __name__ == '__main__':
         # yr.no
         y_temp = None
         y_prec = None
-        # for hour in range(len(y['forecast']['dt'])):
-        #     if int(y['forecast']['dt'][hour]) == ref_dt:
-        #         # y_dt = y['forecast']['dt'][hour]
-        #         y_temp = y['forecast']['temperatures'][hour]
-        #         y_prec = y['forecast']['precipitations'][hour]
-        #         break
         y_data = y['forecast'].get(str(ref_dt), None)
         if y_data:
-            # i_dt = ref_dt
             y_temp = y_data['temperature']
             y_prec = y_data['precipitation']
 
         # openweathermaps.org
         o_temp = None
         o_prec = None
-        # for hour in o['hourly']:
-        #     if int(hour['dt']) == ref_dt:
-        #         # o_dt = int(hour['dt'])
-        #         o_temp = hour['temp']
-        #         try:
-        #             o_prec = hour['rain']['1h']
-        #         except:
-        #             o_prec = '0.0'
         o_data = o['forecast'].get(str(ref_dt), None)
         if o_data:
             o_temp = o_data['temp']

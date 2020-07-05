@@ -367,13 +367,17 @@ def owm_onecall():
                 str(day['weather'][0]['id']),
                 day['weather'][0]['description']
             )
-        weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
-        for hour in weather['history']['hourly']:
-            # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
-            hour['kirjeldus'] = OWM_CODES.get(
-                str(hour['weather'][0]['id']),
-                hour['weather'][0]['description']
-            )
+        try:
+            weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
+        except:
+            weather['history']['hourly3h'] = None
+        if weather['history']['hourly3h']:
+            for hour in weather['history']['hourly']:
+                # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+                hour['kirjeldus'] = OWM_CODES.get(
+                    str(hour['weather'][0]['id']),
+                    hour['weather'][0]['description']
+                )
     return weather
 
 def ilmateenistus_forecast():
