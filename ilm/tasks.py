@@ -285,3 +285,19 @@ if __name__ == '__main__':
         )
         with open(f'logs/forecast_{forecast_hour}h.log', 'a') as f:
             f.write(line + '\n')
+
+    # Viimase täistunnimõõtmise logimine faili
+    now = datetime.now()
+    observation_time = datetime(now.year, now.month, now.day, now.hour)
+    observation = check_observation_exists(observation_time, path)
+    if observation:
+        with open('logs/observations.log', 'a') as f:
+            line = ';'.join(
+                [
+                    observation['timestamp'],
+                    observation['airtemperature'],
+                    observation['precipitations']
+                ]
+            )
+            f.write(line + '\n')
+
