@@ -238,7 +238,7 @@ if __name__ == '__main__':
             # print('olemas.')
             pass
 
-    # Ilmaennustuste logi jaoks andmete küsimine
+    # Ilmaennustuste logi
     y = utils.yrno_48h()
     o = utils.owm_onecall()
     i = utils.ilmateenistus_forecast()
