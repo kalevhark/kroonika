@@ -292,12 +292,9 @@ if __name__ == '__main__':
     observation = check_observation_exists(observation_time, path)
     if observation:
         with open('logs/observations.log', 'a') as f:
-            line = ';'.join(
-                [
-                    observation['timestamp'],
-                    observation['airtemperature'],
-                    observation['precipitations']
-                ]
-            )
+            time = str(datetime.timestamp(observation['timestamp']))
+            temp = str(observation['airtemperature'])
+            prec = str(observation['precipitations'])
+            line = ';'.join([time, temp, prec])
             f.write(line + '\n')
 
