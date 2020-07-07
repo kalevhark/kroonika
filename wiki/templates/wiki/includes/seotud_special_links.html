@@ -9,7 +9,7 @@
             <img
                 class="pilt-special-links"
                 src="{% static 'wiki/img/favicon/wikipedia.ico' %}"
-                alt="Wikipedia"
+                alt="Wikipedia : {{ obj.url }}"
                 title="Vikipeedia: {{ obj.url }}"
             >
           </a>
@@ -18,7 +18,7 @@
             <img
                 class="pilt-special-links"
                 src="{% static 'wiki/img/favicon/touch-icon-iphone.png' %}"
-                alt="geni.com"
+                alt="geni.com : {{ obj.url }}"
                 title="geni.com: {{ obj.url }}"
             >
           </a>
@@ -27,8 +27,17 @@
             <img
                 class="pilt-special-links"
                 src="{% static 'wiki/img/favicon/register-muinas.ico' %}"
-                alt="Kultuurimälestiste register"
+                alt="Kultuurimälestiste register : {{ obj.url }}"
                 title="Kultuurimälestiste register: {{ obj.url }}"
+            >
+          </a>
+        {% elif "youtube.com" in obj.url %}
+          <a href="{{ obj.url }}" target="_blank">
+            <img
+                class="pilt-special-links"
+                src="{% static 'wiki/img/favicon/youtube.png' %}"
+                alt="Youtube video: {{ obj.url }}"
+                title="Youtube video: {{ obj.url }}"
             >
           </a>
         {% endif %}
