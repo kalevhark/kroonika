@@ -1318,7 +1318,8 @@ class ArtikkelDayArchiveView(DayArchiveView):
 # Isikute otsimiseks/filtreerimiseks
 #
 class IsikFilter(django_filters.FilterSet):
-    
+    nimi_sisaldab = django_filters.CharFilter(method='nimi_sisaldab_filter')
+
     class Meta:
         model = Isik
         fields = {
@@ -1331,6 +1332,18 @@ class IsikFilter(django_filters.FilterSet):
     #     # at startup user doen't push Submit button, and QueryDict (in data) is empty
     #     if self.data == {}:
     #         self.queryset = self.queryset.none()
+    def nimi_sisaldab_filter(self, queryset, name, value):
+        # päritud fraas nimes
+        if self.data.get('nimi_sisaldab'):
+            queryset = (
+                    queryset.filter(
+                        perenimi__icontains=self.data['nimi_sisaldab']
+                    ) |
+                    queryset.filter(
+                        eesnimi__icontains=self.data['nimi_sisaldab']
+                    )
+            )
+        return queryset
 
 
 class IsikFilterView(FilterView):
