@@ -416,7 +416,7 @@ def task_art7358():
         # pil.objektid.add(obj)
 
 # Kannab object andmed obj -> org
-# tools.join(obj=xxx,[org=yyy])
+# tools.obj2org(obj=xxx,[org=yyy])
 def obj2org(**kwargs):
     src_obj = kwargs.get('obj', None)
     if src_obj:
