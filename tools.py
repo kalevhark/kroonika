@@ -238,18 +238,29 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-    Aleksander Abel,
-    Jaan Voldemar Berg,
-    Herbert Arnold Hanimägi,
-    Voldemar Johanson,
-    Johannes Kond,
-    Andrei Koorits,
-    Johann Neumann,
-    Paul Voldemar Sallum,
-    Jaak Säga,
-    Jaan Tints,
-    Felix Uibo,
-    Ferdinand Vallner
+    Eduard Arbeiter,
+    August Eiber,
+    Artur Kahro,
+    Oskar Kass,
+    Johannes Kitzberg,
+    Paul Korp,
+    Villem Gottlieb Korp,
+    Kundsing Jakob
+    Eduard Laar,
+    Julius Lavin,
+    Aleksander Luksepp,
+    Friedrich Robert Orav,
+    Jaan Paap,
+    Fromhold Reiljan,
+    Paul Eduard Saretok,
+    Paul Saretok,
+    Roland Soots,
+    Nikolai Strohm,
+    Oskar Tammark,
+    August Utsar,
+    Nikolai Vaher,
+    Peeter Veidenberg,
+    Anton Aleksander Vellmann
     """
     # Millise artikliga siduda isik
     art = Artikkel.objects.get(id=8329)
@@ -265,7 +276,7 @@ def massikanne_from_data():
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Poeglaste gümnaasiumi humanitaarharu lõpetaja 1926'
+    isik_kirjeldus = 'Poeglaste gümnaasiumi reaalharu lõpetaja 1926'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
