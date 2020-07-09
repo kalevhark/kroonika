@@ -238,16 +238,26 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-    Ida Rosalie Anton,
-    Helene Huudi,
-    Alma Jõgevest,
-    Salme Kangro,
-    Minna Johanna Meinholm,
-    Erna Aline Niilus,
-    Elfriede Rosalie Wilhelmine Paas,
-    Ludmilla SildnikalSillmann,
-    Johanna Adele Sööt,
-    Hilda Veidenberg
+    Hilda Gross,
+    Elise Helene Illison,
+    Alvine Johanna Jaanson,
+    Ellinor Alise Kaigas,
+    Elena Karavits,
+    Lilli Emilie Kyma,
+    Salme Marie Kyma,
+    Herta Johanna Linde,
+    Leida Ludmilla Luts,
+    Eudokia Hedvig Lääts,
+    Salme Madisson,
+    Emilie Metusala,
+    Linda Alide Mõttus,
+    Adele Padjas,
+    Veera Ruubel,
+    Ingeborg Anna Sallum,
+    Valentina Sviksch,
+    Magdalene Vassar,
+    Eugenie Vellner,
+    Hilda Alide Villist
     """
     # Millise artikliga siduda isik
     art = Artikkel.objects.get(id=8328)
@@ -263,7 +273,7 @@ def massikanne_from_data():
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Tütarlaste gümnaasiumi reaalharu lõpetaja 1926'
+    isik_kirjeldus = 'Tütarlaste gümnaasiumi humanitaarharu lõpetaja 1926'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
