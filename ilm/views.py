@@ -16,6 +16,7 @@ from . import IlmateenistusValga
 
 from .forms import NameForm
 from .models import Ilm, Jaam
+from .utils import utils
 
 bdi = IlmateenistusValga.IlmateenistusData()
 
@@ -48,6 +49,12 @@ COLORS = [
     "#f45b5b", # kahvatu punane
     "#91e8e1" # murtud heleroheline
 ]
+
+# Temperatuuride värvid
+COLORS_TEMP = {
+    'negative': '#48AFE8', # helesinine
+    'positive': '#FF3333'  # helepunane
+}
 
 # OpenWeatherMaps ilmakoodid
 OWM_CODES = {
@@ -118,7 +125,7 @@ def float_or_none(value):
 def index(request):
     # Avalehekülg, kus näidatakse 24h ilmaajalugu + 48h prognoos
     context = {
-        'weather': owm_onecall()
+        'weather': utils.owm_onecall()
     }
     return render(request, 'ilm/index.html', context)
 
@@ -2054,7 +2061,6 @@ def mixed_ilmateade(request):
     chart['airtemperatures'] = andmed_eelnevad24h['airtemperatures']
     return JsonResponse(chart)
 
-from .utils import utils
 def forecasts(request):
     y = utils.yrno_48h()
     o = utils.owm_onecall()

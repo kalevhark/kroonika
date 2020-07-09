@@ -7,10 +7,10 @@ function changeIlmStartIconColor(data) {
   elementIlmStartIcon = document.getElementById("ilm_start_icon");
   if (elementIlmStartIcon !== undefined) {
     temperatureNow = data.airtemperatures[data.airtemperatures.length - 1][1];
-        if (temperatureNow < 0) {
-          elementIlmStartIcon.style.color = '#48AFE8';
-        } else {
+        if (temperatureNow > 0) {
           elementIlmStartIcon.style.color = '#FF3333';
+        } else {
+          elementIlmStartIcon.style.color = '#48AFE8';
         };
   };
 };

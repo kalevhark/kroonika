@@ -1521,6 +1521,7 @@ class OrganisatsioonDetailView(generic.DetailView):
 #
 class ObjektFilter(django_filters.FilterSet):
     nimi_sisaldab = django_filters.CharFilter(method='nimi_sisaldab_filter')
+    t2nav_sisaldab = django_filters.CharFilter(method='t2nav_sisaldab_filter')
 
     class Meta:
         model = Objekt
@@ -1540,9 +1541,17 @@ class ObjektFilter(django_filters.FilterSet):
         if fraas:
             fragmendid = fraas.split(' ')
             regex_fill = r'\w*\s+\w*'
-            otsi_fraas = fill.join([r'({})'.format(fragment) for fragment in fragmendid])
+            otsi_fraas = regex_fill.join([r'({})'.format(fragment) for fragment in fragmendid])
             queryset = queryset.filter(nimi__iregex=r'{}'.format(otsi_fraas))
         return queryset
+
+    def t2nav_sisaldab_filter(self, queryset, name, value):
+        queryset = queryset.filter(
+            objektid__nimi__icontains=self.data['t2nav_sisaldab'],
+            objektid__tyyp='T'
+        )
+        return queryset
+
 
 class ObjektFilterView(FilterView):
     model = Objekt

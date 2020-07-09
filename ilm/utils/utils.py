@@ -378,6 +378,19 @@ def owm_onecall():
                     str(hour['weather'][0]['id']),
                     hour['weather'][0]['description']
                 )
+                try:
+                    prec_maxvalue = float(hour['rain']['1h'])
+                except:
+                    prec_maxvalue = 0
+                if prec_maxvalue > 2:
+                    prec_color = 'heavy'
+                elif prec_maxvalue > 1:
+                    prec_color = 'moderate'
+                elif prec_maxvalue > 0:
+                    prec_color = 'light'
+                else:
+                    prec_color = 'none'
+                hour['precipitation_color'] = prec_color
     return weather
 
 def ilmateenistus_forecast():

@@ -9,6 +9,38 @@ td {
   vertical-align: middle;
 }
 
+/* Tabeliseaded näitajatele */
+.rain,
+.temperature {
+  text-align: right;
+}
+
+.temperature.colored-negative {
+  color: #48AFE8;
+}
+.temperature.colored-positive::before {
+  content: '+';
+  position: relative;
+}
+
+.temperature.colored-positive {
+    color: #FF3333;
+}
+
+td.rain.light {
+  background-color: lightblue;
+}
+
+td.rain.moderate {
+  background-color: lightskyblue;
+}
+
+td.rain.heavy {
+  background-color: blue;
+  color: white;
+}
+
+# Ilmaikoonid
 .sunrise::before {
   display: block;
 	opacity: 0.6;
@@ -79,8 +111,8 @@ td {
         {% for hour in weather.history.hourly3h %}
           <tr>
             <td>{{ hour.dt|timestamp_to_time|time:"H:i" }}</td>
-            <td style="text-align: right;">{{ hour.temp|floatformat:1 }}°C</td>
-            <td style="text-align: right;">{{ hour.rain.1h|floatformat:1 }}</td>
+            <td class="temperature colored-{% if hour.temp > 0 %}positive{% else %}negative{% endif %}">{{ hour.temp|floatformat:1 }}°C</td>
+            <td class="rain {{ hour.precipitation_color }}">{{ hour.rain.1h|floatformat:1 }}</td>
             <td>{{ hour.kirjeldus }}</td>
             <td>
               <img
@@ -105,7 +137,7 @@ td {
             src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{weather.current.weather.0.icon}}.png"
             alt="{{ weather.current.kirjeldus }}"
         />
-        <p class="font-bold text-5xl ml-1">
+        <p class="font-bold text-5xl temperature colored-{% if weather.current.temp > 0 %}positive{% else %}negative{% endif %} ml-1 mr-4">
           {{ weather.current.temp|floatformat:1 }}°C
         </p>
       </section>
@@ -117,11 +149,11 @@ td {
       <section class="flex items-center justify-center">
         <table>
         {% for hour in weather.hourly %}
-          {% if forloop.counter > 1 and forloop.counter < 8 %}
+          {% if forloop.counter > 1 and forloop.counter < 14 %}
           <tr>
             <td>{{ hour.dt|timestamp_to_time|time:"H:i" }}</td>
-            <td style="text-align: right;">{{ hour.temp|floatformat:1 }}°C</td>
-            <td style="text-align: right;">{{ hour.rain.1h|floatformat:1 }}</td>
+            <td class="temperature colored-{% if hour.temp > 0 %}positive{% else %}negative{% endif %}">{{ hour.temp|floatformat:1 }}°C</td>
+            <td class="rain {{ hour.precipitation_color }}">{{ hour.rain.1h|floatformat:1 }}</td>
             <td>{{ hour.kirjeldus }}</td>
             <td>
               <img
