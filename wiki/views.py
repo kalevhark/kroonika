@@ -1549,7 +1549,7 @@ class ObjektFilter(django_filters.FilterSet):
         queryset = queryset.filter(
             objektid__nimi__icontains=self.data['t2nav_sisaldab'],
             objektid__tyyp='T'
-        )
+        ).distinct()
         return queryset
 
 
