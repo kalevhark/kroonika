@@ -238,45 +238,32 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-    Eduard Arbeiter,
-    August Eiber,
-    Artur Kahro,
-    Oskar Kass,
-    Johannes Kitzberg,
-    Paul Korp,
-    Villem Gottlieb Korp,
-    Kundsing Jakob
-    Eduard Laar,
-    Julius Lavin,
-    Aleksander Luksepp,
-    Friedrich Robert Orav,
-    Jaan Paap,
-    Fromhold Reiljan,
-    Paul Eduard Saretok,
-    Paul Saretok,
-    Roland Soots,
-    Nikolai Strohm,
-    Oskar Tammark,
-    August Utsar,
-    Nikolai Vaher,
-    Peeter Veidenberg,
-    Anton Aleksander Vellmann
+    Ida Rosalie Anton,
+    Helene Huudi,
+    Alma Jõgevest,
+    Salme Kangro,
+    Minna Johanna Meinholm,
+    Erna Aline Niilus,
+    Elfriede Rosalie Wilhelmine Paas,
+    Ludmilla SildnikalSillmann,
+    Johanna Adele Sööt,
+    Hilda Veidenberg
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=8329)
+    art = Artikkel.objects.get(id=8328)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=3766)
+    pilt = Pilt.objects.get(id=3765)
     print(pilt)
     # Milline organisatsioon lisada isikule
-    org = Organisatsioon.objects.get(id=85) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn, 19=6.algkool
+    org = Organisatsioon.objects.get(id=33) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
     viited_ids = [9057, 9058]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Poeglaste gümnaasiumi reaalharu lõpetaja 1926'
+    isik_kirjeldus = 'Tütarlaste gümnaasiumi reaalharu lõpetaja 1926'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
