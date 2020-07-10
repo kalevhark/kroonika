@@ -1030,7 +1030,7 @@ class ArtikkelFilter(django_filters.FilterSet):
                     queryset.filter(
                         isikud__eesnimi__icontains=self.data['nimi_sisaldab']
                     )
-            )
+            ).distinct()
         return queryset
 
     def artikkel_sisaldab_filter(self, queryset, name, value):
