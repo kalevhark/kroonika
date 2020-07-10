@@ -367,6 +367,19 @@ def owm_onecall():
                 str(day['weather'][0]['id']),
                 day['weather'][0]['description']
             )
+            try:
+                prec_maxvalue = float(day['rain'])
+            except:
+                prec_maxvalue = 0
+            if prec_maxvalue > 2:
+                prec_color = 'heavy'
+            elif prec_maxvalue > 1:
+                prec_color = 'moderate'
+            elif prec_maxvalue > 0:
+                prec_color = 'light'
+            else:
+                prec_color = 'none'
+            day['precipitation_color'] = prec_color
         try:
             weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
         except:

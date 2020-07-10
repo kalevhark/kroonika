@@ -36,7 +36,7 @@ td.rain.moderate {
 }
 
 td.rain.heavy {
-  background-color: blue;
+  background-color: DodgerBlue;
   color: white;
 }
 
@@ -85,10 +85,110 @@ td.rain.heavy {
 	margin-right: 0.5em;
 	content: url('data:image/svg+xml;charset=utf-8,%3Csvg width=%2224%22 height=%2224%22 viewBox=%220 0 24 24%22 fill=%22none%22 xmlns=%22http://www.w3.org/2000/svg%22%3E %3Cg%3E %3Cpath d=%22M14.1314 2.22778C14.5361 2.31569 14.793 2.71509 14.7051 3.11986C14.6172 3.52464 14.2178 3.78152 13.813 3.69362C13.2222 3.56532 12.6156 3.5 12 3.5C7.30558 3.5 3.5 7.30558 3.5 12C3.5 16.6944 7.30558 20.5 12 20.5C16.6944 20.5 20.5 16.6944 20.5 12C20.5 11.4103 20.4401 10.8289 20.3222 10.2616C20.238 9.85608 20.4985 9.45902 20.904 9.37478C21.3096 9.29054 21.7067 9.55101 21.7909 9.95657C21.9295 10.624 22 11.3077 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C12.7228 2 13.4361 2.07681 14.1314 2.22778Z%22 fill=%22currentColor%22/%3E %3Cpath fill-rule=%22evenodd%22 clip-rule=%22evenodd%22 d=%22M13.348 10.6533C13.6409 10.9461 14.1158 10.946 14.4086 10.6531L18.0304 7.03025C18.3233 6.73732 18.3232 6.26244 18.0303 5.96959C17.7373 5.67674 17.2624 5.67681 16.9696 5.96975L13.3478 9.59259C13.055 9.88553 13.055 10.3604 13.348 10.6533ZM8.21961 15.7803C8.51248 16.0732 8.98735 16.0732 9.28028 15.7804L10.5308 14.5301C10.8237 14.2373 10.8238 13.7624 10.5309 13.4695C10.238 13.1766 9.76315 13.1765 9.47023 13.4694L8.21972 14.7196C7.9268 15.0125 7.92675 15.4874 8.21961 15.7803Z%22 fill=%22currentColor%22/%3E %3Cpath fill-rule=%22evenodd%22 clip-rule=%22evenodd%22 d=%22M14.75 5.75C14.75 5.33579 15.0858 5 15.5 5H18.25C18.6642 5 19 5.33579 19 5.75C19 6.16421 18.6642 6.5 18.25 6.5H15.5C15.0858 6.5 14.75 6.16421 14.75 5.75Z%22 fill=%22currentColor%22/%3E %3Cpath fill-rule=%22evenodd%22 clip-rule=%22evenodd%22 d=%22M17.5 5.75C17.5 5.33579 17.8358 5 18.25 5C18.6642 5 19 5.33579 19 5.75V8.5C19 8.91421 18.6642 9.25 18.25 9.25C17.8358 9.25 17.5 8.91421 17.5 8.5V5.75Z%22 fill=%22currentColor%22/%3E %3Cpath fill-rule=%22evenodd%22 clip-rule=%22evenodd%22 d=%22M9 12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12ZM13.5 12C13.5 12.8284 12.8284 13.5 12 13.5C11.1716 13.5 10.5 12.8284 10.5 12C10.5 11.1716 11.1716 10.5 12 10.5C12.8284 10.5 13.5 11.1716 13.5 12Z%22 fill=%22currentColor%22/%3E %3C/g%3E %3C/svg%3E');
 }
+
 </style>
 {% endblock %}
 
 {% block javascript %}
+<script>
+// Chrome veateadete vaigistamiseks https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+const eventListenerOptionsSupported = () => {
+  let supported = false;
+
+  try {
+    const opts = Object.defineProperty({}, 'passive', {
+      get() {
+        supported = true;
+      }
+    });
+
+    window.addEventListener('test', null, opts);
+    window.removeEventListener('test', null, opts);
+  } catch (e) {}
+
+  return supported;
+}
+
+const defaultOptions = {
+  passive: false,
+  capture: false
+};
+const supportedPassiveTypes = [
+  'scroll', 'wheel',
+  'touchstart', 'touchmove', 'touchenter', 'touchend', 'touchleave',
+  'mouseout', 'mouseleave', 'mouseup', 'mousedown', 'mousemove', 'mouseenter', 'mousewheel', 'mouseover'
+];
+const getDefaultPassiveOption = (passive, eventName) => {
+  if (passive !== undefined) return passive;
+
+  return supportedPassiveTypes.indexOf(eventName) === -1 ? false : defaultOptions.passive;
+};
+
+const getWritableOptions = (options) => {
+  const passiveDescriptor = Object.getOwnPropertyDescriptor(options, 'passive');
+
+  return passiveDescriptor && passiveDescriptor.writable !== true && passiveDescriptor.set === undefined
+    ? Object.assign({}, options)
+    : options;
+};
+
+const overwriteAddEvent = (superMethod) => {
+  EventTarget.prototype.addEventListener = function (type, listener, options) {
+    const usesListenerOptions = typeof options === 'object' && options !== null;
+    const useCapture          = usesListenerOptions ? options.capture : options;
+
+    options         = usesListenerOptions ? getWritableOptions(options) : {};
+    options.passive = getDefaultPassiveOption(options.passive, type);
+    options.capture = useCapture === undefined ? defaultOptions.capture : useCapture;
+
+    superMethod.call(this, type, listener, options);
+  };
+
+  EventTarget.prototype.addEventListener._original = superMethod;
+};
+
+const supportsPassive = eventListenerOptionsSupported();
+
+if (supportsPassive) {
+  const addEvent = EventTarget.prototype.addEventListener;
+  overwriteAddEvent(addEvent);
+}
+
+// Vasakule või paremale libistamisel vahetame ennustuse andmeid
+$(function(){
+  // Bind the swipeleftHandler callback function to the swipe event on div.box
+  $( document ).on( "swipeleft", swipeleftHandler );
+
+  // Callback function references the event target and adds the 'swipeleft' class to it
+  function swipeleftHandler( event ){
+    if(event.handled !== true) // This will prevent event triggering more then once
+    {
+        // $.mobile.changePage("#article2");
+        $( "#forecast-hours" ).toggleClass( "w3-hide" );
+        $( "#forecast-days" ).toggleClass( "w3-hide" );
+        event.handled = true;
+    }
+    console.log(event);
+    return false;
+  };
+
+    // Bind the swipeleftHandler callback function to the swipe event on div.box
+  $( document ).on( "swiperight", swiperightHandler );
+
+  // Callback function references the event target and adds the 'swipeleft' class to it
+  function swiperightHandler( event ){
+    if(event.handled !== true) // This will prevent event triggering more then once
+    {
+        // $.mobile.changePage("#article1");
+        $( "#forecast-hours" ).toggleClass( "w3-hide" );
+        $( "#forecast-days" ).toggleClass( "w3-hide" );
+        event.handled = true;
+    }
+    console.log(event);
+    return false;
+  }
+});
+</script>
 <script src="{% static 'ilm/js/ilm_mixed_ilmateade.js' %}"></script>
 {% endblock %}
 
@@ -147,6 +247,7 @@ td.rain.heavy {
         <p class="pressure flex items-center">{{ weather.current.pressure }} hPa</p>
       </section>
       <section class="flex items-center justify-center">
+        <div id="forecast-hours">
         <table>
         {% for hour in weather.hourly %}
           {% if forloop.counter > 1 and forloop.counter < 14 %}
@@ -166,31 +267,40 @@ td.rain.heavy {
           {% endif %}
         {% endfor %}
         </table>
+        </div>
+        <div id="forecast-days" class="w3-hide">
+    		<table>
+  			{% for day in weather.daily %}
+  				<tr>
+  					<td>{{ day.dt|timestamp_to_time|date:"d.m" }}</td>
+  					<td class="temperature">
+              <span class="temperature colored-{% if day.temp.min > 0 %}positive{% else %}negative{% endif %}">
+                {{ day.temp.min|floatformat:1 }}
+              </span>
+              -
+              <span class="temperature colored-{% if day.temp.max > 0 %}positive{% else %}negative{% endif %}">
+                {{ day.temp.max|floatformat:1 }}
+              </span>
+              °C
+            </td>
+  					<td class="rain {{ day.precipitation_color }}">{{ day.rain|floatformat:1 }}</td>
+  					<td>{{ day.weather.0.description }}</td>
+  					<td>
+  						<img
+  							src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ day.weather.0.icon }}.png"
+  							alt="{{ day.weather.0.description }}"
+  							width="32" height="32"
+  						/>
+  					</td>
+  				</tr>
+  			{% endfor %}
+  			</table>
+  	</div>
       </section>
     </article>
-  <!--		<section class="flex items-center justify-center">-->
-  <!--			<table>-->
-  <!--			{% for day in weather.daily %}-->
-  <!--				<tr>-->
-  <!--					<td>{{ day.datetime|date:"d.m" }}</td>-->
-  <!--					<td style="text-align: right;">{{ day.temp.day|floatformat:1 }}°C</td>-->
-  <!--					<td style="text-align: right;">{{ day.rain|floatformat:1 }}</td>-->
-  <!--					<td>{{ day.weather.0.description }}</td>-->
-  <!--					<td>-->
-  <!--						<img-->
-  <!--							src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ day.weather.0.icon }}.png"-->
-  <!--							alt="{{ day.weather.0.description }}"-->
-  <!--							width="32" height="32"-->
-  <!--						/>-->
-  <!--					</td>-->
-  <!--				</tr>-->
-  <!--			{% endfor %}-->
-  <!--			</table>-->
-  <!--		</section>-->
 
     <footer class="my-8 text-center">
       Andmed: <a href="https://openweathermap.org/" class="text-yellow-900 hover:underline">Open Weather Map</a>.
     </footer>
   </div>
-
 {% endblock %}
