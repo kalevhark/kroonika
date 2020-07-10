@@ -1,0 +1,99 @@
+{% load static %}
+{% load ilm_extras %}
+<article class="max-w-sm mx-auto mt-5 bg-white rounded shadow">
+  <section class="flex items-center justify-center">
+    <table>
+    {% for hour in weather.history.hourly3h %}
+      <tr>
+        <td>{{ hour.dt|timestamp_to_time|time:"H:i" }}</td>
+        <td class="temperature colored-{% if hour.temp > 0 %}positive{% else %}negative{% endif %}">{{ hour.temp|floatformat:1 }}°C</td>
+        <td class="rain {{ hour.precipitation_color }}">{{ hour.rain.1h|floatformat:1 }}</td>
+        <td>{{ hour.kirjeldus }}</td>
+        <td>
+          <img
+            src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ hour.weather.0.icon }}.png"
+            alt="{{ hour.kirjeldus }}"
+            width="32" height="32"
+          />
+        </td>
+      </tr>
+    {% endfor %}
+    </table>
+  </section>
+  <section class="mt-5 py-3 px-2 flex justify-around">
+    <p class="sunrise flex items-center">{{ weather.current.sunrise|timestamp_to_time|date:"H:i" }}
+    <p class="text-sm text-center text-gray-600">{{ weather.current.dt|timestamp_to_time|date:"d.m H:i" }}</p>
+    <p class="sunset flex items-center">{{ weather.current.sunset|timestamp_to_time|date:"H:i" }}
+  </section>
+  <p class="mt-1 text-lg text-gray-700 font-medium text-center">{{ weather.current.kirjeldus }}</p>
+
+  <section class="flex items-center justify-center">
+    <img
+        src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{weather.current.weather.0.icon}}.png"
+        alt="{{ weather.current.kirjeldus }}"
+    />
+    <p class="font-bold text-5xl temperature colored-{% if weather.current.temp > 0 %}positive{% else %}negative{% endif %} ml-1 mr-4">
+      {{ weather.current.temp|floatformat:1 }}°C
+    </p>
+  </section>
+  <section class="mt-5 py-3 px-2 flex justify-around text-gray-700 bg-yellow-400">
+    <p class="wind flex items-center">{{ weather.current.wind_speed }} m/s</p>
+    <p class="humidity flex items-center">{{ weather.current.humidity }} %</p>
+    <p class="pressure flex items-center">{{ weather.current.pressure }} hPa</p>
+  </section>
+  <section class="flex items-center justify-center">
+    <div id="forecast-hours">
+    <table>
+    {% for hour in weather.hourly %}
+      {% if forloop.counter > 1 and forloop.counter < 14 %}
+      <tr>
+        <td>{{ hour.dt|timestamp_to_time|time:"H:i" }}</td>
+        <td class="temperature colored-{% if hour.temp > 0 %}positive{% else %}negative{% endif %}">{{ hour.temp|floatformat:1 }}°C</td>
+        <td class="rain {{ hour.precipitation_color }}">{{ hour.rain.1h|floatformat:1 }}</td>
+        <td>{{ hour.kirjeldus }}</td>
+        <td>
+          <img
+            src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ hour.weather.0.icon }}.png"
+            alt="{{ hour.kirjeldus }}"
+            width="32" height="32"
+          />
+        </td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+    </table>
+    </div>
+    <div id="forecast-days" class="w3-hide">
+    <table>
+    {% for day in weather.daily %}
+      <tr>
+        <td>{{ day.dt|timestamp_to_time|date:"d.m" }}</td>
+        <td class="temperature">
+          <span class="temperature colored-{% if day.temp.min > 0 %}positive{% else %}negative{% endif %}">
+            {{ day.temp.min|floatformat:1 }}
+          </span>
+          -
+          <span class="temperature colored-{% if day.temp.max > 0 %}positive{% else %}negative{% endif %}">
+            {{ day.temp.max|floatformat:1 }}
+          </span>
+          °C
+        </td>
+        <td class="rain {{ day.precipitation_color }}">{{ day.rain|floatformat:1 }}</td>
+        <td>{{ day.weather.0.description }}</td>
+        <td>
+          <img
+            src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ day.weather.0.icon }}.png"
+            alt="{{ day.weather.0.description }}"
+            width="32" height="32"
+          />
+        </td>
+      </tr>
+    {% endfor %}
+    </table>
+</div>
+  </section>
+</article>
+
+<footer class="my-8 text-center">
+  Andmed: <a href="https://openweathermap.org/" class="text-yellow-900 hover:underline">Open Weather Map</a>.
+</footer>

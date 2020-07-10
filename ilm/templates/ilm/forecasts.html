@@ -3,7 +3,6 @@
 {% load ilm_extras %}
 
 {% block stylesheet %}
-<link rel="stylesheet" href="{% static 'ilm/img/Climacons-Font/webfont/climacons-font.css' %}" />
 <style>
 /* hoverable table rows + columns https://codepen.io/chriscoyier/pen/pvwmaR */
 table {
@@ -63,9 +62,6 @@ tbody th:focus::before {
   text-align: right;
 }
 
-td.rain.light {
-  background-color: lightblue;
-}
 td.rain.light::before {
   content: '';
   position: relative;
@@ -75,9 +71,6 @@ td.rain.light::before {
   display: block;
 }
 
-td.rain.moderate {
-  background-color: lightskyblue;
-}
 td.rain.moderate::before {
   content: '';
   position: relative;
@@ -87,10 +80,6 @@ td.rain.moderate::before {
   display: block;
 }
 
-td.rain.heavy {
-  background-color: blue;
-  color: white;
-}
 td.rain.heavy::before {
   content: '';
   position: relative;
@@ -127,7 +116,6 @@ if (screen.width < 500) {
 
 {% block content %}
   <div class="w3-row">
-
 		<table>
 			<thead>
 			<tr>
