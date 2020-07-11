@@ -79,7 +79,7 @@
           °C
         </td>
         <td class="rain {{ day.precipitation_color }}">{{ day.rain|floatformat:1 }}</td>
-        <td>{{ day.weather.0.description }}</td>
+        <td>{{ day.kirjeldus }}</td>
         <td>
           <img
             src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ day.weather.0.icon }}.png"

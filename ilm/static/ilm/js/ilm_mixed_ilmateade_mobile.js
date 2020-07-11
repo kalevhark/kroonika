@@ -76,7 +76,7 @@ $(function(){
         $( "#forecast-days" ).toggleClass( "w3-hide" );
         event.handled = true;
     }
-    console.log(event);
+    // console.log(event);
     return false;
   };
 
@@ -92,7 +92,7 @@ $(function(){
         $( "#forecast-days" ).toggleClass( "w3-hide" );
         event.handled = true;
     }
-    console.log(event);
+    // console.log(event);
     return false;
   }
 });

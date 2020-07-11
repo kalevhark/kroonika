@@ -27,7 +27,27 @@
 		<link rel="stylesheet" href="{% static 'ilm/img/Climacons-Font/webfont/climacons-font.css' %}" />
 		<link rel="stylesheet" href="{% static 'ilm/css/ilm.css' %}">
 		{% block stylesheet %}{% endblock %}
+
 		<link rel="shortcut icon" href="{% static 'ilm/img/favicon.ico' %}">
+
+		<!-- jQuery teek -->
+<!--    <script src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>-->
+		<script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+<!--  	<script src="//code.jquery.com/mobile/1.5.0-alpha.1/jquery.mobile-1.5.0-alpha.1.min.js"></script>-->
+		<script src="http://code.jquery.com/mobile/1.5.0-rc1/jquery.mobile-1.5.0-rc1.min.js"></script>
+<!--		<script src="http://code.jquery.com/jquery-migrate-3.0.0.js"></script>-->
+<!--		<script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>-->
+
+		<!-- HighCharts skriptid -->
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/highcharts-more.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+		<script src="https://code.highcharts.com/modules/export-data.js"></script>
+		<script src="https://code.highcharts.com/modules/windbarb.js"></script>
+		<script src="{% static 'ilm/js/highcharts-regression.js' %}"></script>
+
+		<!-- Äpi skriptid, kui vaja -->
+		<script src="{% static 'ilm/js/ilm.js' %}"></script>
 
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>
@@ -37,6 +57,7 @@
 			gtag('js', new Date());
 			gtag('config', 'UA-151102639-1');
 		</script>
+		{% block javascript %}{% endblock %}
   </head>
 
   <body class="Site w3-light-grey">
@@ -91,23 +112,5 @@
 				</a>
       </div>
 		</footer>
-
-		<!-- jQuery teek -->
-<!--    <script src="https://code.jquery.com/jquery-3.3.1.min.js"  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>-->
-		<script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
-  	<script src="//code.jquery.com/mobile/1.5.0-alpha.1/jquery.mobile-1.5.0-alpha.1.min.js"></script>
-
-		<!-- HighCharts skriptid -->
-		<script src="https://code.highcharts.com/highcharts.js"></script>
-		<script src="https://code.highcharts.com/highcharts-more.js"></script>
-		<script src="https://code.highcharts.com/modules/exporting.js"></script>
-		<script src="https://code.highcharts.com/modules/export-data.js"></script>
-		<script src="https://code.highcharts.com/modules/windbarb.js"></script>
-		<script src="{% static 'ilm/js/highcharts-regression.js' %}"></script>
-
-		<!-- Äpi skriptid, kui vaja -->
-		<script src="{% static 'ilm/js/ilm.js' %}"></script>
-
-		{% block javascript %}{% endblock %}
 	</body>
 </html>

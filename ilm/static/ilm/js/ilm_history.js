@@ -9,7 +9,7 @@ function container_history_andmed() {
     url: $("#container_history_andmed").attr("data-url"),
     dataType: 'json',
     success: function (data) {
-	  console.log(data)
+	  // console.log(data)
 	  text = data.parameetrid;
     },
     error: function (XMLHttpRequest, textstatus, errorThrown) {
