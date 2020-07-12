@@ -1,0 +1,121 @@
+{% extends "ilm/ilm_base.html" %}
+{% load static %}
+{% load ilm_extras %}
+
+{% block stylesheet %}
+<style>
+/* hoverable table rows + columns https://codepen.io/chriscoyier/pen/pvwmaR */
+table {
+  overflow: hidden;
+}
+
+td, th {
+  vertical-align: middle;
+  padding: 10px;
+  position: relative;
+  outline: 0;
+}
+.ui-loading .ui-loader { display: block; }
+.ui-loader { display: none; position: absolute; opacity: .85; z-index: 100; left: 50%; width: 200px; margin-left: -130px; margin-top: -35px; padding: 10px 30px; }
+
+</style>
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
+
+{% block title %}
+  {{ block.super }} - 48 ilmaennustuste kvaliteet
+{% endblock %}
+
+{% block content %}
+<div class="w3-container">
+  <div class="w3-row">
+      Legend: max = 100<br>
+      Erinevus: 1°C = -5 punkti; 1 mm = -5 punkti<br>
+      Vihmatrahv: ennustus 0,0 mm -> tegelik > 0,0 mm = -10 punkti
+  </div>
+  <p>Päevad:</p>
+  <div class="w3-row">
+		<table>
+			<thead>
+			<tr>
+    		<th>Aeg</th>
+    		<th colspan="3">yr.no</th>
+				<th colspan="3">openweathermaps.org</th>
+				<th colspan="3">ilmateenistus.ee</th>
+  		</tr>
+			<tr>
+        <th class="col"></th>
+				<th class="col">6h</th>
+				<th class="col">12h</th>
+				<th class="col">24h</th>
+				<th class="col">6h</th>
+				<th class="col">12h</th>
+				<th class="col">24h</th>
+        <th class="col">6h</th>
+				<th class="col">12h</th>
+				<th class="col">24h</th>
+			</tr>
+			</thead>
+			<tbody>
+      {% for key, element in data.days.items %}
+			<tr class="row">
+				<td>{{ key.2 }}.{{ key.1 }}.{{ key.0 }}</td>
+        {% include "ilm/forecasts_quality_td.html" with q=element.6h_y_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.12h_y_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.24h_y_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.6h_o_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.12h_o_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.24h_o_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.6h_i_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.12h_i_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.24h_i_qual %}
+      </tr>
+      {% endfor %}
+			</tbody>
+			</table>
+  </div>
+  <p>Viimased 24 tundi:</p>
+  <div class="w3-row">
+		<table>
+			<thead>
+			<tr>
+    		<th>Aeg</th>
+    		<th colspan="3">yr.no</th>
+				<th colspan="3">openweathermaps.org</th>
+				<th colspan="3">ilmateenistus.ee</th>
+  		</tr>
+			<tr>
+        <th class="col"></th>
+				<th class="col">6h</th>
+				<th class="col">12h</th>
+				<th class="col">24h</th>
+				<th class="col">6h</th>
+				<th class="col">12h</th>
+				<th class="col">24h</th>
+        <th class="col">6h</th>
+				<th class="col">12h</th>
+				<th class="col">24h</th>
+			</tr>
+			</thead>
+			<tbody>
+      {% for key, element in data.last24h.items %}
+			<tr class="row">
+				<td>{{ key|timestamp_to_time|date:"d.m H:i" }}</td>
+        {% include "ilm/forecasts_quality_td.html" with q=element.6h_y_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.12h_y_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.24h_y_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.6h_o_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.12h_o_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.24h_o_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.6h_i_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.12h_i_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.24h_i_qual %}
+      </tr>
+      {% endfor %}
+			</tbody>
+			</table>
+  </div>
+</div>
+{% endblock %}

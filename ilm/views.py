@@ -2140,3 +2140,10 @@ def forecasts(request):
         'forecast': forecast
     }
     return render(request, 'ilm/forecasts.html', context)
+
+from ilm.utils import forecast_log_analyze
+def forecasts_quality(request):
+    context = {
+        'data': forecast_log_analyze.main()
+    }
+    return render(request, 'ilm/forecasts_quality.html', context)

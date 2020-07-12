@@ -7,6 +7,18 @@
 {% endblock %}
 
 {% block javascript %}
+<script>
+  $(document).on("mobileinit", function () {
+    /* jQuery Mobile initialization */
+    var html = "<div class='ui-loader'><span class='ui-icon-loading'></span></div>";
+    $.mobile.loader.prototype.defaultHtml = html;
+    // ... other settings as You need
+    $.mobile.loader.prototype.options.text = "";
+    $.mobile.loader.prototype.options.textVisible = false;
+  });
+</script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.5.0-rc1/jquery.mobile-1.5.0-rc1.min.js"></script>
 <script src="{% static 'ilm/js/ilm_mixed_ilmateade.js' %}"></script>
 <script src="{% static 'ilm/js/ilm_mixed_ilmateade_mobile.js' %}"></script>
 {% endblock %}
