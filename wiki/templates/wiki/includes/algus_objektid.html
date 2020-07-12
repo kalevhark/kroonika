@@ -4,7 +4,7 @@
         style="text-decoration:none;"
         href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_objektid"
     >
-      {% now "j.m." %} valminud <span class="w3-badge background-objekt">{{ andmed.objekt.sel_p2eval_kirjeid }}</span>
+      {% now "j.m." %} valminud/avatud <span class="w3-badge background-objekt">{{ andmed.objekt.sel_p2eval_kirjeid }}</span>
     </a>
   </h5>
   {% for obj in andmed.objekt.sel_p2eval %}
@@ -38,7 +38,7 @@
         style="text-decoration:none;"
         href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_objektid"
     >
-      {% include 'wiki/includes/kuul.html' with kuu=kuu %} valminud  <span class="w3-badge background-objekt">{{ andmed.objekt.sel_kuul.count }}</span>
+      {% include 'wiki/includes/kuul.html' with kuu=kuu %} valminud/avatud  <span class="w3-badge background-objekt">{{ andmed.objekt.sel_kuul.count }}</span>
     </a>
   </h5>
   {% for obj in andmed.objekt.sel_kuul %}
