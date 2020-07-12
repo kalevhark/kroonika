@@ -2143,7 +2143,8 @@ def forecasts(request):
 
 from ilm.utils import forecast_log_analyze
 def forecasts_quality(request):
+    path = settings.BASE_DIR
     context = {
-        'data': forecast_log_analyze.main()
+        'data': forecast_log_analyze.main(path)
     }
     return render(request, 'ilm/forecasts_quality.html', context)
