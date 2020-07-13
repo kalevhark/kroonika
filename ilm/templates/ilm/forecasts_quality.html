@@ -15,9 +15,6 @@ td, th {
   position: relative;
   outline: 0;
 }
-.ui-loading .ui-loader { display: block; }
-.ui-loader { display: none; position: absolute; opacity: .85; z-index: 100; left: 50%; width: 200px; margin-left: -130px; margin-top: -35px; padding: 10px 30px; }
-
 </style>
 {% endblock %}
 
@@ -103,15 +100,15 @@ td, th {
       {% for key, element in data.last24h.items %}
 			<tr class="row">
 				<td>{{ key|timestamp_to_time|date:"d.m H:i" }}</td>
-        {% include "ilm/forecasts_quality_td.html" with q=element.6h_y_qual %}
-        {% include "ilm/forecasts_quality_td.html" with q=element.12h_y_qual %}
-        {% include "ilm/forecasts_quality_td.html" with q=element.24h_y_qual %}
-        {% include "ilm/forecasts_quality_td.html" with q=element.6h_o_qual %}
-        {% include "ilm/forecasts_quality_td.html" with q=element.12h_o_qual %}
-        {% include "ilm/forecasts_quality_td.html" with q=element.24h_o_qual %}
-        {% include "ilm/forecasts_quality_td.html" with q=element.6h_i_qual %}
-        {% include "ilm/forecasts_quality_td.html" with q=element.12h_i_qual %}
-        {% include "ilm/forecasts_quality_td.html" with q=element.24h_i_qual %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.6h_y_qual ft=element.forecast_6h_y_temp fp=element.forecast_6h_y_prec %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.12h_y_qual ft=element.forecast_12h_y_temp fp=element.forecast_12h_y_prec %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.24h_y_qual ft=element.forecast_24h_y_temp fp=element.forecast_24h_y_prec %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.6h_o_qual ft=element.forecast_6h_o_temp fp=element.forecast_6h_o_prec %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.12h_o_qual ft=element.forecast_12h_o_temp fp=element.forecast_12h_o_prec %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.24h_o_qual ft=element.forecast_24h_o_temp fp=element.forecast_24h_o_prec %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.6h_i_qual ft=element.forecast_6h_i_temp fp=element.forecast_6h_i_prec %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.12h_i_qual ft=element.forecast_12h_i_temp fp=element.forecast_12h_i_prec %}
+        {% include "ilm/forecasts_quality_td.html" with q=element.24h_i_qual ft=element.forecast_24h_i_temp fp=element.forecast_24h_i_prec %}
       </tr>
       {% endfor %}
 			</tbody>
