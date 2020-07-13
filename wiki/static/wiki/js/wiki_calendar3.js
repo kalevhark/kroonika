@@ -79,8 +79,6 @@ var GWDateTimePicker = {
 
     // Libistamise actionid
     $elements.wrapper.addEventListener('swiped-left', function(e) {
-      var target = e.target,
-        selectedYear, selectedMonth;
       selectedYear = $elements.selectedYear.innerHTML;
       selectedMonth = parseInt(monthNames.indexOf($elements.selectedMonth.innerHTML));
       selectedMonth--;
@@ -88,12 +86,11 @@ var GWDateTimePicker = {
         selectedYear--;
         selectedMonth = 12;
       }
-      console.log(selectedYear, selectedMonth);
-      GWDateTimePicker.setOutput($elements.target, selectedYear, selectedMonth, target.innerHTML);
+      $elements.selectedMonth.innerHTML = monthNames[selectedMonth];
+      $elements.selectedYear.innerHTML = selectedYear;
+      GWDateTimePicker.setDays(selectedYear, selectedMonth);
     });
     $elements.wrapper.addEventListener('swiped-right', function(e) {
-      var target = e.target,
-        selectedYear, selectedMonth;
       selectedYear = $elements.selectedYear.innerHTML;
       selectedMonth = parseInt(monthNames.indexOf($elements.selectedMonth.innerHTML));
       selectedMonth++;
@@ -101,8 +98,9 @@ var GWDateTimePicker = {
         selectedYear++;
         selectedMonth = 1;
       }
-      console.log(selectedYear, selectedMonth);
-      GWDateTimePicker.setOutput($elements.target, selectedYear, selectedMonth, target.innerHTML);
+      $elements.selectedMonth.innerHTML = monthNames[selectedMonth];
+      $elements.selectedYear.innerHTML = selectedYear;
+      GWDateTimePicker.setDays(selectedYear, selectedMonth);
     });
 
     // Klikkimise actionid
