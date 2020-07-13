@@ -77,7 +77,35 @@ var GWDateTimePicker = {
     // 初始化当月的列表
     this.setDays(CYEAR, CMONTH);
 
-    // 初始化事件
+    // Libistamise actionid
+    $elements.wrapper.addEventListener('swiped-left', function(e) {
+      var target = e.target,
+        selectedYear, selectedMonth;
+      selectedYear = $elements.selectedYear.innerHTML;
+      selectedMonth = parseInt(monthNames.indexOf($elements.selectedMonth.innerHTML));
+      selectedMonth--;
+      if (selectedMonth < 1) {
+        selectedYear--;
+        selectedMonth = 12;
+      }
+      console.log(selectedYear, selectedMonth);
+      GWDateTimePicker.setOutput($elements.target, selectedYear, selectedMonth, target.innerHTML);
+    });
+    $elements.wrapper.addEventListener('swiped-right', function(e) {
+      var target = e.target,
+        selectedYear, selectedMonth;
+      selectedYear = $elements.selectedYear.innerHTML;
+      selectedMonth = parseInt(monthNames.indexOf($elements.selectedMonth.innerHTML));
+      selectedMonth++;
+      if (selectedMonth > 12) {
+        selectedYear++;
+        selectedMonth = 1;
+      }
+      console.log(selectedYear, selectedMonth);
+      GWDateTimePicker.setOutput($elements.target, selectedYear, selectedMonth, target.innerHTML);
+    });
+
+    // Klikkimise actionid
     $elements.wrapper.onclick = function(e) {
       var target = e.target,
         selectedYear, selectedMonth;

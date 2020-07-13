@@ -72,11 +72,7 @@
 {% endblock %}
 
 {% block javascript %}
-<!--<script>-->
-<!--  let artikleidKuudeKaupa = {{ andmed.artikleid_kuu_kaupa }};-->
-<!--</script>-->
-<!--<script src="{% static 'wiki/js/wiki_calendar.js'%}"></script>-->
-
+<script src="{% static 'ilm/js/swiped-events.js' %}"></script>
 <script src="{% static 'wiki/js/wiki_calendar3.js'%}"></script>
 <script>
   var calendar_days_with_events_in_month_url = "{% url 'wiki:calendar_days_with_events_in_month' %}"
