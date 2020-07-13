@@ -118,19 +118,19 @@ def obs_quality(row, fore_hour):
     #yr.no
     y_temp_qual = 50-5*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_y_temp'])
     y_prec_qual = 50-5*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_y_prec'])
-    if y_prec_qual > 0 and int(row['observed_prec']) == 0:
+    if (row[f'forecast_{fore_hour}_y_prec'] > 0) and (row['observed_prec'] == 0.0):
         y_prec_qual -= 10
     y_qual = y_temp_qual + y_prec_qual
     #owm
     o_temp_qual = 50-5*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_o_temp'])
     o_prec_qual = 50-5*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_o_prec'])
-    if o_prec_qual > 0 and int(row['observed_prec']) == 0:
+    if (row[f'forecast_{fore_hour}_o_prec'] > 0) and (row['observed_prec'] == 0.0):
         o_prec_qual -= 10
     o_qual = o_temp_qual + o_prec_qual
     #it.ee
     i_temp_qual = 50-5*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_i_temp'])
     i_prec_qual = 50-5*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_i_prec'])
-    if i_prec_qual > 0 and int(row['observed_prec']) == 0:
+    if (row[f'forecast_{fore_hour}_i_prec'] > 0) and (row['observed_prec'] == 0.0):
         i_prec_qual -= 10
     i_qual = i_temp_qual + i_prec_qual
     return pd.Series(

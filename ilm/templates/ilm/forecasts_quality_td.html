@@ -1,5 +1,5 @@
 <td
-        class="w3-{% if q >= 80 %}pale-green{% elif q >= 60 %}pale-yellow{% else %}pale-red{% endif %}"
+        class="w3-{% if q == 100 %}green{% elif q >= 80 %}pale-green{% elif q >= 60 %}pale-yellow{% else %}pale-red{% endif %}"
         {% if ft %}title="ennustus: {{ft}}°C - tegelik: {{ element.observed_temp }}°C&#10;ennustus: {{fp}} mm - tegelik: {{ element.observed_prec }} mm"{% endif %}
 >
     {{ q|floatformat:1 }}
