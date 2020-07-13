@@ -1,4 +1,5 @@
 {% extends "wiki/wiki_base.html" %}
+{% load static %}
 {% load wiki_extras %}
 
 {% block title %}{{ block.super }} - {{ artikkel }}{% endblock %}
@@ -117,4 +118,42 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="{% static 'ilm/js/swiped-events.js' %}"></script>
+{% if prev_obj %}
+<script>
+	// Vasakule või paremale libistamisel liigume eelmisele või järgmisele loole
+$(function(){
+  // Bind the swipeleftHandler callback function to the swipe event on div.box
+  document.addEventListener('swiped-left', swipeleftHandler);
+
+  // Callback function references the event target and adds the 'swipeleft' class to it
+  function swipeleftHandler( event ){
+    if(event.handled !== true) // This will prevent event triggering more then once
+    {
+  			window.open("{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}", "_self")
+        event.handled = true;
+    }
+    return false;
+  };
+});
+</script>
+{% endif %}
+{% if next_obj %}
+<script>
+$(function(){
+  // Bind the swipeleftHandler callback function to the swipe event on div.box
+  document.addEventListener('swiped-right', swiperightHandler);
+
+  // Callback function references the event target and adds the 'swipeleft' class to it
+  function swiperightHandler( event ){
+    if(event.handled !== true) // This will prevent event triggering more then once
+    {
+        window.open("{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}", "_self")
+        event.handled = true;
+    }
+    return false;
+  }
+});
+</script>
+{% endif %}
 {% endblock %}
