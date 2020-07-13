@@ -65,7 +65,8 @@ if (supportsPassive) {
 // Vasakule või paremale libistamisel vahetame ennustuse andmeid
 $(function(){
   // Bind the swipeleftHandler callback function to the swipe event on div.box
-  $( document ).on( "swipeleft", swipeleftHandler );
+  // $( document ).on( "swipeleft", swipeleftHandler );
+  document.addEventListener('swiped-left', swipeleftHandler);
 
   // Callback function references the event target and adds the 'swipeleft' class to it
   function swipeleftHandler( event ){
@@ -80,8 +81,9 @@ $(function(){
     return false;
   };
 
-    // Bind the swipeleftHandler callback function to the swipe event on div.box
-  $( document ).on( "swiperight", swiperightHandler );
+  // Bind the swipeleftHandler callback function to the swipe event on div.box
+  // $( document ).on( "swiperight", swiperightHandler );
+  document.addEventListener('swiped-right', swiperightHandler);
 
   // Callback function references the event target and adds the 'swipeleft' class to it
   function swiperightHandler( event ){
