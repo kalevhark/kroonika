@@ -113,26 +113,28 @@ def timestamp2date(row):
 
 def obs_quality(row, fore_hour):
     # 50% hindest temperatuur: 1 kraad erinevust=-5 punkt
-    # 50% hindest sademete täpsus: 1 mm erinevust=-5 punkt
+    # 50% hindest sademete täpsus: 1 mm erinevust=-10 punkt
     # Kui tegelikult sadas, aga prognoos = 0.0, siis -10 punkti
+    max = 100
+    koefitsent = 10
     #yr.no
-    y_temp_qual = 50-5*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_y_temp'])
-    y_prec_qual = 50-5*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_y_prec'])
+    y_temp_qual = koefitsent*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_y_temp'])
+    y_prec_qual = koefitsent*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_y_prec'])
     if (row[f'forecast_{fore_hour}_y_prec'] > 0) and (row['observed_prec'] == 0.0):
-        y_prec_qual -= 10
-    y_qual = y_temp_qual + y_prec_qual
+        y_prec_qual -= koefitsent
+    y_qual = max - (y_temp_qual + y_prec_qual)
     #owm
-    o_temp_qual = 50-5*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_o_temp'])
-    o_prec_qual = 50-5*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_o_prec'])
+    o_temp_qual = koefitsent*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_o_temp'])
+    o_prec_qual = koefitsent*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_o_prec'])
     if (row[f'forecast_{fore_hour}_o_prec'] > 0) and (row['observed_prec'] == 0.0):
-        o_prec_qual -= 10
-    o_qual = o_temp_qual + o_prec_qual
+        o_prec_qual -= koefitsent
+    o_qual = max - (o_temp_qual + o_prec_qual)
     #it.ee
-    i_temp_qual = 50-5*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_i_temp'])
-    i_prec_qual = 50-5*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_i_prec'])
+    i_temp_qual = koefitsent*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_i_temp'])
+    i_prec_qual = koefitsent*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_i_prec'])
     if (row[f'forecast_{fore_hour}_i_prec'] > 0) and (row['observed_prec'] == 0.0):
-        i_prec_qual -= 10
-    i_qual = i_temp_qual + i_prec_qual
+        i_prec_qual -= koefitsent
+    i_qual = max - (i_temp_qual + i_prec_qual)
     return pd.Series(
         [y_qual, o_qual, i_qual],
         index=[f'{fore_hour}_y_qual', f'{fore_hour}_o_qual', f'{fore_hour}_i_qual']
