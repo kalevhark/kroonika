@@ -11,7 +11,7 @@ table {
 
 td, th {
   vertical-align: middle;
-  padding: 10px;
+  padding: 5px;
   position: relative;
   outline: 0;
 }
@@ -62,6 +62,7 @@ tbody th:focus::before {
   text-align: right;
 }
 
+/*
 td.rain.light::before {
   content: '';
   position: relative;
@@ -70,6 +71,7 @@ td.rain.light::before {
   height: 1em;
   display: block;
 }
+
 
 td.rain.moderate::before {
   content: '';
@@ -88,6 +90,7 @@ td.rain.heavy::before {
   height: 1em;
   display: block;
 }
+*/
 
 /* Climacon */
 .fs1 {
@@ -156,7 +159,12 @@ if (screen.width < 500) {
 		{% for timestamp, data in forecast.items %}
 			<tr class="row">
 				<td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
-				<td class="temperature">{{ data.y_temp|floatformat:1 }}</td>
+				<td
+						class="temperature">
+					<span class="temperature colored-{% if data.y_temp > 0 %}positive{% else %}negative{% endif %}">
+						{{ data.y_temp|floatformat:1 }}
+					</span>
+				</td>
 				<td>
 					<img
 						src="https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/{{ data.y_icon }}.svg"
@@ -165,7 +173,12 @@ if (screen.width < 500) {
           />
 				</td>
 				<td class="rain {{ data.y_prec_color }}">{{ data.y_prec }}</td>
-				<td class="temperature">{{ data.o_temp|floatformat:1 }}</td>
+				<td
+						class="temperature">
+					<span class="temperature colored-{% if data.o_temp > 0 %}positive{% else %}negative{% endif %}">
+						{{ data.o_temp|floatformat:1 }}
+					</span>
+				</td>
 				<td>
 					<img
 						src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ data.o_icon }}.png"
@@ -174,7 +187,12 @@ if (screen.width < 500) {
           />
 				</td>
 				<td class="rain {{ data.o_prec_color }}">{{ data.o_prec|floatformat:1 }}</td>
-				<td class="temperature">{{ data.i_temp|floatformat:1 }}</td>
+				<td
+						class="temperature">
+					<span class="temperature colored-{% if data.i_temp > 0 %}positive{% else %}negative{% endif %}">
+						{{ data.i_temp|floatformat:1 }}
+					</span>
+				</td>
 				<td class="rain {{ data.i_prec_color }}">{{ data.i_prec|floatformat:1 }}</td>
 			</tr>
 		{% endfor %}
