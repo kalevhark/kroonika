@@ -252,7 +252,10 @@ class IlmateenistusData():
         jaam = 'Valga'
         href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
         r = requests.get(href) # TODO: Siia kirjutada tegevus, kui ei saada andmeid online
-        root = ET.fromstring(r.text)
+        try:
+            root = ET.fromstring(r.text)
+        except:
+            return None # Andmeid ei õnnestunud online saada
         i = dict()
         # Mõõtmise aeg
         dt = datetime.fromtimestamp(int(root.attrib['timestamp']))
@@ -399,16 +402,32 @@ class IlmateenistusData():
 
         # Lisame viimase mõõtmise andmed
         i = self.ilm_praegu()
-        tund = self.mitutundi(
-            hetke_aeg - timedelta(hours=23),
-            i['timestamp']
-        )
-        temperature.append([tund, i['airtemperature']])
-        # windbarb.append([
-        #    i['windspeed'], i['winddirection']
-        # ])
-        airpressure.append([tund, i['airpressure']])
-        # precipitation.append(i['precipitations'])
+        if i: # Kui andmed saadi
+            tund = self.mitutundi(
+                hetke_aeg - timedelta(hours=23),
+                i['timestamp']
+            )
+            temperature.append([tund, i['airtemperature']])
+            airpressure.append([tund, i['airpressure']])
+            humidity_string = str(int(i['relativehumidity'])) + '% '
+            windspeed_string = str(i['windspeed']) + ' m/s'
+            dt = i['timestamp'].strftime("%d.%m.%Y %H:%M")
+            dt_string = dt.strftime("%d.%m.%Y %H:%M")
+        else: # Viimase eduka mõõtmise andmed
+            humidity_string = ''
+            windspeed_string = ''
+            dt_delta = 23 - temperature[-1][0]
+            dt = datetime.now() - timedelta(hours=dt_delta)
+            dt_string = dt.strftime("%d.%m.%Y %H:00")
+
+        # Teeme ilmandmete stringi
+        if temperature[-1][1] < 0:
+            color = '#48AFE8'  # Kui negatiivne, siis sinine
+        else:
+            color = '#FF3333'  # Kui positiivne, siis sinine
+        temperature_string = f'{temperature[-1][1]:+.1f}°C'
+        temperature_color_span = f'<span style="color: {color}">{temperature_string}</span>'
+        ilmastring = f'{dt_string}: {temperature_color_span} {humidity_string} {windspeed_string}'
 
         andmed = dict()
         andmed['airtemperatures'] = temperature
@@ -416,19 +435,7 @@ class IlmateenistusData():
         andmed['windbarbs'] = windbarb
         andmed['airpressures'] = airpressure
         andmed['precipitations'] = precipitation
-        if i['airtemperature'] < 0:
-            color = '#48AFE8' # Kui negatiivne, siis sinine
-        else:
-            color = '#FF3333'# Kui positiivne, siis sinine
-        dt = i['timestamp'].strftime("%d.%m.%Y %H:%M")
-        andmed['ilmastring'] = (
-                dt + ': ' +
-                '<span style="color:' + color + '">' +
-                "{0:+.1f}".format(i['airtemperature']) + '°C ' +
-                '</span>' +
-                str(int(i['relativehumidity'])) + '% ' +
-                str(i['windspeed']) + ' m/s'
-        )
+        andmed['ilmastring'] = ilmastring
         return andmed
 
 
