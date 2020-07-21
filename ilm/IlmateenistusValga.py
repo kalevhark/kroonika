@@ -251,16 +251,17 @@ class IlmateenistusData():
         # Loeme Ilmateenistuse viimase mõõtmise andmed veebist
         jaam = 'Valga'
         href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
-        r = requests.get(href) # TODO: Siia kirjutada tegevus, kui ei saada andmeid online
         try:
+            r = requests.get(href)
             root = ET.fromstring(r.text)
         except:
             return None # Andmeid ei õnnestunud online saada
+        # Loeme soovitud jaama andmed
+        station = root.findall("./station/[name='"+jaam+"']")
         i = dict()
         # Mõõtmise aeg
         dt = datetime.fromtimestamp(int(root.attrib['timestamp']))
         i['timestamp'] = pytz.timezone('Europe/Tallinn').localize(dt)
-        station = root.findall("./station/[name='"+jaam+"']")
         for el in station:
             for it in el:
                 data = it.text
