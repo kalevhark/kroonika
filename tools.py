@@ -509,3 +509,11 @@ def db_test():
                 filtered_queryset,
                 f'{(datetime.now() - time).seconds}.{(datetime.now() - time).microseconds}'
             )
+
+    def fix(id):
+        art_500 = Artikkel.objects.get(id=id)
+        print(art_500.inp_date, art_500.mod_date)
+        for err_date in [art_500.inp_date, art_500.mod_date]:
+            if err_date.hour == 3 and err_date.weekday() == 6 and err_date.month in [3,10]:
+                fix_date = datetime(err_date.year, err_date.month, err_date.day)
+                print(fix_date)
