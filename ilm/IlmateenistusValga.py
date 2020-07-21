@@ -411,7 +411,7 @@ class IlmateenistusData():
             airpressure.append([tund, i['airpressure']])
             humidity_string = str(int(i['relativehumidity'])) + '% '
             windspeed_string = str(i['windspeed']) + ' m/s'
-            dt = i['timestamp'].strftime("%d.%m.%Y %H:%M")
+            dt = i['timestamp']
             dt_string = dt.strftime("%d.%m.%Y %H:%M")
         else: # Viimase eduka mõõtmise andmed
             humidity_string = ''

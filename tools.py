@@ -521,5 +521,11 @@ def fix(id):
         art_500.inp_date = fix_date
         fixed = True
 
+    if art_500.mod_date.hour == 3 and art_500.mod_date.weekday() == 6 and art_500.mod_date.month in [3,10]:
+        fix_date = datetime(art_500.mod_date.year, art_500.mod_date.month, art_500.mod_date.day)
+        print('Fix:', fix_date)
+        art_500.mod_date = fix_date
+        fixed = True
+
     if fixed:
         art_500.save()
