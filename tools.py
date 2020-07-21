@@ -512,8 +512,14 @@ def db_test():
 
 def fix(id):
     art_500 = Artikkel.objects.get(id=id)
+    fixed = False
     print(art_500.inp_date, art_500.mod_date)
-    for err_date in [art_500.inp_date, art_500.mod_date]:
-        if err_date.hour == 3 and err_date.weekday() == 6 and err_date.month in [3,10]:
-            fix_date = datetime(err_date.year, err_date.month, err_date.day)
-            print(fix_date)
+
+    if art_500.inp_date.hour == 3 and art_500.inp_date.weekday() == 6 and art_500.inp_date.month in [3,10]:
+        fix_date = datetime(art_500.inp_date.year, art_500.inp_date.month, art_500.inp_date.day)
+        print('Fix:', fix_date)
+        art_500.inp_date = fix_date
+        fixed = True
+
+    if fixed:
+        art_500.save()
