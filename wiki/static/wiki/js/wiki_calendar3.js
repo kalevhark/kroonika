@@ -74,11 +74,11 @@ var GWDateTimePicker = {
     $elements.selectedYear.innerHTML = CYEAR;
     $elements.selectedMonth.innerHTML = monthNames[CMONTH];
 
-    // 初始化当月的列表
+    // Valitud kuu kalender
     this.setDays(CYEAR, CMONTH);
 
     // Libistamise actionid
-    $elements.wrapper.addEventListener('swiped-left', function(e) {
+    $elements.wrapper.addEventListener('swiped-right', function(e) {
       selectedYear = $elements.selectedYear.innerHTML;
       selectedMonth = parseInt(monthNames.indexOf($elements.selectedMonth.innerHTML));
       selectedMonth--;
@@ -90,7 +90,7 @@ var GWDateTimePicker = {
       $elements.selectedYear.innerHTML = selectedYear;
       GWDateTimePicker.setDays(selectedYear, selectedMonth);
     });
-    $elements.wrapper.addEventListener('swiped-right', function(e) {
+    $elements.wrapper.addEventListener('swiped-left', function(e) {
       selectedYear = $elements.selectedYear.innerHTML;
       selectedMonth = parseInt(monthNames.indexOf($elements.selectedMonth.innerHTML));
       selectedMonth++;
