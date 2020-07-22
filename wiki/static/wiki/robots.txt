@@ -2,3 +2,5 @@ User-agent: *
 Disallow: /admin/
 Disallow: /accounts/
 Crawl-delay: 20
+
+Sitemap: https://valgalinn.ee/sitemap.xml
