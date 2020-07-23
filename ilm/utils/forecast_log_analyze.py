@@ -121,19 +121,19 @@ def obs_quality(row, fore_hour):
     y_temp_qual = koefitsent * abs(row['observed_temp'] - row[f'forecast_{fore_hour}_y_temp'])
     y_prec_qual = koefitsent * abs(row['observed_prec'] - row[f'forecast_{fore_hour}_y_prec'])
     y_qual = max - (y_temp_qual + y_prec_qual)
-    if (row[f'forecast_{fore_hour}_y_prec'] > 0) and (row['observed_prec'] == 0.0):
+    if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_y_prec'] == 0):
         y_qual -= koefitsent
     #owm
-    o_temp_qual = koefitsent*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_o_temp'])
-    o_prec_qual = koefitsent*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_o_prec'])
+    o_temp_qual = koefitsent * abs(row['observed_temp'] - row[f'forecast_{fore_hour}_o_temp'])
+    o_prec_qual = koefitsent * abs(row['observed_prec'] - row[f'forecast_{fore_hour}_o_prec'])
     o_qual = max - (o_temp_qual + o_prec_qual)
-    if (row[f'forecast_{fore_hour}_o_prec'] > 0) and (row['observed_prec'] == 0.0):
+    if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_o_prec'] == 0):
         o_qual -= koefitsent
     #it.ee
-    i_temp_qual = koefitsent*abs(row['observed_temp'] - row[f'forecast_{fore_hour}_i_temp'])
-    i_prec_qual = koefitsent*abs(row['observed_prec'] - row[f'forecast_{fore_hour}_i_prec'])
+    i_temp_qual = koefitsent * abs(row['observed_temp'] - row[f'forecast_{fore_hour}_i_temp'])
+    i_prec_qual = koefitsent * abs(row['observed_prec'] - row[f'forecast_{fore_hour}_i_prec'])
     i_qual = max - (i_temp_qual + i_prec_qual)
-    if (row[f'forecast_{fore_hour}_i_prec'] > 0) and (row['observed_prec'] == 0.0):
+    if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_i_prec'] == 0):
         i_qual -= koefitsent
     return pd.Series(
         [y_qual, o_qual, i_qual],
