@@ -117,3 +117,12 @@ if __name__ == '__main__':
         .head(10)
     result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
     print(result)
+
+    # IP aadressid, kes said 403
+    print('403 status:')
+    result = log_df_filtered[log_df_filtered['status_code'] == 403].groupby('IP_address')['resp_size'] \
+        .agg(['count']) \
+        .sort_values(by=['count'], ascending=[False]) \
+        .head(30)
+    # result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
+    print(result)
