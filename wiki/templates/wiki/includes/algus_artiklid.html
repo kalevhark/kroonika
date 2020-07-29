@@ -6,6 +6,7 @@
       Täna 100 aastat tagasi...
     </h5>
     {% if andmed.artikkel.100_aastat_tagasi %}
+      <div>
       {% for obj in andmed.artikkel.100_aastat_tagasi %}
         {% if forloop.counter > 1 %}
           <br>
@@ -15,6 +16,7 @@
           {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
         </a>
       {% endfor %}
+      </div>
     {% endif %}
     {% if andmed.isik.100_aastat_tagasi %}
       {% for obj in andmed.isik.100_aastat_tagasi %}
@@ -28,6 +30,7 @@
       {% endfor %}
     {% endif %}
     {% if andmed.organisatsioon.100_aastat_tagasi %}
+      <div>
       {% for obj in andmed.organisatsioon.100_aastat_tagasi %}
         {% if forloop.counter > 1 %}
           <br>
@@ -37,6 +40,7 @@
           {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
         </a>
       {% endfor %}
+      </div>
     {% endif %}
     {% if andmed.objekt.100_aastat_tagasi %}
       {% for obj in andmed.objekt.100_aastat_tagasi %}
