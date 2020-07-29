@@ -25,7 +25,7 @@
             <br>
           {% endif %}
           <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-            sündis {{ obj }} <strong>{{ obj.vanus }}</strong>
+            ...sündis {{ obj }}
             {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
           </a>
         {% endfor %}
@@ -38,7 +38,7 @@
             <br>
           {% endif %}
           <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
-            {{ obj }}&nbsp;<strong>{{ obj.vanus }}</strong>
+            ...asutati {{ obj }}
             {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
           </a>
         {% endfor %}
@@ -51,7 +51,7 @@
             <br>
           {% endif %}
           <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
-            {{ obj }} <strong>{{ obj.vanus }}</strong>
+            ...valmis {{ obj }}
             {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
           </a>
         {% endfor %}
