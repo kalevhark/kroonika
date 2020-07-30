@@ -1,5 +1,7 @@
 User-agent: *
 Disallow: /admin/
 Disallow: /accounts/
+Disallow: /static/
+Disallow: /media/
 Crawl-delay: 30
 Sitemap: https://valgalinn.ee/sitemap.xml
