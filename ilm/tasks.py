@@ -239,7 +239,9 @@ if __name__ == '__main__':
             pass
 
     # Ilmaennustuste logi
-    y = utils.yrno_48h()
+    # y = utils.yrno_48h()
+    yAPI = utils.YrnoAPI()
+    y = yAPI.yrno_forecasts
     o = utils.owm_onecall()
     i = utils.ilmateenistus_forecast()
 

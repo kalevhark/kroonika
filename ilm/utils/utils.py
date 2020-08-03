@@ -1,5 +1,6 @@
 from configparser import ConfigParser
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 import json
 import os
 import re
@@ -13,7 +14,7 @@ from bs4 import BeautifulSoup
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from pytz import timezone
+# from pytz import timezone
 import pytz
 import requests
 
@@ -78,7 +79,7 @@ OWM_CODES = {
 
 # Teisendab UTC -> Eesti aeg
 def utc2eesti_aeg(dt):
-    eesti_aeg = timezone('Europe/Tallinn')
+    eesti_aeg = pytz.timezone('Europe/Tallinn')
     return dt.astimezone(eesti_aeg)
 
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
@@ -448,3 +449,284 @@ def ilmateenistus_forecast():
             'pressure': hour['pressure']['@attributes']['value']
         }
     return {'forecast': forecast}
+
+
+
+# Vana xml parameetrid
+# <timezone id="Europe/Tallinn" utcoffsetMinutes="180"/>
+# <location altitude="64" latitude="57.77781" longitude="26.0473" geobase="geonames" geobaseid="587876"/>
+
+class YrnoAPI():
+
+    def __init__(self):
+        self.utc = pytz.utc
+        self.local = pytz.timezone("Europe/Tallinn")
+        # Uued ilmasymbolid vs vanad koodid
+        # symobol_codes day&night [4, 15, 10, 11, 48, 32, 50, 34, 46, 30, 47, 31, 49,33, 9, 22, 12, 23, 13, 14]
+        self.symbol_codes = {
+            'clearsky': '1',
+            'cloudy': '4',
+            'fair': '2',
+            'fog': '15',
+            'heavyrain': '10',
+            'heavyrainandthunder': '11',
+            'heavyrainshowers': '41',
+            'heavyrainshowersandthunder': '25',
+            'heavysleet': '48',
+            'heavysleetandthunder': '32',
+            'heavysleetshowers': '43',
+            'heavysleetshowersandthunder': '27',
+            'heavysnow': '50',
+            'heavysnowandthunder': '34',
+            'heavysnowshowers': '45',
+            'heavysnowshowersandthunder': '29',
+            'lightrain': '46', 'lightrainandthunder':
+                '30', 'lightrainshowers': '40',
+            'lightrainshowersandthunder': '24',
+            'lightsleet': '47',
+            'lightsleetandthunder': '31',
+            'lightsleetshowers': '42',
+            'lightsnow': '49',
+            'lightsnowandthunder': '33',
+            'lightsnowshowers': '44',
+            'lightssleetshowersandthunder': '26',
+            'lightssnowshowersandthunder': '28',
+            'partlycloudy': '3',
+            'rain': '9',
+            'rainandthunder': '22',
+            'rainshowers': '5',
+            'rainshowersandthunder': '6',
+            'sleet': '12',
+            'sleetandthunder': '23',
+            'sleetshowers': '7',
+            'sleetshowersandthunder': '20',
+            'snow': '13',
+            'snowandthunder': '14',
+            'snowshowers': '8',
+            'snowshowersandthunder': '21'
+        }
+
+        self.yrno_forecast_json = self.get_data('yrno')
+        if self.yrno_forecast_json:
+            self.timeseries_48h = self.yrno_next48h(self.yrno_forecast_json)
+            self.yrno_forecasts = self.yrno_next48h_forecasts(self.timeseries_48h)
+
+    def get_api_data(self, url, headers, params):
+        r = requests.get(
+            url,
+            headers=headers,
+            params=params
+        )
+        if r.status_code == 200:
+            meta = {}
+            meta = {
+                'Expires': r.headers['Expires'],
+                'Last-Modified': r.headers['Last-Modified']
+            }
+            data = json.loads(r.text)
+            return {'meta': meta, 'data': data}
+        else:
+            print(r.status_code)
+            return None
+
+    def get_data(self, src):
+        cache_file = f'_cache_{src}.json'
+
+        # Kas värsked andmed olemas_
+        if os.path.isfile(cache_file):
+            with open(cache_file, mode='r') as f:
+                data = json.loads(f.read())
+            now = datetime.now(timezone.utc)
+            exp = parsedate_to_datetime(data['meta']['Expires'])
+            print(now, exp)
+            if now < exp:
+                print('Andmed: cache')
+                return data
+
+        # Küsime värsked andmed
+        # kohaandmed = Valga
+        altitude = "64"
+        lat = "57.77781"
+        lon = "26.0473"
+        # yr.no API
+        url = 'https://api.met.no/weatherapi/locationforecast/2.0/complete'
+        params = {
+            'lat': lat,
+            'lon': lon,
+            'altitude': altitude
+        }
+        headers = {}
+        data = self.get_api_data(url, headers, params)
+        print('Andmed: API')
+
+        # Salvestame cache
+        with open(cache_file, mode='w') as f:
+            json.dump(data, f, indent=4)
+        return data
+
+    def yrno_next48h(self, yrno_forecast_json):
+        data = yrno_forecast_json['data']
+        # updated_at = data['properties']['meta']['updated_at']
+        # print(updated_at)
+        # yrno API annab uue ennustuse iga tunni aja tagant
+        # alates sellele järgnevast täistunnist
+        timeseries = data['properties']['timeseries']
+        now = datetime.now(timezone.utc).isoformat()
+        # Filtreerime hetkeajast hilisemad järgmise 48h ennustused
+        filter_pastnow = filter(lambda hour: hour['time'] > now, timeseries)
+        timeseries_48h = list(filter_pastnow)[:48]
+        return timeseries_48h
+
+    def yrno_next48h_forecasts(self, timeseries_48h):
+        yr = {}
+        meta = self.yrno_forecast_json['data']['properties']['meta']
+        updated_at_utc = datetime.strptime(
+            meta['updated_at'],
+            '%Y-%m-%dT%H:%M:%SZ'
+        )
+        updated_at_loc = updated_at_utc.astimezone(self.local)
+        yr['meta'] = meta
+        yr['meta']['lastupdate'] = updated_at_loc
+        yr['forecast'] = {}
+        cat = []
+        dt = []
+        prec = []
+        wind = []
+        temp = []
+        pres = []
+        symb = []
+        dateticks = [0]  # Graafikul kuupäevatikkerite jaoks
+        for hour in timeseries_48h:
+            # data = tag_forecast[n]
+            # time = pytz.timezone('Europe/Tallinn').localize(datetime.strptime(data.attrib['from'], '%Y-%m-%dT%H:%M:%S'))
+            date_string = hour['time']
+            utc_time = self.utc.localize(datetime.strptime(
+                date_string,
+                '%Y-%m-%dT%H:%M:%SZ'
+            )
+            )
+            loc_time = utc_time.astimezone(self.local)
+            cat.append(loc_time)  # Aeg
+            time_stamp = int(datetime.timestamp(loc_time))
+            dt.append(time_stamp)
+            if loc_time.hour == 0:
+                n = loc_time - cat[0]
+                dateticks.append(int(n.total_seconds() / 3600))
+            instant = hour['data']['instant']['details']
+            next_1_hours = hour['data']['next_1_hours']
+            # Sademed
+            prec_minvalue = float(next_1_hours['details']['precipitation_amount_min'])
+            prec_maxvalue = float(next_1_hours['details']['precipitation_amount_max'])
+            prec_value = prec_minvalue  # ühildumiseks eelmise versiooniga
+            # except:
+            if prec_maxvalue > 2:
+                prec_color = 'heavy'
+            elif prec_maxvalue > 1:
+                prec_color = 'moderate'
+            elif prec_maxvalue > 0:
+                prec_color = 'light'
+            else:
+                prec_color = 'none'
+            prec.append([prec_value, prec_minvalue, prec_maxvalue])
+            # Tuul
+            wind_from_direction = float(instant['wind_from_direction'])
+            wind_speed = float(instant['wind_speed'])
+            wind.append(
+                [wind_speed, wind_from_direction]
+            )
+            # Temperatuur
+            air_temperature = float(instant['air_temperature'])
+            temp.append(air_temperature)
+            # Õhurõhk
+            air_pressure_at_sea_level = float(instant['air_pressure_at_sea_level'])
+            pres.append(air_pressure_at_sea_level)
+            # Sümbolid
+            symbol_code = next_1_hours['summary']['symbol_code']
+            symb.append(symbol_code)  # Ilmasümboli kood (YR)
+
+            yr['forecast'][str(time_stamp)] = {
+                'time': loc_time,
+                'precipitation': f'{prec_value}' if prec_value == prec_maxvalue else f'{prec_minvalue}-{prec_maxvalue}',
+                # 'precipitation': {
+                #     'value': prec_value,
+                #     'minvalue': prec_minvalue,
+                #     'maxvalue': prec_maxvalue
+                # },
+                'precipitation_color': prec_color,
+                'temperature': air_temperature,
+                'pressure': air_pressure_at_sea_level,
+                'windSpeed': wind_speed,
+                'windDirection': wind_from_direction,
+                'symbol': symbol_code
+            }
+        yr['series'] = {
+            'start': cat[0],  # Mis kellast prognoos algab
+            'temperatures': temp,
+            'windbarbs': wind,
+            'airpressures': pres,
+            'precipitations': prec,
+            'symbols': symb,
+            'dt': dt,
+        }
+        return yr
+
+    def yrno_next48h_showdata(self, timeseries_48h):
+        for hour in timeseries_48h:
+            date_string = hour['time']
+            utc_time = self.utc.localize(datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ'))
+            loc_time = utc_time.astimezone(self.local)
+            instant = hour['data']['instant']['details']
+            air_pressure_at_sea_level = instant['air_pressure_at_sea_level']
+            air_temperature = instant['air_temperature']
+            wind_from_direction = instant['wind_from_direction']
+            wind_speed = instant['wind_speed']
+            try:
+                next_1_hours = hour['data']['next_1_hours']
+                precipitation_amount_min = next_1_hours['details']['precipitation_amount_min']
+                precipitation_amount_max = next_1_hours['details']['precipitation_amount_max']
+                symbol_code = next_1_hours['summary']['symbol_code']
+                old_symbol_code = self.yrno_2old_symbol_code(symbol_code)
+            except:
+                break
+            print(
+                date_string,
+                loc_time,
+                air_pressure_at_sea_level,
+                air_temperature,
+                wind_from_direction,
+                wind_speed,
+                f'{precipitation_amount_min}-{precipitation_amount_max}',
+                symbol_code,
+                old_symbol_code
+            )
+
+    def yrno_2old_symbol_code(self, symbol_code_str):
+        symbol_code = symbol_code_str.split('_')
+        if symbol_code[-1] == 'night':
+            dayornight = 'n'
+        elif symbol_code[-1] == 'day':
+            dayornight = 'd'
+        else:
+            dayornight = ''
+        old_symbol_code = self.symbol_codes.get(symbol_code[0], None)
+        if old_symbol_code:
+            return ''.join([old_symbol_code, dayornight])
+        else:
+            return ''
+
+    def yrno_2new_symbol_code(self, symbol_code_str):
+        new_symbol_codes = {self.symbol_codes[el]: el for el in self.symbol_codes}
+        if symbol_code_str[-1] == 'd':
+            dayornight = '_day'
+            old_symbol_code = symbol_code_str.replace('d', '')
+        elif symbol_code_str[-1] == 'n':
+            dayornight = '_night'
+            old_symbol_code = symbol_code_str.replace('n', '')
+        else:
+            dayornight = ''
+            old_symbol_code = symbol_code_str
+        new_symbol_code = new_symbol_codes.get(old_symbol_code, None)
+        if new_symbol_code:
+            return ''.join([new_symbol_code, dayornight])
+        else:
+            return ''
