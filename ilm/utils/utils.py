@@ -7,10 +7,16 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
+from bs4 import BeautifulSoup
+
+try:
+    from django.core.cache import cache
+except:
+    pass
+
 from urllib.request import Request, urlopen
 from urllib.error import URLError
 
-from bs4 import BeautifulSoup
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -518,7 +524,6 @@ class YrnoAPI():
             params=params
         )
         if r.status_code == 200:
-            meta = {}
             meta = {
                 'Expires': r.headers['Expires'],
                 'Last-Modified': r.headers['Last-Modified']
@@ -526,21 +531,30 @@ class YrnoAPI():
             data = json.loads(r.text)
             return {'meta': meta, 'data': data}
         else:
-            print(r.status_code)
+            # print(r.status_code)
             return None
 
     def get_data(self, src):
         cache_file = f'_cache_{src}.json'
-
-        # Kas värsked andmed olemas_
+        # Kas värsked andmed olemas (django cache)
+        try:
+            if cache.get(src):
+                data = cache.get(src)
+                now = datetime.now(timezone.utc)
+                exp = parsedate_to_datetime(data['meta']['Expires'])
+                if now < exp:
+                    print('Andmed: cache Django')
+                    return data
+        except:
+            pass
+        # Kas värsked andmed olemas (disk cache)
         if os.path.isfile(cache_file):
             with open(cache_file, mode='r') as f:
                 data = json.loads(f.read())
             now = datetime.now(timezone.utc)
             exp = parsedate_to_datetime(data['meta']['Expires'])
-            print(now, exp)
             if now < exp:
-                print('Andmed: cache')
+                print('Andmed: cache disk')
                 return data
 
         # Küsime värsked andmed
@@ -559,7 +573,12 @@ class YrnoAPI():
         data = self.get_api_data(url, headers, params)
         print('Andmed: API')
 
-        # Salvestame cache
+        # Salvestame cache (django)
+        try:
+            cache.set(src, data)
+        except:
+            pass
+        # Salvestame cache (disk)
         try:
             with open(cache_file, mode='w') as f:
                 json.dump(data, f, indent=4)
