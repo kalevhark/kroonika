@@ -1749,7 +1749,11 @@ def mixed_ilmateade(request):
         'Valga',
         d.replace(minute=0, second=0, microsecond=0)
     )
-    andmed_j2rgnevad48h = yrno_48h()
+
+    # andmed_j2rgnevad48h = yrno_48h()
+    yAPI = utils.YrnoAPI()
+    andmed_j2rgnevad48h = yAPI.yrno_forecasts
+
     # Pimeda aja varjutused
     andmed_nighttime = nighttime2(c[0], c[-1])
     # Hetkeaja joon
@@ -1953,7 +1957,8 @@ def mixed_ilmateade(request):
             'negativeColor': '#48AFE8'
 	    }, {
             'name': 'Temperatuur (prognoos)', # Prognoos
-            'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['temperatures'],
+            # 'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['temperatures'],
+            'data': 24 * [None] + andmed_j2rgnevad48h['series']['temperatures'],
             'type': 'spline',
             'marker': {
                 'enabled': False,
@@ -2002,7 +2007,8 @@ def mixed_ilmateade(request):
                 }
             },
             'name': 'Sademed (prognoos)',
-            'data': 24 * [None] + [el[2] for el in andmed_j2rgnevad48h['forecast']['precipitations']],
+            # 'data': 24 * [None] + [el[2] for el in andmed_j2rgnevad48h['forecast']['precipitations']],
+            'data': 24 * [None] + [el[2] for el in andmed_j2rgnevad48h['series']['precipitations']],
             'color': '#68CFE8',
             'yAxis': 1,
             'groupPadding': 0,
@@ -2030,7 +2036,8 @@ def mixed_ilmateade(request):
             'yAxis': 2
 	    }, {
             'name': 'Õhurõhk (prognoos)',
-            'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['airpressures'],
+            # 'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['airpressures'],
+            'data': 24 * [None] + andmed_j2rgnevad48h['series']['airpressures'],
             'color': '#90ed7d',
             'type': 'spline',
             'marker': {
@@ -2050,13 +2057,15 @@ def mixed_ilmateade(request):
             'type': 'windbarb',
 	    }, {
             'name': 'Tuul (prognoos)',
-            'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['windbarbs'],
+            # 'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['windbarbs'],
+            'data': 24 * [None] + andmed_j2rgnevad48h['series']['windbarbs'],
             'type': 'windbarb',
             'color': 'gray'
 	    }]
     }
 
-    chart['yrno_symbols'] = andmed_eelnevad24h['symbols'] + andmed_j2rgnevad48h['forecast']['symbols']
+    # chart['yrno_symbols'] = andmed_eelnevad24h['symbols'] + andmed_j2rgnevad48h['forecast']['symbols']
+    chart['yrno_symbols'] = andmed_eelnevad24h['symbols'] + andmed_j2rgnevad48h['series']['symbols']
     # Hetketemperatuur
     chart['airtemperatures'] = andmed_eelnevad24h['airtemperatures']
     return JsonResponse(chart)

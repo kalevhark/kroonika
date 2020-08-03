@@ -81,7 +81,7 @@ function mixed_ilmateade() {
               .image(
 //                'http://yr.github.io/weather-symbols/png/100/' +
 //                data.yrno_symbols[i] + '.png',
-                'https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/' +
+                '/static/ilm/img/weathericon/svg/' +
                 data.yrno_symbols[i] + '.svg',
                 point.plotX + chart.plotLeft - 8,
                 point.plotY + chart.plotTop - 30,

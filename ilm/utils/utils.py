@@ -458,10 +458,7 @@ def ilmateenistus_forecast():
 
 
 
-# Vana xml parameetrid
-# <timezone id="Europe/Tallinn" utcoffsetMinutes="180"/>
-# <location altitude="64" latitude="57.77781" longitude="26.0473" geobase="geonames" geobaseid="587876"/>
-
+# yrno API ver 2 andmete päring
 class YrnoAPI():
 
     def __init__(self):
@@ -512,11 +509,15 @@ class YrnoAPI():
             'snowshowersandthunder': '21'
         }
 
+        # Küsime ilmaennustuse json täielikud andmed
         self.yrno_forecast_json = self.get_data('yrno')
         if self.yrno_forecast_json:
+            # Filtreerime järgmise 48h ennustuse andmed
             self.timeseries_48h = self.yrno_next48h(self.yrno_forecast_json)
+            # Töötleme veebi jaoks sobivateks andmepakkideks
             self.yrno_forecasts = self.yrno_next48h_forecasts(self.timeseries_48h)
 
+    # Andmete pärimine APIst
     def get_api_data(self, url, headers, params):
         r = requests.get(
             url,
@@ -534,6 +535,7 @@ class YrnoAPI():
             # print(r.status_code)
             return None
 
+    # Kas andmed on värsked või vaja värskendada
     def get_data(self, src):
         # cache_file = f'_cache_{src}.json'
         # Kas värsked andmed olemas (django cache)
@@ -586,10 +588,9 @@ class YrnoAPI():
         #     pass
         return data
 
+    # Filtreerime täielikust ennustusandmestikust järgmised 48h
     def yrno_next48h(self, yrno_forecast_json):
         data = yrno_forecast_json['data']
-        # updated_at = data['properties']['meta']['updated_at']
-        # print(updated_at)
         # yrno API annab uue ennustuse iga tunni aja tagant
         # alates sellele järgnevast täistunnist
         timeseries = data['properties']['timeseries']
@@ -599,6 +600,7 @@ class YrnoAPI():
         timeseries_48h = list(filter_pastnow)[:48]
         return timeseries_48h
 
+    # Töötleme andmed ilmveebile sobivateks pakkideks: 'meta', 'forecast', 'series'
     def yrno_next48h_forecasts(self, timeseries_48h):
         yr = {}
         meta = self.yrno_forecast_json['data']['properties']['meta']
@@ -692,36 +694,7 @@ class YrnoAPI():
         }
         return yr
 
-    def yrno_next48h_showdata(self, timeseries_48h):
-        for hour in timeseries_48h:
-            date_string = hour['time']
-            utc_time = self.utc.localize(datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ'))
-            loc_time = utc_time.astimezone(self.local)
-            instant = hour['data']['instant']['details']
-            air_pressure_at_sea_level = instant['air_pressure_at_sea_level']
-            air_temperature = instant['air_temperature']
-            wind_from_direction = instant['wind_from_direction']
-            wind_speed = instant['wind_speed']
-            try:
-                next_1_hours = hour['data']['next_1_hours']
-                precipitation_amount_min = next_1_hours['details']['precipitation_amount_min']
-                precipitation_amount_max = next_1_hours['details']['precipitation_amount_max']
-                symbol_code = next_1_hours['summary']['symbol_code']
-                old_symbol_code = self.yrno_2old_symbol_code(symbol_code)
-            except:
-                break
-            print(
-                date_string,
-                loc_time,
-                air_pressure_at_sea_level,
-                air_temperature,
-                wind_from_direction,
-                wind_speed,
-                f'{precipitation_amount_min}-{precipitation_amount_max}',
-                symbol_code,
-                old_symbol_code
-            )
-
+    # uue ilmasümboli teisendamine vanaks
     def yrno_2old_symbol_code(self, symbol_code_str):
         symbol_code = symbol_code_str.split('_')
         if symbol_code[-1] == 'night':
@@ -736,6 +709,7 @@ class YrnoAPI():
         else:
             return ''
 
+    # vana ilmasümboli teisendamine uueks
     def yrno_2new_symbol_code(self, symbol_code_str):
         new_symbol_codes = {self.symbol_codes[el]: el for el in self.symbol_codes}
         if symbol_code_str[-1] == 'd':
