@@ -560,8 +560,11 @@ class YrnoAPI():
         print('Andmed: API')
 
         # Salvestame cache
-        with open(cache_file, mode='w') as f:
-            json.dump(data, f, indent=4)
+        try:
+            with open(cache_file, mode='w') as f:
+                json.dump(data, f, indent=4)
+        except:
+            pass
         return data
 
     def yrno_next48h(self, yrno_forecast_json):
