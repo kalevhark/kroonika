@@ -535,7 +535,7 @@ class YrnoAPI():
             return None
 
     def get_data(self, src):
-        cache_file = f'_cache_{src}.json'
+        # cache_file = f'_cache_{src}.json'
         # Kas värsked andmed olemas (django cache)
         try:
             if cache.get(src):
@@ -548,14 +548,14 @@ class YrnoAPI():
         except:
             pass
         # Kas värsked andmed olemas (disk cache)
-        if os.path.isfile(cache_file):
-            with open(cache_file, mode='r') as f:
-                data = json.loads(f.read())
-            now = datetime.now(timezone.utc)
-            exp = parsedate_to_datetime(data['meta']['Expires'])
-            if now < exp:
-                print('Andmed: cache disk')
-                return data
+        # if os.path.isfile(cache_file):
+        #     with open(cache_file, mode='r') as f:
+        #         data = json.loads(f.read())
+        #     now = datetime.now(timezone.utc)
+        #     exp = parsedate_to_datetime(data['meta']['Expires'])
+        #     if now < exp:
+        #         print('Andmed: cache disk')
+        #         return data
 
         # Küsime värsked andmed
         # kohaandmed = Valga
@@ -579,11 +579,11 @@ class YrnoAPI():
         except:
             pass
         # Salvestame cache (disk)
-        try:
-            with open(cache_file, mode='w') as f:
-                json.dump(data, f, indent=4)
-        except:
-            pass
+        # try:
+        #     with open(cache_file, mode='w') as f:
+        #         json.dump(data, f, indent=4)
+        # except:
+        #     pass
         return data
 
     def yrno_next48h(self, yrno_forecast_json):
