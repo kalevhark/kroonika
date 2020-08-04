@@ -604,11 +604,13 @@ class YrnoAPI():
     def yrno_next48h_forecasts(self, timeseries_48h):
         yr = {}
         meta = self.yrno_forecast_json['data']['properties']['meta']
-        updated_at_utc = datetime.strptime(
+        updated_at = datetime.strptime(
             meta['updated_at'],
             '%Y-%m-%dT%H:%M:%SZ'
         )
+        updated_at_utc = pytz.utc.localize(updated_at)
         updated_at_loc = updated_at_utc.astimezone(self.local)
+        print(updated_at_utc, updated_at_loc)
         yr['meta'] = meta
         yr['meta']['lastupdate'] = updated_at_loc
         yr['forecast'] = {}
