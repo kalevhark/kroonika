@@ -1547,63 +1547,63 @@ def container_history_kuud_aastatekaupa(request):
     }
     return JsonResponse(chart)
 
-def yrno_48h():
-    # Weather forecast from Yr, delivered by the Norwegian Meteorological Institute and the NRK
-    href = 'http://www.yr.no/place/Estonia/Valgamaa/Valga/forecast_hour_by_hour.xml'
-    # tree = etree.parse(href)
-    # root = tree.getroot()
-    r = requests.get(href)
-    root = ET.fromstring(r.text)
-    yr = {}
-    tag_timezone = root.find("location").find("timezone") # Otsime XML puu asukoha andmetega
-    utcoffsetMinutes = int(tag_timezone.attrib['utcoffsetMinutes'])
-    tag_meta = root.find("meta") # Otsime XML puu metaandmetega
-    yr['meta'] = {}
-    yr['meta']['lastupdate'] = datetime.strptime(tag_meta.find("lastupdate").text, '%Y-%m-%dT%H:%M:%S')
-    yr['meta']['nextupdate'] = datetime.strptime(tag_meta.find("nextupdate").text, '%Y-%m-%dT%H:%M:%S')
-    # yr['forecast'] = {}
-    cat = []
-    dt = []
-    prec = []
-    wind = []
-    temp = []
-    pres = []
-    symb = []
-    dateticks = [0] # Graafikul kuupäevatikkerite jaoks
-    tag_forecast = root.find("forecast").find("tabular") # Otsime XML puu prognoosi tabeliga
-    for n in range(len(tag_forecast)):
-        data = tag_forecast[n]
-        date = pytz.timezone('Europe/Tallinn').localize(datetime.strptime(data.attrib['from'], '%Y-%m-%dT%H:%M:%S'))
-        dt.append(datetime.timestamp(date))
-        if date.hour == 0:
-            dateticks.append(n)
-        cat.append(date) # Aeg
-        # Sademed
-        prec_value = float(data.find("precipitation").attrib['value'])
-        try:
-            prec_maxvalue = float(data.find("precipitation").attrib['maxvalue'])
-            prec_minvalue = float(data.find("precipitation").attrib['minvalue'])
-        except:
-            prec_minvalue = prec_maxvalue = prec_value
-
-        prec.append([prec_value, prec_minvalue, prec_maxvalue]) # Sademed
-        wind.append(
-            [float(data.find("windSpeed").attrib['mps']),
-            float(data.find("windDirection").attrib['deg'])]
-        )
-        temp.append(float(data.find("temperature").attrib['value'])) # Temperatuur
-        pres.append(float(data.find("pressure").attrib['value'])) # Õhurõhk
-        symb.append(data.find("symbol").attrib['var']) # Ilmasümboli kood (YR)
-    yr['forecast'] = {
-        'start': cat[0], # Mis kellast prognoos algab
-        'temperatures': temp,
-        'windbarbs': wind,
-        'airpressures': pres,
-        'precipitations': prec,
-        'symbols': symb,
-        'dt': dt,
-    }
-    return yr
+# def yrno_48h():
+#     # Weather forecast from Yr, delivered by the Norwegian Meteorological Institute and the NRK
+#     href = 'http://www.yr.no/place/Estonia/Valgamaa/Valga/forecast_hour_by_hour.xml'
+#     # tree = etree.parse(href)
+#     # root = tree.getroot()
+#     r = requests.get(href)
+#     root = ET.fromstring(r.text)
+#     yr = {}
+#     tag_timezone = root.find("location").find("timezone") # Otsime XML puu asukoha andmetega
+#     utcoffsetMinutes = int(tag_timezone.attrib['utcoffsetMinutes'])
+#     tag_meta = root.find("meta") # Otsime XML puu metaandmetega
+#     yr['meta'] = {}
+#     yr['meta']['lastupdate'] = datetime.strptime(tag_meta.find("lastupdate").text, '%Y-%m-%dT%H:%M:%S')
+#     yr['meta']['nextupdate'] = datetime.strptime(tag_meta.find("nextupdate").text, '%Y-%m-%dT%H:%M:%S')
+#     # yr['forecast'] = {}
+#     cat = []
+#     dt = []
+#     prec = []
+#     wind = []
+#     temp = []
+#     pres = []
+#     symb = []
+#     dateticks = [0] # Graafikul kuupäevatikkerite jaoks
+#     tag_forecast = root.find("forecast").find("tabular") # Otsime XML puu prognoosi tabeliga
+#     for n in range(len(tag_forecast)):
+#         data = tag_forecast[n]
+#         date = pytz.timezone('Europe/Tallinn').localize(datetime.strptime(data.attrib['from'], '%Y-%m-%dT%H:%M:%S'))
+#         dt.append(datetime.timestamp(date))
+#         if date.hour == 0:
+#             dateticks.append(n)
+#         cat.append(date) # Aeg
+#         # Sademed
+#         prec_value = float(data.find("precipitation").attrib['value'])
+#         try:
+#             prec_maxvalue = float(data.find("precipitation").attrib['maxvalue'])
+#             prec_minvalue = float(data.find("precipitation").attrib['minvalue'])
+#         except:
+#             prec_minvalue = prec_maxvalue = prec_value
+#
+#         prec.append([prec_value, prec_minvalue, prec_maxvalue]) # Sademed
+#         wind.append(
+#             [float(data.find("windSpeed").attrib['mps']),
+#             float(data.find("windDirection").attrib['deg'])]
+#         )
+#         temp.append(float(data.find("temperature").attrib['value'])) # Temperatuur
+#         pres.append(float(data.find("pressure").attrib['value'])) # Õhurõhk
+#         symb.append(data.find("symbol").attrib['var']) # Ilmasümboli kood (YR)
+#     yr['forecast'] = {
+#         'start': cat[0], # Mis kellast prognoos algab
+#         'temperatures': temp,
+#         'windbarbs': wind,
+#         'airpressures': pres,
+#         'precipitations': prec,
+#         'symbols': symb,
+#         'dt': dt,
+#     }
+#     return yr
 
 def owm_onecall():
     api_key = settings.OWM_APIKEY
@@ -2070,87 +2070,87 @@ def mixed_ilmateade(request):
     chart['airtemperatures'] = andmed_eelnevad24h['airtemperatures']
     return JsonResponse(chart)
 
+# def forecasts(request):
+#     y = utils.yrno_48h()
+#     o = utils.owm_onecall()
+#     i = utils.ilmateenistus_forecast()
+#     now = datetime.now()
+#     forecast = dict()
+#
+#     for forecast_hour in range(1, 48):
+#         fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(hours=forecast_hour)
+#         ref_dt = int(datetime.timestamp(fore_dt))
+#
+#         # yr.no
+#         y_temp = None
+#         y_prec = None
+#         y_prec_color = ''
+#         y_icon = ''
+#         # for hour in range(len(y['forecast']['dt'])):
+#         #     if int(y['forecast']['dt'][hour]) == ref_dt:
+#         #         # y_dt = y['forecast']['dt'][hour]
+#         #         y_temp = y['forecast']['temperatures'][hour]
+#         #         y_prec = y['forecast']['precipitations'][hour]
+#         #         break
+#         y_data = y['forecast'].get(str(ref_dt), None)
+#         if y_data:
+#             # i_dt = ref_dt
+#             y_temp = y_data['temperature']
+#             y_icon = y_data['symbol']
+#             y_prec = y_data['precipitation']
+#             y_prec_color = y_data['precipitation_color']
+#         # openweathermaps.org
+#         o_temp = None
+#         o_prec = None
+#         o_prec_color = ''
+#         o_icon = ''
+#         # for hour in o['hourly']:
+#         #     if int(hour['dt']) == ref_dt:
+#         #         # o_dt = int(hour['dt'])
+#         #         o_temp = hour['temp']
+#         #         try:
+#         #             o_prec = hour['rain']['1h']
+#         #         except:
+#         #             o_prec = '0.0'
+#         o_data = o['forecast'].get(str(ref_dt), None)
+#         if o_data:
+#             o_temp = o_data['temp']
+#             o_icon = o_data['weather'][0]['icon']
+#             try:
+#                 o_prec = o_data['rain']['1h']
+#             except:
+#                 o_prec = '0.0'
+#             o_prec_color = o_data['precipitation_color']
+#
+#         # ilmateenistus.ee
+#         i_temp = None
+#         i_prec = None
+#         i_prec_color = ''
+#         i_data = i['forecast'].get(str(ref_dt), None)
+#         if i_data:
+#             i_temp = float_or_none(i_data['temperature'])
+#             i_prec = i_data['precipitation']
+#             i_prec_color = i_data['precipitation_color']
+#
+#         forecast[str(ref_dt)] = {
+#             'y_temp': y_temp,
+#             'y_icon': y_icon,
+#             'y_prec': str(y_prec),
+#             'y_prec_color': y_prec_color,
+#             'o_temp': o_temp,
+#             'o_icon': o_icon,
+#             'o_prec': str(o_prec),
+#             'o_prec_color': o_prec_color,
+#             'i_temp': i_temp,
+#             'i_prec': str(i_prec),
+#             'i_prec_color': i_prec_color,
+#         }
+#     context = {
+#         'forecast': forecast
+#     }
+#     return render(request, 'ilm/forecasts.html', context)
+
 def forecasts(request):
-    y = utils.yrno_48h()
-    o = utils.owm_onecall()
-    i = utils.ilmateenistus_forecast()
-    now = datetime.now()
-    forecast = dict()
-
-    for forecast_hour in range(1, 48):
-        fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(hours=forecast_hour)
-        ref_dt = int(datetime.timestamp(fore_dt))
-
-        # yr.no
-        y_temp = None
-        y_prec = None
-        y_prec_color = ''
-        y_icon = ''
-        # for hour in range(len(y['forecast']['dt'])):
-        #     if int(y['forecast']['dt'][hour]) == ref_dt:
-        #         # y_dt = y['forecast']['dt'][hour]
-        #         y_temp = y['forecast']['temperatures'][hour]
-        #         y_prec = y['forecast']['precipitations'][hour]
-        #         break
-        y_data = y['forecast'].get(str(ref_dt), None)
-        if y_data:
-            # i_dt = ref_dt
-            y_temp = y_data['temperature']
-            y_icon = y_data['symbol']
-            y_prec = y_data['precipitation']
-            y_prec_color = y_data['precipitation_color']
-        # openweathermaps.org
-        o_temp = None
-        o_prec = None
-        o_prec_color = ''
-        o_icon = ''
-        # for hour in o['hourly']:
-        #     if int(hour['dt']) == ref_dt:
-        #         # o_dt = int(hour['dt'])
-        #         o_temp = hour['temp']
-        #         try:
-        #             o_prec = hour['rain']['1h']
-        #         except:
-        #             o_prec = '0.0'
-        o_data = o['forecast'].get(str(ref_dt), None)
-        if o_data:
-            o_temp = o_data['temp']
-            o_icon = o_data['weather'][0]['icon']
-            try:
-                o_prec = o_data['rain']['1h']
-            except:
-                o_prec = '0.0'
-            o_prec_color = o_data['precipitation_color']
-
-        # ilmateenistus.ee
-        i_temp = None
-        i_prec = None
-        i_prec_color = ''
-        i_data = i['forecast'].get(str(ref_dt), None)
-        if i_data:
-            i_temp = float_or_none(i_data['temperature'])
-            i_prec = i_data['precipitation']
-            i_prec_color = i_data['precipitation_color']
-
-        forecast[str(ref_dt)] = {
-            'y_temp': y_temp,
-            'y_icon': y_icon,
-            'y_prec': str(y_prec),
-            'y_prec_color': y_prec_color,
-            'o_temp': o_temp,
-            'o_icon': o_icon,
-            'o_prec': str(o_prec),
-            'o_prec_color': o_prec_color,
-            'i_temp': i_temp,
-            'i_prec': str(i_prec),
-            'i_prec_color': i_prec_color,
-        }
-    context = {
-        'forecast': forecast
-    }
-    return render(request, 'ilm/forecasts.html', context)
-
-def forecasts_yrno(request):
     yAPI = utils.YrnoAPI()
     y = yAPI.yrno_forecasts
     o = utils.owm_onecall()
@@ -2229,7 +2229,7 @@ def forecasts_yrno(request):
     context = {
         'forecast': forecast
     }
-    return render(request, 'ilm/forecasts_yrno.html', context)
+    return render(request, 'ilm/forecasts.html', context)
 
 
 from ilm.utils import forecast_log_analyze
