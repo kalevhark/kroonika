@@ -545,7 +545,7 @@ class YrnoAPI():
                 now = datetime.now(timezone.utc)
                 exp = parsedate_to_datetime(data['meta']['Expires'])
                 if now < exp:
-                    print('Andmed: cache Django')
+                    # print('Andmed: cache Django')
                     return data
         except:
             pass
@@ -573,7 +573,7 @@ class YrnoAPI():
         }
         headers = {}
         data = self.get_api_data(url, headers, params)
-        print('Andmed: API')
+        # print('Andmed: API')
 
         # Salvestame cache (django)
         try:
@@ -610,7 +610,6 @@ class YrnoAPI():
         )
         updated_at_utc = pytz.utc.localize(updated_at)
         updated_at_loc = updated_at_utc.astimezone(self.local)
-        print(updated_at_utc, updated_at_loc)
         yr['meta'] = meta
         yr['meta']['lastupdate'] = updated_at_loc
         yr['forecast'] = {}
