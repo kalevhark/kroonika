@@ -26,7 +26,7 @@ def filter_model(model):
 
 class StaticViewSitemap(sitemaps.Sitemap):
     priority = 0.8
-    changefreq = 'daily'
+    changefreq = 'weekly'
     protocol = 'https'
 
     def items(self):
