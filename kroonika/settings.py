@@ -78,7 +78,7 @@ ROOT_URL = config('ROOT_URL') # '/kroonika' Kui rakendus ei asu juurdomeenis: se
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -94,7 +94,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kroonika.wsgi.application'
 
-LOGOUT_REDIRECT_URL = ROOT_URL + '/'
+# LOGOUT_REDIRECT_URL = ROOT_URL + '/'
+LOGIN_REDIRECT_URL = 'algus'
+LOGOUT_REDIRECT_URL = 'algus'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
