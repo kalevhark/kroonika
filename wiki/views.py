@@ -1742,19 +1742,19 @@ def special_j6ul2019(request):
         tervitaja = 'valgalinn.ee'
     return render(
         request,
-        'wiki/wiki_special_j6ul.html',
+        'wiki/special/wiki_special_j6ul2019.html',
         {
             'tervitaja': tervitaja,
         }
     )
 
 #
-# Linna sünnipäevatervituse lehekülg
+# Linna sünnipäevatervituse lehekülg (pole kasutuses)
 #
 def special_valga436(request):
     return render(
         request,
-        'wiki/wiki_special_valga436.html',
+        'wiki/special/wiki_special_valga436.html',
         {}
     )
 
