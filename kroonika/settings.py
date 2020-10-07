@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'wiki.apps.WikiConfig',
     'ilm.apps.IlmConfig',
     'blog.apps.BlogConfig',
+    'v6rkpall.apps.V6RkpallConfig', # Ajutine v6rkpallitulemuste jaoks
     'django_filters', # Laiendatud filtrite jaoks
     'widget_tweaks', # Lisavidinad sisestusvormidele
     'rest_framework', # API liidese jaoks
