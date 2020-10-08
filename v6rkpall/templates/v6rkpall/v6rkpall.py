@@ -95,7 +95,7 @@ def make_days2html(days):
         for k, v in tiimid.items():
             table = days[key]['table']
             html_string_day_table_row = add_html_tag(
-                f'{k} {",".join(v)}',
+                f'{k} {", ".join(v)}',
                 add_tag='td'
                 )
             for el in table[k-1]:
