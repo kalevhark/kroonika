@@ -181,9 +181,9 @@ enim_osalenud = {
         reverse=True
         )
     }
-# Enim võidetud geime
+# Enim mängitud geime
 enim_geime = {
-    k: v['total']['games']
+    k: f"{v['total']['games']} ({v['total']['wins']}:{v['total']['games']-v['total']['wins']})"
     for k, v
     in sorted(
         m2ngijad.items(),
