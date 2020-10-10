@@ -146,5 +146,5 @@ if __name__ == '__main__':
         .agg(['sum','count'])\
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
-    result['bot'] = result.apply(bot_name, axis=1)
+    # result['bot'] = result.apply(bot_name, axis=1)
     print(result)
