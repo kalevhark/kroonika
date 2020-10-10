@@ -80,7 +80,7 @@ def is_bot(rows):
 def bot_name(rows):
     bots = ['bot', 'index']
     pat = rf'(\w*{"|".join(bots)})\w*'
-    bot = re.search(pat, rows.agent, flags=re.IGNORECASE)
+    bot = re.search(pat, rows.name, flags=re.IGNORECASE)
     if bot:
         return bot.group()
     else:
