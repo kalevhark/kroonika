@@ -142,7 +142,7 @@ if __name__ == '__main__':
     print()
     
     print('bots')
-    result = log_df_filtered[[log_df_filtered.apply(is_bot, axis=1)).groupby('agent')['resp_size'] \
+    result = log_df_filtered[log_df_filtered.apply(is_bot, axis=1)].groupby('agent')['resp_size'] \
         .agg(['sum','count'])\
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
