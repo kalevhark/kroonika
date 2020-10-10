@@ -73,6 +73,19 @@ def whoisinfo(ip_addr=''):
 def whoisinfo_asn_description(rows):
     return whoisinfo(rows.name)['asn_description']
 
+# Tagastab, kas on bot
+def is_bot(rows):
+    return re.search('bot', rows.agent, re.IGNORECASE)!=None
+
+def bot_name(rows):
+    bots = ['bot', 'index']
+    pat = rf'(\w*{"|".join(bots)})\w*'
+    bot = re.search(pat, rows.agent, flags=re.IGNORECASE)
+    if bot:
+        return bot.group()
+    else:
+        return ''
+
 if __name__ == '__main__':
     # path = os.path.dirname(sys.argv[0])
     path = '/usr/local/apache2/logs/'
@@ -125,4 +138,13 @@ if __name__ == '__main__':
         .sort_values(by=['count'], ascending=[False]) \
         .head(30)
     # result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
+    print(result)
+    print()
+    
+    print('bots')
+    result = log_df_filtered[[log_df_filtered.apply(is_bot, axis=1)).groupby('agent')['resp_size'] \
+        .agg(['sum','count'])\
+        .sort_values(by = ['sum'], ascending=[False])\
+        .head(10)
+    result['bot'] = result.apply(bot_name, axis=1)
     print(result)
