@@ -75,9 +75,12 @@ def whoisinfo_asn_description(rows):
 
 # Tagastab, kas on bot
 def is_bot(rows):
-    return re.search('bot', rows.agent, re.IGNORECASE)!=None
+    bots = ['bot', 'index']
+    pat = rf'(?:{"|".join(bots)})'
+    return re.search(pat, rows.agent, re.IGNORECASE)!=None
 
-def bot_name(rows):
+# Tagastab stringist sõna, millel on boti laadne nimi *bot, *index vms
+def find_bot_name(rows):
     bots = ['bot', 'index']
     pat = rf'(\w*{"|".join(bots)})\w*'
     bot = re.search(pat, rows.name, flags=re.IGNORECASE)
@@ -146,5 +149,5 @@ if __name__ == '__main__':
         .agg(['sum','count'])\
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
-    result.index = result.apply(bot_name, axis=1)
+    result.index = result.apply(find_bot_name, axis=1)
     print(result)
