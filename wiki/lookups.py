@@ -44,8 +44,11 @@ class IsikLookup(LookupChannel):
                 output_field=CharField()
             )
         )
+        translation = {'w': '[vw]', 'v': '[vw]'}
         for split in splits:
-            queryset = queryset.filter(nimi__icontains=split)
+            # queryset = queryset.filter(nimi__icontains=split)
+            pat = split.translate(str.maketrans(translation))
+            queryset = queryset.filter(nimi__iregex=pat)
         return queryset[:50]
 
     def format_match(self, item):

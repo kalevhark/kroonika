@@ -92,18 +92,20 @@ class IsikFilter(filters.FilterSet):
 
     def filter_tags(self, queryset, field_name, value):
         # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
-        tags = value.split(' ')
-        if len(tags) > 1:
-            for tag in tags:
+        translation = {'w': '[vw]', 'v': '[vw]'}
+        value = value.translate(str.maketrans(translation))
+        splits = value.split(' ')
+        if len(splits) > 1:
+            for split in splits:
                 queryset = queryset.filter(
-                    Q(eesnimi__icontains=tag) |
-                    Q(perenimi__icontains=tag)
+                    Q(eesnimi__iregex=split) |
+                    Q(perenimi__iregex=split)
                 )
             return queryset
         else:
             return queryset.filter(
-                    Q(eesnimi__icontains=value) |
-                    Q(perenimi__icontains=value)
+                    Q(eesnimi__iregex=value) |
+                    Q(perenimi__iregex=value)
                 )
 
 class IsikViewSet(viewsets.ModelViewSet):
