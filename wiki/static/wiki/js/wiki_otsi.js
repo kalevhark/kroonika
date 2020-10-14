@@ -52,11 +52,18 @@ $( document ).ready(function() {
       getAnswer: function () {
         // Kontrollime kas iga fraasi pikkus on vähemalt kolm tähemärki
         // var min_fraasipikkus = Math.min(...(this.question.trim().split(' ').map(fraas => fraas.length)));
-        let min_fraasipikkus = Math.min.apply(null, this.question.trim().split(' ').map(function (fraas) {
+        // let min_fraasipikkus = Math.min.apply(null, this.question.trim().split(' ').map(function (fraas) {
+        //  return fraas.length;
+        // }));
+        // if (min_fraasipikkus < 3) {
+        //  this.answer = 'Vähemalt kolm tähte igas fraasis palun !'
+        //  return
+        // };
+        let max_fraasipikkus = Math.max.apply(null, this.question.trim().split(' ').map(function (fraas) {
           return fraas.length;
         }));
-        if (min_fraasipikkus < 3) {
-          this.answer = 'Vähemalt kolm tähte igas fraasis palun !'
+        if (max_fraasipikkus < 3) {
+          this.answer = 'Vähemalt üks kolmetäheline sõna fraasis palun !'
           return
         };
         this.answer = 'Otsime...';
@@ -80,7 +87,7 @@ $( document ).ready(function() {
         // Päring isik
         axios.get(isik_api_url, {
           params: {
-            nimi: this.question,
+            sisaldab: this.question,
             page: page
           }
         })
@@ -108,7 +115,7 @@ $( document ).ready(function() {
         // Päring organisatsioon
         axios.get(organisatsioon_api_url, {
           params: {
-            nimi: this.question,
+            sisaldab: this.question,
             page: page
           }
         })
@@ -136,7 +143,7 @@ $( document ).ready(function() {
         // Päring objekt
         axios.get(objekt_api_url, {
           params: {
-            nimi: this.question,
+            sisaldab: this.question,
             page: page
           }
         })

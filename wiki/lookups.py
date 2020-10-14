@@ -48,6 +48,12 @@ class IsikLookup(LookupChannel):
             queryset = queryset.filter(nimi__icontains=split)
         return queryset[:50]
 
+    def format_match(self, item):
+        return f"{item} ({item.id})"
+
+    def format_item_display(self, item):
+        return f"{item} ({item.id})"
+
 
 @ajax_select.register('organisatsioonid')
 class OrganisatsioonLookup(LookupChannel):

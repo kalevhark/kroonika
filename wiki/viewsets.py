@@ -97,15 +97,13 @@ class IsikFilter(filters.FilterSet):
             for tag in tags:
                 queryset = queryset.filter(
                     Q(eesnimi__icontains=tag) |
-                    Q(perenimi__icontains=tag) |
-                    Q(kirjeldus__icontains=tag)
+                    Q(perenimi__icontains=tag)
                 )
             return queryset
         else:
             return queryset.filter(
                     Q(eesnimi__icontains=value) |
-                    Q(perenimi__icontains=value) |
-                    Q(kirjeldus__icontains=value)
+                    Q(perenimi__icontains=value)
                 )
 
 class IsikViewSet(viewsets.ModelViewSet):
@@ -127,8 +125,20 @@ class IsikViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Isik.objects.daatumitega(self.request)
 
+
 class ObjektFilter(filters.FilterSet):
     nimi = django_filters.CharFilter(field_name='nimi', lookup_expr='icontains')
+    sisaldab = django_filters.CharFilter(method='filter_tags')
+
+    def filter_tags(self, queryset, field_name, value):
+        # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
+        tags = value.split(' ')
+        if len(tags) > 1:
+            for tag in tags:
+                queryset = queryset.filter(nimi__icontains=tag)
+            return queryset
+        else:
+            return queryset.filter(nimi__icontains=value)
 
 
 class ObjektViewSet(viewsets.ModelViewSet):
@@ -142,8 +152,20 @@ class ObjektViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Objekt.objects.daatumitega(self.request)
 
+
 class OrganisatsioonFilter(filters.FilterSet):
     nimi = django_filters.CharFilter(field_name='nimi', lookup_expr='icontains')
+    sisaldab = django_filters.CharFilter(method='filter_tags')
+
+    def filter_tags(self, queryset, field_name, value):
+        # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
+        tags = value.split(' ')
+        if len(tags) > 1:
+            for tag in tags:
+                queryset = queryset.filter(nimi__icontains=tag)
+            return queryset
+        else:
+            return queryset.filter(nimi__icontains=value)
 
 
 class OrganisatsioonViewSet(viewsets.ModelViewSet):
@@ -156,6 +178,7 @@ class OrganisatsioonViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Organisatsioon.objects.daatumitega(self.request)
+
 
 class PiltViewSet(viewsets.ModelViewSet):
     queryset = Pilt.objects.all()
