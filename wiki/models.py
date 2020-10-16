@@ -952,9 +952,9 @@ class Isik(models.Model):
 
     class Meta:
         ordering = [
+            'id',
             'perenimi',
-            'eesnimi',
-            'id'
+            'eesnimi'
         ]
         verbose_name_plural = "Isikud"
 
