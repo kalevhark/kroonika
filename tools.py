@@ -238,21 +238,27 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-    Alma Emilie Aid,
-    Elena Antsov,
-    Leonida Eliaser,
-    Natalie Minna Hanimägi,
-    Leida Kaasik,
-    Vally Kahro,
-    Hella Lorid Kokk,
-    Ella Kurvits,
-    Alvine Liba,
-    Alide Mägi,
-    Lilly Mägi,
-    Linda Zilmer,
-    Ella Taba,
-    Anna Tars,
-    Linda Toom,
+    Heino Freirik,
+    Voldemar Hansmit,
+    Eduard Kaigas,
+    August Kasvand,
+    Johann Kosseson,
+    Arnold-Johannes Kreevald,
+    Anton Kruus,
+    August Kukrus,
+    Peeter Lindseer,
+    Karl-Leopold Mägi,
+    Olev Märtin,
+    Oskar Nachbar,
+    Armin Neumann,
+    Bruno-Theodor Peltser,
+    August Saar,
+    Karl-Rudolf Saar,
+    Gustav Saarva,
+    Valter Soo,
+    Karl Sõna,
+    Viktor Sõna,
+    Vladimir (Voldemar) Täht,
     """
     # Millise artikliga siduda isik
     art = Artikkel.objects.get(id=8808)
@@ -261,14 +267,14 @@ def massikanne_from_data():
     pilt = Pilt.objects.get(id=4495)
     print(pilt)
     # Milline organisatsioon lisada isikule
-    org = Organisatsioon.objects.get(id=33) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn, 19=6.algkool
+    org = Organisatsioon.objects.get(id=85) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
     viited_ids = [9523, 9524]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Tütarlaste gümnaasiumi majapidamisharu lõpetaja 1927'
+    isik_kirjeldus = 'Poeglaste gümnaasiumi humanitaarharu lõpetaja 1927'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
