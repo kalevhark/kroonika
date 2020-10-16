@@ -952,7 +952,7 @@ class Isik(models.Model):
 
     class Meta:
         ordering = [
-            'id',
+            # 'id',
             'perenimi',
             'eesnimi'
         ]
