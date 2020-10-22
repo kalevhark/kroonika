@@ -7,14 +7,14 @@ from django.shortcuts import render
 from .forms import OtsiSihtnumberForm
 
 def sihtnumbrid_to_dict():
-    if os.path.isfile('sihtnumber\data.pickle'):
-        with open('sihtnumber\data.pickle', 'rb') as f:
+    if os.path.isfile('sihtnumber/data.pickle'):
+        with open('sihtnumber/data.pickle', 'rb') as f:
             # The protocol version used is detected automatically, so we do not
             # have to specify it.
             sihtnumbrid = pickle.load(f)
     else:
         counter = 0
-        with open('sihtnumber\sihtnumbrid.csv', 'r', encoding='utf-8') as f:
+        with open('sihtnumber/sihtnumbrid.csv', 'r', encoding='utf-8') as f:
             f.readline() # Jätame päise vahele
             sihtnumbrid = dict()
             while True:
@@ -29,7 +29,7 @@ def sihtnumbrid_to_dict():
                     sihtnumbrid[aadress] = sihtnumber
                 else:
                     break
-            with open('sihtnumber\data.pickle', 'wb') as f:
+            with open('sihtnumber/data.pickle', 'wb') as f:
                 # Pickle the 'sihtnumbrid' dictionary using the highest protocol available.
                 pickle.dump(sihtnumbrid, f, pickle.HIGHEST_PROTOCOL)
     return sihtnumbrid
