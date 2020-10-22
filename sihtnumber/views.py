@@ -1,5 +1,5 @@
 import os
-from pathlib import Path
+from pathlib import Path, PurePath
 import pickle
 import re
 
@@ -8,16 +8,17 @@ from django.shortcuts import render
 from .forms import OtsiSihtnumberForm
 
 def sihtnumbrid_to_dict():
-    path = Path.cwd() / 'sihtnumber'
-    filename = path / 'data.pickle'
-    if Path.is_file(path / 'data.pickle'):
+    path = PurePath(Path.cwd(), 'sihtnumber')
+    print(path)
+    filename = PurePath(path, 'data.pickle')
+    if Path.is_file(filename):
         with open(filename, 'rb') as f:
             # The protocol version used is detected automatically, so we do not
             # have to specify it.
             sihtnumbrid = pickle.load(f)
     else:
         counter = 0
-        csv_file = path / 'sihtnumbrid.csv'
+        csv_file = PurePath(path, 'sihtnumbrid.csv')
         with open(csv_file, 'r', encoding='utf-8') as f:
             f.readline() # Jätame päise vahele
             sihtnumbrid = dict()
