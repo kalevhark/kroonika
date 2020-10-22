@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sihtnumbrite otsing</title>
+</head>
+<body>
+  <h1>Otsime sihtnumbreid </h1>
+  <p>Allikas: https://opendata.riik.ee/andmehulgad/posti-sihtnumbrid-postiindeksid/ (uuendatud: 2020/10/06)</p>
+  <strong>Tegemist on testlahendusega ja kasutage omal vastutusel!</strong>
+
+  <form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form }}
+    </table>
+    <input type="submit" value="Submit">
+  </form>
+  {% if vastus %}
+    <p>Otsisime sihtnumbrit {{ vastus|length }} aadressile:</p>
+    {% for sihtnumber in vastus %}
+      {{ sihtnumber }}<br>
+    {% endfor %}
+  {% endif %}
+</body>
+</html>
