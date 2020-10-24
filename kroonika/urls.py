@@ -53,11 +53,11 @@ urlpatterns = [
     path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('markdownx/', include('markdownx.urls')),
     path('schema/', schema_view),
-    path('sihtnumber/', include('sihtnumber.urls')),
+    # path('sihtnumber/', include('sihtnumber.urls')),
     # path('test/', views.test, name='test'), # linkide testimiseks
     path('wiki/', include('wiki.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('v6rkpall/', include('v6rkpall.urls'), name='v6rkpall'),
+    # path('v6rkpall/', include('v6rkpall.urls'), name='v6rkpall'),
 ]
 
 # Haldusliidese pealkirjad
