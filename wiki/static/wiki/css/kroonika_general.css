@@ -1,4 +1,4 @@
-/* ver 2020.5 */
+/* ver 2020.10 */
 html, body, p, h1, h2, h3, h4, h5 {
   font-family: "Raleway", sans-serif;
 }
@@ -1438,7 +1438,7 @@ table#change-history tbody th {
 .switch-right {
   right: 0.5em;
   bottom: 0;
-  background-color: #337257;
+  background-color: #00985F; /* #337257; */
   color: #fff;
 }
 

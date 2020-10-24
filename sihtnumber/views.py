@@ -9,7 +9,6 @@ from .forms import OtsiSihtnumberForm
 
 def sihtnumbrid_to_dict():
     path = os.path.join(settings.BASE_DIR, 'sihtnumber')
-    print(path)
     filename = os.path.join(path, 'data.pickle')
     if os.path.isfile(filename):
         with open(filename, 'rb') as f:
