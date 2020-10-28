@@ -1870,7 +1870,7 @@ def mixed_ilmateade(request):
         'yAxis': [
             { # temperature axis
                 'title': {
-                    'text': ''
+                    'text': '°C'
                 },
                 'labels': {
                     'format': '{value}°',
@@ -1952,12 +1952,14 @@ def mixed_ilmateade(request):
                     }
                 }
             },
+            'tooltip': {
+                'valueSuffix': '°C'
+            },
             'zIndex': 1,
             'color': '#FF3333',
             'negativeColor': '#48AFE8'
 	    }, {
             'name': 'Temperatuur (prognoos)', # Prognoos
-            # 'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['temperatures'],
             'data': 24 * [None] + andmed_j2rgnevad48h['series']['temperatures'],
             'type': 'spline',
             'marker': {
@@ -1967,6 +1969,9 @@ def mixed_ilmateade(request):
                         'enabled': True
                     }
                 }
+            },
+            'tooltip': {
+                'valueSuffix': '°C'
             },
             'zIndex': 1,
             'dashStyle': 'shortdot',
@@ -2006,9 +2011,42 @@ def mixed_ilmateade(request):
                     'color': 'gray'
                 }
             },
-            'name': 'Sademed (prognoos)',
-            # 'data': 24 * [None] + [el[2] for el in andmed_j2rgnevad48h['forecast']['precipitations']],
-            'data': 24 * [None] + [el[2] for el in andmed_j2rgnevad48h['series']['precipitations']],
+            'name': 'Sademed (prognoos max)',
+            'data': 24 * [None] + [(el[2]-el[1]) for el in andmed_j2rgnevad48h['series']['precipitations']], # err prec
+            'color': {
+                'pattern': {
+                    'path': {
+                        'd': 'M 0 0 L 5 5 M 4.5 -0.5 L 5.5 0.5 M -0.5 4.5 L 0.5 5.5',
+                    },
+                    'width': 5,
+                    'height': 5,
+                    'color': '#68CFE8',
+                }
+            },
+            'yAxis': 1,
+            'groupPadding': 0,
+            'pointPadding': 0,
+            'grouping': False,
+            'lineWidth' : 2,
+            'tooltip': {
+                'valueSuffix': ' mm'
+            }
+	    }, {
+            'type': 'column',
+            'plotOptions': {
+                'column': {
+                    'stacking': 'normal',
+                }
+            },
+            'dataLabels': {
+                'enabled': False,
+                # 'style': {
+                #     'fontSize': '8px',
+                #     'color': 'gray'
+                # }
+            },
+            'name': 'Sademed (prognoos min)',
+            'data': 24 * [None] + [el[1] for el in andmed_j2rgnevad48h['series']['precipitations']], # min prec
             'color': '#68CFE8',
             'yAxis': 1,
             'groupPadding': 0,
@@ -2064,7 +2102,6 @@ def mixed_ilmateade(request):
 	    }]
     }
 
-    # chart['yrno_symbols'] = andmed_eelnevad24h['symbols'] + andmed_j2rgnevad48h['forecast']['symbols']
     chart['yrno_symbols'] = andmed_eelnevad24h['symbols'] + andmed_j2rgnevad48h['series']['symbols']
     # Hetketemperatuur
     chart['airtemperatures'] = andmed_eelnevad24h['airtemperatures']

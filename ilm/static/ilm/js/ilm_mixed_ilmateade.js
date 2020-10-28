@@ -111,6 +111,21 @@ function mixed_ilmateade() {
           dataLabels: {
             formatter: function () {
               if (this.y > 0) {
+                if (chart.series[5].data[this.x]) {
+                  return this.y + chart.series[5].data[this.x];
+                } else {
+                  return this.y;
+                }
+
+              }
+            }
+          }
+        });
+        // Näitame prognoositavate sademete hulka ainult kui suurem nullist
+        chart.series[5].update({
+          dataLabels: {
+            formatter: function () {
+              if (this.y > 0) {
                 return this.y;
               }
             }
