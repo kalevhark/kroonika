@@ -8,6 +8,15 @@
 
 {% block content %}
 
+
+<!-- Kõik artiklitega leitud kuud vaadeldaval aastal
+<ul>
+    {% for date in date_list %}
+        <li>{{ date|date:"F" }}</li>
+    {% endfor %}
+</ul> -->
+
+<!-- Lingid eelnevale ja järgnevale aastale -->
 <div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
   <div class="w3-large">
     <a style="text-decoration: none;" href="{% url 'wiki:wiki_artikkel_filter' %}">
@@ -20,14 +29,6 @@
   </div>
 </div>
 
-<!-- Kõik artiklitega leitud kuud vaadeldaval aastal
-<ul>
-    {% for date in date_list %}
-        <li>{{ date|date:"F" }}</li>
-    {% endfor %}
-</ul> -->
-
-<!-- Lingid eelnevale ja järgnevale aastale -->
 <div class="w3-cell-row w3-margin-top">
   <div class="w3-half">
     {% if aasta_eelmine %}
@@ -38,7 +39,7 @@
         </div>
       </a>
 	  {% endif %}
-  </div>	
+  </div>
   <div class="w3-half">
     {% if aasta_j2rgmine %}
       <a style="text-decoration: none;" href={% url 'wiki:artikkel_year_archive' year=aasta_j2rgmine %}>
@@ -53,41 +54,62 @@
 
 <div class="w3-bar">
   {% if object_list %}
-    <button
-        class="w3-bar-item w3-button tablink background-artikkel"
-        onclick="openLinks(event, 'artiklid')"
-      >
-        <i class="fa fa-comment"></i> {{ year|date:"Y" }} ({{ object_list.count }})
-    </button>
+  <button
+          class="w3-bar-item w3-button tablink background-artikkel"
+          onclick="openLinks(event, 'artiklid')"
+  >
+    <i class="fa fa-comment"></i> {{ year|date:"Y" }} ({{ object_list.count }})
+  </button>
   {% endif %}
   {% if syndinud_isikud %}
-    <button
-        class="w3-bar-item w3-button tablink"
-        onclick="openLinks(event, 'isikud_syndinud')"
-    >
-      <i class="fa fa-address-card-o"></i> Sündis ({{ syndinud_isikud.count }})
-    </button>
+  <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'isikud_syndinud')"
+  >
+    <i class="fa fa-address-card-o"></i> Sündis ({{ syndinud_isikud.count }})
+  </button>
+  {% endif %}
+  {% if juubilarid_isikud %}
+  <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'juubilarid_isikud')">
+    <i class="fa fa-address-card-o"></i> Juubilarid {% get_verbose_name_plural juubilarid_isikud.first %} ({{ juubilarid_isikud.count }})
+  </button>
   {% endif %}
   {% if surnud_isikud %}
-    <button
-        class="w3-bar-item w3-button tablink"
-        onclick="openLinks(event, 'isikud_surnud')">
-      <i class="fa fa-address-card-o"></i> Suri ({{ surnud_isikud.count }})
-    </button>
+  <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'isikud_surnud')">
+    <i class="fa fa-address-card-o"></i> Suri ({{ surnud_isikud.count }})
+  </button>
   {% endif %}
   {% if loodud_organisatsioonid %}
-    <button
-        class="w3-bar-item w3-button tablink"
-        onclick="openLinks(event, 'organisatsioonid')">
-      <i class="fa fa-group"></i> Asutati ({{ loodud_organisatsioonid.count }})
-    </button>
+  <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'organisatsioonid')">
+    <i class="fa fa-group"></i> Asutati ({{ loodud_organisatsioonid.count }})
+  </button>
+  {% endif %}
+  {% if juubilarid_organisatsioonid %}
+  <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'juubilarid_organisatsioonid')">
+    <i class="fa fa-group"></i> Juubilarid {% get_verbose_name_plural juubilarid_organisatsioonid.first %} ({{ juubilarid_organisatsioonid.count }})
+  </button>
   {% endif %}
   {% if valminud_objektid %}
-    <button
-        class="w3-bar-item w3-button tablink"
-        onclick="openLinks(event, 'objektid')">
-      <i class="fa fa-bank"></i> Valmis ({{ valminud_objektid.count }})
-    </button>
+  <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'objektid')">
+    <i class="fa fa-bank"></i> Valmis ({{ valminud_objektid.count }})
+  </button>
+  {% endif %}
+  {% if juubilarid_objektid %}
+  <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'juubilarid_objektid')">
+    <i class="fa fa-bank"></i> Juubilarid {% get_verbose_name_plural juubilarid_objektid.first %} ({{ juubilarid_objektid.count }})
+  </button>
   {% endif %}
 </div>
 
@@ -109,6 +131,7 @@
   {% endif %}
 </div>
 
+<!-- Samal aastal sündinud isikud -->
 {% if syndinud_isikud %}
   <div
       id="isikud_syndinud"
@@ -119,6 +142,18 @@
   </div>
 {% endif%}
 
+<!-- Juubilarid isikud -->
+{% if juubilarid_isikud %}
+  <div
+      id="juubilarid_isikud"
+      class="seotud w3-cell-row">
+    {% with object_list=juubilarid_isikud %}
+      {% include 'wiki/includes/object_list_isikud.html' with periood=year pealkiri=juubilarid_isikud_pealkiri bookmark='juubilarid_isikud' %}
+    {% endwith %}
+  </div>
+{% endif%}
+
+<!-- Samal aastal surnud isikud -->
 {% if surnud_isikud %}
   <div
       id="isikud_surnud"
@@ -129,12 +164,24 @@
   </div>
 {% endif%}
 
+<!-- Samal aastal valminud organisatsioonid -->
 {% if loodud_organisatsioonid %}
   <div
       id="organisatsioonid"
       class="seotud w3-cell-row">
     {% with object_list=loodud_organisatsioonid %}
       {% include 'wiki/includes/object_list_organisatsioonid.html' with periood=year pealkiri=loodud_organisatsioonid_pealkiri %}
+    {% endwith %}
+  </div>
+{% endif%}
+
+<!-- Juubilarid organisatsioonid -->
+{% if juubilarid_organisatsioonid %}
+  <div
+      id="juubilarid_organisatsioonid"
+      class="seotud w3-cell-row">
+    {% with object_list=juubilarid_organisatsioonid %}
+      {% include 'wiki/includes/object_list_organisatsioonid.html' with periood=year pealkiri=juubilarid_organisatsioonid_pealkiri bookmark='juubilarid_organisatsioonid' %}
     {% endwith %}
   </div>
 {% endif%}
@@ -146,6 +193,17 @@
       class="seotud w3-cell-row">
     {% with object_list=valminud_objektid %}
       {% include 'wiki/includes/object_list_objektid.html' with periood=year pealkiri=valminud_objektid_pealkiri %}
+    {% endwith %}
+  </div>
+{% endif%}
+
+<!-- Juubilarid objektid -->
+{% if juubilarid_objektid %}
+  <div
+      id="juubilarid_objektid"
+      class="seotud w3-cell-row">
+    {% with object_list=juubilarid_objektid %}
+      {% include 'wiki/includes/object_list_objektid.html' with periood=year pealkiri=juubilarid_objektid_pealkiri bookmark='juubilarid_objektid' %}
     {% endwith %}
   </div>
 {% endif%}

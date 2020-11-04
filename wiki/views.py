@@ -1,6 +1,8 @@
 from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
 import shutil
+from functools import reduce
+from operator import or_
 from typing import Dict, Any
 
 from django.conf import settings
@@ -1115,10 +1117,38 @@ class ArtikkelYearArchiveView(YearArchiveView):
         isik_qs = Isik.objects.daatumitega(self.request)
         syndinud_isikud = isik_qs.\
             filter(dob__year = aasta).\
-            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField())).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())).\
             order_by(ExtractMonth('dob'), ExtractDay('dob'))
         context['syndinud_isikud'] = syndinud_isikud
         context['syndinud_isikud_pealkiri'] = '{0}. aastal sündinud {1}'.format(
+            aasta,
+            Isik._meta.verbose_name_plural.lower()
+        )
+        # Leiame selle aasta juubilarid
+        syndinud_isikud_date = isik_qs. \
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
+        juubilarid_isikud_ids_date = [
+            isik.id
+            for isik
+            in syndinud_isikud_date
+            if (isik.dob and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
+        ]
+        syndinud_isikud_year = isik_qs. \
+            filter(hist_date__isnull=True). \
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
+        juubilarid_isikud_ids_year = [
+            isik.id
+            for isik
+            in syndinud_isikud_year
+            if (isik.hist_year and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
+        ]
+        juubilarid_isikud_ids = juubilarid_isikud_ids_date + juubilarid_isikud_ids_year
+        juubilarid_isikud = isik_qs. \
+            filter(id__in=juubilarid_isikud_ids). \
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+            order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+        context['juubilarid_isikud'] = juubilarid_isikud
+        context['juubilarid_isikud_pealkiri'] = '{0}. aasta juubilarid {1}'.format(
             aasta,
             Isik._meta.verbose_name_plural.lower()
         )
@@ -1143,6 +1173,35 @@ class ArtikkelYearArchiveView(YearArchiveView):
             aasta,
             Organisatsioon._meta.verbose_name_plural.lower()
         )
+        # Leiame selle aasta juubilarid organisatsioonid
+        syndinud_organisatsioonid_date = organisatsioon_qs. \
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
+        juubilarid_organisatsioonid_ids_date = [
+            organisatsioon.id
+            for organisatsioon
+            in syndinud_organisatsioonid_date
+            if (organisatsioon.dob and organisatsioon.vanus_gen > 0 and organisatsioon.vanus_gen % 5 == 0)
+        ]
+        syndinud_organisatsioonid_year = organisatsioon_qs. \
+            filter(hist_date__isnull=True). \
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
+        juubilarid_organisatsioonid_ids_year = [
+            organisatsioon.id
+            for organisatsioon
+            in syndinud_organisatsioonid_year
+            if (organisatsioon.hist_year and organisatsioon.vanus_gen > 0 and organisatsioon.vanus_gen % 5 == 0)
+        ]
+        juubilarid_organisatsioonid_ids = juubilarid_organisatsioonid_ids_date + juubilarid_organisatsioonid_ids_year
+        juubilarid_organisatsioonid = organisatsioon_qs. \
+            filter(id__in=juubilarid_organisatsioonid_ids). \
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+            order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+        context['juubilarid_organisatsioonid'] = juubilarid_organisatsioonid
+        context['juubilarid_organisatsioonid_pealkiri'] = '{0}. aasta juubilarid {1}'.format(
+            aasta,
+            Organisatsioon._meta.verbose_name_plural.lower()
+        )
+
         # Leiame samal aastal avatud objektid
         objekt_qs = Objekt.objects.daatumitega(self.request)
         valminud_objektid = objekt_qs. \
@@ -1151,6 +1210,34 @@ class ArtikkelYearArchiveView(YearArchiveView):
             order_by(ExtractMonth('dob'), ExtractDay('dob'))
         context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid_pealkiri'] = '{0}. aastal valminud {1}'.format(
+            aasta,
+            Objekt._meta.verbose_name_plural.lower()
+        )
+        # Leiame selle aasta juubilarid objektid
+        syndinud_objektid_date = objekt_qs. \
+            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
+        juubilarid_objektid_ids_date = [
+            objekt.id
+            for objekt
+            in syndinud_objektid_date
+            if (objekt.dob and objekt.vanus_gen > 0 and objekt.vanus_gen % 5 == 0)
+        ]
+        syndinud_objektid_year = objekt_qs. \
+            filter(hist_date__isnull=True). \
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
+        juubilarid_objektid_ids_year = [
+            objekt.id
+            for objekt
+            in syndinud_objektid_year
+            if (objekt.hist_year and objekt.vanus_gen > 0 and objekt.vanus_gen % 5 == 0)
+        ]
+        juubilarid_objektid_ids = juubilarid_objektid_ids_date + juubilarid_objektid_ids_year
+        juubilarid_objektid = objekt_qs. \
+            filter(id__in=juubilarid_objektid_ids). \
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+            order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+        context['juubilarid_objektid'] = juubilarid_objektid
+        context['juubilarid_objektid_pealkiri'] = '{0}. aasta juubilarid {1}'.format(
             aasta,
             Objekt._meta.verbose_name_plural.lower()
         )

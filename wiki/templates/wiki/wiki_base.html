@@ -28,7 +28,7 @@
   {% if object %}
     <meta property="og:type" content="article" />
     <meta property="og:description" content="{{ object }}" />
-    <meta property="article:section" content="{{ object|verbose_name_plural }}" />
+    <meta property="article:section" content="{% get_verbose_name_plural object %}" />
     <meta property="article:published_time" content="{{ object.mod_date|date:'c' }}" />
     <meta property="article:modified_time" content="{{ object.mod_date|date:'c' }}" />
     <meta property="og:updated_time" content="{{ object.mod_date|date:'c' }}" />
