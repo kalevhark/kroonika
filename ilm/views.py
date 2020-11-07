@@ -1937,10 +1937,12 @@ def mixed_ilmateade(request):
         },
 	
 	    'series': [{
+            'id': 'empty_72h',
             'name': '',
             'data': ['null'] * 72, # Joonistame tühja graafiku 72 tunniks
             'showInLegend': False
         }, {
+            'id': 'andmed_eelnevad24h_airtemperatures',
             'name': 'Temperatuur (mõõdetud)', # Ajalooliselt mõõdetud
             'data': andmed_eelnevad24h['airtemperatures'],
             'type': 'spline',
@@ -1959,6 +1961,7 @@ def mixed_ilmateade(request):
             'color': '#FF3333',
             'negativeColor': '#48AFE8'
 	    }, {
+            'id': 'andmed_j2rgnevad48h_temperatures',
             'name': 'Temperatuur (prognoos)', # Prognoos
             'data': 24 * [None] + andmed_j2rgnevad48h['series']['temperatures'],
             'type': 'spline',
@@ -1978,6 +1981,7 @@ def mixed_ilmateade(request):
             'color': '#FF3333',
             'negativeColor': '#48AFE8'
 	    }, {
+            'id': 'andmed_eelnevad24h_precipitations',
             'name': 'Sademed (mõõdetud)',
             'data': andmed_eelnevad24h['precipitations'],
             'type': 'column',
@@ -1998,6 +2002,8 @@ def mixed_ilmateade(request):
                 'valueSuffix': ' mm'
             }
 	    }, {
+            'id': 'andmed_j2rgnevad48h_precipitations_max',
+            'name': 'Sademed (prognoos max)',
             'type': 'column',
             'plotOptions': {
                 'column': {
@@ -2011,7 +2017,6 @@ def mixed_ilmateade(request):
                     'color': 'gray'
                 }
             },
-            'name': 'Sademed (prognoos max)',
             'data': 24 * [None] + [(el[2]-el[1]) for el in andmed_j2rgnevad48h['series']['precipitations']], # err prec
             'color': {
                 'pattern': {
@@ -2032,6 +2037,8 @@ def mixed_ilmateade(request):
                 'valueSuffix': ' mm'
             }
 	    }, {
+            'id': 'andmed_j2rgnevad48h_precipitations',
+            'name': 'Sademed (prognoos min)',
             'type': 'column',
             'plotOptions': {
                 'column': {
@@ -2045,7 +2052,6 @@ def mixed_ilmateade(request):
                 #     'color': 'gray'
                 # }
             },
-            'name': 'Sademed (prognoos min)',
             'data': 24 * [None] + [el[1] for el in andmed_j2rgnevad48h['series']['precipitations']], # min prec
             'color': '#68CFE8',
             'yAxis': 1,
@@ -2057,6 +2063,7 @@ def mixed_ilmateade(request):
                 'valueSuffix': ' mm'
             }
 	    }, {
+            'id': 'andmed_eelnevad24h_airpressures',
             'name': 'Õhurõhk (mõõdetud)',
             'data': andmed_eelnevad24h['airpressures'],
             'color': '#90ed7d',
@@ -2073,8 +2080,8 @@ def mixed_ilmateade(request):
             'dashStyle': 'solid',
             'yAxis': 2
 	    }, {
+            'id': 'andmed_j2rgnevad48h_airpressures',
             'name': 'Õhurõhk (prognoos)',
-            # 'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['airpressures'],
             'data': 24 * [None] + andmed_j2rgnevad48h['series']['airpressures'],
             'color': '#90ed7d',
             'type': 'spline',
@@ -2090,12 +2097,13 @@ def mixed_ilmateade(request):
             'dashStyle': 'shortdot',
             'yAxis': 2
 	    }, {
+            'id': 'andmed_eelnevad24h_windbarbs',
             'name': 'Tuul (mõõdetud)',
             'data': andmed_eelnevad24h['windbarbs'],
             'type': 'windbarb',
 	    }, {
+            'id': 'andmed_j2rgnevad48h_windbarbs',
             'name': 'Tuul (prognoos)',
-            # 'data': 24 * [None]+ andmed_j2rgnevad48h['forecast']['windbarbs'],
             'data': 24 * [None] + andmed_j2rgnevad48h['series']['windbarbs'],
             'type': 'windbarb',
             'color': 'gray'
@@ -2106,86 +2114,6 @@ def mixed_ilmateade(request):
     # Hetketemperatuur
     chart['airtemperatures'] = andmed_eelnevad24h['airtemperatures']
     return JsonResponse(chart)
-
-# def forecasts(request):
-#     y = utils.yrno_48h()
-#     o = utils.owm_onecall()
-#     i = utils.ilmateenistus_forecast()
-#     now = datetime.now()
-#     forecast = dict()
-#
-#     for forecast_hour in range(1, 48):
-#         fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(hours=forecast_hour)
-#         ref_dt = int(datetime.timestamp(fore_dt))
-#
-#         # yr.no
-#         y_temp = None
-#         y_prec = None
-#         y_prec_color = ''
-#         y_icon = ''
-#         # for hour in range(len(y['forecast']['dt'])):
-#         #     if int(y['forecast']['dt'][hour]) == ref_dt:
-#         #         # y_dt = y['forecast']['dt'][hour]
-#         #         y_temp = y['forecast']['temperatures'][hour]
-#         #         y_prec = y['forecast']['precipitations'][hour]
-#         #         break
-#         y_data = y['forecast'].get(str(ref_dt), None)
-#         if y_data:
-#             # i_dt = ref_dt
-#             y_temp = y_data['temperature']
-#             y_icon = y_data['symbol']
-#             y_prec = y_data['precipitation']
-#             y_prec_color = y_data['precipitation_color']
-#         # openweathermaps.org
-#         o_temp = None
-#         o_prec = None
-#         o_prec_color = ''
-#         o_icon = ''
-#         # for hour in o['hourly']:
-#         #     if int(hour['dt']) == ref_dt:
-#         #         # o_dt = int(hour['dt'])
-#         #         o_temp = hour['temp']
-#         #         try:
-#         #             o_prec = hour['rain']['1h']
-#         #         except:
-#         #             o_prec = '0.0'
-#         o_data = o['forecast'].get(str(ref_dt), None)
-#         if o_data:
-#             o_temp = o_data['temp']
-#             o_icon = o_data['weather'][0]['icon']
-#             try:
-#                 o_prec = o_data['rain']['1h']
-#             except:
-#                 o_prec = '0.0'
-#             o_prec_color = o_data['precipitation_color']
-#
-#         # ilmateenistus.ee
-#         i_temp = None
-#         i_prec = None
-#         i_prec_color = ''
-#         i_data = i['forecast'].get(str(ref_dt), None)
-#         if i_data:
-#             i_temp = float_or_none(i_data['temperature'])
-#             i_prec = i_data['precipitation']
-#             i_prec_color = i_data['precipitation_color']
-#
-#         forecast[str(ref_dt)] = {
-#             'y_temp': y_temp,
-#             'y_icon': y_icon,
-#             'y_prec': str(y_prec),
-#             'y_prec_color': y_prec_color,
-#             'o_temp': o_temp,
-#             'o_icon': o_icon,
-#             'o_prec': str(o_prec),
-#             'o_prec_color': o_prec_color,
-#             'i_temp': i_temp,
-#             'i_prec': str(i_prec),
-#             'i_prec_color': i_prec_color,
-#         }
-#     context = {
-#         'forecast': forecast
-#     }
-#     return render(request, 'ilm/forecasts.html', context)
 
 def forecasts(request):
     yAPI = utils.YrnoAPI()

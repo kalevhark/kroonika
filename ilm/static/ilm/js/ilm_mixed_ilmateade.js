@@ -96,7 +96,7 @@ function mixed_ilmateade() {
         });
 
         // Näitame mõõdetud sademete hulka ainult kui suurem nullist
-        chart.series[3].update({
+        chart.get('andmed_eelnevad24h_precipitations').update({
           dataLabels: {
             formatter: function () {
               if (this.y > 0) {
@@ -107,12 +107,13 @@ function mixed_ilmateade() {
         });
 
         // Näitame prognoositavate sademete hulka ainult kui suurem nullist
-        chart.series[4].update({
+        // Liidetakse min ja max näitajad
+        chart.get('andmed_j2rgnevad48h_precipitations_max').update({
           dataLabels: {
             formatter: function () {
               if (this.y > 0) {
-                if (chart.series[5].data[this.x]) {
-                  return this.y + chart.series[5].data[this.x];
+                if (chart.get('andmed_j2rgnevad48h_precipitations').data[this.x]) {
+                  return this.y + chart.get('andmed_j2rgnevad48h_precipitations').data[this.x];
                 } else {
                   return this.y;
                 }
@@ -122,7 +123,7 @@ function mixed_ilmateade() {
           }
         });
         // Näitame prognoositavate sademete hulka ainult kui suurem nullist
-        chart.series[5].update({
+        chart.get('andmed_j2rgnevad48h_precipitations').update({
           dataLabels: {
             formatter: function () {
               if (this.y > 0) {
