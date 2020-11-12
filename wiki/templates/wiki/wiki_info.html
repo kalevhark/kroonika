@@ -166,21 +166,6 @@
     </ul>
     {% if user.is_authenticated %}
       <div>
-        Oled siin käinud {{ num_visits }}{% if num_visits == 1 %} korra{% else %} korda{% endif %}.
-      {% render_logged_in_user_list %}
-      </div>
-      <div>
-        Seadme {{ system_state.media_root }} täituvus {{ system_state.disk_usage|stringformat:"1.1f" }}%
-      </div>
-      <div>
-        Kuupäevatestid:<br>
-        now {% now "j F Y H:i" %}<br>
-        date.today() {{ dates.date_today }}<br>
-        datetime.now() {{ dates.datetime_now }}<br>
-        timezone.now() {{ dates.timezone_now }}<br>
-        timezone.localtime(timezone.now()) {{ dates.timezone_now_tz }}<br>
-      </div>
-      <div>
         <div>
           Revision: {{ revision_data.kroonika }}:
           {% for obj in revision_data.revised %}

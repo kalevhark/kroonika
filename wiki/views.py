@@ -241,25 +241,6 @@ def info(request):
         order_by('-hist_year')
     a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
     time_log['5'] = (datetime.now() - time).seconds
-    # Andmed süsteemi olukorra kohta
-    media_root = settings.MEDIA_ROOT
-    stat = shutil.disk_usage(media_root)
-    system_state = {
-        'media_root': media_root,
-        'disk_usage': stat[1]/stat[0]*100
-    }
-
-    # Number of visits to this view, as counted in the session variable.
-    num_visits = request.session.get('num_visits', 0)
-    request.session['num_visits'] = num_visits + 1
-
-    # testimiseks kuup2evad
-    dates = {
-        'date_today': date.today(),
-        'datetime_now': datetime.now(),
-        'timezone_now': timezone.now(),
-        'timezone_now_tz': timezone.localtime(timezone.now())  # .date()
-    }
 
     context = {
         'andmebaasid': andmebaasid,
@@ -269,10 +250,7 @@ def info(request):
         'meta_data': request.META,
         'session_data': request.session,
         'a': a,
-        'system_state': system_state,
-        'num_visits': num_visits,
         'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
-        'dates': dates,
         'time_log': time_log,
     }
 
