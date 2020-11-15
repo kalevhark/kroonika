@@ -114,7 +114,7 @@ def info(request):
     # Filtreerime kasutaja järgi
     time = datetime.now()
     time_log = {}
-    time_log['0'] = (datetime.now() - time).seconds
+    time_log['0'] = (datetime.now() - time).microseconds
     artikkel_qs = Artikkel.objects.daatumitega(request)
     isik_qs = Isik.objects.daatumitega(request)
     organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
@@ -134,7 +134,7 @@ def info(request):
         num_obj=0,
         num_pilt=0
     ).count()
-    time_log['1'] = (datetime.now() - time).seconds
+    time_log['1'] = (datetime.now() - time).microseconds
     andmebaasid.append(
         ' '.join(
             [
@@ -144,7 +144,7 @@ def info(request):
             ]
         )
     )
-    time_log['1a'] = (datetime.now() - time).seconds
+    time_log['1a'] = (datetime.now() - time).microseconds
     andmebaasid.append(
         ' '.join(
             [
@@ -155,7 +155,7 @@ def info(request):
             ]
         )
     )
-    time_log['1b'] = (datetime.now() - time).seconds
+    time_log['1b'] = (datetime.now() - time).microseconds
     andmebaasid.append(
         ' '.join(
             [
@@ -166,7 +166,7 @@ def info(request):
             ]
         )
     )
-    time_log['1c'] = (datetime.now() - time).seconds
+    time_log['1c'] = (datetime.now() - time).microseconds
     andmebaasid.append(
         ' '.join(
             [
@@ -177,7 +177,7 @@ def info(request):
             ]
         )
     )
-    time_log['1d'] = (datetime.now() - time).seconds
+    time_log['1d'] = (datetime.now() - time).microseconds
     andmebaasid.append(
         ' '.join(
             [
@@ -188,7 +188,7 @@ def info(request):
             ]
         )
     )
-    time_log['1e'] = (datetime.now() - time).seconds
+    time_log['1e'] = (datetime.now() - time).microseconds
     andmebaasid.append(
         ' '.join(
             [
@@ -198,7 +198,7 @@ def info(request):
             ]
         )
     )
-    time_log['2'] = (datetime.now() - time).seconds
+    time_log['2'] = (datetime.now() - time).microseconds
     # Artiklite ülevaade
     andmed = artikkel_qs.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
     perioodid = artikkel_qs. \
@@ -217,7 +217,7 @@ def info(request):
         artikleid_kuus_max = max([kuu_andmed[2] for kuu_andmed in artikleid_kuus])
     else:
         artikleid_kuus_max = 1 # kui ei ole artikleid sisestatud
-    time_log['3'] = (datetime.now() - time).seconds
+    time_log['3'] = (datetime.now() - time).microseconds
     # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
     revision_data['kroonika'] = artikkel_qs.\
@@ -227,7 +227,7 @@ def info(request):
         filter(kroonika__isnull=False).\
         annotate(num_viited=Count('viited')).\
         filter(num_viited__gt=1)
-    time_log['4'] = (datetime.now() - time).seconds
+    time_log['4'] = (datetime.now() - time).microseconds
 
     # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
