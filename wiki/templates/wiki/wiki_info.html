@@ -164,40 +164,7 @@
       <li><a href="https://github.com/jazzband/django-widget-tweaks">django-widget-tweaks</a></li>
       <li><a href="https://www.django-rest-framework.org/">Django REST framework</a></li>
     </ul>
-    {% if user.is_authenticated %}
-      <div>
-        <div>
-          Revision: {{ revision_data.kroonika }}:
-          {% for obj in revision_data.revised %}
-            &nbsp;<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.pk slug=obj.slug %}">
-              {{ obj.pk }}
-            </a>
-          {% endfor %}
-        </div>
-        {% if revision_data.viiteta %}
-          <div>
-            Viiteta:
-            {% for obj in revision_data.viiteta %}
-              &nbsp;<a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.pk slug=obj.slug %}">
-                {{ obj.pk }}
-              </a>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-<!--      <div>-->
-<!--        session:<br>-->
-<!--        {% for item, value in session_data.items %}-->
-<!--          <small>{{ item }}:{{ value }}</small><br>-->
-<!--        {% endfor %}-->
-<!--      </div>-->
-<!--      <div>-->
-<!--        Meta:<br>-->
-<!--        {% for item, value in meta_data.items %}-->
-<!--          <small>{{ item }}:{{ value }}</small><br>-->
-<!--        {% endfor %}-->
-<!--      </div>-->
-    {% endif %}
+
 <!--    {{ time_log }}-->
   </div>
 {% endblock %}
