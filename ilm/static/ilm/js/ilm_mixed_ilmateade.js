@@ -115,9 +115,8 @@ function mixed_ilmateade() {
                 if (chart.get('andmed_j2rgnevad48h_precipitations').data[this.x]) {
                   return this.y + chart.get('andmed_j2rgnevad48h_precipitations').data[this.x];
                 } else {
-                  return this.y;
+                  return this.y.toFixed(1);
                 }
-
               }
             }
           }

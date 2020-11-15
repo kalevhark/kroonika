@@ -1813,9 +1813,11 @@ def mixed_ilmateade(request):
                 'tooltip': {
                     'valueSuffix': ' m/s'
                 }
+            },
+            'column': {
+                'stacking': 'normal',
             }
         },
-	
         'xAxis': [
             {
                 'tickInterval': 2, # kaks tundi
@@ -1935,7 +1937,7 @@ def mixed_ilmateade(request):
             'shared': True,
             'headerFormat': '{point.key:%d.%m %H:%M}<br>',
         },
-	
+
 	    'series': [{
             'id': 'empty_72h',
             'name': '',
@@ -2005,11 +2007,11 @@ def mixed_ilmateade(request):
             'id': 'andmed_j2rgnevad48h_precipitations_max',
             'name': 'Sademed (prognoos max)',
             'type': 'column',
-            'plotOptions': {
-                'column': {
-                    'stacking': 'normal',
-                }
-            },
+            # 'plotOptions': {
+            #     'column': {
+            #         'stacking': 'normal',
+            #     }
+            # },
             'dataLabels': {
                 'enabled': True,
                 'style': {
@@ -2040,11 +2042,11 @@ def mixed_ilmateade(request):
             'id': 'andmed_j2rgnevad48h_precipitations',
             'name': 'Sademed (prognoos min)',
             'type': 'column',
-            'plotOptions': {
-                'column': {
-                    'stacking': 'normal',
-                }
-            },
+            # 'plotOptions': {
+            #     'column': {
+            #         'stacking': 'normal',
+            #     }
+            # },
             'dataLabels': {
                 'enabled': False,
                 # 'style': {
