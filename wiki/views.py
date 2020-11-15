@@ -234,12 +234,12 @@ def info(request):
     # Koondnäitajad aastate ja kuude kaupa
     # import json
     a = dict()
-    artikleid_aasta_kaupa = artikkel_qs.\
-        filter(hist_searchdate__isnull=False).\
-        values('hist_year').\
-        annotate(Count('hist_year')).\
-        order_by('-hist_year')
-    a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
+    # artikleid_aasta_kaupa = artikkel_qs.\
+    #     filter(hist_searchdate__isnull=False).\
+    #     values('hist_year').\
+    #     annotate(Count('hist_year')).\
+    #     order_by('-hist_year')
+    # a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
     time_log['5'] = (datetime.now() - time).seconds
 
     context = {
@@ -247,9 +247,9 @@ def info(request):
         'andmed': andmed,
         'artikleid_kuus': artikleid_kuus,
         'artikleid_kuus_max': artikleid_kuus_max,
-        'meta_data': request.META,
+        # 'meta_data': request.META,
         'session_data': request.session,
-        'a': a,
+        # 'a': a,
         'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         'time_log': time_log,
     }
