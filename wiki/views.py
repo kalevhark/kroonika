@@ -240,7 +240,7 @@ def info(request):
     #     annotate(Count('hist_year')).\
     #     order_by('-hist_year')
     # a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
-    time_log['5'] = (datetime.now() - time).seconds
+    time_log['5'] = (datetime.now() - time).microseconds
 
     context = {
         'andmebaasid': andmebaasid,
