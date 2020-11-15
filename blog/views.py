@@ -26,10 +26,14 @@ def blog_detail(request, pk):
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
+            remote_addr = request.META['REMOTE_ADDR']  # kasutaja IP aadress
+            http_user_agent = request.META['HTTP_USER_AGENT']  # kasutaja veebilehitseja
             comment = Comment(
                 author=form.cleaned_data["author"],
                 body=form.cleaned_data["body"],
                 post=post,
+                remote_addr=remote_addr,
+                http_user_agent=http_user_agent
             )
             comment.save()
 

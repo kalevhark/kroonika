@@ -39,7 +39,7 @@
   {% for comment in comments %}
   <div class="w3-hover-white">
     <p>
-      <small><b>{{ comment.author }}</b> kirjutas {{comment.created_on | date:'d.m.Y' }}:</small>
+      <small><b>{{ comment.author }}</b> kirjutas {{comment.inp_date | date:'d.m.Y' }}:</small>
     </p>
     <p>{{ comment.body }}</p>
   </div>
