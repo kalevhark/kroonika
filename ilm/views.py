@@ -2019,7 +2019,7 @@ def mixed_ilmateade(request):
                     'color': 'gray'
                 }
             },
-            'data': 24 * [None] + [(el[2]-el[1]) for el in andmed_j2rgnevad48h['series']['precipitations']], # err prec
+            'data': 24 * [None] + [round(el[2]-el[1], 1) for el in andmed_j2rgnevad48h['series']['precipitations']], # err prec
             'color': {
                 'pattern': {
                     'path': {

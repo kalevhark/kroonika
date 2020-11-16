@@ -1,4 +1,5 @@
 // Järgnev käivitub kui leht laetud ja kutsub välja graafiku
+// version 2020.11
 var chart,
 	obj,
 	chartTitle;
@@ -115,7 +116,7 @@ function mixed_ilmateade() {
                 if (chart.get('andmed_j2rgnevad48h_precipitations').data[this.x]) {
                   return this.y + chart.get('andmed_j2rgnevad48h_precipitations').data[this.x];
                 } else {
-                  return this.y.toFixed(1);
+                  return this.y;
                 }
               }
             }
