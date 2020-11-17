@@ -96,7 +96,7 @@ def wiki_base_info(request):
         feedbacks = Vihje.objects.\
             exclude(end_date__isnull=False).\
             filter(inp_date__gt=tagasi24h).count()
-        comments = Comment.objects.filter(created_on__gt=tagasi24h).count()
+        comments = Comment.objects.filter(inp_date__gt=tagasi24h).count()
     else:
          feedbacks = 0
          comments = 0
