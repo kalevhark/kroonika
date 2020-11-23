@@ -222,9 +222,15 @@ def ilmaandmed_veebist(dt):
 def yrno_48h():
     # Weather forecast from Yr, delivered by the Norwegian Meteorological Institute and the NRK
     href = 'http://www.yr.no/place/Estonia/Valgamaa/Valga/forecast_hour_by_hour.xml'
-    # tree = etree.parse(href)
-    # root = tree.getroot()
-    r = requests.get(href)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Accept": "*/*",
+    }
+    r = requests.get(
+        href,
+        headers=headers,
+    )
     root = ET.fromstring(r.text)
     yr = {}
     tag_timezone = root.find("location").find("timezone") # Otsime XML puu asukoha andmetega
@@ -571,7 +577,11 @@ class YrnoAPI():
             'lon': lon,
             'altitude': altitude
         }
-        headers = {}
+        headers = {
+            "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "Accept": "*/*",
+        }
         data = self.get_api_data(url, headers, params)
         # print('Andmed: API')
 
