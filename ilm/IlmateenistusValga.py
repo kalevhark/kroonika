@@ -251,11 +251,16 @@ class IlmateenistusData():
         # Loeme Ilmateenistuse viimase mõõtmise andmed veebist
         jaam = 'Valga'
         href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
+        r = requests.get(href)
         try:
-            r = requests.get(href)
             root = ET.fromstring(r.text)
         except:
-            return None # Andmeid ei õnnestunud online saada
+            # Kontrollime kas vaatlusandmed ikkagi olemas
+            observation_exists = r.text.find('<observations')
+            if observation_exists > 0:
+                root = ET.fromstring(r.text[observation_exists:])
+            else:
+                return None # Andmeid ei õnnestunud online saada
         # Loeme soovitud jaama andmed
         station = root.findall("./station/[name='"+jaam+"']")
         i = dict()

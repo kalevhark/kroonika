@@ -40,7 +40,15 @@ def ilm_praegu():
     jaam = 'Valga'
     href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
     r = requests.get(href)
-    root = ET.fromstring(r.text)
+    try:
+        root = ET.fromstring(r.text)
+    except:
+        # Kontrollime kas vaatlusandmed ikkagi olemas
+        observation_exists = r.text.find('<observations')
+        if observation_exists > 0:
+            root = ET.fromstring(r.text[observation_exists:])
+        else:
+            return None
     i = dict()
     # Mõõtmise aeg
     dt = datetime.fromtimestamp(int(root.attrib['timestamp']))

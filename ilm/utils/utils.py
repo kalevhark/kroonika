@@ -117,11 +117,16 @@ def config(path='', filename='utils/database.ini', section='postgresql'):
 def ilm_praegu():
     jaam = 'Valga'
     href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
+    r = requests.get(href)
     try:
-        r = requests.get(href)
         root = ET.fromstring(r.text)
     except:
-        return None
+        # Kontrollime kas vaatlusandmed ikkagi olemas
+        observation_exists = r.text.find('<observations')
+        if observation_exists > 0:
+            root = ET.fromstring(r.text[observation_exists:])
+        else:
+            return None
     # Leiame xmlist Valga andmed
     station = root.findall("./station/[name='" + jaam + "']")
     i = dict()
