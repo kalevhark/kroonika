@@ -429,13 +429,15 @@ def owm_onecall():
     return weather
 
 def ilmateenistus_forecast():
-    url = "http://www.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php?locationId=8918&lang=et"
-    soup = BeautifulSoup(requests.get(url).content, "html.parser")
+    # url = "http://www.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php?locationId=8918&lang=et"
+    # soup = BeautifulSoup(requests.get(url).content, "html.parser")
 
-    pattern = re.compile(r"callback\((.*)\);", re.DOTALL)
-    matches = pattern.search(soup.text)
-    data = json.loads(matches.group(1))
-
+    # pattern = re.compile(r"callback\((.*)\);", re.DOTALL)
+    # matches = pattern.search(soup.text)
+    # data = json.loads(matches.group(1))
+    url = "http://www.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php/?coordinates=57.7747649934758;26.0331527813654"
+    r = requests.get(url)
+    data = json.loads(r.text)
     hours = [hour for hour in data['forecast']['tabular']['time']]
 
     forecast = dict()
