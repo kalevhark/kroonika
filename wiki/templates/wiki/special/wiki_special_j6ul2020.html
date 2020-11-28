@@ -1,0 +1,567 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block src %}
+{% endblock %}
+
+{% block css %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap');
+
+body, html {
+  overflow:hidden;
+  margin: 0;
+  height: 100%;
+  background-color: #f1f1f1;
+}
+
+@media screen and (min-width: 1024px) {
+  div.image-wrapper {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+  }
+}
+
+/* Alla 800px laiuse sätted */
+@media screen and (max-width: 1023px) {
+  div.image-wrapper {
+    position: absolute;
+    /* left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%); */
+  }
+}
+
+#divGreeting {
+  /* border: solid 0.3em; */
+  position: relative;
+  left:0;
+  top:50%;
+  right:0;
+  height:50px;
+  margin: 0 auto;
+  /* text-align:center; */
+  width: 100%;
+  /* font-family: 'Just Another Hand', cursive; */
+  font-family: 'Mountains of Christmas', cursive;
+}
+
+/* Santa Claus by Jordana Morais https://codepen.io/jordanamorais/pen/dOLPmW */
+
+.holidays-title {
+	font-size: 2em;
+	font-weight: bold;
+	color: red;
+	/* font-family: 'Just Another Hand', cursive; */
+	font-family: 'Mountains of Christmas', cursive;
+	margin: .5em;
+	text-align: center;
+	justify-content: center;
+}
+
+.holidays-title-small {
+	font-size: 1.5em;
+	color: red;
+	/* font-family: 'Just Another Hand', cursive; */
+	font-family: 'Mountains of Christmas', cursive;
+	margin: .5em;
+	text-align: center;
+	justify-content: center;
+}
+
+.sky {
+  height: 100%;
+  color: #FFF;
+  display: block;
+}
+
+.wrapper {
+  margin: 0;
+  display: flex;
+  height: inherit;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+}
+
+.room-window::before, .room-window::after, .sc-head .nose, .sc-head .beard::before, .sc-head .ears, .sc-hat {
+  display: table;
+  margin: 0 auto;
+}
+
+.room-window {
+  width: 100%;
+  border: 10px solid #ccaa53;
+  box-shadow: 4px 5px 2px 0px rgba(182, 146, 54, 0.3);
+  overflow: hidden;
+  position: relative;
+  background-image: url("{% static 'wiki/img/special/VaMF597_1_pisipilt_cr_800x497.jpg' %}");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.room-window::before {
+  content: '';
+  background: #ccaa53;
+  box-shadow: 1px 0 1px 1px #a28230;
+  width: 10px;
+  height: inherit;
+  position: absolute;
+  left: 48%;
+  z-index: 1;
+}
+.room-window::after {
+  content: '';
+  background: #ccaa53;
+  width: inherit;
+  height: 10px;
+  position: absolute;
+  top: 48%;
+  z-index: 1;
+}
+
+.santa-claus {
+  margin: 40px;
+  animation: santa-claus 6s ease-in infinite;
+}
+.sc-head {
+  width: 80px;
+  height: 80px;
+  border-radius: 40%;
+  background: #f7caaf;
+  position: relative;
+  z-index: 2;
+}
+.sc-head .eyes {
+  position: absolute;
+  left: 2px;
+  top: 20px;
+  display: table;
+  margin: 0 auto;
+}
+.sc-head .eyes::before, .sc-head .eyes::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #000;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 15px;
+}
+.sc-head .nose {
+  width: 20px;
+  height: 13px;
+  border-radius: 50%;
+  background: #d48c7e;
+  top: 32px;
+  position: relative;
+}
+.sc-head .beard {
+  position: absolute;
+  bottom: -55px;
+  left: -10px;
+  background: #fff;
+  width: calc(100% + 20px);
+  height: 80px;
+  border-radius: 20% 20% 60% 60%;
+}
+.sc-head .beard::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  background: #000;
+  border-radius: 0 0 50% 50%;
+  margin-top: 6px;
+}
+.sc-head .ears {
+  width: calc(100% + 17px);
+  position: absolute;
+  top: 25px;
+  left: -8px;
+}
+.sc-head .ears .ear {
+  width: 10px;
+  height: 20px;
+  background: #d48c7e;
+  border-radius: 50% 0 0 50%;
+}
+.sc-head .ears .ear.left {
+  float: left;
+}
+.sc-head .ears .ear.right {
+  float: right;
+  transform: rotateZ(180deg);
+}
+.sc-hat {
+  position: absolute;
+  top: -37px;
+  left: -6px;
+  width: calc(100% + 10px);
+  height: 55px;
+  background: #de3939;
+  border-radius: 60px 80px 0 0;
+}
+.sc-hat::before {
+  content: '';
+  width: inherit;
+  height: 20px;
+  background: #fff;
+  display: block;
+  border-radius: 6px;
+  position: absolute;
+  bottom: -5px;
+  left: -4px;
+}
+.sc-hat .hat-tip {
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 69px solid #de3939;
+  position: absolute;
+  top: -37px;
+  animation: swing 2s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  left: 8px;
+}
+.sc-hat .hat-tip::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  display: block;
+  position: absolute;
+  left: -13px;
+  top: -10px;
+}
+.sc-body {
+  position: absolute;
+  left: -70px;
+  width: 200px;
+  height: 200px;
+  background: #de3939;
+  border-radius: 30%;
+}
+@keyframes santa-claus {
+  0%, 60%, 80%, 100% {
+    transform: rotateZ(195deg) translateY(0);
+  }
+  30% {
+    transform: rotateZ(195deg) translateY(300px);
+  }
+}
+</style>
+{% endblock %}
+
+
+{% block og_image %}
+  <meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/special/VaMF597_1_pisipilt_cr_1200x600' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="w3-container image-wrapper">
+    <div class="holidays-title w3-hide-small w3-hide-medium">
+      {% now "Y" as current_year %}
+      {% if current_year == '2020' %}
+        Rahulikke jõule!
+      {% else %}
+        Head uut aastat!
+      {% endif %}
+    </div>
+    <div
+        style="color: red; text-align: center;"
+        class="holidays-title-small w3-hide-large"
+    >
+      {% now "Y" as current_year %}
+      {% if current_year == '2020' %}
+        Rahulikke jõule!
+      {% else %}
+        Head uut aastat!
+      {% endif %}
+    </div>
+    <div
+        style="font-size: 1em; color: red; text-align: center;"
+        id="txtHolder"
+        class="holidays-title-small w3-hide-large"
+    >
+    </div>
+    <div id="roomWindow" class="room-window sky">
+      <div id="santaClaus" class="santa-claus">
+        <div class="sc-head">
+          <div class="sc-hat">
+            <div class="hat-tip"></div>
+          </div>
+          <div class="eyes"></div>
+          <div class="nose"></div>
+          <div class="beard"></div>
+          <div class="ears">
+            <div class="ear left"></div>
+            <div class="ear right"></div>
+          </div>
+        </div>
+        <div class="sc-body"></div>
+      </div>
+		</div>
+    <div class="w3-tiny">
+		  Foto: Valga. Vaade Jaani kiriku poole, VaM F 597, Valga Muuseum
+    </div>
+
+    {% include 'wiki/includes/object_fbshare.html' %}
+    <div id="divGreeting" class="w3-hide-small w3-hide-medium">
+      <canvas
+              id="canvasGreeting"
+              width=300
+              height=100
+              style="position: relative; top: -170px; left: 30px; "
+      >
+      </canvas>
+    </div>
+    <div class="w3-tiny">
+      Oma nimega jõulukaardi saatmiseks kasutage aadressi: https://valgalinn.ee/wiki/j6ul2020/?<i>minginimi</i> NB! Küsimärk peab olema!
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function() {
+  showWindow();
+  setContext();
+  showGreeting();
+});
+
+function setContext() {
+  WebFontConfig = {
+    // google: { families: [ 'Just+Another+Hand::latin' ] }
+    google: { families: [ 'Mountains+of+Christmas::latin' ] }
+  };
+  (function() {
+    var wf = document.createElement('script');
+    // wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+    //   '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+      '://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+  })();
+};
+
+// On window reisize redraw
+$(window).bind('resize', function(e)
+  {
+    if (window.RT) clearTimeout(window.RT);
+    window.RT = setTimeout(function()
+      {
+        showWindow();
+      }, 100);
+  }
+);
+
+// Snow from https://codepen.io/radum/pen/xICAB
+function showWindow() {
+  var divWidth = document.getElementsByClassName("image-wrapper")[0].clientWidth;
+
+  // var COUNT = 300;
+  var masthead = document.querySelector('.sky');
+  var canvas = document.createElement('canvas');
+  canvas.setAttribute("id", "canvasWindow");
+  var ctx = canvas.getContext('2d');
+  var width = masthead.clientWidth;
+  // var height = masthead.clientHeight;
+  var height = Math.round(width / 1.6);
+  var santaClausBottomMargin = height - 40 - 80;
+  document.getElementById("santaClaus").style.marginBottom = santaClausBottomMargin + "px";
+  var COUNT = Math.round(width / 3);
+
+  console.log(divWidth, width, height);
+  var i = 0;
+  var active = false;
+
+  function onResize() {
+    width = masthead.clientWidth;
+    height = masthead.clientHeight;
+    canvas.width = width;
+    canvas.height = height;
+    ctx.fillStyle = '#FFF';
+
+    var wasActive = active;
+    active = width > 100;
+
+    if (!wasActive && active)
+      requestAnimFrame(update);
+  }
+
+  var Snowflake = function () {
+    this.x = 0;
+    this.y = 0;
+    this.vy = 0;
+    this.vx = 0;
+    this.r = 0;
+
+    this.reset();
+  }
+
+  Snowflake.prototype.reset = function() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * -height;
+    this.vy = 1 + Math.random() * 3;
+    this.vx = 0.5 - Math.random();
+    this.r = 1 + Math.random() * 2;
+    this.o = 0.5 + Math.random() * 0.5;
+  }
+
+  canvas.style.position = 'absolute';
+  canvas.style.left = canvas.style.top = '0';
+
+  var snowflakes = [], snowflake;
+  for (i = 0; i < COUNT; i++) {
+    snowflake = new Snowflake();
+    snowflake.reset();
+    snowflakes.push(snowflake);
+  }
+
+  function update() {
+
+    ctx.clearRect(0, 0, width, height);
+
+    if (!active)
+      return;
+
+    for (i = 0; i < COUNT; i++) {
+      snowflake = snowflakes[i];
+      snowflake.y += snowflake.vy;
+      snowflake.x += snowflake.vx;
+
+      ctx.globalAlpha = snowflake.o;
+      ctx.beginPath();
+      ctx.arc(snowflake.x, snowflake.y, snowflake.r, 0, Math.PI * 2, false);
+      ctx.closePath();
+      ctx.fill();
+
+      if (snowflake.y > height) {
+        snowflake.reset();
+      }
+    }
+
+    requestAnimFrame(update);
+  }
+
+  // shim layer with setTimeout fallback
+  window.requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame    ||
+            function( callback ){
+              window.setTimeout(callback, 1000 / 60);
+            };
+  })();
+
+  onResize();
+  window.addEventListener('resize', onResize, false);
+
+  masthead.appendChild(canvas);
+};
+
+function showGreeting() {
+  // get 2D context
+  var ctxGreeting = document.getElementById("canvasGreeting").getContext("2d"),
+
+  // the text we will draw
+  txt = decodeURIComponent("Soovib: {{tervitaja}}".replace("amp;", "")),
+
+  // dash-length for off-range
+  dashLen = 220,
+
+  // we'll update this, initialize
+  dashOffset = dashLen,
+
+  // some arbitrary speed
+  speed = 10,
+
+  // start position for x and iterator
+  x = 0, i = 0;
+
+  // Kohendame tervitusvälja akna suurusele vastavaks
+  // let elCanvasWindow = document.getElementById("canvasWindow");
+  // console.log(elCanvasWindow.clientWidth);
+  // let elCanvasGreeting = document.getElementById("canvasGreeting");
+  // elCanvasGreeting.style.width = (elCanvasWindow.clientWidth - 80) + "px";
+
+  // text mobiiliseadmete jaoks
+  document.getElementById("txtHolder").innerHTML = txt;
+  // elCanvasGreeting.innerHTML = txt;
+
+  // Comic Sans?? Let's make it useful for something ;) w/ fallbacks
+  // ctxGreeting.font = "30px Just Another Hand";
+  ctxGreeting.font = "30px Mountains of Christmas";
+
+  // thickness of the line
+  ctxGreeting.lineWidth = 1;
+
+  // to avoid spikes we can join each line with a round joint
+  //ctxGreeting.lineJoin = "round";
+
+  // increase realism letting background (f.ex. paper) show through
+  ctxGreeting.globalAlpha = 2/3;
+
+  // some color, lets use a black pencil
+  ctxGreeting.strokeStyle = ctxGreeting.fillStyle = "white";
+
+  // loop(ctxGreeting, txt, x, dashLen, dashOffset, speed, i);
+  (function loop() {
+      // clear canvas for each frame
+      ctxGreeting.clearRect(x, 0, 60, 150);
+
+      // calculate and set current line-dash for this char
+      ctxGreeting.setLineDash([dashLen - dashOffset, dashOffset - speed]);
+
+      // reduce length of off-dash
+      dashOffset -= speed;
+
+      // draw char to canvas with current dash-length
+      ctxGreeting.strokeText(txt[i], x, 90);
+
+      // char done? no, the loop
+      if (dashOffset > 0) requestAnimationFrame(loop);
+      else {
+
+        // ok, outline done, lets fill its interior before next
+        ctxGreeting.fillText(txt[i], x, 90);
+
+        // reset line-dash length
+        dashOffset = dashLen;
+
+        // get x position to next char by measuring what we have drawn
+        // notice we offset it a little by random to increase realism
+        x += ctxGreeting.measureText(txt[i++]).width + ctxGreeting.lineWidth * Math.random();
+
+        // lets use an absolute transform to randomize y-position a little
+        ctxGreeting.setTransform(1, 0, 0, 1, 0, 3 * Math.random());
+
+        // and just cause we can, rotate it a little too to make it even
+        // more realistic
+        ctxGreeting.rotate(Math.random() * 0.005);
+
+        // if we still have chars left, loop animation again for this char
+        if (i < txt.length) requestAnimationFrame(loop);
+      }
+    })();  // just to self-invoke the loop
+
+};
+</script>
+{% endblock %}
