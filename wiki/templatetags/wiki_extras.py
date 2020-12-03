@@ -56,6 +56,11 @@ def ukj(date_vkj):
 def vkj(date):
     return date != ukj(date)
 
+# Mis tüüpi server DEV, TEST või Live
+@register.simple_tag
+def server_type():
+    return settings.SERVER_TYPE
+
 @register.simple_tag
 def kalev():
     return 'Kalev Härk'

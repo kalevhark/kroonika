@@ -28,6 +28,9 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
+# DEV, TEST or Live server
+SERVER_TYPE = config('SERVER_TYPE', default='')
+
 ALLOWED_HOSTS = [
     '18.190.26.217', # t2.micro
     '3.134.244.125', # t3.nano
@@ -221,6 +224,7 @@ KROONIKA = {
 # sites framework: django.contrib.sites
 SITE_ID = 1
 
+# OpenWeatherMap API
 OWM_APIKEY = config('OWM_APIKEY')
 
 # DEFINE THE SEARCH CHANNELS:
