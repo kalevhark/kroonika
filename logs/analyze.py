@@ -102,10 +102,6 @@ if __name__ == '__main__':
     time24hoursago = now - timedelta(days=1)
     log_df_filtered = log_df[log_df.time > time24hoursago]
 
-    # Viimase 24h kogumaht
-    print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {log_df_filtered.resp_size.sum()} b')
-    print()
-
     # Agendid aadressid allalaadimise mahu järgi
     print('Downloader Agents:')
     result = log_df_filtered.groupby('agent')['resp_size']\
@@ -150,4 +146,11 @@ if __name__ == '__main__':
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
     result.index = result.apply(find_bot_name, axis=1)
+    result.style.format('{:,}')
+    result.columns()
     print(result)
+
+    # Viimase 24h kogumaht
+    log_df_filtered_resp_size_sum = '{:,}'.format(log_df_filtered.resp_size.sum()).str.replace(',', ' ')
+    print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {log_df_filtered_resp_size_sum} b')
+    # print()
