@@ -146,7 +146,7 @@ if __name__ == '__main__':
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
     result.index = result.apply(find_bot_name, axis=1)
-    result.style.format('{:,}')
+    # result.style.format('{:,}')
     result.columns()
     print(result)
 
