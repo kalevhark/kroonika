@@ -108,6 +108,7 @@ if __name__ == '__main__':
         .agg(['sum','count'])\
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
+    result['sum'] = result['sum'].map('{:,.3f}'.format).str.replace(",", " ").str.replace(".", ",")
     print(result)
     print()
 
@@ -147,7 +148,7 @@ if __name__ == '__main__':
         .head(10)
     result.index = result.apply(find_bot_name, axis=1)
     # result.style.format('{:,}')
-    result.columns()
+
     print(result)
 
     # Viimase 24h kogumaht
