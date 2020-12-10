@@ -154,6 +154,6 @@ if __name__ == '__main__':
 
     # Viimase 24h kogumaht
     log_df_filtered_resp_size_sum = log_df_filtered.resp_size.sum()
-    log_df_filtered_resp_size_sum['sum'] = log_df_filtered_resp_size_sum['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
+    # log_df_filtered_resp_size_sum['sum'] = log_df_filtered_resp_size_sum['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
     print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {log_df_filtered_resp_size_sum} b')
     # print()
