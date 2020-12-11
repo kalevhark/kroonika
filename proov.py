@@ -18,14 +18,14 @@ urls = [
     '/',
     '/wiki/kroonika/1922/',
     '/wiki/kroonika/1922/4/',
-    '/wiki/kroonika/1922/4/20'
+    '/wiki/kroonika/1922/4/20/'
 ]
 
 for url in urls:
     time_start = datetime.now()
     response = client.get(url)
-    time_stopp = (datetime.now() - time_start).microseconds
-    print(url, response.status_code, time_stopp)
+    time_stopp = datetime.now() - time_start
+    print(url, response.status_code, time_stopp.seconds, time_stopp.microseconds)
 
 pages = [
     'algus',
