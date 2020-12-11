@@ -16,7 +16,7 @@ client = Client()
 response = client.get('/')
 print(response.status_code)
 
-pages = ['algus', 'ilm', 'info']
+pages = ['algus', 'ilm:index', 'wiki:info']
 
 for page in pages:
     response = client.get(reverse(page))
