@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 
 import django
@@ -21,12 +22,15 @@ urls = [
 ]
 
 for url in urls:
+    time_start = datetime.now()
     response = client.get(url)
-    print(response.status_code)
+    time_stopp = (datetime.now() - time_start).microseconds
+    print(url, response.status_code, time_stopp)
 
 pages = [
     'algus',
     'ilm:index',
+    'ilm:history',
     'wiki:info',
     'wiki:otsi'
 ]
