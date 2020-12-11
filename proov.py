@@ -55,5 +55,5 @@ for isik in isikud:
     time_start = datetime.now()
     response = client.get(url)
     time_stopp = datetime.now() - time_start
-    if response != 200 or time_stopp.seconds > 1:
+    if response.status_code != 200 or time_stopp.seconds > 1:
         print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
