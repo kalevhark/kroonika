@@ -13,12 +13,25 @@ setup_test_environment()
 client = Client()
 
 # get a response from '/'
-response = client.get('/')
-print(response.status_code)
+urls = [
+    '/',
+    '/kroonika/1922/',
+    '/kroonika/1922/4/',
+    '/kroonika/1922/4/20'
+]
 
-pages = ['algus', 'ilm:index', 'wiki:info']
+for url in urls:
+    response = client.get(url)
+    print(response.status_code)
+
+pages = [
+    'algus',
+    'ilm:index',
+    'wiki:info',
+    'wiki:feedback'
+]
 
 for page in pages:
     response = client.get(reverse(page))
     print(page, response.status_code)
-    print(response.context.keys())
+    # print(response.context.keys())
