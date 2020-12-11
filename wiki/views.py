@@ -846,6 +846,7 @@ class ArtikkelDetailView(generic.DetailView):
 
     def get_object(self):
         obj = super().get_object()
+        return obj
         # Record the last accessed date
         obj.last_accessed = timezone.now()
         obj.total_accessed += 1
