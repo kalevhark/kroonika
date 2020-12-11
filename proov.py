@@ -21,11 +21,11 @@ isik_url = f'/wiki/isik/{isik.id}-{isik.slug}/'
 
 urls = [
     '/',
-    '/wiki/kroonika/1922/',
-    '/wiki/kroonika/1922/4/',
-    '/wiki/kroonika/1922/4/20/',
-    art_url,
-    isik_url
+    # '/wiki/kroonika/1922/',
+    # '/wiki/kroonika/1922/4/',
+    # '/wiki/kroonika/1922/4/20/',
+    # art_url,
+    # isik_url
 ]
 
 for url in urls:
@@ -49,3 +49,11 @@ for page in pages:
     print(page, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
     # print(response.context.keys())
 
+isikud = Isik.objects.all()
+for isik in isikud:
+    url = f'/wiki/isik/{isik.id}-{isik.slug}/'
+    time_start = datetime.now()
+    response = client.get(url)
+    time_stopp = datetime.now() - time_start
+    if response != '200' or time_stopp.seconds > 1:
+        print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
