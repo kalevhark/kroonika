@@ -15,9 +15,9 @@ client = Client()
 # get a response from '/'
 urls = [
     '/',
-    '/kroonika/1922/',
-    '/kroonika/1922/4/',
-    '/kroonika/1922/4/20'
+    '/wiki/kroonika/1922/',
+    '/wiki/kroonika/1922/4/',
+    '/wiki/kroonika/1922/4/20'
 ]
 
 for url in urls:
@@ -28,7 +28,7 @@ pages = [
     'algus',
     'ilm:index',
     'wiki:info',
-    'wiki:feedback'
+    'wiki:otsi'
 ]
 
 for page in pages:
