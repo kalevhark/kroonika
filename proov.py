@@ -1,5 +1,8 @@
-from django.conf import settings
-settings.configure()
+import django
+django.setup()
+
+# from django.conf import settings
+# settings.configure()
 
 from django.test.utils import setup_test_environment
 setup_test_environment()
