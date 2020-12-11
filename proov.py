@@ -25,7 +25,7 @@ for url in urls:
     time_start = datetime.now()
     response = client.get(url)
     time_stopp = datetime.now() - time_start
-    print(url, response.status_code, time_stopp.seconds, time_stopp.microseconds)
+    print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
 
 pages = [
     'algus',
@@ -36,6 +36,8 @@ pages = [
 ]
 
 for page in pages:
+    time_start = datetime.now()
     response = client.get(reverse(page))
-    print(page, response.status_code)
+    time_stopp = datetime.now() - time_start
+    print(page, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
     # print(response.context.keys())
