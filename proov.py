@@ -1,8 +1,8 @@
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
 
-import django
-django.setup()
+# import django
+# django.setup()
 
 # from django.conf import settings
 # settings.configure()
