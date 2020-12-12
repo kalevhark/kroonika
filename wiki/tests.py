@@ -1,10 +1,12 @@
 from datetime import datetime
+from functools import reduce
+from operator import or_
 import urllib
 
 from django.urls import reverse
 from django.test import TestCase
 
-from wiki.models import Artikkel, Isik
+from wiki.models import Artikkel, Isik, Objekt
 
 class WikiViewTests(TestCase):
     def test_algus_view(self):
@@ -41,7 +43,7 @@ class ArtikkelViewTests(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-    def test_artikkel_view_show_by_name(self):
+    def test_artikkel_view_show_by_name_random(self):
         SELECT_COUNT = 10
         # Juhuslikud artiklid kontrolliks
         objs = Artikkel.objects.filter(kroonika__isnull=True).order_by('?')[:SELECT_COUNT]
@@ -78,16 +80,35 @@ class ArtikkelViewTests(TestCase):
 
 
 class IsikViewTests(TestCase):
-    test_object_id = 19 # Johannes Märtson
+    def setUp(self):
+        # Every test needs access to the request factory.
+        self.test_object_id = 19 # Johannes Märtson
+        # Anonymous user filter
+        artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
+        self.initial_queryset = Isik.objects.all()
+        artikliga = self.initial_queryset. \
+            filter(artikkel__in=artikkel_qs). \
+            values_list('id', flat=True)
+        viitega = self.initial_queryset. \
+            filter(viited__isnull=False). \
+            values_list('id', flat=True)
+        viiteta_artiklita = self.initial_queryset. \
+            filter(viited__isnull=True, artikkel__isnull=True). \
+            values_list('id', flat=True)
+        self.model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
 
     def test_object_exists(self):
         self.assertEqual(Isik.objects.filter(id=self.test_object_id).count(), 1)
-        obj = Isik.objects.get(id=7)
-        self.assertEqual(obj.get_absolute_url(), f'/wiki/isik/{obj.id}-{obj.slug}/')
+        obj = Isik.objects.get(id=self.test_object_id)
+        url = urllib.parse.unquote(obj.get_absolute_url())
+        self.assertEqual(url, f'/wiki/isik/{obj.id}-{obj.slug}/')
 
     def test_view_url_exists_at_desired_location(self):
         isik = Isik.objects.get(id=self.test_object_id)
         url = f'/wiki/isik/{isik.id}-{isik.slug}/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        url = '/wiki/isik/19-johannes-märtson/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -115,6 +136,130 @@ class IsikViewTests(TestCase):
         response = self.client.get(reverse('wiki:wiki_isik_detail', kwargs=kwargs))
         self.assertEqual(response.status_code, 200)
 
+    def test_view_show_by_name_random(self):
+        SELECT_COUNT = 10
+        # Juhuslikud isikud kontrolliks
+        objs = self.initial_queryset.filter(id__in=self.model_ids).order_by('?')[:SELECT_COUNT]
+        for obj in objs:
+            kwargs = {
+                'pk': obj.id,
+                'slug': obj.slug
+            }
+            response = self.client.get(reverse('wiki:wiki_isik_detail', kwargs=kwargs))
+            self.assertEqual(response.status_code, 200)
+
+    def test_view_HTTP404_for_non_authented_user(self):
+        SELECT_COUNT = 10
+        # Juhuslikud isikud kontrolliks
+        objs = self.initial_queryset.exclude(id__in=self.model_ids).order_by('?')[:SELECT_COUNT]
+        for obj in objs:
+            kwargs = {
+                'pk': obj.id,
+                'slug': obj.slug
+            }
+            response = self.client.get(reverse('wiki:wiki_isik_detail', kwargs=kwargs))
+            self.assertEqual(response.status_code, 404)
+
+    def test_view_HTTP404_for_wrong_query(self):
+        # Valel kujul otsingud
+        urls = [
+            f'/wiki/isik/{self.test_object_id}/',
+            '/wiki/isik/{self.test_object_id}-mingi-suvanimi',
+        ]
+        for url in urls:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 404)
+
+
+class ObjektViewTests(TestCase):
+    def setUp(self):
+        # Every test needs access to the request factory.
+        self.test_object_id = 68 # Säde seltsimaja
+        # Anonymous user filter
+        artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
+        self.initial_queryset = Objekt.objects.all()
+        artikliga = self.initial_queryset. \
+            filter(artikkel__in=artikkel_qs). \
+            values_list('id', flat=True)
+        viitega = self.initial_queryset. \
+            filter(viited__isnull=False). \
+            values_list('id', flat=True)
+        viiteta_artiklita = self.initial_queryset. \
+            filter(viited__isnull=True, artikkel__isnull=True). \
+            values_list('id', flat=True)
+        self.model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
+
+    def test_object_exists(self):
+        self.assertEqual(Objekt.objects.filter(id=self.test_object_id).count(), 1)
+        obj = Objekt.objects.get(id=self.test_object_id)
+        url = urllib.parse.unquote(obj.get_absolute_url())
+        self.assertEqual(url, f'/wiki/objekt/{obj.id}-{obj.slug}/')
+
+    def test_view_url_exists_at_desired_location(self):
+        obj = Objekt.objects.get(id=self.test_object_id)
+        url = f'/wiki/objekt/{obj.id}-{obj.slug}/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_response_time(self):
+        time_start = datetime.now()
+        obj = Objekt.objects.get(id=self.test_object_id)
+        url = f'/wiki/objekt/{obj.id}-{obj.slug}/'
+        _ = self.client.get(url)
+        time_stopp = datetime.now() - time_start
+        self.assertTrue(time_stopp.seconds < 5)
+
+    def test_view_uses_correct_template(self):
+        obj = Objekt.objects.get(id=self.test_object_id)
+        url = f'/wiki/objekt/{obj.id}-{obj.slug}/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'wiki/objekt_detail.html')
+
+    def test_view_show_by_name(self):
+        obj = Objekt.objects.get(id=self.test_object_id)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        response = self.client.get(reverse('wiki:wiki_objekt_detail', kwargs=kwargs))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_show_by_name_random(self):
+        SELECT_COUNT = 10
+        # Juhuslikud objektid kontrolliks
+        objs = self.initial_queryset.filter(id__in=self.model_ids).order_by('?')[:SELECT_COUNT]
+        for obj in objs:
+            kwargs = {
+                'pk': obj.id,
+                'slug': obj.slug
+            }
+            response = self.client.get(reverse('wiki:wiki_objekt_detail', kwargs=kwargs))
+            self.assertEqual(response.status_code, 200)
+
+    def test_view_HTTP404_for_non_authented_user(self):
+        SELECT_COUNT = 10
+        # Juhuslikud objektid kontrolliks
+        objs = self.initial_queryset.exclude(id__in=self.model_ids).order_by('?')[:SELECT_COUNT]
+        for obj in objs:
+            kwargs = {
+                'pk': obj.id,
+                'slug': obj.slug
+            }
+            response = self.client.get(reverse('wiki:wiki_objekt_detail', kwargs=kwargs))
+            self.assertEqual(response.status_code, 404)
+
+    def test_view_HTTP404_for_wrong_query(self):
+        # Valel kujul otsingud
+        urls = [
+            f'/wiki/objekt/{self.test_object_id}/',
+            '/wiki/objekt/{self.test_object_id}-mingi-suvanimi',
+        ]
+        for url in urls:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 404)
+
+
 class IlmViewTests(TestCase):
     def test_ilm_view(self):
        response = self.client.get(reverse('ilm:index'))
@@ -124,6 +269,6 @@ class IlmViewTests(TestCase):
        response = self.client.get(reverse('ilm:history'))
        self.assertEqual(response.status_code, 200)
 
-    def test_ilm_mixed_ilmateade_response(self):
-       response = self.client.get(reverse('ilm:mixed_ilmateade'))
-       self.assertEqual(response.status_code, 200)
+    # def test_ilm_mixed_ilmateade_response(self):
+    #    response = self.client.get(reverse('ilm:mixed_ilmateade'))
+    #    self.assertEqual(response.status_code, 200)
