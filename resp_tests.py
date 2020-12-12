@@ -14,18 +14,12 @@ setup_test_environment()
 client = Client()
 
 from wiki.models import Artikkel, Isik
-art = Artikkel.objects.latest('inp_date')
-art_url = f'/wiki/{art.id}-{art.slug}/'
-isik = Isik.objects.latest('inp_date')
-isik_url = f'/wiki/isik/{isik.id}-{isik.slug}/'
 
 urls = [
     '/',
     # '/wiki/kroonika/1922/',
     # '/wiki/kroonika/1922/4/',
     # '/wiki/kroonika/1922/4/20/',
-    # art_url,
-    # isik_url
 ]
 
 for url in urls:
