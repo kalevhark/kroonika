@@ -45,7 +45,7 @@ for page in pages:
     print(page, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
     # print(response.context.keys())
 
-print('Kontrollime avalikult nähtavate artikleid:')
+print('Kontrollime avalikult nähtavaid artikleid:')
 objs = Artikkel.objects.filter(kroonika__isnull=True)
 OK = objs.count()
 NOK = 0
@@ -59,6 +59,7 @@ for obj in objs:
         print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
 print(f'Avalikud ariklid NOK: {NOK}/{OK}')
 
+print('Kontrollime avalikult mittenähtavaid artikleid:')
 objs = Artikkel.objects.filter(kroonika__isnull=False)
 OK = objs.count()
 NOK = 0

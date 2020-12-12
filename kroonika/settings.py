@@ -32,11 +32,11 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 SERVER_TYPE = config('SERVER_TYPE', default='')
 
 ALLOWED_HOSTS = [
-    '18.190.26.217', # t2.micro
-    '3.134.244.125', # t3.nano
+    'valgalinn.ee', 'www.valgalinn.ee',
+    '3.134.244.125', 'ec2-3-134-244-125.us-east-2.compute.amazonaws.com', # t3.nano
     '18.217.172.167', # a1.medium
     '127.0.0.1', 'localhost',
-    'valgalinn.ee', 'www.valgalinn.ee'
+    # '18.190.26.217', # t2.micro
 ]
 
 
