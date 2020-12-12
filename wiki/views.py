@@ -45,8 +45,10 @@ from wiki.forms import VihjeForm
 # reCAPTCHA kontrollifunktsioon
 #
 def check_recaptcha(request):
-    data = request.POST
+    if settings.DEBUG:
+        return True
 
+    data = request.POST
     # get the token submitted in the form
     recaptcha_response = data.get('g-recaptcha-response')
     # captcha verification

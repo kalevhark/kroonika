@@ -42,19 +42,39 @@ class ArtikkelViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_artikkel_view_show_by_name(self):
-        obj = Artikkel.objects.filter(kroonika__isnull=True).first()
-        kwargs = {
-            'pk': obj.id,
-            'slug': obj.slug
-        }
-        response = self.client.get(reverse('wiki:wiki_artikkel_detail', kwargs=kwargs))
-        self.assertEqual(response.status_code, 200)
+        SELECT_COUNT = 10
+        # Juhuslikud artiklid kontrolliks
+        objs = Artikkel.objects.filter(kroonika__isnull=True).order_by('?')[:SELECT_COUNT]
+        for obj in objs:
+            kwargs = {
+                'pk': obj.id,
+                'slug': obj.slug
+            }
+            response = self.client.get(reverse('wiki:wiki_artikkel_detail', kwargs=kwargs))
+            self.assertEqual(response.status_code, 200)
 
-    def test_artikkel_view_no_show(self):
-        obj = Artikkel.objects.filter(kroonika__isnull=False).first()
-        url = f'/wiki/{obj.id}-{obj.slug}/'
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
+    def test_artikkel_HTTP404_for_non_authented_user(self):
+        SELECT_COUNT = 10
+        # Juhuslikud artiklid kontrolliks
+        objs = Artikkel.objects.filter(kroonika__isnull=False).order_by('?')[:SELECT_COUNT]
+        # obj = Artikkel.objects.filter(kroonika__isnull=False).first()
+        for obj in objs:
+            url = f'/wiki/{obj.id}-{obj.slug}/'
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 404)
+
+    def test_artikkel_HTTP404_for_wrong_dateformat(self):
+        # Valel kujul kuupäevaotsingud
+        urls = [
+            '/wiki/kroonika/922/',
+            '/wiki/kroonika/11922/',
+            '/wiki/kroonika/1922/13/',
+            '/wiki/kroonika/1922/4/50/',
+            '/wiki/kroonika/1933/2/29/'
+        ]
+        for url in urls:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 404)
 
 
 class IsikViewTests(TestCase):
