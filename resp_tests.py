@@ -30,12 +30,14 @@ for url in urls:
 
 pages = [
     'algus',
+    'wiki:info',
+    'wiki:otsi',
     'ilm:index',
     'ilm:history',
-    'wiki:info',
-    'wiki:otsi'
+    'ilm:mixed_ilmateade',
 ]
 
+print('Kontrollime põhilinke:')
 for page in pages:
     time_start = datetime.now()
     response = client.get(reverse(page))
@@ -43,11 +45,36 @@ for page in pages:
     print(page, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
     # print(response.context.keys())
 
-isikud = Isik.objects.all()
-for isik in isikud:
-    url = f'/wiki/isik/{isik.id}-{isik.slug}/'
+print('Kontrollime avalikult nähtavate artikleid:')
+objs = Artikkel.objects.filter(kroonika__isnull=True)
+OK = objs.count()
+NOK = 0
+for obj in objs:
+    url = f'/wiki/{obj.id}-{obj.slug}/'
     time_start = datetime.now()
     response = client.get(url)
     time_stopp = datetime.now() - time_start
     if response.status_code != 200 or time_stopp.seconds > 1:
+        NOK += 1
         print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+print(f'Avalikud ariklid NOK: {NOK}/{OK}')
+
+objs = Artikkel.objects.filter(kroonika__isnull=False)
+OK = objs.count()
+NOK = 0
+for obj in objs:
+    url = f'/wiki/{obj.id}-{obj.slug}/'
+    response = client.get(url)
+    if response.status_code != 404:
+        NOK += 1
+        print(url, response.status_code)
+print(f'Mitteavalikud ariklid NOK: {NOK}/{OK}')
+
+# isikud = Isik.objects.all()
+# for isik in isikud:
+#     url = f'/wiki/isik/{isik.id}-{isik.slug}/'
+#     time_start = datetime.now()
+#     response = client.get(url)
+#     time_stopp = datetime.now() - time_start
+#     if response.status_code != 200 or time_stopp.seconds > 1:
+#         print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
