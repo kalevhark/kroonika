@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.sitemaps',
+    'vgvk', # Ajutine VG vilistlaskogu jaoks
 ]
 
 MIDDLEWARE = [
