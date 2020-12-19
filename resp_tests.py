@@ -80,6 +80,7 @@ def check_nonpublic_artikkel():
     print(f'Mitteavalikud ariklid NOK: {NOK}/{OK}')
 
 def check_public_isik():
+    print('Kontrollime avalikult nähtavaid isikuid:')
     # Anonymous user filter
     artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
     initial_queryset = Isik.objects.all()
@@ -103,6 +104,7 @@ def check_public_isik():
             print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
 
 def check_nonpublic_isik():
+    print('Kontrollime avalikult mittenähtavaid isikuid:')
     # Anonymous user filter
     artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
     initial_queryset = Isik.objects.all()
