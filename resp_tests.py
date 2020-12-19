@@ -8,11 +8,11 @@ from django.test import Client
 from django.test.utils import setup_test_environment
 from django.urls import reverse
 
-from wiki.models import Artikkel, Isik
-
 os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
 django.setup()
 setup_test_environment()
+
+from wiki.models import Artikkel, Isik
 
 # create an instance of the client for our use
 client = Client()
