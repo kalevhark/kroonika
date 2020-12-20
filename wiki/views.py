@@ -1467,9 +1467,6 @@ class IsikDetailView(generic.DetailView):
         seotud_artiklid = artikkel_qs.\
             filter(isikud__id=self.object.id)
         context['seotud_artiklid'] = seotud_artiklid
-        # context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(self.request, seotud_artiklid, self.object.id)
-        # context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
-        # context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
         context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
             self.request,
             Isik,

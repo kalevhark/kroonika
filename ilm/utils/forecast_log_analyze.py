@@ -65,6 +65,7 @@ def read_forecast_log2pd(path, dir_logs, fn_forecast):
         index_col = 0,
         converters={2: yrno_prec},
         decimal = '.',
+        na_values = ['None'],
         # usecols=[1,2,3,6,11,13],
         names = [
             'timestamp',
@@ -130,8 +131,9 @@ def obs_quality(row, fore_hour):
     if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_o_prec'] == 0):
         o_qual -= koefitsent
     #it.ee
-    i_temp_qual = koefitsent * abs(row['observed_temp'] - row[f'forecast_{fore_hour}_i_temp'])
-    i_prec_qual = koefitsent * abs(row['observed_prec'] - row[f'forecast_{fore_hour}_i_prec'])
+    print(type(row[f'forecast_{fore_hour}_i_temp']))
+    i_temp_qual = koefitsent * abs(row['observed_temp'] - float(row[f'forecast_{fore_hour}_i_temp']))
+    i_prec_qual = koefitsent * abs(row['observed_prec'] - float(row[f'forecast_{fore_hour}_i_prec']))
     i_qual = max - (i_temp_qual + i_prec_qual)
     if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_i_prec'] == 0):
         i_qual -= koefitsent
@@ -161,7 +163,7 @@ def logs2bigdata(path):
         # print(qual.dropna().apply(mean))
         bd = bd.merge(qual, how='outer', left_index=True, right_index=True)
     # Konverteerime timestamp -> datetime -> kohalik ajavöönd
-    bd['aeg'] = pd.to_datetime(bd.index, unit='s').tz_localize('EET', ambiguous='infer')
+    bd['aeg'] = pd.to_datetime(bd.index, unit='s').tz_localize('EET', ambiguous='NaT')
     # print('qual', bd.shape)
     return bd
     
