@@ -1,5 +1,6 @@
 from datetime import datetime
 from functools import reduce
+import logging
 from operator import or_
 import os
 
@@ -64,12 +65,12 @@ def check_public_artikkel():
         if response.status_code != 200 or time_stopp.seconds > 1:
             NOK += 1
             print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
-    print(f'Avalikud ariklid NOK: {NOK}/{OK}')
+    logging.info(f'Avalikud ariklid NOK: {NOK}/{OK}')
 
 def check_nonpublic_artikkel():
     print('Kontrollime avalikult mittenähtavaid artikleid:')
     objs = Artikkel.objects.filter(kroonika__isnull=False)
-    OK = objs.count()
+    ALL = objs.count()
     NOK = 0
     for obj in objs:
         url = f'/wiki/{obj.id}-{obj.slug}/'
@@ -77,7 +78,7 @@ def check_nonpublic_artikkel():
         if response.status_code != 404:
             NOK += 1
             print(url, response.status_code)
-    print(f'Mitteavalikud ariklid NOK: {NOK}/{OK}')
+    logging.info(f'Mitteavalikud ariklid NOK: {NOK}/{ALL}')
 
 def check_public_isik():
     print('Kontrollime avalikult nähtavaid isikuid:')
@@ -95,13 +96,18 @@ def check_public_isik():
         values_list('id', flat=True)
     model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
     isikud = initial_queryset.filter(id__in=model_ids)
+    ALL = isikud.count()
+    NOK = 0
     for isik in isikud:
         url = f'/wiki/isik/{isik.id}-{isik.slug}/'
         time_start = datetime.now()
         response = client.get(url)
         time_stopp = datetime.now() - time_start
         if response.status_code != 200 or time_stopp.seconds > 1:
-            print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+            NOK += 1
+            logging.warning(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+            # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+    logging.info(f'Avalikud isikud NOK: {NOK}/{ALL}')
 
 def check_nonpublic_isik():
     print('Kontrollime avalikult mittenähtavaid isikuid:')
@@ -119,18 +125,34 @@ def check_nonpublic_isik():
         values_list('id', flat=True)
     model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
     isikud = initial_queryset.exclude(id__in=model_ids)
+    ALL = isikud.count()
+    NOK = 0
     for isik in isikud:
         url = f'/wiki/isik/{isik.id}-{isik.slug}/'
         time_start = datetime.now()
         response = client.get(url)
         time_stopp = datetime.now() - time_start
         if response.status_code != 404:
-            print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+            NOK += 1
+            # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+            logging.warning(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+    logging.info(f'Avalikud isikud NOK: {NOK}/{ALL}')
 
 if __name__ == '__main__':
+    # logger = logging.getLogger('resp_tests')
+    logging.basicConfig(
+        filename='logs/resp_tests.log',
+        encoding='utf-8',
+        filemode='w',
+        level=logging.DEBUG,
+        format='%(asctime)s %(message)s',
+        datefmt='%d.%m.%Y %H:%M:%S'
+    )
+    logging.info('Test started')
     check_urls()
     check_names()
     # check_public_artikkel()
     # check_nonpublic_artikkel()
     check_public_isik()
     check_nonpublic_isik()
+    logging.info('Test completed')
