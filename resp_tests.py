@@ -108,6 +108,26 @@ def check_public_object(model):
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
     logging.info(f'Avalikud {model._meta.verbose_name_plural} NOK: {NOK}/{ALL}')
 
+def prevent_request_warnings(original_function):
+    """
+    If we need to test for 404s or 405s this decorator can prevent the
+    request class from throwing warnings.
+    """
+    def new_function(*args, **kwargs):
+        # raise logging level to ERROR
+        logger = logging.getLogger('django.request')
+        previous_logging_level = logger.getEffectiveLevel()
+        logger.setLevel(logging.ERROR)
+
+        # trigger original function that would throw warning
+        original_function(*args, **kwargs)
+
+        # lower logging level back to previous
+        logger.setLevel(previous_logging_level)
+
+    return new_function
+
+@prevent_request_warnings
 def check_nonpublic_object(model):
     print(f'Kontrollime avalikult mittenähtavad {model._meta.verbose_name_plural}')
     # Anonymous user filter
@@ -129,15 +149,12 @@ def check_nonpublic_object(model):
     for obj in objs:
         url = f'/wiki/{model._meta.model_name}/{obj.id}-{obj.slug}/'
         time_start = datetime.now()
-        try:
-            response = client.get(url)
-        except Exception as e: print(e)
-        else:
-            time_stopp = datetime.now() - time_start
-            if response.status_code != 404:
-                NOK += 1
-                # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
-                logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
+        response = client.get(url)
+        time_stopp = datetime.now() - time_start
+        if response.status_code != 404:
+            NOK += 1
+            # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
     logging.info(f'Mitteavalikud {model._meta.verbose_name_plural} NOK: {NOK}/{ALL}')
 
 if __name__ == '__main__':
