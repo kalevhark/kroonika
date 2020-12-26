@@ -12,22 +12,23 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import configparser
 import os
-print(os.getcwd())
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Tundliku info eraldamiseks programmifailidest
 # Kasutus KEY = config('KEY')
 # from decouple import config
-config  = configparser.ConfigParser()
-config.read('settings.ini')
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+# Access configparser to load variable values
+config = configparser.SafeConfigParser(allow_no_value=True)
+# config  = configparser.ConfigParser()
+# config.read('settings.ini')
+config.read('%s/settings.ini' % (PROJECT_DIR))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-DEBUG = True
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config['django']['SECRET_KEY']
 
