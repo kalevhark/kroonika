@@ -129,13 +129,15 @@ def check_nonpublic_object(model):
     for obj in objs:
         url = f'/wiki/{model._meta.model_name}/{obj.id}-{obj.slug}/'
         time_start = datetime.now()
-        response = client.get(url)
-        time_stopp = datetime.now() - time_start
-        if 'Lehekülge ei leitud' not in response.content.decode():
-            print(response.status_code, type(response.status_code))
-            NOK += 1
-            # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
-            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
+        try:
+            response = client.get(url)
+        except Exception as e: print(e)
+        else:
+            time_stopp = datetime.now() - time_start
+            if response.status_code != 404:
+                NOK += 1
+                # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+                logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
     logging.info(f'Mitteavalikud {model._meta.verbose_name_plural} NOK: {NOK}/{ALL}')
 
 if __name__ == '__main__':
