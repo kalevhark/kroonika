@@ -79,7 +79,7 @@ def check_nonpublic_artikkel():
             logging.warning(f'{url} {response.status_code}')
     logging.info(f'Mitteavalikud ariklid NOK: {NOK}/{ALL}')
 
-def check_public_model(model):
+def check_public_object(model):
     print(f'Kontrollime avalikult nähtavad {model._meta.verbose_name_plural}:')
     # Anonymous user filter
     artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
@@ -108,7 +108,7 @@ def check_public_model(model):
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
     logging.info(f'Avalikud {model._meta.verbose_name_plural} NOK: {NOK}/{ALL}')
 
-def check_nonpublic_model(model):
+def check_nonpublic_object(model):
     print(f'Kontrollime avalikult mittenähtavad {model._meta.verbose_name_plural}')
     # Anonymous user filter
     artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
@@ -131,7 +131,7 @@ def check_nonpublic_model(model):
         time_start = datetime.now()
         response = client.get(url)
         time_stopp = datetime.now() - time_start
-        if 'Lehekülge ei leitud' not in response.content:
+        if 'Lehekülge ei leitud' not in response.content.decode():
             NOK += 1
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
             logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
@@ -154,6 +154,6 @@ if __name__ == '__main__':
     # check_public_artikkel()
     # check_nonpublic_artikkel()
     test_model = Objekt
-    check_public_model(test_model)
-    check_nonpublic_model(test_model)
+    # check_public_object(test_model)
+    check_nonpublic_object(test_model)
     logging.info('Test completed')
