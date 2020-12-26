@@ -13,7 +13,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
 django.setup()
 setup_test_environment()
 
-from wiki.models import Artikkel, Isik
+from wiki.models import Artikkel, Isik, Organisatsioon
 
 # create an instance of the client for our use
 client = Client()
@@ -80,11 +80,11 @@ def check_nonpublic_artikkel():
             print(url, response.status_code)
     logging.info(f'Mitteavalikud ariklid NOK: {NOK}/{ALL}')
 
-def check_public_isik():
-    print('Kontrollime avalikult nähtavaid isikuid:')
+def check_public_model(model):
+    print(f'Kontrollime avalikult nähtavad {model._meta.verbose_name_plural}:')
     # Anonymous user filter
     artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
-    initial_queryset = Isik.objects.all()
+    initial_queryset = model.objects.all()
     artikliga = initial_queryset. \
         filter(artikkel__in=artikkel_qs). \
         values_list('id', flat=True)
@@ -95,25 +95,25 @@ def check_public_isik():
         filter(viited__isnull=True, artikkel__isnull=True). \
         values_list('id', flat=True)
     model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
-    isikud = initial_queryset.filter(id__in=model_ids)
-    ALL = isikud.count()
+    objs = initial_queryset.filter(id__in=model_ids)
+    ALL = objs.count()
     NOK = 0
-    for isik in isikud:
-        url = f'/wiki/isik/{isik.id}-{isik.slug}/'
+    for obj in objs:
+        url = f'/wiki/{model._meta.model_name}/{obj.id}-{obj.slug}/'
         time_start = datetime.now()
         response = client.get(url)
         time_stopp = datetime.now() - time_start
         if response.status_code != 200 or time_stopp.seconds > 1:
             NOK += 1
-            logging.warning(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
-    logging.info(f'Avalikud isikud NOK: {NOK}/{ALL}')
+    logging.info(f'Avalikud {model._meta.verbose_name_plural} NOK: {NOK}/{ALL}')
 
-def check_nonpublic_isik():
-    print('Kontrollime avalikult mittenähtavaid isikuid:')
+def check_nonpublic_model(model):
+    print(f'Kontrollime avalikult mittenähtavad {model._meta.verbose_name_plural}')
     # Anonymous user filter
     artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
-    initial_queryset = Isik.objects.all()
+    initial_queryset = model.objects.all()
     artikliga = initial_queryset. \
         filter(artikkel__in=artikkel_qs). \
         values_list('id', flat=True)
@@ -124,19 +124,19 @@ def check_nonpublic_isik():
         filter(viited__isnull=True, artikkel__isnull=True). \
         values_list('id', flat=True)
     model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
-    isikud = initial_queryset.exclude(id__in=model_ids)
-    ALL = isikud.count()
+    objs = initial_queryset.exclude(id__in=model_ids)
+    ALL = objs.count()
     NOK = 0
-    for isik in isikud:
-        url = f'/wiki/isik/{isik.id}-{isik.slug}/'
+    for obj in objs:
+        url = f'/wiki/{model._meta.model_name}/{obj.id}-{obj.slug}/'
         time_start = datetime.now()
         response = client.get(url)
         time_stopp = datetime.now() - time_start
         if response.status_code != 404:
             NOK += 1
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
-            logging.warning(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
-    logging.info(f'Avalikud isikud NOK: {NOK}/{ALL}')
+            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
+    logging.info(f'Mitteavalikud {model._meta.verbose_name_plural} NOK: {NOK}/{ALL}')
 
 if __name__ == '__main__':
     # logger = logging.getLogger('resp_tests')
@@ -153,6 +153,6 @@ if __name__ == '__main__':
     check_names()
     # check_public_artikkel()
     # check_nonpublic_artikkel()
-    check_public_isik()
-    check_nonpublic_isik()
+    check_public_model(Isik)
+    check_nonpublic_model(Isik)
     logging.info('Test completed')
