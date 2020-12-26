@@ -10,11 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
+import configparser
 import os
 
 # Tundliku info eraldamiseks programmifailidest
 # Kasutus KEY = config('KEY')
-from decouple import config
+# from decouple import config
+config  = configparser.ConfigParser()
+config.read('kroonika/settings.ini')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,12 +27,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config['django']['SECRET_KEY']
 
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config['django'].getboolean('DEBUG', fallback=False)
 
 # DEV, TEST or Live server
-SERVER_TYPE = config('SERVER_TYPE', default='')
+SERVER_TYPE = config['django'].get('SERVER_TYPE', '')
 
 ALLOWED_HOSTS = [
     'valgalinn.ee', 'www.valgalinn.ee',
@@ -80,7 +83,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'kroonika.urls'
 
-ROOT_URL = config('ROOT_URL') # '/kroonika' Kui rakendus ei asu juurdomeenis: server_name/kroonika/...
+# ROOT_URL = config['settings']['ROOT_URL'] # '/kroonika' Kui rakendus ei asu juurdomeenis: server_name/kroonika/...
 
 TEMPLATES = [
     {
@@ -123,8 +126,8 @@ DATABASES = {
         'ENGINE':   'django.db.backends.postgresql',
         # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME':     'kroonika_db',
-        'USER':     config('PSQL_USER'),
-        'PASSWORD': config('PSQL_PSWD'),
+        'USER':     config['postgresql']['PSQL_USER'],
+        'PASSWORD': config['postgresql']['PSQL_PSWD'],
         'HOST':     'localhost',
         'PORT':     '5432',
         'CONN_MAX_AGE': 600,
@@ -171,10 +174,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
-STATIC_URL = ROOT_URL + '/static/'
+STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URL = ROOT_URL + '/media/'
+MEDIA_URL = '/media/'
 
 def FILTERS_VERBOSE_LOOKUPS():
     from django_filters.conf import DEFAULTS
@@ -202,8 +205,8 @@ REST_FRAMEWORK = {
 
 # https://www.google.com/recaptcha/intro/v3.html
 SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
-GOOGLE_RECAPTCHA_SECRET_KEY = config('GOOGLE_RECAPTCHA_SECRET_KEY')
-GOOGLE_RECAPTCHA_PUBLIC_KEY = config('GOOGLE_RECAPTCHA_PUBLIC_KEY')
+GOOGLE_RECAPTCHA_SECRET_KEY = config['recaptcha']['GOOGLE_RECAPTCHA_SECRET_KEY']
+GOOGLE_RECAPTCHA_PUBLIC_KEY = config['recaptcha']['GOOGLE_RECAPTCHA_PUBLIC_KEY']
 
 # Markdown settings https://python-markdown.github.io/extensions/index.html
 MARKDOWNX_MARKDOWN_EXTENSIONS = [
@@ -229,7 +232,7 @@ KROONIKA = {
 SITE_ID = 1
 
 # OpenWeatherMap API
-OWM_APIKEY = config('OWM_APIKEY')
+OWM_APIKEY = config['OpenWeatherMap']['OWM_APIKEY']
 
 # DEFINE THE SEARCH CHANNELS:
 
@@ -241,3 +244,10 @@ OWM_APIKEY = config('OWM_APIKEY')
 #     # channel: ( module.where_lookup_is, ClassNameOfLookup )
 #     'objektid': ('wiki.lookups', 'ObjektLookup'),
 # }
+
+# AWS SES credentials
+EMAIL_HOST = config['aws_mail']['HOST']
+EMAIL_HOST_PASSWORD = config['aws_mail']['PASSWORD_SMTP']
+EMAIL_HOST_USER = config['aws_mail']['USERNAME_SMTP']
+EMAIL_PORT = config['aws_mail']['PORT']
+EMAIL_USE_TLS = True

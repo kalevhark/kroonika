@@ -172,8 +172,10 @@ if __name__ == '__main__':
     print('Kontrollime põhilinke:')
     check_urls()
     check_names()
+
     # check_public_artikkel()
     # check_nonpublic_artikkel()
+
     test_model = Isik
     check_public_object(test_model)
     check_nonpublic_object(test_model)
