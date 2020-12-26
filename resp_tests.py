@@ -30,7 +30,7 @@ def check_urls():
         time_start = datetime.now()
         response = client.get(url)
         time_stopp = datetime.now() - time_start
-        print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+        logging.info(f'{url}, {response.status_code}, {time_stopp.seconds},{time_stopp.microseconds}s')
 
 def check_names():
     pages = [
@@ -44,12 +44,11 @@ def check_names():
         'vgvk:vgvk_index'
     ]
 
-    print('Kontrollime põhilinke:')
     for page in pages:
         time_start = datetime.now()
         response = client.get(reverse(page))
         time_stopp = datetime.now() - time_start
-        print(page, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+        logging.info(f'{page} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
         # print(response.context.keys())
 
 def check_public_artikkel():
@@ -64,7 +63,7 @@ def check_public_artikkel():
         time_stopp = datetime.now() - time_start
         if response.status_code != 200 or time_stopp.seconds > 1:
             NOK += 1
-            print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
+            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
     logging.info(f'Avalikud ariklid NOK: {NOK}/{OK}')
 
 def check_nonpublic_artikkel():
@@ -77,7 +76,7 @@ def check_nonpublic_artikkel():
         response = client.get(url)
         if response.status_code != 404:
             NOK += 1
-            print(url, response.status_code)
+            logging.warning(f'{url} {response.status_code}')
     logging.info(f'Mitteavalikud ariklid NOK: {NOK}/{ALL}')
 
 def check_public_model(model):
@@ -132,7 +131,7 @@ def check_nonpublic_model(model):
         time_start = datetime.now()
         response = client.get(url)
         time_stopp = datetime.now() - time_start
-        if response.status_code != 404:
+        if response.status_code == 200:
             NOK += 1
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
             logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
@@ -145,14 +144,16 @@ if __name__ == '__main__':
         encoding='utf-8',
         filemode='w',
         level=logging.INFO,
-        format='%(asctime)s %(message)s',
+        format='%(asctime)s %(levelname)s %(message)s',
         datefmt='%d.%m.%Y %H:%M:%S'
     )
     logging.info('Test started')
+    print('Kontrollime põhilinke:')
     check_urls()
     check_names()
     # check_public_artikkel()
     # check_nonpublic_artikkel()
-    check_public_model(Isik)
-    check_nonpublic_model(Isik)
+    test_model = Organisatsioon
+    check_public_model(test_model)
+    check_nonpublic_model(test_model)
     logging.info('Test completed')
