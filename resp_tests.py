@@ -132,6 +132,7 @@ def check_nonpublic_object(model):
         response = client.get(url)
         time_stopp = datetime.now() - time_start
         if 'Lehekülge ei leitud' not in response.content.decode():
+            print(response.status_code, type(response.status_code))
             NOK += 1
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
             logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
