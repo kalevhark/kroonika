@@ -144,7 +144,7 @@ if __name__ == '__main__':
         filename='logs/resp_tests.log',
         encoding='utf-8',
         filemode='w',
-        level=logging.DEBUG,
+        level=logging.INFO,
         format='%(asctime)s %(message)s',
         datefmt='%d.%m.%Y %H:%M:%S'
     )
