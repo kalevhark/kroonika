@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import configparser
 import os
+print(os.getcwd())
 
 # Tundliku info eraldamiseks programmifailidest
 # Kasutus KEY = config('KEY')
