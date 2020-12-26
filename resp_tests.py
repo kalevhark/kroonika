@@ -13,7 +13,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
 django.setup()
 setup_test_environment()
 
-from wiki.models import Artikkel, Isik, Organisatsioon
+from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 
 # create an instance of the client for our use
 client = Client()
@@ -131,7 +131,7 @@ def check_nonpublic_model(model):
         time_start = datetime.now()
         response = client.get(url)
         time_stopp = datetime.now() - time_start
-        if response.status_code == 200:
+        if 'Lehekülge ei leitud' not in response.content:
             NOK += 1
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
             logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
@@ -153,7 +153,7 @@ if __name__ == '__main__':
     check_names()
     # check_public_artikkel()
     # check_nonpublic_artikkel()
-    test_model = Organisatsioon
+    test_model = Objekt
     check_public_model(test_model)
     check_nonpublic_model(test_model)
     logging.info('Test completed')
