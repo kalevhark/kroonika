@@ -18,6 +18,25 @@ from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 # create an instance of the client for our use
 client = Client()
 
+def prevent_request_warnings(original_function):
+    """
+    If we need to test for 404s or 405s this decorator can prevent the
+    request class from throwing warnings.
+    """
+    def new_function(*args, **kwargs):
+        # raise logging level to ERROR
+        logger = logging.getLogger('django.request')
+        previous_logging_level = logger.getEffectiveLevel()
+        logger.setLevel(logging.ERROR)
+
+        # trigger original function that would throw warning
+        original_function(*args, **kwargs)
+
+        # lower logging level back to previous
+        logger.setLevel(previous_logging_level)
+
+    return new_function
+
 def check_urls():
     urls = [
         '/',
@@ -66,6 +85,7 @@ def check_public_artikkel():
             logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
     logging.info(f'Avalikud ariklid NOK: {NOK}/{OK}')
 
+@prevent_request_warnings
 def check_nonpublic_artikkel():
     print('Kontrollime avalikult mittenähtavaid artikleid:')
     objs = Artikkel.objects.filter(kroonika__isnull=False)
@@ -107,25 +127,6 @@ def check_public_object(model):
             logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
     logging.info(f'Avalikud {model._meta.verbose_name_plural} NOK: {NOK}/{ALL}')
-
-def prevent_request_warnings(original_function):
-    """
-    If we need to test for 404s or 405s this decorator can prevent the
-    request class from throwing warnings.
-    """
-    def new_function(*args, **kwargs):
-        # raise logging level to ERROR
-        logger = logging.getLogger('django.request')
-        previous_logging_level = logger.getEffectiveLevel()
-        logger.setLevel(logging.ERROR)
-
-        # trigger original function that would throw warning
-        original_function(*args, **kwargs)
-
-        # lower logging level back to previous
-        logger.setLevel(previous_logging_level)
-
-    return new_function
 
 @prevent_request_warnings
 def check_nonpublic_object(model):
@@ -173,7 +174,7 @@ if __name__ == '__main__':
     check_names()
     # check_public_artikkel()
     # check_nonpublic_artikkel()
-    test_model = Objekt
-    # check_public_object(test_model)
+    test_model = Isik
+    check_public_object(test_model)
     check_nonpublic_object(test_model)
     logging.info('Test completed')
