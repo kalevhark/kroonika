@@ -49,7 +49,7 @@ def check_urls():
         time_start = datetime.now()
         response = client.get(url)
         time_stopp = datetime.now() - time_start
-        logging.info(f'{url}, {response.status_code}, {time_stopp.seconds},{time_stopp.microseconds}s')
+        logging.info(f'{url}, {response.status_code}, {time_stopp.seconds},{time_stopp.microseconds:06}s')
 
 def check_names():
     pages = [
@@ -67,7 +67,7 @@ def check_names():
         time_start = datetime.now()
         response = client.get(reverse(page))
         time_stopp = datetime.now() - time_start
-        logging.info(f'{page} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
+        logging.info(f'{page} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds:06}s')
         # print(response.context.keys())
 
 def check_public_artikkel():
@@ -82,7 +82,7 @@ def check_public_artikkel():
         time_stopp = datetime.now() - time_start
         if response.status_code != 200 or time_stopp.seconds > 1:
             NOK += 1
-            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
+            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds:06}s')
     logging.info(f'Avalikud ariklid NOK: {NOK}/{OK}')
 
 @prevent_request_warnings
@@ -124,7 +124,7 @@ def check_public_object(model):
         time_stopp = datetime.now() - time_start
         if response.status_code != 200 or time_stopp.seconds > 1:
             NOK += 1
-            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
+            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds:06}s')
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
     logging.info(f'Avalikud {model._meta.verbose_name_plural} NOK: {NOK}/{ALL}')
 
@@ -155,7 +155,7 @@ def check_nonpublic_object(model):
         if response.status_code != 404:
             NOK += 1
             # print(url, response.status_code, f'{time_stopp.seconds},{time_stopp.microseconds}s')
-            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds}s')
+            logging.warning(f'{url} {response.status_code} {time_stopp.seconds},{time_stopp.microseconds:06}s')
     logging.info(f'Mitteavalikud {model._meta.verbose_name_plural} NOK: {NOK}/{ALL}')
 
 if __name__ == '__main__':
