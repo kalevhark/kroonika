@@ -1450,10 +1450,9 @@ class IsikDetailView(generic.DetailView):
         return Isik.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
-        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
-        # context['opts'] = Isik._meta
+
         # Kas isikule on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.\
             filter(isikud__id=self.object.id).\
@@ -1467,6 +1466,7 @@ class IsikDetailView(generic.DetailView):
         seotud_artiklid = artikkel_qs.\
             filter(isikud__id=self.object.id)
         context['seotud_artiklid'] = seotud_artiklid
+
         context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
             self.request,
             Isik,
@@ -1486,7 +1486,6 @@ class IsikDetailView(generic.DetailView):
             self.object.id
         )
         return context
-
 
 #
 # Organisatsioonide otsimiseks/filtreerimiseks

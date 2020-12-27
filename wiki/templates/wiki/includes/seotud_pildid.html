@@ -12,22 +12,24 @@ function showPilt(imgs) {
 }
 </script>
 
-{% if object.pilt_set.all %}
-  <p>
-		<i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
-		<div>
-		{% for obj in object.pilt_set.all %}
-			<a href="#">
-				<img
-					class="pilt-pildirida"
-					src="{{ obj.pilt_icon.url }}"
-					data-img-big="{{ obj.pilt.url }}"
-					alt="{{ obj.caption }}"
-					title="{{ obj }}"
-					onclick="showPilt(this);"
-				>
-			</a>
-		{% endfor %}
-		</div>
-  </p>
-{% endif %}
+{% with pildid=object.pilt_set.all %}
+  {% if pildid %}
+    <p>
+      <i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
+      <div>
+      {% for obj in pildid %}
+        <a href="#">
+          <img
+            class="pilt-pildirida"
+            src="{{ obj.pilt_icon.url }}"
+            data-img-big="{{ obj.pilt.url }}"
+            alt="{{ obj.caption }}"
+            title="{{ obj }}"
+            onclick="showPilt(this);"
+          >
+        </a>
+      {% endfor %}
+      </div>
+    </p>
+  {% endif %}
+{% endwith %}
