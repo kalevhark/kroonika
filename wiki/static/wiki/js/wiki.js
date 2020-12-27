@@ -1,4 +1,5 @@
 // ver 2020.5
+
 // Tagastab eestikeelse kuunime
 function getEstonianMonthName(idx) {
   var kuud = [

@@ -1,3 +1,5 @@
+// ver 2020.12
+
 $( document ).ready(function() {
   // Vue otsimisäpp
   var watchExampleVM = new Vue({
@@ -68,10 +70,14 @@ $( document ).ready(function() {
         };
         this.answer = 'Otsime...';
         // API url
-        var isik_api_url = kroonika_url + '/api/isik/?format=json';
-        var organisatsioon_api_url = kroonika_url + '/api/organisatsioon/?format=json';
-        var objekt_api_url = kroonika_url + '/api/objekt/?format=json';
-        var artikkel_api_url = kroonika_url + '/api/artikkel/?format=json';
+        // var isik_api_url = kroonika_url + '/api/isik/?format=json';
+        // var organisatsioon_api_url = kroonika_url + '/api/organisatsioon/?format=json';
+        // var objekt_api_url = kroonika_url + '/api/objekt/?format=json';
+        // var artikkel_api_url = kroonika_url + '/api/artikkel/?format=json';
+        var isik_api_url = '/api/isik/?format=json';
+        var organisatsioon_api_url = '/api/organisatsioon/?format=json';
+        var objekt_api_url = '/api/objekt/?format=json';
+        var artikkel_api_url = '/api/artikkel/?format=json';
         var vm = this;
         // Nullime väärtused enne uut päringut
         vm.isik_results = [];

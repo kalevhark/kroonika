@@ -276,7 +276,7 @@ def otsi(request):
         request,
         'wiki/wiki_otsi.html',
         {
-            'kroonika_url': settings.ROOT_URL,
+            # 'kroonika_url': settings.ROOT_URL,
             'question': question
         }
         # {'kroonika_url': request.META['SCRIPT_NAME']}
