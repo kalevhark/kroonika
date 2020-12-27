@@ -177,6 +177,6 @@ if __name__ == '__main__':
     # check_nonpublic_artikkel()
 
     test_model = Isik
-    # check_public_object(test_model)
+    check_public_object(test_model)
     # check_nonpublic_object(test_model)
     logging.info('Test completed')

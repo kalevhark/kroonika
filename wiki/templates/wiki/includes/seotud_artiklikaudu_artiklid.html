@@ -1,46 +1,45 @@
 <!-- Loend seotud artiklite numbritest ja lühisisu -->
 {% load wiki_extras %}
 {% for artikkel in obj.artiklid %}
-<a
-		style="cursor: pointer;"
-		onclick="document.getElementById('{{ model_id }}-art{{ artikkel.id }}').style.display='block'"
-		class="hover-artikkel tooltip"
->
-	{{ artikkel.hist_year }}
-	<span class="tooltiptext w3-hide-medium w3-hide-small">
-		{% if artikkel. %}dob
-			{{ artikkel.dob|date:"d.m.Y" }}
-		{% else %}
-			{% if artikkel.hist_month %}{% include 'wiki/includes/kuu.html' with kuu=artikkel.hist_month|stringformat:"02d" %} {% endif %}{{ artikkel.hist_year }}
+  <a
+      style="cursor: pointer;"
+      onclick="document.getElementById('{{ model_id }}-art{{ artikkel.id }}').style.display='block'"
+      class="hover-artikkel tooltip"
+  >
+    {{ artikkel.hist_year }}
+    <span class="tooltiptext w3-hide-medium w3-hide-small">
+      {% if artikkel. %}dob
+        {{ artikkel.dob|date:"d.m.Y" }}
+      {% else %}
+        {% if artikkel.hist_month %}{% include 'wiki/includes/kuu.html' with kuu=artikkel.hist_month|stringformat:"02d" %} {% endif %}{{ artikkel.hist_year }}
 
-		{% endif %}
-		:
-		{{ artikkel.body_text|truncatewords:10 }}
-	</span>
-</a>
-<div id="{{ model_id }}-art{{ artikkel.id }}" class="w3-modal">
-  <div class="w3-modal-content w3-padding-16 w3-light-gray">
-	  <header class="w3-container">
-			<span
-					onclick="document.getElementById('{{ model_id }}-art{{ artikkel.id }}').style.display='none'"
-					class="w3-button w3-display-topright">&#10060;
-			</span>
-			<strong>{% include 'wiki/includes/date_range.html' with obj=artikkel %}</strong>
-	  </header>
-		<div class="w3-container w3-padding-16">
-			{{ artikkel.body_text }}
-		</div>
-		<footer class="w3-container">
-			<a
-					style="text-decoration: none;"
-					class="text-artikkel hover-artikkel"
-					href="{% url 'wiki:wiki_artikkel_detail' pk=artikkel.id slug=artikkel.slug %}"
-			>
-				<i class="fa fa-comment"> </i>
-				Sissekande juurde
-			</a>
-		</footer>
+      {% endif %}
+      :
+      {{ artikkel.body_text|truncatewords:10 }}
+    </span>
+  </a>
+  <div id="{{ model_id }}-art{{ artikkel.id }}" class="w3-modal">
+    <div class="w3-modal-content w3-padding-16 w3-light-gray">
+      <header class="w3-container">
+        <span
+            onclick="document.getElementById('{{ model_id }}-art{{ artikkel.id }}').style.display='none'"
+            class="w3-button w3-display-topright">&#10060;
+        </span>
+        <strong>{% include 'wiki/includes/date_range.html' with obj=artikkel %}</strong>
+      </header>
+      <div class="w3-container w3-padding-16">
+        {{ artikkel.body_text }}
+      </div>
+      <footer class="w3-container">
+        <a
+            style="text-decoration: none;"
+            class="text-artikkel hover-artikkel"
+            href="{% url 'wiki:wiki_artikkel_detail' pk=artikkel.id slug=artikkel.slug %}"
+        >
+          <i class="fa fa-comment"> </i>
+          Sissekande juurde
+        </a>
+      </footer>
+    </div>
   </div>
-</div>
-
 {% endfor %}
