@@ -1462,30 +1462,68 @@ class IsikDetailView(generic.DetailView):
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Isik', self.object)
 
-        # Isikuga seotud artiklid
-        seotud_artiklid = artikkel_qs.\
-            filter(isikud__id=self.object.id)
-        context['seotud_artiklid'] = seotud_artiklid
-
-        context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
-            self.request,
-            Isik,
-            seotud_artiklid,
-            self.object.id
-        )
-        context['seotud_organisatsioonid_artiklikaudu'] = seotud_artiklikaudu(
-            self.request,
-            Organisatsioon,
-            seotud_artiklid,
-            self.object.id
-        )
-        context['seotud_objektid_artiklikaudu'] = seotud_artiklikaudu(
-            self.request,
-            Objekt,
-            seotud_artiklid,
-            self.object.id
-        )
+        # # Isikuga seotud artiklid
+        # seotud_artiklid = artikkel_qs.\
+        #     filter(isikud__id=self.object.id)
+        # context['seotud_artiklid'] = seotud_artiklid
+        #
+        # context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
+        #     self.request,
+        #     Isik,
+        #     seotud_artiklid,
+        #     self.object.id
+        # )
+        # context['seotud_organisatsioonid_artiklikaudu'] = seotud_artiklikaudu(
+        #     self.request,
+        #     Organisatsioon,
+        #     seotud_artiklid,
+        #     self.object.id
+        # )
+        # context['seotud_objektid_artiklikaudu'] = seotud_artiklikaudu(
+        #     self.request,
+        #     Objekt,
+        #     seotud_artiklid,
+        #     self.object.id
+        # )
         return context
+
+def object_detail_seotud(request, model, id):
+    context = {
+        'model': model
+    }
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    model_filters = {
+        'isik':           'isikud__id',
+        'organisatsioon': 'organisatsioonid__id',
+        'objekt':         'objektid__id'
+    }
+    # Objectiga seotud artiklid
+    filter = {
+        model_filters[model]: id
+    }
+    seotud_artiklid = artikkel_qs.filter(**filter)
+
+    context['seotud_artiklid'] = seotud_artiklid
+
+    context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
+        request,
+        Isik,
+        seotud_artiklid,
+        id
+    )
+    context['seotud_organisatsioonid_artiklikaudu'] = seotud_artiklikaudu(
+        request,
+        Organisatsioon,
+        seotud_artiklid,
+        id
+    )
+    context['seotud_objektid_artiklikaudu'] = seotud_artiklikaudu(
+        request,
+        Objekt,
+        seotud_artiklid,
+        id
+    )
+    return render(request, 'wiki/includes/seotud_artiklikaudu.html', context)
 
 #
 # Organisatsioonide otsimiseks/filtreerimiseks

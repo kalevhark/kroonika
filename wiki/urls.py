@@ -30,6 +30,7 @@ urlpatterns = [
     # path('kroonika/mine_krono_aasta', views.mine_krono_aasta, name='mine_krono_aasta'),
     path('isik/', IsikFilterView.as_view(), name='wiki_isik_filter'),
     path('isik/<int:pk>-<str:slug>/', IsikDetailView.as_view(), name='wiki_isik_detail'),
+    path('object_detail_seotud/<str:model>-<int:id>/', views.object_detail_seotud, name='wiki_object_detail_seotud'),
     path('organisatsioon/', OrganisatsioonFilterView.as_view(), name='wiki_organisatsioon_filter'),
     path('organisatsioon/<int:pk>-<str:slug>/', OrganisatsioonDetailView.as_view(), name='wiki_organisatsioon_detail'),
     path('objekt/', ObjektFilterView.as_view(), name='wiki_objekt_filter'),

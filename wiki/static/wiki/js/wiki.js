@@ -1,4 +1,4 @@
-// ver 2020.5
+// ver 2020.12
 
 // Tagastab eestikeelse kuunime
 function getEstonianMonthName(idx) {
@@ -85,6 +85,38 @@ function showFeedback() {
   };
 };
 
+// Küsib object kohta seotud andmed ja kuvab need detail vaates
+function wiki_object_detail_seotud() {
+    // Küsime andmed
+    $.ajax({
+      url: $("#wiki_object_detail_seotud").attr("data-url"),
+      dataType: 'html',
+      timeout: 300000,
+    beforeSend: function() {
+        $("#loaderDiv1").show();
+    },
+    success: function (data) {
+      document.getElementById("wiki_object_detail_seotud").innerHTML = data;
+    },
+    error: function (XMLHttpRequest, textstatus, errorThrown) {
+      console.log(textstatus);
+    },
+    complete: function () {
+      $("#loaderDiv1").hide();
+      // Kuupäevaväljade unikaalsete id-de lisamine
+      let dates = document.body.getElementsByClassName('date');
+      // console.dir(dates);
+      let counter = 0;
+      for (let i = 0; i < dates.length; i++) {
+        if (!dates[i].id) {
+          dates[i].id = "_date_" + counter++;
+        }
+      }
+    }
+    });
+  };
+
+// lülitab sisse valitud kuupäevaväljad lehel class=date-highlighted
 function hoverDate(x) {
   const newClassName = 'date-highlighted';
   let selectedId = x.parentElement.id;
@@ -100,6 +132,7 @@ function hoverDate(x) {
   }
 }
 
+// lülitab välja valitud kuupäevaväljad lehel class=date-highlighted
 function normalDate(x) {
   const oldClassName = 'date-highlighted';
   let selectedId = x.parentElement.id;

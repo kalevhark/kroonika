@@ -1,59 +1,75 @@
 {% extends "wiki/wiki_base.html" %}
+{% load static %}
 {% load wiki_extras %}
 
 {% block title %}{{ block.super }} - {{ object }}{% endblock %}
 
 {% block content %}
-<div class="w3-panel w3-card-4 w3-light-grey" >
-	<!-- Sisukaardi päis-->
-  <div class="w3-row text-objekt" >
-    <h4>
-			<a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_filter' %}">
-				<i class="fa fa-bank"></i>
-			</a>
-			{{ object }}
-		</h4>
-    <h5>
-      {% if object.hist_date %}
-        <strong>{{ object.hist_date }}</strong>
-				{% if object.hist_date|vkj %}ukj: {{ object.hist_date|ukj }}{% endif %}
-      {% elif object.hist_year %}
-        <strong>{{ object.hist_year }}</strong>
-      {% endif %}
-      {% if object.hist_enddate %}
-        <strong> - {{ object.hist_enddate }}</strong>
-				{% if object.hist_enddate|vkj %}ukj: {{ object.hist_enddate|ukj }}{% endif %}
-      {% elif object.hist_endyear %}
-        <strong> - {{ object.hist_endyear }}</strong>
-      {% endif %}
-    </h5>
+  <div class="w3-panel w3-card-4 w3-light-grey" >
+    <!-- Sisukaardi päis-->
+    <div class="w3-row text-objekt" >
+      <h4>
+        <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_filter' %}">
+          <i class="fa fa-bank"></i>
+        </a>
+        {{ object }}
+      </h4>
+      <h5>
+        {% if object.hist_date %}
+          <strong>{{ object.hist_date }}</strong>
+          {% if object.hist_date|vkj %}ukj: {{ object.hist_date|ukj }}{% endif %}
+        {% elif object.hist_year %}
+          <strong>{{ object.hist_year }}</strong>
+        {% endif %}
+        {% if object.hist_enddate %}
+          <strong> - {{ object.hist_enddate }}</strong>
+          {% if object.hist_enddate|vkj %}ukj: {{ object.hist_enddate|ukj }}{% endif %}
+        {% elif object.hist_endyear %}
+          <strong> - {{ object.hist_endyear }}</strong>
+        {% endif %}
+      </h5>
+    </div>
+
+    <!-- Sisukaardi kirjeldav osa-->
+    <div class="w3-twothird">
+      {% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
+      <!-- Sisukaardi tekstiosa-->
+      <div class="w3-twothird">
+        {% include 'wiki/includes/vigane.html' %}
+        <div>
+          {{ object.formatted_markdown | safe }}
+        </div>
+        {% include 'wiki/includes/mainitud_aastatel.html' %}
+        {% include 'wiki/includes/seotud_special_links.html' %}
+        {% include 'wiki/includes/seotud_viited.html' %}
+      </div>
+      <!-- Andmete lisamise/muutmise andmed: -->
+      {% include 'wiki/includes/object_updated_edit.html' with model='objekt' %}
+    </div>
+
+    <!--  Sisukaardi otseseosed-->
+    <div class="w3-third" >
+      {% include 'wiki/includes/seotud_objektid.html' %}
+      {% include 'wiki/includes/seotud_pildid.html' %}
+    </div>
+
   </div>
 
-	<!-- Sisukaardi kirjeldav osa-->
-  <div class="w3-twothird">
-		{% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
-		<!-- Sisukaardi tekstiosa-->
-		<div class="w3-twothird">
-			{% include 'wiki/includes/vigane.html' %}
-			<div>
-				{{ object.formatted_markdown | safe }}
-			</div>
-			{% include 'wiki/includes/mainitud_aastatel.html' %}
-			{% include 'wiki/includes/seotud_special_links.html' %}
-			{% include 'wiki/includes/seotud_viited.html' %}
+{#{% include 'wiki/includes/seotud_artiklikaudu.html' with model='objekt' %}#}
+
+  <div class="w3-row">
+    <div class="w3-center" id="loaderDiv1">
+			<img src="{% static 'wiki/img/ajax-loader-bar.gif' %}" >
 		</div>
-		<!-- Andmete lisamise/muutmise andmed: -->
-		{% include 'wiki/includes/object_updated_edit.html' with model='objekt' %}
+		<div
+            id="wiki_object_detail_seotud"
+            data-url="{% url 'wiki:wiki_object_detail_seotud' model=object|to_model_name_lower id=object.id %}"
+    ></div>
   </div>
 
-	<!--  Sisukaardi otseseosed-->
-	<div class="w3-third" >
-		{% include 'wiki/includes/seotud_objektid.html' %}
-		{% include 'wiki/includes/seotud_pildid.html' %}
-  </div>
-
-</div>
-
-{% include 'wiki/includes/seotud_artiklikaudu.html' with model='objekt' %}
+  <script>
+    // Laadime objektiga seosed
+    wiki_object_detail_seotud();
+  </script>
 
 {% endblock %}

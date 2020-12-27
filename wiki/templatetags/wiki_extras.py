@@ -15,6 +15,10 @@ def render_logged_in_user_list(context):
         'users': get_all_logged_in_users()
     }
 
+@register.filter
+def to_model_name_lower(object):
+    return object.__class__.__name__.lower()
+
 # Tagastab konkreetsele kasutajale filtreeritud loetelu objectiga (Isik, Organisatsioon, Objekt) seotud artiklitega
 @register.inclusion_tag('wiki/includes/object_mainitud_artiklites.html', takes_context=True)
 def object_mainitud_artiklites(context, object, model):
