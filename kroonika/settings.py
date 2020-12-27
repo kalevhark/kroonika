@@ -20,6 +20,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 # Tundliku info eraldamiseks programmifailidest
 # Kasutus KEY = config('KEY')
 # from decouple import config
+
 # Access configparser to load variable values
 config = configparser.SafeConfigParser(allow_no_value=True)
 # config  = configparser.ConfigParser()
@@ -43,9 +44,7 @@ ALLOWED_HOSTS = [
     '3.134.244.125', 'ec2-3-134-244-125.us-east-2.compute.amazonaws.com', # t3.nano
     '18.217.172.167', # a1.medium
     '127.0.0.1', 'localhost',
-    # '18.190.26.217', # t2.micro
 ]
-
 
 # Application definition
 
