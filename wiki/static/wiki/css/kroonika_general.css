@@ -2207,15 +2207,11 @@ input:checked:focus + .switch-left + .switch-right {
   }
 }
 
-.loaderbook-green, .loaderbook-gray {
+.loaderbook {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   min-height: 8vh;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.loaderbook-green {
-  background: #00985F;
 }
