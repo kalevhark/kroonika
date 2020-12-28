@@ -65,19 +65,6 @@
   </div>
 
   {#{% include 'wiki/includes/seotud_artiklikaudu.html' with model='isik' %}#}
+  {% include 'wiki/includes/seotud_objects.html' %}
 
-  <div class="w3-row">
-    <div class="w3-center" id="loaderDiv1">
-			<img src="{% static 'wiki/img/ajax-loader-bar.gif' %}" >
-		</div>
-		<div
-            id="wiki_object_detail_seotud"
-            data-url="{% url 'wiki:wiki_object_detail_seotud' model=object|to_model_name_lower id=object.id %}"
-    ></div>
-  </div>
-
-  <script>
-    // Laadime objektiga seosed
-    wiki_object_detail_seotud();
-  </script>
 {% endblock %}
