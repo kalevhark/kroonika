@@ -209,10 +209,9 @@ function openLinks(evt, linkName) {
   }
   tablinks = document.getElementsByClassName("tablink");
   for (i = 0; i < x.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(/\bbackground-artikkel\b/g, "");
-    tablinks[i].className = tablinks[i].className.replace(/\bbackground-isik\b/g, "");
-    tablinks[i].className = tablinks[i].className.replace(/\bbackground-organisatsioon\b/g, "");
-    tablinks[i].className = tablinks[i].className.replace(/\bbackground-objekt\b/g, "");
+    if (tablinks[i] !== undefined) {
+      tablinks[i].className = tablinks[i].className.replace(/(?:^|\s)(background-).*[a-z]$/g, '');
+    }
   }
   document.getElementById(linkName).style.display = "block";
   evt.currentTarget.className += " " + newClassName;

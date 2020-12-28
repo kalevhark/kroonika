@@ -1484,7 +1484,7 @@ class IsikDetailView(generic.DetailView):
 #
 def object_detail_seotud(request, model, id):
     context = {
-        # 'model': model
+        'model': model
     }
     artikkel_qs = Artikkel.objects.daatumitega(request)
     model_filters = {
