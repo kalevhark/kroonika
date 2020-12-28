@@ -54,6 +54,8 @@
       </div>
       <!-- Andmete lisamise/muutmise andmed: -->
       {% include 'wiki/includes/object_updated_edit.html' with model='isik' %}
+      <!-- Seotud objectide andmed -->
+      {% include 'wiki/includes/seotud_objects.html' %}
     </div>
 
     <!--  Sisukaardi otseseosed-->
@@ -63,8 +65,4 @@
       {% include 'wiki/includes/seotud_pildid.html' %}
     </div>
   </div>
-
-  {#{% include 'wiki/includes/seotud_artiklikaudu.html' with model='isik' %}#}
-  {% include 'wiki/includes/seotud_objects.html' %}
-
 {% endblock %}
