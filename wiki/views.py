@@ -830,9 +830,20 @@ class ArtikkelDetailView(generic.DetailView):
         # Kas artiklile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
             artiklid__id=self.object.id).filter(profiilipilt_artikkel=True).first()
-        # kuup2ev = context['artikkel'].hist_searchdate
-        obj_id = context['artikkel'].id
+
+        # Seotud objectid
+        context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(
+            artikkel=self.object
+        )
+        context['seotud_organisatsioonid'] = Organisatsioon.objects.daatumitega(self.request).filter(
+            artikkel=self.object
+        )
+        context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(
+            artikkel=self.object
+        )
+
         # Järjestame artiklid kronoloogiliselt
+        obj_id = context['artikkel'].id
         loend = list(artikkel_qs.values_list('id', flat=True))
         # Leiame valitud artikli järjekorranumbri
         n = loend.index(obj_id)
@@ -1461,30 +1472,11 @@ class IsikDetailView(generic.DetailView):
 
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Isik', self.object)
-
-        # # Isikuga seotud artiklid
-        # seotud_artiklid = artikkel_qs.\
-        #     filter(isikud__id=self.object.id)
-        # context['seotud_artiklid'] = seotud_artiklid
-        #
-        # context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
-        #     self.request,
-        #     Isik,
-        #     seotud_artiklid,
-        #     self.object.id
-        # )
-        # context['seotud_organisatsioonid_artiklikaudu'] = seotud_artiklikaudu(
-        #     self.request,
-        #     Organisatsioon,
-        #     seotud_artiklid,
-        #     self.object.id
-        # )
-        # context['seotud_objektid_artiklikaudu'] = seotud_artiklikaudu(
-        #     self.request,
-        #     Objekt,
-        #     seotud_artiklid,
-        #     self.object.id
-        # )
+        # Otseseosed objektidega
+        context['seotud_organisatsioonid'] = Organisatsioon.objects.daatumitega(self.request).filter(
+            isik=self.object)
+        context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(isik=self.object)
+        # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
 #
@@ -1582,7 +1574,6 @@ class OrganisatsioonDetailView(generic.DetailView):
         return Organisatsioon.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
-        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas organisatsioonile on määratud profiilipilt
@@ -1591,33 +1582,14 @@ class OrganisatsioonDetailView(generic.DetailView):
 
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Organisatsioon', self.object)
-        # Seotud objects lisab async object_detail_seotud()
-
-        # # Organisatsiooniga seotud artiklid
-        # seotud_artiklid = artikkel_qs.filter(organisatsioonid__id=self.object.id)
-        #
-        # context['seotud_artiklid'] = seotud_artiklid
-        # # context['seotud_isikud_artiklikaudu'] = seotud_isikud_artiklikaudu(seotud_artiklid, self.object.id)
-        # # context['seotud_organisatsioonid_artiklikaudu'] = seotud_organisatsioonid_artiklikaudu(seotud_artiklid, self.object.id)
-        # # context['seotud_objektid_artiklikaudu'] = seotud_objektid_artiklikaudu(seotud_artiklid, self.object.id)
-        # context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
-        #     self.request,
-        #     Isik,
-        #     seotud_artiklid,
-        #     self.object.id
-        # )
-        # context['seotud_organisatsioonid_artiklikaudu'] = seotud_artiklikaudu(
-        #     self.request,
-        #     Organisatsioon,
-        #     seotud_artiklid,
-        #     self.object.id
-        # )
-        # context['seotud_objektid_artiklikaudu'] = seotud_artiklikaudu(
-        #     self.request,
-        #     Objekt,
-        #     seotud_artiklid,
-        #     self.object.id
-        # )
+        # Otseseosed objectidega
+        # isik_related = self.object.isik_set.all().values_list('id', flat=True)
+        # context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(id__in=isik_related)
+        context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(
+            organisatsioonid=self.object
+        )
+        context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(organisatsioon__id=self.object.id)
+        # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
 
@@ -1702,30 +1674,14 @@ class ObjektDetailView(generic.DetailView):
             objektid__id=self.object.id).filter(profiilipilt_objekt=True).first()
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
-        # Seotud objects lisab async object_detail_seotud()
-
-        # Objektiga seotud artiklid
-        # seotud_artiklid = artikkel_qs.filter(objektid__id=self.object.id)
-        # context['seotud_artiklid'] = seotud_artiklid
-        #
-        # context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
-        #     self.request,
-        #     Isik,
-        #     seotud_artiklid,
-        #     self.object.id
-        # )
-        # context['seotud_organisatsioonid_artiklikaudu'] = seotud_artiklikaudu(
-        #     self.request,
-        #     Organisatsioon,
-        #     seotud_artiklid,
-        #     self.object.id
-        # )
-        # context['seotud_objektid_artiklikaudu'] = seotud_artiklikaudu(
-        #     self.request,
-        #     Objekt,
-        #     seotud_artiklid,
-        #     self.object.id
-        # )
+        # Otseseosed objektidega
+        # Otseseosed objectidega
+        # isik_related = self.object.isik_set.all().values_list('id', flat=True)
+        # context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(id__in=isik_related)
+        context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(objektid=self.object)
+        context['seotud_organisatsioonid'] = Organisatsioon.objects.daatumitega(self.request).filter(objektid=self.object)
+        context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(objektid=self.object)
+        # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
 

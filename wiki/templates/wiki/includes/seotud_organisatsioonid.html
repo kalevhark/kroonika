@@ -1,25 +1,13 @@
-<!-- Loend seotud organisatsioonidest -->
-{% with organisatsioonid=object.organisatsioonid.all %}
+{% with organisatsioonid=seotud_organisatsioonid %}
   {% if organisatsioonid %}
-  <p><i class="fa fa-group w3-xlarge text-organisatsioon"></i>
-  {% for obj in organisatsioonid %}
-    {% if forloop.counter > 1 %}
-    &ensp;
-    {% endif %}
-    <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}>{{ obj }}</a>
-  {% endfor %}
-  </p>
-  {% endif %}
-{% endwith %}
-{% with organisatsioonid=object.organisatsioon_set.all %}
-{% if organisatsioonid %}
-  <p><i class="fa fa-group w3-xlarge text-organisatsioon"></i>
-  {% for obj in object.organisatsioon_set.all %}
-    {% if forloop.counter > 1 %}
-    &ensp;
-    {% endif %}
-    <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}>{{ obj }}</a>
-  {% endfor %}
-  </p>
+    <!-- Loend seotud organisatsioonidest -->
+    <p><i class="fa fa-group w3-xlarge text-organisatsioon"></i>
+    {% for obj in organisatsioonid %}
+      {% if forloop.counter > 1 %}
+      &ensp;
+      {% endif %}
+      <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}>{{ obj }}</a>
+    {% endfor %}
+    </p>
   {% endif %}
 {% endwith %}

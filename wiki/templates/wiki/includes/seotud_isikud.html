@@ -1,22 +1,13 @@
-{% if object.isikud.all %}
-<!-- Loend seotud isikutest -->
+{% with isikud=seotud_isikud %}
+  {% if isikud %}
+    <!-- Loend seotud isikutest -->
     <p><i class="fa fa-address-card-o w3-xlarge text-isik"></i>
-	{% for obj in object.isikud.all %}
-	  {% if forloop.counter > 1 %}
-		&ensp;
-	  {% endif %}
-	  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}> {{ obj }}</a>
-	{% endfor %}
-	</p>
-{% endif %}
-{% if object.isik_set.all %}
-<!-- Loend seotud isikutest -->
-    <p><i class="fa fa-address-card-o w3-xlarge text-isik"></i>
-	{% for obj in object.isik_set.all %}
-	  {% if forloop.counter > 1 %}
-		&ensp;
-	  {% endif %}
-	  <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}> {{ obj }}</a>
-	{% endfor %}
-	</p>
-{% endif %}
+    {% for obj in isikud %}
+      {% if forloop.counter > 1 %}
+      &ensp;
+      {% endif %}
+      <a class="hover-isik" href={% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}> {{ obj }}</a>
+    {% endfor %}
+    </p>
+  {% endif %}
+{% endwith %}

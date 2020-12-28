@@ -1,18 +1,6 @@
-<!-- Loend seotud objektidest -->
-{% with objektid=object.objektid.all %}
+{% with objektid=seotud_objektid %}
   {% if objektid %}
-    <p><i class="fa fa-bank w3-xlarge text-objekt"></i>
-    {% for obj in objektid %}
-      {% if forloop.counter > 1 %}
-      &ensp;
-      {% endif %}
-      <a class="hover-objekt" href={% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}>{{ obj }}</a>
-    {% endfor %}
-    </p>
-  {% endif %}
-{% endwith %}
-{% with objektid=object.objekt_set.all %}
-  {% if objektid %}
+    <!-- Loend seotud objektidest -->
     <p><i class="fa fa-bank w3-xlarge text-objekt"></i>
     {% for obj in objektid %}
       {% if forloop.counter > 1 %}
