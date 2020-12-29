@@ -29,6 +29,42 @@ class WikiViewTests(TestCase):
        self.assertContains(response, "Rahulikke jõule!")
        # self.assertQuerysetEqual(response.context['latest_question_list'], [])
 
+class WikiDateViewTests(TestCase):
+    def test_year_view(self):
+        time_start = datetime.now()
+        response = self.client.get(
+            reverse(
+                'wiki:artikkel_year_archive',
+                kwargs={'year': 1920}
+            )
+        )
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3)
+
+    def test_month_view(self):
+        time_start = datetime.now()
+        response = self.client.get(
+            reverse(
+                'wiki:artikkel_month_archive',
+                kwargs={'year': 1920, 'month': 2}
+            )
+        )
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3)
+
+    def test_day_view(self):
+        time_start = datetime.now()
+        response = self.client.get(
+            reverse(
+                'wiki:artikkel_day_archive',
+                kwargs={'year': 1920, 'month': 2, 'day': 24}
+            )
+        )
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3)
 
 class ArtikkelViewTests(TestCase):
     def test_object_exists(self):
