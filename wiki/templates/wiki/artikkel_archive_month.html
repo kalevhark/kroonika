@@ -112,10 +112,14 @@
         <h5><i class="fa fa-comment w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} teistel aastatel:</h5>
       </div>
     </div>
-    {% include 'wiki/includes/object_list.html' with object_list=sel_kuul %}
+{#    {% include 'wiki/includes/object_list.html' with object_list=sel_kuul %}#}
+    {% include 'wiki/includes/div_loader_book.html' %}
+    <div class="w3-padding-16"
+          id="artikkel_month_archive_otheryears"
+          data-url="{% url 'wiki:artikkel_month_archive_otheryears' year=month|date:"Y" month=month|date:"m" %}"
+    ></div>
   </div>
 {% endif %}
-
 
 <!-- Loend samal kuul sündinud isikutest -->
 {% if syndinud_isikud %}
@@ -160,8 +164,42 @@
     {% endwith %}
   </div>
 {% endif%}
-
 {% endblock %}
 
 {% block javascript %}
+  <script>
+  // Laadime samal kuul teistel aastatel
+  // Küsib object kohta seotud andmed ja kuvab need detail vaates
+function artikkel_month_archive_otheryears() {
+    // Küsime andmed
+    $.ajax({
+      url: $("#artikkel_month_archive_otheryears").attr("data-url"),
+      dataType: 'html',
+      timeout: 300000,
+      beforeSend: function() {
+        $("#loaderDiv1").show();
+      },
+      success: function (data) {
+        document.getElementById("artikkel_month_archive_otheryears").innerHTML = data;
+      },
+      error: function (XMLHttpRequest, textstatus, errorThrown) {
+        console.log(textstatus);
+      },
+      complete: function () {
+        $("#loaderDiv1").hide();
+        // Kuupäevaväljade unikaalsete id-de lisamine
+        let dates = document.body.getElementsByClassName('date');
+        // console.dir(dates);
+        let counter = 0;
+        for (let i = 0; i < dates.length; i++) {
+          if (!dates[i].id) {
+            dates[i].id = "_date_" + counter++;
+          }
+        }
+      }
+    });
+  };
+
+  artikkel_month_archive_otheryears();
+</script>
 {% endblock %}

@@ -2215,3 +2215,24 @@ input:checked:focus + .switch-left + .switch-right {
   justify-content: center;
   align-items: center;
 }
+
+/*Change text on hover*/
+.flip>span {
+	color: transparent;
+	float: none;
+}
+
+.flip:hover>span {
+	color: black;
+	float: left;
+}
+
+.flip>span:first-child {
+	color: black;
+	float: left;
+}
+
+.flip:hover>span:first-child {
+	color: transparent;
+	float: none;
+}

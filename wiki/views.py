@@ -1087,11 +1087,12 @@ class ArtikkelArchiveIndexView(ArchiveIndexView):
 
 class ArtikkelYearArchiveView(YearArchiveView):
     date_field = "hist_searchdate"
+    context_object_name = 'artiklid'
     make_object_list = True
     allow_future = True
     allow_empty = True
-    # paginate_by = 20
-    # ordering = ('hist_searchdate', 'id')
+    paginate_by = 20
+    ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
@@ -1240,8 +1241,8 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
     make_object_list = True
     allow_future = True
     allow_empty = True
-    # paginate_by = 20
-    # ordering = ('hist_searchdate', 'id')
+    paginate_by = 20
+    ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
@@ -1309,6 +1310,12 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         )
         return context
 
+def artikkel_month_archive_otheryears(request, year, month):
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    sel_kuul = artikkel_qs. \
+        exclude(hist_year=year). \
+        filter(Q(dob__month=month) | Q(doe__month=month) | Q(hist_month=month))
+    return render(request, 'wiki/includes/object_list.html', {'object_list': sel_kuul})
 
 class ArtikkelDayArchiveView(DayArchiveView):
     # queryset = Artikkel.objects.all()

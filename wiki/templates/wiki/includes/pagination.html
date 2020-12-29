@@ -1,5 +1,4 @@
 <!-- model = artikkel, isik, organisatsioon, objekt -->
-
 <!-- Lehekülgede valimine -->
 <div class="w3-cell-row w3-margin-top">
 
@@ -86,70 +85,70 @@
   <!-- Väikese ekraani versioon -->
   <div class="w3-container background-{{ model }} w3-cell w3-cell-middle w3-mobile w3-hide-large w3-hide-medium">
     <div class="w3-center">
-    <!-- Esimene lk -->
-    {% if object_list.has_previous %}
-      <a
-          style="text-decoration: none;"
-          href="?{% include 'wiki/includes/pagination_querystring.html' %}page=1"
-          title="esimesele leheküljele (lk 1)"
-      >
-        <div class="w3-button background-{{ model }} w3-padding-16">
+      <!-- Esimene lk -->
+      {% if object_list.has_previous %}
+        <a
+            style="text-decoration: none;"
+            href="?{% include 'wiki/includes/pagination_querystring.html' %}page=1"
+            title="esimesele leheküljele (lk 1)"
+        >
+          <div class="w3-button background-{{ model }} w3-padding-16">
+            <b><i class="fa fa-angle-double-left w3-large"></i></b>
+          </div>
+        </a>
+      {% else %}
+        <div class="w3-button background-{{ model }} text-{{ model }}">
           <b><i class="fa fa-angle-double-left w3-large"></i></b>
         </div>
-      </a>
-    {% else %}
-      <div class="w3-button background-{{ model }} text-{{ model }}">
-        <b><i class="fa fa-angle-double-left w3-large"></i></b>
-      </div>
-    {% endif %}
-    <!-- Eelmine lehekülg -->
-    {% if object_list.has_previous %}
-        <a
-            style="text-decoration: none;"
-            href="?{% include 'wiki/includes/pagination_querystring.html' %}page={{ object_list.previous_page_number }}"
-            title="eelmisele leheküljele (lk {{ object_list.previous_page_number }})"
-        >
-          <div class="w3-button background-{{ model }} w3-padding-16">
-            <b><i class="fa fa-angle-left w3-large"></i></b>
-          </div>
-        </a>
-    {% else %}
-      <div class="w3-button background-{{ model }} text-{{ model }} w3-padding-16">
-        <b><i class="fa fa-angle-left w3-large"></i></b>
-      </div>
-    {% endif %}
-    <!-- Järgmine lehekülg -->
-    {% if object_list.has_next %}
-        <a
-            style="text-decoration: none;"
-            href="?{% include 'wiki/includes/pagination_querystring.html' %}page={{ object_list.next_page_number }}"
-            title="järgmisele leheküljele (lk {{ object_list.next_page_number }})"
-        >
-          <div class="w3-button background-{{ model }} w3-padding-16">
+      {% endif %}
+      <!-- Eelmine lehekülg -->
+      {% if object_list.has_previous %}
+          <a
+              style="text-decoration: none;"
+              href="?{% include 'wiki/includes/pagination_querystring.html' %}page={{ object_list.previous_page_number }}"
+              title="eelmisele leheküljele (lk {{ object_list.previous_page_number }})"
+          >
+            <div class="w3-button background-{{ model }} w3-padding-16">
+              <b><i class="fa fa-angle-left w3-large"></i></b>
+            </div>
+          </a>
+      {% else %}
+        <div class="w3-button background-{{ model }} text-{{ model }} w3-padding-16">
+          <b><i class="fa fa-angle-left w3-large"></i></b>
+        </div>
+      {% endif %}
+      <!-- Järgmine lehekülg -->
+      {% if object_list.has_next %}
+          <a
+              style="text-decoration: none;"
+              href="?{% include 'wiki/includes/pagination_querystring.html' %}page={{ object_list.next_page_number }}"
+              title="järgmisele leheküljele (lk {{ object_list.next_page_number }})"
+          >
+            <div class="w3-button background-{{ model }} w3-padding-16">
+              <b><i class="fa fa-angle-right w3-large"></i></b>
+            </div>
+          </a>
+      {% else %}
+        <div class="w3-button background-{{ model }} text-{{ model }}">
             <b><i class="fa fa-angle-right w3-large"></i></b>
+        </div>
+      {% endif %}
+      <!-- Viimane lehekülg -->
+      {% if object_list.has_next %}
+        <a
+            style="text-decoration: none;"
+            href="?{% include 'wiki/includes/pagination_querystring.html' %}page={{ object_list.paginator.num_pages }}"
+            title="viimasele leheküljele (lk {{ object_list.paginator.num_pages }})"
+        >
+          <div class="w3-button background-{{ model }} w3-padding-16">
+            <b><i class="fa fa-angle-double-right w3-large"></i></b>
           </div>
         </a>
-    {% else %}
-      <div class="w3-button background-{{ model }} text-{{ model }}">
-          <b><i class="fa fa-angle-right w3-large"></i></b>
-      </div>
-    {% endif %}
-    <!-- Viimane lehekülg -->
-    {% if object_list.has_next %}
-      <a
-          style="text-decoration: none;"
-          href="?{% include 'wiki/includes/pagination_querystring.html' %}page={{ object_list.paginator.num_pages }}"
-          title="viimasele leheküljele (lk {{ object_list.paginator.num_pages }})"
-      >
-        <div class="w3-button background-{{ model }} w3-padding-16">
+      {% else %}
+        <div class="w3-button background-{{ model }} text-{{ model }}">
           <b><i class="fa fa-angle-double-right w3-large"></i></b>
         </div>
-      </a>
-    {% else %}
-      <div class="w3-button background-{{ model }} text-{{ model }}">
-        <b><i class="fa fa-angle-double-right w3-large"></i></b>
-      </div>
-    {% endif %}
+      {% endif %}
+    </div>
   </div>
-
 </div>

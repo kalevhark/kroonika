@@ -189,7 +189,8 @@ function showFeedBackInfo() {
 	});
 };
 
-// Avab perioodivaadete alamvalikud
+
+// Avab objektivaadete alamvalikud
 function openLinks(evt, linkName) {
   let modelName = 'artikkel';
   if (linkName.indexOf("isik") >= 0) {
