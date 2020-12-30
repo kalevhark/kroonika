@@ -136,6 +136,12 @@ def join(model_name, source_id, dest_id):
             print(art.id, art)
             art.objektid.add(new)
             # art.objektid.remove(old)
+        print('Objektid:')
+        objektid = old.objektid.all()
+        for objekt in objektid:
+            if objekt != old:
+                print(objekt.id, objekt)
+                new.objektid.add(objekt)
         print('Pildid:')
         pildid = Pilt.objects.filter(objektid=old)
         for pilt in pildid:
