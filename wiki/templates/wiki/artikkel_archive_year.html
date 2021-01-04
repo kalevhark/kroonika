@@ -122,7 +122,7 @@
     {% endif %}
     <!-- Loend valitud aasta artiklitest -->
     {% include 'wiki/includes/object_list.html' %}
-    {% if page_obj.paginator.num_pages > 1 %}
+    {% if page_obj.has_next %}
       {% include 'wiki/includes/pagination_next.html' with object_list=page_obj model="artikkel" %}
     {% endif %}
   {% else %}

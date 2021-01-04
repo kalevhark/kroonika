@@ -12,37 +12,18 @@
   </div>
 
   {% if artiklid %}
+    {% if page_obj.paginator.num_pages > 1 %}
+      {% include 'wiki/includes/pagination.html' with object_list=page_obj model="artikkel" %}
+    {% endif %}
     <div id="object_list">
       {% include "wiki/includes/object_list.html" with object_list=artiklid %}
     </div>
     {% if page_obj.has_next %}
-      <p class="pagination">
-        <a class="next-page" href="?page={{ page_obj.next_page_number }}">Järgmised lood...</a>
-      </p>
+      {% include 'wiki/includes/pagination_next.html' with object_list=page_obj model="artikkel" %}
     {% endif %}
   {% else %}
     <p>Lugusid ei ole</p>
   {% endif %}
 {% endblock %}
 
-{% block javascript %}
-<!-- jQuery CDN hosted by Google -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<!-- jScroll plug-in CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jscroll/2.4.1/jquery.jscroll.min.js"></script>
-
-<script>
-    jQuery(function ($) {
-        var $list = $('.object_list');
-        $list.jscroll({
-            loadingHtml: '<div class="text-center">' +
-                '<img src="{% static 'ilm/img/ajax-loader.gif' %}" alt="Loading" />' +
-                '</div>',
-            padding: 100,
-            pagingSelector: '.pagination',
-            nextSelector: 'a.next-page:last',
-            contentSelector: '.card,.pagination'
-        });
-    });
-</script>
-{% endblock %}
+{% block javascript %}{% endblock %}
