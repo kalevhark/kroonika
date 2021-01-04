@@ -436,9 +436,9 @@ class MySeleniumTests(StaticLiveServerTestCase):
         timeout = 2
         self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
         username_input = self.selenium.find_element_by_name("username")
-        username_input.send_keys('admin')
+        username_input.send_keys('')
         password_input = self.selenium.find_element_by_name("password")
-        password_input.send_keys('kr00nika')
+        password_input.send_keys('')
         self.selenium.find_element_by_xpath('//input[@value="login"]').click()
         # Wait until the response is received
         WebDriverWait(self.selenium, timeout).until(
