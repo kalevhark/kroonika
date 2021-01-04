@@ -1,22 +1,19 @@
 import calendar
-from datetime import datetime, date, timedelta, timezone
+from datetime import datetime, timedelta
 import json
-# from lxml import etree
-import xml.etree.ElementTree as ET
 
 from django.conf import settings
-from django.db.models import Sum, Count, Avg, Min, Max
+from django.db.models import Sum, Avg, Min, Max
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 import pandas as pd
 import pytz
 import requests
 
-from . import IlmateenistusValga
-
 from .forms import NameForm
-from .models import Ilm, Jaam
-from .utils import utils
+from .models import Ilm
+from .utils import utils, IlmateenistusValga
+import ilm.utils.ephem_util as ephem_data
 
 bdi = IlmateenistusValga.IlmateenistusData()
 
@@ -1766,12 +1763,11 @@ def mixed_ilmateade(request):
         for el in c_00hours
     )
 
-    graafik_title = (
-        'Mõõtmised: ' +
-        andmed_eelnevad24h['ilmastring'] + '; ' +
-        'Prognoos:' + 
-        andmed_j2rgnevad48h['meta']['lastupdate'].strftime("%d.%m.%Y %H:%M")
-    )
+    sun_str = ephem_data.get_sun_str(d)
+    moon_str = ephem_data.get_moon_str(d)
+    ilmastring_now = andmed_eelnevad24h['ilmastring']
+    ilmastring_fore = andmed_j2rgnevad48h['meta']['lastupdate'].strftime("%d.%m.%Y %H:%M")
+    graafik_title = f'Mõõtmised: {ilmastring_now}; Prognoos: {ilmastring_fore}; {sun_str} {moon_str}'
     
     graafik_subtitle = (
         'Allikad: ' +
