@@ -1,116 +1,114 @@
 {% for obj in object_list %}
-<div class="w3-cell-row w3-hover-white w3-padding-small">
-	<div class="w3-third">
-		<div class="w3-cell w3-cell-middle w3-mobile">
-			<strong>{% include 'wiki/includes/date_range.html' with obj=obj %}</strong>
-			&nbsp;<a
-				class="hover-artikkel"
-				href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}"
-			>
-			{{ obj.body_text|truncatewords:10 }}
-			</a>
-		</div>
-	</div>
-		
-	<div class="w3-rest w3-hide-small">
-		<div class="w3-bar">
-			{% if obj.isikud.exists %}
-				<button
-						class="w3-bar-item w3-button tablink isik {{ obj.id }}"
-						onclick="openTab(event,'isik', {{ obj.id }})">
-					<i class="fa fa-address-card-o"></i> {{ obj.isikud.count }}
-				</button>
-			{% endif %}
-			{% if obj.organisatsioonid.exists %}
-				<button
-						class="w3-bar-item w3-button tablink organisatsioon {{ obj.id }}"
-						onclick="openTab(event,'organisatsioon', {{ obj.id }})">
-					<i class="fa fa-group"></i> {{ obj.organisatsioonid.count }}
-				</button>
-			{% endif %}
-			{% if obj.objektid.exists %}
-				<button
-						class="w3-bar-item w3-button tablink objekt {{ obj.id }}"
-						onclick="openTab(event,'objekt', {{ obj.id }})">
-					<i class="fa fa-bank"></i> {{ obj.objektid.count }}
-				</button>
-			{% endif %}
-			{% if obj.pilt_set.exists %}
-				<button
-						class="w3-bar-item w3-button tablink pilt {{ obj.id }}"
-						onclick="openTab(event,'pilt', {{ obj.id }})">
-					<i class="fa fa-camera-retro"></i> {{ obj.pilt_set.count }}
-				</button>
-			{% endif %}
-		</div>
+  <div class="w3-cell-row w3-hover-white w3-padding-small infinite-item">
+    <div class="w3-third">
+      <div class="w3-cell w3-cell-middle w3-mobile">
+        <strong>{% include 'wiki/includes/date_range.html' with obj=obj %}</strong>
+        &nbsp;<a
+          class="hover-artikkel"
+          href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}"
+        >
+        {{ obj.body_text|truncatewords:10 }}
+        </a>
+      </div>
+    </div>
 
-		<div id="isik{{ obj.id }}" class="w3-container sisu isik {{ obj.id }}">
-			{% for isik in obj.isikud.all %}
-				{% if forloop.counter > 1 %}
-					&ensp;
-				{% endif %}
-				<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=isik.id slug=isik.slug %}">
-					{{ isik }}
-				</a>
-			{% endfor %}
-		</div>
+    <div class="w3-rest w3-hide-small">
+      <div class="w3-bar">
+        {% if obj.isikud.exists %}
+          <button
+              class="w3-bar-item w3-button tablink isik {{ obj.id }}"
+              onclick="openTab(event,'isik', {{ obj.id }})">
+            <i class="fa fa-address-card-o"></i> {{ obj.isikud.count }}
+          </button>
+        {% endif %}
+        {% if obj.organisatsioonid.exists %}
+          <button
+              class="w3-bar-item w3-button tablink organisatsioon {{ obj.id }}"
+              onclick="openTab(event,'organisatsioon', {{ obj.id }})">
+            <i class="fa fa-group"></i> {{ obj.organisatsioonid.count }}
+          </button>
+        {% endif %}
+        {% if obj.objektid.exists %}
+          <button
+              class="w3-bar-item w3-button tablink objekt {{ obj.id }}"
+              onclick="openTab(event,'objekt', {{ obj.id }})">
+            <i class="fa fa-bank"></i> {{ obj.objektid.count }}
+          </button>
+        {% endif %}
+        {% if obj.pilt_set.exists %}
+          <button
+              class="w3-bar-item w3-button tablink pilt {{ obj.id }}"
+              onclick="openTab(event,'pilt', {{ obj.id }})">
+            <i class="fa fa-camera-retro"></i> {{ obj.pilt_set.count }}
+          </button>
+        {% endif %}
+      </div>
 
-		<div id="organisatsioon{{ obj.id }}" class="w3-container sisu organisatsioon {{ obj.id }}" style="display:none">
-			{% for organisatsioon in obj.organisatsioonid.all %}
-				{% if forloop.counter > 1 %}
-					&ensp;
-				{% endif %}
-				<a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=organisatsioon.id slug=organisatsioon.slug %}">
-					{{ organisatsioon }}
-				</a>
-			{% endfor %}
-		</div>
+      <div id="isik{{ obj.id }}" class="w3-container sisu isik {{ obj.id }}">
+        {% for isik in obj.isikud.all %}
+          {% if forloop.counter > 1 %}
+            &ensp;
+          {% endif %}
+          <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=isik.id slug=isik.slug %}">
+            {{ isik }}
+          </a>
+        {% endfor %}
+      </div>
 
-		<div id="objekt{{ obj.id }}" class="w3-container sisu objekt {{ obj.id }}" style="display:none">
-			{% for objekt in obj.objektid.all %}
-				{% if forloop.counter > 1 %}
-					&ensp;
-				{% endif %}
-				<a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=objekt.id  slug=objekt.slug %}">
-					{{ objekt }}
-				</a>
-			{% endfor %}
-		</div>
+      <div id="organisatsioon{{ obj.id }}" class="w3-container sisu organisatsioon {{ obj.id }}" style="display:none">
+        {% for organisatsioon in obj.organisatsioonid.all %}
+          {% if forloop.counter > 1 %}
+            &ensp;
+          {% endif %}
+          <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=organisatsioon.id slug=organisatsioon.slug %}">
+            {{ organisatsioon }}
+          </a>
+        {% endfor %}
+      </div>
 
-		<div id="pilt{{ obj.id }}" class="w3-container sisu pilt {{ obj.id }}" style="display:none">
-			{% for pilt in obj.pilt_set.all %}
-				{% if forloop.counter > 1 %}
-					&ensp;
-				{% endif %}
-				<!-- Vaja lisada pildirida! -->
-				<a class="hover-pilt" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
-					<img class="pilt-pildirida" src="{{ pilt.pilt_icon.url }}" alt="{{ pilt }}" title="{{ pilt }}">
-				</a>
-			{% endfor %}
-		</div>
-	</div>
-</div>
+      <div id="objekt{{ obj.id }}" class="w3-container sisu objekt {{ obj.id }}" style="display:none">
+        {% for objekt in obj.objektid.all %}
+          {% if forloop.counter > 1 %}
+            &ensp;
+          {% endif %}
+          <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=objekt.id  slug=objekt.slug %}">
+            {{ objekt }}
+          </a>
+        {% endfor %}
+      </div>
 
-	
+      <div id="pilt{{ obj.id }}" class="w3-container sisu pilt {{ obj.id }}" style="display:none">
+        {% for pilt in obj.pilt_set.all %}
+          {% if forloop.counter > 1 %}
+            &ensp;
+          {% endif %}
+          <!-- Vaja lisada pildirida! -->
+          <a class="hover-pilt" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
+            <img class="pilt-pildirida" src="{{ pilt.pilt_icon.url }}" alt="{{ pilt }}" title="{{ pilt }}">
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 {% empty %}
-	Ei leitud midagi
+  Ei leitud midagi
 {% endfor %}
 
 <script>
-function openTab(evt, tyyp, obj) {
-  var i, x, tablinks;
-  x = document.getElementsByClassName("sisu " + obj);
-  for (i = 0; i < x.length; i++) {
-      x[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink " + obj);
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" text-isik", "");
-	  tablinks[i].className = tablinks[i].className.replace(" text-organisatsioon", "");
-	  tablinks[i].className = tablinks[i].className.replace(" text-objekt", "");
-	  tablinks[i].className = tablinks[i].className.replace(" text-pilt", "");
-  }
-  document.getElementById(tyyp + obj).style.display = "block";
-  evt.currentTarget.className += " text-"+tyyp;
-}
+{#function openTab(evt, tyyp, obj) {#}
+{#  var i, x, tablinks;#}
+{#  x = document.getElementsByClassName("sisu " + obj);#}
+{#  for (i = 0; i < x.length; i++) {#}
+{#      x[i].style.display = "none";#}
+{#  }#}
+{#  tablinks = document.getElementsByClassName("tablink " + obj);#}
+{#  for (i = 0; i < tablinks.length; i++) {#}
+{#    tablinks[i].className = tablinks[i].className.replace(" text-isik", "");#}
+{#	  tablinks[i].className = tablinks[i].className.replace(" text-organisatsioon", "");#}
+{#	  tablinks[i].className = tablinks[i].className.replace(" text-objekt", "");#}
+{#	  tablinks[i].className = tablinks[i].className.replace(" text-pilt", "");#}
+{#  }#}
+{#  document.getElementById(tyyp + obj).style.display = "block";#}
+{#  evt.currentTarget.className += " text-"+tyyp;#}
+{#}#}
 </script>

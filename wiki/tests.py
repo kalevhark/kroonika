@@ -26,8 +26,13 @@ class WikiViewTests(TestCase):
     def test_j6ul2020_view(self):
        response = self.client.get(reverse('special_j6ul2020'))
        self.assertEqual(response.status_code, 200)
-       self.assertContains(response, "Rahulikke jõule!")
+       self.assertContains(response, "Head uut aastat!")
        # self.assertQuerysetEqual(response.context['latest_question_list'], [])
+
+    # def test_login(self):
+    #     response = self.client.login(username='', password='')
+    #     self.assertEqual(response, True)
+    #     _ = self.client.logout()
 
 class WikiDateViewTests(TestCase):
     def test_year_view(self):
@@ -383,3 +388,58 @@ class ObjektViewTests(TestCase):
         for url in urls:
             response = self.client.get(url)
             self.assertEqual(response.status_code, 404)
+
+
+class FilterViewTests(TestCase):
+    # def setUp(self):
+    #     # Every test needs access to the request factory.
+    #     self.test_object_id = 68 # Säde seltsimaja
+    #     # Anonymous user filter
+    #     artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
+    #     self.initial_queryset = Objekt.objects.all()
+    #     artikliga = self.initial_queryset. \
+    #         filter(artikkel__in=artikkel_qs). \
+    #         values_list('id', flat=True)
+    #     viitega = self.initial_queryset. \
+    #         filter(viited__isnull=False). \
+    #         values_list('id', flat=True)
+    #     viiteta_artiklita = self.initial_queryset. \
+    #         filter(viited__isnull=True, artikkel__isnull=True). \
+    #         values_list('id', flat=True)
+    #     self.model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
+
+    def test_filter_objekt_for_non_authented_user(self):
+        response = self.client.get('/wiki/objekt/', {'nimi__icontains': 'säde', 't2nav_sisaldab': ''})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['object_list']), 2)
+
+
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.chrome.webdriver import WebDriver
+
+class MySeleniumTests(StaticLiveServerTestCase):
+    # fixtures = ['user-data.json']
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.selenium = WebDriver()
+        cls.selenium.implicitly_wait(10)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def test_login(self):
+        from selenium.webdriver.support.wait import WebDriverWait
+        timeout = 2
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+        username_input = self.selenium.find_element_by_name("username")
+        username_input.send_keys('admin')
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys('kr00nika')
+        self.selenium.find_element_by_xpath('//input[@value="login"]').click()
+        # Wait until the response is received
+        WebDriverWait(self.selenium, timeout).until(
+            lambda driver: driver.find_element_by_tag_name('body'))

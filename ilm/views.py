@@ -1784,6 +1784,7 @@ def mixed_ilmateade(request):
     # Graafiku kujundamine
     chart = {
         'title': {
+            'useHTML': True,
             'text': graafik_title,
             'align': 'left',
             'style': {"fontSize": "12px"},

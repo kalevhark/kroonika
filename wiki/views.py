@@ -1077,13 +1077,28 @@ class ArtikkelFilterView(FilterView):
 #
 class ArtikkelArchiveIndexView(ArchiveIndexView):
     date_field = "hist_searchdate"
-    make_object_list = True
+    # make_object_list = True
+    context_object_name = 'artiklid'
     allow_future = True
     paginate_by = 20
 
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
+
+def artikkel_index_archive_infinite(request):
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(artikkel_qs, 10)
+    try:
+        artiklid = paginator.page(page)
+    except PageNotAnInteger:
+        artiklid = paginator.page(1)
+    except EmptyPage:
+        artiklid = paginator.page(paginator.num_pages)
+    return render(request, 'wiki/artikkel_archive_infinite.html', {'artiklid': artiklid})
 
 class ArtikkelYearArchiveView(YearArchiveView):
     date_field = "hist_searchdate"

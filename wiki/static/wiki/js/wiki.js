@@ -217,3 +217,21 @@ function openLinks(evt, linkName) {
   document.getElementById(linkName).style.display = "block";
   evt.currentTarget.className += " " + newClassName;
 }
+
+// Artiklite loendis isik, organisatsioon, objekt, pildid tabide valikuks
+function openTab(evt, tyyp, obj) {
+  var i, x, tablinks;
+  x = document.getElementsByClassName("sisu " + obj);
+  for (i = 0; i < x.length; i++) {
+      x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink " + obj);
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" text-isik", "");
+	  tablinks[i].className = tablinks[i].className.replace(" text-organisatsioon", "");
+	  tablinks[i].className = tablinks[i].className.replace(" text-objekt", "");
+	  tablinks[i].className = tablinks[i].className.replace(" text-pilt", "");
+  }
+  document.getElementById(tyyp + obj).style.display = "block";
+  evt.currentTarget.className += " text-"+tyyp;
+}

@@ -71,16 +71,21 @@ color:white;
 }
 .hover-isik:hover {
   color:#00aba9;
+  background-color:white;
 }
 .hover-organisatsioon:hover {
   color:#2d89ef;
+  background-color:white;
 }
 .hover-objekt:hover {
   color:#2b5797;
+  background-color:white;
 }
 .hover-pilt:hover {
   color:#008CBA;
+  background-color:white;
 }
 .hover-viide:hover {
   color:#A9A9A9;
+  background-color:white;
 }

@@ -42,7 +42,7 @@
   transition: all 0.2s; }
 
 #gw--datetimepicker-header ul li:hover {
-  background: #009688;
+  background: #00985F;
   color: white;
 }
 
@@ -88,7 +88,7 @@
 
 #gw--datetimepicker-year-body td:hover,
 #gw--datetimepicker-month-body td:hover {
-  background: #009688;
+  background: #00985F;
   color: white;
 }
 
@@ -102,7 +102,7 @@
   color: #999; }
 
 #gw--datetimepicker-day-body td.selected:hover {
-  background: #009688;
+  background: #00985F;
   color: white; }
 
 #gw--now {

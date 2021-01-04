@@ -1,27 +1,48 @@
 {% extends "wiki/wiki_base.html" %}
+{% load static %}
 {% load wiki_extras %}
 
 {% block title %}{{ block.super }} - Kõik sissekanded {% endblock %}
 
-{% block breadcrumb %}
+{% block content %}
+  <div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
+    <div class="w3-container w3-cell w3-cell-middle">
+       <i class="fa fa-comment w3-xlarge"> {% model_name_artikkel %} kronoloogilises järjestuses</i>
+    </div>
+  </div>
+
+  {% if artiklid %}
+    <div id="object_list">
+      {% include "wiki/includes/object_list.html" with object_list=artiklid %}
+    </div>
+    {% if page_obj.has_next %}
+      <p class="pagination">
+        <a class="next-page" href="?page={{ page_obj.next_page_number }}">Järgmised lood...</a>
+      </p>
+    {% endif %}
+  {% else %}
+    <p>Lugusid ei ole</p>
+  {% endif %}
 {% endblock %}
 
-{% block content %}
-<div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
-  <div class="w3-container w3-cell w3-cell-middle">
-     <i class="fa fa-comment w3-xlarge"> {% model_name_artikkel %} kronoloogilises järjestuses</i>
-  </div>
-</div>
+{% block javascript %}
+<!-- jQuery CDN hosted by Google -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- jScroll plug-in CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jscroll/2.4.1/jquery.jscroll.min.js"></script>
 
-<table class="table table-sm">
-{% if object_list %}
-	<!-- Lehekülgede nummerdamine -->
-	{% include 'wiki/includes/pagination.html' with object_list=page_obj %}
-	
-  <!-- Loend kõigist artiklitest -->
-	{% include 'wiki/includes/object_list.html' %}
-
-{% endif %}
-</table>
-	
+<script>
+    jQuery(function ($) {
+        var $list = $('.object_list');
+        $list.jscroll({
+            loadingHtml: '<div class="text-center">' +
+                '<img src="{% static 'ilm/img/ajax-loader.gif' %}" alt="Loading" />' +
+                '</div>',
+            padding: 100,
+            pagingSelector: '.pagination',
+            nextSelector: 'a.next-page:last',
+            contentSelector: '.card,.pagination'
+        });
+    });
+</script>
 {% endblock %}
