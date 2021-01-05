@@ -1,0 +1,38 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+{% load wiki_extras %}
+
+{% block title %}{{ block.super }} - Kõik sissekanded {% endblock %}
+
+{% block src %}
+  <script src="{% static 'wiki/js/waypoints/jquery.waypoints.min.js' %}"></script>
+  <script src="{% static 'wiki/js/waypoints/infinite.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
+    <div class="w3-container w3-cell w3-cell-middle">
+       <i class="fa fa-comment w3-xlarge"> {% model_name_artikkel %} kronoloogilises järjestuses</i>
+    </div>
+  </div>
+
+  <div class="infinite-container">
+    {% include "wiki/includes/object_list.html" with object_list=artiklid %}
+  </div>
+  {% include 'wiki/includes/div_loader_book.html' %}
+  <a class="infinite-more-link" href="?page={{ artiklid.next_page_number }}">Veel lugusid...</a>
+{% endblock %}
+
+{% block javascript %}
+  <script>
+    var infinite = new Waypoint.Infinite({
+      element: $('.infinite-container')[0],
+      onBeforePageLoad: function () {
+        $("#loaderDiv1").show();
+      },
+      onAfterPageLoad: function ($items) {
+        $("#loaderDiv1").hide();
+      }
+    })
+  </script>
+{% endblock %}
