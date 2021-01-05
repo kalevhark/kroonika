@@ -35,6 +35,37 @@ class WikiViewTests(TestCase):
     #     _ = self.client.logout()
 
 class WikiDateViewTests(TestCase):
+    def test_all_view_1st_page(self):
+        time_start = datetime.now()
+        response = self.client.get(
+            reverse(
+                'wiki:artikkel_index_archive'
+            )
+        )
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3)
+
+    def test_all_view_other_page(self):
+        time_start = datetime.now()
+        response = self.client.get(
+            '/wiki/kroonika/',
+            {'page': '5'}
+        )
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3)
+
+    def test_all_view_wrong_page(self):
+        time_start = datetime.now()
+        response = self.client.get(
+            '/wiki/kroonika',
+            {'page': '5000'}
+        )
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 301)
+        self.assertTrue(time_stopp.seconds < 3)
+
     def test_year_view(self):
         time_start = datetime.now()
         response = self.client.get(
@@ -417,29 +448,29 @@ class FilterViewTests(TestCase):
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.chrome.webdriver import WebDriver
 
-class MySeleniumTests(StaticLiveServerTestCase):
-    # fixtures = ['user-data.json']
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.selenium = WebDriver()
-        cls.selenium.implicitly_wait(10)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.selenium.quit()
-        super().tearDownClass()
-
-    def test_login(self):
-        from selenium.webdriver.support.wait import WebDriverWait
-        timeout = 2
-        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
-        username_input = self.selenium.find_element_by_name("username")
-        username_input.send_keys('')
-        password_input = self.selenium.find_element_by_name("password")
-        password_input.send_keys('')
-        self.selenium.find_element_by_xpath('//input[@value="login"]').click()
-        # Wait until the response is received
-        WebDriverWait(self.selenium, timeout).until(
-            lambda driver: driver.find_element_by_tag_name('body'))
+# class MySeleniumTests(StaticLiveServerTestCase):
+#     # fixtures = ['user-data.json']
+#
+#     @classmethod
+#     def setUpClass(cls):
+#         super().setUpClass()
+#         cls.selenium = WebDriver()
+#         cls.selenium.implicitly_wait(10)
+#
+#     @classmethod
+#     def tearDownClass(cls):
+#         cls.selenium.quit()
+#         super().tearDownClass()
+#
+#     def test_login(self):
+#         from selenium.webdriver.support.wait import WebDriverWait
+#         timeout = 2
+#         self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+#         username_input = self.selenium.find_element_by_name("username")
+#         username_input.send_keys('')
+#         password_input = self.selenium.find_element_by_name("password")
+#         password_input.send_keys('')
+#         self.selenium.find_element_by_xpath('//input[@value="login"]').click()
+#         # Wait until the response is received
+#         WebDriverWait(self.selenium, timeout).until(
+#             lambda driver: driver.find_element_by_tag_name('body'))
