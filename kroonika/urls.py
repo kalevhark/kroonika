@@ -56,8 +56,8 @@ urlpatterns = [
     # path('test/', views.test, name='test'), # linkide testimiseks
     path('wiki/', include('wiki.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('j6ul2020/', views.special_j6ul2020, name='special_j6ul2020'),
-    path('vgvk/', include('vgvk.urls')),
+    # path('j6ul2020/', views.special_j6ul2020, name='special_j6ul2020'),
+    # path('vgvk/', include('vgvk.urls')),
 ]
 
 # Haldusliidese pealkirjad

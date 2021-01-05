@@ -1,24 +1,24 @@
 {% load static %}
-<a
-    href="{% url 'special_j6ul2020' %}"
-    class="hover-artikkel"
-    title="Vaata valgalinn.ee jõulukaarti!"
->
-  <h5 class="holidays-title-small">
-      {% now "Y" as current_year %}
-      {% if current_year == '2020' %}
-        Rahulikke jõule!
-      {% else %}
-        Head uut aastat!
-      {% endif %}
-  </h5>
-  <img
-        style="width: 100%;"
-        src="{% static 'wiki/img/special/VaMF597_1_pisipilt_cr_icon.JPG' %}"
-        alt="Foto: Valga. Vaade Jaani kiriku poole, VaM F 597, Valga Muuseum"
-        title="Vaata valgalinn.ee jõulukaarti!"
-  />
-  <div class="w3-tiny">
-    Valga. Vaade Jaani kiriku poole, VaM F 597, Valga Muuseum
-  </div>
-</a>
+{#<a#}
+{#    href="{% url 'special_j6ul2020' %}"#}
+{#    class="hover-artikkel"#}
+{#    title="Vaata valgalinn.ee jõulukaarti!"#}
+{#>#}
+{#  <h5 class="holidays-title-small">#}
+{#      {% now "Y" as current_year %}#}
+{#      {% if current_year == '2020' %}#}
+{#        Rahulikke jõule!#}
+{#      {% else %}#}
+{#        Head uut aastat!#}
+{#      {% endif %}#}
+{#  </h5>#}
+{#  <img#}
+{#        style="width: 100%;"#}
+{#        src="{% static 'wiki/img/special/VaMF597_1_pisipilt_cr_icon.JPG' %}"#}
+{#        alt="Foto: Valga. Vaade Jaani kiriku poole, VaM F 597, Valga Muuseum"#}
+{#        title="Vaata valgalinn.ee jõulukaarti!"#}
+{#  />#}
+{#  <div class="w3-tiny">#}
+{#    Valga. Vaade Jaani kiriku poole, VaM F 597, Valga Muuseum#}
+{#  </div>#}
+{#</a>#}
