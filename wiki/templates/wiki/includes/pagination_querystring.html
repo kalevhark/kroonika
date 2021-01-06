@@ -1,9 +1,9 @@
 {% if filter.form %}
-{% for element in filter.form %}
-{{ element.name }}=
-{% if element.value %}
-{{ element.value }}
-{% endif %}
-&
-{% endfor %}
+  {% for element in filter.form %}
+    {{ element.name }}=
+    {% if element.value %}
+      {{ element.value }}
+    {% endif %}
+    &
+  {% endfor %}
 {% endif %}

@@ -1,0 +1,10 @@
+{% if data %}
+	<p>
+	data: 
+	{% for instance in data %}
+		{% for field, value in instance.fields.items %}
+			({{ field }}:{{ value }}) 
+		{% endfor %}
+	{% endfor %}
+	</p>
+{% endif %}

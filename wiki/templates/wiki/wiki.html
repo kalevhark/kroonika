@@ -3,7 +3,8 @@
 {% load wiki_extras %}
 
 {% block css %}
-  <link rel="stylesheet" href="{% static 'wiki/css/wiki_calendar3.css' %}">
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'wiki/css/wiki_calendar3.css' %}?ver=2021.1">
 
 {#  <link rel="preconnect" href="https://fonts.gstatic.com">#}
 {#  <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap" rel="stylesheet">#}
