@@ -411,7 +411,7 @@
         </a>" alla.
       </small>
       <a href="{% url 'wiki:info' %}">
-          <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018-2020 {% kalev %}</small></button>
+          <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018-{% now "Y" %} {% kalev %}</small></button>
       </a>
     </div>
   </footer>
@@ -432,19 +432,15 @@ function grecaptcha_onload() {
       'size' : 'invisible',
     });
   });
-};
+}
 
 function showCalendarTypeSwitch() {
   let ukj_state = '{{ request.session.ukj }}'
 
   <!-- näitame kalendrivahetuse nuppu ja valime salvetatud seisu -->
-  let checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
+  var checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
   checkboxUkjVkj.style.visibility = 'visible';
-  if (ukj_state == 'on') {
-    document.getElementById("checkbox1").checked = true;
-    } else {
-    document.getElementById("checkbox1").checked = false;
-  };
+  document.getElementById("checkbox1").checked = ukj_state === 'on';
   <!-- Loome triggeri, kui kalendrisüsteemi valik muutub -->
   $("#checkbox1").on('change', function() {
     let ukj_state = document.getElementById("checkbox1").checked;
@@ -452,7 +448,7 @@ function showCalendarTypeSwitch() {
         ukj = 'on';
       } else {
         ukj = 'off';
-    };
+    }
     switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
     var oReq = new XMLHttpRequest();
     oReq.onload = function(e) {
