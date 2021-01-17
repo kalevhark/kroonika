@@ -43,7 +43,6 @@ schema_view = get_schema_view(title='Valga linna kroonika API')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.algus, name='algus'),
-    # path('accounts/login/', auth_views.LoginView.as_view()),
     path('accounts/', include('django.contrib.auth.urls')),
     path('ajax_select/', include(ajax_select_urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
@@ -53,11 +52,9 @@ urlpatterns = [
     path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('markdownx/', include('markdownx.urls')),
     path('schema/', schema_view),
-    # path('test/', views.test, name='test'), # linkide testimiseks
     path('wiki/', include('wiki.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     # path('j6ul2020/', views.special_j6ul2020, name='special_j6ul2020'),
-    # path('vgvk/', include('vgvk.urls')),
 ]
 
 # Haldusliidese pealkirjad
