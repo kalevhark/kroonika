@@ -55,7 +55,7 @@
 
 {% if object_list %}
   {% include 'wiki/includes/pagination.html' with model="isik" %}
-  {% include 'wiki/includes/object_list_isikud.html'%}
+  {% include 'wiki/includes/object_list_isikud.html' %}
 	{% include 'wiki/includes/pagination_next.html' with model="isik" %}
 {% else %}
   <div class="w3-container w3-padding">

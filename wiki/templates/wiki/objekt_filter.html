@@ -53,7 +53,7 @@
 	
 {% if object_list %}
   {% include 'wiki/includes/pagination.html' with model="objekt" %}
-  {% include 'wiki/includes/object_list_objektid.html' with periood=day %}
+  {% include 'wiki/includes/object_list_objektid.html' %}
 	{% include 'wiki/includes/pagination_next.html' with model="objekt" %}
 {% else %}
 	<div class="w3-container w3-padding">
