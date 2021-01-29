@@ -60,7 +60,6 @@ def check_names():
         'ilm:history',
         'ilm:mixed_ilmateade',
         'blog:blog_index',
-        'vgvk:vgvk_index'
     ]
 
     for page in pages:

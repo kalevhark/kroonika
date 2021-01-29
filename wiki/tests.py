@@ -23,10 +23,10 @@ class WikiViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3)
 
-    def test_j6ul2020_view(self):
-       response = self.client.get(reverse('special_j6ul2020'))
-       self.assertEqual(response.status_code, 200)
-       self.assertContains(response, "Head uut aastat!")
+    # def test_j6ul2020_view(self):
+    #    response = self.client.get(reverse('special_j6ul2020'))
+    #    self.assertEqual(response.status_code, 200)
+    #    self.assertContains(response, "Head uut aastat!")
        # self.assertQuerysetEqual(response.context['latest_question_list'], [])
 
     # def test_login(self):

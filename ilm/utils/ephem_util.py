@@ -6,7 +6,8 @@ import pytz
 U_ARR = u'\N{UPWARDS ARROW}'
 D_ARR = u'\N{DOWNWARDS ARROW}'
 SUN = u'\N{WHITE SUN WITH RAYS}'
-MOON = u'\N{FIRST QUARTER MOON}'
+MOON_NEW = u'\N{FIRST QUARTER MOON}'
+MOON_OLD = u'\N{LAST QUARTER MOON}'
 DEGR = u'\N{DEGREE SIGN}'
 
 tz_EE = pytz.timezone(pytz.country_timezones['ee'][0])
@@ -82,14 +83,19 @@ def get_moon_str(date_loc, observer=None):
             f"{D_ARR}{to_local(observer.next_setting(m)):%H:%M:%S}"
     else:
         moon_string = f"{U_ARR}{to_local(observer.next_rising(m)):%H:%M:%S}"
-    moon_string = f'{MOON} {moon_string}'
+    if ephem.next_full_moon(date_loc) < ephem.next_new_moon(date_loc):
+        moon_symbol = MOON_NEW
+    else:
+        moon_symbol = MOON_OLD
+    moon_string = f'{moon_symbol} {moon_string}'
     return moon_string
 
 def main():
-    # d = datetime(2021,1,2,8,8,33)
+    date_loc = datetime.now(tz=tz_EE)
     # s9a = get_observer()
-    sun = get_sun_str()
-    moon = get_moon_str()
+    sun = get_sun_str(date_loc)
+    moon = get_moon_str(date_loc)
+    print(sun, moon)
 
 if __name__ == "__main__":
     main()
