@@ -3,14 +3,13 @@
 {% if object.viited.all %}
   <i class="fa fa-binoculars w3-small text-viide" alt="Viited"></i>
 	{% for obj in object.viited.all %}
-    <br>
-    <small>
+    <p id="viide_{{ obj.id }}" class="w3-small">
       {% if obj.url %}
         <a class="hover-viide" href="{{ obj.url }}" target="_blank">{{ obj }}</a>
       {% else %}
         {{ obj }}
       {% endif %}
-    </small>
+    </p>
   {% endfor %}
 {% endif %}
 </div>
