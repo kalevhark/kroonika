@@ -82,7 +82,9 @@ def get_moon_str(date_loc, observer=None):
             f"@{str(az).split(':')[0]}{DEGR}({get_direction(str(az).split(':')[0])}) " +\
             f"{D_ARR}{to_local(observer.next_setting(m)):%H:%M:%S}"
     else:
-        moon_string = f"{U_ARR}{to_local(observer.next_rising(m)):%H:%M:%S}"
+        moon_string = \
+            f"{int(round(m.phase, 0))}% " + \
+            f"{U_ARR}{to_local(observer.next_rising(m)):%H:%M:%S}"
     if ephem.next_full_moon(date_loc) < ephem.next_new_moon(date_loc):
         moon_symbol = MOON_NEW
     else:
