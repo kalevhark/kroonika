@@ -54,7 +54,7 @@
 	{% include 'wiki/includes/pagination_next.html' with model="organisatsioon" %}
 {% else %}
 	<div class="w3-container w3-padding">
-	  {% if filter.form.nimi__icontains.value %}
+	  {% if filter.form.nimi__nimi_sisaldab.value %}
 	    Otsinguga ({% model_name_organisatsioon %} nimi sisaldab fraasi &#x0022;{{filter.form.nimi__icontains.value }}&#x0022;) ei leitud midagi
 	  {% else %}
 	    Valikut pole tehtud

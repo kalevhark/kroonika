@@ -1432,6 +1432,7 @@ class IsikFilter(django_filters.FilterSet):
     #     # at startup user doen't push Submit button, and QueryDict (in data) is empty
     #     if self.data == {}:
     #         self.queryset = self.queryset.none()
+
     def nimi_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
         if self.data.get('nimi_sisaldab'):
@@ -1619,8 +1620,8 @@ class OrganisatsioonDetailView(generic.DetailView):
 # Objektide otsimiseks/filtreerimiseks
 #
 class ObjektFilter(django_filters.FilterSet):
-    nimi_sisaldab = django_filters.CharFilter(method='nimi_sisaldab_filter')
-    t2nav_sisaldab = django_filters.CharFilter(method='t2nav_sisaldab_filter')
+    # nimi_sisaldab = django_filters.CharFilter(method='nimi_sisaldab_filter')
+    # t2nav_sisaldab = django_filters.CharFilter(method='t2nav_sisaldab_filter')
 
     class Meta:
         model = Objekt

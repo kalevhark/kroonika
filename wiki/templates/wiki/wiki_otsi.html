@@ -75,7 +75,7 @@
                   class="hover-organisatsioon"
                   style="text-decoration: none;"
                   title="näita kõiki..."
-                  v-bind:href="wiki_organisatsioon_filter_url + '?nimi__sisaldab=' + question">
+                  v-bind:href="wiki_organisatsioon_filter_url + '?nimi__icontains=' + question">
                 [[ organisatsioon_message ]]
               </a>
             </strong>
@@ -101,7 +101,7 @@
                   class="hover-objekt"
                   style="text-decoration: none;"
                   title="näita kõiki..."
-                  v-bind:href="wiki_objekt_filter_url + '?nimi__sisaldab=' + question">
+                  v-bind:href="wiki_objekt_filter_url + '?nimi__icontains=' + question">
                 [[ objekt_message ]]
               </a>
             </strong>
