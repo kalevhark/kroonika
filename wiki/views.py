@@ -15,7 +15,7 @@ from django.db.models import \
     Value, BooleanField, DateField, DecimalField, IntegerField, \
     ExpressionWrapper
 from django.db.models import Count, Max, Min
-from django.db.models.functions import Extract, ExtractYear, ExtractMonth, ExtractDay
+from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -1016,14 +1016,12 @@ class ArtikkelFilter(django_filters.FilterSet):
     def nimi_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
         if self.data.get('nimi_sisaldab'):
-            queryset = (
-                    queryset.filter(
-                        isikud__perenimi__icontains=self.data['nimi_sisaldab']
-                    ) |
-                    queryset.filter(
-                        isikud__eesnimi__icontains=self.data['nimi_sisaldab']
-                    )
-            ).distinct()
+            queryset = queryset.annotate(nimi=Concat('eesnimi', Value(' '), 'perenimi'))
+            fraasid = self.data.get('nimi_sisaldab', '').split(' ')
+            for fraas in fraasid:
+                queryset = queryset.filter(
+                    nimi__icontains=fraas
+                )
         return queryset
 
     def artikkel_sisaldab_filter(self, queryset, name, value):
@@ -1436,14 +1434,20 @@ class IsikFilter(django_filters.FilterSet):
     def nimi_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
         if self.data.get('nimi_sisaldab'):
-            queryset = (
-                    queryset.filter(
-                        perenimi__icontains=self.data['nimi_sisaldab']
-                    ) |
-                    queryset.filter(
-                        eesnimi__icontains=self.data['nimi_sisaldab']
-                    )
-            )
+            # queryset = (
+            #         queryset.filter(
+            #             perenimi__icontains=self.data['nimi_sisaldab']
+            #         ) |
+            #         queryset.filter(
+            #             eesnimi__icontains=self.data['nimi_sisaldab']
+            #         )
+            # )
+            queryset = queryset.annotate(nimi=Concat('eesnimi', Value(' '), 'perenimi'))
+            fraasid = self.data.get('nimi_sisaldab', '').split(' ')
+            for fraas in fraasid:
+                queryset = queryset.filter(
+                    nimi__icontains=fraas
+                )
         return queryset
 
 

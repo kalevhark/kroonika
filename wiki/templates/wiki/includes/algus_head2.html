@@ -98,7 +98,7 @@
                 class="search-input"
                 placeholder="Otsi nimest fraasi..."
                 autocomplete="off"
-        >
+        />
         <button
                 type="submit"
                 class="background-isik search-button fa fa-search"
@@ -141,12 +141,12 @@
             id="icon-organisatsioon-dropdown"
     >
       <form
-              id="form-search-organisatsioon"
+              id="form_search_organisatsioon"
               name="form-search-organisatsioon"
               action="{% url 'wiki:wiki_organisatsioon_filter' %}"
               class="search-form"
       >
-        <label for="nimi__icontains" class="screen-reader-text">Otsi</label>
+        <label for="nimi__icontains_organisatsioon" class="screen-reader-text">Otsi</label>
         <input
                 id="nimi__icontains_organisatsioon"
                 name="nimi__icontains"
@@ -154,9 +154,11 @@
                 class="search-input"
                 placeholder="Otsi asutise nimest fraasi..."
                 autocomplete="off"
-        >
+        />
         <button
                 type="submit"
+                value="submit"
+                form="form_search_organisatsioon"
                 class="background-organisatsioon search-button fa fa-search"
         ></button>
         {% csrf_token %}
@@ -206,7 +208,7 @@
               action="{% url 'wiki:wiki_objekt_filter' %}"
               class="search-form"
       >
-        <label for="nimi__icontains" class="screen-reader-text">Otsi</label>
+        <label for="nimi__icontains_objekt" class="screen-reader-text">Otsi</label>
         <input
                 id="nimi__icontains_objekt"
                 name="nimi__icontains"
@@ -214,7 +216,7 @@
                 class="search-input"
                 placeholder="Otsi kohanimest fraasi..."
                 autocomplete="off"
-        >
+        />
         <button
                 type="submit"
                 class="background-objekt search-button fa fa-search"
