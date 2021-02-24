@@ -1551,11 +1551,12 @@ def object_detail_seotud(request, model, id):
 # Organisatsioonide otsimiseks/filtreerimiseks
 #
 class OrganisatsioonFilter(django_filters.FilterSet):
-    
+    nimi_sisaldab = django_filters.CharFilter(method='nimi_sisaldab_filter')
+
     class Meta:
         model = Organisatsioon
         fields = {
-            'nimi': ['icontains'],
+            # 'nimi': ['icontains'],
             }
 
 ##    def __init__(self, *args, **kwargs):
@@ -1564,6 +1565,15 @@ class OrganisatsioonFilter(django_filters.FilterSet):
 ##        if self.data == {}:
 ##            self.queryset = self.queryset.none()
 
+    def nimi_sisaldab_filter(self, queryset, name, value):
+        # päritud fraas nimes
+        if self.data.get('nimi_sisaldab'):
+            fraasid = self.data.get('nimi_sisaldab', '').split(' ')
+            for fraas in fraasid:
+                queryset = queryset.filter(
+                    nimi__icontains=fraas
+                )
+        return queryset
 
 class OrganisatsioonFilterView(FilterView):
     model = Organisatsioon
@@ -1624,13 +1634,13 @@ class OrganisatsioonDetailView(generic.DetailView):
 # Objektide otsimiseks/filtreerimiseks
 #
 class ObjektFilter(django_filters.FilterSet):
-    # nimi_sisaldab = django_filters.CharFilter(method='nimi_sisaldab_filter')
+    nimi_sisaldab = django_filters.CharFilter(method='nimi_sisaldab_filter')
     # t2nav_sisaldab = django_filters.CharFilter(method='t2nav_sisaldab_filter')
 
     class Meta:
         model = Objekt
         fields = {
-            'nimi': ['icontains'],
+            # 'nimi': ['icontains'],
             }
 
 ##    def __init__(self, *args, **kwargs):
@@ -1639,22 +1649,32 @@ class ObjektFilter(django_filters.FilterSet):
 ##        if self.data == {}:
 ##            self.queryset = self.queryset.none()
 
+    # def nimi_sisaldab_filter(self, queryset, name, value):
+    #     # päritud fraas nimes
+    #     fraas = self.data.get('nimi_sisaldab')
+    #     if fraas:
+    #         fragmendid = fraas.split(' ')
+    #         regex_fill = r'\w*\s+\w*'
+    #         otsi_fraas = regex_fill.join([r'({})'.format(fragment) for fragment in fragmendid])
+    #         queryset = queryset.filter(nimi__iregex=r'{}'.format(otsi_fraas))
+    #     return queryset
+
     def nimi_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
-        fraas = self.data.get('nimi_sisaldab')
-        if fraas:
-            fragmendid = fraas.split(' ')
-            regex_fill = r'\w*\s+\w*'
-            otsi_fraas = regex_fill.join([r'({})'.format(fragment) for fragment in fragmendid])
-            queryset = queryset.filter(nimi__iregex=r'{}'.format(otsi_fraas))
+        if self.data.get('nimi_sisaldab'):
+            fraasid = self.data.get('nimi_sisaldab', '').split(' ')
+            for fraas in fraasid:
+                queryset = queryset.filter(
+                    nimi__icontains=fraas
+                )
         return queryset
 
-    def t2nav_sisaldab_filter(self, queryset, name, value):
-        queryset = queryset.filter(
-            objektid__nimi__icontains=self.data['t2nav_sisaldab'],
-            objektid__tyyp='T'
-        ).distinct()
-        return queryset
+    # def t2nav_sisaldab_filter(self, queryset, name, value):
+    #     queryset = queryset.filter(
+    #         objektid__nimi__icontains=self.data['t2nav_sisaldab'],
+    #         objektid__tyyp='T'
+    #     ).distinct()
+    #     return queryset
 
 
 class ObjektFilterView(FilterView):
