@@ -404,7 +404,6 @@ form#search svg:hover {
 /* Otsinguriba */
 .search-form {
   --searchButtonWidth: 32px;
-
   margin: 8px;
   overflow: hidden;
   position: relative;
@@ -420,13 +419,16 @@ form#search svg:hover {
   -webkit-appearance: none;
   font-size: 0.8rem;
 }
+
 .search-input:focus {
   outline: 0;
   background: white;
 }
-.search-input:not(:placeholder-shown) ~ .search-button {
-  /* transform: translateX(calc(-1 * var(--searchButtonWidth))); */
-}
+
+/* .search-input:not(:placeholder-shown) ~ .search-button {
+  transform: translateX(calc(-1 * var(--searchButtonWidth)));
+  transform: translateX(0px);
+} */
 
 .search-input:focus ~ .search-button {
   left: calc(100% - var(--searchButtonWidth));
@@ -444,10 +446,13 @@ form#search svg:hover {
   color: white;
   height: 100%;
 }
+
 .search-button:focus {
   outline: 0;
   background: #222;
   opacity: 0.5;
+  transition: 0.2s;
+  left: calc(100% - var(--searchButtonWidth));
 }
 
 .search-button:hover {

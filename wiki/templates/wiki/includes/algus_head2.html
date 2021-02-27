@@ -45,6 +45,7 @@
         >
         <button
                 type="submit"
+                form="form-search-artikkel"
                 class="background-artikkel search-button fa fa-search"
         ></button>
         {% csrf_token %}
@@ -101,6 +102,7 @@
         />
         <button
                 type="submit"
+                form="form-search-isik"
                 class="background-isik search-button fa fa-search"
         ></button>
         {% csrf_token %}
@@ -141,7 +143,7 @@
             id="icon-organisatsioon-dropdown"
     >
       <form
-              id="form_search_organisatsioon"
+              id="form-search-organisatsioon"
               name="form-search-organisatsioon"
               action="{% url 'wiki:wiki_organisatsioon_filter' %}"
               class="search-form"
@@ -157,8 +159,7 @@
         />
         <button
                 type="submit"
-                value="submit"
-                form="form_search_organisatsioon"
+                form="form-search-organisatsioon"
                 class="background-organisatsioon search-button fa fa-search"
         ></button>
         {% csrf_token %}
@@ -208,9 +209,9 @@
               action="{% url 'wiki:wiki_objekt_filter' %}"
               class="search-form"
       >
-        <label for="objekt_nimi_sisaldab" class="screen-reader-text">Otsi</label>
+        <label for="inp_objekt_nimi_sisaldab" class="screen-reader-text">Otsi</label>
         <input
-                id="objekt_nimi_sisaldab"
+                id="inp_objekt_nimi_sisaldab"
                 name="nimi_sisaldab"
                 type="search"
                 class="search-input"
@@ -218,7 +219,9 @@
                 autocomplete="off"
         />
         <button
+                id="btn_submit_form_search_objekt"
                 type="submit"
+                form="form-search-objekt"
                 class="background-objekt search-button fa fa-search"
         ></button>
         {% csrf_token %}
@@ -232,3 +235,23 @@
     </div>
   </div>
 </div>
+<script>
+// Code By Webdevtrick ( https://webdevtrick.com )
+var search = document.getElementById('form-search-objekt');
+var button = document.getElementById('btn_submit_form_search_objekt');
+var input = document.getElementById('inp_objekt_nimi_sisaldab');
+
+function loading() {
+	search.classList.add('loading');
+
+	setTimeout(function() {
+		search.classList.remove('loading');
+	}, 1500);
+}
+
+button.addEventListener('click', loading);
+
+input.addEventListener('keydown', function() {
+	if(event.keyCode == 13) loading();
+});
+</script>
