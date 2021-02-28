@@ -461,6 +461,13 @@ form#search svg:hover {
   opacity: 0.5;
 }
 
+.search-button:active {
+  outline: 0;
+  opacity: 0;
+  transition: 0.5s;
+  left: calc(100% - var(--searchButtonWidth));
+}
+
 .screen-reader-text {
   position: absolute;
   top: -9999px;
