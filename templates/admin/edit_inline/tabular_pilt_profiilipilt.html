@@ -1,0 +1,28 @@
+id:{{ inline_admin_form.form.instance.pilt.id }}
+{% if inline_admin_form.form.instance.pilt.profiilipilt_allikas %} ALL{% endif %}
+{% if inline_admin_form.form.instance.pilt.profiilipilt_artikkel %}
+  <span style="{% if inline_admin_form.form.instance.artikkel in inline_admin_form.form.instance.pilt.artiklid.all %}
+    color: white; background: green;
+  {% endif %}padding: 2px;">
+    ART
+  </span>{% endif %}
+{% if inline_admin_form.form.instance.pilt.profiilipilt_isik %}
+  <span style="{% if inline_admin_form.form.instance.isik in inline_admin_form.form.instance.pilt.isikud.all %}
+    color: white; background: green;
+  {% endif %}padding: 2px;">
+    ISIK
+  </span>
+{% endif %}
+{% if inline_admin_form.form.instance.pilt.profiilipilt_organisatsioon %}
+  <span style="{% if inline_admin_form.form.instance.organisatsioon in inline_admin_form.form.instance.pilt.organisatsioonid.all %}
+    color: white; background: green;
+  {% endif %}padding: 2px;">
+    ORG
+  </span>{% endif %}
+{% if inline_admin_form.form.instance.pilt.profiilipilt_objekt %}
+  <span style="{% if inline_admin_form.form.instance.objekt in inline_admin_form.form.instance.pilt.objektid.all %}
+    color: white; background: green;
+  {% endif %}padding: 2px;">
+    OBJ
+  </span>
+{% endif %}

@@ -16,6 +16,7 @@ from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, PiltF
 class PiltArtikkelInline(admin.TabularInline):
     model = Pilt.artiklid.through
     extra = 1
+    template = 'admin/edit_inline/tabular_pilt.html'
 
 
 #
@@ -24,6 +25,7 @@ class PiltArtikkelInline(admin.TabularInline):
 class PiltIsikInline(admin.TabularInline):
     model = Pilt.isikud.through
     extra = 1
+    template = 'admin/edit_inline/tabular_pilt.html'
 
 
 #
@@ -32,6 +34,7 @@ class PiltIsikInline(admin.TabularInline):
 class PiltOrganisatsioonInline(admin.TabularInline):
     model = Pilt.organisatsioonid.through
     extra = 1
+    template = 'admin/edit_inline/tabular_pilt.html'
 
 
 #
@@ -40,6 +43,7 @@ class PiltOrganisatsioonInline(admin.TabularInline):
 class PiltObjektInline(admin.TabularInline):
     model = Pilt.objektid.through
     extra = 1
+    template = 'admin/edit_inline/tabular_pilt.html'
 
 
 class AllikasAdmin(admin.ModelAdmin):
