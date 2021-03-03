@@ -1,6 +1,4 @@
-<!-- 
-cs - lingi värv ("artikkel", "isik", "organisatsioon", "objekt")
--->
+{# cs - lingi värv ("artikkel", "isik", "organisatsioon", "objekt") #}
 {% with sd=obj.dob y=obj.hist_year m=obj.hist_month %}
 	{% if sd %}
 		<div class="date {% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
