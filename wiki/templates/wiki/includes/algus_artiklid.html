@@ -70,14 +70,14 @@
         <br>
       {% endif %}
       <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
-<!--      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">-->
-<!--        <strong>{{ obj.hist_year }}</strong>:-->
-<!--      </a>-->
+{#      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}" #}
+{#        <strong>{{ obj.hist_year }}</strong>: #}
+{#      </a> #}
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
         {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
       </a>
-      <!-- Kui kirjed rohkem kui artikleid_max_split, siis hakime artikleid_max_split_half+1+artikleid_max_split_half -->
+      {# Kui kirjed rohkem kui artikleid_max_split, siis hakime artikleid_max_split_half+1+artikleid_max_split_half  #}
       {% if andmed.artikkel.sel_p2eval_kirjeid > andmed.artikkel.artikleid_max_split %}
         {% if forloop.counter == andmed.artikkel.artikleid_max_split_half %}
           <br><span class="w3-tiny text-artikkel"> - - - </span>
@@ -107,13 +107,13 @@
         <br>
       {% endif %}
       <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
-<!--      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">-->
-<!--        <strong>{{ obj.hist_year }}</strong>:-->
-<!--      </a>-->
+{#      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}"> #}
+{#        <strong>{{ obj.hist_year }}</strong>: #}
+{#      </a> #}
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
       </a>
-      <!-- Kui kirjed rohkem kui artikleid_max_split, siis hakime artikleid_max_split_half+1+artikleid_max_split_half -->
+      {# Kui kirjed rohkem kui artikleid_max_split, siis hakime artikleid_max_split_half+1+artikleid_max_split_half  #}
       {% if andmed.artikkel.sel_kuul_kirjeid > andmed.artikkel.artikleid_max_split %}
         {% if forloop.counter == andmed.artikkel.artikleid_max_split_half %}
           <br><span class="w3-tiny w3-text-artikkel"> - - - </span>
@@ -141,9 +141,9 @@
         <br>
       {% endif %}
       <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
-<!--      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}">-->
-<!--        <strong>{{ obj.hist_year }}</strong>:-->
-<!--      </a>-->
+{#      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}" #}
+{#        <strong>{{ obj.hist_year }}</strong>: #}
+{#      </a> #}
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
       </a>

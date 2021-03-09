@@ -235,23 +235,3 @@
     </div>
   </div>
 </div>
-<script>
-// Code By Webdevtrick ( https://webdevtrick.com )
-var search = document.getElementById('form-search-objekt');
-var button = document.getElementById('btn_submit_form_search_objekt');
-var input = document.getElementById('inp_objekt_nimi_sisaldab');
-
-function loading() {
-	search.classList.add('loading');
-
-	setTimeout(function() {
-		search.classList.remove('loading');
-	}, 1500);
-}
-
-button.addEventListener('click', loading);
-
-input.addEventListener('keydown', function() {
-	if(event.keyCode == 13) loading();
-});
-</script>
