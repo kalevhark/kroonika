@@ -4,7 +4,6 @@ from email.utils import parsedate_to_datetime
 import json
 import os
 import re
-import sys
 import xml.etree.ElementTree as ET
 
 from bs4 import BeautifulSoup
@@ -17,10 +16,6 @@ except:
 from urllib.request import Request, urlopen
 from urllib.error import URLError
 
-
-import psycopg2
-from psycopg2.extras import RealDictCursor
-# from pytz import timezone
 import pytz
 import requests
 
