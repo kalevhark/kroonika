@@ -534,3 +534,12 @@ def objekt_to_csv():
                     str(len(obj.objektid.all()))
                 ]
             )
+
+def update_objekt_from_csv():
+    with open('objekt.csv', encoding='utf-8', newline='') as csvfile:
+        reader = csv.DictReader(csvfile, fieldnames=['id', 'tyyp', 'nimi', 'asukoht', 'kir', 'objs', 'muuta'], delimiter=';')
+        for row in reader:
+            if row['muuta'] == 'X':
+                obj = Objekt.objects.filter(id=row['id']).first()
+                if obj:
+                    print(row['asukoht'], '->', obj.asukoht)
