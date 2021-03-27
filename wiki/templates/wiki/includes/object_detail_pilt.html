@@ -1,46 +1,44 @@
 {# Muutuja: cls: pilt-portree-medium, pilt-postkaart-medium #}
 <!-- Sisukaardi pildiosa-->
-<div class="w3-third">
-  <div
-      class="w3-margin-right w3-center"
-      style="display: {% if profiilipilt %}block{% else %}none{% endif %}">
-    <img
-      class="{{cls}} pilt-detail"
-      id="profiiliPilt"
-      src="{{ profiilipilt.pilt.url }}"
-      alt="{{ profiilipilt.caption }}"
-      title="{{ profiilipilt }}"
-    />
-    <small>
-      <div class="w3-center" id="imgtext">
-        {{ profiilipilt.caption }}
-      </div>
-    </small>
-  </div>
+<div
+    class="w3-margin-right w3-center"
+    style="display: {% if profiilipilt %}block{% else %}none{% endif %}">
+  <img
+    class="{{cls}} pilt-detail"
+    id="profiiliPilt"
+    src="{{ profiilipilt.pilt.url }}"
+    alt="{{ profiilipilt.caption }}"
+    title="{{ profiilipilt }}"
+  />
+  <small>
+    <div class="w3-center" id="imgtext">
+      {{ profiilipilt.caption }}
+    </div>
+  </small>
+</div>
 
-  <!-- The Modal https://www.w3schools.com/howto/howto_css_modal_images.asp -->
-  <div id="myModal" class="modal">
-    <!-- The Close Button -->
-    <span class="close">&times;</span>
-    <!-- Modal Content (The Image) -->
-    <img class="modal-content" id="img01"/>
-    <!-- Modal Caption (Image Text) -->
-    <div id="caption"></div>
-  </div>
+{# The Modal https://www.w3schools.com/howto/howto_css_modal_images.asp #}
+<div id="myModal" class="modal">
+  {# The Close Button #}
+  <span class="close">&times;</span>
+  {# Modal Content (The Image) #}
+  <img class="modal-content" id="img01"/>
+  {# Modal Caption (Image Text) #}
+  <div id="caption"></div>
 </div>
 
 <script>
-// Get the modal
+{# Get the modal #}
 var modal = document.getElementById("myModal");
 
-// Get the image and insert it inside the modal - use its "alt" text as a caption
+{# Get the image and insert it inside the modal - use its "alt" text as a caption #}
 var img = document.getElementById("profiiliPilt");
 var modalImg = document.getElementById("img01");
 var captionText = document.getElementById("caption");
 img.onclick = function(){
-  // Järgnev tagab, et navbar ei tuleks modal akna peale
+  {# Järgnev tagab, et navbar ei tuleks modal akna peale #}
   document.getElementsByTagName("header")[0].style.zIndex = 0;
-  // Avatakse modal aken pildi näitamiseks
+  {# Avatakse modal aken pildi näitamiseks #}
   modal.style.display = "block";
   modalImg.src = this.src;
   modalImg.alt = this.alt;

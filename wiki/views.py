@@ -1718,6 +1718,8 @@ class ObjektDetailView(generic.DetailView):
         # Kas objektile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
             objektid__id=self.object.id).filter(profiilipilt_objekt=True).first()
+        # Kas objektil on kaardivaade
+        context['kaardid'] = True # TODO: Siia tuleb kaardiobjekt
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
         # Otseseosed objektidega

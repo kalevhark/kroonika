@@ -303,7 +303,7 @@ class Viide(models.Model):
         help_text='Avaldamise aasta'
     )
     kohaviit = models.CharField( # fonditähis, aastakäigu/väljaande nr, lehekülje nr,
-        'Viit',
+        'Leidandmed',
         max_length=50,
         null=True,
         blank=True

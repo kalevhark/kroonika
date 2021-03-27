@@ -32,7 +32,10 @@
 
     <!-- Sisukaardi kirjeldav osa-->
     <div class="w3-twothird">
-      {% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
+      <div class="w3-third">
+        {% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
+        {% include 'wiki/includes/object_detail_map.html' %}
+      </div>
       <!-- Sisukaardi tekstiosa-->
       <div class="w3-twothird">
         {% include 'wiki/includes/vigane.html' %}

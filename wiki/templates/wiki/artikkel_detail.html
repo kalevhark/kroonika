@@ -98,7 +98,9 @@
 	</div>
   <div class="w3-twothird w3-padding-16" >
     <!-- Artikkel -->
-		{% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
+    <div class="w3-third">
+		  {% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
+    </div>
 		<div class="w3-twothird">
 			{% include 'wiki/includes/vigane.html' %}
 			{{ object.formatted_markdown | safe }}
