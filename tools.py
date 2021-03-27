@@ -1,3 +1,5 @@
+import csv
+
 from datetime import date, datetime, timedelta
 
 from django.db.models import (
@@ -516,3 +518,18 @@ def fix(id):
 
     if fixed:
         art_500.save()
+
+def objekt_to_csv():
+    objs = Objekt.objects.all()
+    with open('objekt.csv', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        for obj in objs:
+            writer.writerow(
+                [
+                    obj.id,
+                    obj.nimi,
+                    obj.asukoht,
+                    str(len(obj.kirjeldus)),
+                    str(len(obj.objektid.all()))
+                ]
+            )
