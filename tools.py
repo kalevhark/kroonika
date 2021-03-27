@@ -522,11 +522,12 @@ def fix(id):
 def objekt_to_csv():
     objs = Objekt.objects.all()
     with open('objekt.csv', 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
+        writer = csv.writer(csvfile, delimiter=';')
         for obj in objs:
             writer.writerow(
                 [
                     obj.id,
+                    obj.tyyp,
                     obj.nimi,
                     obj.asukoht,
                     str(len(obj.kirjeldus)),
