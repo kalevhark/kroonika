@@ -521,7 +521,7 @@ def fix(id):
 
 def objekt_to_csv():
     objs = Objekt.objects.all()
-    with open('objekt.csv', newline='') as csvfile:
+    with open('objekt.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         for obj in objs:
             writer.writerow(
