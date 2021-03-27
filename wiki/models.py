@@ -366,11 +366,11 @@ class Viide(models.Model):
 
 class Objekt(models.Model):
     OBJEKTITYYP = (
-        ('H', 'Hoone'),
+        ('H', 'Hoone'), # maja
         ('T', 'Tänav'),
-        ('E', 'Ehitis'),
-        ('A', 'Asustusüksus'),
-        ('M', 'Muu'),
+        ('E', 'Ehitis'), # sild, laululava,
+        ('A', 'Ala'), # plats, piirkond, asustusüksus
+        ('M', 'Muu'), # sh looduslikud objektid
     )
     nimi = models.CharField(
         'Kohanimi',
@@ -386,13 +386,13 @@ class Objekt(models.Model):
         'Asukoht',
         max_length=200,
         blank=True,
-        help_text='Asukoht'
+        help_text='Lähiaadress kaasajal'
     )
     hist_date = models.DateField(
         'Valminud',
         null=True,
         blank=True,
-        help_text='Valminud'
+        help_text='Valmimise aeg'
     )
     hist_year = models.IntegerField( # juhuks kui on teada ainult aasta
         'Valmimisaasta',
@@ -411,7 +411,7 @@ class Objekt(models.Model):
         'Likvideeritud',
         null=True,
         blank=True,
-        help_text='Likvideeritud'
+        help_text='Hävimise või likvideerimise aeg'
     )
     hist_endyear = models.IntegerField( # juhuks kui on teada ainult aasta
         'Likvideerimise aasta',
@@ -427,7 +427,7 @@ class Objekt(models.Model):
     tyyp = models.CharField(
         max_length=1,
         choices=OBJEKTITYYP,
-        help_text='Mis liiki koht'
+        help_text='Mis tüüpi koht'
     )
     kirjeldus = MarkdownxField(
         'Kirjeldus',
