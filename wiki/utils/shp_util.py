@@ -10,13 +10,11 @@ if __name__ == "__main__":
     setup_test_environment()
     from django.conf import settings
     UTIL_DIR = Path(__file__).resolve().parent
+    print('Töökataloog:', UTIL_DIR)
+    # Build paths inside the project like this: UTIL_DIR / 'subdir'.
 else:
     from django.conf import settings
     UTIL_DIR = settings.BASE_DIR / 'wiki' / 'utils'
-
-print(UTIL_DIR)
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 import csv
 import json
