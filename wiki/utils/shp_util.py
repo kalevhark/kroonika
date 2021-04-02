@@ -9,10 +9,12 @@ if __name__ == "__main__":
     django.setup()
     setup_test_environment()
     from django.conf import settings
-    UTIL_DIR = Path('.')
+    UTIL_DIR = Path(__file__).resolve().parent
 else:
     from django.conf import settings
     UTIL_DIR = settings.BASE_DIR / 'wiki' / 'utils'
+
+print(UTIL_DIR)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -75,19 +77,20 @@ def shp_crs_to_degree(coordinates, reverse=False):
 def read_shp_to_db(aasta):
     kaart = Kaart.objects.filter(aasta=aasta).first()
     if kaart:
-        with shapefile.Reader(UTIL_DIR / aasta) as sf:
-            # existing Shape objects
-            for shaperec in sf.iterShapeRecords():
-                rec = shaperec.record.as_dict()
-                geometry = shaperec.shape.__geo_interface__
-                kontroll = Kaardiobjekt.objects.filter(kaart=kaart, geometry=geometry)
-                print(rec, end=' ')
-                if kontroll:
-                    print('olemas')
-                else:
-                    print('lisame:')
-                    o = Kaardiobjekt.objects.create(kaart=kaart, geometry=geometry, **rec)
-                    print(o)
+        with open(UTIL_DIR / f'{aasta}.shp', 'r') as shp_file:
+            with shapefile.Reader(f'{aasta}.shp') as sf:
+                # existing Shape objects
+                for shaperec in sf.iterShapeRecords():
+                    rec = shaperec.record.as_dict()
+                    geometry = shaperec.shape.__geo_interface__
+                    kontroll = Kaardiobjekt.objects.filter(kaart=kaart, geometry=geometry)
+                    print(rec, end=' ')
+                    if kontroll:
+                        print('olemas')
+                    else:
+                        print('lisame:')
+                        o = Kaardiobjekt.objects.create(kaart=kaart, geometry=geometry, **rec)
+                        print(o)
     else:
         print('Sellist kaarti ei ole andmebaasis')
 
@@ -489,9 +492,9 @@ def make_objekt_leaflet_combo(objekt_id=1):
         return map_html
 
 if __name__ == "__main__":
-    read_kaart_csv_to_db()
+    # read_kaart_csv_to_db()
     # read_kaardiobjekt_csv_to_db('2021')
-    # read_shp_to_db(aasta='1912') # Loeb kaamap.save("map.html")rdikihi shp failist andmebaasi
+    read_shp_to_db(aasta='1905') # Loeb kaamap.save("map.html")rdikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1905') # Kirjutab andmebaasist kaardikihi shp faili
     # save_current_data() # Salvestame andmebaasi värsked andmed OpenStreetMapist ja Maa-ameti andmefailist
     # find_intersections()
