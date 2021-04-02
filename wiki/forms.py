@@ -14,7 +14,7 @@ from django.forms import (
 from .models import (
     Artikkel, Isik, Organisatsioon, Objekt,
     Vihje, Pilt,
-    Kaart, Kaardiobjekt
+    # Kaart, Kaardiobjekt
 )
 
 
@@ -110,29 +110,29 @@ class ObjektForm(ModelForm):
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
         }
 
-class KaartForm(ModelForm):
-
-    viited = AutoCompleteSelectMultipleField('viited', required=False)
-
-    class Meta:
-        model = Kaart
-        fields = ('nimi', 'aasta', 'kirjeldus', 'tiles', 'viited')
-        widgets = {
-            'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-        }
-
-
-class KaardiobjektForm(ModelForm):
-
-    objekt = AutoCompleteSelectField('objektid', required=False)
-
-    class Meta:
-        model = Kaardiobjekt
-        fields = (
-            'kaart',
-            'objekt',
-            'tyyp', 'objekt', 'geometry', 'zoom', 'tn', 'nr', 'lisainfo'
-        )
+# class KaartForm(ModelForm):
+#
+#     viited = AutoCompleteSelectMultipleField('viited', required=False)
+#
+#     class Meta:
+#         model = Kaart
+#         fields = ('nimi', 'aasta', 'kirjeldus', 'tiles', 'viited')
+#         widgets = {
+#             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
+#         }
+#
+#
+# class KaardiobjektForm(ModelForm):
+#
+#     objekt = AutoCompleteSelectField('objektid', required=False)
+#
+#     class Meta:
+#         model = Kaardiobjekt
+#         fields = (
+#             'kaart',
+#             'objekt',
+#             'tyyp', 'objekt', 'geometry', 'zoom', 'tn', 'nr', 'lisainfo'
+#         )
 
 
 class VihjeForm(ModelForm):
