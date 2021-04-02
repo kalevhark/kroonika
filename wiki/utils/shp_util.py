@@ -77,20 +77,21 @@ def shp_crs_to_degree(coordinates, reverse=False):
 def read_shp_to_db(aasta):
     kaart = Kaart.objects.filter(aasta=aasta).first()
     if kaart:
-        with open(UTIL_DIR / f'{aasta}.shp', 'r') as shp_file:
-            with shapefile.Reader(f'{aasta}.shp') as sf:
-                # existing Shape objects
-                for shaperec in sf.iterShapeRecords():
-                    rec = shaperec.record.as_dict()
-                    geometry = shaperec.shape.__geo_interface__
-                    kontroll = Kaardiobjekt.objects.filter(kaart=kaart, geometry=geometry)
-                    print(rec, end=' ')
-                    if kontroll:
-                        print('olemas')
-                    else:
-                        print('lisame:')
-                        o = Kaardiobjekt.objects.create(kaart=kaart, geometry=geometry, **rec)
-                        print(o)
+        with open(UTIL_DIR / f'{aasta}.shp', 'rb') as shp_file:
+            with open(UTIL_DIR / f'{aasta}.dbf', 'rb') as dbf_file:
+                with shapefile.Reader(shp=shp_file, dbf=dbf_file) as sf:
+                    # existing Shape objects
+                    for shaperec in sf.iterShapeRecords():
+                        rec = shaperec.record.as_dict()
+                        geometry = shaperec.shape.__geo_interface__
+                        kontroll = Kaardiobjekt.objects.filter(kaart=kaart, geometry=geometry)
+                        print(rec, end=' ')
+                        if kontroll:
+                            print('olemas')
+                        else:
+                            print('lisame:')
+                            o = Kaardiobjekt.objects.create(kaart=kaart, geometry=geometry, **rec)
+                            print(o)
     else:
         print('Sellist kaarti ei ole andmebaasis')
 
@@ -494,7 +495,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
 if __name__ == "__main__":
     # read_kaart_csv_to_db()
     # read_kaardiobjekt_csv_to_db('2021')
-    read_shp_to_db(aasta='1905') # Loeb kaamap.save("map.html")rdikihi shp failist andmebaasi
+    read_shp_to_db(aasta='1905') # Loeb kaardikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1905') # Kirjutab andmebaasist kaardikihi shp faili
     # save_current_data() # Salvestame andmebaasi värsked andmed OpenStreetMapist ja Maa-ameti andmefailist
     # find_intersections()
