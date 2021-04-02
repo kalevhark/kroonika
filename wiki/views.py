@@ -38,12 +38,12 @@ from wiki.models import (
     Artikkel, Isik, Objekt, Organisatsioon,
     Pilt,
     Vihje,
-    # Kaart, Kaardiobjekt
+    Kaart, Kaardiobjekt
 )
 from wiki.forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 from wiki.forms import VihjeForm
 
-# from wiki.utils.shp_util import make_objekt_leaflet_combo
+from wiki.utils.shp_util import make_objekt_leaflet_combo
 
 #
 # reCAPTCHA kontrollifunktsioon

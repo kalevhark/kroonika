@@ -489,8 +489,9 @@ def make_objekt_leaflet_combo(objekt_id=1):
         return map_html
 
 if __name__ == "__main__":
+    read_kaart_csv_to_db()
     # read_kaardiobjekt_csv_to_db('2021')
-    read_shp_to_db(aasta='1912') # Loeb kaamap.save("map.html")rdikihi shp failist andmebaasi
+    # read_shp_to_db(aasta='1912') # Loeb kaamap.save("map.html")rdikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1905') # Kirjutab andmebaasist kaardikihi shp faili
     # save_current_data() # Salvestame andmebaasi värsked andmed OpenStreetMapist ja Maa-ameti andmefailist
     # find_intersections()
