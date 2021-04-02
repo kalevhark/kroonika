@@ -75,7 +75,7 @@ def shp_crs_to_degree(coordinates, reverse=False):
 def read_shp_to_db(aasta):
     kaart = Kaart.objects.filter(aasta=aasta).first()
     if kaart:
-        with shapefile.Reader(aasta) as sf:
+        with shapefile.Reader(UTIL_DIR / aasta) as sf:
             # existing Shape objects
             for shaperec in sf.iterShapeRecords():
                 rec = shaperec.record.as_dict()
