@@ -378,6 +378,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
                 name=aasta,
                 overlay=False
             )
+            print(kaart.tiles)
             if kaart == DEFAULT_MAP and gone:
                 folium.TileLayer(
                     location=map.location,
