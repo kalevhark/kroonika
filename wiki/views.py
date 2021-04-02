@@ -1,6 +1,5 @@
 from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
-import shutil
 from functools import reduce
 from operator import or_
 from typing import Dict, Any
@@ -17,9 +16,7 @@ from django.db.models import \
 from django.db.models import Count, Max, Min
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
 from django.shortcuts import redirect
-from django.shortcuts import get_list_or_404, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
@@ -36,10 +33,17 @@ from django_filters.views import FilterView
 import requests
 
 from blog.models import Comment
-from wiki.models import Allikas, Viide, Artikkel, Isik, Objekt, Organisatsioon, Pilt, Vihje
+from wiki.models import (
+    Allikas, Viide,
+    Artikkel, Isik, Objekt, Organisatsioon,
+    Pilt,
+    Vihje,
+    Kaart, Kaardiobjekt
+)
 from wiki.forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
 from wiki.forms import VihjeForm
 
+from wiki.utils.shp_util import make_objekt_leaflet_combo
 
 #
 # reCAPTCHA kontrollifunktsioon
@@ -1718,8 +1722,8 @@ class ObjektDetailView(generic.DetailView):
         # Kas objektile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.filter(
             objektid__id=self.object.id).filter(profiilipilt_objekt=True).first()
-        # Kas objektil on kaardivaade
-        context['kaardid'] = True # TODO: Siia tuleb kaardiobjekt
+        # Kas objektil on kaardivaateid
+        context['kaardiobjektid_olemas'] = Kaardiobjekt.objects.filter(objekt__id=self.object.id).exists()
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
         # Otseseosed objektidega
@@ -2382,3 +2386,8 @@ def calendar_days_with_events_in_month(request):
         },
         safe=False
     )
+
+# Tagastab objekti kõigi olemasolevate aastate kaardid
+def get_objekt_leaflet_combo(request, objekt_id):
+    map_html = make_objekt_leaflet_combo(objekt_id)
+    return HttpResponse(map_html)

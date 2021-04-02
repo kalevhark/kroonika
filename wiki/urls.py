@@ -37,6 +37,7 @@ urlpatterns = [
     path('organisatsioon/<int:pk>-<str:slug>/', OrganisatsioonDetailView.as_view(), name='wiki_organisatsioon_detail'),
     path('objekt/', ObjektFilterView.as_view(), name='wiki_objekt_filter'),
     path('objekt/<int:pk>-<str:slug>/', ObjektDetailView.as_view(), name='wiki_objekt_detail'),
+    path('objekt/get_objekt_leaflet_combo/<int:objekt_id>/', views.get_objekt_leaflet_combo, name='get_objekt_leaflet_combo'),
     path('update/artikkel/<int:pk>', ArtikkelUpdate.as_view(), name='artikkel_update'),
     path('update/isik/<int:pk>', IsikUpdate.as_view(), name='isik_update'),
     path('update/organisatsioon/<int:pk>', OrganisatsioonUpdate.as_view(), name='organisatsioon_update'),

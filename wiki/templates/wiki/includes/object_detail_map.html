@@ -1,7 +1,39 @@
 <!-- Sisukaardi kaardiosa-->
 <div
         class="w3-margin-right w3-center w3-padding-16"
-        style="display: {% if kaart %}block{% else %}none{% endif %}"
+        style="display: {% if kaardiobjektid_olemas %}block{% else %}none{% endif %}"
 >
-  {#  Siis tuleb kaardiosa #}
+  <div
+        id="get_objekt_leaflet_combo"
+        data-url="{% url 'wiki:get_objekt_leaflet_combo' object.id %}"
+  ></div>
 </div>
+
+<script>
+  function get_objekt_leaflet_combo() {
+    // Küsime andmed ja näitame kaarti
+    $.ajax({
+      url: $("#get_objekt_leaflet_combo").attr("data-url"),
+      dataType: 'text',
+      timeout: 300000,
+      beforeSend: function() {
+        // $("#loaderDiv7").show();
+      },
+    success: function (data) {
+      if (data) {
+          document.getElementById("get_objekt_leaflet_combo").innerHTML = data;
+        }
+      },
+      error: function (XMLHttpRequest, textstatus, errorThrown) {
+        console.log(textstatus);
+      },
+    complete: function () {
+      // $("#loaderDiv7").hide();
+    }
+    });
+  }
+
+  $(document).ready(function() {
+    get_objekt_leaflet_combo();
+  });
+</script>

@@ -37,6 +37,8 @@ from markdownx.utils import markdownify
 
 from PIL import Image
 
+from shapely.geometry import shape
+
 KUUD = (
         (1, 'jaanuar'),
         (2, 'veebruar'),
@@ -353,7 +355,7 @@ class Viide(models.Model):
             else: # kui viite ilmumisaastat pole, siis allika ilmumisaasta
                 if self.allikas.hist_year:
                     aeg = str(self.allikas.hist_year)
-        viide = ' '.join([autorid, peatykk, allika_nimi, viit, aeg])
+        viide = ' '.join([autorid, peatykk, allika_nimi, viit, aeg]).replace(' , ', ', ')
         return viide.strip()
 
 # # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
@@ -1475,6 +1477,187 @@ class Vihje(models.Model):
         tekst = self.kirjeldus[:50]
         return f'{y_str}{m_str}{d_str}: {tekst}'
 
-
     class Meta:
         verbose_name_plural = "Vihjed"
+
+
+# Kaartide andmed
+class Kaart(models.Model):
+
+    nimi = models.CharField(
+        'Pealkiri',
+        max_length=200,
+        help_text='Kaardi pealkiri'
+    )
+    aasta = models.CharField(
+        'Väljaandmise aeg',
+        max_length=200,
+        unique=True,
+        help_text='Väljaandmise aeg'
+    )
+    kirjeldus = models.TextField(
+        'Kirjeldus',
+        # max_length=200,
+        blank=True,
+        help_text='Kaardi kirjeldus'
+    )
+    tiles = models.CharField(  # Kaardi internetiaadress folium leafleti jaoks
+        'Internetikaart',
+        max_length=100,
+        blank=True,
+        help_text='Internetikaardi asukoht'
+    )
+    viited = models.ManyToManyField(
+        Viide,
+        blank=True,
+        verbose_name='Viited',
+    )
+    # Tehnilised väljad
+    inp_date = models.DateTimeField(
+        'Lisatud',
+        auto_now_add=True,
+        blank=True
+    )
+    mod_date = models.DateTimeField(
+        'Muudetud',
+        auto_now=True,
+        blank=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name='Lisaja'
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='+',
+        verbose_name='Muutja'
+    )
+
+    def __str__(self):
+        return f'{self.aasta} {self.nimi}'
+
+    class Meta:
+        ordering = ['-aasta']
+        verbose_name_plural = "Kaardid"
+
+
+class Kaardiobjekt(models.Model):
+    TYYP = (
+        ('H', 'Hoone(d)'),
+        ('A', 'Ala'),
+        ('M', 'Muu'),
+    )
+    kaart = models.ForeignKey(
+        Kaart,
+        on_delete=models.SET_NULL,
+        verbose_name='Kaart',
+        help_text='Seotud kaart',
+        null=True,
+        blank=True
+    )
+    objekt = models.ForeignKey(
+        Objekt,
+        on_delete=models.SET_NULL,
+        verbose_name='Objekt',
+        help_text='Seotud objekt',
+        null=True,
+        blank=True
+    )
+    tyyp = models.CharField(
+        max_length=1,
+        choices=TYYP,
+        help_text='Mis liiki kaardiobjekt',
+        default='H'
+    )
+    geometry = models.JSONField(
+        'Kaardiobjekt',
+        null=True,
+        blank=True,
+        help_text='Kaardiobjekti GeoJSON-andmed (geometry)'
+    )
+    zoom = models.SmallIntegerField(
+        'Algne kaardi suurendusaste',
+        null=True,
+        blank=True,
+    )
+    tn = models.CharField(
+        'Tänav',
+        max_length=80,
+        blank=True,
+        help_text='Tänava nimi kaardikihil'
+    )
+    nr = models.CharField(
+        'Majanumber',
+        max_length=80,
+        blank=True,
+        help_text='Maja number kaardikihil'
+    )
+    lisainfo = models.CharField(
+        'Lisainfo',
+        max_length=80,
+        blank=True,
+        help_text='Lisainfo kaardikihil'
+    )
+    # Tehnilised väljad
+    inp_date = models.DateTimeField(
+        'Lisatud',
+        auto_now_add=True
+    )
+    mod_date = models.DateTimeField(
+        'Muudetud',
+        auto_now=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name='Lisaja'
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='+',
+        verbose_name='Muutja'
+    )
+
+    def __str__(self):
+        return ' '.join([self.kaart.aasta, self.tn, self.nr, self.lisainfo])
+
+    @property
+    def centroid(self, *args, **kwargs):
+        try:
+            # s = shape(self.geometry).centroid # andis vale tulemuse!
+            # print(s.x, s.y, s.wkt)
+            # return s # s.x ja s.y kasutamiseks
+            s = shape(self.geometry).bounds
+            return [
+                (s[3]+s[1])/2,
+                (s[2]+s[0])/2
+            ]
+        except:
+            pass
+
+    def colored_id(self):
+        if not self.objekt:
+            color = 'red'
+        else:
+            color = ''
+        return format_html(
+            '<strong><span style="color: {};">{}</span></strong>',
+            color,
+            self.id
+        )
+    colored_id.short_description = 'ID'
+
+    class Meta:
+        ordering = ['kaart', 'tn', 'nr']
+        verbose_name_plural = "Kaardiobjektid"

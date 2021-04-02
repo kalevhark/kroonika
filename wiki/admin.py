@@ -6,8 +6,17 @@ from django.contrib.admin.templatetags.admin_list import _boolean_icon
 # from django.db.models import Count
 from markdownx.admin import MarkdownxModelAdmin
 
-from .models import Allikas, Viide, Kroonika, Artikkel, Isik, Organisatsioon, Objekt, Pilt, Vihje
-from .forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, PiltForm
+from .models import (
+    Allikas, Viide, Kroonika,
+    Artikkel, Isik, Organisatsioon, Objekt,
+    Pilt, Vihje,
+    Kaart, Kaardiobjekt
+)
+from .forms import (
+    ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm,
+    PiltForm,
+    KaartForm, KaardiobjektForm
+)
 
 
 #
@@ -879,3 +888,35 @@ class ObjektPiltidetaAdmin(ObjektAdmin):
         return obj.pilt_set
 
 create_modeladmin(ObjektPiltidetaAdmin, name='kohad-kiirparandusteks', model=Objekt)
+
+
+class KaartAdmin(AjaxSelectAdmin):
+
+    form = KaartForm
+
+    list_display = (
+        'id',
+        '__str__',
+    )
+
+admin.site.register(Kaart, KaartAdmin)
+
+
+class KaardiobjektAdmin(AjaxSelectAdmin):
+
+    form=KaardiobjektForm
+
+    list_display = (
+        'colored_id',
+        'tyyp',
+        '__str__',
+    )
+    list_filter = ['kaart', 'tn']
+    search_fields = [
+        'tn',
+        'nr',
+        'lisainfo',
+        'id'
+    ]
+
+admin.site.register(Kaardiobjekt, KaardiobjektAdmin)

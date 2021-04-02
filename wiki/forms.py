@@ -11,7 +11,11 @@ from django.forms import (
     ModelMultipleChoiceField,
 )
 
-from .models import Artikkel, Isik, Organisatsioon, Objekt, Vihje, Pilt
+from .models import (
+    Artikkel, Isik, Organisatsioon, Objekt,
+    Vihje, Pilt,
+    Kaart, Kaardiobjekt
+)
 
 
 class PiltForm(ModelForm):
@@ -46,26 +50,6 @@ class ArtikkelForm(ModelForm):
         )
         widgets = {
             'body_text': Textarea(attrs={'rows': 10}),
-            # 'isikud': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud isikud'}),
-            # 'isikud': FilteredSelectMultiple(
-            #     'isikud',
-            #     is_stacked=False,
-            # ),
-            # # 'organisatsioonid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud organisatsioonid'}),
-            # 'organisatsioonid': FilteredSelectMultiple(
-            #     'organisatsioonid',
-            #     is_stacked=False,
-            # ),
-            # 'objektid': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud objektid'}),
-            # 'objektid': FilteredSelectMultiple(
-            #     'objektid',
-            #     is_stacked=False
-            # ),
-            # 'viited': SelectMultiple(attrs={'size': 15, 'title': 'Vali seotud viited'}),
-            # 'viited': FilteredSelectMultiple(
-            #     'viited',
-            #     is_stacked=False
-            # ),
         }
 
     def clean(self):
@@ -90,18 +74,6 @@ class IsikForm(ModelForm):
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            # 'organisatsioonid': FilteredSelectMultiple(
-            #     'organisatsioonid',
-            #     is_stacked=False,
-            # ),
-            # 'objektid': FilteredSelectMultiple(
-            #     'objektid',
-            #     is_stacked=False
-            # ),
-            # 'viited': FilteredSelectMultiple(
-            #     'viited',
-            #     is_stacked=False
-            # ),
         }
 
 class OrganisatsioonForm(ModelForm):
@@ -118,14 +90,6 @@ class OrganisatsioonForm(ModelForm):
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            # 'objektid': FilteredSelectMultiple(
-            #     'objektid',
-            #     is_stacked=False
-            # ),
-            # 'viited': FilteredSelectMultiple(
-            #     'viited',
-            #     is_stacked=False
-            # ),
         }
 
 
@@ -144,15 +108,31 @@ class ObjektForm(ModelForm):
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            # 'objektid': FilteredSelectMultiple(
-            #     'objektid',
-            #     is_stacked=False
-            # ),
-            # 'viited': FilteredSelectMultiple(
-            #     'viited',
-            #     is_stacked=False
-            # ),
         }
+
+class KaartForm(ModelForm):
+
+    viited = AutoCompleteSelectMultipleField('viited', required=False)
+
+    class Meta:
+        model = Kaart
+        fields = ('nimi', 'aasta', 'kirjeldus', 'tiles', 'viited')
+        widgets = {
+            'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
+        }
+
+
+class KaardiobjektForm(ModelForm):
+
+    objekt = AutoCompleteSelectField('objektid', required=False)
+
+    class Meta:
+        model = Kaardiobjekt
+        fields = (
+            'kaart',
+            'objekt',
+            'tyyp', 'objekt', 'geometry', 'zoom', 'tn', 'nr', 'lisainfo'
+        )
 
 
 class VihjeForm(ModelForm):
