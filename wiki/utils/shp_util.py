@@ -227,6 +227,9 @@ def get_shp_data(asukoht):
         with shapefile.Reader("SHP_KATASTRIYKSUS_VALGA", encoding="latin1") as sf:
             for rec in sf.iterShapeRecords():
                 if street in rec.record.L_AADRESS.split(' ') and housenumber in rec.record.L_AADRESS.split(' '):
+                    points = rec.shape.points
+                    parts = rec.shape.parts
+                    print(parts)
                     nodes = [
                         shp_crs_to_degree(el)
                         for el
@@ -250,12 +253,11 @@ def shp_match_db():
             for rec in sf.iterShapeRecords():
                 if rec.record.SIHT1 != "Transpordimaa":
                     n += 1
-                    l_aadress = rec.record.L_AADRESS
-                    l_aadress = re.sub(erisus, '', l_aadress.split('//')[0])
-                    kinnitus = save_current_data(l_aadress)
-                    af.write(kinnitus + '\n')
-                    print(f'{n}/{total}:{kinnitus}')
-                    continue # TODO: ajutiselt siin katkestame
+                    # l_aadress = rec.record.L_AADRESS
+                    # l_aadress = re.sub(erisus, '', l_aadress.split('//')[0])
+                    # kinnitus = save_current_data(l_aadress)
+                    # af.write(kinnitus + '\n')
+                    # print(f'{n}/{total}:{kinnitus}')
                     points = rec.shape.points
                     parts = rec.shape.parts
                     endpoint = len(points) if len(parts)==1 else parts[1]
@@ -279,6 +281,31 @@ def shp_match_db():
                     else:
                         print('Vigane my:', rec.record.L_AADRESS)
                         print(rec.shape.parts)
+
+# Loeb kaardiobjekti andmed ja leiab kas on kattuvusi teiste kaartide kaardiobjektidega
+def kaardiobjekt_match_db(kaardiobjekt_id):
+    kaardiobjekt = Kaardiobjekt.objects.get(id=kaardiobjekt_id)
+    shape = kaardiobjekt.geometry['coordinates'][0]
+    polygon = Polygon(shape)
+    ignore_maps = ['1683'] # , kaardiobjekt.kaart.aasta]
+    objs = Kaardiobjekt.objects.exclude(kaart__aasta__in=ignore_maps).filter(tyyp__exact='H')
+    if polygon.is_valid:
+        for obj in objs:
+            s = obj.geometry['coordinates'][0]
+            p = Polygon(s)
+            if p.intersects(polygon):
+                try:
+                    kattuvus = round(p.intersection(polygon).area/p.area, 2)
+                    if kattuvus > 0.2:
+                        if obj.objekt:
+                            seotud = obj.objekt.nimi
+                        else:
+                            seotud = '****'
+                        print(obj.kaart.aasta, obj.id, obj.tn, obj.nr, obj.lisainfo, kattuvus, '->', seotud)
+                except:
+                    print(obj, polygon.is_valid, p.is_valid)
+    else:
+        print('Vigane my:', kaardiobjekt)
 
 # Salvestame andmebaasi värsked andmed OpenStreetMapist ja Maa-ameti andmefailist
 def save_current_data(asukoht):
@@ -378,7 +405,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
                 name=aasta,
                 overlay=False
             )
-            print(kaart.tiles)
+            # print(kaart.tiles)
             if kaart == DEFAULT_MAP and gone:
                 folium.TileLayer(
                     location=map.location,
@@ -391,7 +418,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
                 kaardiobjektid = obj.kaardiobjekt_set.filter(kaart=kaart)
                 if kaardiobjektid[0].geometry:
                     map.location = kaardiobjektid[0].centroid
-                folium.TileLayer(
+                tilelayer = folium.TileLayer(
                     location=map.location,
                     name=aasta,
                     tiles=kaart.tiles,
@@ -423,7 +450,9 @@ def make_objekt_leaflet_combo(objekt_id=1):
                             name=name,
                             style_function=lambda x: style
                         ).add_to(feature_group[DEFAULT_MAP.aasta])
-
+                    # Kui on antud zoomimise tase, siis kasutame seda
+                    if kaardiobjekt.zoom:
+                        tilelayer.zoom_start = kaardiobjekt.zoom
             # Lisame kaardi leaflet combosse
             feature_group[aasta].add_to(map)
             # print(feature_group[aasta].get_name())
@@ -492,9 +521,10 @@ def make_objekt_leaflet_combo(objekt_id=1):
         return map_html
 
 if __name__ == "__main__":
-    # read_kaart_csv_to_db()
     # read_kaardiobjekt_csv_to_db('2021')
-    read_shp_to_db(aasta='1905') # Loeb kaardikihi shp failist andmebaasi
+    # get_shp_data('Kesk 12')
+    kaardiobjekt_match_db(20938)
+    # read_shp_to_db(aasta='1905') # Loeb kaardikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1905') # Kirjutab andmebaasist kaardikihi shp faili
     # save_current_data() # Salvestame andmebaasi värsked andmed OpenStreetMapist ja Maa-ameti andmefailist
     # find_intersections()
