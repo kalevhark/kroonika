@@ -401,6 +401,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
         # map_name = map.get_name()
 
         feature_group = {}
+        zoom_start = DEFAULT_MAP_ZOOM_START
         for kaart in kaardid:
             aasta = kaart.aasta
 
@@ -414,7 +415,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
                     location=map.location,
                     name=aasta,
                     tiles="Stamen Toner",
-                    zoom_start=DEFAULT_MAP_ZOOM_START,
+                    zoom_start=zoom_start,
                     min_zoom=DEFAULT_MIN_ZOOM
                 ).add_to(feature_group[aasta])
             else:
@@ -425,7 +426,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
                     location=map.location,
                     name=aasta,
                     tiles=kaart.tiles,
-                    zoom_start=DEFAULT_MAP_ZOOM_START,
+                    zoom_start=zoom_start,
                     min_zoom=DEFAULT_MIN_ZOOM,
                     attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
                 ).add_to(feature_group[aasta])
@@ -455,10 +456,17 @@ def make_objekt_leaflet_combo(objekt_id=1):
                         ).add_to(feature_group[DEFAULT_MAP.aasta])
                     # Kui on antud zoomimise tase, siis kasutame seda
                     if kaardiobjekt.zoom:
-                        map.zoom_start = kaardiobjekt.zoom
+                        zoom_start = kaardiobjekt.zoom
+
+                # Parandame zoomi, kui mõnel kihil on määratud TODO: ei toimi
+                tilelayer.zoom_start = zoom_start
+
             # Lisame kaardi leaflet combosse
             feature_group[aasta].add_to(map)
             # print(feature_group[aasta].get_name())
+
+        # Parandame zoomi, kui mõnel kihil on määratud TODO: ei toimi
+        map.zoom_start = zoom_start
 
         # Piirid tänapäeval
         style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}

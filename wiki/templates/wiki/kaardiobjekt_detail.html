@@ -104,13 +104,10 @@
 
     $(document).ready(function() {
       kaardiobjektid = document.getElementsByClassName("kaardiobjekt");
-      console.log(kaardiobjektid);
       var i;
       for (i = 0; i < kaardiobjektid.length; i++) {
-        console.log(kaardiobjektid[i].id);
         get_kaardiobjekt_leaflet(kaardiobjektid[i].id);
       }
-      // kaardiobjektid.forEach(get_kaardiobjekt_leaflet);
     });
   </script>
 {% endblock %}
