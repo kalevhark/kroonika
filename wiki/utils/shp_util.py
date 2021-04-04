@@ -472,10 +472,10 @@ def make_objekt_leaflet_combo(objekt_id=1):
         style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
         with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
             src = json.load(gf)
-            folium.GeoJson(src, name="piirid", style_function=lambda x: style1).add_to(map)
+            folium.GeoJson(src, name="administratiivpiirid", style_function=lambda x: style1).add_to(map)
 
         # Tänavatevõrk tänapäeval
-        style2 = {'fill': None, 'color': 'red', 'weight': 2}
+        style2 = {'fill': None, 'color': 'orange', 'weight': 2}
         with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
             src = json.load(gf)
             folium.GeoJson(src, name="teedevõrk", style_function=lambda x: style2).add_to(map)

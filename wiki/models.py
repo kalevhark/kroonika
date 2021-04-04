@@ -1632,6 +1632,12 @@ class Kaardiobjekt(models.Model):
     def __str__(self):
         return ' '.join([self.kaart.aasta, self.tn, self.nr, self.lisainfo])
 
+    def get_absolute_url(self):
+        kwargs = {
+            'pk': self.id,
+        }
+        return reverse('wiki:wiki_kaardiobjekt_detail', kwargs=kwargs)
+
     @property
     def centroid(self, *args, **kwargs):
         try:
