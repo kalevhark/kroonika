@@ -50,33 +50,35 @@
     </div>
   </div>
 
-  <div>
-    <div class="w3-twothird">
-      <h5>Kattuvad kaardiobjektid</h5>
-      {% for match in kaardiobjekt_match %}
-          {{ match.kaardiobjekt }} {{ match.kattuvus }}
-          {% if match.kaardiobjekt.objekt %} -> <strong>{{ match.kaardiobjekt.objekt }}</strong>{% endif %}
-          <div class="w3-container">
-            <div class="w3-third">
-              <!-- Kattuva kaardiobjekt kaardiosa-->
-              <div class="w3-margin-right w3-center w3-padding-16">
-                <div
-                        class="kaardiobjekt"
-                        id="get_kaardiobjekt_leaflet_{{ match.kaardiobjekt.id }}"
-                        data-url="{% url 'wiki:get_kaardiobjekt_leaflet' match.kaardiobjekt.id %}"
-                ></div>
+  {% if kaardiobjekt_match%}
+    <div>
+      <div class="w3-twothird">
+        <h5>Kattuvad kaardiobjektid</h5>
+        {% for match in kaardiobjekt_match %}
+            {{ match.kaardiobjekt }} {{ match.kattuvus }}
+            {% if match.kaardiobjekt.objekt %} -> <strong>{{ match.kaardiobjekt.objekt }}</strong>{% endif %}
+            <div class="w3-container">
+              <div class="w3-third">
+                <!-- Kattuva kaardiobjekt kaardiosa-->
+                <div class="w3-margin-right w3-center w3-padding-16">
+                  <div
+                          class="kaardiobjekt"
+                          id="get_kaardiobjekt_leaflet_{{ match.kaardiobjekt.id }}"
+                          data-url="{% url 'wiki:get_kaardiobjekt_leaflet' match.kaardiobjekt.id %}"
+                  ></div>
+                </div>
+              </div>
+              <div class="w3-twothird">
+                {{ match.kaardiobjekt.geometry }}
               </div>
             </div>
-            <div class="w3-twothird">
-              {{ match.kaardiobjekt.geometry }}
-            </div>
-          </div>
-      {% endfor %}
+        {% endfor %}
+      </div>
+      <div class="w3-third">
+        {#      tühi#}
+      </div>
     </div>
-    <div class="w3-third">
-      {#      tühi#}
-    </div>
-  </div>
+  {% endif %}
 
   <script>
     function get_kaardiobjekt_leaflet(id) {
