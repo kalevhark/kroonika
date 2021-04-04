@@ -216,6 +216,7 @@ def get_osm_data(asukoht=None):
                 'type': 'Polygon',
                 'coordinates': nodes_sets
             }
+            print('H', json.dumps(geometry))
             return geometry #, center
         else:
             pass # print('ei leidnud')
@@ -229,7 +230,7 @@ def get_shp_data(asukoht):
                 if street in rec.record.L_AADRESS.split(' ') and housenumber in rec.record.L_AADRESS.split(' '):
                     points = rec.shape.points
                     parts = rec.shape.parts
-                    print(parts)
+                    # print(parts)
                     nodes = [
                         shp_crs_to_degree(el)
                         for el
@@ -239,6 +240,7 @@ def get_shp_data(asukoht):
                         'type': 'Polygon',
                         'coordinates': [nodes]
                     }
+                    print('A', json.dumps(geometry))
                     return geometry
 
 # Loeb katastriyksuse failist ja leiab kas on kattuvusi andmebaasi kaardiobjektidega
@@ -579,8 +581,9 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
 
 if __name__ == "__main__":
     # read_kaardiobjekt_csv_to_db('2021')
-    # get_shp_data('Kesk 12')
-    kaardiobjekt_match_db(20938)
+    get_osm_data('Vabaduse 17')
+    get_shp_data('Vabaduse 17')
+    # kaardiobjekt_match_db(20938)
     # read_shp_to_db(aasta='1905') # Loeb kaardikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1905') # Kirjutab andmebaasist kaardikihi shp faili
     # save_current_data() # Salvestame andmebaasi värsked andmed OpenStreetMapist ja Maa-ameti andmefailist

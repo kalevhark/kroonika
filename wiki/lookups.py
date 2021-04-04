@@ -4,7 +4,11 @@ from ajax_select import LookupChannel
 from django.db.models.functions import Concat
 from django.db.models import F, Value, CharField
 
-from .models import Artikkel, Isik, Organisatsioon, Objekt, Allikas, Viide
+from .models import (
+    Artikkel, Isik, Organisatsioon, Objekt,
+    Allikas, Viide,
+    Kaardiobjekt
+)
 
 
 @ajax_select.register('artiklid')
@@ -121,3 +125,16 @@ class AllikasLookup(LookupChannel):
         for split in splits:
             queryset = queryset.filter(nimi__icontains=split)
         return queryset[:20]
+
+
+# @ajax_select.register('kaardiobjektid')
+# class KaardiobjektLookup(LookupChannel):
+#
+#     model = Kaardiobjekt
+#
+#     def get_query(self, q, request):
+#         splits = q.split(' ')
+#         queryset = self.model.objects.annotate(nimi=Concat('tn', Value(' '), 'nr', Value(' '), 'lisainfo'))
+#         for split in splits:
+#             queryset = queryset.filter(nimi__icontains=split)
+#         return queryset[:50]

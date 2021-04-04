@@ -104,7 +104,7 @@ class ObjektForm(ModelForm):
                   'hist_date', 'hist_year', 'hist_month',
                   'hist_enddate', 'hist_endyear', 'gone',
                   'objektid',
-                  'viited'
+                  'viited',
         )
         widgets = {
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),

@@ -65,7 +65,7 @@ def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
     """
     # create thumbnail image
     media_dir = settings.MEDIA_ROOT
-    with Image.open(media_dir + src_image_field.name) as img:
+    with Image.open(media_dir / src_image_field.name) as img:
         if name_suffix == 'thumb':
             dest_size = (img.size[0], 128)
         else:

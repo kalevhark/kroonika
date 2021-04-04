@@ -223,6 +223,7 @@ class ViideAdmin(admin.ModelAdmin):
 
     short_url.short_description = 'Link'
 
+
 # class ArtikkelAdmin(MarkdownxModelAdmin):
 class ArtikkelAdmin(AjaxSelectAdmin):
     form = ArtikkelForm
@@ -594,6 +595,7 @@ class ObjektAdmin(AjaxSelectAdmin):
     list_display = [
         # 'id',
         'colored_id',
+        'seotud_kaardiga',
         'nimi',
         'hist_date',
         'hist_year',
@@ -680,6 +682,12 @@ class ObjektAdmin(AjaxSelectAdmin):
     def seotud_viiteid(self, obj):
         return obj.viited.count()
     seotud_viiteid.short_description = 'Viiteid'
+
+    def seotud_kaardiga(self, obj):
+        return _boolean_icon(
+            obj.kaardiobjekt_set.count() > 0
+        )
+    seotud_kaardiga.short_description = 'Kaardiga'
 
 
 class KroonikaAdmin(admin.ModelAdmin):
