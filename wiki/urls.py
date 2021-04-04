@@ -3,9 +3,9 @@ from django.urls import path
 from . import views
 
 # Objektivaated
-from wiki.views import ArtikkelDetailView, IsikDetailView, OrganisatsioonDetailView, ObjektDetailView
+from wiki.views import ArtikkelDetailView, IsikDetailView, OrganisatsioonDetailView, ObjektDetailView, KaardiobjektDetailView
 # Filtreerimisvaated
-from wiki.views import ArtikkelFilterView, IsikFilterView, OrganisatsioonFilterView, ObjektFilterView
+from wiki.views import ArtikkelFilterView, IsikFilterView, OrganisatsioonFilterView, ObjektFilterView, KaardiobjektFilterView
 # Loendivaated
 from wiki.views import ArtikkelArchiveIndexView, ArtikkelYearArchiveView, ArtikkelMonthArchiveView, ArtikkelDayArchiveView
 # Muutmisvaated
@@ -38,6 +38,9 @@ urlpatterns = [
     path('objekt/', ObjektFilterView.as_view(), name='wiki_objekt_filter'),
     path('objekt/<int:pk>-<str:slug>/', ObjektDetailView.as_view(), name='wiki_objekt_detail'),
     path('objekt/get_objekt_leaflet_combo/<int:objekt_id>/', views.get_objekt_leaflet_combo, name='get_objekt_leaflet_combo'),
+    path('kaardiobjekt/', KaardiobjektFilterView.as_view(), name='wiki_kaardiobjekt_filter'),
+    path('kaardiobjekt/<int:pk>/', KaardiobjektDetailView.as_view(), name='wiki_kaardiobjekt_detail'),
+    path('kaardiobjekt/get_kaardiobjekt_leaflet/<int:kaardiobjekt_id>/', views.get_kaardiobjekt_leaflet, name='get_kaardiobjekt_leaflet'),
     path('update/artikkel/<int:pk>', ArtikkelUpdate.as_view(), name='artikkel_update'),
     path('update/isik/<int:pk>', IsikUpdate.as_view(), name='isik_update'),
     path('update/organisatsioon/<int:pk>', OrganisatsioonUpdate.as_view(), name='organisatsioon_update'),

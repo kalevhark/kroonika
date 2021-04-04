@@ -287,9 +287,10 @@ def kaardiobjekt_match_db(kaardiobjekt_id):
     kaardiobjekt = Kaardiobjekt.objects.get(id=kaardiobjekt_id)
     shape = kaardiobjekt.geometry['coordinates'][0]
     polygon = Polygon(shape)
-    ignore_maps = ['1683'] # , kaardiobjekt.kaart.aasta]
+    ignore_maps = ['1683', kaardiobjekt.kaart.aasta]
     objs = Kaardiobjekt.objects.exclude(kaart__aasta__in=ignore_maps).filter(tyyp__exact='H')
     if polygon.is_valid:
+        kaardiobjekt_match = []
         for obj in objs:
             s = obj.geometry['coordinates'][0]
             p = Polygon(s)
@@ -301,9 +302,11 @@ def kaardiobjekt_match_db(kaardiobjekt_id):
                             seotud = obj.objekt.nimi
                         else:
                             seotud = '****'
-                        print(obj.kaart.aasta, obj.id, obj.tn, obj.nr, obj.lisainfo, kattuvus, '->', seotud)
+                        # print(obj.kaart.aasta, obj.id, obj.tn, obj.nr, obj.lisainfo, kattuvus, '->', seotud)
+                        kaardiobjekt_match.append({'kaardiobjekt': obj, 'kattuvus': kattuvus})
                 except:
                     print(obj, polygon.is_valid, p.is_valid)
+        return kaardiobjekt_match
     else:
         print('Vigane my:', kaardiobjekt)
 
@@ -391,7 +394,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
             location=DEFAULT_CENTER,  # NB! tagurpidi: [lat, lon],
             zoom_start=DEFAULT_MAP_ZOOM_START,
             min_zoom=DEFAULT_MIN_ZOOM,
-            zoom_control=False,
+            zoom_control=True,
             # control_scale=True,
             tiles=None,
         )
@@ -452,7 +455,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
                         ).add_to(feature_group[DEFAULT_MAP.aasta])
                     # Kui on antud zoomimise tase, siis kasutame seda
                     if kaardiobjekt.zoom:
-                        tilelayer.zoom_start = kaardiobjekt.zoom
+                        map.zoom_start = kaardiobjekt.zoom
             # Lisame kaardi leaflet combosse
             feature_group[aasta].add_to(map)
             # print(feature_group[aasta].get_name())
@@ -515,10 +518,56 @@ def make_objekt_leaflet_combo(objekt_id=1):
 
         # v2ike h2kk, mis muudab vertikaalset suurust
         map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
-        # with open(f"ajutine_{objekt_id}-{kaart_id}.html", "w") as f:
-        #     pass # f.write(map_html)
-        # map.save(f"ajutine_{objekt_id}")
+        # with open(f"ajutine_{objekt_id}.html", "w") as f:
+        #     f.write(map_html)
+        # map.save(f"ajutine_{objekt_id}.html")
         return map_html
+
+# Konkreetse objekti erinevate aastate kaardid koos
+def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
+    kaardiobjekt = Kaardiobjekt.objects.get(id=kaardiobjekt_id)
+    if kaardiobjekt:
+        zoom_start = kaardiobjekt.zoom if kaardiobjekt.zoom else DEFAULT_MAP_ZOOM_START
+        # Loome aluskaardi
+        map = folium.Map(
+            location=kaardiobjekt.centroid, # kaardiobjekt.centroid,  # NB! tagurpidi: [lat, lon],
+            zoom_start=zoom_start,
+            min_zoom=DEFAULT_MIN_ZOOM,
+            zoom_control=True,
+            name=kaardiobjekt.kaart.aasta,
+            tiles=kaardiobjekt.kaart.tiles,
+            attr=f'{kaardiobjekt.kaart.__str__()}',
+        )
+
+        # lisame vektorkihid
+        geometry = kaardiobjekt.geometry
+        tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
+        name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
+        feature_collection = {
+            "type": "FeatureCollection",
+            "name": name,
+            "features": [geometry]
+        }
+        style = GEOJSON_STYLE[tyyp]
+        f = json.dumps(feature_collection)
+        folium.GeoJson(
+            f,
+            name=name,
+            style_function=lambda x: style
+        ).add_to(map)
+
+        # Lisame kihtide kontrolli
+        folium.LayerControl().add_to(map)
+
+        map_html = map._repr_html_()
+
+        # v2ike h2kk, mis muudab vertikaalset suurust
+        map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
+        # with open(f"ajutine_{objekt_id}.html", "w") as f:
+        #     f.write(map_html)
+        # map.save(f"ajutine_{kaardiobjekt_id}.html")
+        return map_html
+
 
 if __name__ == "__main__":
     # read_kaardiobjekt_csv_to_db('2021')
