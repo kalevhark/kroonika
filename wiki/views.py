@@ -1714,19 +1714,29 @@ class ObjektDetailView(generic.DetailView):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas objektile on määratud profiilipilt
-        context['profiilipilt'] = Pilt.objects.filter(
-            objektid__id=self.object.id).filter(profiilipilt_objekt=True).first()
+        context['profiilipilt'] = Pilt.objects.\
+            filter(objektid__id=self.object.id).\
+            filter(profiilipilt_objekt=True).\
+            first()
         # Kas objektil on kaardivaateid
-        context['kaardiobjektid_olemas'] = Kaardiobjekt.objects.filter(objekt__id=self.object.id).exists()
+        context['kaardiobjektid_olemas'] = Kaardiobjekt.objects.\
+            filter(objekt__id=self.object.id).\
+            exists()
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
         # Otseseosed objektidega
         # Otseseosed objectidega
         # isik_related = self.object.isik_set.all().values_list('id', flat=True)
         # context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(id__in=isik_related)
-        context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(objektid=self.object)
-        context['seotud_organisatsioonid'] = Organisatsioon.objects.daatumitega(self.request).filter(objektid=self.object)
-        context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(objektid=self.object)
+        context['seotud_isikud'] = Isik.objects.\
+            daatumitega(self.request).\
+            filter(objektid=self.object)
+        context['seotud_organisatsioonid'] = Organisatsioon.objects.\
+            daatumitega(self.request).\
+            filter(objektid=self.object)
+        context['seotud_objektid'] = Objekt.objects.\
+            daatumitega(self.request).\
+            filter(objektid=self.object)
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 

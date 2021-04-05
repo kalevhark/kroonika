@@ -1,4 +1,5 @@
 <!-- Sisukaardi kaardiosa-->
+{% include 'wiki/includes/div_loader_book.html' with n=2 %}
 <div
         class="w3-margin-right w3-center w3-padding-16"
         style="display: {% if kaardiobjektid_olemas %}block{% else %}none{% endif %}"
@@ -17,18 +18,18 @@
       dataType: 'text',
       timeout: 300000,
       beforeSend: function() {
-        // $("#loaderDiv7").show();
+        $("#loaderDiv2").show();
       },
-    success: function (data) {
-      if (data) {
-          document.getElementById("get_objekt_leaflet_combo").innerHTML = data;
-        }
-      },
+      success: function (data) {
+        if (data) {
+            document.getElementById("get_objekt_leaflet_combo").innerHTML = data;
+          }
+        },
       error: function (XMLHttpRequest, textstatus, errorThrown) {
         console.log(textstatus);
       },
     complete: function () {
-      // $("#loaderDiv7").hide();
+      $("#loaderDiv2").hide();
     }
     });
   }
