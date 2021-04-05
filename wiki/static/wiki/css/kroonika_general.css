@@ -165,6 +165,10 @@ form#search svg:hover {
 }
 
 /* Kasutamiseks objektivaates */
+ul.no-bullets li {
+  list-style-type: none;
+}
+
 .pilt-postkaart-medium {
 	max-height: 512px;
 	max-width: 100%;

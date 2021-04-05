@@ -1719,9 +1719,14 @@ class ObjektDetailView(generic.DetailView):
             filter(profiilipilt_objekt=True).\
             first()
         # Kas objektil on kaardivaateid
-        context['kaardiobjektid_olemas'] = Kaardiobjekt.objects.\
-            filter(objekt__id=self.object.id).\
-            exists()
+        if self.request.user.is_authenticated and self.request.user.is_staff:
+            context['seotud_kaardiobjektid'] = Kaardiobjekt.objects. \
+                filter(objekt__id=self.object.id). \
+                all()
+        else:
+            context['seotud_kaardiobjektid'] = Kaardiobjekt.objects.\
+                filter(objekt__id=self.object.id).\
+                exists()
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
         # Otseseosed objektidega
