@@ -7,6 +7,7 @@ from typing import Dict, Any
 from django.conf import settings
 from django.contrib import messages
 from django.core import serializers
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import \
     Count, Max, Min, \
@@ -1744,6 +1745,19 @@ class ObjektDetailView(generic.DetailView):
             filter(objektid=self.object)
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
+
+def join_kaardiobjekt_with_objekt(request, kaardiobjekt_id, objekt_id):
+    if request.user.is_authenticated and request.user.is_staff:
+        try:
+            kaardiobjekt = Kaardiobjekt.objects.get(id=kaardiobjekt_id)
+            objekt = Objekt.objects.get(id=objekt_id)
+            kaardiobjekt.objekt = objekt
+            kaardiobjekt.save()
+            return HttpResponse(f'Seotud: {kaardiobjekt} -> <strong>{objekt}</strong>')
+        except:
+            return HttpResponse('Sidumise viga!')
+    else:
+        raise PermissionDenied
 
 
 # Loetleb kõik sisse logitud kasutajad

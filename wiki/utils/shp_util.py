@@ -391,19 +391,10 @@ def make_objekt_leaflet_combo(objekt_id=1):
             # Lisame vaate, millel näitame virtuaalset asukohta tänapäeval
             kaardid = kaardid | Kaart.objects.filter(id=DEFAULT_MAP.id)
 
-        # Loome aluskaardi
-        map = folium.Map(
-            location=DEFAULT_CENTER,  # NB! tagurpidi: [lat, lon],
-            zoom_start=DEFAULT_MAP_ZOOM_START,
-            min_zoom=DEFAULT_MIN_ZOOM,
-            zoom_control=True,
-            # control_scale=True,
-            tiles=None,
-        )
-        # map_name = map.get_name()
-
         feature_group = {}
         zoom_start = DEFAULT_MAP_ZOOM_START
+        location = DEFAULT_CENTER
+
         for kaart in kaardid:
             aasta = kaart.aasta
 
@@ -411,10 +402,10 @@ def make_objekt_leaflet_combo(objekt_id=1):
                 name=aasta,
                 overlay=False
             )
-            # print(kaart.tiles)
+
             if kaart == DEFAULT_MAP and gone:
                 folium.TileLayer(
-                    location=map.location,
+                    location=location,
                     name=aasta,
                     tiles="Stamen Toner",
                     zoom_start=zoom_start,
@@ -423,9 +414,9 @@ def make_objekt_leaflet_combo(objekt_id=1):
             else:
                 kaardiobjektid = obj.kaardiobjekt_set.filter(kaart=kaart)
                 if kaardiobjektid[0].geometry:
-                    map.location = kaardiobjektid[0].centroid
-                tilelayer = folium.TileLayer(
-                    location=map.location,
+                    location = kaardiobjektid[0].centroid
+                folium.TileLayer(
+                    location=location,
                     name=aasta,
                     tiles=kaart.tiles,
                     zoom_start=zoom_start,
@@ -457,18 +448,27 @@ def make_objekt_leaflet_combo(objekt_id=1):
                             style_function=lambda x: style
                         ).add_to(feature_group[DEFAULT_MAP.aasta])
                     # Kui on antud zoomimise tase, siis kasutame seda
-                    if kaardiobjekt.zoom:
+                    if kaardiobjekt.zoom and (zoom_start > kaardiobjekt.zoom):
                         zoom_start = kaardiobjekt.zoom
 
                 # Parandame zoomi, kui mõnel kihil on määratud TODO: ei toimi
-                tilelayer.zoom_start = zoom_start
+                # tilelayer.zoom_start = zoom_start
 
+        # Loome aluskaardi
+        map = folium.Map(
+            location=location,  # NB! tagurpidi: [lat, lon],
+            zoom_start=zoom_start,
+            min_zoom=DEFAULT_MIN_ZOOM,
+            zoom_control=True,
+            # control_scale=True,
+            tiles=None,
+        )
+        # map_name = map.get_name()
+
+        for aasta in feature_group.keys():
             # Lisame kaardi leaflet combosse
             feature_group[aasta].add_to(map)
             # print(feature_group[aasta].get_name())
-
-        # Parandame zoomi, kui mõnel kihil on määratud TODO: ei toimi
-        map.zoom_start = zoom_start
 
         # Piirid tänapäeval
         style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}

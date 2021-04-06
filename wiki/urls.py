@@ -41,6 +41,7 @@ urlpatterns = [
     path('kaardiobjekt/', KaardiobjektFilterView.as_view(), name='wiki_kaardiobjekt_filter'),
     path('kaardiobjekt/<int:pk>/', KaardiobjektDetailView.as_view(), name='wiki_kaardiobjekt_detail'),
     path('kaardiobjekt/get_kaardiobjekt_leaflet/<int:kaardiobjekt_id>/', views.get_kaardiobjekt_leaflet, name='get_kaardiobjekt_leaflet'),
+    path('kaardiobjekt/join_kaardiobjekt_with_objekt/<int:kaardiobjekt_id>-<int:objekt_id>/', views.join_kaardiobjekt_with_objekt, name='join_kaardiobjekt_with_objekt'),
     path('update/artikkel/<int:pk>', ArtikkelUpdate.as_view(), name='artikkel_update'),
     path('update/isik/<int:pk>', IsikUpdate.as_view(), name='isik_update'),
     path('update/organisatsioon/<int:pk>', OrganisatsioonUpdate.as_view(), name='organisatsioon_update'),

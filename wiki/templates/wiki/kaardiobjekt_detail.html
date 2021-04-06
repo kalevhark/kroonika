@@ -55,8 +55,25 @@
       <div class="w3-twothird">
         <h5>Kattuvad kaardiobjektid</h5>
         {% for match in kaardiobjekt_match %}
-            {{ match.kaardiobjekt }} {{ match.kattuvus }}
-            {% if match.kaardiobjekt.objekt %} -> <strong>{{ match.kaardiobjekt.objekt }}</strong>{% endif %}
+            <div
+                    id="kaardiobjekt-{{ match.kaardiobjekt.id }}"
+                    data-url="{% url 'wiki:join_kaardiobjekt_with_objekt' kaardiobjekt_id=match.kaardiobjekt.id objekt_id=object.objekt.id %}"
+            >
+              {{ match.kaardiobjekt }} {{ match.kattuvus }}
+              {% if match.kaardiobjekt.objekt %}
+                -> <strong>{{ match.kaardiobjekt.objekt }}</strong>
+              {% else %}
+                {% if user.is_authenticated %}
+                  <button
+                          class="w3-button"
+{#                      href="javascript:joinKaardiobjektWithObjekt({{ match.kaardiobjekt.id }})"#}
+                          onclick="joinKaardiobjektWithObjekt({{ match.kaardiobjekt.id }})"
+                  >
+                    Seo objektiga {{ object.objekt }} {# TODO: link + js asendus #}
+                  </button>
+                {% endif %}
+              {% endif %}
+            </div>
             <div class="w3-container">
               <div class="w3-third">
                 <!-- Kattuva kaardiobjekt kaardiosa-->
@@ -71,6 +88,7 @@
               <div class="w3-twothird">
                 {{ match.kaardiobjekt.geometry }}
               </div>
+
             </div>
         {% endfor %}
       </div>
@@ -81,6 +99,28 @@
   {% endif %}
 
   <script>
+    function joinKaardiobjektWithObjekt(kaardiobjekt_id) {
+      $.ajax({
+        url: $("#kaardiobjekt-"+kaardiobjekt_id).attr("data-url"),
+        dataType: 'text',
+        timeout: 300000,
+        beforeSend: function() {
+          // $("#loaderDiv7").show();
+        },
+      success: function (data) {
+        if (data) {
+            document.getElementById("kaardiobjekt-"+kaardiobjekt_id).innerHTML = data;
+          }
+        },
+        error: function (XMLHttpRequest, textstatus, errorThrown) {
+          console.log(textstatus);
+        },
+      complete: function () {
+        // $("#loaderDiv7").hide();
+      }
+      });
+    }
+
     function get_kaardiobjekt_leaflet(id) {
       // Küsime andmed ja näitame kaarti
       $.ajax({
