@@ -26,7 +26,7 @@ from rest_framework.schemas import get_schema_view
 
 from .sitemaps import StaticViewSitemap, ArtikkelSitemap, IsikSitemap, OrganisatsioonSitemap, ObjektSitemap
 from .routers import router
-from wiki import views
+from wiki import views, specials
 
 # sitemaps.xml
 sitemaps = {
@@ -54,7 +54,7 @@ urlpatterns = [
     path('schema/', schema_view),
     path('wiki/', include('wiki.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    # path('j6ul2020/', views.special_j6ul2020, name='special_j6ul2020'),
+    # path('j6ul2020/', specials.special_j6ul2020, name='special_j6ul2020'),
 ]
 
 # Haldusliidese pealkirjad

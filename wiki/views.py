@@ -108,7 +108,7 @@ def wiki_base_info(request):
     return JsonResponse(data)
 
 #
-# Avalehekülg
+# Infolehekülg
 #
 def info(request):
     # Filtreerime kasutaja järgi
@@ -731,82 +731,6 @@ def seotud_artiklikaudu(request, model, seotud_artiklid, object_self):
         )
         andmed[seotud_object.id] = kirje
     return andmed
-
-# def seotud_isikud_artiklikaudu(seotud_artiklid, isik_ise):
-#     # Isikuga artiklite kaudu seotud teised isikud
-#     queryset = Isik.objects.daatumitega(self.request)
-#     isikud = queryset.\
-#         filter(artikkel__pk__in=seotud_artiklid).\
-#         distinct().\
-#         exclude(pk=isik_ise)
-#     andmed = {}
-#     for seotud_isik in isikud:
-#         kirje = {}
-#         kirje['id'] = seotud_isik.id
-#         kirje['slug'] = seotud_isik.slug
-#         kirje['nimi'] = seotud_isik
-#         # kirje['perenimi'] = seotud_isik.perenimi
-#         # kirje['eesnimi'] = seotud_isik.eesnimi
-#         kirje['artiklid'] = seotud_artiklid.\
-#             filter(isikud=seotud_isik).\
-#             values(
-#                 'id', 'slug',
-#                 'body_text',
-#                 'hist_date', 'dob', 'hist_year', 'hist_month',
-#                 'hist_enddate', 'doe'
-#             )
-#         andmed[seotud_isik.id] = kirje
-#     return andmed
-#
-#
-#
-# def seotud_organisatsioonid_artiklikaudu(seotud_artiklid, organisatsiooni_ise):
-#     # Isikuga artiklite kaudu seotud organisatsioonid
-#     organisatsioon_qs =  Organisatsioon.objects.daatumitega(self.request)
-#     organisatsioonid = organisatsioon_qs.\
-#         filter(artikkel__pk__in=seotud_artiklid).\
-#         distinct().\
-#         exclude(pk=organisatsiooni_ise)
-#     andmed = {}
-#     for seotud_organisatsioon in organisatsioonid:
-#         kirje = {}
-#         kirje['id'] = seotud_organisatsioon.id
-#         kirje['slug'] = seotud_organisatsioon.slug
-#         kirje['nimi'] = seotud_organisatsioon.nimi
-#         kirje['artiklid'] = seotud_artiklid.\
-#             filter(organisatsioonid=seotud_organisatsioon).\
-#                 values(
-#                 'id', 'slug',
-#                 'body_text',
-#                 'dob', 'hist_date', 'hist_year', 'hist_month',
-#                 'doe', 'hist_enddate'
-#             )
-#         andmed[seotud_organisatsioon.id] = kirje
-#     return andmed
-#
-# def seotud_objektid_artiklikaudu(seotud_artiklid, objekt_ise):
-#     # Objektiga artiklite kaudu seotud organisatsioonid
-#     objekt_qs = Objekt.objects.daatumitega(self.request)
-#     objektid = objekt_qs.\
-#         filter(artikkel__pk__in=seotud_artiklid).\
-#         distinct().\
-#         exclude(pk=objekt_ise)
-#     andmed = {}
-#     for seotud_objekt in objektid:
-#         kirje = {}
-#         kirje['id'] = seotud_objekt.id
-#         kirje['slug'] = seotud_objekt.slug
-#         kirje['nimi'] = seotud_objekt.nimi
-#         kirje['artiklid'] = seotud_artiklid.\
-#             filter(objektid=seotud_objekt).\
-#             values(
-#                 'id', 'slug',
-#                'body_text',
-#                'dob', 'hist_date', 'hist_year', 'hist_month',
-#                'doe', 'hist_enddate'
-#             )
-#         andmed[seotud_objekt.id] = kirje
-#     return andmed
 
 #
 # Artikli vaatamiseks
@@ -1857,63 +1781,6 @@ def test(request):
     except:
         urls = data
     return JsonResponse(urls, safe=False)
-
-
-# Arhiiv taaskasutamise jaoks:
-
-#
-# Jõulutervituse lehekülg 2019
-#
-def special_j6ul2019(request):
-    tervitaja = request.META['QUERY_STRING']
-    # Kui tervituses on mitu osa
-    tykid = tervitaja.split('&')
-    # Filtreerime välja FB lisa
-    tervitaja = '&'.join([tykk.replace('+', ' ') for tykk in tykid if 'fbclid=' not in tykk])
-    if tervitaja:
-        tervitaja = tervitaja[:30]
-    else:
-        tervitaja = 'valgalinn.ee'
-    return render(
-        request,
-        'wiki/special/wiki_special_j6ul2019.html',
-        {
-            'tervitaja': tervitaja,
-        }
-    )
-
-#
-# Jõulutervituse lehekülg 2019
-#
-def special_j6ul2020(request):
-    tervitaja = request.META['QUERY_STRING']
-    # Kui tervituses on mitu osa
-    tykid = tervitaja.split('&')
-    # Filtreerime välja FB lisa
-    tervitaja = '&'.join([tykk.replace('+', ' ') for tykk in tykid if 'fbclid=' not in tykk])
-    if tervitaja:
-        tervitaja = tervitaja[:30]
-        if tervitaja == 'XKH':
-            tervitaja = 'Kalev Härk'
-    else:
-        tervitaja = 'valgalinn.ee'
-    return render(
-        request,
-        'wiki/special/wiki_special_j6ul2020.html',
-        {
-            'tervitaja': tervitaja,
-        }
-    )
-
-#
-# Linna sünnipäevatervituse lehekülg (pole kasutuses)
-#
-def special_valga436(request):
-    return render(
-        request,
-        'wiki/special/wiki_special_valga436.html',
-        {}
-    )
 
 def switch_vkj_ukj(request, ukj):
     # print('switch2:', ukj)
