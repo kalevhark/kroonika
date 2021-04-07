@@ -34,7 +34,7 @@ from wiki.models import Kaart, Kaardiobjekt, Objekt
 OVERPASS_URL = "http://overpass-api.de/api/interpreter"
 DEFAULT_CENTER = (57.7769268, 26.0308911) # {'lon': 26.0308911, 'lat': 57.7769268} # Jaani kiriku koordinaadid
 DEFAULT_MAP = Kaart.objects.filter(aasta='2021').first() # Vaikimisi Stamen Toner internetikaart
-DEFAULT_MAP_ZOOM_START = 17
+DEFAULT_MAP_ZOOM_START = 16
 DEFAULT_MIN_ZOOM = 13
 
 GEOJSON_STYLE = {
@@ -375,6 +375,50 @@ def update_objekt_from_csv():
 ###
 # Kaardivaadete loomiseks
 ###
+
+def make_big_maps_leaflet():
+    kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
+
+    # Loome aluskaardi
+    map = folium.Map(
+        location=DEFAULT_CENTER,  # NB! tagurpidi: [lat, lon],
+        zoom_start=DEFAULT_MAP_ZOOM_START,
+        min_zoom=DEFAULT_MIN_ZOOM,
+        zoom_control=True,
+        control_scale=True,
+        tiles=None,
+    )
+
+    for kaart in kaardid:
+        folium.TileLayer(
+            location=DEFAULT_CENTER,
+            name=kaart.aasta,
+            tiles=kaart.tiles,
+            zoom_start=DEFAULT_MAP_ZOOM_START,
+            min_zoom=DEFAULT_MIN_ZOOM,
+            attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
+        ).add_to(map)
+
+    # Piirid tänapäeval
+    style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
+    with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
+        src = json.load(gf)
+        folium.GeoJson(src, name="administratiivpiirid", style_function=lambda x: style1).add_to(map)
+
+    # Tänavatevõrk tänapäeval
+    style2 = {'fill': None, 'color': 'orange', 'weight': 2}
+    with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
+        src = json.load(gf)
+        folium.GeoJson(src, name="teedevõrk", style_function=lambda x: style2).add_to(map)
+
+    # Lisame kihtide kontrolli
+    folium.LayerControl().add_to(map)
+
+    map_html = map._repr_html_()
+
+    # v2ike h2kk, mis muudab vertikaalset suurust
+    map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:50%;', 1)
+    return map_html
 
 # Konkreetse objekti erinevate aastate kaardid koos
 def make_objekt_leaflet_combo(objekt_id=1):

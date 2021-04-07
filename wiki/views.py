@@ -47,7 +47,8 @@ from wiki.forms import VihjeForm
 from wiki.utils.shp_util import (
     make_objekt_leaflet_combo,
     make_kaardiobjekt_leaflet,
-    kaardiobjekt_match_db
+    kaardiobjekt_match_db,
+    make_big_maps_leaflet
 )
 
 #
@@ -1888,6 +1889,14 @@ def calendar_days_with_events_in_month(request):
             'months_with_events': months_with_events
         },
         safe=False
+    )
+
+def kaart(request):
+    map_html = make_big_maps_leaflet()
+    return render(
+        request,
+        'wiki/kaart.html',
+        {'kaart': map_html},
     )
 
 # Tagastab objekti kõigi olemasolevate aastate kaardid

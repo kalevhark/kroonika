@@ -1,0 +1,11 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+{% load wiki_extras %}
+
+{% block title %}{{ block.super }} ajaloolised kaardid{% endblock %}
+
+{% block content %}
+  <div class="w3-container">
+    {{ kaart|safe }}
+  </div>
+{% endblock %}
