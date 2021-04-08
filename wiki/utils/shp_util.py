@@ -75,6 +75,8 @@ def shp_crs_to_degree(coordinates, reverse=False):
 def read_shp_to_db(aasta):
     kaart = Kaart.objects.filter(aasta=aasta).first()
     if kaart:
+        lisatud = 0
+        olemas = 0
         with open(UTIL_DIR / f'{aasta}.shp', 'rb') as shp_file:
             with open(UTIL_DIR / f'{aasta}.dbf', 'rb') as dbf_file:
                 with shapefile.Reader(shp=shp_file, dbf=dbf_file) as sf:
@@ -86,10 +88,13 @@ def read_shp_to_db(aasta):
                         print(rec, end=' ')
                         if kontroll:
                             print('olemas')
+                            olemas += 1
                         else:
                             print('lisame:')
+                            lisatud += 1
                             o = Kaardiobjekt.objects.create(kaart=kaart, geometry=geometry, **rec)
                             print(o)
+        print(f'Olemas {olemas}, lisatud {lisatud}')
     else:
         print('Sellist kaarti ei ole andmebaasis')
 
@@ -625,8 +630,8 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
 
 if __name__ == "__main__":
     # read_kaardiobjekt_csv_to_db('2021')
-    get_osm_data('Vabaduse 17')
-    get_shp_data('Vabaduse 17')
+    get_osm_data('Vahtra 4')
+    get_shp_data('Vahtra 4')
     # kaardiobjekt_match_db(20938)
     # read_shp_to_db(aasta='1905') # Loeb kaardikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1905') # Kirjutab andmebaasist kaardikihi shp faili
