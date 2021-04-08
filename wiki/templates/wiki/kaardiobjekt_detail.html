@@ -65,7 +65,7 @@
               {% if match.kaardiobjekt.objekt %}
                 -> <strong>{{ match.kaardiobjekt.objekt }}</strong>
               {% else %}
-                {% if user.is_authenticated and user.is_staff %}
+                {% if object.objekt and user.is_authenticated and user.is_staff %}
                   <button
                           class="w3-button"
 {#                      href="javascript:joinKaardiobjektWithObjekt({{ match.kaardiobjekt.id }})"#}
