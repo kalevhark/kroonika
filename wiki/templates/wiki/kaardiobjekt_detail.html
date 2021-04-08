@@ -50,14 +50,16 @@
     </div>
   </div>
 
-  {% if kaardiobjekt_match%}
+  {% if kaardiobjekt_match %}
     <div>
       <div class="w3-twothird">
         <h5>Kattuvad kaardiobjektid</h5>
         {% for match in kaardiobjekt_match %}
             <div
-                    id="kaardiobjekt-{{ match.kaardiobjekt.id }}"
-                    data-url="{% url 'wiki:join_kaardiobjekt_with_objekt' kaardiobjekt_id=match.kaardiobjekt.id objekt_id=object.objekt.id %}"
+                    {% if object.objekt %}
+                      id="kaardiobjekt-{{ match.kaardiobjekt.id }}"
+                      data-url="{% url 'wiki:join_kaardiobjekt_with_objekt' kaardiobjekt_id=match.kaardiobjekt.id objekt_id=object.objekt.id %}"
+                    {% endif %}
             >
               {{ match.kaardiobjekt }} {{ match.kattuvus }}
               {% if match.kaardiobjekt.objekt %}
