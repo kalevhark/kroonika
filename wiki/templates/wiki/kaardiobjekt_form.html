@@ -1,0 +1,27 @@
+{% extends "wiki/wiki_base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n static %}
+
+{% block src %}
+  <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/base.css' %}" >
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/widgets.css' %}" >
+{% endblock %}
+
+{% block title %}{{ block.super }} - {{ object }} - muutmine{% endblock %}
+
+{% block content %}
+  <div class="w3-container">
+    <form method="post" class="uniForm">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button href="{% url 'wiki:wiki_kaardiobjekt_detail' pk=object.pk %}" role="button">Loobu</button>
+      <button class="btn btn-info btn-sm btn-block" type="submit" value="Update">Muuda</button>
+      {% include 'wiki/includes/object_form_footer.html' %}
+    </form>
+    {{ form.media }}
+  </div>
+{% endblock %}

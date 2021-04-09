@@ -9,7 +9,7 @@ from wiki.views import ArtikkelFilterView, IsikFilterView, OrganisatsioonFilterV
 # Loendivaated
 from wiki.views import ArtikkelArchiveIndexView, ArtikkelYearArchiveView, ArtikkelMonthArchiveView, ArtikkelDayArchiveView
 # Muutmisvaated
-from wiki.views import ArtikkelUpdate, IsikUpdate, OrganisatsioonUpdate, ObjektUpdate
+from wiki.views import ArtikkelUpdate, IsikUpdate, OrganisatsioonUpdate, ObjektUpdate, KaardiobjektUpdate
 # API vaated
 # from wiki.views import UserDetail, UserList
 
@@ -46,6 +46,7 @@ urlpatterns = [
     path('update/isik/<int:pk>', IsikUpdate.as_view(), name='isik_update'),
     path('update/organisatsioon/<int:pk>', OrganisatsioonUpdate.as_view(), name='organisatsioon_update'),
     path('update/objekt/<int:pk>', ObjektUpdate.as_view(), name='objekt_update'),
+    path('update/kaardiobjekt/<int:pk>', KaardiobjektUpdate.as_view(), name='kaardiobjekt_update'),
     path('wiki_base_info/', views.wiki_base_info, name='wiki_base_info'),
     path('switch_vkj_ukj/<str:ukj>/', views.switch_vkj_ukj, name='switch_vkj_ukj'),
     # path('users/', UserList.as_view()),

@@ -41,7 +41,7 @@ from wiki.models import (
     Vihje,
     Kaart, Kaardiobjekt
 )
-from wiki.forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm
+from wiki.forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, KaardiobjektForm
 from wiki.forms import VihjeForm
 
 from wiki.utils.shp_util import (
@@ -914,6 +914,58 @@ class ObjektUpdate(LoginRequiredMixin, UpdateView):
         objekt.save()
         form.save_m2m()
         return redirect('wiki:wiki_objekt_detail', pk=self.object.id, slug=self.object.slug)
+
+class OrganisatsioonUpdate(LoginRequiredMixin, UpdateView):
+    redirect_field_name = 'next'
+    model = Organisatsioon
+    form_class = OrganisatsioonForm
+    pk_url_kwarg = 'pk'
+
+    def form_valid(self, form):
+        objekt = form.save(commit=False)
+        # Lisaja/muutja andmed
+        if not objekt.id:
+            objekt.created_by = self.request.user
+        else:
+            objekt.updated_by = self.request.user
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+        if objekt.hist_date:
+            objekt.hist_year = objekt.hist_date.year
+            objekt.hist_month = objekt.hist_date.month
+            objekt.hist_searchdate = objekt.hist_date
+        else:
+            if objekt.hist_year:
+                y = objekt.hist_year
+                if objekt.hist_month:
+                    m = objekt.hist_month
+                else:
+                    m = 1
+                objekt.hist_searchdate = datetime(y, m, 1)
+            else:
+                objekt.hist_searchdate = None
+        if objekt.hist_enddate:
+            objekt.hist_endyear = objekt.hist_enddate.year
+        objekt.save()
+        form.save_m2m()
+        return redirect('wiki:wiki_organisatsioon_detail', pk=self.object.id, slug=self.object.slug)
+
+
+class KaardiobjektUpdate(LoginRequiredMixin, UpdateView):
+    redirect_field_name = 'next'
+    model = Kaardiobjekt
+    form_class = KaardiobjektForm
+
+    def form_valid(self, form):
+        kaardiobjekt = form.save(commit=False)
+        # Lisaja/muutja andmed
+        if not kaardiobjekt.id:
+            kaardiobjekt.created_by = self.request.user
+        else:
+            kaardiobjekt.updated_by = self.request.user
+        kaardiobjekt.save()
+        form.save_m2m()
+        return redirect('wiki:wiki_kaardiobjekt_detail', pk=self.object.id)
+
 
 #
 # Artiklite otsimise/filtreerimise seaded
