@@ -1943,8 +1943,8 @@ def calendar_days_with_events_in_month(request):
         safe=False
     )
 
-def kaart(request):
-    map_html = make_big_maps_leaflet()
+def kaart(request, aasta=None):
+    map_html = make_big_maps_leaflet(aasta)
     return render(
         request,
         'wiki/kaart.html',

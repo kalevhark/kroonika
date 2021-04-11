@@ -381,49 +381,72 @@ def update_objekt_from_csv():
 # Kaardivaadete loomiseks
 ###
 
-def make_big_maps_leaflet():
-    kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
+def make_big_maps_leaflet(aasta=None):
+    if aasta:
+        kaardid = Kaart.objects.filter(aasta=aasta)
+    else:
+        kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
+    zoom_start = DEFAULT_MAP_ZOOM_START
 
-    # Loome aluskaardi
-    map = folium.Map(
-        location=DEFAULT_CENTER,  # NB! tagurpidi: [lat, lon],
-        zoom_start=DEFAULT_MAP_ZOOM_START,
-        min_zoom=DEFAULT_MIN_ZOOM,
-        zoom_control=True,
-        control_scale=True,
-        tiles=None,
-    )
-
-    for kaart in kaardid:
-        folium.TileLayer(
-            location=DEFAULT_CENTER,
-            name=kaart.aasta,
-            tiles=kaart.tiles,
-            zoom_start=DEFAULT_MAP_ZOOM_START,
+    if kaardid:
+        # Loome aluskaardi
+        map = folium.Map(
+            location=DEFAULT_CENTER,  # NB! tagurpidi: [lat, lon],
+            zoom_start=zoom_start,
             min_zoom=DEFAULT_MIN_ZOOM,
-            attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
-        ).add_to(map)
+            zoom_control=True,
+            control_scale=True,
+            tiles=None,
+        )
+        map_name = map.get_name()
+        print(map_name)
 
-    # Piirid tänapäeval
-    style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
-    with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
-        src = json.load(gf)
-        folium.GeoJson(src, name="administratiivpiirid", style_function=lambda x: style1).add_to(map)
+        for kaart in kaardid:
+            tilelayer = folium.TileLayer(
+                location=DEFAULT_CENTER,
+                name=kaart.aasta,
+                tiles=kaart.tiles,
+                zoom_start=zoom_start,
+                min_zoom=DEFAULT_MIN_ZOOM,
+                attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
+            ).add_to(map)
+            print(kaart.aasta, tilelayer.get_name())
+            # print(map_name)
 
-    # Tänavatevõrk tänapäeval
-    style2 = {'fill': None, 'color': 'orange', 'weight': 2}
-    with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
-        src = json.load(gf)
-        folium.GeoJson(src, name="teedevõrk", style_function=lambda x: style2).add_to(map)
+        # Piirid tänapäeval
+        style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
+        with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
+            src = json.load(gf)
+            folium.GeoJson(src, name="administratiivpiirid (2021)", style_function=lambda x: style1).add_to(map)
 
-    # Lisame kihtide kontrolli
-    folium.LayerControl().add_to(map)
+        # Tänavatevõrk tänapäeval
+        style2 = {'fill': None, 'color': 'orange', 'weight': 2}
+        with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
+            src = json.load(gf)
+            folium.GeoJson(src, name="teedevõrk (2021)", style_function=lambda x: style2).add_to(map)
 
-    map_html = map._repr_html_()
+        # Lisame kihtide kontrolli
+        folium.LayerControl().add_to(map)
+        id = map.get_root().to_dict()['children'][map_name]['id']
 
-    # v2ike h2kk, mis muudab vertikaalset suurust
-    map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:50%;', 1)
-    return map_html
+        my_js = '''
+        '''
+        from branca.element import Element
+        # map.get_root().script.add_child(Element(my_js))
+        # map.save("ajutine.html")
+
+        map_html = map._repr_html_()
+
+        # v2ike h2kk, mis muudab vertikaalset suurust
+        map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:50%;', 1)
+        # import urllib.parse
+        # map_html = map_html.replace(
+        #     urllib.parse.quote('</script>'),
+        #     urllib.parse.quote(f'console.log({map_name});</script>')
+        # )
+        return map_html
+    else:
+        return 'Otsitud kaarti ei ole'
 
 # Konkreetse objekti erinevate aastate kaardid koos
 def make_objekt_leaflet_combo(objekt_id=1):
@@ -523,13 +546,13 @@ def make_objekt_leaflet_combo(objekt_id=1):
         style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
         with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
             src = json.load(gf)
-            folium.GeoJson(src, name="administratiivpiirid", style_function=lambda x: style1).add_to(map)
+            folium.GeoJson(src, name="administratiivpiirid (2021)", style_function=lambda x: style1).add_to(map)
 
         # Tänavatevõrk tänapäeval
         style2 = {'fill': None, 'color': 'orange', 'weight': 2}
         with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
             src = json.load(gf)
-            folium.GeoJson(src, name="teedevõrk", style_function=lambda x: style2).add_to(map)
+            folium.GeoJson(src, name="teedevõrk (2021)", style_function=lambda x: style2).add_to(map)
 
         # Lisame kihtide kontrolli
         folium.LayerControl().add_to(map)
@@ -630,8 +653,8 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
 
 if __name__ == "__main__":
     # read_kaardiobjekt_csv_to_db('2021')
-    get_osm_data('Vahtra 4')
-    get_shp_data('Vahtra 4')
+    get_osm_data('Võru 5d')
+    get_shp_data('Võru 5d')
     # kaardiobjekt_match_db(20938)
     # read_shp_to_db(aasta='1905') # Loeb kaardikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1905') # Kirjutab andmebaasist kaardikihi shp faili

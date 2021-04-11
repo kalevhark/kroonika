@@ -54,6 +54,7 @@ urlpatterns = [
     path('schema/', schema_view),
     path('wiki/', include('wiki.urls')),
     path('kaart/', views.kaart, name='kaart'),
+    path('kaart/<str:aasta>/', views.kaart, name='kaart'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     # path('j6ul2020/', specials.special_j6ul2020, name='special_j6ul2020'),
 ]
