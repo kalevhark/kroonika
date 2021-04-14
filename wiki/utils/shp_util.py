@@ -24,6 +24,7 @@ import time
 from django.contrib.auth.models import User
 
 import folium
+import jinja2
 import pyproj
 import requests
 import shapefile
@@ -382,13 +383,13 @@ def update_objekt_from_csv():
 ###
 
 def make_big_maps_leaflet(aasta=None):
-    if aasta:
-        kaardid = Kaart.objects.filter(aasta=aasta)
-    else:
-        kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
+    kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
     zoom_start = DEFAULT_MAP_ZOOM_START
 
-    if kaardid:
+    if aasta and Kaart.objects.filter(aasta=aasta).count()==0:
+        aastad = ', '.join([kaart.aasta for kaart in kaardid])
+        return f'<p><strong>{aasta}</strong>. aasta kaarti ei ole. Vali järgmistest: {aastad}</p>'
+    else:
         # Loome aluskaardi
         map = folium.Map(
             location=DEFAULT_CENTER,  # NB! tagurpidi: [lat, lon],
@@ -399,8 +400,9 @@ def make_big_maps_leaflet(aasta=None):
             tiles=None,
         )
         map_name = map.get_name()
-        print(map_name)
+        # print(map_name)
 
+        tilelayers = {}
         for kaart in kaardid:
             tilelayer = folium.TileLayer(
                 location=DEFAULT_CENTER,
@@ -409,9 +411,10 @@ def make_big_maps_leaflet(aasta=None):
                 zoom_start=zoom_start,
                 min_zoom=DEFAULT_MIN_ZOOM,
                 attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
-            ).add_to(map)
-            print(kaart.aasta, tilelayer.get_name())
-            # print(map_name)
+            )
+            tilelayer.add_to(map)
+            print(tilelayer.get_name(), tilelayer.to_dict())
+            tilelayers[kaart.aasta] = tilelayer.get_name()
 
         # Piirid tänapäeval
         style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
@@ -427,26 +430,34 @@ def make_big_maps_leaflet(aasta=None):
 
         # Lisame kihtide kontrolli
         folium.LayerControl().add_to(map)
-        id = map.get_root().to_dict()['children'][map_name]['id']
 
-        my_js = '''
-        '''
-        from branca.element import Element
+        # Lisab javascripti <script> tagi algusesse
+        # my_js = '''
+        # function sortFunction(layerA, layerB, nameA, nameB) {return [nameA,nameB].sort();}
+        # '''
+        # from branca.element import Element
         # map.get_root().script.add_child(Element(my_js))
-        # map.save("ajutine.html")
+
+        if aasta:
+            el = folium.MacroElement().add_to(map)
+            js = ''
+            for kaart in tilelayers.keys():
+                if kaart == aasta:
+                    js += f'{map_name}.addLayer({tilelayers[kaart]});\n'
+                else:
+                    js += f'{map_name}.removeLayer({tilelayers[kaart]});\n'
+            # Lisab javascripti <script> tagi lõppu
+            el._template = jinja2.Template('''
+            {{% macro script(this, kwargs) %}}
+                {0}
+            {{% endmacro %}}'''.format(js))
 
         map_html = map._repr_html_()
+        # map.save("ajutine.html")
 
         # v2ike h2kk, mis muudab vertikaalset suurust
         map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:50%;', 1)
-        # import urllib.parse
-        # map_html = map_html.replace(
-        #     urllib.parse.quote('</script>'),
-        #     urllib.parse.quote(f'console.log({map_name});</script>')
-        # )
         return map_html
-    else:
-        return 'Otsitud kaarti ei ole'
 
 # Konkreetse objekti erinevate aastate kaardid koos
 def make_objekt_leaflet_combo(objekt_id=1):
