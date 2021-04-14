@@ -89,6 +89,10 @@ def find_bot_name(rows):
     else:
         return ''
 
+def is_tiles(rows):
+    pat = re.compile('/tiles/')
+    return re.search(pat, rows.request) != None
+
 if __name__ == '__main__':
     # path = os.path.dirname(sys.argv[0])
     path = '/usr/local/apache2/logs/'
@@ -152,8 +156,13 @@ if __name__ == '__main__':
     result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
     print(result)
 
+    print('tiles')
+    result = log_df_filtered[log_df_filtered.apply(is_tiles, axis=1)]['resp_size'] \
+        .agg(['sum', 'count'])
+    print(result)
+
     # Viimase 24h kogumaht
     log_df_filtered_resp_size_sum = log_df_filtered.resp_size.sum()
     # log_df_filtered_resp_size_sum['sum'] = log_df_filtered_resp_size_sum['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
-    print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {log_df_filtered_resp_size_sum} b')
+    print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {round(log_df_filtered_resp_size_sum/1024/1024)} Mb')
     # print()
