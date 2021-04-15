@@ -413,7 +413,7 @@ def make_big_maps_leaflet(aasta=None):
                 attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
             )
             tilelayer.add_to(map)
-            print(tilelayer.get_name(), tilelayer.to_dict())
+            # print(tilelayer.get_name(), tilelayer.to_dict())
             tilelayers[kaart.aasta] = tilelayer.get_name()
 
         # Piirid tänapäeval
@@ -433,7 +433,20 @@ def make_big_maps_leaflet(aasta=None):
 
         # Lisab javascripti <script> tagi algusesse
         # my_js = '''
-        # function sortFunction(layerA, layerB, nameA, nameB) {return [nameA,nameB].sort();}
+        # let height;
+        #
+        # const sendPostMessage = () => {
+        #     if (height !== document.getElementById('mapcontainer').offsetHeight) {
+        #         height = document.getElementById('mapcontainer').offsetHeight;
+        #         window.parent.postMessage({
+        #             frameHeight: height
+        #         }, '*');
+        #         console.log(height);
+        #     }
+        # }
+        #
+        # window.onload = () => sendPostMessage();
+        # window.onresize = () => sendPostMessage();
         # '''
         # from branca.element import Element
         # map.get_root().script.add_child(Element(my_js))
@@ -454,9 +467,18 @@ def make_big_maps_leaflet(aasta=None):
 
         map_html = map._repr_html_()
         # map.save("ajutine.html")
+        # with open(f"ajutine.html", "w") as f:
+        #     f.write(map_html)
 
         # v2ike h2kk, mis muudab vertikaalset suurust
-        map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:50%;', 1)
+        map_html = map_html.replace(
+            'style="position:relative;width:100%;height:0;padding-bottom:60%;"',
+            'id = "folium-map-big" class="folium-map-big"',
+            1
+        )
+        with open(f"ajutine.html", "w") as f:
+            f.write(map_html)
+
         return map_html
 
 # Konkreetse objekti erinevate aastate kaardid koos

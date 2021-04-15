@@ -2,6 +2,41 @@
 {% load static %}
 {% load wiki_extras %}
 
+{% block css %}
+  <style>
+    /* Minimum aspect ratio */
+    @media (min-aspect-ratio: 8/5) {
+      .folium-map-big {
+          position:relative;
+          width:100%;
+          height:0;
+          padding-bottom:50%;
+      }
+    }
+
+    /* Maximum aspect ratio */
+    @media (max-aspect-ratio: 3/2) {
+      .folium-map-big {
+          position:relative;
+        width:100%;
+        height:0;
+          padding-bottom:120%;
+      }
+    }
+
+    /* Exact aspect ratio, put it at the bottom to avoid override*/
+    @media (aspect-ratio: 1/1) {
+      .folium-map-big {
+          position:relative;
+        width:100%;
+        height:0;
+          padding-bottom:60%;
+      }
+    }
+
+  </style>
+{% endblock %}
+
 {% block title %}{{ block.super }} ajaloolised kaardid{% endblock %}
 
 {% block content %}
