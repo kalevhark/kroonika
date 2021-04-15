@@ -476,8 +476,8 @@ def make_big_maps_leaflet(aasta=None):
             'id = "folium-map-big" class="folium-map-big"',
             1
         )
-        with open(f"ajutine.html", "w") as f:
-            f.write(map_html)
+        # with open(f"ajutine.html", "w") as f:
+        #     f.write(map_html)
 
         return map_html
 
