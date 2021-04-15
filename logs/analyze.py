@@ -136,6 +136,7 @@ if __name__ == '__main__':
     result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
     result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
     print(result)
+    print()
 
     # IP aadressid, kes said 403
     print('403 status:')
@@ -155,11 +156,13 @@ if __name__ == '__main__':
     result.index = result.apply(find_bot_name, axis=1)
     result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
     print(result)
+    print()
 
     print('tiles')
     result = log_df_filtered[log_df_filtered.apply(is_tiles, axis=1)]['resp_size'] \
         .agg(['sum', 'count'])
     print(result)
+    print()
 
     # Viimase 24h kogumaht
     log_df_filtered_resp_size_sum = log_df_filtered.resp_size.sum()
