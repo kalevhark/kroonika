@@ -1,7 +1,14 @@
 // Aluseks https://codepen.io/geekwen/pen/JYYrob
 // Oluliselt täiendanud Kalev Härk 2020
-const monthNames = ['', 'jaanuar', 'veebruar', 'märts', 'aprill', 'mai', 'juuni', 'juuli', 'august', 'september', 'oktoober', 'november', 'detsember'];
-const KUUL = ['jaanuaril', 'veebruaril', 'märtsil', 'aprillil', 'mail', 'juunil', 'juulil', 'augustil', 'septembril', 'oktoobril', 'novembril', 'detsembril'];
+const monthNames = [
+  '',
+  'jaanuar', 'veebruar', 'märts', 'aprill', 'mai', 'juuni',
+  'juuli', 'august', 'september', 'oktoober', 'november', 'detsember'
+];
+const KUUL = [
+  'jaanuaril', 'veebruaril', 'märtsil', 'aprillil', 'mail', 'juunil',
+  'juulil', 'augustil', 'septembril', 'oktoobril', 'novembril', 'detsembril'
+];
 
 // var monthDays = new Array;
 
@@ -14,11 +21,23 @@ function getCalendar(theYear, theMonth) {
         month: theMonth
       },
       success: function(events) {
-        // console.log(data);
+        // console.log(theYear, theMonth);
+        // Päevad, millel on kalendris lugusid
+        var d;
+        for (d = 1; d < 32; d++) {
+          let dayThisMonthId = '#gw--day-this-month-id_' + d;
+          $(dayThisMonthId).removeClass("day-with-events");
+        }
         events.days_with_events.forEach(function(day) {
           let dayThisMonthId = '#gw--day-this-month-id_' + day;
           $(dayThisMonthId).addClass("day-with-events");
         });
+        // Kuud, millel on kalendris lugusid
+        var m;
+        for (m = 1; m < 13; m++) {
+          let monthChoiceId = '#gw--month-choice-id_' + m;
+          $(monthChoiceId).removeClass("month-with-events");
+        }
         events.months_with_events.forEach(function(month) {
           let monthChoiceId = '#gw--month-choice-id_' + month;
           $(monthChoiceId).addClass("month-with-events");
@@ -28,9 +47,9 @@ function getCalendar(theYear, theMonth) {
         var msg = '';
         if (jqXHR.status === 0) {
             msg = 'Not connect.\n Verify Network.';
-        } else if (jqXHR.status == 404) {
+        } else if (jqXHR.status === 404) {
             msg = 'Requested page not found. [404]';
-        } else if (jqXHR.status == 500) {
+        } else if (jqXHR.status === 500) {
             msg = 'Internal Server Error [500].';
         } else if (exception === 'parsererror') {
             msg = 'Requested JSON parse failed.';
@@ -43,13 +62,11 @@ function getCalendar(theYear, theMonth) {
         }
         console.log(msg);
         <!-- Proovime 5 s pärast uuesti -->
-        {
           window.setTimeout(getCalendar(year, month), 50000);
-        };
       },
     }
   );
-};
+}
 
 var GWDateTimePicker = {
   init: function(param) {
@@ -132,28 +149,37 @@ var GWDateTimePicker = {
           GWDateTimePicker.setOutput($elements.target, CYEAR, CMONTH, CDAY);
           break;
       }
+      // console.log(target.id, target.className);
 
       switch (target.className) {
         case "gw--year":
           getCalendar(target.innerHTML, 1);
+          // selectedYear = $elements.selectedYear.innerHTML;
+          // getCalendar(selectedYear, 1);
           $elements.selectedYear.innerHTML = target.innerHTML;
           GWDateTimePicker.showMonths($elements);
           break;
         case "gw--year year-with-events":
           getCalendar(target.innerHTML, 1);
+          // selectedYear = $elements.selectedYear.innerHTML;
+          // getCalendar(selectedYear, 1);
           $elements.selectedYear.innerHTML = target.innerHTML;
           GWDateTimePicker.showMonths($elements);
           break;
         case "gw--month":
           $elements.selectedMonth.innerHTML = target.innerHTML;
+          // selectedYear = $elements.selectedYear.innerHTML;
+          // selectedMonth = parseInt(monthNames.indexOf($elements.selectedMonth.innerHTML));
+          // getCalendar(selectedYear, selectedMonth);
           GWDateTimePicker.setDays($elements.selectedYear.innerHTML, monthNames.indexOf($elements.selectedMonth.innerHTML));
-
           GWDateTimePicker.showDays($elements);
           break;
         case "gw--month month-with-events":
           $elements.selectedMonth.innerHTML = target.innerHTML;
+          // selectedYear = $elements.selectedYear.innerHTML;
+          // selectedMonth = parseInt(monthNames.indexOf($elements.selectedMonth.innerHTML));
+          // getCalendar(selectedYear, selectedMonth);
           GWDateTimePicker.setDays($elements.selectedYear.innerHTML, monthNames.indexOf($elements.selectedMonth.innerHTML));
-
           GWDateTimePicker.showDays($elements);
           break;
         case "gw--day":
@@ -235,12 +261,12 @@ var GWDateTimePicker = {
     }
 
     // Liigaasta parandused
-    if (month === 1 && ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)) {
+    if (month === 1 && ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0)) {
       totalDays++;
     }
 
     // Kalendrisysteemide erinevused
-    if (calendarSystem != 'on') {
+    if (calendarSystem !== 'on') {
       // Kalendrimuudatuse parandused
       if (year < 1918 || (year === 1918 && month === 0)) {
         --firstDateWeek;
@@ -268,11 +294,11 @@ var GWDateTimePicker = {
 
     // Nädalad
     while (week < 7) {
-      if (week == 0) {
+      if (week === 0) {
         innerHTML += '<tr>';
       }
 
-      if (line == 0) {
+      if (line === 0) {
         //
         while (week++ < firstDateWeek) {
           innerHTML += '<td class="prev gw--day">' + (daysNotThisMonth + week) + '</td>';
@@ -288,7 +314,7 @@ var GWDateTimePicker = {
         }
 
         daysNotThisMonth = 1;
-        if (calendarSystem != 'on') { // Juhul kui vana kalendri järgi, siis üleminek 31.01 -> 14.02
+        if (calendarSystem !== 'on') { // Juhul kui vana kalendri järgi, siis üleminek 31.01 -> 14.02
           if (month === 0 && year === 1918) {
             daysNotThisMonth = 14;
           };
@@ -302,7 +328,7 @@ var GWDateTimePicker = {
           let startNewCalendar = new Date(1582, 9, 4);
           let stopNewCalendar = new Date(1918, 1, 14);
           let theDate = new Date(year, month, day);
-          if (calendarSystem == 'on' && theDate < stopNewCalendar && theDate > startNewCalendar) {
+          if (calendarSystem === 'on' && theDate < stopNewCalendar && theDate > startNewCalendar) {
             calendarSystemClass = ' text-ukj';
           } else {
             calendarSystemClass = '';
@@ -316,12 +342,12 @@ var GWDateTimePicker = {
         }
       }
 
-      if (week == 6) {
+      if (week === 6) {
         innerHTML += '</tr>';
         line++;
       }
 
-      line < 6 && week == 6 ? week = 0 : week++;
+      line < 6 && week === 6 ? week = 0 : week++;
     }
 
     $wrap.innerHTML = innerHTML;

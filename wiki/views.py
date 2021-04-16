@@ -569,7 +569,9 @@ def algus(request):
 
     # Millistel kuude kohta valitud aastal on kirjeid
     years_with_events_set = set(
-        artikkel_qs.values_list('hist_year', flat=True)
+        artikkel_qs.\
+            exclude(hist_date__isnull=True).\
+            values_list('hist_year', flat=True)
     )
     years_with_events = [day for day in years_with_events_set]
 
@@ -1911,14 +1913,18 @@ class KaardiobjektDetailView(generic.DetailView):
 
 
 def calendar_days_with_events_in_month(request):
-    artikkel_qs = Artikkel.objects.daatumitega(request)
+    artikkel_qs = Artikkel.objects.daatumitega(request).exclude(hist_date__isnull=True)
     t2na = timezone.now()
+
     # Kasutaja kuuvalik
     year = request.GET.get('year', t2na.year - 100)
     month = request.GET.get('month', t2na.month)
+    print(year, month)
+
     # Salvestame kasutaja kuuvaliku
     user_calendar_view_last = date(int(year), int(month), 1).strftime("%Y-%m")
     request.session['user_calendar_view_last'] = user_calendar_view_last
+
     # Millistel päevade kohta valitud kuu ja aasta on kirjeid
     days_with_events_set = set(
         artikkel_qs.
@@ -1927,14 +1933,18 @@ def calendar_days_with_events_in_month(request):
             values_list('day', flat=True)
     )
     days_with_events = [day for day in days_with_events_set]
+
     # Millistel kuude kohta valitud aastal on kirjeid
     months_with_events_set = set(
         artikkel_qs.
             filter(dob__year=year).
             # annotate(day=Extract('hist_date', 'month')).
-            values_list('hist_month', flat=True)
+            # values_list('hist_month', flat=True)
+            annotate(month=Extract('dob', 'month')).
+            values_list('month', flat=True)
     )
     months_with_events = [month for month in months_with_events_set]
+    print(months_with_events)
     return JsonResponse(
         {
             'days_with_events': days_with_events,
