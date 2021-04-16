@@ -1912,6 +1912,7 @@ class KaardiobjektDetailView(generic.DetailView):
         return context
 
 
+# Kalendris näidatakse ainult neid lugusid, millel hist_date olemas
 def calendar_days_with_events_in_month(request):
     artikkel_qs = Artikkel.objects.daatumitega(request).exclude(hist_date__isnull=True)
     t2na = timezone.now()
@@ -1919,7 +1920,6 @@ def calendar_days_with_events_in_month(request):
     # Kasutaja kuuvalik
     year = request.GET.get('year', t2na.year - 100)
     month = request.GET.get('month', t2na.month)
-    print(year, month)
 
     # Salvestame kasutaja kuuvaliku
     user_calendar_view_last = date(int(year), int(month), 1).strftime("%Y-%m")
@@ -1944,7 +1944,7 @@ def calendar_days_with_events_in_month(request):
             values_list('month', flat=True)
     )
     months_with_events = [month for month in months_with_events_set]
-    print(months_with_events)
+
     return JsonResponse(
         {
             'days_with_events': days_with_events,
