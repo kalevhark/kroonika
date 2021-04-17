@@ -147,7 +147,15 @@ if __name__ == '__main__':
     # result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
     print(result)
     print()
-    
+
+    print('404 status:')
+    result = log_df_filtered[log_df_filtered['status_code'] == 404].groupby('request')['resp_size'] \
+        .agg(['count']) \
+        .sort_values(by=['count'], ascending=[False]) \
+        .head(10)
+    print(result)
+    print()
+
     print('bots')
     result = log_df_filtered[log_df_filtered.apply(is_bot, axis=1)].groupby('agent')['resp_size'] \
         .agg(['sum','count'])\
