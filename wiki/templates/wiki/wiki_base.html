@@ -193,7 +193,7 @@
         <a
             href="{% url 'kaart' %}"
             class="w3-bar-item w3-button w3-hide-small w3-hover-white"
-            title="Kaardid">
+            title="Ajaloolised kaardid">
           <i class="fa fa-map-o"></i>
         </a>
         <a
@@ -205,7 +205,7 @@
         <a
             href="{% url 'blog:blog_index' %}"
             id="wiki_base_blog"
-            class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+            class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
             title="Blogi">
           <i class="fa fa-comments-o"></i>
         </a>
@@ -267,7 +267,7 @@
           </a>
         {% endif %}
         <!-- Kalendrivaliku nupp -->
-        <div id="checkbox_ukjvkj"  class="w3-hide-small w3-right" style="visibility:hidden;">
+        <div id="checkbox_ukjvkj"  class="w3-hide-small w3-hide-medium w3-right" style="visibility:hidden;">
           <label class="rocker rocker-small" title="vana või uus kalender?"><input type="checkbox" id="checkbox1">
             <span class="switch-left">ukj</span>
             <span class="switch-right">vkj</span>
@@ -290,6 +290,13 @@
             class="w3-bar-item w3-button">
           <i class="fa fa-bug"></i>
           <span class="bar-item-text-with-icon">Vigadest teatamine</span>
+        </a>
+        <a
+            href="{% url 'kaart' %}"
+            class="w3-bar-item w3-button"
+        >
+          <i class="fa fa-map-o"></i>
+           <span class="bar-item-text-with-icon">Ajaloolised kaardid</span>
         </a>
         <a
             href="{% url 'blog:blog_index' %}"
@@ -316,6 +323,13 @@
             class="w3-bar-item w3-button">
           <i class="fa fa-facebook-official"></i>
           <span class="bar-item-text-with-icon">Valga Facebook</span>
+        </a>
+        <a
+            href="https://www.instagram.com/valgalinn/"
+            target="blank"
+            class="w3-bar-item w3-button">
+          <i class="fa fa-instagram"></i>
+          <span class="bar-item-text-with-icon">Valga Instagram</span>
         </a>
         <a
             href="{% url 'wiki:info' %}"
@@ -397,7 +411,9 @@
           data-action="like"
           data-size="small"
           data-show-faces="true"
-          data-share="true">
+          data-share="true"
+          style="vertical-align: bottom;"
+      >
       </div>
       <!--    Autoriõigused-->
       <a
