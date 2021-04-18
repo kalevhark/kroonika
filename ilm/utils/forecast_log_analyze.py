@@ -109,7 +109,7 @@ def timestamp2date(row):
     results = data['results'][0]
     temp = results['airtemperature']
     prec = results['precipitations']
-    print(results['timestamp'])
+    # print(results['timestamp'])
     return pd.Series([temp, prec], index=['real_temp', 'real_prec'])
 
 def obs_quality(row, fore_hour):
@@ -131,7 +131,7 @@ def obs_quality(row, fore_hour):
     if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_o_prec'] == 0):
         o_qual -= koefitsent
     #it.ee
-    print(type(row[f'forecast_{fore_hour}_i_temp']))
+    # print(type(row[f'forecast_{fore_hour}_i_temp']))
     i_temp_qual = koefitsent * abs(row['observed_temp'] - float(row[f'forecast_{fore_hour}_i_temp']))
     i_prec_qual = koefitsent * abs(row['observed_prec'] - float(row[f'forecast_{fore_hour}_i_prec']))
     i_qual = max - (i_temp_qual + i_prec_qual)
@@ -163,7 +163,7 @@ def logs2bigdata(path):
         # print(qual.dropna().apply(mean))
         bd = bd.merge(qual, how='outer', left_index=True, right_index=True)
     # Konverteerime timestamp -> datetime -> kohalik ajavöönd
-    bd['aeg'] = pd.to_datetime(bd.index, unit='s').tz_localize('EET', ambiguous='NaT')
+    bd['aeg'] = pd.to_datetime(bd.index, unit='s').tz_localize('EET', ambiguous='NaT', nonexistent=pd.Timedelta('1H'))
     # print('qual', bd.shape)
     return bd
     
