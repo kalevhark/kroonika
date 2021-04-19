@@ -23,6 +23,13 @@ class WikiViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3)
 
+    def test_kaart_view(self):
+        time_start = datetime.now()
+        response = self.client.get(reverse('kaart'))
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3)
+
     # def test_j6ul2020_view(self):
     #    response = self.client.get(reverse('special_j6ul2020'))
     #    self.assertEqual(response.status_code, 200)
