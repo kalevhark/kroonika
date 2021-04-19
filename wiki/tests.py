@@ -440,7 +440,7 @@ class FilterViewTests(TestCase):
     #     self.model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
 
     def test_filter_objekt_for_non_authented_user(self):
-        response = self.client.get('/wiki/objekt/', {'nimi__icontains': 'säde', 't2nav_sisaldab': ''})
+        response = self.client.get('/wiki/objekt/', {'nimi_sisaldab': 'säde'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['object_list']), 2)
 
