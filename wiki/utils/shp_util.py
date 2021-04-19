@@ -476,6 +476,12 @@ def make_big_maps_leaflet(aasta=None):
             'id = "folium-map-big" class="folium-map-big"',
             1
         )
+        # v2ike h2kk, mis muudab vaikimis veateksti
+        map_html = map_html.replace(
+            '<span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span>',
+            '<span style="color:#565656">Kaarti laetakse. Kui see kiri jääb nähtavaks, tekkis laadimisel viga</span>',
+            1
+        )
         # with open(f"ajutine.html", "w") as f:
         #     f.write(map_html)
 
