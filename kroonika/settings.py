@@ -6,6 +6,10 @@ import configparser
 import os
 from pathlib import Path
 
+# Starting with 3.2 new projects are generated with DEFAULT_AUTO_FIELD set to BigAutoField
+# To avoid unwanted migrations in the future, either explicitly set DEFAULT_AUTO_FIELD to AutoField
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = Path(__file__).resolve().parent
 
