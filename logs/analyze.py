@@ -112,7 +112,7 @@ if __name__ == '__main__':
         .agg(['sum','count'])\
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
+    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",", regex=False)
     print(result)
     print()
 
@@ -123,7 +123,7 @@ if __name__ == '__main__':
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
     result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
+    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",", regex=False)
     print(result)
     print()
 
@@ -134,7 +134,7 @@ if __name__ == '__main__':
         .sort_values(by=['count'], ascending=[False]) \
         .head(10)
     result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
+    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",", regex=False)
     print(result)
     print()
 
@@ -162,7 +162,7 @@ if __name__ == '__main__':
         .sort_values(by = ['sum'], ascending=[False])\
         .head(10)
     result.index = result.apply(find_bot_name, axis=1)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
+    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",", regex=False)
     print(result)
     print()
 
@@ -174,6 +174,5 @@ if __name__ == '__main__':
 
     # Viimase 24h kogumaht
     log_df_filtered_resp_size_sum = log_df_filtered.resp_size.sum()
-    # log_df_filtered_resp_size_sum['sum'] = log_df_filtered_resp_size_sum['sum'].map('{:,}'.format).str.replace(",", " ").str.replace(".", ",")
     print(f'Päringuid {log_df_filtered.IP_address.count()}, kogumahuga {round(log_df_filtered_resp_size_sum/1024/1024)} Mb')
     # print()
