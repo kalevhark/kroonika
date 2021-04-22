@@ -470,7 +470,7 @@ def make_big_maps_leaflet(aasta=None):
         # with open(f"ajutine.html", "w") as f:
         #     f.write(map_html)
 
-        # v2ike h2kk, mis muudab vertikaalset suurust
+        # v2ike h2kk, mis muudab vertikaalset suuruse sõltuvaks css-ist
         map_html = map_html.replace(
             'style="position:relative;width:100%;height:0;padding-bottom:60%;"',
             'id = "folium-map-big" class="folium-map-big"',
@@ -644,7 +644,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
         # map.save(f"ajutine_{objekt_id}.html")
         return map_html
 
-# Konkreetse objekti erinevate aastate kaardid koos
+# Konkreetse kaardiobjekti kaart
 def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
     kaardiobjekt = Kaardiobjekt.objects.get(id=kaardiobjekt_id)
     if kaardiobjekt:
