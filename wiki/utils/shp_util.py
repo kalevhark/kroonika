@@ -35,7 +35,7 @@ from wiki.models import Kaart, Kaardiobjekt, Objekt
 OVERPASS_URL = "http://overpass-api.de/api/interpreter"
 DEFAULT_CENTER = (57.7769268, 26.0308911) # {'lon': 26.0308911, 'lat': 57.7769268} # Jaani kiriku koordinaadid
 DEFAULT_MAP = Kaart.objects.filter(aasta='2021').first() # Vaikimisi Stamen Toner internetikaart
-DEFAULT_MAP_ZOOM_START = 17
+DEFAULT_MAP_ZOOM_START = 16
 DEFAULT_MIN_ZOOM = 13
 
 GEOJSON_STYLE = {
