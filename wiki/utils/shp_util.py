@@ -382,6 +382,67 @@ def update_objekt_from_csv():
 # Kaardivaadete loomiseks
 ###
 
+from branca.element import CssLink, Figure, JavascriptLink, MacroElement
+from jinja2 import Template
+
+# https://github.com/prhbrt/folium-jsbutton
+class JsButton(MacroElement):
+    """
+    Button that executes a javascript function.
+    Parameters
+    ----------
+    title : str
+         title of the button, may contain html like
+    function : str
+         function to execute, should have format `function(btn, map) { ... }`
+
+    See https://github.com/prinsherbert/folium-jsbutton.
+    """
+    _template = Template("""
+        {% macro script(this, kwargs) %}
+        L.easyButton(
+            '<span>{{ this.title }}</span>',
+            {{ this.function }}
+        ).addTo({{ this.map_name }});
+        {% endmacro %}
+        """)
+
+    def __init__(self, title='', function="""
+        function(btn, map){
+            alert('no function defined yet.');
+        }
+    """):
+        super(JsButton, self).__init__()
+        self.title = title
+        self.function = function
+
+    def add_to(self, m):
+        self.map_name = m.get_name()
+        super(JsButton, self).add_to(m)
+
+    def render(self, **kwargs):
+        super(JsButton, self).render()
+
+        figure = self.get_root()
+        assert isinstance(figure, Figure), (
+            'You cannot render this Element if it is not in a Figure.')
+
+        figure.header.add_child(
+            JavascriptLink('https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js'),  # noqa
+            name='Control.EasyButton.js'
+        )
+
+        figure.header.add_child(
+            CssLink('https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css'),  # noqa
+            name='Control.EasyButton.css'
+        )
+
+        figure.header.add_child(
+            CssLink('https://use.fontawesome.com/releases/v5.3.1/css/all.css'),  # noqa
+            name='Control.FontAwesome.css'
+        )
+
+
 def make_big_maps_leaflet(aasta=None):
     kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
     zoom_start = DEFAULT_MAP_ZOOM_START
@@ -411,7 +472,21 @@ def make_big_maps_leaflet(aasta=None):
                 zoom_start=zoom_start,
                 min_zoom=DEFAULT_MIN_ZOOM,
                 attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
+                id=kaart.aasta
             )
+            kwargs = {
+                'direction': 'center',
+                'permanent': False,
+                'interactive': True,
+                'opacity': 0.9
+            }
+            tekst = '<img src="https://www.ktchnrebel.com/wp-content/uploads/2019/03/Working-in-Mexico-City-KTCHNrebel-copyright-Fotolia-javarman.jpg"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>'
+            # Lisame kaardile kirjelduse tootipi
+            folium.Tooltip(
+                kaart.kirjeldus_html,
+                **kwargs
+            ).add_to(tilelayer)
+
             tilelayer.add_to(map)
             # print(tilelayer.get_name(), tilelayer.to_dict())
             tilelayers[kaart.aasta] = tilelayer.get_name()
@@ -420,7 +495,7 @@ def make_big_maps_leaflet(aasta=None):
         style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
         with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
             src = json.load(gf)
-            folium.GeoJson(src, name="administratiivpiirid (2021)", style_function=lambda x: style1).add_to(map)
+            folium.GeoJson(src, name="Valga ja Valka piirid (2021)", style_function=lambda x: style1).add_to(map)
 
         # Tänavatevõrk tänapäeval
         style2 = {'fill': None, 'color': 'orange', 'weight': 2}
@@ -430,6 +505,20 @@ def make_big_maps_leaflet(aasta=None):
 
         # Lisame kihtide kontrolli
         folium.LayerControl().add_to(map)
+
+        # Lisame infonupu
+        JsButton(
+            title='<i class="fas fa-info"></i>', function="""
+            function(btn, map) {
+                map.eachLayer(function(layer) {
+                    layerId = layer.options.id;
+                    if (layerId) {
+                        // console.log(layer.options);
+                        layer.toggleTooltip(map.getCenter());
+                    }
+                });
+            }
+            """).add_to(map)
 
         # Lisab javascripti <script> tagi algusesse
         # my_js = '''
@@ -451,19 +540,26 @@ def make_big_maps_leaflet(aasta=None):
         # from branca.element import Element
         # map.get_root().script.add_child(Element(my_js))
 
+        el = folium.MacroElement().add_to(map)
+        js = map_name + """
+        .on('baselayerchange', function (eventLayer) {
+            console.log(eventLayer.name);
+        });\n
+        """
+
         if aasta:
-            el = folium.MacroElement().add_to(map)
-            js = ''
+            # el = folium.MacroElement().add_to(map)
             for kaart in tilelayers.keys():
                 if kaart == aasta:
                     js += f'{map_name}.addLayer({tilelayers[kaart]});\n'
                 else:
                     js += f'{map_name}.removeLayer({tilelayers[kaart]});\n'
-            # Lisab javascripti <script> tagi lõppu
-            el._template = jinja2.Template('''
-            {{% macro script(this, kwargs) %}}
-                {0}
-            {{% endmacro %}}'''.format(js))
+
+        # Lisab javascripti <script> tagi lõppu
+        el._template = jinja2.Template('''
+        {{% macro script(this, kwargs) %}}
+            {0}
+        {{% endmacro %}}'''.format(js))
 
         map_html = map._repr_html_()
         # map.save("ajutine.html")

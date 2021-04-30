@@ -1495,7 +1495,7 @@ class Kaart(models.Model):
         unique=True,
         help_text='Väljaandmise aeg'
     )
-    kirjeldus = models.TextField(
+    kirjeldus = MarkdownxField(
         'Kirjeldus',
         # max_length=200,
         blank=True,
@@ -1541,6 +1541,17 @@ class Kaart(models.Model):
 
     def __str__(self):
         return f'{self.aasta} {self.nimi}'
+
+    @property
+    def kirjeldus_html(self):
+        return '<br>'.join(
+            [
+                f'<h4>{self.aasta} {self.nimi}</h4>',
+                markdownify(escape_numberdot(self.kirjeldus)),
+                f'Allikas: {self.viited.first()}'
+            ]
+        )
+
 
     class Meta:
         ordering = ['-aasta']
