@@ -11,7 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import \
     Count, Max, Min, \
-    Case, F, Q, When, \
+    Case, F, Func, Q, When, \
     Value, BooleanField, DateField, DecimalField, IntegerField, \
     ExpressionWrapper
 from django.db.models import Count, Max, Min
@@ -528,6 +528,38 @@ def algus(request):
             filter(id__in=juubilarid).\
             order_by('hist_year', 'dob')
     andmed['objekt'] = a
+
+    # Andmebaas Kaart andmed veebi
+    a = dict()
+    z, x, y = 15, 18753, 9907 # näitamiseks valitud kaarditükk
+    qs = Kaart.objects\
+        .filter(tiles__startswith='http')\
+        .annotate(sample_tile=F('tiles'))
+    qs = qs.annotate(
+        sample_tile=Func(
+            F('sample_tile'),
+            Value('{z}'), Value(str(z)),
+            function='replace',
+        )
+    )
+    qs = qs.annotate(
+        sample_tile=Func(
+            F('sample_tile'),
+            Value('{x}'), Value(str(x)),
+            function='replace',
+        )
+    )
+    qs = qs.annotate(
+        sample_tile=Func(
+            F('sample_tile'),
+            Value('{y}'), Value(str(y)),
+            function='replace',
+        )
+    )
+    kirjeid = qs.count()
+    a['kirjeid'] = kirjeid
+    a['kaardid'] = qs
+    andmed['kaart'] = a
 
     # Kas on 100 aastat tagasi toimunud asju?
     andmed['100_aastat_tagasi'] = any(
