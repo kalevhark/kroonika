@@ -534,7 +534,8 @@ def algus(request):
     z, x, y = 15, 18753, 9907 # näitamiseks valitud kaarditükk
     qs = Kaart.objects\
         .filter(tiles__startswith='http')\
-        .annotate(sample_tile=F('tiles'))
+        .annotate(sample_tile=F('tiles'))\
+        .order_by('aasta')
     qs = qs.annotate(
         sample_tile=Func(
             F('sample_tile'),
