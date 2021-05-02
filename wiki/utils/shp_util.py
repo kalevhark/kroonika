@@ -407,11 +407,15 @@ class JsButton(MacroElement):
         {% endmacro %}
         """)
 
-    def __init__(self, title='', function="""
-        function(btn, map){
-            alert('no function defined yet.');
-        }
-    """):
+    def __init__(
+            self,
+            title='',
+            function="""
+                function(btn, map){
+                    alert('no function defined yet.');
+                }
+            """
+    ):
         super(JsButton, self).__init__()
         self.title = title
         self.function = function
@@ -422,6 +426,75 @@ class JsButton(MacroElement):
 
     def render(self, **kwargs):
         super(JsButton, self).render()
+
+        figure = self.get_root()
+        assert isinstance(figure, Figure), (
+            'You cannot render this Element if it is not in a Figure.')
+
+        figure.header.add_child(
+            JavascriptLink('https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js'),  # noqa
+            name='Control.EasyButton.js'
+        )
+
+        figure.header.add_child(
+            CssLink('https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css'),  # noqa
+            name='Control.EasyButton.css'
+        )
+
+        figure.header.add_child(
+            CssLink('https://use.fontawesome.com/releases/v5.3.1/css/all.css'),  # noqa
+            name='Control.FontAwesome.css'
+        )
+
+
+class JsButton2(MacroElement):
+    """
+    Button that executes a javascript function.
+    Parameters
+    ----------
+    object : str
+         function to execute, should have format
+         `{
+            states:[
+                {
+                    icon: '<span class="star">&starf;</span>',
+                    onClick: function(){ alert('you just clicked the html entity \&starf;'); }
+                }
+            ]
+        }`
+
+    See http://danielmontague.com/projects/easyButton.js/v1/examples/
+    """
+    _template = Template("""
+        {% macro script(this, kwargs) %}
+        L.easyButton(
+            {{ this.object }}
+        ).addTo({{ this.map_name }});
+        {% endmacro %}
+        """)
+
+    def __init__(
+            self,
+            object="""
+                {
+                  states:[
+                    {
+                      icon: '<span class="star">&starf;</span>',
+                      onClick: function(){ alert('you just clicked the html entity \&starf;'); }
+                    }
+                  ]
+                }
+            """
+    ):
+        super(JsButton2, self).__init__()
+        self.object = object
+
+    def add_to(self, m):
+        self.map_name = m.get_name()
+        super(JsButton2, self).add_to(m)
+
+    def render(self, **kwargs):
+        super(JsButton2, self).render()
 
         figure = self.get_root()
         assert isinstance(figure, Figure), (
@@ -477,10 +550,10 @@ def make_big_maps_leaflet(aasta=None):
             kwargs = {
                 'direction': 'center',
                 'permanent': False,
+                # 'sticky': False,
                 'interactive': True,
-                'opacity': 0.9
+                'opacity': 0.9,
             }
-            tekst = '<img src="https://www.ktchnrebel.com/wp-content/uploads/2019/03/Working-in-Mexico-City-KTCHNrebel-copyright-Fotolia-javarman.jpg"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>'
             # Lisame kaardile kirjelduse tootipi
             folium.Tooltip(
                 kaart.kirjeldus_html,
@@ -507,18 +580,60 @@ def make_big_maps_leaflet(aasta=None):
         folium.LayerControl().add_to(map)
 
         # Lisame infonupu
-        JsButton(
-            title='<i class="fas fa-info"></i>', function="""
-            function(btn, map) {
-                map.eachLayer(function(layer) {
-                    layerId = layer.options.id;
-                    if (layerId) {
-                        // console.log(layer.options);
-                        layer.toggleTooltip(map.getCenter());
+        # JsButton(
+        #     title='<i class="fas fa-info"></i>',
+        #     function="""
+        #     function(btn, map) {
+        #         map.eachLayer(function(layer) {
+        #             layerId = layer.options.id;
+        #             if (layerId) {
+        #                 // console.log(layer.options);
+        #                 layer.toggleTooltip(map.getCenter());
+        #             }
+        #         });
+        #     }
+        #     """
+        # ).add_to(map)
+
+        # Lisame infonupu
+        JsButton2(
+            object="""
+            {
+                states:[
+                    {
+                        stateName: 'show-info',
+                        icon: 'fa-info',
+                        title: 'Info kaardi kohta',
+                        onClick: function(btn, map) {
+                            map.eachLayer(function(layer) {
+                                layerId = layer.options.id;
+                                if (layerId) {
+                                    layer.openTooltip(map.getCenter());
+                                    map.once('tooltipclose', function(ev){
+                                        btn.state('show-info');
+                                    });
+                                }
+                            });
+                            btn.state('hide-info');
+                        }
+                    }, {
+                        icon: 'fa-close',
+                        stateName: 'hide-info',
+                        onClick: function(btn, map) {
+                            map.eachLayer(function(layer) {
+                                layerId = layer.options.id;
+                                if (layerId) {
+                                    layer.closeTooltip();
+                                }
+                            });
+                            btn.state('show-info');
+                        },
+                        title: 'Sulge infoaken'
                     }
-                });
+                ]
             }
-            """).add_to(map)
+        """
+        ).add_to(map)
 
         # Lisab javascripti <script> tagi algusesse
         # my_js = '''
@@ -543,7 +658,7 @@ def make_big_maps_leaflet(aasta=None):
         el = folium.MacroElement().add_to(map)
         js = map_name + """
         .on('baselayerchange', function (eventLayer) {
-            console.log(eventLayer.name);
+            // console.log(eventLayer.name);
         });\n
         """
 
