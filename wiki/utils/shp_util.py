@@ -477,10 +477,13 @@ class JsButton2(MacroElement):
             self,
             object="""
                 {
+                  id: 'any-id-for-your-control',
                   states:[
                     {
                       icon: '<span class="star">&starf;</span>',
                       onClick: function(){ alert('you just clicked the html entity \&starf;'); }
+                    }, {
+                      ...
                     }
                   ]
                 }
