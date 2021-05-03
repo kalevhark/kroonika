@@ -23,6 +23,7 @@ import time
 
 from django.contrib.auth.models import User
 
+from branca.element import CssLink, Figure, JavascriptLink, MacroElement
 import folium
 import jinja2
 import pyproj
@@ -382,72 +383,69 @@ def update_objekt_from_csv():
 # Kaardivaadete loomiseks
 ###
 
-from branca.element import CssLink, Figure, JavascriptLink, MacroElement
-from jinja2 import Template
-
-# https://github.com/prhbrt/folium-jsbutton
-class JsButton(MacroElement):
-    """
-    Button that executes a javascript function.
-    Parameters
-    ----------
-    title : str
-         title of the button, may contain html like
-    function : str
-         function to execute, should have format `function(btn, map) { ... }`
-
-    See https://github.com/prinsherbert/folium-jsbutton.
-    """
-    _template = Template("""
-        {% macro script(this, kwargs) %}
-        L.easyButton(
-            '<span>{{ this.title }}</span>',
-            {{ this.function }}
-        ).addTo({{ this.map_name }});
-        {% endmacro %}
-        """)
-
-    def __init__(
-            self,
-            title='',
-            function="""
-                function(btn, map){
-                    alert('no function defined yet.');
-                }
-            """
-    ):
-        super(JsButton, self).__init__()
-        self.title = title
-        self.function = function
-
-    def add_to(self, m):
-        self.map_name = m.get_name()
-        super(JsButton, self).add_to(m)
-
-    def render(self, **kwargs):
-        super(JsButton, self).render()
-
-        figure = self.get_root()
-        assert isinstance(figure, Figure), (
-            'You cannot render this Element if it is not in a Figure.')
-
-        figure.header.add_child(
-            JavascriptLink('https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js'),  # noqa
-            name='Control.EasyButton.js'
-        )
-
-        figure.header.add_child(
-            CssLink('https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css'),  # noqa
-            name='Control.EasyButton.css'
-        )
-
-        figure.header.add_child(
-            CssLink('https://use.fontawesome.com/releases/v5.3.1/css/all.css'),  # noqa
-            name='Control.FontAwesome.css'
-        )
+# # https://github.com/prhbrt/folium-jsbutton
+# class JsButton(MacroElement):
+#     """
+#     Button that executes a javascript function.
+#     Parameters
+#     ----------
+#     title : str
+#          title of the button, may contain html like
+#     function : str
+#          function to execute, should have format `function(btn, map) { ... }`
+#
+#     See https://github.com/prinsherbert/folium-jsbutton.
+#     """
+#     _template = Template("""
+#         {% macro script(this, kwargs) %}
+#         L.easyButton(
+#             '<span>{{ this.title }}</span>',
+#             {{ this.function }}
+#         ).addTo({{ this.map_name }});
+#         {% endmacro %}
+#         """)
+#
+#     def __init__(
+#             self,
+#             title='',
+#             function="""
+#                 function(btn, map){
+#                     alert('no function defined yet.');
+#                 }
+#             """
+#     ):
+#         super(JsButton, self).__init__()
+#         self.title = title
+#         self.function = function
+#
+#     def add_to(self, m):
+#         self.map_name = m.get_name()
+#         super(JsButton, self).add_to(m)
+#
+#     def render(self, **kwargs):
+#         super(JsButton, self).render()
+#
+#         figure = self.get_root()
+#         assert isinstance(figure, Figure), (
+#             'You cannot render this Element if it is not in a Figure.')
+#
+#         figure.header.add_child(
+#             JavascriptLink('https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js'),  # noqa
+#             name='Control.EasyButton.js'
+#         )
+#
+#         figure.header.add_child(
+#             CssLink('https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css'),  # noqa
+#             name='Control.EasyButton.css'
+#         )
+#
+#         figure.header.add_child(
+#             CssLink('https://use.fontawesome.com/releases/v5.3.1/css/all.css'),  # noqa
+#             name='Control.FontAwesome.css'
+#         )
 
 
-class JsButton2(MacroElement):
+class leafletJsButton(MacroElement):
     """
     Button that executes a javascript function.
     Parameters
@@ -465,7 +463,7 @@ class JsButton2(MacroElement):
 
     See http://danielmontague.com/projects/easyButton.js/v1/examples/
     """
-    _template = Template("""
+    _template = jinja2.Template("""
         {% macro script(this, kwargs) %}
         L.easyButton(
             {{ this.object }}
@@ -489,15 +487,15 @@ class JsButton2(MacroElement):
                 }
             """
     ):
-        super(JsButton2, self).__init__()
+        super(leafletJsButton, self).__init__()
         self.object = object
 
     def add_to(self, m):
         self.map_name = m.get_name()
-        super(JsButton2, self).add_to(m)
+        super(leafletJsButton, self).add_to(m)
 
     def render(self, **kwargs):
-        super(JsButton2, self).render()
+        super(leafletJsButton, self).render()
 
         figure = self.get_root()
         assert isinstance(figure, Figure), (
@@ -599,7 +597,7 @@ def make_big_maps_leaflet(aasta=None):
         # ).add_to(map)
 
         # Lisame infonupu
-        JsButton2(
+        leafletJsButton(
             object="""
             {
                 states:[
