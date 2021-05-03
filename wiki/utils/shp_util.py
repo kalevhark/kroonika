@@ -45,6 +45,22 @@ GEOJSON_STYLE = {
     'M': {'fill': None, 'color': 'red', 'weight': 3}, # muu
 }
 
+# https://python-visualization.github.io/folium/modules.html#module-folium.map
+LEAFLET_DEFAULT_CSS = [
+    ('leaflet_css', 'https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css'),
+    ('bootstrap_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'),
+    ('bootstrap_theme_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css'),
+    ('awesome_markers_font_css', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'),
+    ('awesome_markers_css', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css'),
+    ('awesome_rotate_css', 'https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css')
+]
+LEAFLET_DEFAULT_JS = [
+    ('leaflet', 'https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js'),
+    ('jquery', 'https://code.jquery.com/jquery-1.12.4.min.js'),
+    ('bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'),
+    ('awesome_markers', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js')
+]
+
 # crs to degree converter init
 proj = pyproj.Transformer.from_crs(3301, 4326, always_xy=True)
 
@@ -534,6 +550,9 @@ def make_big_maps_leaflet(aasta=None):
             control_scale=True,
             tiles=None,
         )
+        map.default_css = LEAFLET_DEFAULT_CSS
+        map.default_js = LEAFLET_DEFAULT_JS
+
         map_name = map.get_name()
         # print(map_name)
 
@@ -579,22 +598,6 @@ def make_big_maps_leaflet(aasta=None):
 
         # Lisame kihtide kontrolli
         folium.LayerControl().add_to(map)
-
-        # Lisame infonupu
-        # JsButton(
-        #     title='<i class="fas fa-info"></i>',
-        #     function="""
-        #     function(btn, map) {
-        #         map.eachLayer(function(layer) {
-        #             layerId = layer.options.id;
-        #             if (layerId) {
-        #                 // console.log(layer.options);
-        #                 layer.toggleTooltip(map.getCenter());
-        #             }
-        #         });
-        #     }
-        #     """
-        # ).add_to(map)
 
         # Lisame infonupu
         leafletJsButton(
@@ -655,6 +658,9 @@ def make_big_maps_leaflet(aasta=None):
         # '''
         # from branca.element import Element
         # map.get_root().script.add_child(Element(my_js))
+        #
+        # Kui on vaja lisada lisa html-i <div class="folium-map" id="map_795eaceab1bb4d5d8a0d91d1a99d36a4" ></div> järele
+        # map.get_root().html.add_child(Element("<h1>Hello world</h1>"))
 
         el = folium.MacroElement().add_to(map)
         js = map_name + """
@@ -679,8 +685,8 @@ def make_big_maps_leaflet(aasta=None):
 
         map_html = map._repr_html_()
         # map.save("ajutine.html")
-        # with open(f"ajutine.html", "w") as f:
-        #     f.write(map_html)
+        print(map.__dir__())
+        map._parent.html.add_child(Element("<h1>Hello world</h1>"))
 
         # v2ike h2kk, mis muudab vertikaalset suuruse sõltuvaks css-ist
         map_html = map_html.replace(
