@@ -12,7 +12,12 @@
         <a style="text-decoration: none;" href="{% url 'wiki:wiki_kaardiobjekt_filter' %}">
           <i class="fa fa-bank"></i>
         </a>
-        {{ object }}{% if object.objekt %} -> <strong>{{ object.objekt }}</strong>{% endif %}
+        {{ object }}
+        {% if object.objekt %} ->
+          <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_detail' pk=object.objekt.pk slug=object.objekt.slug  %}">
+            <strong>{{ object.objekt }}</strong>
+          </a>
+        {% endif %}
       </h4>
     </div>
 
@@ -63,7 +68,10 @@
             >
               {{ match.kaardiobjekt }} {{ match.kattuvus }}
               {% if match.kaardiobjekt.objekt %}
-                -> <strong>{{ match.kaardiobjekt.objekt }}</strong>
+                ->
+                <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_detail' pk=match.kaardiobjekt.objekt.pk slug=match.kaardiobjekt.objekt.slug  %}">
+                  <strong>{{ match.kaardiobjekt.objekt }}</strong>
+                </a>
               {% else %}
                 {% if object.objekt and user.is_authenticated and user.is_staff %}
                   <button
