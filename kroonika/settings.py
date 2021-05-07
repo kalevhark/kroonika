@@ -30,7 +30,7 @@ SERVER_TYPE = config['django'].get('SERVER_TYPE', '')
 
 ALLOWED_HOSTS = [
     'valgalinn.ee', 'www.valgalinn.ee',
-    '3.134.244.125', 'ec2-3-134-244-125.us-east-2.compute.amazonaws.com', # t3.nano
+    '3.21.230.30', 'ec2-3-21-230-30.us-east-2.compute.amazonaws.com', # t3.nano
     '18.217.172.167', # a1.medium
     '127.0.0.1', 'localhost',
 ]
