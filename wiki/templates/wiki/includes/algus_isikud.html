@@ -1,3 +1,20 @@
+{% load wiki_extras %}
+<div
+        class="card w3-round w3-hide-large w3-hide-medium"
+>
+  <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
+    <div
+            class="w3-container w3-round background-isik w3-padding-16 icon"
+    >
+      <div class="w3-left">
+          <i class="fa fa-address-card-o w3-xxxlarge"></i>
+      </div>
+      <div class="w3-right">
+        <h4>{% model_name_isik %} ({{ andmed.isik.kirjeid }})</h4>
+      </div>
+    </div>
+  </a>
+</div>
 {% if andmed.isik.sel_p2eval %}
   <h5>
     <a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_syndinud">

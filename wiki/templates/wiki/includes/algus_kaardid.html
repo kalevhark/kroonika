@@ -103,6 +103,29 @@
 }
 </style>
 
+<div
+          class="card w3-round w3-hide-large w3-hide-medium"
+          id="card-kaart"
+  >
+    <a
+      class="w3-tooltip"
+      style="text-decoration: none;"
+      href="{% url 'wiki:wiki_kaardiobjekt_filter' %}"
+    >
+      <div
+              class="w3-container w3-round background-objekt w3-padding-16 icon"
+              id="icon-kaart"
+      >
+        <div class="w3-left">
+            <i class="fa fa-map w3-xxxlarge"></i>
+        </div>
+        <div class="w3-right">
+          <h4>{% model_name_kaart %} ({{ andmed.kaart.kirjeid }})</h4>
+        </div>
+      </div>
+    </a>
+  </div>
+
 {#<a class="w3-tooltip" style="text-decoration: none;" href="{% url 'kaart' %}">#}
 {#  <div#}
 {#          class="w3-container w3-round background-objekt w3-padding-16 icon"#}

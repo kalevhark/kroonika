@@ -1,3 +1,24 @@
+{% load wiki_extras %}
+<div
+        class="card w3-round w3-hide-large w3-hide-medium"
+>
+  <a
+    class="w3-tooltip"
+    style="text-decoration: none;"
+    href="{% url 'wiki:wiki_objekt_filter' %}"
+  >
+    <div
+            class="w3-container w3-round background-objekt w3-padding-16 icon"
+    >
+      <div class="w3-left">
+          <i class="fa fa-bank w3-xxxlarge"></i>
+      </div>
+      <div class="w3-right">
+        <h4>{% model_name_objekt %} ({{ andmed.objekt.kirjeid }})</h4>
+      </div>
+    </div>
+  </a>
+</div>
 {% if andmed.objekt.sel_p2eval %}
   <h5>
     <a
