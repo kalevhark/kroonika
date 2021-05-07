@@ -685,8 +685,7 @@ def make_big_maps_leaflet(aasta=None):
 
         map_html = map._repr_html_()
         # map.save("ajutine.html")
-        print(map.__dir__())
-        map._parent.html.add_child(Element("<h1>Hello world</h1>"))
+        # print(map.__dir__())
 
         # v2ike h2kk, mis muudab vertikaalset suuruse sõltuvaks css-ist
         map_html = map_html.replace(
