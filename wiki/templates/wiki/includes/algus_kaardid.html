@@ -126,23 +126,6 @@
     </a>
   </div>
 
-{#<a class="w3-tooltip" style="text-decoration: none;" href="{% url 'kaart' %}">#}
-{#  <div#}
-{#          class="w3-container w3-round background-objekt w3-padding-16 icon"#}
-{#          id="icon-kaart"#}
-{#  >#}
-{#    <div class="w3-left">#}
-{#        <i class="fa fa-map w3-xxxlarge"></i>#}
-{#    </div>#}
-{#    <div class="w3-hide-medium w3-right">#}
-{#          <h4>{% model_name_kaart %} ({{ andmed.kaart.kirjeid }})</h4>#}
-{#    </div>#}
-{#    <div class="w3-hide-large w3-hide-small w3-right ">#}
-{#      <h6>{% model_name_kaart %} ({{ andmed.kaart.kirjeid }})</h6>#}
-{#    </div>#}
-{#  </div>#}
-{#</a>#}
-
 <div class="tile-img-slideshow-container">
   {% for kaart in andmed.kaart.kaardid %}
 
@@ -161,7 +144,12 @@
                 alt="{{ kaart.aasta }}. aasta kaarditükk"
         >
       </a>
-      <div class="tile-img-captiontext">{{ kaart }}</div>
+      <div class="tile-img-captiontext w3-hide-medium">
+        {{ kaart }}
+      </div>
+      <div class="tile-img-captiontext w3-hide-large w3-hide-small">
+        {{ kaart.aasta }}
+      </div>
     </div>
 
   {% endfor %}
