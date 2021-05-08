@@ -22,23 +22,27 @@
 		<div>
 			{% if prev_obj %}
         <div class="w3-container w3-cell w3-cell-middle">
-        <a href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}">
-          <div class="w3-padding w3-xxlarge hover-artikkel">
-            <i class="fa fa-angle-left"></i>
-          </div>
+          <a
+                  href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}"
+                  title="Liigu eelmisele loole"
+          >
+            <div class="w3-padding w3-xxlarge hover-artikkel">
+              <i class="fa fa-angle-left"></i>
+            </div>
           </a>
         </div>
         <div class="w3-cell">
-				<strong>
-					{% include 'wiki/includes/date_range.html' with obj=prev_obj %}
-				</strong>
-				<br>
-				<a
-						class="hover-artikkel"
-						href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}"
-				>
-					{{ prev_obj }}
-				</a>
+          <strong>
+            {% include 'wiki/includes/date_range.html' with obj=prev_obj %}
+          </strong>
+          <br>
+          <a
+              class="hover-artikkel"
+              href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}"
+              title="Liigu eelmisele loole"
+          >
+            {{ prev_obj }}
+				  </a>
         </div>
 			{% endif %}
 		</div>
@@ -81,25 +85,28 @@
 	<div class="w3-third w3-cell w3-hover-white">
 		<div class="w3-right-align w3-right">
 			{% if next_obj %}
-
         <div class="w3-container w3-rest w3-cell w3-cell-middle w3-right">
-        <a href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}">
-          <div class="w3-padding w3-xxlarge hover-artikkel">
-            <i class="fa fa-angle-right"></i>
-          </div>
+          <a
+                  href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}"
+                  title="Liigu järgmisele loole"
+          >
+            <div class="w3-padding w3-xxlarge hover-artikkel">
+              <i class="fa fa-angle-right"></i>
+            </div>
           </a>
         </div>
         <div class="w3-cell">
-				<strong>
-				  {% include 'wiki/includes/date_range.html' with obj=next_obj %}
-				</strong>
-				<br>
-				<a
-						class="hover-artikkel"
-						href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}"
-				>
-					{{ next_obj }}
-				</a>
+          <strong>
+            {% include 'wiki/includes/date_range.html' with obj=next_obj %}
+          </strong>
+          <br>
+          <a
+              class="hover-artikkel"
+              href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}"
+              title="Liigu järgmisele loole"
+          >
+            {{ next_obj }}
+          </a>
         </div>
 			{% endif %}
 		</div>
