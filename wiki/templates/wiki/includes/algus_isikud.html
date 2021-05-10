@@ -55,6 +55,7 @@
     </a>
     {% if obj.vanus|divisibleby:"5" %}
       &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+      {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
     {% endif %}
   {% endfor %}
 {% endif %}
