@@ -88,6 +88,19 @@ header {
     background: rgba(0, 0, 0, 0.20); /* NON-IE */
 }
 
+@media (min-width: 1400px) {
+  .fixed-header {
+    position: fixed;
+    /* center the element */
+    right: 0;
+    left: 0;
+    margin-right: auto;
+    margin-left: auto;
+    /* give it dimensions */
+    max-width: 1340px;
+  }
+}
+
 /* Navbar*/
 nav {
     width: 100%;
