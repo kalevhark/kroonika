@@ -17,6 +17,13 @@
   <!-- Required meta tags -->
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  <link rel="shortcut icon" href="{% static 'wiki/img/favicon.ico' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'wiki/img/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'wiki/img/favicon-32x32.png' %}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'wiki/img/favicon-16x16.png' %}">
+  <link rel="manifest" href="{% static 'wiki/img/site.webmanifest' %}">
+
   <meta name="description" content="Valga linna kroonika. Lood, inimesed, asutised ja kohad Valga linna ajaloost." />
   <meta name="keywords" content="{% if object %}{{ object.keywords }}{% else %}{% keywords %}{% endif %}" />
   <meta name="author" content="{% kalev %}" />
@@ -111,8 +118,6 @@
   <!-- <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}> -->
 
   {% block css %}{% endblock %}
-
-  <link rel="shortcut icon" href="{% static 'wiki/img/favicon.ico' %}">
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>
