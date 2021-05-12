@@ -552,5 +552,5 @@ def task_20210512():
     print(pilt, org, viide, isikud.count())
     for isik in isikud:
         print(f'isik{isik.id}:{isik}')
-        # isik.organisatsioonid.add(org)
-        # isik.viited.add(viide)
+        isik.organisatsioonid.add(org)
+        isik.viited.add(viide)
