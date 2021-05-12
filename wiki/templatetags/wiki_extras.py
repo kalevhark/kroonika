@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from django import template
 from django.conf import settings
 
-from wiki.models import VIGA_TEKSTIS, Artikkel, Isik, Organisatsioon, Objekt, Kaart
+from wiki.models import VIGA_TEKSTIS, Artikkel, Isik, Organisatsioon, Objekt, Kaart, Kaardiobjekt
 from wiki.views import get_all_logged_in_users #, artikkel_qs_userfilter
 
 register = template.Library()
@@ -99,6 +99,10 @@ def model_name_objekt():
 @register.simple_tag
 def model_name_kaart():
     return Kaart._meta.verbose_name_plural
+
+@register.simple_tag
+def model_name_kaardiobjekt():
+    return Kaardiobjekt._meta.verbose_name_plural
 
 @register.simple_tag
 def recaptcha_public_key():
