@@ -94,7 +94,6 @@ def is_tiles(rows):
     try:
         return re.search(pat, rows.request) != None
     except:
-        print(rows.request)
         return False
 
 if __name__ == '__main__':
