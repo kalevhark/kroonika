@@ -70,7 +70,7 @@
 						class="w3-bar-item w3-button w3-hover-white">
 						<img
 								src="{% static 'wiki/favicon-32x32.png' %}"
-								style='max-height:22px;'
+								style='max-height:22px; display: inline;'
 								alt="valgalinn.ee logo">
 				</a>
 				<a
@@ -91,13 +91,13 @@
 				</a>
 				<a
 						href="{% url 'algus' %}"
-						class="w3-bar-item w3-button w3-hover-white"
+						class="w3-bar-item w3-button w3-hover-white w3-hide-small"
 						title="Valga linna kroonika">
 					<i class="fa fa-leanpub"></i>
 				</a>
         <a
             href="{% url 'wiki:info' %}"
-            class="w3-bar-item w3-button w3-hover-white"
+            class="w3-bar-item w3-button w3-hover-white w3-hide-small"
             title="Projektist">
           <i class="fa fa-info"></i>
         </a>
