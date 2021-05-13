@@ -91,7 +91,11 @@ def find_bot_name(rows):
 
 def is_tiles(rows):
     pat = re.compile('/tiles/')
-    return (rows.request != None) and (re.search(pat, rows.request) != None)
+    try:
+        return re.search(pat, rows.request) != None
+    except:
+        print(rows.request)
+        return False
 
 if __name__ == '__main__':
     # path = os.path.dirname(sys.argv[0])
