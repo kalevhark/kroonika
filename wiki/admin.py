@@ -498,6 +498,7 @@ class IsikAdmin(AjaxSelectAdmin):
         return obj.viited.count()
     seotud_viiteid.short_description = 'Viiteid'
 
+
 class OrganisatsioonAdmin(AjaxSelectAdmin):
     form = OrganisatsioonForm
     readonly_fields = [
