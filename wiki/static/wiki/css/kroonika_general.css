@@ -244,13 +244,20 @@ ul.no-bullets li {
   box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5); /* = #008CBA */
 }
 
+#profiiliPilt:hover {
+  opacity: 0.7;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
 /* Kasutamiseks pisipildireana */
 .pilt-pildirida {
-	max-height: 64px;
+  max-height: 64px;
   float: left;
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 5px;
+  margin-bottom: 2px;
 }
 
 .pilt-pildirida:hover {
@@ -295,15 +302,6 @@ ul.no-bullets li {
     visibility: visible;
     opacity: 1;
 }
-
-/* Style the Image Used to Trigger the Modal */
-#myImg {
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-#myImg:hover {opacity: 0.7;}
 
 /* The Modal (background) */
 .modal {

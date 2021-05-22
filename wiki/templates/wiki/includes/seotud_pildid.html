@@ -11,10 +11,7 @@
 
     {# Avatakse modal aken pildi näitamiseks #}
     {#  modal on object_detail_pilt.html -> <div id="myModal" class="modal">#}
-    modal.style.display = "block";
-    modalImg.src = imgs.getAttribute("data-img-big");
-    modalImg.alt = imgs.alt;
-    captionText.innerHTML = imgs.alt;
+    imgToModal(imgs);
   }
 </script>
 
