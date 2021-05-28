@@ -560,7 +560,7 @@ def ilmadata():
     from django.db.models import Sum, Count, Avg, Min, Max
     qs_kuud = Ilm.objects \
         .values('timestamp__year', 'timestamp__month') \
-        .annotate(Sum('precipitations')) \
+        .annotate(Sum('precipitations'), Avg('airtemperature')) \
         .order_by('timestamp__year', 'timestamp__month')
     import csv
 
