@@ -554,3 +554,24 @@ def task_20210512():
         print(f'isik{isik.id}:{isik}')
         isik.organisatsioonid.add(org)
         isik.viited.add(viide)
+
+def ilmadata():
+    from ilm.models import Ilm
+    from django.db.models import Sum, Count, Avg, Min, Max
+    qs_kuud = Ilm.objects \
+        .values('timestamp__year', 'timestamp__month') \
+        .annotate(Sum('precipitations')) \
+        .order_by('timestamp__year', 'timestamp__month')
+    import csv
+
+    with open('ilm.csv', 'w', newline='') as csvfile:
+        fieldnames = ['month', 'avgtemp']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for kuu in qs_kuud:
+            writer.writerow(
+                {
+                    'month': f'{kuu["timestamp__year"]}-{kuu["timestamp__month"]}-01',
+                    'avgtemp': float(kuu["airtemperature__avg"])
+                }
+            )
