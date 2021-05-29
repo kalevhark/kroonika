@@ -25,9 +25,6 @@
 		</div>
   </div>
   <form action="" method="get">
-{#  <div class="w3-container w3-cell w3-cell-middle w3-mobile">#}
-{#		{% render_field filter.form.nimi__icontains class+="w3-input w3-border-0" placeholder=filter.form.nimi__icontains.label %}#}
-{#  </div>#}
   <div class="w3-container w3-cell w3-cell-middle w3-mobile">
     {% render_field filter.form.nimi_sisaldab class+="w3-input w3-border-0" placeholder="Fraas asutise nimes..." %}
   </div>
@@ -57,8 +54,8 @@
 	{% include 'wiki/includes/pagination_next.html' with model="organisatsioon" %}
 {% else %}
 	<div class="w3-container w3-padding">
-	  {% if filter.form.nimi__nimi_sisaldab.value %}
-	    Otsinguga ({% model_name_organisatsioon %} nimi sisaldab fraasi &#x0022;{{filter.form.nimi__nimi_sisaldab.value }}&#x0022;) ei leitud midagi
+	  {% if filter.form.nimi_sisaldab.value %}
+	    Otsinguga, {% model_name_organisatsioon %} mille nimi sisaldab fraasi &#x0022;{{filter.form.nimi_sisaldab.value }}&#x0022;, ei leitud midagi
 	  {% else %}
 	    Valikut pole tehtud
 	  {% endif %}
