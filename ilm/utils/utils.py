@@ -540,12 +540,10 @@ class YrnoAPI():
             data = json.loads(r.text)
             return {'meta': meta, 'data': data}
         else:
-            # print(r.status_code)
             return None
 
     # Kas andmed on värsked või vaja värskendada
     def get_data(self, src):
-        # cache_file = f'_cache_{src}.json'
         # Kas värsked andmed olemas (django cache)
         try:
             if cache.get(src):
@@ -557,22 +555,13 @@ class YrnoAPI():
                     return data
         except:
             pass
-        # Kas värsked andmed olemas (disk cache)
-        # if os.path.isfile(cache_file):
-        #     with open(cache_file, mode='r') as f:
-        #         data = json.loads(f.read())
-        #     now = datetime.now(timezone.utc)
-        #     exp = parsedate_to_datetime(data['meta']['Expires'])
-        #     if now < exp:
-        #         print('Andmed: cache disk')
-        #         return data
 
         # Küsime värsked andmed
         # kohaandmed = Valga
         altitude = "64"
         lat = "57.77781"
         lon = "26.0473"
-        # yr.no API
+        # yr.no API Valga: https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=57.77781&lon=26.0473&altitude=64
         url = 'https://api.met.no/weatherapi/locationforecast/2.0/complete'
         params = {
             'lat': lat,
@@ -585,19 +574,13 @@ class YrnoAPI():
             "Accept": "*/*",
         }
         data = self.get_api_data(url, headers, params)
-        # print('Andmed: API')
 
         # Salvestame cache (django)
         try:
             cache.set(src, data)
         except:
             pass
-        # Salvestame cache (disk)
-        # try:
-        #     with open(cache_file, mode='w') as f:
-        #         json.dump(data, f, indent=4)
-        # except:
-        #     pass
+
         return data
 
     # Filtreerime täielikust ennustusandmestikust järgmised 48h
