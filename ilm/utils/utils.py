@@ -650,7 +650,11 @@ class YrnoAPI():
                 n = loc_time - cat[0]
                 dateticks.append(int(n.total_seconds() / 3600))
             instant = hour['data']['instant']['details']
-            next_1_hours = hour['data']['next_1_hours']
+            # print(hour['time'])
+            try:
+                next_1_hours = hour['data']['next_1_hours']
+            except KeyError:
+                next_1_hours = hour['data']['next_6_hours']
             # Sademed
             prec_minvalue = float(next_1_hours['details']['precipitation_amount_min'])
             prec_maxvalue = float(next_1_hours['details']['precipitation_amount_max'])
