@@ -265,11 +265,6 @@ def container_history_aastad(request):
         },
 
         'xAxis': {
-            # 'type': 'datetime',
-            # 'dateTimeLabelFormats': {
-            #     'day': '%e of %b'
-            # },
-            # 'categories': json.dumps(categories, cls=DjangoJSONEncoder),
             'categories': categories,
             # 'labels': {
             #     'format': '{value:%e. %b}'
