@@ -29,6 +29,11 @@ from .serializers import (
 
 # from .views import artikkel_qs_userfilter
 
+TRANSLATION = {
+    'w': '[vw]',
+    'v': '[vw]'
+}
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -51,13 +56,14 @@ class ArtikkelFilter(filters.FilterSet):
 
     def filter_tags(self, queryset, field_name, value):
         # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
+        value = value.translate(str.maketrans(TRANSLATION))
         tags = value.split(' ')
         if len(tags) > 1:
             for tag in tags:
-                queryset = queryset.filter(body_text__icontains=tag)
+                queryset = queryset.filter(body_text__iregex=tag)
             return queryset
         else:
-            return queryset.filter(body_text__icontains=value)
+            return queryset.filter(body_text__iregex=value)
 
 
 class ArtikkelViewSet(viewsets.ModelViewSet):
@@ -92,8 +98,8 @@ class IsikFilter(filters.FilterSet):
 
     def filter_tags(self, queryset, field_name, value):
         # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
-        translation = {'w': '[vw]', 'v': '[vw]'}
-        value = value.translate(str.maketrans(translation))
+        # translation = {'w': '[vw]', 'v': '[vw]'}
+        value = value.translate(str.maketrans(TRANSLATION))
         splits = value.split(' ')
         if len(splits) > 1:
             for split in splits:
@@ -134,13 +140,14 @@ class ObjektFilter(filters.FilterSet):
 
     def filter_tags(self, queryset, field_name, value):
         # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
+        value = value.translate(str.maketrans(TRANSLATION))
         tags = value.split(' ')
         if len(tags) > 1:
             for tag in tags:
-                queryset = queryset.filter(nimi__icontains=tag)
+                queryset = queryset.filter(nimi__iregex=tag)
             return queryset
         else:
-            return queryset.filter(nimi__icontains=value)
+            return queryset.filter(nimi__iregex=value)
 
 
 class ObjektViewSet(viewsets.ModelViewSet):
@@ -161,13 +168,14 @@ class OrganisatsioonFilter(filters.FilterSet):
 
     def filter_tags(self, queryset, field_name, value):
         # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
+        value = value.translate(str.maketrans(TRANSLATION))
         tags = value.split(' ')
         if len(tags) > 1:
             for tag in tags:
-                queryset = queryset.filter(nimi__icontains=tag)
+                queryset = queryset.filter(nimi__iregex=tag)
             return queryset
         else:
-            return queryset.filter(nimi__icontains=value)
+            return queryset.filter(nimi__iregex=value)
 
 
 class OrganisatsioonViewSet(viewsets.ModelViewSet):

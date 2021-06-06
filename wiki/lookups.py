@@ -10,6 +10,10 @@ from .models import (
     Kaardiobjekt
 )
 
+TRANSLATION = {
+    'w': '[vw]',
+    'v': '[vw]'
+}
 
 @ajax_select.register('artiklid')
 class ArtikkelLookup(LookupChannel):
@@ -17,6 +21,7 @@ class ArtikkelLookup(LookupChannel):
     model = Artikkel
 
     def get_query(self, q, request):
+        q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
         queryset = self.model.objects.annotate(
             full_viide=Concat(
@@ -29,7 +34,7 @@ class ArtikkelLookup(LookupChannel):
             )
         )
         for split in splits:
-            queryset = queryset.filter(full_viide__icontains=split)
+            queryset = queryset.filter(full_viide__iregex=split)
         return queryset[:50]
 
 
@@ -39,6 +44,7 @@ class IsikLookup(LookupChannel):
     model = Isik
 
     def get_query(self, q, request):
+        q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
         queryset = self.model.objects.annotate(
             nimi=Concat(
@@ -48,11 +54,11 @@ class IsikLookup(LookupChannel):
                 output_field=CharField()
             )
         )
-        translation = {'w': '[vw]', 'v': '[vw]'}
+        # translation = {'w': '[vw]', 'v': '[vw]'}
         for split in splits:
             # queryset = queryset.filter(nimi__icontains=split)
-            pat = split.translate(str.maketrans(translation))
-            queryset = queryset.filter(nimi__iregex=pat)
+            # pat = split.translate(str.maketrans(TRANSLATION))
+            queryset = queryset.filter(nimi__iregex=split)
         return queryset[:50]
 
     def format_match(self, item):
@@ -68,10 +74,11 @@ class OrganisatsioonLookup(LookupChannel):
     model = Organisatsioon
 
     def get_query(self, q, request):
+        q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
         queryset = self.model.objects.all()
         for split in splits:
-            queryset = queryset.filter(nimi__icontains=split)
+            queryset = queryset.filter(nimi__iregex=split)
         return queryset[:50]
 
 
@@ -81,10 +88,13 @@ class ObjektLookup(LookupChannel):
     model = Objekt
 
     def get_query(self, q, request):
+        q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
         queryset = self.model.objects.all()
         for split in splits:
-            queryset = queryset.filter(nimi__icontains=split)
+            # pat = split.translate(str.maketrans(TRANSLATION))
+            # queryset = queryset.filter(nimi__icontains=split)
+            queryset = queryset.filter(nimi__iregex=split)
         return queryset[:50]
 
 
