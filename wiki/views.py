@@ -17,7 +17,7 @@ from django.db.models import \
 from django.db.models import Count, Max, Min
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
@@ -1092,9 +1092,6 @@ class ArtikkelArchiveIndexView(ArchiveIndexView):
 
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
-
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render
 
 def artikkel_index_archive_infinite(request):
     artikkel_qs = Artikkel.objects.daatumitega(request)
