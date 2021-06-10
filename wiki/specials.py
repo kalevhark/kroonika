@@ -46,11 +46,21 @@ def special_j6ul2020(request):
     )
 
 #
-# Linna sünnipäevatervituse lehekülg (pole kasutuses)
+# Linna sünnipäevatervituse lehekülg 436
 #
 def special_valga436(request):
     return render(
         request,
         'wiki/special/wiki_special_valga436.html',
+        {}
+    )
+
+#
+# Linna sünnipäevatervituse lehekülg 437
+#
+def special_valga437(request):
+    return render(
+        request,
+        'wiki/special/wiki_special_valga437.html',
         {}
     )

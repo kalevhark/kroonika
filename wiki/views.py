@@ -1740,9 +1740,6 @@ class ObjektDetailView(generic.DetailView):
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
         # Otseseosed objektidega
-        # Otseseosed objectidega
-        # isik_related = self.object.isik_set.all().values_list('id', flat=True)
-        # context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(id__in=isik_related)
         context['seotud_isikud'] = Isik.objects.\
             daatumitega(self.request).\
             filter(objektid=self.object)
