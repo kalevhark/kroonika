@@ -341,7 +341,7 @@ if __name__ == '__main__':
     if rows_deleted > 0:
         print(f'Kustutati: {rows_deleted} kirjet')
 
-    for hour in range(47, -1, -1): # Viimase 48 tunni andmed
+    for hour in range(71, -1, -1): # Viimase 72 tunni andmed
         observation_time = datetime.now() - timedelta(hours=hour)
         observation = check_observation_exists(observation_time, path)
         # print(observation_time, end=': ')
