@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from urllib.request import Request, urlopen
 from urllib.error import URLError
 
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from pytz import timezone
@@ -248,6 +248,9 @@ if __name__ == '__main__':
     rows_deleted = delete_duplicate_observations(path)
     if rows_deleted > 0:
         print(f'Kustutati: {rows_deleted} kirjet')
+
+    # Täiendame puudulikke kirjeid
+    update_uncomplete_observations(path)
 
     # Kontrollime 72 tunni andmete olemasolu, vajadusel lisame
     for hour in range(71, -1, -1): # Viimase 72 tunni andmed
