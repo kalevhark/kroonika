@@ -222,13 +222,13 @@ def update_uncomplete_observations(path=''):
         # connect to the PostgreSQL database
         conn = psycopg2.connect(**params)
         # create a new cursor
-        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         # execute the UPDATE  statement
         cur.execute("SELECT timestamp FROM ilm_ilm WHERE airtemperature IS NULL;")
         # get the number of updated rows
         rows_updated = cur.rowcount
         record = cur.fetchone()
-        print(record['id'], record['timestamp'])
+        print(record)
         # Commit the changes to the database
         # conn.commit()
         # Close communication with the PostgreSQL database
