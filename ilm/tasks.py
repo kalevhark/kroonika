@@ -224,7 +224,7 @@ def update_uncomplete_observations(path=''):
         # create a new cursor
         cur = conn.cursor()
         # execute the UPDATE  statement
-        cur.execute("SELECT timestamp FROM ilm_ilm WHERE airtemperature IS NULL;")
+        cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;")
         # get the number of updated rows
         rows_updated = cur.rowcount
         print(cur.fetchone())
@@ -237,7 +237,7 @@ def update_uncomplete_observations(path=''):
     finally:
         if conn is not None:
             conn.close()
-    print(f'Täiendati: {rows_updated}')
+    # print(f'Täiendati: {rows_updated}')
     return rows_updated
 
 
