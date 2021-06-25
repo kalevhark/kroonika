@@ -274,7 +274,7 @@ def update_missing_observations(path=''):
         # create a new cursor
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         # leiame kõik kuupäevaread
-        cur.execute("SELECT timestamp FROM ilm_ilm ORDER timestamp;")
+        cur.execute("SELECT timestamp FROM ilm_ilm ORDER BY timestamp ASC;")
         timestamp_all_records = [record['timestamp'] for record in cur]
         for n in range(0, len(timestamp_all_records)-1):
             if (timestamp_all_records[n+1] - timestamp_all_records[n]) > timedelta(seconds=3600):
