@@ -225,7 +225,7 @@ def update_uncomplete_observations(path=''):
         # create a new cursor
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         # leiame jooksva aasta ilma õhutemperatuuri näiduta read
-        cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
+        # cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
         # leiame kõik ilma õhutemperatuuri näiduta read
         cur.execute(
             "SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;"
