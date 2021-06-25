@@ -242,7 +242,7 @@ def update_uncomplete_observations(path=''):
             # 11322 2004-05-01 06:00:00+00:00
             observation_time = record['timestamp']
             ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
-            if ilm_observation_veebist:
+            if ilm_observation_veebist and ilm_observation_veebist['airtemperature']:
                 id = insert_new_observations(ilm_observation_veebist, path)
                 print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
                 rows_updated += 1
