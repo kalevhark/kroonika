@@ -1,3 +1,4 @@
+import calendar
 from configparser import ConfigParser
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
@@ -90,6 +91,11 @@ def float_or_none(value):
     except:
         return None
 
+# tagastab kuu viimase pühapäeva UTC
+def last_sunday(year, month):
+    last_sunday = max(week[-1] for week in calendar.monthcalendar(year, month))
+    return pytz.utc.localize(datetime(year, month, last_sunday))
+
 # postgresql andmebaasi lugemiseks seadete lugemine .ini failist
 # The following config() function read the database.ini file and returns the connection parameters.
 def config(path='', filename='utils/database.ini', section='postgresql'):
@@ -140,7 +146,7 @@ def ilm_praegu():
             i[it.tag] = data
     return i
 
-# Ilmateenistuse veebist täistunni max+min andmed
+# Ilmateenistuse veebist tunni max+min andmed
 def get_maxmin_airtemperature(dt_utc):
     dt_loc = utc2eesti_aeg(dt_utc)
     p2ev = dt_loc.strftime("%d.%m.%Y")

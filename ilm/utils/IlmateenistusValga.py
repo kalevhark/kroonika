@@ -14,6 +14,7 @@ from pytz import timezone
 import requests
 
 from ilm.models import Ilm, Jaam
+from ilm.utils import utils
 
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
 def float_or_none(value):
@@ -284,60 +285,63 @@ class IlmateenistusData():
         Tagastab etteantud ajahetke (d) viimase möödunud täistunni ilmaandmed
         ilmateenistus.ee veebilehelt
         """
-        jaam = 'Valga'
-        cols = ['airtemperature',
-                'relativehumidity',
-                'airpressure',
-                'airpressure_delta',
-                'winddirection',
-                'windspeed',
-                'windspeedmax',
-                'cloudiness',
-                'phenomenon',
-                'phenomenon_observer',
-                'precipitations',
-                'visibility']
-        href = 'http://ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
-        p2ev = d.strftime("%d.%m.%Y")
-        tund = d.strftime("%H")
-        # Päringu aadress
-        p2ring = ''.join(
-            [href,
-             '?filter[date]=',
-             p2ev,
-             '&filter[hour]=',
-             tund]
-        )
-        # Loeme veebist andmed
-        req = Request(p2ring, headers={'User-Agent': 'Mozilla/5.0'})
-        webpage = urlopen(req).read()
-        # Struktueerime
-        soup = BeautifulSoup(webpage, 'html.parser')
-        kontroll_hour = soup.find(attrs={"name": "filter[hour]"})
-        kontroll_date = soup.find(attrs={"name": "filter[date]"})
-        andmed = dict()
-        if kontroll_hour:
-            if kontroll_hour['value'].zfill(2) != tund.zfill(2) or kontroll_date['value'] != p2ev:
-                # Kui vastus vale kellaajaga või kuupäevaga, saadame tagasi tühja tabeli
-                return andmed
-        # Leiame lehelt tabeli
-        table = soup.table
-        # Leiame tabelist rea
-        row = table.find(string=re.compile(jaam))
-        data = row.find_parent().find_next_siblings()
-        for i in range(len(data)):
-            if data[i]: # kui andmeväli pole tühi
-                if cols[i] in ['phenomenon', 'phenomenon_observer']: # tekstiväli
-                    andmed[cols[i]] = data[i].text.strip()
-                else: # numbriväli
-                    value = data[i].text.strip().replace(',', '.')
-                    andmed[cols[i]] = float_or_none(value)
-            else:
-                andmed[cols[i]] = None
+        # jaam = 'Valga'
+        # cols = ['airtemperature',
+        #         'relativehumidity',
+        #         'airpressure',
+        #         'airpressure_delta',
+        #         'winddirection',
+        #         'windspeed',
+        #         'windspeedmax',
+        #         'cloudiness',
+        #         'phenomenon',
+        #         'phenomenon_observer',
+        #         'precipitations',
+        #         'visibility']
+        # href = 'http://ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
+        # p2ev = d.strftime("%d.%m.%Y")
+        # tund = d.strftime("%H")
+        # # Päringu aadress
+        # p2ring = ''.join(
+        #     [href,
+        #      '?filter[date]=',
+        #      p2ev,
+        #      '&filter[hour]=',
+        #      tund]
+        # )
+        # # Loeme veebist andmed
+        # req = Request(p2ring, headers={'User-Agent': 'Mozilla/5.0'})
+        # webpage = urlopen(req).read()
+        # # Struktueerime
+        # soup = BeautifulSoup(webpage, 'html.parser')
+        # kontroll_hour = soup.find(attrs={"name": "filter[hour]"})
+        # kontroll_date = soup.find(attrs={"name": "filter[date]"})
+        # andmed = dict()
+        # if kontroll_hour:
+        #     if kontroll_hour['value'].zfill(2) != tund.zfill(2) or kontroll_date['value'] != p2ev:
+        #         # Kui vastus vale kellaajaga või kuupäevaga, saadame tagasi tühja tabeli
+        #         return andmed
+        # # Leiame lehelt tabeli
+        # table = soup.table
+        # # Leiame tabelist rea
+        # row = table.find(string=re.compile(jaam))
+        # data = row.find_parent().find_next_siblings()
+        # for i in range(len(data)):
+        #     if data[i]: # kui andmeväli pole tühi
+        #         if cols[i] in ['phenomenon', 'phenomenon_observer']: # tekstiväli
+        #             andmed[cols[i]] = data[i].text.strip()
+        #         else: # numbriväli
+        #             value = data[i].text.strip().replace(',', '.')
+        #             andmed[cols[i]] = float_or_none(value)
+        #     else:
+        #         andmed[cols[i]] = None
+        #
+        # andmed['station'] = Jaam.objects.filter(name=jaam).first()
+        # andmed['timestamp'] = pytz.timezone('Europe/Tallinn').localize(
+        #     datetime(d.year, d.month, d.day, d.hour))
 
-        andmed['station'] = Jaam.objects.filter(name=jaam).first()
-        andmed['timestamp'] = pytz.timezone('Europe/Tallinn').localize(
-            datetime(d.year, d.month, d.day, d.hour))
+        dt_utc = d.astimezone(pytz.utc)
+        andmed = utils.ilmaandmed_veebist(dt_utc)
         # Ilmaandmed andmebaasi juhul kui põhiandmed olemas
         if andmed['airtemperature'] != None:
             i = Ilm(**andmed)

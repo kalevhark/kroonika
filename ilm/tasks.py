@@ -261,6 +261,49 @@ def update_uncomplete_observations(path=''):
     # print(f'Täiendati: {rows_updated}/{rows_uncomplete}')
     return rows_updated
 
+# Täiendab puudulikud kirjed, millel puudub õhutemperatuurinäit
+def update_missing_observations(path=''):
+    conn = None
+    rows_updated = 0
+    timestamp_missing_records = []
+    try:
+        # read database configuration
+        params = utils.config(path)
+        # connect to the PostgreSQL database
+        conn = psycopg2.connect(**params)
+        # create a new cursor
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        # leiame kõik kuupäevaread
+        cur.execute("SELECT timestamp FROM ilm_ilm ORDER timestamp;")
+        timestamp_all_records = [record['timestamp'] for record in cur]
+        for n in range(0, len(timestamp_all_records)-1):
+            if (timestamp_all_records[n+1] - timestamp_all_records[n]) > timedelta(seconds=3600):
+                d = timestamp_all_records[n] + timedelta(hours=1)
+                while d not in timestamp_all_records:
+                    timestamp_missing_records.append(d)
+                    d += timedelta(hours=1)
+        print(timestamp_missing_records)
+        # for timestamp in timestamp_missing_records:
+        #     observation_time = timestamp
+        #     ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
+        #     if ilm_observation_veebist and ilm_observation_veebist['airtemperature']:
+        #         id = insert_new_observations(ilm_observation_veebist, path)
+        #         print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+        #         rows_updated += 1
+        #     else:
+        #         print(f'{observation_time} uuendamine ebaõnnestus')
+
+        # Commit the changes to the database
+        conn.commit()
+        # Close communication with the PostgreSQL database
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+    # print(f'Täiendati: {rows_updated}/{rows_uncomplete}')
+    return len(timestamp_missing_records)
 
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
@@ -274,6 +317,8 @@ if __name__ == '__main__':
     rows_updated = update_uncomplete_observations(path)
     if rows_updated > 0:
         print(f'Täiendati: {rows_updated} kirjet')
+
+    update_missing_observations(path)
 
     # Kontrollime 72 tunni andmete olemasolu, vajadusel lisame
     for hour in range(71, -1, -1): # Viimase 72 tunni andmed
