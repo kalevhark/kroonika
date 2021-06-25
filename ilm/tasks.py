@@ -215,6 +215,7 @@ def delete_duplicate_observations(path=''):
 # Täiendab puudulikud kirjed
 def update_uncomplete_observations(path=''):
     conn = None
+    rows_uncomplete = 0
     rows_updated = 0
     try:
         # read database configuration
@@ -223,21 +224,21 @@ def update_uncomplete_observations(path=''):
         conn = psycopg2.connect(**params)
         # create a new cursor
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        # execute the UPDATE  statement
-        # cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
+        # leiame jooksva aasta ilma õhutemperatuuri näiduta read
+        cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
+        # leiame kõik ilma õhutemperatuuri näiduta read
         cur.execute(
             "SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;"
         )
         # get the number of uncomplete rows
         rows_uncomplete = cur.rowcount
-        rows_updated = 0
         for record in cur:
             # record:
             # RealDictRow([
             #   ('id', 11322),
             #   ('timestamp', datetime.datetime(2004, 5, 1, 6, 0, tzinfo=psycopg2.tz.FixedOffsetTimezone(offset=0, name=None)))
             # ])
-            print(record['id'], record['timestamp'])
+            print(record['timestamp'], 'ebatäielikud andmed', record['id'])
             # 11322 2004-05-01 06:00:00+00:00
             observation_time = record['timestamp']
             ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)

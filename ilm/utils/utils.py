@@ -161,7 +161,7 @@ def ilmaandmed_veebist(dt_utc):
             'visibility']
     href = 'http://ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
     dt = utc2eesti_aeg(dt_utc)
-    print(dt)
+    # print(dt)
     p2ev = dt.strftime("%d.%m.%Y")
     tund = dt.strftime("%H")
     # Päringu aadress
