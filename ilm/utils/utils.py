@@ -78,7 +78,7 @@ OWM_CODES = {
     "804": "pilvine", # overcast clouds: 85-100%;Clouds
 }
 
-# Teisendab UTC -> Eesti aeg
+# Teisendab noTZ -> Eesti aeg
 def utc2eesti_aeg(dt):
     eesti_aeg = pytz.timezone('Europe/Tallinn')
     return dt.astimezone(eesti_aeg)
