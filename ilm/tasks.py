@@ -225,11 +225,11 @@ def update_uncomplete_observations(path=''):
         # create a new cursor
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         # leiame jooksva aasta ilma õhutemperatuuri näiduta read
-        # cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
+        cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
         # leiame kõik ilma õhutemperatuuri näiduta read
-        cur.execute(
-            "SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;"
-        )
+        # cur.execute(
+        #     "SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;"
+        # )
         # get the number of uncomplete rows
         rows_uncomplete = cur.rowcount
         for record in cur:
@@ -274,7 +274,13 @@ def update_missing_observations(path=''):
         # create a new cursor
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         # leiame kõik kuupäevaread
-        cur.execute("SELECT timestamp FROM ilm_ilm ORDER BY timestamp ASC;")
+        # cur.execute(
+        #     "SELECT timestamp FROM ilm_ilm ORDER BY timestamp ASC;"
+        # )
+        # leiame kõik kuupäevaread köesoleval aastal
+        cur.execute(
+            "SELECT timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) ORDER BY timestamp ASC;"
+        )
         timestamp_all_records = [record['timestamp'] for record in cur]
         for n in range(0, len(timestamp_all_records)-1):
             if (timestamp_all_records[n+1] - timestamp_all_records[n]) > timedelta(seconds=3600):
