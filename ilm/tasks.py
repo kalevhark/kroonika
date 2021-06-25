@@ -212,7 +212,7 @@ def delete_duplicate_observations(path=''):
     # print(f'Kustutati: {rows_deleted}')
     return rows_deleted
 
-# Täiendab puudulikud kirjed
+# Täiendab puudulikud kirjed, millel puudub õhutemperatuurinäit
 def update_uncomplete_observations(path=''):
     conn = None
     rows_uncomplete = 0
@@ -225,11 +225,11 @@ def update_uncomplete_observations(path=''):
         # create a new cursor
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         # leiame jooksva aasta ilma õhutemperatuuri näiduta read
-        # cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
+        cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
         # leiame kõik ilma õhutemperatuuri näiduta read
-        cur.execute(
-            "SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;"
-        )
+        # cur.execute(
+        #     "SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;"
+        # )
         # get the number of uncomplete rows
         rows_uncomplete = cur.rowcount
         for record in cur:
@@ -258,7 +258,7 @@ def update_uncomplete_observations(path=''):
     finally:
         if conn is not None:
             conn.close()
-    print(f'Täiendati: {rows_updated}/{rows_uncomplete}')
+    # print(f'Täiendati: {rows_updated}/{rows_uncomplete}')
     return rows_updated
 
 
@@ -271,7 +271,9 @@ if __name__ == '__main__':
         print(f'Kustutati: {rows_deleted} kirjet')
 
     # Täiendame puudulikke kirjeid
-    update_uncomplete_observations(path)
+    rows_updated = update_uncomplete_observations(path)
+    if rows_updated > 0:
+        print(f'Täiendati: {rows_updated} kirjet')
 
     # Kontrollime 72 tunni andmete olemasolu, vajadusel lisame
     for hour in range(71, -1, -1): # Viimase 72 tunni andmed
