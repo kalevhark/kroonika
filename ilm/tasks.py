@@ -227,7 +227,7 @@ def update_uncomplete_observations(path=''):
         cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;")
         # get the number of updated rows
         rows_uncomplete = cur.rowcount
-        for record in rows_uncomplete:
+        for record in cur:
             # record = cur.fetchone()
             # print(record)
             # record:
@@ -236,6 +236,7 @@ def update_uncomplete_observations(path=''):
             #   ('timestamp', datetime.datetime(2004, 5, 1, 6, 0, tzinfo=psycopg2.tz.FixedOffsetTimezone(offset=0, name=None)))
             # ])
             print(record['id'], record['timestamp'])
+            # print(record)
             # 11322 2004-05-01 06:00:00+00:00
 
         # Commit the changes to the database
