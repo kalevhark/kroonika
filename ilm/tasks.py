@@ -226,7 +226,7 @@ def update_uncomplete_observations(path=''):
         # execute the UPDATE  statement
         cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
         # get the number of uncomplete rows
-        # rows_uncomplete = cur.rowcount
+        rows_uncomplete = cur.rowcount
         rows_updated = 0
         for record in cur:
             # record:
@@ -239,8 +239,8 @@ def update_uncomplete_observations(path=''):
             observation_time = record['timestamp']
             ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
             if ilm_observation_veebist:
-                # id = insert_new_observations(ilm_observation_veebist, path)
-                # print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+                id = insert_new_observations(ilm_observation_veebist, path)
+                print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
                 rows_updated += 1
             else:
                 print(f'{observation_time} uuendamine ebaõnnestus')
@@ -254,7 +254,7 @@ def update_uncomplete_observations(path=''):
     finally:
         if conn is not None:
             conn.close()
-    print(f'Täiendati: {rows_updated}')
+    print(f'Täiendati: {rows_updated}/{rows_uncomplete}')
     return rows_updated
 
 
