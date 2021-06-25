@@ -228,8 +228,10 @@ def update_uncomplete_observations(path=''):
         # get the number of updated rows
         rows_updated = cur.rowcount
         record = cur.fetchone()
-        # print(record)
+        print(record)
         # record: RealDictRow([('timestamp', datetime.datetime(2004, 5, 1, 6, 0, tzinfo=psycopg2.tz.FixedOffsetTimezone(offset=0, name=None)))])
+        print(record[0]['id'], record[0]['timestamp'])
+
         # Commit the changes to the database
         # conn.commit()
         # Close communication with the PostgreSQL database
