@@ -280,11 +280,13 @@ def update_missing_observations(path=''):
             if (timestamp_all_records[n+1] - timestamp_all_records[n]) > timedelta(seconds=3600):
                 d = timestamp_all_records[n] + timedelta(hours=1)
                 while d not in timestamp_all_records:
-                    timestamp_missing_records.append(d)
+                    if d != utils.last_sunday(d.year, 10): # oktoobri viimane pühapäev
+                        timestamp_missing_records.append(d)
                     d += timedelta(hours=1)
-        print(timestamp_missing_records)
-        # for timestamp in timestamp_missing_records:
-        #     observation_time = timestamp
+
+        for timestamp in timestamp_missing_records:
+            observation_time = timestamp
+            print(observation_time)
         #     ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
         #     if ilm_observation_veebist and ilm_observation_veebist['airtemperature']:
         #         id = insert_new_observations(ilm_observation_veebist, path)
