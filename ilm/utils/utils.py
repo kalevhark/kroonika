@@ -143,7 +143,7 @@ def ilm_praegu():
 # Ilmateenistuse etteantud täistunni mõõtmise andmed veebist
 def ilmaandmed_veebist(dt):
     """
-    Tagastab etteantud ajahetke (d) viimase möödunud täistunni ilmaandmed
+    Tagastab etteantud ajahetke (dt) viimase möödunud täistunni ilmaandmed
     ilmateenistus.ee veebilehelt
     """
     jaam = 'Valga'
@@ -161,6 +161,7 @@ def ilmaandmed_veebist(dt):
             'visibility']
     href = 'http://ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
     dt = utc2eesti_aeg(dt)
+    print(dt)
     p2ev = dt.strftime("%d.%m.%Y")
     tund = dt.strftime("%H")
     # Päringu aadress

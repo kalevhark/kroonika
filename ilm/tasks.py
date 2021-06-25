@@ -224,23 +224,29 @@ def update_uncomplete_observations(path=''):
         # create a new cursor
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         # execute the UPDATE  statement
-        cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;")
-        # get the number of updated rows
-        rows_uncomplete = cur.rowcount
+        cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', mydate) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
+        # get the number of uncomplete rows
+        # rows_uncomplete = cur.rowcount
+        rows_updated = 0
         for record in cur:
-            # record = cur.fetchone()
-            # print(record)
             # record:
             # RealDictRow([
-            # ('id', 11322),
+            #   ('id', 11322),
             #   ('timestamp', datetime.datetime(2004, 5, 1, 6, 0, tzinfo=psycopg2.tz.FixedOffsetTimezone(offset=0, name=None)))
             # ])
             print(record['id'], record['timestamp'])
-            # print(record)
             # 11322 2004-05-01 06:00:00+00:00
+            observation_time = record['timestamp']
+            ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
+            if ilm_observation_veebist:
+                # id = insert_new_observations(ilm_observation_veebist, path)
+                # print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+                rows_updated += 1
+            else:
+                print(f'{observation_time} uuendamine ebaõnnestus')
 
         # Commit the changes to the database
-        # conn.commit()
+        conn.commit()
         # Close communication with the PostgreSQL database
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
@@ -248,7 +254,7 @@ def update_uncomplete_observations(path=''):
     finally:
         if conn is not None:
             conn.close()
-    # print(f'Täiendati: {rows_updated}')
+    print(f'Täiendati: {rows_updated}')
     return rows_updated
 
 
