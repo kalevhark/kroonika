@@ -226,17 +226,17 @@ def update_uncomplete_observations(path=''):
         # execute the UPDATE  statement
         cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;")
         # get the number of updated rows
-        rows_updated = cur.rowcount
-        record = cur.fetchone()
-        print(record)
-        # record:
-        # RealDictRow(
-        # [
-        # ('id', 11322),
-        # ('timestamp', datetime.datetime(2004, 5, 1, 6, 0, tzinfo=psycopg2.tz.FixedOffsetTimezone(offset=0, name=None)))
-        # ]
-        # )
-        print(record['id'], record['timestamp'])
+        rows_uncomplete = cur.rowcount
+        for record in rows_uncomplete:
+            # record = cur.fetchone()
+            # print(record)
+            # record:
+            # RealDictRow([
+            # ('id', 11322),
+            #   ('timestamp', datetime.datetime(2004, 5, 1, 6, 0, tzinfo=psycopg2.tz.FixedOffsetTimezone(offset=0, name=None)))
+            # ])
+            print(record['id'], record['timestamp'])
+            # 11322 2004-05-01 06:00:00+00:00
 
         # Commit the changes to the database
         # conn.commit()
