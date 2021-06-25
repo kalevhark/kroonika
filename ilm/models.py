@@ -7,7 +7,7 @@ class Ilm(models.Model):
         on_delete=models.CASCADE,
         blank=True,
     )
-    airtemperature = models.DecimalField('Õhutemperatuur (°C)', max_digits=4, decimal_places=1, blank=True, null=True)
+    airtemperature = models.DecimalField('Õhutemperatuur tunni keskmine (°C)', max_digits=4, decimal_places=1, blank=True, null=True)
     relativehumidity = models.DecimalField('Suhteline õhuniiskus (%)', max_digits=4, decimal_places=1, blank=True,
                                            null=True)
     airpressure = models.DecimalField('Õhurõhk merepinnal (hPa)', max_digits=6, decimal_places=1, blank=True, null=True)
@@ -22,6 +22,8 @@ class Ilm(models.Model):
     precipitations = models.DecimalField('Sademed (mm)', max_digits=4, decimal_places=1, blank=True, null=True)
     visibility = models.DecimalField('Nähtavus (km)', max_digits=5, decimal_places=1, blank=True, null=True)
     timestamp = models.DateTimeField('Mõõtmise aeg', blank=True)
+    # airtemperature_max = models.DecimalField('Õhutemperatuur tunni max (°C)', max_digits=4, decimal_places=1, blank=True, null=True)
+    # airtemperature_min = models.DecimalField('Õhutemperatuur tunni min (°C)', max_digits=4, decimal_places=1, blank=True, null=True)
 
     def __repr__(self):
         return str(self.timestamp)

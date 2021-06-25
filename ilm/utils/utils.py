@@ -140,6 +140,48 @@ def ilm_praegu():
             i[it.tag] = data
     return i
 
+# Ilmateenistuse veebist täistunni max+min andmed
+def get_maxmin_airtemperature(dt_utc):
+    dt_loc = utc2eesti_aeg(dt_utc)
+    p2ev = dt_loc.strftime("%d.%m.%Y")
+    tund = dt_loc.strftime("%H")
+
+    url = 'https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/maxmin-ohutemp/'
+    params = {
+        'lang': 'et',
+        r'filter%5BmaxDate%5D': p2ev,
+        r'filter%5BminDate%5D': p2ev,
+        r'filter%5Bdate%5D': p2ev,
+        r'filter%5Bhour%5D': tund
+    }
+    headers = {'User-Agent': 'Mozilla/5.0'}
+
+    maxmin_data = dict()
+    try:
+        r = requests.get(
+            url=url,
+            params=params,
+            headers=headers
+        )
+
+        # print(r.status_code, r.text.find('Valga'))
+        soup = BeautifulSoup(r.text, 'html.parser')
+
+        tables = soup.find_all('table')
+        for table in tables:
+            if table.thead.get_text().find('Maksimaalne') > 0:
+                trs = table.tbody.find_all('tr')
+                for tr in trs:
+                    if tr.text.find('Valga') > 0:
+                        weather_data = tr.find_all('td')
+                        maxmin_data['airtemperature_max'] = float_or_none(weather_data[1].text)
+                        maxmin_data['airtemperature_min'] = float_or_none(weather_data[2].text)
+                        break
+    except:
+        pass
+    return maxmin_data
+
+
 # Ilmateenistuse etteantud täistunni mõõtmise andmed veebist
 def ilmaandmed_veebist(dt_utc):
     """
@@ -174,7 +216,10 @@ def ilmaandmed_veebist(dt_utc):
     )
     andmed = dict()
     # Loeme veebist andmed
-    req = Request(p2ring, headers={'User-Agent': 'Mozilla/5.0'})
+    req = Request(
+        p2ring,
+        headers={'User-Agent': 'Mozilla/5.0'}
+    )
     try:
         response = urlopen(req).read()
     except URLError as e:
@@ -213,11 +258,12 @@ def ilmaandmed_veebist(dt_utc):
         andmed['station_id'] = 1
         andmed['timestamp'] = pytz.timezone('Europe/Tallinn').localize(
             datetime(dt.year, dt.month, dt.day, dt.hour))
-        # Ilmaandmed andmebaasi juhul kui põhiandmed olemas
-        # if andmed['airtemperature'] != None:
-        #     i = Ilm(**andmed)
-        #     i.save()
-        #     print('Salvestan andmebaasi:', d)
+        # küsime andmed maxmin andmed juurde
+        maxmin_andmed = get_maxmin_airtemperature(dt_utc)
+        if maxmin_andmed:
+            pass
+            # andmed['airtemperature_max'] = maxmin_andmed['airtemperature_max']
+            # andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
     return andmed
 
 def yrno_48h():
