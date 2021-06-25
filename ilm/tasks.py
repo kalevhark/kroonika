@@ -286,14 +286,14 @@ def update_missing_observations(path=''):
 
         for timestamp in timestamp_missing_records:
             observation_time = timestamp
-            print(observation_time)
-        #     ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
-        #     if ilm_observation_veebist and ilm_observation_veebist['airtemperature']:
-        #         id = insert_new_observations(ilm_observation_veebist, path)
-        #         print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
-        #         rows_updated += 1
-        #     else:
-        #         print(f'{observation_time} uuendamine ebaõnnestus')
+            print(observation_time, 'puuduvad andmed')
+            ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
+            if ilm_observation_veebist and ilm_observation_veebist['airtemperature']:
+                id = insert_new_observations(ilm_observation_veebist, path)
+                print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+                rows_updated += 1
+            else:
+                print(f'{observation_time} uuendamine ebaõnnestus')
 
         # Commit the changes to the database
         conn.commit()
@@ -305,7 +305,7 @@ def update_missing_observations(path=''):
         if conn is not None:
             conn.close()
     # print(f'Täiendati: {rows_updated}/{rows_uncomplete}')
-    return len(timestamp_missing_records)
+    return rows_updated
 
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
@@ -319,8 +319,9 @@ if __name__ == '__main__':
     rows_updated = update_uncomplete_observations(path)
     if rows_updated > 0:
         print(f'Täiendati: {rows_updated} kirjet')
-
-    update_missing_observations(path)
+    rows_missing = update_missing_observations(path)
+    if rows_missing > 0:
+        print(f'Lisati: {rows_missing} kirjet')
 
     # Kontrollime 72 tunni andmete olemasolu, vajadusel lisame
     for hour in range(71, -1, -1): # Viimase 72 tunni andmed
