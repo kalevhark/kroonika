@@ -180,11 +180,21 @@ def get_maxmin_airtemperature(dt_utc):
                 for tr in trs:
                     if tr.text.find('Valga') > 0:
                         weather_data = tr.find_all('td')
-                        maxmin_data['airtemperature_max'] = float_or_none(weather_data[1].text)
-                        maxmin_data['airtemperature_min'] = float_or_none(weather_data[2].text)
+                        maxmin_data['airtemperature_max'] = float_or_none(
+                            weather_data[1]
+                                .text
+                                .strip()
+                                .replace(',', '.')
+                        )
+                        maxmin_data['airtemperature_min'] = float_or_none(
+                            weather_data[2]
+                                .text
+                                .strip()
+                                .replace(',', '.')
+                        )
                         break
-    except:
-        pass
+    except Exception as error:
+        print(error)
     return maxmin_data
 
 
@@ -267,7 +277,6 @@ def ilmaandmed_veebist(dt_utc):
         # küsime andmed maxmin andmed juurde
         maxmin_andmed = get_maxmin_airtemperature(dt_utc)
         if maxmin_andmed:
-            pass
             andmed['airtemperature_max'] = maxmin_andmed['airtemperature_max']
             andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
     return andmed
