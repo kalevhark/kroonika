@@ -13,6 +13,12 @@ from ipwhois import IPWhois
 
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt, Allikas, Viide
 
+# Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
+def float_or_none(value):
+    try:
+        return float(value.strip().replace(',', '.'))
+    except:
+        return None
 
 #
 # Funktsioon duplikaatkirjete koondamiseks
@@ -555,7 +561,7 @@ def task_20210512():
         isik.organisatsioonid.add(org)
         isik.viited.add(viide)
 
-def ilmadata():
+def export_ilm_data():
     from ilm.models import Ilm
     from django.db.models import Sum, Count, Avg, Min, Max
     qs_kuud = Ilm.objects \
@@ -575,3 +581,34 @@ def ilmadata():
                     'avgtemp': float(kuu["airtemperature__avg"])
                 }
             )
+
+def import_ilm_maxmin_airtemperature():
+    from ilm.models import Ilm
+    from datetime import datetime
+    fn_import = 'ilm_maxmin_2004_01_30_00utc.txt'
+    format = '%Y-%m-%d %H:%M:%S%z'
+    with open(fn_import) as f:
+        ok = 0
+        nok = 0
+        with open('nok.txt', 'w') as viga:
+            for line in f:
+                data = line.split(';')
+                dt_loc_str = data[0].strip()
+                airtemperature_max = float_or_none(data[2])
+                airtemperature_min = float_or_none(data[3])
+
+                dt_loc = datetime.strptime(dt_loc_str, format)
+                obs = Ilm.objects.filter(timestamp=dt_loc).first()
+
+                if obs and (airtemperature_max != None or airtemperature_min != None):
+                    obs.airtemperature_max = airtemperature_max
+                    obs.airtemperature_min = airtemperature_min
+                    # print(dt_loc, airtemperature_max, airtemperature_min)
+                    # obs.save(update_fields=['airtemperature_max', 'airtemperature_min'])
+                    ok += 1
+                else:
+                    viga.write(line)
+                    nok += 1
+    print(ok, nok)
+
+
