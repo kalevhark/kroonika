@@ -590,6 +590,7 @@ def import_ilm_maxmin_airtemperature():
     with open(fn_import) as f:
         ok = 0
         nok = 0
+        y = 0
         with open('nok.txt', 'w') as viga:
             for line in f:
                 data = line.split(';')
@@ -598,15 +599,19 @@ def import_ilm_maxmin_airtemperature():
                 airtemperature_min = float_or_none(data[3])
 
                 dt_loc = datetime.strptime(dt_loc_str, format)
+                if y != dt_loc.year:
+                    y = dt_loc.year
+                    print(y) # edenemise näitamiseks
                 obs = Ilm.objects.filter(timestamp=dt_loc).first()
 
                 if obs and (airtemperature_max != None or airtemperature_min != None):
                     obs.airtemperature_max = airtemperature_max
                     obs.airtemperature_min = airtemperature_min
                     # print(dt_loc, airtemperature_max, airtemperature_min)
-                    obs.save(update_fields=['airtemperature_max', 'airtemperature_min'])
+                    # obs.save(update_fields=['airtemperature_max', 'airtemperature_min'])
                     ok += 1
                 else:
+                    print('Viga: ', line, end='')
                     viga.write(line)
                     nok += 1
     print(ok, nok)
