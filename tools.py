@@ -595,8 +595,6 @@ def import_ilm_maxmin_airtemperature():
             for line in f:
                 data = line.split(';')
                 dt_loc_str = data[0].strip()
-                airtemperature_max = float_or_none(data[2])
-                airtemperature_min = float_or_none(data[3])
 
                 dt_loc = datetime.strptime(dt_loc_str, format)
                 if y != dt_loc.year:
@@ -604,9 +602,9 @@ def import_ilm_maxmin_airtemperature():
                     print(y) # edenemise näitamiseks
                 obs = Ilm.objects.filter(timestamp=dt_loc).first()
 
-                if obs and (airtemperature_max != None or airtemperature_min != None):
-                    obs.airtemperature_max = airtemperature_max
-                    obs.airtemperature_min = airtemperature_min
+                if len(data)>2 and obs and (float_or_none(data[2]) != None or float_or_none(data[3]) != None):
+                    obs.airtemperature_max = float_or_none(data[2])
+                    obs.airtemperature_min = float_or_none(data[3])
                     # print(dt_loc, airtemperature_max, airtemperature_min)
                     # obs.save(update_fields=['airtemperature_max', 'airtemperature_min'])
                     ok += 1
