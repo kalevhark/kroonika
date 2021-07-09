@@ -585,8 +585,8 @@ def export_ilm_data():
 def import_ilm_maxmin_airtemperature():
     from ilm.models import Ilm
     from datetime import datetime
-    fn_import = 'ilm_maxmin.txt'
-    # fn_import = 'ilm_maxmin_upd_2021_07_09_08.txt'
+    # fn_import = 'ilm_maxmin.txt'
+    fn_import = 'ilm_maxmin_upd_2021_07_09_08.txt'
     format = '%Y-%m-%d %H:%M:%S%z'
     with open(fn_import) as f:
         ok = 0
