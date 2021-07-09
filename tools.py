@@ -606,7 +606,7 @@ def import_ilm_maxmin_airtemperature():
                     obs.airtemperature_max = float_or_none(data[2])
                     obs.airtemperature_min = float_or_none(data[3])
                     # print(dt_loc, airtemperature_max, airtemperature_min)
-                    # obs.save(update_fields=['airtemperature_max', 'airtemperature_min'])
+                    obs.save(update_fields=['airtemperature_max', 'airtemperature_min'])
                     ok += 1
                 else:
                     print('Viga: ', line, end='')
