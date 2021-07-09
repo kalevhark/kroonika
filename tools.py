@@ -585,8 +585,8 @@ def export_ilm_data():
 def import_ilm_maxmin_airtemperature():
     from ilm.models import Ilm
     from datetime import datetime
-    # fn_import = 'ilm_maxmin.txt'
-    fn_import = 'ilm_maxmin_upd_2021_07_09_08.txt'
+    fn_import = 'ilm_maxmin.txt'
+    # fn_import = 'ilm_maxmin_upd_2021_07_09_08.txt'
     format = '%Y-%m-%d %H:%M:%S%z'
     with open(fn_import) as f:
         ok = 0
@@ -607,7 +607,7 @@ def import_ilm_maxmin_airtemperature():
                     obs.airtemperature_max = float_or_none(data[2])
                     obs.airtemperature_min = float_or_none(data[3])
                     # print(dt_loc, airtemperature_max, airtemperature_min)
-                    obs.save(update_fields=['airtemperature_max', 'airtemperature_min'])
+                    # obs.save(update_fields=['airtemperature_max', 'airtemperature_min'])
                     ok += 1
                 else:
                     print('Viga: ', line, end='')
