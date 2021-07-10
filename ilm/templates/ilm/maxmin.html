@@ -58,6 +58,7 @@ tbody th:focus::before {
 
 /* Tabeliseaded näitajatele */
 .rain,
+.days,
 .temperature {
   text-align: right;
 }
@@ -162,10 +163,10 @@ if (screen.width < 500) {
               </span>
             </td>
             <td class="rain">{{ data.year_prec_sum }}</td>
-            <td>{% if data.days_below30 %}{{ data.days_below30 }}{% endif %}</td>
-            <td>{% if data.days_above30 %}{{ data.days_above30 }}{% endif %}</td>
-            <td>{% if data.days_below20 %}{{ data.days_below20 }}{% endif %}</td>
-            <td>{% if data.days_above20 %}{{ data.days_above20 }}{% endif %}</td>
+            <td class="days">{% if data.days_below30 %}{{ data.days_below30 }}{% endif %}</td>
+            <td class="days">{% if data.days_above30 %}{{ data.days_above30 }}{% endif %}</td>
+            <td class="days">{% if data.days_below20 %}{{ data.days_below20 }}{% endif %}</td>
+            <td class="days">{% if data.days_above20 %}{{ data.days_above20 }}{% endif %}</td>
           </tr>
         {% endfor %}
 			</tbody>
