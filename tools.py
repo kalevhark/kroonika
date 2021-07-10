@@ -635,10 +635,11 @@ def ilm_maxmin():
         year_max = year['airtemperature_max__max']
         obs_max = Ilm.objects.filter(airtemperature_max=year_max, timestamp__year=y)
         # Põevi Min(d)>+30 ja Max(d)<-30
-
+        days_below30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__gte=30).count()
+        days_above30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__lte=-30).count()
         # Põevi Avg(d)>+20 ja Avg(d)<-20
-        days_below20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature__avg__gte=20)
-        days_above20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature__avg__lte=-20)
+        days_below20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__gte=20).count()
+        days_above20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__lte=-20).count()
 
         print(
             y,
@@ -648,6 +649,8 @@ def ilm_maxmin():
             [obs.timestamp for obs in obs_max],
             days_below20,
             days_above20,
+            days_below30,
+            days_above30,
         )
         years_top[y] = {
             'year_min': year_min,
