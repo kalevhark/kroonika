@@ -615,4 +615,45 @@ def import_ilm_maxmin_airtemperature():
                     nok += 1
     print(ok, nok)
 
+def ilm_maxmin():
+    from ilm.models import Ilm
+    from django.db.models import Sum, Count, Avg, Min, Max
+    years_top = dict()
+    years_maxmin_qs = Ilm.objects\
+        .values('timestamp__year')\
+        .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Sum('precipitations'))\
+        .order_by('timestamp__year')
+    days_maxmin_qs = Ilm.objects\
+        .values('timestamp__year', 'timestamp__month', 'timestamp__day')\
+        .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Avg('airtemperature'), Sum('precipitations'))\
+        .order_by('timestamp__year', 'timestamp__month', 'timestamp__day')
+    for year in years_maxmin_qs:
+        y = year['timestamp__year']
+        # Maksimum-miinimum
+        year_min = year['airtemperature_min__min']
+        obs_min = Ilm.objects.filter(airtemperature_min=year_min, timestamp__year=y)
+        year_max = year['airtemperature_max__max']
+        obs_max = Ilm.objects.filter(airtemperature_max=year_max, timestamp__year=y)
+        # Põevi Min(d)>+30 ja Max(d)<-30
 
+        # Põevi Avg(d)>+20 ja Avg(d)<-20
+        days_below20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature__avg__gte=20)
+        days_above20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature__avg__lte=-20)
+
+        print(
+            y,
+            year_min,
+            [obs.timestamp for obs in obs_min],
+            year_max,
+            [obs.timestamp for obs in obs_max],
+            days_below20,
+            days_above20,
+        )
+        years_top[y] = {
+            'year_min': year_min,
+            'obs_min': obs_min,
+            'year_max': year_max,
+            'obs_max': obs_max,
+            'days_below20': days_below20,
+            'days_above20': days_above20
+        }
