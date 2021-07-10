@@ -2198,3 +2198,56 @@ def forecasts_quality(request):
         'data': forecast_log_analyze.main(path)
     }
     return render(request, 'ilm/forecasts_quality.html', context)
+
+def maxmin(request):
+    # from ilm.models import Ilm
+    # from django.db.models import Sum, Count, Avg, Min, Max
+    years_top = dict()
+    years_maxmin_qs = Ilm.objects\
+        .values('timestamp__year')\
+        .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Sum('precipitations'))\
+        .order_by('timestamp__year')
+    days_maxmin_qs = Ilm.objects\
+        .values('timestamp__year', 'timestamp__month', 'timestamp__day')\
+        .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Avg('airtemperature'), Sum('precipitations'))\
+        .order_by('timestamp__year', 'timestamp__month', 'timestamp__day')
+    for year in years_maxmin_qs:
+        y = year['timestamp__year']
+        # Maksimum-miinimum
+        year_min = year['airtemperature_min__min']
+        obs_min = Ilm.objects.filter(airtemperature_min=year_min, timestamp__year=y).first()
+        year_max = year['airtemperature_max__max']
+        obs_max = Ilm.objects.filter(airtemperature_max=year_max, timestamp__year=y).first()
+        # Põevi Min(d)>+30 ja Max(d)<-30
+        days_below30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__gte=30).count()
+        days_above30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__lte=-30).count()
+        # Põevi Avg(d)>+20 ja Avg(d)<-20
+        days_below20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__gte=20).count()
+        days_above20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__lte=-20).count()
+
+        # print(
+        #     y,
+        #     year_min,
+        #     [obs.timestamp for obs in obs_min],
+        #     year_max,
+        #     [obs.timestamp for obs in obs_max],
+        #     days_below20,
+        #     days_above20,
+        #     days_below30,
+        #     days_above30,
+        # )
+        years_top[y] = {
+            'year_min': year_min,
+            'obs_min': obs_min,
+            'year_max': year_max,
+            'obs_max': obs_max,
+            'days_below20': days_below20,
+            'days_above20': days_above20,
+            'days_below30': days_below30,
+            'days_above30': days_above30
+        }
+    return render(
+        request,
+        'ilm/maxmin.html',
+        {'years_top': years_top}
+    )

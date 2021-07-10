@@ -9,6 +9,7 @@ urlpatterns = [
     path('forecasts/', views.forecasts, name='forecasts'),
     # path('forecasts_yrno/', views.forecasts_yrno, name='forecasts_yrno'),
     path('forecasts_quality/', views.forecasts_quality, name='forecasts_quality'),
+    path('maxmin/', views.maxmin, name='maxmin'),
     path('mixed_ilmateade/', views.mixed_ilmateade, name='mixed_ilmateade'),
     path('container_history_andmed/', views.container_history_andmed, name='container_history_andmed'),
     path('container_history_aasta/', views.container_history_aasta, name='container_history_aasta'),

@@ -1,0 +1,165 @@
+{% extends "ilm/ilm_base.html" %}
+{% load static %}
+{% load ilm_extras %}
+
+{% block stylesheet %}
+<style>
+/* hoverable table rows + columns https://codepen.io/chriscoyier/pen/pvwmaR */
+table {
+  overflow: hidden;
+}
+
+td, th {
+  vertical-align: middle;
+  padding: 5px;
+  position: relative;
+  outline: 0;
+}
+
+body:not(.nohover) tbody tr:hover {
+  background-color: #ffa;
+}
+
+td:hover::after,
+thead th:not(:empty):hover::after,
+td:focus::after,
+thead th:not(:empty):focus::after {
+  content: '';
+  height: 10000px;
+  left: 0;
+  position: absolute;
+  top: -5000px;
+  width: 100%;
+  z-index: -1;
+}
+
+td:hover::after,
+th:hover::after {
+  background-color: #ffa;
+}
+
+td:focus::after,
+th:focus::after {
+  background-color: lightblue;
+}
+
+/* Focus stuff for mobile */
+td:focus::before,
+tbody th:focus::before {
+  background-color: lightblue;
+  content: '';
+  height: 100%;
+  top: 0;
+  left: -5000px;
+  position: absolute;
+  width: 10000px;
+  z-index: -1;
+}
+
+/* Tabeliseaded näitajatele */
+.rain,
+.temperature {
+  text-align: right;
+}
+
+/*
+td.rain.light::before {
+  content: '';
+  position: relative;
+  background:url('https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/05d.svg');
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+
+td.rain.moderate::before {
+  content: '';
+  position: relative;
+  background:url('https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/09.svg');
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+td.rain.heavy::before {
+  content: '';
+  position: relative;
+  background:url('https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/10.svg');
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+*/
+
+/* Climacon */
+.fs1 {
+	font-size: 2em;
+}
+</style>
+{% endblock %}
+
+{% block javascript %}
+<script>
+// whatever kind of mobile test you wanna do.
+if (screen.width < 500) {
+  $("body").addClass("nohover");
+  $("td, th")
+    .attr("tabindex", "1")
+    .on("touchstart", function() {
+      $(this).focus();
+    });
+}
+</script>
+{% endblock %}
+
+{% block title %}
+  {{ block.super }} - aastate ekstreemumid
+{% endblock %}
+
+{% block content %}
+  <div class="w3-row">
+		<table>
+			<thead>
+        <tr>
+          <th>Aasta</th>
+          <th colspan="2">Minimaalne</th>
+          <th colspan="2">Maksimaalne</th>
+          <th title="päevade arv kui temperatuur langes alla -30°C">< -30°C</th>
+          <th title="päevade arv kui temperatuur tõuses üle +30°C">> +30°C</th>
+          <th title="päevade arv kui temperatuur ei tõusnud üle -20°C">Arktiline päev</th>
+          <th title="päevade arv kui temperatuur ei langenud alla +20°C">Troopiline öö</th>
+        </tr>
+			</thead>
+			<tbody>
+        {% for year, data in years_top.items %}
+          <tr class="row">
+            <td>{{ year }}</td>
+            <td
+                class="temperature">
+              <span class="temperature colored-{% if data.year_min > 0 %}positive{% else %}negative{% endif %}">
+                {{ data.year_min|floatformat:1 }}
+              </span>
+            </td>
+            <td>
+              {{ data.obs_min.timestamp|date:"d.m H:i" }}
+            </td>
+            <td
+                class="temperature">
+              <span class="temperature colored-{% if data.year_max > 0 %}positive{% else %}negative{% endif %}">
+                {{ data.year_max|floatformat:1 }}
+              </span>
+            </td>
+            <td>
+              {{ data.obs_max.timestamp|date:"d.m H:i" }}
+            </td>
+            <td>{{ data.days_below20 }}</td>
+            <td>{{ data.days_above20 }}</td>
+            <td>{{ data.days_below30 }}</td>
+            <td>{{ data.days_above30 }}</td>
+          </tr>
+        {% endfor %}
+			</tbody>
+			</table>
+  </div>
+{% endblock %}
