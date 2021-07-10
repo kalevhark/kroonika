@@ -123,10 +123,10 @@ if (screen.width < 500) {
 			<thead>
         <tr>
           <th>Aasta</th>
-          <th colspan="2">Minimaalne</th>
-          <th colspan="2">Maksimaalne</th>
-          <th>Keskmine</th>
-          <th>Sademeid</th>
+          <th colspan="2">Minimaalne (°C)</th>
+          <th colspan="2">Maksimaalne (°C)</th>
+          <th>Keskmine (°C)</th>
+          <th>Sademeid (mm)</th>
           <th title="päevade arv kui temperatuur langes alla -30°C">< -30°C</th>
           <th title="päevade arv kui temperatuur tõusis üle +30°C">> +30°C</th>
           <th title="päevade arv kui temperatuur ei tõusnud üle -20°C">Arktiline päev</th>
@@ -161,11 +161,11 @@ if (screen.width < 500) {
                 {{ data.year_temp_avg|floatformat:1 }}
               </span>
             </td>
-            <td>{{ data.year_prec_sum }}</td>
-            <td>{{ data.days_below30 }}</td>
-            <td>{{ data.days_above30 }}</td>
-            <td>{{ data.days_below20 }}</td>
-            <td>{{ data.days_above20 }}</td>
+            <td class="rain">{{ data.year_prec_sum }}</td>
+            <td>{% if data.days_below30 %}{{ data.days_below30 }}{% endif %}</td>
+            <td>{% if data.days_above30 %}{{ data.days_above30 }}{% endif %}</td>
+            <td>{% if data.days_below20 %}{{ data.days_below20 }}{% endif %}</td>
+            <td>{% if data.days_above20 %}{{ data.days_above20 }}{% endif %}</td>
           </tr>
         {% endfor %}
 			</tbody>
