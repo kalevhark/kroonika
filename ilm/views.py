@@ -2205,7 +2205,7 @@ def maxmin(request):
     years_top = dict()
     years_maxmin_qs = Ilm.objects\
         .values('timestamp__year')\
-        .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Sum('precipitations'))\
+        .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Avg('airtemperature'), Sum('precipitations'))\
         .order_by('timestamp__year')
     days_maxmin_qs = Ilm.objects\
         .values('timestamp__year', 'timestamp__month', 'timestamp__day')\
@@ -2219,11 +2219,11 @@ def maxmin(request):
         year_max = year['airtemperature_max__max']
         obs_max = Ilm.objects.filter(airtemperature_max=year_max, timestamp__year=y).first()
         # Põevi Min(d)>+30 ja Max(d)<-30
-        days_below30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__gte=30).count()
-        days_above30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__lte=-30).count()
+        days_above30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__gte=30).count()
+        days_below30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__lte=-30).count()
         # Põevi Avg(d)>+20 ja Avg(d)<-20
-        days_below20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__gte=20).count()
-        days_above20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__lte=-20).count()
+        days_above20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__gte=20).count() # troopiline öö
+        days_below20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__lte=-20).count() # arktiline päev
 
         # print(
         #     y,

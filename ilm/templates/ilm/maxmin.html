@@ -126,7 +126,7 @@ if (screen.width < 500) {
           <th colspan="2">Minimaalne</th>
           <th colspan="2">Maksimaalne</th>
           <th title="päevade arv kui temperatuur langes alla -30°C">< -30°C</th>
-          <th title="päevade arv kui temperatuur tõuses üle +30°C">> +30°C</th>
+          <th title="päevade arv kui temperatuur tõusis üle +30°C">> +30°C</th>
           <th title="päevade arv kui temperatuur ei tõusnud üle -20°C">Arktiline päev</th>
           <th title="päevade arv kui temperatuur ei langenud alla +20°C">Troopiline öö</th>
         </tr>
@@ -153,10 +153,10 @@ if (screen.width < 500) {
             <td>
               {{ data.obs_max.timestamp|date:"d.m H:i" }}
             </td>
-            <td>{{ data.days_below20 }}</td>
-            <td>{{ data.days_above20 }}</td>
             <td>{{ data.days_below30 }}</td>
             <td>{{ data.days_above30 }}</td>
+            <td>{{ data.days_below20 }}</td>
+            <td>{{ data.days_above20 }}</td>
           </tr>
         {% endfor %}
 			</tbody>
