@@ -125,6 +125,8 @@ if (screen.width < 500) {
           <th>Aasta</th>
           <th colspan="2">Minimaalne</th>
           <th colspan="2">Maksimaalne</th>
+          <th>Keskmine</th>
+          <th>Sademeid</th>
           <th title="päevade arv kui temperatuur langes alla -30°C">< -30°C</th>
           <th title="päevade arv kui temperatuur tõusis üle +30°C">> +30°C</th>
           <th title="päevade arv kui temperatuur ei tõusnud üle -20°C">Arktiline päev</th>
@@ -153,6 +155,13 @@ if (screen.width < 500) {
             <td>
               {{ data.obs_max.timestamp|date:"d.m H:i" }}
             </td>
+            <td
+                class="temperature">
+              <span class="temperature colored-{% if data.year_temp_avg > 0 %}positive{% else %}negative{% endif %}">
+                {{ data.year_temp_avg|floatformat:1 }}
+              </span>
+            </td>
+            <td>{{ data.year_prec_sum }}</td>
             <td>{{ data.days_below30 }}</td>
             <td>{{ data.days_above30 }}</td>
             <td>{{ data.days_below20 }}</td>

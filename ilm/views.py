@@ -2218,6 +2218,8 @@ def maxmin(request):
         obs_min = Ilm.objects.filter(airtemperature_min=year_min, timestamp__year=y).first()
         year_max = year['airtemperature_max__max']
         obs_max = Ilm.objects.filter(airtemperature_max=year_max, timestamp__year=y).first()
+        year_temp_avg = year['airtemperature__avg']
+        year_prec_sum = year['precipitations__sum']
         # Põevi Min(d)>+30 ja Max(d)<-30
         days_above30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__gte=30).count()
         days_below30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__lte=-30).count()
@@ -2241,6 +2243,8 @@ def maxmin(request):
             'obs_min': obs_min,
             'year_max': year_max,
             'obs_max': obs_max,
+            'year_temp_avg': year_temp_avg,
+            'year_prec_sum': year_prec_sum,
             'days_below20': days_below20,
             'days_above20': days_above20,
             'days_below30': days_below30,
