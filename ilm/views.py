@@ -2227,17 +2227,6 @@ def maxmin(request):
         days_above20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__gte=20).count() # troopiline öö
         days_below20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__lte=-20).count() # arktiline päev
 
-        # print(
-        #     y,
-        #     year_min,
-        #     [obs.timestamp for obs in obs_min],
-        #     year_max,
-        #     [obs.timestamp for obs in obs_max],
-        #     days_below20,
-        #     days_above20,
-        #     days_below30,
-        #     days_above30,
-        # )
         years_top[y] = {
             'year_min': year_min,
             'obs_min': obs_min,
@@ -2250,8 +2239,45 @@ def maxmin(request):
             'days_below30': days_below30,
             'days_above30': days_above30
         }
+
+    yearMin = min(years_top.keys())
+    yearMax = max(years_top.keys())
+
+    # heatmap data
+    def myFunc(e): # listi sortimiseks
+        return (
+            e[2], # year
+            e[1], # month
+            e[0], # day
+        )
+
+    data = list()
+    for day in days_maxmin_qs:
+        row = [
+            day['timestamp__day'],
+            day['timestamp__month'],
+            day['timestamp__year'],
+            round(day['airtemperature__avg'],1)
+        ]
+        data.append(row)
+    data.sort(key=myFunc)
+
+    chartdata = "Date,Time,Temperature"
+    for row in data:
+        y = row[2]
+        m = row[1]
+        d = row[0]
+        t = row[3]
+        chartdata += f'\n2016-{m}-{d},{y},{t}' # kasutame liigaastat 2016
+
+    context = {
+        'years_top': years_top,
+        'chartdata': chartdata,
+        'yearMin': yearMin,
+        'yearMax': yearMax
+    }
     return render(
         request,
         'ilm/maxmin.html',
-        {'years_top': years_top}
+        context
     )
