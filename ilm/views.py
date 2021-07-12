@@ -2203,17 +2203,29 @@ def maxmin(request):
     # from ilm.models import Ilm
     # from django.db.models import Sum, Count, Avg, Min, Max
     years_top = dict()
+    # Agregeeritud näitajad aastate kaupa
     years_maxmin_qs = Ilm.objects\
         .values('timestamp__year')\
         .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Avg('airtemperature'), Sum('precipitations'))\
         .order_by('timestamp__year')
+    # Agregeeritud näitajad kuupäevade kaupa
     days_maxmin_qs = Ilm.objects\
         .values('timestamp__year', 'timestamp__month', 'timestamp__day')\
         .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Avg('airtemperature'), Sum('precipitations'))\
         .order_by('timestamp__year', 'timestamp__month', 'timestamp__day')
+    # Agregeeritud näitajad aasta päevade kaupa
+    days_airtemp_avgs_qs = Ilm.objects\
+        .values('timestamp__month', 'timestamp__day')\
+        .annotate(Avg('airtemperature'))\
+        .order_by('timestamp__month', 'timestamp__day')
+    days_airtemp_avgs = dict()
+    for day in days_airtemp_avgs_qs:
+        day_tuple = (day['timestamp__month'], day['timestamp__day'])
+        days_airtemp_avgs[day_tuple] = day['airtemperature__avg']
+
+    # Maksimum-miinimum tabeli andmed:
     for year in years_maxmin_qs:
         y = year['timestamp__year']
-        # Maksimum-miinimum
         year_min = year['airtemperature_min__min']
         obs_min = Ilm.objects.filter(airtemperature_min=year_min, timestamp__year=y).first()
         year_max = year['airtemperature_max__max']
@@ -2262,17 +2274,21 @@ def maxmin(request):
         data.append(row)
     data.sort(key=myFunc)
 
-    chartdata = "Date,Time,Temperature"
+    chartdata_heatmap_daily = "Date,Time,Temperature"
+    chartdata_heatmap_relative = "Date,Time,Temperature"
     for row in data:
         y = row[2]
         m = row[1]
         d = row[0]
         t = row[3]
-        chartdata += f'\n2016-{m}-{d},{y},{t}' # kasutame liigaastat 2016
+        chartdata_heatmap_daily += f'\n2016-{m}-{d},{y},{t}' # kasutame liigaastat 2016
+        delta_t = days_airtemp_avgs[(m, d)]-t
+        chartdata_heatmap_relative += f'\n2016-{m}-{d},{y},{delta_t}'
 
     context = {
         'years_top': years_top,
-        'chartdata': chartdata,
+        'chartdata_heatmap_daily': chartdata_heatmap_daily,
+        'chartdata_heatmap_relative': chartdata_heatmap_relative,
         'yearMin': yearMin,
         'yearMax': yearMax
     }
