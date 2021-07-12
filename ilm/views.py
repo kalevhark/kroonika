@@ -2288,7 +2288,7 @@ def maxmin(request):
     context = {
         'years_top': years_top,
         'chartdata_heatmap_daily': chartdata_heatmap_daily,
-        'chartdata_heatmap_relative': tchartdata_heatmap_relative,
+        'chartdata_heatmap_relative': chartdata_heatmap_relative,
         'yearMin': yearMin,
         'yearMax': yearMax
     }
