@@ -132,7 +132,7 @@ if (screen.width < 500) {
 				<th class="col temperature">
 					<span class="fs1 climacon thermometer" aria-hidden="true"></span>
 				</th>
-				<th class="col rain">
+				<th class="col w3-center">
 					<span class="fa fa-eye"></span>
 				</th>
 				<th class="col rain">
@@ -141,7 +141,7 @@ if (screen.width < 500) {
 				<th class="temperature">
 					<span class="fs1 climacon thermometer" aria-hidden="true"></span>
 				</th>
-				<th class="col rain">
+				<th class="col w3-center">
 					<span class="fa fa-eye"></span>
 				</th>
 				<th class="col rain">
@@ -165,9 +165,8 @@ if (screen.width < 500) {
 						{{ data.y_temp|floatformat:1 }}
 					</span>
 				</td>
-				<td>
+				<td class="w3-center">
 					<img
-                  class="rain"
 						      src="{% static "" %}ilm/img/weathericon/svg/{{ data.y_icon }}.svg"
 						      alt="{{ data.y_icon }}"
 						      width="32" height="32"
@@ -180,9 +179,8 @@ if (screen.width < 500) {
 						{{ data.o_temp|floatformat:1 }}
 					</span>
 				</td>
-				<td>
+				<td class="w3-center">
 					<img
-                  class="rain"
 						      src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ data.o_icon }}.png"
 						      alt="{{ data.o_icon }}"
 						      width="32" height="32"
