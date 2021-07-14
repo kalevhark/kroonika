@@ -2282,7 +2282,7 @@ def maxmin(request):
         d = row[0]
         t = row[3]
         chartdata_heatmap_daily += f'\n2016-{m}-{d},{y},{t}' # kasutame liigaastat 2016
-        delta_t = t - days_airtemp_avgs[(m, d)]
+        delta_t = round(t - days_airtemp_avgs[(m, d)], 1)
         chartdata_heatmap_relative += f'\n2016-{m}-{d},{y},{delta_t}'
 
     context = {
