@@ -230,7 +230,9 @@ td.rain.heavy::before {
     </figure>
   </div>
   <pre id="csv_chartdata_heatmap_relative" style="display: none">{{ chartdata_heatmap_relative }}</pre>
-
+  <div class="w3-row">
+    {{ days_airtemp_monthmaxmin }}
+  </div>
   <script>
   // heatmap chart daily variations
   Highcharts.chart('container_chartdata_heatmap_daily', {

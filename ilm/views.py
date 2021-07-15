@@ -2219,6 +2219,7 @@ def maxmin(request):
         .annotate(Avg('airtemperature'))\
         .order_by('timestamp__month', 'timestamp__day')
     days_airtemp_avgs = dict()
+
     for day in days_airtemp_avgs_qs:
         day_tuple = (day['timestamp__month'], day['timestamp__day'])
         days_airtemp_avgs[day_tuple] = day['airtemperature__avg']
@@ -2264,6 +2265,14 @@ def maxmin(request):
         )
 
     data = list()
+    days_airtemp_monthmaxmin = dict()
+    for month in range(1, 13):
+        days_airtemp_monthmaxmin[month] = {
+            'airtemperature_max': -40,
+            'airtemperature_max_timestamp': None,
+            'airtemperature_min': 40,
+            'airtemperature_min_timestamp': None,
+        }
     for day in days_maxmin_qs:
         row = [
             day['timestamp__day'],
@@ -2272,6 +2281,23 @@ def maxmin(request):
             round(day['airtemperature__avg'],1)
         ]
         data.append(row)
+
+        # Kuude ekstreemumid
+        if day['airtemperature_max__max'] and days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_max'] < day['airtemperature_max__max']:
+            days_airtemp_monthmaxmin[day['timestamp__month']] = {
+                'airtemperature_max': day['airtemperature_max__max'],
+                'airtemperature_max_timestamp': datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day']),
+                'airtemperature_min': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_min'],
+                'airtemperature_min_timestamp': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_min_timestamp'],
+            }
+        if day['airtemperature_min__min'] and days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_min'] > day['airtemperature_min__min']:
+            days_airtemp_monthmaxmin[day['timestamp__month']] = {
+                'airtemperature_max': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_max'],
+                'airtemperature_max_timestamp': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_max_timestamp'],
+                'airtemperature_min': day['airtemperature_min__min'],
+                'airtemperature_min_timestamp': datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day']),
+            }
+
     data.sort(key=myFunc)
 
     chartdata_heatmap_daily = "Date,Time,Temperature"
@@ -2289,6 +2315,7 @@ def maxmin(request):
         'years_top': years_top,
         'chartdata_heatmap_daily': chartdata_heatmap_daily,
         'chartdata_heatmap_relative': chartdata_heatmap_relative,
+        'days_airtemp_monthmaxmin': days_airtemp_monthmaxmin,
         'yearMin': yearMin,
         'yearMax': yearMax
     }
