@@ -2278,7 +2278,8 @@ def maxmin(request):
             day['timestamp__day'],
             day['timestamp__month'],
             day['timestamp__year'],
-            round(day['airtemperature__avg'],1)
+            round(day['airtemperature__avg'], 1),
+            day['precipitations__sum'] if day['precipitations__sum'] else 0,
         ]
         data.append(row)
 
@@ -2302,19 +2303,26 @@ def maxmin(request):
 
     chartdata_heatmap_daily = "Date,Time,Temperature"
     chartdata_heatmap_relative = "Date,Time,Temperature"
+    chartdata_heatmap_precipitations = "Date,Time,Precipitations"
     for row in data:
         y = row[2]
         m = row[1]
         d = row[0]
         t = row[3]
+        p = row[4]
+        # päevakeskmised temperatuurid
         chartdata_heatmap_daily += f'\n2016-{m}-{d},{y},{t}' # kasutame liigaastat 2016
+        # päevakeskmised temperatuurid võrrelduna ajaloo keskmisega samal kuul ja päeval
         delta_t = round(t - days_airtemp_avgs[(m, d)], 1)
         chartdata_heatmap_relative += f'\n2016-{m}-{d},{y},{delta_t}'
+        # sademete hulk
+        chartdata_heatmap_precipitations += f'\n2016-{m}-{d},{y},{p}'
 
     context = {
         'years_top': years_top,
         'chartdata_heatmap_daily': chartdata_heatmap_daily,
         'chartdata_heatmap_relative': chartdata_heatmap_relative,
+        'chartdata_heatmap_precipitations': chartdata_heatmap_precipitations,
         'days_airtemp_monthmaxmin': days_airtemp_monthmaxmin,
         'yearMin': yearMin,
         'yearMax': yearMax

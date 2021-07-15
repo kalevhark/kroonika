@@ -213,25 +213,7 @@ td.rain.heavy::before {
 			</tbody>
 		</table>
   </div>
-  <div>
-    <figure class="highcharts-figure">
-      <div id="container_chartdata_heatmap_daily"></div>
-      <p class="highcharts-description">
-          Allikas: ilmateenistus.ee
-      </p>
-    </figure>
-  </div>
-  <pre id="csv_chartdata_heatmap_daily" style="display: none">{{ chartdata_heatmap_daily }}</pre>
 
-    <div>
-    <figure class="highcharts-figure">
-      <div id="container_chartdata_heatmap_relative"></div>
-      <p class="highcharts-description">
-          Allikas: ilmateenistus.ee
-      </p>
-    </figure>
-  </div>
-  <pre id="csv_chartdata_heatmap_relative" style="display: none">{{ chartdata_heatmap_relative }}</pre>
   <div class="w3-row">
     <table>
       <caption>Maksimum- ja miinimumtemperatuurid kuude kaupa</caption>
@@ -254,6 +236,37 @@ td.rain.heavy::before {
       {% endfor %}
     </table>
   </div>
+
+  <div>
+    <figure class="highcharts-figure">
+      <div id="container_chartdata_heatmap_daily"></div>
+      <p class="highcharts-description">
+          Allikas: ilmateenistus.ee
+      </p>
+    </figure>
+  </div>
+  <pre id="csv_chartdata_heatmap_daily" style="display: none">{{ chartdata_heatmap_daily }}</pre>
+
+  <div>
+    <figure class="highcharts-figure">
+      <div id="container_chartdata_heatmap_relative"></div>
+      <p class="highcharts-description">
+          Allikas: ilmateenistus.ee
+      </p>
+    </figure>
+  </div>
+  <pre id="csv_chartdata_heatmap_relative" style="display: none">{{ chartdata_heatmap_relative }}</pre>
+
+  <div>
+    <figure class="highcharts-figure">
+      <div id="container_chartdata_heatmap_precipitations"></div>
+      <p class="highcharts-description">
+          Allikas: ilmateenistus.ee
+      </p>
+    </figure>
+  </div>
+  <pre id="csv_chartdata_heatmap_precipitations" style="display: none">{{ chartdata_heatmap_precipitations }}</pre>
+
   <script>
   // heatmap chart daily variations
   Highcharts.chart('container_chartdata_heatmap_daily', {
@@ -427,6 +440,93 @@ td.rain.heavy::before {
           tooltip: {
               headerFormat: 'Temperatuur<br/>',
               pointFormat: '{point.x:%d.%m}.{point.y}: <b>{point.value} ℃</b>'
+          },
+          turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
+      }]
+
+  });
+
+  // heatmap chart daily variations
+  Highcharts.chart('container_chartdata_heatmap_precipitations', {
+
+      data: {
+          csv: document.getElementById('csv_chartdata_heatmap_precipitations').innerHTML
+      },
+
+      chart: {
+          type: 'heatmap'
+      },
+
+      boost: {
+          useGPUTranslations: true
+      },
+
+      title: {
+          text: 'Sademete hulga varieerumine',
+          align: 'left',
+          x: 40
+      },
+
+      subtitle: {
+          text: '{{ yearMin }}-{{ yearMax }}',
+          align: 'left',
+          x: 40
+      },
+
+      xAxis: {
+          type: 'datetime',
+          min: Date.UTC(2016, 0, 1), //  kasutame liigaastat 2016
+          max: Date.UTC(2016, 11, 31, 23, 59, 59),
+          labels: {
+              align: 'left',
+              x: 5,
+              y: 14,
+              format: '{value:%B}' // long month
+          },
+          showLastLabel: false,
+          tickLength: 16
+      },
+
+      yAxis: {
+          title: {
+              text: null
+          },
+          labels: {
+              format: '{value}'
+          },
+          minPadding: 0,
+          maxPadding: 0,
+          startOnTick: false,
+          endOnTick: false,
+          tickPositions: _.range({{ yearMin }}, {{ yearMax }}, 4),
+          tickWidth: 1,
+          min: {{ yearMin }},
+          max: {{ yearMax }},
+          reversed: true
+      },
+
+      colorAxis: {
+          stops: [
+              [0, '#ffffff'],
+              [1, '#3060cf']
+          ],
+          min: 0,
+          max: 10,
+          startOnTick: false,
+          endOnTick: false,
+          labels: {
+              format: '{value} mm'
+          }
+      },
+
+      series: [{
+          boostThreshold: 100,
+          borderWidth: 0,
+          nullColor: '#EFEFEF',
+          colsize: 24 * 36e5, // one day
+          tooltip: {
+              headerFormat: 'Sademete hulk<br/>',
+              pointFormat: '{point.x:%d.%m}.{point.y}: <b>{point.value} mm</b>'
           },
           turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
       }]
