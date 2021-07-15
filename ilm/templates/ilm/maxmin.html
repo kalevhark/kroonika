@@ -1,5 +1,6 @@
 {% extends "ilm/ilm_base.html" %}
 {% load static %}
+{% load i18n %}
 {% load ilm_extras %}
 
 {% block stylesheet %}
@@ -160,6 +161,7 @@ td.rain.heavy::before {
 {% block content %}
   <div class="w3-row">
 		<table>
+      <caption>Maksimum- ja miinimumtemperatuurid aastate kaupa</caption>
 			<thead>
         <tr>
           <th>Aasta</th>
@@ -231,7 +233,26 @@ td.rain.heavy::before {
   </div>
   <pre id="csv_chartdata_heatmap_relative" style="display: none">{{ chartdata_heatmap_relative }}</pre>
   <div class="w3-row">
-    {{ days_airtemp_monthmaxmin }}
+    <table>
+      <caption>Maksimum- ja miinimumtemperatuurid kuude kaupa</caption>
+      {% for month, data in days_airtemp_monthmaxmin.items %}
+        <tr>
+          <td>{{ data.airtemperature_max_timestamp|date:"F" }}</td>
+          <td class="temperature">
+            <span class="temperature colored-{% if data.airtemperature_max > 0 %}positive{% else %}negative{% endif %}">
+              {{ data.airtemperature_max|floatformat:1 }}
+            </span>
+          </td>
+          <td>{{ data.airtemperature_max_timestamp|date:"SHORT_DATE_FORMAT" }}<td>
+          <td class="temperature">
+            <span class="temperature colored-{% if data.airtemperature_min > 0 %}positive{% else %}negative{% endif %}">
+              {{ data.airtemperature_min|floatformat:1 }}
+            </span>
+          </td>
+          <td>{{ data.airtemperature_min_timestamp|date:"SHORT_DATE_FORMAT" }}<td>
+        </tr>
+      {% endfor %}
+    </table>
   </div>
   <script>
   // heatmap chart daily variations
