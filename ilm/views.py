@@ -2236,9 +2236,10 @@ def maxmin(request):
         # Põevi Min(d)>+30 ja Max(d)<-30
         days_above30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__gte=30).count()
         days_below30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__lte=-30).count()
-        # Põevi Avg(d)>+20 ja Avg(d)<-20
-        days_above20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__gte=20).count() # troopiline öö
-        days_below20 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__lte=-20).count() # arktiline päev
+        # Öid, mil temperatuur ei lange alla 20 kraadi (öö = UTC00:00-08:00)
+        days_above20 = days_maxmin_qs.filter(timestamp__year=y, timestamp__hour__lt=8, airtemperature_min__min__gte=20).count() # troopiline öö
+        # Päevi, mil temperatuur ei tõuse üle -20 kraadi (päev = UTC08:00-24:00)
+        days_below20 = days_maxmin_qs.filter(timestamp__year=y, timestamp__hour__gte=8, airtemperature_max__max__lte=-20).count() # arktiline päev
 
         years_top[y] = {
             'year_min': year_min,
