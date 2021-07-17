@@ -95,8 +95,8 @@ def read_observation_log2pd(path, dir_logs, fn_forecast):
         decimal = '.',
         na_values = ['None'],
         names = names,
-    )
-    df[names[1:]] = df.dropna()[names[1:]].apply(pd.to_numeric, downcast="float")
+    ).dropna()
+    df[names[1:]] = df[names[1:]].apply(pd.to_numeric, downcast="float")
     return df
 
 def timestamp2date(row):
