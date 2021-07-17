@@ -56,7 +56,12 @@ def read_forecast_log2pd(path, dir_logs, fn_forecast):
     fn_src_path = [path, dir_logs, fn_forecast]
     fn_src = os.path.join(*fn_src_path)
     field_prefix = fn_forecast.split('.')[0] + '_'
-
+    names = [
+        'timestamp',
+        f'{field_prefix}y_temp', f'{field_prefix}y_prec',
+        f'{field_prefix}o_temp', f'{field_prefix}o_prec',
+        f'{field_prefix}i_temp', f'{field_prefix}i_prec',
+    ]
     df = pd.read_csv(
         fn_src,
         delimiter=';',
@@ -67,19 +72,20 @@ def read_forecast_log2pd(path, dir_logs, fn_forecast):
         decimal = '.',
         na_values = ['None'],
         # usecols=[1,2,3,6,11,13],
-        names = [
-            'timestamp',
-            f'{field_prefix}y_temp', f'{field_prefix}y_prec',
-            f'{field_prefix}o_temp', f'{field_prefix}o_prec',
-            f'{field_prefix}i_temp', f'{field_prefix}i_prec',
-            ],
+        names = names,
         # parse_dates=[5]
     )
+    df[names[1:]] = df[names[1:]].apply(pd.to_numeric, downcast="float")
     return df
 
 def read_observation_log2pd(path, dir_logs, fn_forecast):
     fn_src_path = [path, dir_logs, fn_forecast]
     fn_src = os.path.join(*fn_src_path)
+    names = [
+        'timestamp',
+        'observed_temp',
+        'observed_prec',
+    ]
     df = pd.read_csv(
         fn_src,
         delimiter=';',
@@ -88,13 +94,10 @@ def read_observation_log2pd(path, dir_logs, fn_forecast):
         index_col = 0,
         decimal = '.',
         na_values = ['None'],
-        names = [
-            'timestamp',
-            'observed_temp',
-            'observed_prec',
-            ],
+        names = names,
     )
-    return df.dropna()
+    df[names[1:]] = df.dropna()[names[1:]].apply(pd.to_numeric, downcast="float")
+    return df
 
 def timestamp2date(row):
     date = datetime.fromtimestamp(row.name)
@@ -139,6 +142,7 @@ def obs_quality(row, fore_hour):
         i_qual -= koefitsent
     return pd.Series(
         [y_qual, o_qual, i_qual],
+        dtype="float16",
         index=[f'{fore_hour}_y_qual', f'{fore_hour}_o_qual', f'{fore_hour}_i_qual']
     )
 
@@ -164,7 +168,7 @@ def logs2bigdata(path):
         bd = bd.merge(qual, how='outer', left_index=True, right_index=True)
     # Konverteerime timestamp -> datetime -> kohalik ajavöönd
     bd['aeg'] = pd.to_datetime(bd.index, unit='s').tz_localize('EET', ambiguous='NaT', nonexistent=pd.Timedelta('1H'))
-    # print('qual', bd.shape)
+    # print(bd.shape, bd.dtypes, bd.memory_usage(deep=True))
     return bd
     
 def main(path=''):

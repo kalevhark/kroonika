@@ -2199,6 +2199,20 @@ def forecasts_quality(request):
     }
     return render(request, 'ilm/forecasts_quality.html', context)
 
+def maxmin_new(request):
+    # import pandas as pd
+    import datetime as dt
+    columns = ['timestamp', 'airtemperature', 'airtemperature_min', 'airtemperature_max', 'precipitations']
+    qs = Ilm.objects.all().\
+        values_list(*columns).\
+        order_by('timestamp')
+    df = pd.DataFrame(qs, columns=columns)
+    window = timedelta(hours=8)
+    df_rolling = df.rolling(window=window, on='timestamp').min()
+    df_rolling = df.rolling(window=window, on='timestamp').agg(Min=('airtemperature_min', 'min'), Sum=('precipitations', 'sum'))
+    min = df_rolling[(df_rolling['airtemperature_min'] >= 20) & (df_rolling['timestamp'].dt.hour == 4)]
+
+
 def maxmin(request):
     # from ilm.models import Ilm
     # from django.db.models import Sum, Count, Avg, Min, Max

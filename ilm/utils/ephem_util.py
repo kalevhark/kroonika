@@ -92,12 +92,23 @@ def get_moon_str(date_loc, observer=None):
     moon_string = f'{moon_symbol} {moon_string}'
     return moon_string
 
+# tagastab tuple, kujul ('D|N', date_utc), D-day, N-night, date_utc-järgmise päikesetõusu kuupäev
+def get_dayornight(date_loc, observer=None):
+    if not observer:
+        observer = get_observer(date_loc)
+    s = ephem.Sun()
+    s.compute(observer)
+    alt, next_rizing = s.alt, observer.next_rising(s)
+    daytime = 'D' if alt > 0 else 'N'
+    print(daytime, next_rizing)
+
 def main():
     date_loc = datetime.now(tz=tz_EE)
     # s9a = get_observer()
     sun = get_sun_str(date_loc)
     moon = get_moon_str(date_loc)
-    print(sun, moon)
+    get_dayornight(date_loc)
+    # print(date_loc, sun, moon)
 
 if __name__ == "__main__":
     main()
