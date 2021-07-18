@@ -211,7 +211,7 @@ def main(path=''):
 ##    fn_dst = os.path.join(*fn_dst_path)
 ##    real.to_csv(fn_dst, sep=';', header=False)
     return {
-        'all': bd.to_dict('index'),
+        # 'all': bd.to_dict('index'),
         'last24h': bd_last24h.to_dict('index'),
         'days': bd_days.to_dict('index')
     }
