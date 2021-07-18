@@ -2,6 +2,7 @@ import csv
 from datetime import datetime, timedelta
 import json
 import os
+from pathlib import Path
 import re
 from statistics import mean
 import sys
@@ -119,6 +120,8 @@ def obs_quality(row, fore_hour):
     # 50% hindest temperatuur: 1 kraad erinevust=-5 punkt
     # 50% hindest sademete täpsus: 1 mm erinevust=-10 punkt
     # Kui tegelikult sadas, aga prognoos = 0.0, siis -10 punkti
+    columns = row.keys()
+    values = [row[column] for column in columns]
     max = 100
     koefitsent = 10
     #yr.no
@@ -141,9 +144,9 @@ def obs_quality(row, fore_hour):
     if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_i_prec'] == 0):
         i_qual -= koefitsent
     return pd.Series(
-        [y_qual, o_qual, i_qual],
-        dtype="float16",
-        index=[f'{fore_hour}_y_qual', f'{fore_hour}_o_qual', f'{fore_hour}_i_qual']
+        [*values, y_qual, o_qual, i_qual],
+        dtype="float32",
+        index=[*columns, f'{fore_hour}_y_qual', f'{fore_hour}_o_qual', f'{fore_hour}_i_qual']
     )
 
 def logs2bigdata(path):
@@ -163,16 +166,29 @@ def logs2bigdata(path):
     bd = pd.merge(fore, obs, how='outer', left_index=True, right_index=True)
     # Arvutame prognoosi kvalteedi
     for hour in ('6h', '12h', '24h'):
-        qual = bd.apply(obs_quality, axis=1, args=(hour,))
+        # qual = bd.apply(obs_quality, axis=1, args=(hour,))
+        bd = bd.apply(obs_quality, axis=1, args=(hour,))
         # print(qual.dropna().apply(mean))
-        bd = bd.merge(qual, how='outer', left_index=True, right_index=True)
+        # bd = bd.merge(qual, how='outer', left_index=True, right_index=True)
     # Konverteerime timestamp -> datetime -> kohalik ajavöönd
     bd['aeg'] = pd.to_datetime(bd.index, unit='s').tz_localize('EET', ambiguous='NaT', nonexistent=pd.Timedelta('1H'))
     # print(bd.shape, bd.dtypes, bd.memory_usage(deep=True))
     return bd
-    
+
+# ei kasuta
+def logs2pd(path):
+    # Loeme mõõtmisandmed
+    obs = read_observation_log2pd(path, dir_logs, 'observations.log')
+    # Loeme prognooside logid
+    fore_xh = dict()
+    qual_xh = dict()
+    for hour in ('6h', '12h', '24h'):
+        fore_xh[hour] = read_forecast_log2pd(path, dir_logs, f'forecast_{hour}.log')
+        qual_xh[hour] = bd.apply(obs_quality, axis=1, args=(hour,))
+    return obs, fore_xh, qual_xh
+
 def main(path=''):
-    from django.utils import timezone
+    # from django.utils import timezone
     bd = logs2bigdata(path)
     bd_days = bd.groupby(
         [
@@ -181,8 +197,10 @@ def main(path=''):
             bd.aeg.dt.day.values
             ]
         ).mean().dropna()
-    now = int(datetime.timestamp(timezone.now()))
-    now24hback = int(datetime.timestamp(timezone.now() - timedelta(hours=24)))
+    # now = int(datetime.timestamp(timezone.now()))
+    now = int(datetime.timestamp(datetime.now()))
+    # now24hback = int(datetime.timestamp(timezone.now() - timedelta(hours=24)))
+    now24hback = int(datetime.timestamp(datetime.now() - timedelta(hours=24)))
     bd_last24h = bd[(bd.index >= now24hback) & (bd.index < now)].dropna()
     # bd_days.loc[year, month, day] -> filtreerimiseks
     # bd.loc[(2020, 7, 3):(2020, 7, 5)] -> vahemiku filtreerimiseks
@@ -193,20 +211,14 @@ def main(path=''):
 ##    fn_dst = os.path.join(*fn_dst_path)
 ##    real.to_csv(fn_dst, sep=';', header=False)
     return {
-        # 'all': bd.to_dict('index'),
+        'all': bd.to_dict('index'),
         'last24h': bd_last24h.to_dict('index'),
         'days': bd_days.to_dict('index')
     }
 
 if __name__ == "__main__":
     # execute only if run as a script
-    path = os.path.dirname(sys.argv[0])
-    if len(sys.argv) < 2:
-        # Argumente ei ole
-        pass
-    else:
-        for arg in sys.argv:
-            print(arg)
-
+    path = Path(__file__).resolve().parent.parent.parent
+    print(path)
     # Käivitame põhiprotsessi        
     a = main(path)
