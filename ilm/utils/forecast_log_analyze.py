@@ -219,6 +219,5 @@ def main(path=''):
 if __name__ == "__main__":
     # execute only if run as a script
     path = Path(__file__).resolve().parent.parent.parent
-    print(path)
     # Käivitame põhiprotsessi        
-    a = main(path)
+    # a = main(path)
