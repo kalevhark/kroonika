@@ -163,8 +163,7 @@ def main(path=''):
             ]
         )\
         .mean(numeric_only=True)\
-        .dropna()\
-        .round(1)
+        .dropna()
     bd_mean = bd.mean(numeric_only=True)  # ajaloo keskmine
 
     tz_EE = pytz.timezone(pytz.country_timezones['ee'][0])
