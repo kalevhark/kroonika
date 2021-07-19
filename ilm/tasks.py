@@ -412,5 +412,5 @@ if __name__ == '__main__':
 
     # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
     from .utils import forecast_log_analyze
-    path = Path(__file__).resolve().parent.parent.parent
+    path = Path(__file__).resolve().parent.parent
     forecast_log_analyze.logs2bigdata(path)
