@@ -408,3 +408,6 @@ if __name__ == '__main__':
             line = ';'.join([time, temp, prec])
             f.write(line + '\n')
 
+    # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
+    from .utils import forecast_log_analyze
+    forecast_log_analyze.main(path)
