@@ -1,6 +1,6 @@
 <td
         class="w3-{% if q == 100 %}green{% elif q >= 80 %}pale-green{% elif q >= 60 %}pale-yellow{% else %}pale-red{% endif %}"
-        {% if ft %}title="ennustus: {{ft}}°C - tegelik: {{ element.observed_temp }}°C&#10;ennustus: {{fp}} mm - tegelik: {{ element.observed_prec }} mm"{% endif %}
+        {% if ft %}title="ennustus: {{ ft|floatformat:1 }}°C - tegelik: {{ element.observed_temp|floatformat:1 }}°C&#10;ennustus: {{ fp|floatformat:1 }} mm - tegelik: {{ element.observed_prec|floatformat:1 }} mm"{% endif %}
 >
     {{ q|floatformat:1 }}
 </td>
