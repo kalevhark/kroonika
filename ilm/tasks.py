@@ -315,8 +315,8 @@ def update_missing_observations(path=''):
     return rows_updated
 
 if __name__ == '__main__':
-    # path = os.path.dirname(sys.argv[0])
-    path = Path(__file__).resolve().parent.parent.parent
+    path = os.path.dirname(sys.argv[0])
+    # path = Path(__file__).resolve().parent.parent.parent
     # get_maxtimestamp()
     # Kustutame duplikaatread
     rows_deleted = delete_duplicate_observations(path)
@@ -412,4 +412,5 @@ if __name__ == '__main__':
 
     # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
     from .utils import forecast_log_analyze
-    forecast_log_analyze.main(path)
+    path = Path(__file__).resolve().parent.parent.parent
+    forecast_log_analyze.logs2bigdata(path)
