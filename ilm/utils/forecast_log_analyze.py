@@ -161,8 +161,11 @@ def main(path=''):
             bd.aeg.dt.month.values,
             bd.aeg.dt.day.values
             ]
-        ).mean().dropna().round(1)
-    bd_mean = bd.mean()  # ajaloo keskmine
+        )\
+        .mean(numeric_only=True)\
+        .dropna()\
+        .round(1)
+    bd_mean = bd.mean(numeric_only=True)  # ajaloo keskmine
 
     tz_EE = pytz.timezone(pytz.country_timezones['ee'][0])
     today = datetime.now(tz=tz_EE)
@@ -173,7 +176,7 @@ def main(path=''):
     # now24hback = int(datetime.timestamp(timezone.now() - timedelta(hours=24)))
     now24hback = int(datetime.timestamp(today - timedelta(hours=24)))
     bd_last24h = bd[(bd.index >= now24hback) & (bd.index < now)].dropna()
-    bd_last24h_mean = bd_last24h.mean()
+    bd_last24h_mean = bd_last24h.mean(numeric_only=True)
 
     # viimase 30p andmed
     # now = int(datetime.timestamp(timezone.now()))
@@ -181,7 +184,7 @@ def main(path=''):
     now30dback = int(datetime.timestamp(today - timedelta(days=30)))
     bd_last30d_mean = bd[(bd.index >= now30dback) & (bd.index < now)]\
         .dropna()\
-        .mean()
+        .mean(numeric_only=True)
 
     # bd_days.loc[year, month, day] -> filtreerimiseks
     # bd.loc[(2020, 7, 3):(2020, 7, 5)] -> vahemiku filtreerimiseks
