@@ -7,6 +7,7 @@
 
 from datetime import datetime, timedelta
 import os
+from pathlib import Path
 import re
 import sys
 import xml.etree.ElementTree as ET
@@ -314,7 +315,8 @@ def update_missing_observations(path=''):
     return rows_updated
 
 if __name__ == '__main__':
-    path = os.path.dirname(sys.argv[0])
+    # path = os.path.dirname(sys.argv[0])
+    path = Path(__file__).resolve().parent.parent.parent
     # get_maxtimestamp()
     # Kustutame duplikaatread
     rows_deleted = delete_duplicate_observations(path)
