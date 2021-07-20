@@ -133,15 +133,18 @@ def logs2bigdata(path):
     obs = read_observation_log2pd(path, dir_logs, 'observations.log')
     # print('obs', obs.shape)
     # Ühendame prognoosid ja mõõtmised
-    bd = pd.merge(fore, obs, how='outer', left_index=True, right_index=True)
+    bd = pd.\
+        merge(fore, obs, how='outer', left_index=True, right_index=True)
     # Arvutame prognoosi kvalteedi
     for hour in ('6h', '12h', '24h'):
         # qual = bd.apply(obs_quality, axis=1, args=(hour,))
-        bd = bd.apply(obs_quality, axis=1, args=(hour,)).round(1)
+        bd = bd.apply(obs_quality, axis=1, args=(hour,))
         # print(qual.dropna().apply(mean))
         # bd = bd.merge(qual, how='outer', left_index=True, right_index=True)
     # Konverteerime timestamp -> datetime -> kohalik ajavöönd
-    bd['aeg'] = pd.to_datetime(bd.index, unit='s').tz_localize('EET', ambiguous='NaT', nonexistent=pd.Timedelta('1H'))
+    bd['aeg'] = pd.\
+        to_datetime(bd.index, unit='s').\
+        tz_localize('EET', ambiguous='NaT', nonexistent=pd.Timedelta('1H'))
     # print(bd.shape, bd.dtypes, bd.memory_usage(deep=True))
 
     bd.to_pickle(path / dir_logs / 'obs_quality_data.pickle')
@@ -163,7 +166,8 @@ def main(path=''):
             ]
         )\
         .mean(numeric_only=True)\
-        .dropna()
+        .dropna()\
+        .sort_index(ascending=False) # sorteerime uuemad ette
     bd_mean = bd.mean(numeric_only=True)  # ajaloo keskmine
 
     tz_EE = pytz.timezone(pytz.country_timezones['ee'][0])
@@ -174,15 +178,20 @@ def main(path=''):
     # now = int(datetime.timestamp(timezone.now()))
     # now24hback = int(datetime.timestamp(timezone.now() - timedelta(hours=24)))
     now24hback = int(datetime.timestamp(today - timedelta(hours=24)))
-    bd_last24h = bd[(bd.index >= now24hback) & (bd.index < now)].dropna()
+    bd_last24h = bd[(bd.index >= now24hback) & (bd.index < now)]\
+        .dropna()\
+        .sort_index(ascending=False) # sorteerime uuemad ette
     bd_last24h_mean = bd_last24h.mean(numeric_only=True)
 
     # viimase 30p andmed
-    # now = int(datetime.timestamp(timezone.now()))
-    # now24hback = int(datetime.timestamp(timezone.now() - timedelta(hours=24)))
     now30dback = int(datetime.timestamp(today - timedelta(days=30)))
     bd_last30d_mean = bd[(bd.index >= now30dback) & (bd.index < now)]\
         .dropna()\
+        .mean(numeric_only=True)
+    # viimase 30p andmed
+    now01yback = int(datetime.timestamp(datetime(today.year-1, today.month, today.day)))
+    bd_last01y_mean = bd[(bd.index >= now01yback) & (bd.index < now)] \
+        .dropna() \
         .mean(numeric_only=True)
 
     # bd_days.loc[year, month, day] -> filtreerimiseks
@@ -196,8 +205,9 @@ def main(path=''):
         'last24h': bd_last24h.to_dict('index'),
         'days': bd_days.to_dict('index'),
         'bd_mean': bd_mean.to_dict(),
-        'bd_last24h_mean': bd_last24h_mean,
-        'bd_last30d_mean': bd_last30d_mean
+        'bd_last24h_mean': bd_last24h_mean.to_dict(),
+        'bd_last30d_mean': bd_last30d_mean.to_dict(),
+        'bd_last01y_mean': bd_last01y_mean.to_dict()
     }
 
 if __name__ == "__main__":

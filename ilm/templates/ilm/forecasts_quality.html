@@ -27,10 +27,75 @@ td, th {
 
 {% block content %}
 <div class="w3-container">
+  <h3>Ilmaennustuste kvaliteet</h3>
+  <p>Võrreldud on erinevate ilmaportaalide 6, 12 ja 24 tunni ennustuste täpsust võrrelduna tegeliku mõõtmisega</p>
   <div class="w3-row">
-      Legend: max = 100<br>
+      Legend: max = 100 punkti<br>
       Erinevus: 1°C = -10 punkti; 1 mm = -10 punkti<br>
-      Vihmatrahv: ennustus 0,0 mm -> tegelik > 0,0 mm = -10 punkti
+      Vihmatrahv: ennustus 0,0 mm -> tegelik suurem kui 0,0 mm = -10 punkti
+  </div>
+  <p>Perioodi keskmised:</p>
+  <div class="w3-row">
+    <table>
+			<thead>
+        <tr>
+          <th>Aeg</th>
+          <th colspan="3">yr.no</th>
+          <th colspan="3">openweathermaps.org</th>
+          <th colspan="3">ilmateenistus.ee</th>
+        </tr>
+        <tr>
+          <th class="col"></th>
+          <th class="col">6h</th>
+          <th class="col">12h</th>
+          <th class="col">24h</th>
+          <th class="col">6h</th>
+          <th class="col">12h</th>
+          <th class="col">24h</th>
+          <th class="col">6h</th>
+          <th class="col">12h</th>
+          <th class="col">24h</th>
+        </tr>
+			</thead>
+			<tbody>
+        <tr class="row">
+          <td>Viimased 24h</td>
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last24h_mean.6h_y_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last24h_mean.12h_y_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last24h_mean.24h_y_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last24h_mean.6h_o_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last24h_mean.12h_o_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last24h_mean.24h_o_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last24h_mean.6h_i_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last24h_mean.12h_i_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last24h_mean.24h_i_qual %}
+        </tr>
+        <tr class="row">
+          <td>Viimased 30p</td>
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last30d_mean.6h_y_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last30d_mean.12h_y_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last30d_mean.24h_y_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last30d_mean.6h_o_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last30d_mean.12h_o_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last30d_mean.24h_o_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last30d_mean.6h_i_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last30d_mean.12h_i_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last30d_mean.24h_i_qual %}
+        </tr>
+        <tr class="row">
+          <td>Viimane aasta</td>
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last01y_mean.6h_y_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last01y_mean.12h_y_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last01y_mean.24h_y_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last01y_mean.6h_o_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last01y_mean.12h_o_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last01y_mean.24h_o_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last01y_mean.6h_i_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last01y_mean.12h_i_qual %}
+          {% include "ilm/forecasts_quality_td.html" with q=data.bd_last01y_mean.24h_i_qual %}
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <p>Viimased 24 tundi:</p>
