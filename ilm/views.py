@@ -2226,10 +2226,18 @@ def maxmin(request):
         .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Avg('airtemperature'), Sum('precipitations'))\
         .order_by('timestamp__year')
 
-    hours_rolling = Ilm.objects.annotate(rolling_min=Window(expression=Min('airtemperature_min'), order_by=F('timestamp').asc(),
-                                            frame=RowRange(start=-7, end=0)),
-                                 rolling_max=Window(expression=Max('airtemperature_max'), order_by=F('timestamp').asc(),
-                                            frame=RowRange(start=-7, end=0))).values()
+    hours_rolling = Ilm.objects.annotate(
+        rolling_min=Window(
+            expression=Min('airtemperature_min'),
+            order_by=F('timestamp').asc(),
+            frame=RowRange(start=-7, end=0)
+        ),
+        rolling_max=Window(
+            expression=Max('airtemperature_max'),
+            order_by=F('timestamp').asc(),
+            frame=RowRange(start=-7, end=0)
+        )
+    ).values('timestamp', 'rolling_min', 'rolling_max')
 
     # Maksimum-miinimum tabeli andmed:
     for year in years_maxmin_qs:
@@ -2351,14 +2359,39 @@ def maxmin(request):
         # sademete hulk
         chartdata_heatmap_precipitations += f'\n2016-{m}-{d},{y},{p}'
 
+    # arvutatakse ujuv aastakeskmine
+    years_rolling_1y = Ilm.objects.annotate(
+        rolling_avg_1y=Window(expression=Avg('airtemperature'),
+            order_by=F('timestamp').asc(),
+            frame=RowRange(start=-int(365 * 24 / 2 - 1), end=int(365 * 24 / 2))),
+    ).values('timestamp', 'rolling_avg_1y')
+    # years_rolling_5y = Ilm.objects.annotate(
+    #     rolling_avg_5y=Window(expression=Avg('airtemperature'),
+    #                           order_by=F('timestamp').asc(),
+    #                           frame=RowRange(start=-int(5 * 365 * 24 / 2 - 1), end=int(5 * 365 * 24 / 2))),
+    # ).values('rolling_avg_5y')
+
+    from statistics import mean
+    histAvg = round(mean([el['rolling_avg_1y'] for el in years_rolling_1y]), 1)
+    chartdata_rolling_year_avg = 'Aasta,Aasta keskmine'
+    for row in range(len(years_rolling_1y)):
+        y = years_rolling_1y[row]['timestamp'].year
+        m = years_rolling_1y[row]['timestamp'].month
+        d = years_rolling_1y[row]['timestamp'].day
+        h = years_rolling_1y[row]['timestamp'].hour
+        avg_1y_delta = round(years_rolling_1y[row]['rolling_avg_1y'] - histAvg, 1)
+        chartdata_rolling_year_avg += f'\n{y}-{m}-{d} {h}:00,{avg_1y_delta}'
+
     context = {
         'years_top': years_top,
         'chartdata_heatmap_daily': chartdata_heatmap_daily,
         'chartdata_heatmap_relative': chartdata_heatmap_relative,
         'chartdata_heatmap_precipitations': chartdata_heatmap_precipitations,
+        'chartdata_rolling_year_avg': chartdata_rolling_year_avg,
         'days_airtemp_monthmaxmin': days_airtemp_monthmaxmin,
         'yearMin': yearMin,
         'yearMax': yearMax,
+        'histAvg': histAvg
     }
     return render(
         request,

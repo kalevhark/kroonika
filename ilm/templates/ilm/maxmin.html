@@ -267,6 +267,16 @@ td.rain.heavy::before {
   </div>
   <pre id="csv_chartdata_heatmap_precipitations" style="display: none">{{ chartdata_heatmap_precipitations }}</pre>
 
+  <div>
+    <figure class="highcharts-figure">
+      <div id="container_chartdata_rolling_year_avg"></div>
+      <p class="highcharts-description">
+          Allikas: ilmateenistus.ee
+      </p>
+    </figure>
+  </div>
+  <pre id="csv_chartdata_rolling_year_avg" style="display: none">{{ chartdata_rolling_year_avg }}</pre>
+
   <script>
   // heatmap chart daily variations
   Highcharts.chart('container_chartdata_heatmap_daily', {
@@ -531,6 +541,39 @@ td.rain.heavy::before {
           turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
       }]
 
+  });
+
+  // aasta ujuva keskmise muutumine
+  Highcharts.chart('container_chartdata_rolling_year_avg', {
+    title: {
+        text: 'Aasta ujuva keskmise muutumine'
+    },
+    yAxis: {
+        title: {
+            text: 'Erinevus ajaloo keskmisega ({{ histAvg }}C°)'
+        },
+        labels: {
+            formatter: function () {
+                return this.value + 'C°';
+            }
+        }
+    },
+    data: {
+        csv: document.getElementById('csv_chartdata_rolling_year_avg').innerHTML
+    },
+    plotOptions: {
+        series: {
+            marker: {
+                enabled: false
+            }
+        }
+    },
+    series: [{
+        type: 'areaspline',
+        color: '#c4392d',
+        negativeColor: '#5679c4',
+        fillOpacity: 0.5
+    }]
   });
   </script>
 {% endblock %}
