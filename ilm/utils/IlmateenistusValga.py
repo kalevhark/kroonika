@@ -16,6 +16,19 @@ import requests
 from ilm.models import Ilm, Jaam
 from ilm.utils import utils
 
+"""
+Ilmateenistuse terminid:
+Öösel  21-05 
+Öö hakul (õhtupoole ööd, enne keskööd)  21-00 
+Kesköö paiku  23-02 
+Hommikupoole ööd  03-05 
+Hommikul  05-09 
+Päeval  09-17 
+Ennelõunal  09-12 
+Keskpäeval  12-14 
+Pärastlõunal  14-17 
+Õhtul  17-21
+"""
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
 def float_or_none(value):
     try:
