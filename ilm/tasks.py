@@ -541,7 +541,7 @@ def update_maxmin_rolling(path=''):
     #     cur.execute(query)
     #     a = cur.fetchall()
         stages['1'] = datetime.now() - start
-        print(cur.rowcount, stages['1'].seconds)
+        # print(cur.rowcount, stages['1'].seconds)
 
         query = """
             DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_1y;
@@ -560,7 +560,7 @@ def update_maxmin_rolling(path=''):
         """
         cur.execute(query)
         stages['2'] = datetime.now() - start
-        print(stages['2'].seconds)
+        # print(stages['2'].seconds)
 
         query = """
             REFRESH MATERIALIZED VIEW public.ilm_ilm_rolling_1y
@@ -569,7 +569,7 @@ def update_maxmin_rolling(path=''):
         cur.execute(query)
         # a = cur.fetchall()
         stages['3'] = datetime.now() - start
-        print(stages['3'].seconds)
+        # print(stages['3'].seconds)
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
