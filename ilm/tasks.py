@@ -574,7 +574,7 @@ def update_maxmin_rolling(path=''):
                     SELECT COUNT(*) FROM public.ilm_ilm_rolling_1y;
                 """
         cur.execute(query)
-        print(cur.rowcount)
+        print(cur.fetchone())
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
@@ -675,21 +675,21 @@ if __name__ == '__main__':
     # get_maxtimestamp()
 
     # Kustutame duplikaatread
-    rows_deleted = delete_duplicate_observations(path, verbose)
+    # rows_deleted = delete_duplicate_observations(path, verbose)
 
     # Täiendame puudulikke kirjeid
-    rows_updated = update_uncomplete_observations(path, verbose)
-    rows_missing = update_missing_observations(path, verbose)
-    update_lasthours(path, verbose, hours=72)
+    # rows_updated = update_uncomplete_observations(path, verbose)
+    # rows_missing = update_missing_observations(path, verbose)
+    # update_lasthours(path, verbose, hours=72)
 
     # Ilmaennustuste logi
-    update_forecast_logs(path, verbose)
+    # update_forecast_logs(path, verbose)
 
     # Viimase täistunnimõõtmise logimine faili
-    update_lasthour_log(path, verbose)
+    # update_lasthour_log(path, verbose)
 
     # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
-    update_forecast_log_analyze()
+    # update_forecast_log_analyze()
 
     # Tabelid mahukate arvutuste jaoks
     # update_maxmin(path)
