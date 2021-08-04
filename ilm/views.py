@@ -2392,6 +2392,8 @@ def maxmin(request):
     histAvg = round(mean([el['rolling_avg_1y'] for el in years_rolling_1y]), 1)
 
     chartdata_rolling_year_avg = 'Aasta,Aasta keskmine'
+    chartdata_rolling_year_avg_data_categories = []
+    chartdata_rolling_year_avg_data_averages = []
     for row in range(len(years_rolling_1y)):
         y = years_rolling_1y[row]['timestamp'].year
         m = years_rolling_1y[row]['timestamp'].month
@@ -2399,6 +2401,8 @@ def maxmin(request):
         h = years_rolling_1y[row]['timestamp'].hour
         avg_1y_delta = round(years_rolling_1y[row]['rolling_avg_1y'] - histAvg, 1)
         chartdata_rolling_year_avg += f'\n{y}-{m}-{d} {h}:00,{avg_1y_delta}'
+        chartdata_rolling_year_avg_data_categories.append(f'{y}-{m}-{d} {h}:00')
+        chartdata_rolling_year_avg_data_averages.append(avg_1y_delta)
     # for sql_statement in connection.queries:
     #     print(sql_statement['sql'])
 

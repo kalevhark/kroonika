@@ -544,7 +544,7 @@ def update_maxmin_rolling(path=''):
         print(cur.rowcount, stages['1'].seconds)
 
         query = """
-            DROP MATERIALIZED VIEW public.ilm_ilm_rolling_1y;
+            DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_1y;
 
             CREATE MATERIALIZED VIEW public.ilm_ilm_rolling_1y
             TABLESPACE pg_default
