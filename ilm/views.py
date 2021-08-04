@@ -2202,6 +2202,8 @@ def forecasts_quality(request):
 
 # Ajaloo ilmanäitajate ekstreemumid, keskmised ja varieerumine
 def maxmin(request):
+    from django.db import connection
+
     # Agregeeritud näitajad kuupäevade kaupa
     days_maxmin_qs = Ilm.objects \
         .values('timestamp__year', 'timestamp__month', 'timestamp__day') \
@@ -2221,11 +2223,18 @@ def maxmin(request):
 
     years_top = dict()
     # Agregeeritud näitajad aastate kaupa
+    from django.db.models import F, OuterRef, Subquery, IntegerField
+
     years_maxmin_qs = Ilm.objects\
         .values('timestamp__year')\
-        .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Avg('airtemperature'), Sum('precipitations'))\
+        .annotate(
+            Max('airtemperature_max'),
+            Min('airtemperature_min'),
+            Avg('airtemperature'),
+            Sum('precipitations'))\
         .order_by('timestamp__year')
 
+    from django.db.models import Q
     hours_rolling = Ilm.objects.annotate(
         rolling_min=Window(
             expression=Min('airtemperature_min'),
@@ -2243,18 +2252,29 @@ def maxmin(request):
     for year in years_maxmin_qs:
         y = year['timestamp__year']
         year_min = year['airtemperature_min__min']
-        obs_min = Ilm.objects.filter(airtemperature_min=year_min, timestamp__year=y).first()
+        obs_min = Ilm.objects.filter(
+            airtemperature_min=year_min,
+            timestamp__year=y
+        ).values_list('timestamp', flat=True).first()
+
         year_max = year['airtemperature_max__max']
-        obs_max = Ilm.objects.filter(airtemperature_max=year_max, timestamp__year=y).first()
+        obs_max = Ilm.objects.filter(
+            airtemperature_max=year_max,
+            timestamp__year=y
+        ).values_list('timestamp', flat=True).first()
+
         year_temp_avg = year['airtemperature__avg']
         year_prec_sum = year['precipitations__sum']
         # Põevi Min(d)>+30 ja Max(d)<-30
-        days_above30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_max__max__gte=30).count()
-        days_below30 = days_maxmin_qs.filter(timestamp__year=y, airtemperature_min__min__lte=-30).count()
+        days_above30 = days_maxmin_qs.filter(
+            timestamp__year=y,
+            airtemperature_max__max__gte=30
+        ).count()
+        days_below30 = days_maxmin_qs.filter(
+            timestamp__year=y,
+            airtemperature_min__min__lte=-30
+        ).count()
         # Öid, mil temperatuur ei lange alla 20 kraadi (öö = UTC18:00-02:00)
-        # days_above20 = days_maxmin_qs.\
-        #     filter(timestamp__year=y, timestamp__hour__lte=2, airtemperature_min__min__gte=20).\
-        #     count() # troopiline öö
         days_above20 = len([
             el
             for el
@@ -2267,9 +2287,6 @@ def maxmin(request):
             )
         ])
         # Päevi, mil temperatuur ei tõuse üle -20 kraadi (päev = UTC09:00-17:00)
-        # days_below20 = days_maxmin_qs.\
-        #     filter(timestamp__year=y, timestamp__hour__gte=7, timestamp__hour__lte=15, airtemperature_max__max__lte=-20).\
-        #     count() # arktiline päev
         days_below20 = len([
             el
             for el
@@ -2278,7 +2295,7 @@ def maxmin(request):
                     el['rolling_max'] and
                     el['timestamp'].year == y and
                     el['timestamp'].hour == 17 and
-                    el['rolling_min'] <= -20
+                    el['rolling_max'] <= -20
             )
         ])
         years_top[y] = {
@@ -2373,6 +2390,7 @@ def maxmin(request):
 
     from statistics import mean
     histAvg = round(mean([el['rolling_avg_1y'] for el in years_rolling_1y]), 1)
+
     chartdata_rolling_year_avg = 'Aasta,Aasta keskmine'
     for row in range(len(years_rolling_1y)):
         y = years_rolling_1y[row]['timestamp'].year
@@ -2381,6 +2399,8 @@ def maxmin(request):
         h = years_rolling_1y[row]['timestamp'].hour
         avg_1y_delta = round(years_rolling_1y[row]['rolling_avg_1y'] - histAvg, 1)
         chartdata_rolling_year_avg += f'\n{y}-{m}-{d} {h}:00,{avg_1y_delta}'
+    # for sql_statement in connection.queries:
+    #     print(sql_statement['sql'])
 
     context = {
         'years_top': years_top,

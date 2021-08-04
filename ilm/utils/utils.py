@@ -96,6 +96,7 @@ def last_sunday(year, month):
     last_sunday = max(week[-1] for week in calendar.monthcalendar(year, month))
     return pytz.utc.localize(datetime(year, month, last_sunday))
 
+
 # postgresql andmebaasi lugemiseks seadete lugemine .ini failist
 # The following config() function read the database.ini file and returns the connection parameters.
 def config(path='', filename='utils/database.ini', section='postgresql'):
@@ -376,12 +377,12 @@ def yrno_48h():
     }
     return yr
 
-def owm_onecall():
+def owm_onecall(path=os.getcwd()):
     try:
         from django.conf import settings
         api_key = settings.OWM_APIKEY
     except:
-        api_config = config(os.getcwd(), 'ilm/utils/owm.ini', 'OWM')
+        api_config = config(path, 'ilm/utils/owm.ini', 'OWM')
         api_key = api_config['owm_apikey']
     city_id = 587876  # Valga
     lon = '26.05'

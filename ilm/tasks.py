@@ -8,21 +8,24 @@
 from datetime import datetime, timedelta
 import os
 from pathlib import Path
-import re
+# import re
 import sys
-import xml.etree.ElementTree as ET
+# import xml.etree.ElementTree as ET
 
-from urllib.request import Request, urlopen
-from urllib.error import URLError
+# from urllib.request import Request, urlopen
+# from urllib.error import URLError
 
 # from bs4 import BeautifulSoup
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from pytz import timezone
-import pytz
-import requests
+# from pytz import timezone
+# import pytz
+# import requests
 
-from .utils import utils
+try:
+    from .utils import utils
+except: # kui käivitatakse lokaalselt
+    from utils import utils
 
 # The following connect() function connects to the suppliers database and prints out the PostgreSQL database version.
 def connect(path=''):
@@ -187,7 +190,7 @@ def insert_new_observations(observation_dict, path=''):
     return obs_id
 
 # Kustutab topeltkirjed
-def delete_duplicate_observations(path=''):
+def delete_duplicate_observations(path='', verbose=False):
     conn = None
     rows_deleted = 0
     try:
@@ -210,11 +213,12 @@ def delete_duplicate_observations(path=''):
     finally:
         if conn is not None:
             conn.close()
-    # print(f'Kustutati: {rows_deleted}')
+    if verbose and rows_deleted > 0:
+        print(f'Kustutati: {rows_deleted} kirjet')
     return rows_deleted
 
 # Täiendab puudulikud kirjed, millel puudub õhutemperatuurinäit
-def update_uncomplete_observations(path=''):
+def update_uncomplete_observations(path='', verbose=False):
     conn = None
     rows_uncomplete = 0
     rows_updated = 0
@@ -259,11 +263,12 @@ def update_uncomplete_observations(path=''):
     finally:
         if conn is not None:
             conn.close()
-    # print(f'Täiendati: {rows_updated}/{rows_uncomplete}')
+    if verbose and rows_updated > 0:
+        print(f'Täiendati: {rows_updated} kirjet')
     return rows_updated
 
 # Täiendab puudulikud kirjed, millel puudub õhutemperatuurinäit
-def update_missing_observations(path=''):
+def update_missing_observations(path='', verbose=False):
     conn = None
     rows_updated = 0
     timestamp_missing_records = []
@@ -311,26 +316,268 @@ def update_missing_observations(path=''):
     finally:
         if conn is not None:
             conn.close()
-    # print(f'Täiendati: {rows_updated}/{rows_uncomplete}')
+    if verbose and rows_updated > 0:
+        print(f'Lisati: {rows_updated} kirjet')
     return rows_updated
 
-if __name__ == '__main__':
-    path = os.path.dirname(sys.argv[0])
-    # path = Path(__file__).resolve().parent.parent.parent
-    # get_maxtimestamp()
-    # Kustutame duplikaatread
-    rows_deleted = delete_duplicate_observations(path)
-    if rows_deleted > 0:
-        print(f'Kustutati: {rows_deleted} kirjet')
+def update_maxmin(path=''):
+    conn = None
+    row = dict()
 
-    # Täiendame puudulikke kirjeid
-    rows_updated = update_uncomplete_observations(path)
-    if rows_updated > 0:
-        print(f'Täiendati: {rows_updated} kirjet')
-    rows_missing = update_missing_observations(path)
-    if rows_missing > 0:
-        print(f'Lisati: {rows_missing} kirjet')
+    try:
+        params = utils.config(path)
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        query = """
+            SELECT 
+                "ilm_ilm"."timestamp", 
+                MIN("ilm_ilm"."airtemperature_min") 
+                    OVER 
+                        (
+                            ORDER BY 
+                                "ilm_ilm"."timestamp" ASC 
+                            ROWS BETWEEN 7 PRECEDING AND CURRENT ROW
+                        ) AS "rolling_min", 
+                MAX("ilm_ilm"."airtemperature_max") 
+                    OVER 
+                        (
+                            ORDER BY 
+                                "ilm_ilm"."timestamp" ASC 
+                            ROWS BETWEEN 7 PRECEDING AND CURRENT ROW
+                        ) AS "rolling_max" 
+                FROM "ilm_ilm"
+            ORDER BY "ilm_ilm"."timestamp" DESC
+            """
+        cur.execute(query)
+        print(cur.rowcount)
 
+        from collections import Counter
+        above20_year_list = []
+        below20_year_list = []
+        for row in cur.fetchall():
+            if row['rolling_max'] and (row['rolling_max'] <= -20) and (row['timestamp'].hour == 17):
+                above20_year_list.append(row['timestamp'].year)
+            if row['rolling_min'] and (row['rolling_min'] >= 20) and (row['timestamp'].hour == 2):
+                below20_year_list.append(row['timestamp'].year)
+        print(Counter(above20_year_list), Counter(below20_year_list))
+
+        # Iga aasta max, min, keskmine temperatuur ja sademete kogus
+        query = """
+            SELECT 
+                EXTRACT(\'year\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\'), 
+                MAX("ilm_ilm"."airtemperature_max") AS "airtemperature_max__max", 
+                MIN("ilm_ilm"."airtemperature_min") AS "airtemperature_min__min", 
+                AVG("ilm_ilm"."airtemperature") AS "airtemperature__avg", 
+                SUM("ilm_ilm"."precipitations") AS "precipitations__sum" FROM "ilm_ilm" 
+            GROUP BY 
+                EXTRACT(\'year\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\') 
+            ORDER BY 
+                EXTRACT(\'year\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\') ASC
+        """
+
+        cur.execute(query)
+        # print("Kandeid: ", cur.rowcount)
+
+        years_top = dict()
+        row = cur.fetchone()
+        while row is not None:
+            #     # d = row[0]
+            #     # print(f'PostgreSQL datetime          : {d}')
+            #     # print(f'PostgreSQL timezone          : {d.tzname()}')
+            #     # print(f'PostgreSQL offset UTC ajaga  : {d.utcoffset()}')
+            #     # print(f'PostgreSQL Eesti aeg         : {utc2eesti_aeg(d)}')
+            #     # print((d - row[0]).seconds)
+            # print(row)
+            year = int(row['date_part'])
+            airtemperature_max__max = row['airtemperature_max__max']
+            airtemperature_min__min = row['airtemperature_min__min']
+            airtemperature__avg = round(row['airtemperature__avg'], 1)
+            precipitations__sum = row['precipitations__sum']
+
+            cur2 = conn.cursor(cursor_factory=RealDictCursor)
+
+            # Aasta max temp mõõtmise aeg
+            subquery_obs_max = f"""
+                SELECT 
+                    "ilm_ilm"."timestamp" FROM "ilm_ilm" 
+                WHERE 
+                    (
+                        "ilm_ilm"."airtemperature_max" = {airtemperature_max__max} AND 
+                        "ilm_ilm"."timestamp" BETWEEN \'{year}-01-01T00:00:00+02:00\'::timestamptz AND \'{year}-12-31T23:59:59.999999+02:00\'::timestamptz
+                    ) 
+                ORDER BY 
+                    "ilm_ilm"."timestamp" DESC 
+                    LIMIT 1
+            """
+            cur2.execute(subquery_obs_max)
+            row = cur2.fetchone()
+            obs_max= row['timestamp']
+
+            # Aasta min temp mõõtmise aeg
+            subquery_obs_min = f"""
+                SELECT 
+                    "ilm_ilm"."timestamp" FROM "ilm_ilm" 
+                WHERE 
+                    (
+                        "ilm_ilm"."airtemperature_min" = {airtemperature_min__min} AND 
+                        "ilm_ilm"."timestamp" BETWEEN \'{year}-01-01T00:00:00+02:00\'::timestamptz AND \'{year}-12-31T23:59:59.999999+02:00\'::timestamptz
+                    ) 
+                ORDER BY 
+                    "ilm_ilm"."timestamp" DESC 
+                    LIMIT 1
+            """
+            cur2.execute(subquery_obs_min)
+            row = cur2.fetchone()
+            obs_min = row['timestamp']
+
+            subquery_below30 = f"""
+            SELECT 
+                COUNT(*) FROM 
+                    (
+                        SELECT 
+                            EXTRACT(\'year\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\') AS Col1, 
+                            EXTRACT(\'month\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\') AS Col2, 
+                            EXTRACT(\'day\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\') AS Col3, 
+                            MAX("ilm_ilm"."airtemperature_max") AS "airtemperature_max__max", 
+                            MIN("ilm_ilm"."airtemperature_min") AS "airtemperature_min__min", 
+                            AVG("ilm_ilm"."airtemperature") AS "airtemperature__avg", 
+                            SUM("ilm_ilm"."precipitations") AS "precipitations__sum" FROM "ilm_ilm" 
+                        WHERE 
+                            "ilm_ilm"."timestamp" BETWEEN \'{year}-01-01T00:00:00+02:00\'::timestamptz AND \'{year}-12-31T23:59:59.999999+02:00\'::timestamptz 
+                        GROUP BY 
+                            EXTRACT(\'year\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\'), 
+                            EXTRACT(\'month\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\'), 
+                            EXTRACT(\'day\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\') 
+                        HAVING 
+                            MIN("ilm_ilm"."airtemperature_min") <=  -30
+                    ) 
+                subquery
+            """
+            cur2.execute(subquery_below30)
+            row = cur2.fetchone()
+            days_below30 = row['count']
+
+            subquery_above30 = f"""
+            SELECT 
+                COUNT(*) FROM 
+                    (
+                        SELECT 
+                            EXTRACT(\'year\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\') AS Col1, 
+                            EXTRACT(\'month\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\') AS Col2, 
+                            EXTRACT(\'day\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\') AS Col3, 
+                            MAX("ilm_ilm"."airtemperature_max") AS "airtemperature_max__max", 
+                            MIN("ilm_ilm"."airtemperature_min") AS "airtemperature_min__min", 
+                            AVG("ilm_ilm"."airtemperature") AS "airtemperature__avg", 
+                            SUM("ilm_ilm"."precipitations") AS "precipitations__sum" FROM "ilm_ilm" 
+                        WHERE 
+                            "ilm_ilm"."timestamp" BETWEEN \'{year}-01-01T00:00:00+02:00\'::timestamptz AND \'{year}-12-31T23:59:59.999999+02:00\'::timestamptz 
+                        GROUP BY 
+                            EXTRACT(\'year\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\'), 
+                            EXTRACT(\'month\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\'), 
+                            EXTRACT(\'day\' FROM "ilm_ilm"."timestamp" AT TIME ZONE \'Europe/Tallinn\') 
+                        HAVING 
+                            MAX("ilm_ilm"."airtemperature_max") >=  30
+                    ) 
+                subquery
+            """
+            cur2.execute(subquery_above30)
+            row = cur2.fetchone()
+            days_above30 = row['count']
+
+            # print(obs_max, obs_min, days_below30, days_above30)
+
+            cur2.close()
+
+            days_above20 = 0
+            days_below20 = 0
+
+            years_top[year] = {
+                'year_min': airtemperature_min__min,  # madalaim aasta jooksul mõõdetud õhutemperatuur
+                'obs_min': obs_min,  # madalaima aasta jooksul mõõdetud õhutemperatuuri mõõtmise aeg
+                'year_max': airtemperature_max__max,  # kõrgeim aasta jooksul mõõdetud õhutemperatuur
+                'obs_max': obs_max,  # kõrgeima aasta jooksul mõõdetud õhutemperatuuri mõõtmise aeg
+                'year_temp_avg': airtemperature__avg,
+                'year_prec_sum': precipitations__sum,
+                'days_below20': days_below20,
+                'days_above20': days_above20,
+                'days_below30': days_below30,
+                'days_above30': days_above30
+            }
+
+            # järgmine rida:
+            row = cur.fetchone()
+
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+    return row
+
+def update_maxmin_rolling(path=''):
+    conn = None
+    row = dict()
+
+    start = datetime.now()
+    stages = dict()
+    try:
+        params = utils.config(path)
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+    #     query = """
+    #         SELECT
+    #             "ilm_ilm"."timestamp",
+    #             AVG("ilm_ilm"."airtemperature")
+    #                 OVER
+    #                     (
+    #                         ORDER BY
+    #                             "ilm_ilm"."timestamp" ASC
+    #                         ROWS BETWEEN 4379 PRECEDING AND 4380 FOLLOWING
+    #                     ) AS "rolling_avg_1y" FROM "ilm_ilm"
+    #         ORDER BY
+    #             "ilm_ilm"."timestamp" DESC
+    #         """
+    #     cur.execute(query)
+    #     a = cur.fetchall()
+        stages['1'] = datetime.now() - start
+        print(cur.rowcount, stages['1'].seconds)
+
+        query = """
+            DROP MATERIALIZED VIEW public.ilm_ilm_rolling_1y;
+
+            CREATE MATERIALIZED VIEW public.ilm_ilm_rolling_1y
+            TABLESPACE pg_default
+            AS
+             SELECT ilm_ilm."timestamp",
+                avg(ilm_ilm.airtemperature) OVER (ORDER BY ilm_ilm."timestamp" ROWS BETWEEN 4379 PRECEDING AND 4380 FOLLOWING) AS rolling_avg_1y
+               FROM ilm_ilm
+              ORDER BY ilm_ilm."timestamp" DESC
+            WITH DATA;
+            
+            ALTER TABLE public.ilm_ilm_rolling_1y
+                OWNER TO kroonika;
+        """
+        cur.execute(query)
+        stages['2'] = datetime.now() - start
+        print(stages['2'].seconds)
+
+        query = """
+            REFRESH MATERIALIZED VIEW public.ilm_ilm_rolling_1y
+                WITH DATA
+        """
+        cur.execute(query)
+        # a = cur.fetchall()
+        stages['3'] = datetime.now() - start
+        print(stages['3'].seconds)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+    return
+
+def update_lasthours(path, verbose=False, hours=72):
     # Kontrollime 72 tunni andmete olemasolu, vajadusel lisame
     for hour in range(71, -1, -1): # Viimase 72 tunni andmed
         observation_time = datetime.now() - timedelta(hours=hour)
@@ -341,15 +588,16 @@ if __name__ == '__main__':
             # print(ilm_observation_veebist)
             if ilm_observation_veebist:
                 id = insert_new_observations(ilm_observation_veebist, path)
-                print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+                if verbose:
+                    print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
             else:
-                print(f'{observation_time} uuendamine ebaõnnestus')
+                if verbose:
+                    print(f'{observation_time} uuendamine ebaõnnestus')
         else:
             # print('olemas.')
             pass
 
-    # Ilmaennustuste logi
-    # y = utils.yrno_48h()
+def update_forecast_logs(path='', verbose=False):
     yAPI = utils.YrnoAPI()
     y = yAPI.yrno_forecasts
     o = utils.owm_onecall()
@@ -398,7 +646,7 @@ if __name__ == '__main__':
         with open(f'logs/forecast_{forecast_hour}h.log', 'a') as f:
             f.write(line + '\n')
 
-    # Viimase täistunnimõõtmise logimine faili
+def update_lasthour_log(path='', verbose=False):
     now = datetime.now()
     observation_time = datetime(now.year, now.month, now.day, now.hour)
     observation = check_observation_exists(observation_time, path)
@@ -410,7 +658,34 @@ if __name__ == '__main__':
             line = ';'.join([time, temp, prec])
             f.write(line + '\n')
 
-    # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
+def update_forecast_log_analyze():
     from .utils import forecast_log_analyze
     path = Path(__file__).resolve().parent.parent
     forecast_log_analyze.logs2bigdata(path)
+
+if __name__ == '__main__':
+    path = os.path.dirname(sys.argv[0])
+    verbose = True
+    # path = Path(__file__).resolve().parent.parent.parent
+    # get_maxtimestamp()
+
+    # Kustutame duplikaatread
+    rows_deleted = delete_duplicate_observations(path, verbose)
+
+    # Täiendame puudulikke kirjeid
+    rows_updated = update_uncomplete_observations(path, verbose)
+    rows_missing = update_missing_observations(path, verbose)
+    update_lasthours(path, verbose, hours=72)
+
+    # Ilmaennustuste logi
+    update_forecast_logs(path, verbose)
+
+    # Viimase täistunnimõõtmise logimine faili
+    update_lasthour_log(path, verbose)
+
+    # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
+    update_forecast_log_analyze()
+
+    # Tabelid mahukate arvutuste jaoks
+    # update_maxmin(path)
+    update_maxmin_rolling(path)
