@@ -213,8 +213,6 @@ class IlmateenistusData():
         else:
             t2isaasta_max = self.stopp.year - 1
 
-        from django.db import connection
-
         self.qs_years = Ilm.objects \
             .filter(timestamp__year__gte = t2isaasta_min, timestamp__year__lte = t2isaasta_max) \
             .values('timestamp__year') \
@@ -240,8 +238,6 @@ class IlmateenistusData():
             .values('timestamp__month', 'timestamp__day', 'timestamp__hour') \
             .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
             .order_by('timestamp__month', 'timestamp__day', 'timestamp__hour')
-        for sql_statement in connection.queries:
-            print(sql_statement['sql'])
 
     def bdi_startstopp(self):
         # Leian andmebaasi ajaliselt esimese ja viimase kande aja

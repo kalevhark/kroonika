@@ -2394,6 +2394,7 @@ def maxmin(request):
     chartdata_rolling_year_avg = 'Aasta,Aasta keskmine'
     chartdata_rolling_year_avg_data_categories = []
     chartdata_rolling_year_avg_data_averages = []
+
     for row in range(len(years_rolling_1y)):
         y = years_rolling_1y[row]['timestamp'].year
         m = years_rolling_1y[row]['timestamp'].month
@@ -2412,6 +2413,8 @@ def maxmin(request):
         'chartdata_heatmap_relative': chartdata_heatmap_relative,
         'chartdata_heatmap_precipitations': chartdata_heatmap_precipitations,
         'chartdata_rolling_year_avg': chartdata_rolling_year_avg,
+        'chartdata_rolling_year_avg_data_categories': chartdata_rolling_year_avg_data_categories,
+        'chartdata_rolling_year_avg_data_averages': chartdata_rolling_year_avg_data_averages,
         'days_airtemp_monthmaxmin': days_airtemp_monthmaxmin,
         'yearMin': yearMin,
         'yearMax': yearMax,
