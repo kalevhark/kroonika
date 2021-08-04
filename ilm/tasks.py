@@ -564,12 +564,17 @@ def update_maxmin_rolling(path=''):
 
         query = """
             REFRESH MATERIALIZED VIEW public.ilm_ilm_rolling_1y
-                WITH DATA
+                WITH DATA;
         """
         cur.execute(query)
         # a = cur.fetchall()
         stages['3'] = datetime.now() - start
         # print(stages['3'].seconds)
+        query = """
+                    SELECT COUNT(*) FROM public.ilm_ilm_rolling_1y;
+                """
+        cur.execute(query)
+        print(cur.rowcount)
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
