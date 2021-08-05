@@ -2202,8 +2202,6 @@ def forecasts_quality(request):
 
 # Ajaloo ilmanäitajate ekstreemumid, keskmised ja varieerumine
 def maxmin(request):
-    from django.db import connection
-
     # Agregeeritud näitajad kuupäevade kaupa
     days_maxmin_qs = Ilm.objects \
         .values('timestamp__year', 'timestamp__month', 'timestamp__day') \
@@ -2383,10 +2381,10 @@ def maxmin(request):
             frame=RowRange(start=-int(365 * 24 / 2 - 1), end=int(365 * 24 / 2))),
     ).values('timestamp', 'rolling_avg_1y')
 
-    # from django.db import connection
-    # with connection.cursor() as cursor:
-    #     cursor.execute('SELECT COUNT(*) FROM ilm_ilm_rolling_1y')
-    #     row = cursor.fetchone()
+    from django.db import connection
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT * FROM ilm_ilm_rolling_1y')
+        years_rolling_1y = cursor.fetchall()
     # print(row)
 
     # years_rolling_5y = Ilm.objects.annotate(
@@ -2396,23 +2394,29 @@ def maxmin(request):
     # ).values('rolling_avg_5y')
 
     from statistics import mean
-    histAvg = round(mean([el['rolling_avg_1y'] for el in years_rolling_1y]), 1)
+    # histAvg = round(mean([el['rolling_avg_1y'] for el in years_rolling_1y]), 1)
+    histAvg = round(mean([el[1] for el in years_rolling_1y]), 1)
 
     chartdata_rolling_year_avg = 'Aasta,Aasta keskmine'
-    chartdata_rolling_year_avg_data_categories = []
-    chartdata_rolling_year_avg_data_averages = []
+    # chartdata_rolling_year_avg_data_categories = []
+    # chartdata_rolling_year_avg_data_averages = []
 
-    for row in range(len(years_rolling_1y)):
-        y = years_rolling_1y[row]['timestamp'].year
-        m = years_rolling_1y[row]['timestamp'].month
-        d = years_rolling_1y[row]['timestamp'].day
-        h = years_rolling_1y[row]['timestamp'].hour
-        avg_1y_delta = round(years_rolling_1y[row]['rolling_avg_1y'] - histAvg, 1)
+    # for row in range(len(years_rolling_1y)):
+    for row in years_rolling_1y:
+        dt = row[0]
+        # y = years_rolling_1y[row]['timestamp'].year
+        # m = years_rolling_1y[row]['timestamp'].month
+        # d = years_rolling_1y[row]['timestamp'].day
+        # h = years_rolling_1y[row]['timestamp'].hour
+        y = dt.year
+        m = dt.month
+        d = dt.day
+        h = dt.hour
+        # avg_1y_delta = round(years_rolling_1y[row]['rolling_avg_1y'] - histAvg, 1)
+        avg_1y_delta = round(row[1] - histAvg, 1)
         chartdata_rolling_year_avg += f'\n{y}-{m}-{d} {h}:00,{avg_1y_delta}'
-        chartdata_rolling_year_avg_data_categories.append(f'{y}-{m}-{d} {h}:00')
-        chartdata_rolling_year_avg_data_averages.append(avg_1y_delta)
-    # for sql_statement in connection.queries:
-    #     print(sql_statement['sql'])
+        # chartdata_rolling_year_avg_data_categories.append(f'{y}-{m}-{d} {h}:00')
+        # chartdata_rolling_year_avg_data_averages.append(avg_1y_delta)
 
     context = {
         'years_top': years_top,
@@ -2420,8 +2424,8 @@ def maxmin(request):
         'chartdata_heatmap_relative': chartdata_heatmap_relative,
         'chartdata_heatmap_precipitations': chartdata_heatmap_precipitations,
         'chartdata_rolling_year_avg': chartdata_rolling_year_avg,
-        'chartdata_rolling_year_avg_data_categories': chartdata_rolling_year_avg_data_categories,
-        'chartdata_rolling_year_avg_data_averages': chartdata_rolling_year_avg_data_averages,
+        # 'chartdata_rolling_year_avg_data_categories': chartdata_rolling_year_avg_data_categories,
+        # 'chartdata_rolling_year_avg_data_averages': chartdata_rolling_year_avg_data_averages,
         'days_airtemp_monthmaxmin': days_airtemp_monthmaxmin,
         'yearMin': yearMin,
         'yearMax': yearMax,
