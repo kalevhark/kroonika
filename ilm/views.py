@@ -2382,6 +2382,13 @@ def maxmin(request):
             order_by=F('timestamp').asc(),
             frame=RowRange(start=-int(365 * 24 / 2 - 1), end=int(365 * 24 / 2))),
     ).values('timestamp', 'rolling_avg_1y')
+
+    # from django.db import connection
+    # with connection.cursor() as cursor:
+    #     cursor.execute('SELECT COUNT(*) FROM ilm_ilm_rolling_1y')
+    #     row = cursor.fetchone()
+    # print(row)
+
     # years_rolling_5y = Ilm.objects.annotate(
     #     rolling_avg_5y=Window(expression=Avg('airtemperature'),
     #                           order_by=F('timestamp').asc(),

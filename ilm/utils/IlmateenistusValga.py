@@ -178,7 +178,6 @@ class IlmateenistusData():
     
     def __init__(self):
         # Lähteandmed vormides
-        print('init')
         dt = pytz.timezone('Europe/Tallinn').localize(datetime.now())
         self.aasta = dt.year
         self.kuu = dt.month

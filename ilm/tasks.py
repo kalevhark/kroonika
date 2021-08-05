@@ -525,84 +525,84 @@ def update_maxmin_rolling(path=''):
         params = utils.config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        query = """
-            DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_8h;
-
-            CREATE MATERIALIZED VIEW public.ilm_ilm_rolling_8h
-            TABLESPACE pg_default
-            AS
-                SELECT * 
-                FROM
-                    (SELECT 
-                        "ilm_ilm"."timestamp", 
-                        MIN("ilm_ilm"."airtemperature_min") 
-                            OVER 
-                                (
-                                    ORDER BY 
-                                        "ilm_ilm"."timestamp" ASC 
-                                    ROWS BETWEEN 7 PRECEDING AND CURRENT ROW
-                                ) AS "rolling_min", 
-                        MAX("ilm_ilm"."airtemperature_max") 
-                            OVER 
-                                (
-                                    ORDER BY 
-                                        "ilm_ilm"."timestamp" ASC 
-                                    ROWS BETWEEN 7 PRECEDING AND CURRENT ROW
-                                ) AS "rolling_max" 
-                        FROM "ilm_ilm" 
-                    ORDER BY "ilm_ilm"."timestamp" DESC) AS rolling
-                WHERE (
-                    "rolling"."rolling_min" > 20 AND 
-                    EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn') = 5
-                ) OR (
-                    "rolling"."rolling_max" < -20 AND 
-                    EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn') = 19
-                )
-                ORDER BY "rolling"."timestamp" DESC
-            WITH DATA;
-            
-            ALTER TABLE public.ilm_ilm_rolling_8h
-                OWNER TO kroonika;
-            """
-        cur.execute(query)
-        stages['1'] = datetime.now() - start
-        print(stages['1'].seconds)
-
-        query = """
-            DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_1y;
-
-            CREATE MATERIALIZED VIEW public.ilm_ilm_rolling_1y
-            TABLESPACE pg_default
-            AS
-             SELECT "rolling"."timestamp", "rolling"."rolling_avg_1y"
-                FROM
-                    (SELECT 
-                        "ilm_ilm"."timestamp", 
-                        AVG("ilm_ilm"."airtemperature")
-                            OVER 
-                                (
-                                    ORDER BY 
-                                        "ilm_ilm"."timestamp" ASC 
-                                    ROWS BETWEEN 4379 PRECEDING AND 4380 FOLLOWING
-                                ) AS "rolling_avg_1y" FROM "ilm_ilm" 
-                    ORDER BY 
-                        "ilm_ilm"."timestamp" DESC) AS rolling
-                WHERE EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn')=12
-            WITH DATA;
-            
-            ALTER TABLE public.ilm_ilm_rolling_1y
-                OWNER TO kroonika;
-        """
-        cur.execute(query)
-        stages['2'] = datetime.now() - start
-        print(stages['2'].seconds)
-
-        query = """
-            REFRESH MATERIALIZED VIEW public.ilm_ilm_rolling_1y
-                WITH DATA;
-        """
-        cur.execute(query)
-        stages['3'] = datetime.now() - start
+        # query = """
+        #     DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_8h;
+        #
+        #     CREATE MATERIALIZED VIEW public.ilm_ilm_rolling_8h
+        #     -- TABLESPACE pg_default
+        #     AS
+        #         SELECT *
+        #         FROM
+        #             (SELECT
+        #                 "ilm_ilm"."timestamp",
+        #                 MIN("ilm_ilm"."airtemperature_min")
+        #                     OVER
+        #                         (
+        #                             ORDER BY
+        #                                 "ilm_ilm"."timestamp" ASC
+        #                             ROWS BETWEEN 7 PRECEDING AND CURRENT ROW
+        #                         ) AS "rolling_min",
+        #                 MAX("ilm_ilm"."airtemperature_max")
+        #                     OVER
+        #                         (
+        #                             ORDER BY
+        #                                 "ilm_ilm"."timestamp" ASC
+        #                             ROWS BETWEEN 7 PRECEDING AND CURRENT ROW
+        #                         ) AS "rolling_max"
+        #                 FROM "ilm_ilm"
+        #             ORDER BY "ilm_ilm"."timestamp" DESC) AS rolling
+        #         WHERE (
+        #             "rolling"."rolling_min" > 20 AND
+        #             EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn') = 5
+        #         ) OR (
+        #             "rolling"."rolling_max" < -20 AND
+        #             EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn') = 19
+        #         )
+        #         ORDER BY "rolling"."timestamp" DESC
+        #     WITH DATA;
+        #
+        #     ALTER TABLE public.ilm_ilm_rolling_8h
+        #         OWNER TO kroonika;
+        #     """
+        # cur.execute(query)
+        # stages['1'] = datetime.now() - start
+        # # print(stages['1'].seconds)
+        #
+        # query = """
+        #     DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_1y;
+        #
+        #     CREATE MATERIALIZED VIEW public.ilm_ilm_rolling_1y
+        #     -- TABLESPACE pg_default
+        #     AS
+        #      SELECT "rolling"."timestamp", "rolling"."rolling_avg_1y"
+        #         FROM
+        #             (SELECT
+        #                 "ilm_ilm"."timestamp",
+        #                 AVG("ilm_ilm"."airtemperature")
+        #                     OVER
+        #                         (
+        #                             ORDER BY
+        #                                 "ilm_ilm"."timestamp" ASC
+        #                             ROWS BETWEEN 4379 PRECEDING AND 4380 FOLLOWING
+        #                         ) AS "rolling_avg_1y" FROM "ilm_ilm"
+        #             ORDER BY
+        #                 "ilm_ilm"."timestamp" DESC) AS rolling
+        #         WHERE EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn')=12
+        #     WITH DATA;
+        #
+        #     ALTER TABLE public.ilm_ilm_rolling_1y
+        #         OWNER TO kroonika;
+        # """
+        # cur.execute(query)
+        # stages['2'] = datetime.now() - start
+        # # print(stages['2'].seconds)
+        #
+        # query = """
+        #     REFRESH MATERIALIZED VIEW public.ilm_ilm_rolling_1y
+        #         WITH DATA;
+        # """
+        # cur.execute(query)
+        # stages['3'] = datetime.now() - start
         # print(stages['3'].seconds)
         query = """
             SELECT COUNT(*) FROM public.ilm_ilm_rolling_8h;
