@@ -2385,7 +2385,6 @@ def maxmin(request):
     with connection.cursor() as cursor:
         cursor.execute('SELECT * FROM ilm_ilm_rolling_1y')
         years_rolling_1y = cursor.fetchall()
-    # print(row)
 
     # years_rolling_5y = Ilm.objects.annotate(
     #     rolling_avg_5y=Window(expression=Avg('airtemperature'),

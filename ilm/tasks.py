@@ -517,10 +517,6 @@ def update_maxmin(path=''):
 
 def update_maxmin_rolling(path=''):
     conn = None
-    row = dict()
-
-    start = datetime.now()
-    stages = dict()
     try:
         params = utils.config(path)
         conn = psycopg2.connect(**params)
@@ -567,8 +563,6 @@ def update_maxmin_rolling(path=''):
             COMMIT;
             """
         cur.execute(query)
-        stages['1'] = datetime.now() - start
-        # print(stages['1'].seconds)
 
         query = """
             DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_1y;
@@ -585,7 +579,7 @@ def update_maxmin_rolling(path=''):
                                 (
                                     ORDER BY
                                         "ilm_ilm"."timestamp" ASC
-                                    ROWS BETWEEN 4379 PRECEDING AND 4380 FOLLOWING
+                                    ROWS BETWEEN 365*24/2-1 PRECEDING AND 365*24/2 FOLLOWING
                                 ) AS "rolling_avg_1y" FROM "ilm_ilm"
                     ORDER BY
                         "ilm_ilm"."timestamp" DESC) AS rolling
@@ -598,29 +592,61 @@ def update_maxmin_rolling(path=''):
             COMMIT;
         """
         cur.execute(query)
-        stages['2'] = datetime.now() - start
-        # print(stages['2'].seconds)
+
+        # query = """
+        #     REFRESH MATERIALIZED VIEW public.ilm_ilm_rolling_1y
+        #         WITH DATA;
+        # """
+        # cur.execute(query)
+        # stages['3'] = datetime.now() - start
+        # print(stages['3'].seconds)
 
         query = """
-            REFRESH MATERIALIZED VIEW public.ilm_ilm_rolling_1y
-                WITH DATA;
+            DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_5y;
+
+            CREATE MATERIALIZED VIEW public.ilm_ilm_rolling_5y
+            -- TABLESPACE pg_default
+            AS
+             SELECT "rolling"."timestamp", "rolling"."rolling_avg_5y"
+                FROM
+                    (SELECT
+                        "ilm_ilm"."timestamp",
+                        AVG("ilm_ilm"."airtemperature")
+                            OVER
+                                (
+                                    ORDER BY
+                                        "ilm_ilm"."timestamp" ASC
+                                    ROWS BETWEEN 5*365*24/2-1 PRECEDING AND 5*365*24/2 FOLLOWING
+                                ) AS "rolling_avg_5y" FROM "ilm_ilm"
+                    ORDER BY
+                        "ilm_ilm"."timestamp" DESC) AS rolling
+                WHERE EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn')=12
+            WITH DATA;
+
+            ALTER TABLE public.ilm_ilm_rolling_5y
+                OWNER TO kroonika;
+
+            COMMIT;
         """
         cur.execute(query)
-        stages['3'] = datetime.now() - start
-        print(stages['3'].seconds)
+
         query = """
             SELECT COUNT(*) FROM public.ilm_ilm_rolling_8h;
         """
         cur.execute(query)
-        stages['4'] = datetime.now() - start
-        print(cur.fetchone(), stages['4'].seconds)
+        print('8h:', cur.fetchone())
 
         query = """
             SELECT COUNT(*) FROM public.ilm_ilm_rolling_1y;
         """
         cur.execute(query)
-        stages['5'] = datetime.now() - start
-        print(cur.fetchone(), stages['5'].seconds)
+        print('1y:', cur.fetchone())
+
+        query = """
+            SELECT COUNT(*) FROM public.ilm_ilm_rolling_5y;
+        """
+        cur.execute(query)
+        print('5y:', cur.fetchone())
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
