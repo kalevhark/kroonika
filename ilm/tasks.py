@@ -525,21 +525,47 @@ def update_maxmin_rolling(path=''):
         params = utils.config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor(cursor_factory=RealDictCursor)
-    #     query = """
-    #         SELECT
-    #             "ilm_ilm"."timestamp",
-    #             AVG("ilm_ilm"."airtemperature")
-    #                 OVER
-    #                     (
-    #                         ORDER BY
-    #                             "ilm_ilm"."timestamp" ASC
-    #                         ROWS BETWEEN 4379 PRECEDING AND 4380 FOLLOWING
-    #                     ) AS "rolling_avg_1y" FROM "ilm_ilm"
-    #         ORDER BY
-    #             "ilm_ilm"."timestamp" DESC
-    #         """
-    #     cur.execute(query)
-    #     a = cur.fetchall()
+        query = """
+            DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_8h;
+
+            CREATE MATERIALIZED VIEW public.ilm_ilm_rolling_8h
+            TABLESPACE pg_default
+            AS
+                SELECT * 
+                FROM
+                    (SELECT 
+                        "ilm_ilm"."timestamp", 
+                        MIN("ilm_ilm"."airtemperature_min") 
+                            OVER 
+                                (
+                                    ORDER BY 
+                                        "ilm_ilm"."timestamp" ASC 
+                                    ROWS BETWEEN 7 PRECEDING AND CURRENT ROW
+                                ) AS "rolling_min", 
+                        MAX("ilm_ilm"."airtemperature_max") 
+                            OVER 
+                                (
+                                    ORDER BY 
+                                        "ilm_ilm"."timestamp" ASC 
+                                    ROWS BETWEEN 7 PRECEDING AND CURRENT ROW
+                                ) AS "rolling_max" 
+                        FROM "ilm_ilm" 
+                    ORDER BY "ilm_ilm"."timestamp" DESC) AS rolling
+                WHERE (
+                    "rolling"."rolling_min" > 20 AND 
+                    EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn') = 5
+                ) OR (
+                    "rolling"."rolling_max" < -20 AND 
+                    EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn') = 19
+                )
+                ORDER BY "rolling"."timestamp" DESC
+            WITH DATA;
+            
+            ALTER TABLE public.ilm_ilm_rolling_8h
+                OWNER TO kroonika;
+            """
+        cur.execute(query)
+        a = cur.fetchall()
         stages['1'] = datetime.now() - start
         # print(cur.rowcount, stages['1'].seconds)
 
@@ -549,10 +575,20 @@ def update_maxmin_rolling(path=''):
             CREATE MATERIALIZED VIEW public.ilm_ilm_rolling_1y
             TABLESPACE pg_default
             AS
-             SELECT ilm_ilm."timestamp",
-                avg(ilm_ilm.airtemperature) OVER (ORDER BY ilm_ilm."timestamp" ROWS BETWEEN 4379 PRECEDING AND 4380 FOLLOWING) AS rolling_avg_1y
-               FROM ilm_ilm
-              ORDER BY ilm_ilm."timestamp" DESC
+             SELECT "rolling"."timestamp", "rolling"."rolling_avg_1y"
+                FROM
+                    (SELECT 
+                        "ilm_ilm"."timestamp", 
+                        AVG("ilm_ilm"."airtemperature")
+                            OVER 
+                                (
+                                    ORDER BY 
+                                        "ilm_ilm"."timestamp" ASC 
+                                    ROWS BETWEEN 4379 PRECEDING AND 4380 FOLLOWING
+                                ) AS "rolling_avg_1y" FROM "ilm_ilm" 
+                    ORDER BY 
+                        "ilm_ilm"."timestamp" DESC) AS rolling
+                WHERE EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn')=12
             WITH DATA;
             
             ALTER TABLE public.ilm_ilm_rolling_1y
@@ -571,8 +607,14 @@ def update_maxmin_rolling(path=''):
         stages['3'] = datetime.now() - start
         # print(stages['3'].seconds)
         query = """
-                    SELECT COUNT(*) FROM public.ilm_ilm_rolling_1y;
-                """
+            SELECT COUNT(*) FROM public.ilm_ilm_rolling_8h;
+        """
+        cur.execute(query)
+        stages['4'] = datetime.now() - start
+        print(cur.fetchone())
+        query = """
+            SELECT COUNT(*) FROM public.ilm_ilm_rolling_1y;
+        """
         cur.execute(query)
         print(cur.fetchone())
     except (Exception, psycopg2.DatabaseError) as error:
@@ -682,6 +724,10 @@ if __name__ == '__main__':
     rows_missing = update_missing_observations(path, verbose)
     update_lasthours(path, verbose, hours=72)
 
+    # Tabelid mahukate arvutuste jaoks
+    # update_maxmin(path)
+    update_maxmin_rolling(path)
+
     # Ilmaennustuste logi
     update_forecast_logs(path, verbose)
 
@@ -691,6 +737,4 @@ if __name__ == '__main__':
     # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
     update_forecast_log_analyze()
 
-    # Tabelid mahukate arvutuste jaoks
-    # update_maxmin(path)
-    update_maxmin_rolling(path)
+
