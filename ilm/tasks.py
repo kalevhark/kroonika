@@ -516,6 +516,9 @@ def update_maxmin(path=''):
     return row
 
 def update_maxmin_rolling(path=''):
+    BELOW20_END = 17 # Arktiline päev 09-17 Eesti aja järgi
+    ABOVE20_END = 5  # Troopiline öö  21-05 Eesti aja järgi
+    DAYNIGHT_PERIOD = 8
     conn = None
     try:
         params = utils.config(path)
@@ -536,23 +539,23 @@ def update_maxmin_rolling(path=''):
                                 (
                                     ORDER BY
                                         "ilm_ilm"."timestamp" ASC
-                                    ROWS BETWEEN 7 PRECEDING AND CURRENT ROW
+                                    ROWS BETWEEN %s-1 PRECEDING AND CURRENT ROW
                                 ) AS "rolling_min",
                         MAX("ilm_ilm"."airtemperature_max")
                             OVER
                                 (
                                     ORDER BY
                                         "ilm_ilm"."timestamp" ASC
-                                    ROWS BETWEEN 7 PRECEDING AND CURRENT ROW
+                                    ROWS BETWEEN %s-1 PRECEDING AND CURRENT ROW
                                 ) AS "rolling_max"
                         FROM "ilm_ilm"
                     ORDER BY "ilm_ilm"."timestamp" DESC) AS rolling
                 WHERE (
                     "rolling"."rolling_min" > 20 AND
-                    EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn') = 5
+                    EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn') = %s
                 ) OR (
                     "rolling"."rolling_max" < -20 AND
-                    EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn') = 19
+                    EXTRACT(hour FROM "rolling"."timestamp" AT TIME ZONE 'Europe/Tallinn') = %s
                 )
                 ORDER BY "rolling"."timestamp" DESC
             WITH DATA;
@@ -562,7 +565,7 @@ def update_maxmin_rolling(path=''):
                 
             COMMIT;
             """
-        cur.execute(query)
+        cur.execute(query, (DAYNIGHT_PERIOD, DAYNIGHT_PERIOD, ABOVE20_END, BELOW20_END))
 
         query = """
             DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_1y;

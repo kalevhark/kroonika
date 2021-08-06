@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import json
 
 from django.conf import settings
+from django.db import connection
 from django.db.models import F, RowRange, Window, Sum, Avg, Min, Max
 
 from django.http import JsonResponse
@@ -2232,19 +2233,26 @@ def maxmin(request):
             Sum('precipitations'))\
         .order_by('timestamp__year')
 
-    from django.db.models import Q
-    hours_rolling = Ilm.objects.annotate(
-        rolling_min=Window(
-            expression=Min('airtemperature_min'),
-            order_by=F('timestamp').asc(),
-            frame=RowRange(start=-7, end=0)
-        ),
-        rolling_max=Window(
-            expression=Max('airtemperature_max'),
-            order_by=F('timestamp').asc(),
-            frame=RowRange(start=-7, end=0)
-        )
-    ).values('timestamp', 'rolling_min', 'rolling_max')
+    # hours_rolling = Ilm.objects.annotate(
+    #     rolling_min=Window(
+    #         expression=Min('airtemperature_min'),
+    #         order_by=F('timestamp').asc(),
+    #         frame=RowRange(start=-7, end=0)
+    #     ),
+    #     rolling_max=Window(
+    #         expression=Max('airtemperature_max'),
+    #         order_by=F('timestamp').asc(),
+    #         frame=RowRange(start=-7, end=0)
+    #     )
+    # ).values('timestamp', 'rolling_min', 'rolling_max')
+
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT * FROM ilm_ilm_rolling_1y')
+        years_rolling_1y = cursor.fetchall()
+        cursor.execute('SELECT * FROM ilm_ilm_rolling_5y')
+        years_rolling_5y = cursor.fetchall()
+        cursor.execute('SELECT * FROM ilm_ilm_rolling_8h')
+        years_rolling_8h = cursor.fetchall()
 
     # Maksimum-miinimum tabeli andmed:
     for year in years_maxmin_qs:
@@ -2273,27 +2281,49 @@ def maxmin(request):
             airtemperature_min__min__lte=-30
         ).count()
         # Öid, mil temperatuur ei lange alla 20 kraadi (öö = UTC18:00-02:00)
+        # days_above20 = len([
+        #     el
+        #     for el
+        #     in hours_rolling
+        #     if (
+        #         el['rolling_min'] and
+        #         el['timestamp'].year==y and
+        #         el['timestamp'].hour==2 and
+        #         el['rolling_min'] >= 20
+        #     )
+        # ])
         days_above20 = len([
             el
             for el
-            in hours_rolling
+            in years_rolling_8h
             if (
-                el['rolling_min'] and
-                el['timestamp'].year==y and
-                el['timestamp'].hour==2 and
-                el['rolling_min'] >= 20
+                el[1] and
+                el[0].year==y and
+                el[0].hour==2 and
+                el[1] >= 20
             )
         ])
         # Päevi, mil temperatuur ei tõuse üle -20 kraadi (päev = UTC09:00-17:00)
+        # days_below20 = len([
+        #     el
+        #     for el
+        #     in hours_rolling
+        #     if (
+        #             el['rolling_max'] and
+        #             el['timestamp'].year == y and
+        #             el['timestamp'].hour == 17 and
+        #             el['rolling_max'] <= -20
+        #     )
+        # ])
         days_below20 = len([
             el
             for el
-            in hours_rolling
+            in years_rolling_8h
             if (
-                    el['rolling_max'] and
-                    el['timestamp'].year == y and
-                    el['timestamp'].hour == 17 and
-                    el['rolling_max'] <= -20
+                    el[2] and
+                    el[0].year == y and
+                    el[0].hour == 17 and
+                    el[2] <= -20
             )
         ])
         years_top[y] = {
@@ -2374,33 +2404,17 @@ def maxmin(request):
         # sademete hulk
         chartdata_heatmap_precipitations += f'\n2016-{m}-{d},{y},{p}'
 
-    # arvutatakse ujuv aastakeskmine
-    years_rolling_1y = Ilm.objects.annotate(
-        rolling_avg_1y=Window(expression=Avg('airtemperature'),
-            order_by=F('timestamp').asc(),
-            frame=RowRange(start=-int(365 * 24 / 2 - 1), end=int(365 * 24 / 2))),
-    ).values('timestamp', 'rolling_avg_1y')
-
-    from django.db import connection
-    with connection.cursor() as cursor:
-        cursor.execute('SELECT * FROM ilm_ilm_rolling_1y')
-        years_rolling_1y = cursor.fetchall()
-        cursor.execute('SELECT * FROM ilm_ilm_rolling_5y')
-        years_rolling_5y = cursor.fetchall()
-
-    # years_rolling_5y = Ilm.objects.annotate(
-    #     rolling_avg_5y=Window(expression=Avg('airtemperature'),
-    #                           order_by=F('timestamp').asc(),
-    #                           frame=RowRange(start=-int(5 * 365 * 24 / 2 - 1), end=int(5 * 365 * 24 / 2))),
-    # ).values('rolling_avg_5y')
+    # # arvutatakse ujuv aastakeskmine
+    # years_rolling_1y = Ilm.objects.annotate(
+    #     rolling_avg_1y=Window(expression=Avg('airtemperature'),
+    #         order_by=F('timestamp').asc(),
+    #         frame=RowRange(start=-int(365 * 24 / 2 - 1), end=int(365 * 24 / 2))),
+    # ).values('timestamp', 'rolling_avg_1y')
 
     from statistics import mean
-    # histAvg = round(mean([el['rolling_avg_1y'] for el in years_rolling_1y]), 1)
     histAvg = round(mean([el[1] for el in years_rolling_1y]), 1)
 
     chartdata_rolling_year_avg = 'aasta,ühe aasta keskmine, viie aasta keskmine'
-    # chartdata_rolling_year_avg_data_categories = []
-    # chartdata_rolling_year_avg_data_averages = []
 
     years_rolling = list(zip(
         [el[0] for el in years_rolling_1y],
