@@ -637,13 +637,13 @@ def update_maxmin_rolling(path=''):
             SELECT COUNT(*) FROM public.ilm_ilm_rolling_8h;
         """
         cur.execute(query)
-        print('8h:', cur.fetchone())
+        # print('8h:', cur.fetchone())
 
         query = """
             SELECT COUNT(*) FROM public.ilm_ilm_rolling_1y;
         """
         cur.execute(query)
-        print('1y:', cur.fetchone())
+        # print('1y:', cur.fetchone())
 
         query = """
             SELECT COUNT(*) FROM public.ilm_ilm_rolling_5y;
