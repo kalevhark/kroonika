@@ -14,13 +14,10 @@
 {% endblock %}
 
 {% block content %}
-  <div class="w3-row">#}
+  <div class="w3-row w3-hide-small">
     {% include "ilm/mixed_ilmateade.html" %}
   </div>
-{#  <div class="w3-row w3-hide-small">#}
-{#    {% include "ilm/mixed_ilmateade.html" %}#}
-{#  </div>#}
-{#  <div class="font-sans max-w-md mx-auto w3-hide-large w3-hide-medium">#}
-{#    {% include "ilm/mixed_ilmateade_mobile.html" %}#}
-{#  </div>#}
+  <div class="font-sans max-w-md mx-auto w3-hide-large w3-hide-medium">
+    {% include "ilm/mixed_ilmateade_mobile.html" %}
+  </div>
 {% endblock %}
