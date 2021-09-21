@@ -412,6 +412,7 @@ def owm_onecall(path=os.getcwd()):
         # headers=headers,
         params=params
     )
+    print(resp.text)
     weather['history'] = json.loads(resp.text)
 
     weather['forecast'] = dict()
