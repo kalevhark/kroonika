@@ -243,6 +243,10 @@ def info(request):
     # a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
     time_log['5'] = (datetime.now() - time).microseconds
 
+    # Moodulid, mis kasutusel
+    import pkg_resources
+    env = dict(tuple(str(ws).split()) for ws in pkg_resources.working_set)
+
     context = {
         'andmebaasid': andmebaasid,
         'andmed': andmed,
@@ -250,6 +254,7 @@ def info(request):
         'artikleid_kuus_max': artikleid_kuus_max,
         # 'meta_data': request.META,
         'session_data': request.session,
+        'env': env,
         # 'a': a,
         'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         'time_log': time_log,
