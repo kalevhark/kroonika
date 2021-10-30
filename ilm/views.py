@@ -1695,7 +1695,7 @@ def nighttime2(algus, l6pp):
         )
         jada.append({
             'from': sun['dusk'],
-            'to': (d + timedelta(days=1)).replace(hour=0),
+            'to': d.replace(hour=23, minute=59, second=59, microsecond=999999),
             'color': pime}
         )
         d += timedelta(days=1)
