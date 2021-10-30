@@ -245,21 +245,18 @@ def update_uncomplete_observations(path='', verbose=False):
             #   ('timestamp', datetime.datetime(2004, 5, 1, 6, 0, tzinfo=psycopg2.tz.FixedOffsetTimezone(offset=0, name=None)))
             # ])
             observation_time = record['timestamp']
-            try:
-                timegap = now - datetime(observation_time.year, observation_time.month, observation_time.day)
-                print(timegap < timedelta(days=30))
-            except:
-                pass
-            print(observation_time, 'ebatäielikud andmed', record['id'])
-            # 11322 2004-05-01 06:00:00+00:00
+            timegap = now - datetime(observation_time.year, observation_time.month, observation_time.day)
+            if timegap < timedelta(days=30): # kui vigased andmed on viimase kuu jooksul
+                print(observation_time, 'ebatäielikud andmed', record['id'])
+                # 11322 2004-05-01 06:00:00+00:00
 
-            ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
-            if ilm_observation_veebist and (ilm_observation_veebist['airtemperature'] != None):
-                id = insert_new_observations(ilm_observation_veebist, path)
-                print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
-                rows_updated += 1
-            else:
-                print(f'{observation_time} uuendamine ebaõnnestus')
+                ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
+                if ilm_observation_veebist and (ilm_observation_veebist['airtemperature'] != None):
+                    id = insert_new_observations(ilm_observation_veebist, path)
+                    print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+                    rows_updated += 1
+                else:
+                    print(f'{observation_time} uuendamine ebaõnnestus')
 
         # Commit the changes to the database
         conn.commit()
