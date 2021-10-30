@@ -238,14 +238,20 @@ def update_uncomplete_observations(path='', verbose=False):
         # get the number of uncomplete rows
         rows_uncomplete = cur.rowcount
         for record in cur:
+            now = datetime.now()
             # record:
             # RealDictRow([
             #   ('id', 11322),
             #   ('timestamp', datetime.datetime(2004, 5, 1, 6, 0, tzinfo=psycopg2.tz.FixedOffsetTimezone(offset=0, name=None)))
             # ])
-            print(record['timestamp'], 'ebatäielikud andmed', record['id'])
-            # 11322 2004-05-01 06:00:00+00:00
             observation_time = record['timestamp']
+            try:
+                print(now - observation_time)
+            except:
+                pass
+            print(observation_time, 'ebatäielikud andmed', record['id'])
+            # 11322 2004-05-01 06:00:00+00:00
+
             ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
             if ilm_observation_veebist and (ilm_observation_veebist['airtemperature'] != None):
                 id = insert_new_observations(ilm_observation_veebist, path)
@@ -649,7 +655,7 @@ def update_maxmin_rolling(path=''):
             SELECT COUNT(*) FROM public.ilm_ilm_rolling_5y;
         """
         cur.execute(query)
-        print('5y:', cur.fetchone())
+        # print('5y:', cur.fetchone())
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
