@@ -246,7 +246,8 @@ def update_uncomplete_observations(path='', verbose=False):
             # ])
             observation_time = record['timestamp']
             try:
-                print(now - datetime(observation_time.year, observation_time.month, observation_time.day))
+                timegap = now - datetime(observation_time.year, observation_time.month, observation_time.day)
+                print(timegap < timedelta(days=30))
             except:
                 pass
             print(observation_time, 'ebatäielikud andmed', record['id'])
