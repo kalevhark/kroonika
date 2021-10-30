@@ -1695,10 +1695,11 @@ def nighttime2(algus, l6pp):
         )
         jada.append({
             'from': sun['dusk'],
-            'to': d.replace(hour=0) + timedelta(hours=24),
+            'to': (d + timedelta(days=1)).replace(hour=0),
             'color': pime}
         )
         d += timedelta(days=1)
+    print(jada)
 
     plotBands = list()
     # Sordime välja perioodi mitte jäävad pimedaajad
