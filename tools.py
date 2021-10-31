@@ -415,7 +415,7 @@ def task_art9754():
     pil = Pilt.objects.get(id=6431)
     for isik in art.isikud.all():
         print(isik)
-        # pil.isikud.add(isik)
+        pil.isikud.add(isik)
     # for obj in art.objektid.all():
         # print(obj)
         # pil.objektid.add(obj)
