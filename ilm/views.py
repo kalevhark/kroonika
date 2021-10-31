@@ -1699,7 +1699,6 @@ def nighttime2(algus, l6pp):
             'color': pime}
         )
         d += timedelta(days=1)
-    print(jada)
 
     plotBands = list()
     # Sordime välja perioodi mitte jäävad pimedaajad
@@ -1735,10 +1734,10 @@ def mixed_ilmateade(request):
         freq='H'
     )
     # x-telg 2 märgime ainult kuupäevavahetused
-    c_00hours = []
-    for el in c:
-        if el.hour == 0:
-            c_00hours.append(el)
+    # c_00hours = []
+    # for el in c:
+    #     if el.hour == 0:
+    #         c_00hours.append(el)
     # Ilmaandmete hankimine
     andmed_eelnevad24h = bdi.viimase24h_andmed(
         'Valga',
@@ -1757,8 +1756,8 @@ def mixed_ilmateade(request):
     graafik_categories = list((el + timedelta(seconds=el.utcoffset().seconds)).timestamp()*1000 for el in c)
     graafik_nullpunkt = graafik_categories[0]
     graafik_00hours = list(
-        ((el + timedelta(seconds=utcoffset)).timestamp() * 1000 - graafik_nullpunkt) / (60 * 60 * 1000)
-        for el in c_00hours
+        ((el + timedelta(seconds=c[0].utcoffset().seconds)).timestamp() * 1000 - graafik_nullpunkt) / (60 * 60 * 1000)
+        for el in c if el.hour == 0
     )
 
     sun_str = ephem_data.get_sun_str(d)
