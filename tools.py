@@ -409,14 +409,15 @@ def update_peatykk_from_url():
             print('-')
 
 # Lisab artiklile lisatud pildile isikud ja objektid
-def task_art7358():
-    art = Artikkel.objects.get(id=7358)
-    pil = Pilt.objects.get(id=2625)
+def task_art9754():
+    art = Artikkel.objects.get(id=9754)
+    print(art)
+    pil = Pilt.objects.get(id=6431)
     for isik in art.isikud.all():
         print(isik)
-        pil.isikud.add(isik)
-    for obj in art.objektid.all():
-        print(obj)
+        # pil.isikud.add(isik)
+    # for obj in art.objektid.all():
+        # print(obj)
         # pil.objektid.add(obj)
 
 # Kannab object andmed obj -> org
