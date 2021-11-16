@@ -313,7 +313,19 @@ def feedback(request):
             v = Vihje(**vihje)
             v.save()
             vihje['inp_date'] = v.inp_date
+            # Näitame brauseris
             messages.add_message(request, messages.INFO, 'Tagasiside saadetud.')
+            # Saadame meili adminile
+            from django.core.mail import send_mail
+            subject = f'Message from valgalinn.ee {datetime.now().strftime("%d.%m.%Y %H:%M:%S")}'
+            message = str(vihje)
+            send_mail(
+                subject,
+                message,
+                'noreply@valgalinn.ee',
+                ['kalevhark@gmail.com'],
+                fail_silently=False,
+            )
             context = {
                 'vihje': vihje
             }
