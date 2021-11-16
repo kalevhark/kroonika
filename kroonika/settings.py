@@ -29,9 +29,8 @@ DEBUG = config['django'].getboolean('DEBUG', fallback=False)
 SERVER_TYPE = config['django'].get('SERVER_TYPE', '')
 
 ALLOWED_HOSTS = [
-    'valgalinn.ee', 'www.valgalinn.ee',
-    '3.136.97.151', # t3.nano
-    '18.217.172.167', # a1.medium
+    'valgalinn.ee', 'www.valgalinn.ee', '18.217.172.167', # a1.medium
+    'test.valgalinn.ee', '18.217.179.154', # t4g.nano
     '127.0.0.1', 'localhost',
 ]
 
