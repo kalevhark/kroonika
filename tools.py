@@ -562,6 +562,21 @@ def task_20210512():
         isik.organisatsioonid.add(org)
         isik.viited.add(viide)
 
+def task_20211121():
+    art =  Artikkel.objects.get(id=9738)
+    isikud = art.isikud.all()
+    org = Organisatsioon.objects.get(id=2782)
+    pilt = Pilt.objects.get(id=6561)
+    viide = Viide.objects.get(id=10917)
+
+    print(art, pilt, org, viide, isikud.count())
+
+    for isik in isikud:
+        print(f'isik{isik.id}:{isik}')
+        # isik.organisatsioonid.add(org)
+        # isik.viited.add(viide)
+        # pilt.isikud.add(isik)
+
 def export_ilm_data():
     from ilm.models import Ilm
     from django.db.models import Sum, Count, Avg, Min, Max
