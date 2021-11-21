@@ -573,9 +573,9 @@ def task_20211121():
 
     for isik in isikud:
         print(f'isik{isik.id}:{isik}')
-        # isik.organisatsioonid.add(org)
-        # isik.viited.add(viide)
-        # pilt.isikud.add(isik)
+        isik.organisatsioonid.add(org)
+        isik.viited.add(viide)
+        pilt.isikud.add(isik)
 
 def export_ilm_data():
     from ilm.models import Ilm
