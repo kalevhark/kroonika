@@ -7,8 +7,7 @@
 {% block src %}
 {% endblock %}
 
-{% now "Y" as current_year %}
-{% block title %}{{ block.super }} - {% if current_year == '2021' %}Rahulikke jõule!{% else %}Head uut aastat!{% endif %}{% endblock %}
+{% block title %}{{ block.super }} - {{ pyhadesoov }}{% endblock %}
 
 {% block css %}
   <style>
@@ -92,7 +91,7 @@
     svg{
         position: absolute;
         left: 50%;
-        top: 50%;
+        top: 42%;
         transform: translate(-50%, -50%);
         -moz-transform: translate(-50%, -50%);
         -ms-transform: translate(-50%, -50%);
@@ -162,53 +161,48 @@
 
 {% block og_image %}
   <meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/special/Alb 32-27_cr_960x600_icon.png' %}" />
-  <meta property="og:description" content="Pühadetervitus" />
+  <meta property="og:description" content="{{ pyhadesoov }}" />
 {% endblock %}
 
 {% block content %}
   <div class="w3-container image-wrapper">
     <div class="holidays-title w3-hide-small w3-hide-medium">
-      {% now "Y" as current_year %}
-      {% if current_year == '2021' %}
-        Rahulikke jõule!
-      {% else %}
-        Head uut aastat!
-      {% endif %}
+      {{ pyhadesoov }}
     </div>
     <div
         style="color: red; text-align: center;"
         class="holidays-title-small w3-hide-large"
     >
-      {% now "Y" as current_year %}
-      {% if current_year == '2021' %}
-        Rahulikke jõule!
-      {% else %}
-        Head uut aastat!
-      {% endif %}
+      {{ pyhadesoov }}
     </div>
     <img
         src="{% static 'wiki/img/special/Alb 32-27_cr_960x600.png' %}"
-        alt="Pühadetervitus"
+        alt="{{ pyhadesoov }}"
         style="width:100%"
     >
-    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="350" height="400">
+    <svg
+            data-name="Layer 1"
+            xmlns="http://www.w3.org/2000/svg"
+            width="350"
+            height="400"
+    >
       <path fill="transparent" d="M0 0h960v600H0z"/>
-      <g fill="#CCE6F4" class="cloud">
+      <g fill="#CCE6F4" class="cloud w3-hide-small">
         <path d="M63 53h65a13 13 0 0113 13 13 13 0 01-13 13H61a12 12 0 01-12-12 14 14 0 0114-14z"/>
         <path d="M83 26a19 19 0 0119 19v1a19 19 0 01-19 19h-2a18 18 0 01-18-18v-1a20 20 0 0120-20z"/>
         <path d="M113 38a14 14 0 0114 14v1a14 14 0 01-14 14h-2a13 13 0 01-13-13v-1a15 15 0 0115-15z"/>
       </g>
-      <g fill="#CCE6F4" class="cloud">
+      <g fill="#CCE6F4" class="cloud w3-hide-small">
         <path d="M202.936 343.907h52.943a10.589 10.589 0 0110.588 10.589 10.589 10.589 0 01-10.588 10.588h-54.572a9.774 9.774 0 01-9.774-9.774 11.403 11.403 0 0111.403-11.403z"/>
         <path d="M219.226 321.916a15.476 15.476 0 0115.476 15.475v.815a15.476 15.476 0 01-15.476 15.475h-1.629a14.661 14.661 0 01-14.661-14.66v-.815a16.29 16.29 0 0116.29-16.29z"/>
         <path d="M243.661 331.69a11.403 11.403 0 0111.403 11.403v.814a11.403 11.403 0 01-11.403 11.403h-1.629a10.589 10.589 0 01-10.588-10.588v-.815a12.218 12.218 0 0112.217-12.217z"/>
       </g>
-      <g fill="#CCE6F4" class="cloud">
+      <g fill="#CCE6F4" class="cloud w3-hide-small">
         <path d="M12.936 245.907h52.943a10.589 10.589 0 0110.588 10.589 10.589 10.589 0 01-10.588 10.588H11.307a9.774 9.774 0 01-9.774-9.774 11.403 11.403 0 0111.403-11.403z"/>
         <path d="M29.226 223.916a15.476 15.476 0 0115.476 15.475v.815a15.476 15.476 0 01-15.476 15.475h-1.629a14.661 14.661 0 01-14.661-14.66v-.815a16.29 16.29 0 0116.29-16.29z"/>
         <path d="M53.661 233.69a11.403 11.403 0 0111.403 11.403v.814a11.403 11.403 0 01-11.403 11.403h-1.629a10.589 10.589 0 01-10.588-10.588v-.815A12.218 12.218 0 0153.66 233.69z"/>
       </g>
-      <g fill="#CCE6F4" class="cloud">
+      <g fill="#CCE6F4" class="cloud w3-hide-small">
         <path d="M246.79835,143.07881h75.40328a15.04912,15.04912,0,0,1,15.04912,15.04912v0a15.0491,15.0491,0,0,1-15.0491,15.0491H244.79837a14.04912,14.04912,0,0,1-14.04912-14.04912v0A16.0491,16.0491,0,0,1,246.79835,143.07881Z"/>
         <path d="M269.00509,111.82294h2.04917a21.04912,21.04912,0,0,1,21.04912,21.04912v3.04917a21.04909,21.04909,0,0,1-21.04909,21.04909h-4.04917A20.04912,20.04912,0,0,1,246.956,136.9212V133.872a22.04909,22.04909,0,0,1,22.04909-22.04909Z" />
         <path d="M304.522,125.71444h.47291A16.04912,16.04912,0,0,1,321.044,141.76356v1.47291a16.0491,16.0491,0,0,1-16.0491,16.0491H302.522a15.04912,15.04912,0,0,1-15.04912-15.04912v-1.47291A17.0491,17.0491,0,0,1,304.522,125.71444Z"/>
@@ -253,12 +247,12 @@
         <path d="M176.713 165.422s2.459-3.995 6.454 0M197.306 165.422s2.459-3.995 6.454 0" fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="1.844"/>
       </g>
 	  </svg>
-    <div
-        style="font-family: 'Just Another Hand', cursive; text-align: center; position: relative; top: -170px; left: 30px;"
+    <p
+        style="font-family: 'Mountains of Christmas', cursive;"
         id="txtHolder"
         class="w3-hide-large"
     >
-    </div>
+    </p>
 
     <p style="text-align: center;">
       <small>
@@ -272,7 +266,7 @@
     <div id="divGreeting" class="w3-hide-small w3-hide-medium">
       <canvas
               id="canvasGreeting"
-              width=300
+              width=400
               height=100
               style="position: relative; top: -200px; left: 30px;"
       >
@@ -347,14 +341,14 @@
           dashOffset -= speed;
 
           // draw char to canvas with current dash-length
-          ctxGreeting.strokeText(txt[i], x, 90);
+          ctxGreeting.strokeText(txt[i], x, 80);
 
           // char done? no, the loop
           if (dashOffset > 0) requestAnimationFrame(loop);
           else {
 
             // ok, outline done, lets fill its interior before next
-            ctxGreeting.fillText(txt[i], x, 90);
+            ctxGreeting.fillText(txt[i], x, 80);
 
             // reset line-dash length
             dashOffset = dashLen;

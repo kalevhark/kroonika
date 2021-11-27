@@ -1,16 +1,16 @@
 {% load static %}
 <a
     href="{% url 'special_j6ul2021' %}"
+    title="Vaata pühadetervitust"
 >
   <h5 class="w3-red w3-round" style="padding-top: 1em; padding-bottom: 1em;">
     {% now "Y" as current_year %}
-    <strong>{% if current_year == '2021' %}Rahulikke jõule!{% else %}Head uut aastat!{% endif %}</strong>
+    <strong>{% if current_year == '2021' %}Ilusat jõuluaega!{% else %}Head uut aastat!{% endif %}</strong>
   </h5>
   <img
         style="width: 100%; margin-top: 1em"
         src="{% static 'wiki/img/special/Alb 32-27_cr_960x600_icon_j6ul2021.JPG' %}"
         alt='Valga linna vaade õhust 1928. aastast'
-        title="Valga linna vaade õhust 1928. aastast"
   />
   <div class="w3-tiny">
     Valga linna vaade 1928. aastast linnapargi kohalt (EKLA, Alb.-32:27)

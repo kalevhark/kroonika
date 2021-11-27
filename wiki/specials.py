@@ -60,11 +60,17 @@ def special_j6ul2021(request):
             tervitaja = 'Kalev Härk'
     else:
         tervitaja = 'valgalinn.ee'
+    from django.utils import timezone
+    if timezone.now().year == 2021:
+        pyhadesoov = 'Ilusat jõuluaega!'
+    else:
+        pyhadesoov = 'Head uut aastat!'
     return render(
         request,
         'wiki/special/wiki_special_j6ul2021.html',
         {
             'tervitaja': tervitaja,
+            'pyhadesoov': pyhadesoov
         }
     )
 
