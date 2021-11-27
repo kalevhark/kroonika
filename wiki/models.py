@@ -1382,6 +1382,7 @@ class Pilt(models.Model):
     def __repr__(self):
         return self.nimi
 
+
     # def clean(self):
     #     # Täidame tühja nimekoha failinimega ilma laiendita
     #     if not self.nimi and self.pilt:

@@ -765,6 +765,19 @@ class PiltAdmin(AjaxSelectAdmin):
          ),
     ]
 
+    # def get_changeform_initial_data(self, request):
+    #     g = request.GET.items()
+    #     l = [el for el in g]
+    #     return {'kirjeldus': l}
+
+
+    # def formfield_for_dbfield(self, db_field, **kwargs):
+    #     field = super(PiltAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+    #     print(f'{db_field}: {field.initial}')
+    #     if db_field.name == 'kirjeldus':
+    #         field.initial = f'{db_field}: {field}'
+    #     return field
+
     def link(self, obj):
         if obj.pilt:
             return obj.pilt.url
