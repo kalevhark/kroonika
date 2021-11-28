@@ -262,7 +262,17 @@
     <div class="w3-tiny">
       Oma nimega jõulukaardi saatmiseks kasutage aadressi: https://valgalinn.ee/j6ul2021/?<i>minginimi</i> NB! Küsimärk peab olema!
     </div>
-    {% include 'wiki/includes/object_fbshare.html' %}
+    <div
+        class="fb-share-button"
+        data-href="{% url 'special_j6ul2021' %}"
+        data-layout="button"
+        data-size="small">
+      <a
+          target="_blank"
+          href="https://www.facebook.com/sharer/sharer.php?u={% url 'special_j6ul2021' %}%2F&amp;src=sdkpreparse"
+          class="fb-xfbml-parse-ignore">Jaga
+      </a>
+    </div>
     <div id="divGreeting" class="w3-hide-small w3-hide-medium">
       <canvas
               id="canvasGreeting"
