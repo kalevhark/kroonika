@@ -431,7 +431,7 @@
         />
       </a>
       <br class="w3-hide-large">
-      <small>
+      <small class="w3-hide-small">
         "<span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Valga linna kroonika</span>" on antud Creative Commonsi litsentsi "
         <a
             rel="license"
@@ -465,11 +465,11 @@ function grecaptcha_onload() {
 function showCalendarTypeSwitch() {
   let ukj_state = '{{ request.session.ukj }}'
 
-  <!-- näitame kalendrivahetuse nuppu ja valime salvetatud seisu -->
+  // näitame kalendrivahetuse nuppu ja valime salvetatud seisu
   var checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
   checkboxUkjVkj.style.visibility = 'visible';
   document.getElementById("checkbox1").checked = ukj_state === 'on';
-  <!-- Loome triggeri, kui kalendrisüsteemi valik muutub -->
+  // Loome triggeri, kui kalendrisüsteemi valik muutub
   $("#checkbox1").on('change', function() {
     let ukj_state = document.getElementById("checkbox1").checked;
     if (ukj_state) {
