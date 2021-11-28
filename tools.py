@@ -584,9 +584,9 @@ def task_20211128():
 
     print(art, pilt, isikud.count())
 
-    # for isik in isikud:
-    #     print(f'isik{isik.id}:{isik}')
-    #     pilt.isikud.add(isik)
+    for isik in isikud:
+        print(f'isik{isik.id}:{isik}')
+        pilt.isikud.add(isik)
 
 def export_ilm_data():
     from ilm.models import Ilm
