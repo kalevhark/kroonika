@@ -577,6 +577,17 @@ def task_20211121():
         isik.viited.add(viide)
         pilt.isikud.add(isik)
 
+def task_20211128():
+    art =  Artikkel.objects.get(id=9854)
+    isikud = art.isikud.all()
+    pilt = Pilt.objects.get(id=6606)
+
+    print(art, pilt, isikud.count())
+
+    # for isik in isikud:
+    #     print(f'isik{isik.id}:{isik}')
+    #     pilt.isikud.add(isik)
+
 def export_ilm_data():
     from ilm.models import Ilm
     from django.db.models import Sum, Count, Avg, Min, Max
