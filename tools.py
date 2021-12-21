@@ -551,17 +551,6 @@ def update_objekt_from_csv():
                 if obj:
                     print(row['asukoht'], '->', obj.asukoht)
 
-def task_20210512():
-    pilt = Pilt.objects.get(id=1166)
-    org = Organisatsioon.objects.get(id=2748)
-    viide = Viide.objects.get(id=6543)
-    isikud = pilt.isikud.all()
-    print(pilt, org, viide, isikud.count())
-    for isik in isikud:
-        print(f'isik{isik.id}:{isik}')
-        isik.organisatsioonid.add(org)
-        isik.viited.add(viide)
-
 def task_20211121():
     art =  Artikkel.objects.get(id=9738)
     isikud = art.isikud.all()
@@ -575,17 +564,6 @@ def task_20211121():
         print(f'isik{isik.id}:{isik}')
         isik.organisatsioonid.add(org)
         isik.viited.add(viide)
-        pilt.isikud.add(isik)
-
-def task_20211128():
-    art =  Artikkel.objects.get(id=9854)
-    isikud = art.isikud.all()
-    pilt = Pilt.objects.get(id=6606)
-
-    print(art, pilt, isikud.count())
-
-    for isik in isikud:
-        print(f'isik{isik.id}:{isik}')
         pilt.isikud.add(isik)
 
 def export_ilm_data():

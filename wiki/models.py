@@ -98,6 +98,7 @@ def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
         dst_bytes.close()
 
 # Lisab numbri ja punkti vahele backslashi
+# Vajalik funktsiooni escape_numberdot jaoks
 def add_escape(matchobj):
     leiti = matchobj.group(0)
     return "\\".join([leiti[:-1], "."])
@@ -111,6 +112,7 @@ def escape_numberdot(string):
     return string_modified
 
 # map punctuation to space
+# Vajalik funktsiooni object2keywords jaoks
 translator = str.maketrans(string.punctuation, ' ' * len(string.punctuation))
 
 # Moodustab objecti nimest märksõnad
@@ -357,13 +359,6 @@ class Viide(models.Model):
                     aeg = str(self.allikas.hist_year)
         viide = ' '.join([autorid, peatykk, allika_nimi, viit, aeg]).replace(' , ', ', ')
         return viide.strip()
-
-# # Ajutine filtreeriv Manager kui vaja näidata kuni 100 aastat tagasi TODO: Kuni revisjoni lõpuni
-# class ObjektSajandTagasiManager(models.Manager):
-#     def get_queryset(self):
-#         sajandtagasi = datetime.date.today().year - 100
-#         return super().get_queryset().filter(Q(hist_year__lte=sajandtagasi) | Q(hist_year__isnull=True))
-
 
 
 class Objekt(models.Model):

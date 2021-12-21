@@ -316,16 +316,32 @@ def feedback(request):
             # Näitame brauseris
             messages.add_message(request, messages.INFO, 'Tagasiside saadetud.')
             # Saadame meili adminile
-            from django.core.mail import send_mail
+
             subject = f'Message from valgalinn.ee {datetime.now().strftime("%d.%m.%Y %H:%M:%S")}'
             message = str(vihje)
-            send_mail(
-                subject,
-                message,
-                'noreply@valgalinn.ee',
-                ['kalevhark@gmail.com'],
-                fail_silently=False,
-            )
+
+            # from django.core.mail import send_mail
+            # send_mail(
+            #     subject,
+            #     message,
+            #     'noreply@valgalinn.ee',
+            #     ['kalevhark@gmail.com'],
+            #     fail_silently=False,
+            # )
+
+            from django.core.mail import EmailMultiAlternatives
+            from django.template.loader import render_to_string
+            from_email, to = 'valgalinn.ee <noreply@valgalinn.ee>', 'kalevhark@gmail.com'
+            text_content = message
+            # html_content = f'<p>Saabus selline vihje: <strong>{message}</strong>.</p>'
+            merge_data = {
+                'message': message
+            }
+            html_content = render_to_string('wiki/email/email-templates.html', merge_data)
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send(fail_silently=False)
+
             context = {
                 'vihje': vihje
             }
