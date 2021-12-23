@@ -756,6 +756,7 @@ def serverless():
         {'model': Objekt, 'verbose_name_plural': 'objektid', 'acronym': 'obj'},  # Kohad
     ]
 
+    from django.forms.models import model_to_dict
     for andmebaas in andmebaasid:
         objs = andmebaas['model'].objects.all()[:10]
         for method in ['xml', 'json']:
@@ -763,18 +764,28 @@ def serverless():
             Serializer = serializers.get_serializer(method)
             serializer = Serializer()
             for obj in objs:
-                # pildid = Pilt.objects.filter(artiklid__in=[obj])
-                # print([viide.id for viide in obj.viited.all()])
-                serverless_save_viited(BACKUP_DIR, method, obj)
-                pildifailid = serverless_save_pildid(BACKUP_DIR, method, obj, andmebaas['verbose_name_plural'], BASE_DIR, pildifailid)
-                with open(
-                        BACKUP_DIR / method / andmebaas['verbose_name_plural'] / f'{andmebaas["acronym"]}_{obj.id}.{method}',
-                        "w",
-                        encoding="utf-8"
-                ) as out:
+                # obj_dict = model_to_dict(obj)
+                # filterset = {f"{andmebaas['verbose_name_plural']}__in": [obj]}
+                # pildid = Pilt.objects.filter(**filterset).values('id', 'pilt')
+                # obj_dict['pildid'] = pildid
+                serverless_save_viited(
+                    BACKUP_DIR,
+                    method,
+                    obj
+                )
+                pildifailid = serverless_save_pildid(
+                    BACKUP_DIR,
+                    method,
+                    obj,
+                    andmebaas['verbose_name_plural'],
+                    BASE_DIR,
+                    pildifailid
+                )
+                file_name = BACKUP_DIR / method / andmebaas['verbose_name_plural'] / f'{andmebaas["acronym"]}_{obj.id}.{method}'
+                with open(file_name, "w", encoding="utf-8") as out:
                     serializer.serialize([obj], stream=out)
 
-    print(pildifailid)
+    # print(pildifailid)
 
 
 if __name__ == "__main__":
