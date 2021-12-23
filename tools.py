@@ -1,6 +1,9 @@
 import csv
 from datetime import date, datetime, timedelta
+import json
 from pathlib import Path
+import shutil
+import xml.etree.ElementTree as ET
 
 if __name__ == "__main__":
     import os
@@ -675,6 +678,7 @@ def ilm_maxmin():
             'days_above20': days_above20
         }
 
+
 # Andmete varundamiseks offline kasutuseks
 # Loob valgalinn.ee ajalookroonika koopia json ja xml formaatides
 
@@ -685,7 +689,7 @@ def serverless_save_allikad(path, method, allikas):
     Serializer = serializers.get_serializer(method)
     serializer = Serializer()
     if not Path.exists(FILE_NAME):
-        with open(FILE_NAME, "w") as out:
+        with open(FILE_NAME, "w", encoding="utf-8") as out:
             serializer.serialize([allikas], stream=out)
 
 # Salvestame ainult kasutatud viited
@@ -699,7 +703,7 @@ def serverless_save_viited(path, method, obj):
             Serializer = serializers.get_serializer(method)
             serializer = Serializer()
             if not Path.exists(FILE_NAME):
-                with open(FILE_NAME, "w") as out:
+                with open(FILE_NAME, "w", encoding="utf-8") as out:
                     serializer.serialize([viide], stream=out)
                 if viide.allikas:
                     serverless_save_allikad(path, method, viide.allikas)
@@ -707,11 +711,6 @@ def serverless_save_viited(path, method, obj):
 # Salvestame ainult kasutatud pildid
 def serverless_save_pildid(path, method, obj, verbose_name_plural, base_dir, pildifailid):
     filterset = {f'{verbose_name_plural}__in': [obj]}
-    # if obj._meta.model.__name__ == 'Artikkel':
-    #     filterset = {'artiklid__in': [obj]}
-    #     # pildid = Pilt.objects.filter(artiklid__in=[obj])
-    # if obj._meta.model.__name__ == 'Isik':
-    #     filterset = {'isikud__in': [obj]}
     pildid = Pilt.objects.filter(**filterset)
     if pildid:
         SAVE_PATH = path / method / 'pildid'
@@ -720,17 +719,105 @@ def serverless_save_pildid(path, method, obj, verbose_name_plural, base_dir, pil
             Serializer = serializers.get_serializer(method)
             serializer = Serializer()
             if not Path.exists(FILE_NAME):
-                with open(FILE_NAME, "w") as out:
+                with open(FILE_NAME, "w", encoding="utf-8") as out:
                     serializer.serialize([pilt], stream=out)
                 serverless_save_viited(path, method, pilt)
-            pildifail = base_dir / 'media' / str(pilt.pilt)
-            if Path.exists(pildifail) and (pildifail not in pildifailid):
+            pildifail = str(pilt.pilt)
+            if Path.exists(base_dir / 'media' / pildifail) and (pildifail not in pildifailid):
                 pildifailid.append(pildifail)
     return pildifailid
 
-def serverless():
+# Kopeerime pildid BACKUP_DIRi
+def serverless_copy_pildid(pildifailid, BACKUP_DIR, BASE_DIR):
+    Path(BACKUP_DIR / 'media').mkdir(parents=True, exist_ok=True)
+    for fail in pildifailid:
+        src = Path(BASE_DIR / 'media' / fail)
+        dst = Path(BACKUP_DIR / 'media' / fail)
+        dst_dir = dst.parent
+        Path(dst_dir).mkdir(parents=True, exist_ok=True)
+        shutil.copy(src, dst)
+    print('Kopeeriti', len(pildifailid), 'pilti')
+
+def serverless_make_index(objs, andmebaas, BACKUP_DIR):
+    for method in ['xml', 'json']:
+        Serializer = serializers.get_serializer(method)
+        serializer = Serializer()
+        file_name = BACKUP_DIR / method / f'{andmebaas["verbose_name_plural"]}.{method}'
+        # with open(file_name, "w", encoding="utf-8") as out:
+        #     serializer.serialize(objs, fields=('hist_year', 'hist_date', 'slug'), stream=out)
+
+    db_table = objs.model._meta.db_table
+    xml_content = ET.Element('root', attrib={'lang': 'et', 'origin': 'https://valgalinn.ee', 'db_table': db_table})
+    json_content = {
+        'origin': 'https://valgalinn.ee',
+        'db_table': db_table,
+        'data': []
+    }
+    html_content = ET.Element('html', attrib={'lang': 'et'})
+    html_content_h1 = ET.SubElement(html_content, 'h1')
+    html_content_table = ET.SubElement(html_content, 'table')
+    html_content_table_thead = ET.SubElement(html_content_table, 'thead')
+    html_content_table_tbody = ET.SubElement(html_content_table, 'tbody')
+
+    for obj in objs:
+        object = {
+            'pk': str(obj.pk),
+            'hist_year': str(obj.hist_year),
+            'hist_date': obj.hist_date.strftime('%Y-%m-%d') if obj.hist_date else str(obj.hist_date),
+            'hist_enddate': obj.hist_enddate.strftime('%Y-%m-%d') if obj.hist_enddate else str(obj.hist_enddate),
+            'obj': str(obj),
+            'JSON': f'json/{andmebaas["verbose_name_plural"]}/{andmebaas["acronym"]}_{obj.id}.json',
+            'XML':  f'xml/{andmebaas["verbose_name_plural"]}/{andmebaas["acronym"]}_{obj.id}.xml'
+        }
+
+        # Lisame xml elemendi
+        xml_content_object = ET.SubElement(xml_content, 'object')
+        for field in object.keys():
+            xml_content_field = ET.SubElement(xml_content_object, 'field', attrib={'name': field})
+            xml_content_field.text = object[field]
+
+        # Lisame json elemendi
+        json_content['data'].append(object)
+
+        # Lisame html elemendi
+        if not html_content_table_thead.findall("./tr"): # kui tabeli päist ei ole
+            # link = '<a href="https://valgalinn.ee" target="_blank">valgalinn.ee</a>'
+            link = 'https://valgalinn.ee'
+            html_content_h1.text = f'Väljavõte {link} veebilehe andmetabelist {db_table}'
+            html_content_table_thead_tr = ET.SubElement(html_content_table_thead, 'tr')
+            for field in object.keys():
+                html_content_table_thead_tr_th = ET.SubElement(html_content_table_thead_tr, 'th')
+                html_content_table_thead_tr_th.text = field
+
+        html_content_table_tbody_tr = ET.SubElement(html_content_table_tbody, 'tr')
+        for field in object.keys():
+            html_content_table_tbody_tr_td = ET.SubElement(html_content_table_tbody_tr, 'td')
+            if field in ['JSON', 'XML']:
+                html_content_table_tbody_tr_td_a = ET.SubElement(
+                    html_content_table_tbody_tr_td,
+                    'a',
+                    attrib={'href': object[field]}
+                )
+                html_content_table_tbody_tr_td_a.text = field
+            else:
+                html_content_table_tbody_tr_td.text = object[field]
+
+    xml_content_file_name = BACKUP_DIR / 'xml' / f'{andmebaas["verbose_name_plural"]}.xml'
+    tree = ET.ElementTree(xml_content)
+    tree.write(xml_content_file_name, encoding = "UTF-8", xml_declaration = True)
+
+    json_content_file_name = BACKUP_DIR / 'json' / f'{andmebaas["verbose_name_plural"]}.json'
+    with open(json_content_file_name, "w", encoding = "UTF-8") as write_file:
+        json.dump(json_content, write_file)
+
+    html_content_file_name = BACKUP_DIR / f'{andmebaas["verbose_name_plural"]}.html'
+    # write_file.write(ET.dump(html_content))
+    tree = ET.ElementTree(html_content)
+    tree.write(html_content_file_name, encoding = "UTF-8")
+
+def serverless(objects=10):
     BASE_DIR = Path(__file__).resolve().parent
-    # print(BASE_DIR)
+    print('Alustasime:', datetime.now())
 
     # Loome backup kataloogistruktuuri
     now = datetime.now()
@@ -738,7 +825,6 @@ def serverless():
     BACKUP_DIR = BASE_DIR / now_string
     Path(BACKUP_DIR).mkdir(parents=True, exist_ok=True)
     for method in ['xml', 'json']:
-        # Path(BACKUP_DIR / method ).mkdir(parents=True, exist_ok=True)
         Path(BACKUP_DIR / method / 'artiklid').mkdir(parents=True, exist_ok=True)
         Path(BACKUP_DIR / method / 'isikud').mkdir(parents=True, exist_ok=True)
         Path(BACKUP_DIR / method / 'organisatsioonid').mkdir(parents=True, exist_ok=True)
@@ -758,9 +844,13 @@ def serverless():
 
     from django.forms.models import model_to_dict
     for andmebaas in andmebaasid:
-        objs = andmebaas['model'].objects.all()[:10]
+        objs = andmebaas['model'].objects.all()
+        if objects > 0:
+            objs = objs[:objects]
+        print(f'Kopeerime {andmebaas["verbose_name_plural"]}:', len(objs), 'objekti...', end=' ')
+
         for method in ['xml', 'json']:
-            # Path(BACKUP_DIR / method / 'artiklid').mkdir(parents=True, exist_ok=True)
+            print(method, end=' ')
             Serializer = serializers.get_serializer(method)
             serializer = Serializer()
             for obj in objs:
@@ -784,9 +874,15 @@ def serverless():
                 file_name = BACKUP_DIR / method / andmebaas['verbose_name_plural'] / f'{andmebaas["acronym"]}_{obj.id}.{method}'
                 with open(file_name, "w", encoding="utf-8") as out:
                     serializer.serialize([obj], stream=out)
+        print('loome indeksi', end=' ')
+        serverless_make_index(objs, andmebaas, BACKUP_DIR)
 
-    # print(pildifailid)
+        print('OK')
 
+    # kopeerime asjakohased pildid BACKUP_DIRi
+    serverless_copy_pildid(pildifailid, BACKUP_DIR, BASE_DIR)
+
+    print('Lõpetasime:', datetime.now())
 
 if __name__ == "__main__":
-    serverless()
+    serverless(objects=10) # objects=0 = täiskoopia
