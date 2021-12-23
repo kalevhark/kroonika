@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.relations import HyperlinkedIdentityField
+from rest_framework.relations import HyperlinkedIdentityField, PrimaryKeyRelatedField
 from rest_framework.reverse import reverse
 from django.contrib.auth.models import User
 from django.db.models import Field
@@ -60,11 +60,26 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 #         fields = '__all__'
 
 
+class PiltSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Pilt
+        fields = '__all__'
+
+
+class PiltListingField(serializers.RelatedField):
+    def to_representation(self, value):
+        return {'pk': value.pk, 'link': value.pilt.url}
+
+
 class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
     link = serializers.SerializerMethodField()
     url = ParameterisedHyperlinkedIdentityField(
         view_name='wiki:wiki_artikkel_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
+    )
+    pilt_set = PiltListingField(
+        many=True,
+        read_only=True,
     )
 
     def get_link(self, obj):
@@ -81,6 +96,10 @@ class IsikSerializer(serializers.HyperlinkedModelSerializer):
     url = ParameterisedHyperlinkedIdentityField(
         view_name='wiki:wiki_isik_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
+    )
+    pilt_set = PiltListingField(
+        many = True,
+        read_only=True,
     )
 
     def get_link(self, obj):
@@ -100,6 +119,10 @@ class ObjektSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_objekt_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
+    pilt_set = PiltListingField(
+        many=True,
+        read_only=True,
+    )
 
     def get_link(self, obj):
         return obj.get_absolute_url()
@@ -115,18 +138,16 @@ class OrganisatsioonSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_organisatsioon_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
+    pilt_set = PiltListingField(
+        many=True,
+        read_only=True,
+    )
 
     def get_link(self, obj):
         return obj.get_absolute_url()
 
     class Meta:
         model = Organisatsioon
-        fields = '__all__'
-
-
-class PiltSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Pilt
         fields = '__all__'
 
 

@@ -1,17 +1,26 @@
 import csv
-
 from datetime import date, datetime, timedelta
+from pathlib import Path
+
+if __name__ == "__main__":
+    import os
+    import django
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
+    django.setup()
+
+from django.core import serializers
 
 from django.db.models import (
     Case, F, Q, Value, When,
     BooleanField, DateField, DateTimeField, DecimalField, IntegerField,
     ExpressionWrapper
 )
+
 from django.db.models.functions import Extract, Trunc, ExtractDay
 
 from ipwhois import IPWhois
 
-from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt, Allikas, Viide
+from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt, Viide, Allikas
 
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
 def float_or_none(value):
@@ -665,3 +674,108 @@ def ilm_maxmin():
             'days_below20': days_below20,
             'days_above20': days_above20
         }
+
+# Andmete varundamiseks offline kasutuseks
+# Loob valgalinn.ee ajalookroonika koopia json ja xml formaatides
+
+# Salvestame ainult kasutatud allikad
+def serverless_save_allikad(path, method, allikas):
+    SAVE_PATH = path / method / 'allikad'
+    FILE_NAME = SAVE_PATH / f'allikas_{allikas.id}.{method}'
+    Serializer = serializers.get_serializer(method)
+    serializer = Serializer()
+    if not Path.exists(FILE_NAME):
+        with open(FILE_NAME, "w") as out:
+            serializer.serialize([allikas], stream=out)
+
+# Salvestame ainult kasutatud viited
+def serverless_save_viited(path, method, obj):
+    viited = obj.viited.all()
+    if viited:
+        SAVE_PATH = path / method / 'viited'
+        for viide in viited:
+            # print(viide.id)
+            FILE_NAME = SAVE_PATH / f'viide_{viide.id}.{method}'
+            Serializer = serializers.get_serializer(method)
+            serializer = Serializer()
+            if not Path.exists(FILE_NAME):
+                with open(FILE_NAME, "w") as out:
+                    serializer.serialize([viide], stream=out)
+                if viide.allikas:
+                    serverless_save_allikad(path, method, viide.allikas)
+
+# Salvestame ainult kasutatud pildid
+def serverless_save_pildid(path, method, obj, verbose_name_plural, base_dir, pildifailid):
+    filterset = {f'{verbose_name_plural}__in': [obj]}
+    # if obj._meta.model.__name__ == 'Artikkel':
+    #     filterset = {'artiklid__in': [obj]}
+    #     # pildid = Pilt.objects.filter(artiklid__in=[obj])
+    # if obj._meta.model.__name__ == 'Isik':
+    #     filterset = {'isikud__in': [obj]}
+    pildid = Pilt.objects.filter(**filterset)
+    if pildid:
+        SAVE_PATH = path / method / 'pildid'
+        for pilt in pildid:
+            FILE_NAME = SAVE_PATH / f'pilt_{pilt.id}.{method}'
+            Serializer = serializers.get_serializer(method)
+            serializer = Serializer()
+            if not Path.exists(FILE_NAME):
+                with open(FILE_NAME, "w") as out:
+                    serializer.serialize([pilt], stream=out)
+                serverless_save_viited(path, method, pilt)
+            pildifail = base_dir / 'media' / str(pilt.pilt)
+            if Path.exists(pildifail) and (pildifail not in pildifailid):
+                pildifailid.append(pildifail)
+    return pildifailid
+
+def serverless():
+    BASE_DIR = Path(__file__).resolve().parent
+    # print(BASE_DIR)
+
+    # Loome backup kataloogistruktuuri
+    now = datetime.now()
+    now_string = now.strftime('%Y%m%d-%H%M')
+    BACKUP_DIR = BASE_DIR / now_string
+    Path(BACKUP_DIR).mkdir(parents=True, exist_ok=True)
+    for method in ['xml', 'json']:
+        # Path(BACKUP_DIR / method ).mkdir(parents=True, exist_ok=True)
+        Path(BACKUP_DIR / method / 'artiklid').mkdir(parents=True, exist_ok=True)
+        Path(BACKUP_DIR / method / 'isikud').mkdir(parents=True, exist_ok=True)
+        Path(BACKUP_DIR / method / 'organisatsioonid').mkdir(parents=True, exist_ok=True)
+        Path(BACKUP_DIR / method / 'objektid').mkdir(parents=True, exist_ok=True)
+        Path(BACKUP_DIR / method / 'viited').mkdir(parents=True, exist_ok=True)
+        Path(BACKUP_DIR / method / 'allikad').mkdir(parents=True, exist_ok=True)
+        Path(BACKUP_DIR / method / 'pildid').mkdir(parents=True, exist_ok=True)
+
+    pildifailid = []
+
+    andmebaasid = [
+        {'model': Artikkel, 'verbose_name_plural': 'artiklid', 'acronym': 'art'}, # Lood
+        {'model': Isik, 'verbose_name_plural': 'isikud', 'acronym': 'isik'}, # Isikud
+        {'model': Organisatsioon, 'verbose_name_plural': 'organisatsioonid', 'acronym': 'org'},  # Asutised
+        {'model': Objekt, 'verbose_name_plural': 'objektid', 'acronym': 'obj'},  # Kohad
+    ]
+
+    for andmebaas in andmebaasid:
+        objs = andmebaas['model'].objects.all()[:10]
+        for method in ['xml', 'json']:
+            # Path(BACKUP_DIR / method / 'artiklid').mkdir(parents=True, exist_ok=True)
+            Serializer = serializers.get_serializer(method)
+            serializer = Serializer()
+            for obj in objs:
+                # pildid = Pilt.objects.filter(artiklid__in=[obj])
+                # print([viide.id for viide in obj.viited.all()])
+                serverless_save_viited(BACKUP_DIR, method, obj)
+                pildifailid = serverless_save_pildid(BACKUP_DIR, method, obj, andmebaas['verbose_name_plural'], BASE_DIR, pildifailid)
+                with open(
+                        BACKUP_DIR / method / andmebaas['verbose_name_plural'] / f'{andmebaas["acronym"]}_{obj.id}.{method}',
+                        "w",
+                        encoding="utf-8"
+                ) as out:
+                    serializer.serialize([obj], stream=out)
+
+    print(pildifailid)
+
+
+if __name__ == "__main__":
+    serverless()
