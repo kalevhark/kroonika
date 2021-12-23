@@ -746,13 +746,20 @@ def serverless_make_index(objs, andmebaas, BACKUP_DIR):
         # with open(file_name, "w", encoding="utf-8") as out:
         #     serializer.serialize(objs, fields=('hist_year', 'hist_date', 'slug'), stream=out)
 
+    # millisest andmebaasi tabelist andmed
     db_table = objs.model._meta.db_table
+
+    # init xml-data
     xml_content = ET.Element('root', attrib={'lang': 'et', 'origin': 'https://valgalinn.ee', 'db_table': db_table})
+
+    # init json-data
     json_content = {
         'origin': 'https://valgalinn.ee',
         'db_table': db_table,
         'data': []
     }
+
+    # init html-data
     html_content = ET.Element('html', attrib={'lang': 'et'})
     html_content_h1 = ET.SubElement(html_content, 'h1')
     html_content_table = ET.SubElement(html_content, 'table')
@@ -872,8 +879,33 @@ def serverless(objects=10):
                     pildifailid
                 )
                 file_name = BACKUP_DIR / method / andmebaas['verbose_name_plural'] / f'{andmebaas["acronym"]}_{obj.id}.{method}'
-                with open(file_name, "w", encoding="utf-8") as out:
-                    serializer.serialize([obj], stream=out)
+
+                serializer.serialize([obj])
+                data = serializer.getvalue()
+
+                # Lisame pildiviited
+                filterset = {f"{andmebaas['verbose_name_plural']}__in": [obj]}
+                pildid = [pilt.id for pilt in Pilt.objects.filter(**filterset)]
+
+                if method == 'json':
+                    json_src = json.loads(data)[0]
+                    json_src['fields']['pildid'] = pildid
+                    dst = json.dumps(json_src)
+                    with open(file_name, "w", encoding="utf-8") as out:
+                        out.write(dst)
+                elif method == 'xml':
+                    xml_src = ET.fromstring(data)
+                    # <field name="viited" rel="ManyToManyRel" to="wiki.viide"><object pk="2459"></object>
+                    fields = xml_src.find('object')
+                    field_pildid = ET.SubElement(fields, "field", {"name": "pildid", "rel": "ManyToManyRel", "to": "wiki.pilt"})
+                    for pilt in pildid:
+                        object_pilt = ET.SubElement(field_pildid, 'object', attrib={'pk': str(pilt)})
+                    dst = ET.ElementTree(xml_src)
+                    # tree = ET.ElementTree(html_content)
+                    dst.write(file_name, encoding="UTF-8", xml_declaration=True)
+                else:
+                    continue
+
         print('loome indeksi', end=' ')
         serverless_make_index(objs, andmebaas, BACKUP_DIR)
 
@@ -885,4 +917,4 @@ def serverless(objects=10):
     print('Lõpetasime:', datetime.now())
 
 if __name__ == "__main__":
-    serverless(objects=10) # objects=0 = täiskoopia
+    serverless(objects=3) # objects=0 = täiskoopia
