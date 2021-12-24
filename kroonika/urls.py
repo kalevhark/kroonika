@@ -48,6 +48,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 	path('api/', include(router.urls)),
     path('blog/', include('blog.urls'), name='blog'),
+    path('kiri/', include('kiri.urls'), name='kiri'),
     path('ilm/', include('ilm.urls'), name='ilm'),
     path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('markdownx/', include('markdownx.urls')),

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'wiki.apps.WikiConfig',
     'ilm.apps.IlmConfig',
     'blog.apps.BlogConfig',
+    'kiri.apps.KiriConfig',
     'django_filters', # Laiendatud filtrite jaoks
     'widget_tweaks', # Lisavidinad sisestusvormidele
     'rest_framework', # API liidese jaoks
@@ -223,3 +224,7 @@ EMAIL_HOST_PASSWORD = config['aws_mail']['PASSWORD_SMTP']
 EMAIL_HOST_USER = config['aws_mail']['USERNAME_SMTP']
 EMAIL_PORT = config['aws_mail']['PORT']
 EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = config['aws_mail']['DEFAULT_FROM_EMAIL']
+
+# Indicates the frontend framework django crispy forms use
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

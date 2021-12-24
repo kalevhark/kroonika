@@ -58,6 +58,8 @@ def special_j6ul2021(request):
         tervitaja = tervitaja[:30]
         if tervitaja == 'XKH':
             tervitaja = 'Kalev Härk'
+        elif tervitaja == 'S9a':
+            tervitaja = 'Sulevi 9a rahvas'
     else:
         tervitaja = 'valgalinn.ee'
     from django.utils import timezone
