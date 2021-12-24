@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="et">
+	<meta charset="utf-8">
+	<head>
+		<title>{% block title %}Valga linna kroonika kirjasaatja{% endblock %}</title>
+		{% load static %}
+		<!-- Required meta tags -->
+		<meta charset="utf-8" />
+		<meta name="description"          content="Valga linna kroonika kirjasaatja" />
+		<meta name="keywords"             content="Valga, linn, kroonika, ajalugu, blog" />
+		<meta name="author"               content="Kalev Härk" />
+		<meta name="viewport"             content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+		<!-- Kirjeldus -->
+		<meta property="og:type"          content="website" />
+		<meta property="og:title"         content="Valga linna kroonika kirjasaatja" />
+		<meta property="og:description"   content="Valga linna kroonika kirjasaatja" />
+		<meta property="og:image"         content="{% static 'wiki/img/android-chrome-512x512.png' %}" />
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0"
+            crossorigin="anonymous" /
+    >
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}">
+  	<!--  Alternatiivsed värvivalikud metro või colorful-->
+  	<link rel="stylesheet" href="{% static 'wiki/css/kroonika_color_metro.css' %}">
+		{% block stylesheet %}{% endblock %}
+		<link rel="shortcut icon" href="{% static 'wiki/favicon.ico' %}">
+  </head>
+  <body class="Site w3-light-grey">
+    <header>
+			<!-- Navbar -->
+			<div id="top" class="w3-top">
+				<div class="w3-bar w3-left-align w3-large">
+					<a
+						href="{% url 'algus' %}"
+						title="Valga linna kroonika avalehele"
+						class="w3-bar-item w3-button w3-hover-white">
+						<img
+								src="{% static 'wiki/favicon-32x32.png' %}"
+								style='max-height:22px;'
+								alt="vapp">
+					</a>
+					<a
+							href="{% url 'kiri:index' %}"
+							class="w3-bar-item w3-button w3-theme-d4 w3-hover-white">
+						<i
+								id="kiri_start_icon"
+								style="display: inline-block; margin-right: 10px;"
+								class="fa fa-envelope">
+						</i>
+						valgalinn.ee kirjasaatja
+					</a>
+					<a
+							href="{% url 'algus' %}"
+							class="w3-bar-item w3-button w3-hover-white w3-hide-small"
+							title="Valga linna kroonika">
+						<i class="fa fa-leanpub"></i>
+					</a>
+          <a
+              href="{% url 'wiki:info' %}"
+              class="w3-bar-item w3-button w3-hover-white w3-hide-small"
+              title="Projektist">
+            <i class="fa fa-info"></i>
+          </a>
+
+          <!-- Kasutaja ja adminlingid -->
+          {% if user.is_authenticated %}
+            <a
+                href="{% url 'logout' %}?next={{ request.path | urlencode }}"
+                class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
+                title="Logi välja">{{ user.first_name }}&nbsp;<i class="fa fa-sign-out"></i>
+            </a>
+          {% else %}
+            <a
+                href="{% url 'login' %}?next={{ request.path }}"
+                class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
+                title="Logi sisse">
+              <i class="fa fa-sign-in"></i>
+            </a>
+          {% endif %}
+				</div>
+			</div>
+		</header>
+
+		<main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+	  <div class="w3-bar">
+      <a href="#">
+	      <button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
+	    </a>
+	    <a href="{% url 'wiki:info' %}">
+          <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018-{% now "Y" %} Kalev Härk</small></button>
+	    </a>
+      </div>
+		</footer>
+
+    <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8"
+            crossorigin="anonymous"
+    ></script>
+		<!-- Äpi skriptid, kui vaja -->
+	  {% block javascript %}{% endblock %}
+	</body>
+</html>

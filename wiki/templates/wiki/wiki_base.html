@@ -262,7 +262,6 @@
               class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
               title="Logi välja">{{ user.first_name }}&nbsp;<i class="fa fa-sign-out"></i>
           </a>
-          <!--      <a href={% url 'logout' %} class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-right" title={{ user.first_name }}>{{ user.first_name }}&nbsp;<i class="fa fa-sign-out"></i></a>-->
         {% else %}
           <a
               href="{% url 'login' %}?next={{ request.path }}"
@@ -271,6 +270,7 @@
             <i class="fa fa-sign-in"></i>
           </a>
         {% endif %}
+
         <!-- Kalendrivaliku nupp -->
         <div id="checkbox_ukjvkj"  class="w3-hide-small w3-hide-medium w3-right" style="visibility:hidden;">
           <label class="rocker rocker-small" title="vana või uus kalender?"><input type="checkbox" id="checkbox1">
@@ -360,8 +360,8 @@
           </ul>
         {% endif %}
       </div>
-    <!--		Tagasiside vorm -->
-      {% load crispy_forms_tags %}
+
+      <!--		Tagasiside vorm -->
       <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">
         {% crispy feedbackform %}
       </div>
