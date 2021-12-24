@@ -58,7 +58,7 @@ def special_j6ul2021(request):
         tervitaja = tervitaja[:30]
         if tervitaja == 'XKH':
             tervitaja = 'Kalev Härk'
-        elif tervitaja == 'S9a':
+        elif tervitaja == 'S9a': # Sulevi 9a rahvas
             tervitaja = 'Sulevi 9a rahvas'
     else:
         tervitaja = 'valgalinn.ee'
