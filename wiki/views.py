@@ -6,8 +6,12 @@ from typing import Dict, Any
 
 from django.conf import settings
 from django.contrib import messages
-from django.core import serializers
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.contrib.sessions.models import Session
+# from django.core import serializers
 from django.core.exceptions import PermissionDenied
+from django.core.mail import EmailMultiAlternatives
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import \
     Count, Max, Min, \
@@ -18,13 +22,11 @@ from django.db.models import Count, Max, Min
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
-from django.contrib.sessions.models import Session
+from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
-from django.views import generic
 from django.utils.version import get_version
+from django.views import generic
 from django.views.generic.dates import ArchiveIndexView, YearArchiveView, MonthArchiveView, DayArchiveView
 from django.views.generic.edit import UpdateView
 
@@ -329,16 +331,12 @@ def feedback(request):
             #     fail_silently=False,
             # )
 
-            from django.core.mail import EmailMultiAlternatives
-            from django.template.loader import render_to_string
-            from_email, to = 'valgalinn.ee <noreply@valgalinn.ee>', 'kalevhark@gmail.com'
-            text_content = message
-            # html_content = f'<p>Saabus selline vihje: <strong>{message}</strong>.</p>'
+            from_email, to = f'valgalinn.ee <{settings.DEFAULT_FROM_EMAIL}>', 'kalevhark@gmail.com'
             merge_data = {
                 'message': message
             }
             html_content = render_to_string('wiki/email/feedback2admin.html', merge_data)
-            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg = EmailMultiAlternatives(subject, message, from_email, [to])
             msg.attach_alternative(html_content, "text/html")
             msg.send(fail_silently=False)
 
