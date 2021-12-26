@@ -6,11 +6,33 @@ from django.template.loader import render_to_string
 
 class KiriForm(forms.Form):
 
-    name = forms.CharField(max_length=120, initial='valgalinn.ee', required=False)
-    email_from = forms.EmailField(initial=settings.DEFAULT_FROM_EMAIL)
-    email_to = forms.EmailField()
-    subject = forms.CharField(max_length=70)
-    message = forms.CharField(widget=forms.Textarea)
+    name = forms.CharField(
+        max_length=120,
+        initial='valgalinn.ee',
+        required=False,
+        label='Saatja nimi'
+    )
+    email_from = forms.EmailField(
+        initial=settings.DEFAULT_FROM_EMAIL,
+        label='Saatja aadress'
+    )
+    email_to = forms.EmailField(
+        label='Saaja aadress'
+    )
+
+    subject = forms.CharField(
+        max_length=70,
+        label='Pealkiri'
+    )
+    message = forms.CharField(
+        widget=forms.Textarea,
+        label='Kirja sisu'
+    )
+    file_field = forms.FileField(
+        widget=forms.ClearableFileInput(attrs={'class': 'custom-file-input', 'multiple': True}),
+        required=False,
+        label=''
+    )
 
     def get_info(self):
         """
@@ -28,7 +50,7 @@ class KiriForm(forms.Form):
 
         return name, email_from, email_to, subject, message
 
-    def send(self):
+    def send(self, files):
         name, email_from, email_to, subject, message = self.get_info()
         if name:
             email_from = f'{name} <{email_from}>'
@@ -54,6 +76,15 @@ class KiriForm(forms.Form):
             [email_to]
         )
         msg.attach_alternative(html_content, "text/html")
+
+        import mimetypes
+        if files: # kui failid lisatud
+            for f in files:
+                print(dir(f))
+                print(f.name, f.file, f.content_type)
+                msg.attach(f.name, f.read(), f.content_type)
+                # filename, content and mimetype
+
         msg.send(fail_silently=False)
 
         return email_to, subject

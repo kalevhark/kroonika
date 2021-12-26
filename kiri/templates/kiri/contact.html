@@ -1,15 +1,52 @@
 {% extends 'kiri/kiri_base.html' %}
 {% load crispy_forms_tags %}
 
+{% block stylesheet %}
+  <style>
+     .custom-file-input::-webkit-file-upload-button {
+      visibility: hidden;
+    }
+    .custom-file-input::before {
+      content: 'Lisatud failid';
+      display: inline-block;
+      background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+      border: 1px solid #999;
+      border-radius: 3px;
+      padding: 5px 8px;
+      outline: none;
+      white-space: nowrap;
+      -webkit-user-select: none;
+      cursor: pointer;
+      text-shadow: 1px 1px #fff;
+      font-weight: 700;
+      font-size: 10pt;
+  </style>
+}
+.custom-file-input:hover::before {
+  border-color: black;
+}
+.custom-file-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+{% endblock %}
+
 {% block content %}
 <div class="mx-auto my-4 text-center">
     <h1>valgalinn.ee kirjasaatja</h1>
 </div>
 <div class="container">
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form | crispy }}
-    <button class="btn btn-success my-3" type="submit">Send message</button>
+    <button class="btn btn-success my-3" type="submit">Saada kiri</button>
     </form>
 </div>
+{% endblock %}
+
+{% block javascript %}
+  <script>
+    $(document).on('change', '.custom-file-input', function (event) {
+        console.log(event.target.files);
+    })
+  </script>
 {% endblock %}
