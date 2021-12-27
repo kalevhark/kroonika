@@ -129,18 +129,26 @@ def object2keywords(obj):
 class DaatumitegaManager(models.Manager):
 
     def daatumitega(self, request):
-        ukj_state = request.session.get('ukj', 'off')
+        if request:
+            user_is_staff = request.user.is_authenticated and request.user.is_staff
+            ukj_state = request.session.get('ukj', 'off')
+        else:
+            user_is_staff = False
+            ukj_state = 'off'
+
         initial_queryset = super().get_queryset()
         # Filtreerime kasutaja järgi
         if initial_queryset.model.__name__ == 'Artikkel':
             # Kui andmebaas on Artikkel
-            if not (request.user.is_authenticated and request.user.is_staff):
+            # if not (request.user.is_authenticated and request.user.is_staff):
+            if not user_is_staff:
                 filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
             else:
                 filtered_queryset = initial_queryset
         else:
             # Kui andmebaas on Isik, Organisatsioon, Objekt
-            if not (request.user.is_authenticated and request.user.is_staff):
+            # if not (request.user.is_authenticated and request.user.is_staff):
+            if not user_is_staff:
                 artikkel_qs = Artikkel.objects.daatumitega(request)
                 # Algne aeglane päring, mis tekitas Organisatsioon tabeliga 5000+ ms päringuid
                 # filtered_queryset = initial_queryset.filter(

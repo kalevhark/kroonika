@@ -851,7 +851,7 @@ def serverless(objects=10):
 
     from django.forms.models import model_to_dict
     for andmebaas in andmebaasid:
-        objs = andmebaas['model'].objects.all()
+        objs = andmebaas['model'].objects.daatumitega(request=None)
         if objects > 0:
             objs = objs[:objects]
         print(f'Kopeerime {andmebaas["verbose_name_plural"]}:', len(objs), 'objekti...', end=' ')
