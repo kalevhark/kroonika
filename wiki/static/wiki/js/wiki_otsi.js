@@ -1,4 +1,4 @@
-// ver 2020.12
+// ver 2021.12
 
 $( document ).ready(function() {
   // Vue otsimisäpp
