@@ -11,7 +11,6 @@
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script type="text/javascript">
     // Muutujad vue jaoks
-    // var kroonika_url = "" // "{{ kroonika_url }}"
     var wiki_artikkel_filter_url = "{% url 'wiki:wiki_artikkel_filter' %}"
     var wiki_isik_filter_url = "{% url 'wiki:wiki_isik_filter' %}"
     var wiki_organisatsioon_filter_url = "{% url 'wiki:wiki_organisatsioon_filter' %}"
@@ -217,5 +216,5 @@
 {% endblock %}
 
 {% block javascript %}
-  <script src="{% static 'wiki/js/wiki_otsi.js'%}?ver=2020.12"></script>
+  <script src="{% static 'wiki/js/wiki_otsi.js'%}?ver=2021.12"></script>
 {% endblock %}
