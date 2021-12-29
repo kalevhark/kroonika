@@ -783,7 +783,7 @@ class Isik(models.Model):
         blank=True,
         help_text='Surma-aasta'
     )
-    gone = models.BooleanField( # surnud teadmata ajal
+    gone = models.BooleanField( # surnud
         'Surnud',
         default=False,
         help_text='Kas on surnud?'
