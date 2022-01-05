@@ -926,19 +926,20 @@ class Isik(models.Model):
 
     def vanus(self, d=timezone.now()):
         if self.hist_date:
-            return d.year - self.hist_date.year
+            # return d.year - self.hist_date.year
+            return d.year - self.dob.year # arvutatakse vastavalt vkj või ukj järgi
         elif self.hist_year:
             return d.year - self.hist_year
         else:
             return None
 
-    def vanus_ukj(self, d=timezone.now()):
-        if self.hist_date_ukj:
-            return d.year - self.hist_date_ukj.year
-        elif self.hist_year:
-            return d.year - self.hist_year
-        else:
-            return None
+    # def vanus_ukj(self, d=timezone.now()):
+    #     if self.hist_date_ukj:
+    #         return d.year - self.hist_date_ukj.year
+    #     elif self.hist_year:
+    #         return d.year - self.hist_year
+    #     else:
+    #         return None
 
     def profiilipilt(self):
         return Pilt.objects.filter(isikud=self.id, profiilipilt_isik=True).first()
