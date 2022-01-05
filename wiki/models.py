@@ -867,7 +867,7 @@ class Isik(models.Model):
         if self.hist_enddate:
             # su = self.hist_enddate.year
             su = self.doe.year
-        elif self.hist_endyear:s
+        elif self.hist_endyear:
             su = self.hist_endyear
         elif self.gone:
             su = '?'
