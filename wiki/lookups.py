@@ -23,7 +23,7 @@ class ArtikkelLookup(LookupChannel):
     def get_query(self, q, request):
         q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
-        queryset = self.model.objects.annotate(
+        queryset = self.model.objects.daatumitega(request).annotate(
             full_viide=Concat(
                 F('body_text'),
                 Value(' '),
@@ -46,7 +46,8 @@ class IsikLookup(LookupChannel):
     def get_query(self, q, request):
         q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
-        queryset = self.model.objects.annotate(
+        queryset = self.model.objects.daatumitega(request).annotate(
+        # queryset = self.model.objects.annotate(
             nimi=Concat(
                 F('eesnimi'),
                 Value(' '),
@@ -76,7 +77,7 @@ class OrganisatsioonLookup(LookupChannel):
     def get_query(self, q, request):
         q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
-        queryset = self.model.objects.all()
+        queryset = self.model.objects.daatumitega(request)
         for split in splits:
             queryset = queryset.filter(nimi__iregex=split)
         return queryset[:50]
@@ -90,7 +91,7 @@ class ObjektLookup(LookupChannel):
     def get_query(self, q, request):
         q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
-        queryset = self.model.objects.all()
+        queryset = self.model.objects.daatumitega(request)
         for split in splits:
             # pat = split.translate(str.maketrans(TRANSLATION))
             # queryset = queryset.filter(nimi__icontains=split)
