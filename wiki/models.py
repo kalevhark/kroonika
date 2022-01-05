@@ -535,7 +535,7 @@ class Objekt(models.Model):
 
     def vanus(self, d=timezone.now()):
         if self.hist_date:
-            return d.year - self.hist_date.year
+            return d.year - self.dob.year
         elif self.hist_year:
             return d.year - self.hist_year
         else:
@@ -708,7 +708,7 @@ class Organisatsioon(models.Model):
 
     def vanus(self, d=timezone.now()):
         if self.hist_date:
-            return d.year - self.hist_date.year
+            return d.year - self.dob.year
         elif self.hist_year:
             return d.year - self.hist_year
         else:
@@ -926,7 +926,6 @@ class Isik(models.Model):
 
     def vanus(self, d=timezone.now()):
         if self.hist_date:
-            # return d.year - self.hist_date.year
             return d.year - self.dob.year # arvutatakse vastavalt vkj või ukj järgi
         elif self.hist_year:
             return d.year - self.hist_year
