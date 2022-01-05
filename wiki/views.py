@@ -358,7 +358,6 @@ def feedback(request):
 #
 def algus(request):
     # Filtreerime artiklite hulga kasutaja järgi
-    # artikkel_qs = artikkel_qs_userfilter(request.user)
     artikkel_qs = Artikkel.objects.daatumitega(request)
     andmed = {} # Selle muutuja saadame veebi
     p2ev = date.today().day # str(p2ev).zfill(2) -> PP
@@ -382,8 +381,6 @@ def algus(request):
             dob__month = kuu
         )
         sel_p2eval = inrange_dates_artikkel(artikkel_qs, p2ev, kuu) # hist_date < KKPP <= hist_enddate
-        # sel_p2eval = sel_p2eval_exactly | sel_p2eval_inrange
-        # sel_p2eval = sel_p2eval_inrange
         sel_p2eval_kirjeid = len(sel_p2eval)
         if sel_p2eval_kirjeid > artikleid_max_split: # Kui leiti palju artikleid, teeme splitid
             a['sel_p2eval'] = (
@@ -430,11 +427,6 @@ def algus(request):
     if kirjeid > 0:
         a['viimane_lisatud'] = isik_qs.latest('inp_date')
         a['viimane_muudetud'] = isik_qs.latest('mod_date')
-        # Filtreerime isikud, kelle sünniaeg teada
-        # isikud_synniajaga = isik_qs.exclude(
-        #     hist_date__isnull=True,
-        #     hist_year__isnull=True
-        # )
         a['100_aastat_tagasi'] = isik_qs.filter(
             dob__day = p2ev,
             dob__month = kuu,
@@ -475,10 +467,7 @@ def algus(request):
     kirjeid = organisatsioon_qs.count()
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
-        # kp = Organisatsioon.objects.all().aggregate(max_inp_date=Max('inp_date'), max_mod_date=Max('mod_date'))
-        # a['viimane_lisatud'] = Organisatsioon.objects.filter(inp_date=kp['max_inp_date']).last()
         a['viimane_lisatud'] = organisatsioon_qs.latest('inp_date')
-        # a['viimane_muudetud'] = organisatsioon_qs.filter(mod_date=kp['max_mod_date']).last()
         a['viimane_muudetud'] = organisatsioon_qs.latest('mod_date')
         a['100_aastat_tagasi'] = organisatsioon_qs.filter(
             dob__day=p2ev,
@@ -494,15 +483,6 @@ def algus(request):
             filter(dob__month = kuu).\
             order_by(ExtractDay('dob'))
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
-        # juubilarid = Organisatsioon.objects.exclude(hist_year=None).annotate(
-        #     nulliga=ExpressionWrapper(
-        #         (date.today().year - F('hist_year'))%5, output_field=IntegerField()), vanus_gen=ExpressionWrapper(
-        #             date.today().year - F('hist_year'), output_field=IntegerField())).filter(nulliga=0).order_by('-vanus_gen')
-        # a['juubilarid'] = juubilarid
-        # organisatsioonid_synniajaga = organisatsioon_qs.exclude(
-        #     hist_date__isnull=True,
-        #     hist_year__isnull=True
-        # )
         juubilarid = [
             organisatsioon.id
             for organisatsioon
@@ -520,10 +500,7 @@ def algus(request):
     kirjeid = objekt_qs.count()
     a['kirjeid'] = kirjeid
     if kirjeid > 0:
-        # kp = Objekt.objects.all().aggregate(max_inp_date=Max('inp_date'), max_mod_date=Max('mod_date'))
-        # a['viimane_lisatud'] = Objekt.objects.filter(inp_date=kp['max_inp_date']).last()
         a['viimane_lisatud'] = objekt_qs.latest('inp_date')
-        # a['viimane_muudetud'] = Objekt.objects.filter(mod_date=kp['max_mod_date']).last()
         a['viimane_muudetud'] = objekt_qs.latest('mod_date')
         a['100_aastat_tagasi'] = objekt_qs.filter(
             dob__day=p2ev,
@@ -539,16 +516,6 @@ def algus(request):
             filter(dob__month = kuu).\
             order_by(ExtractDay('dob'))
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
-        # juubilarid = Objekt.objects.exclude(hist_year=None).annotate(
-        #     nulliga=ExpressionWrapper(
-        #         (date.today().year - F('hist_year'))%5, output_field=IntegerField()),
-        #     vanus_gen=ExpressionWrapper(
-        #             date.today().year - (ExtractYear('hist_date') if 'hist_date' else F('hist_year')), output_field=IntegerField())).filter(nulliga=0).order_by('hist_year')
-        # a['juubilarid'] = juubilarid
-        # objektid_synniajaga = objekt_qs.exclude(
-        #     hist_date__isnull=True,
-        #     hist_year__isnull=True
-        # )
         juubilarid = [
             objekt.id
             for objekt
@@ -740,21 +707,9 @@ def mainitud_aastatel(qs, model, obj):
         filter = qs.filter(organisatsioonid__id=obj.id)
 
     aastad = list(filter.all().values_list('hist_year', flat=True).distinct())
-    # if obj.dob:
-    #     synniaasta = obj.dob.year
-    # elif obj.hist_year:
-    #     synniaasta = obj.hist_year
-    # else:
-    #     synniaasta = None
     synniaasta = obj.dob.year if obj.dob else obj.hist_year
     if synniaasta:
         aastad.append(synniaasta)
-    # if obj.doe:
-    #     surmaaasta = obj.doe.year
-    # elif obj.hist_year:
-    #     surmaaasta = obj.hist_endyear
-    # else:
-    #     surmaaasta = None
     surmaaasta = obj.doe.year if obj.doe else obj.hist_endyear
     if surmaaasta:
         aastad.append(surmaaasta)
@@ -808,12 +763,10 @@ class ArtikkelDetailView(generic.DetailView):
     template_name = 'wiki/artikkel_detail.html'
 
     def get_queryset(self):
-        # return artikkel_qs_userfilter(self.request.user)
         return Artikkel.objects.daatumitega(self.request)
 
 
     def get_context_data(self, **kwargs):
-        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas artiklile on määratud profiilipilt
