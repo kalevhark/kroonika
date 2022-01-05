@@ -845,6 +845,9 @@ class VihjeAdmin(admin.ModelAdmin):
         (None, {
             'fields': [('inp_date', 'end_date')]}),
     ]
+    list_filter = [
+        'end_date'
+    ]
     list_display = [
         'id',
         'done',
