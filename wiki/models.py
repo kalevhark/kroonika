@@ -479,14 +479,14 @@ class Objekt(models.Model):
 
     def __str__(self):
         if self.hist_date:
-            sy = self.hist_date.year
+            sy = self.dob.year
         else:
             if self.hist_year:
                 sy = self.hist_year
             else:
                 sy = ''
         if self.hist_enddate:
-            su = self.hist_enddate.year
+            su = self.doe.year
         elif self.hist_endyear:
             su = self.hist_endyear
         elif self.gone:
@@ -652,14 +652,14 @@ class Organisatsioon(models.Model):
 
     def __str__(self):
         if self.hist_date:
-            sy = self.hist_date.year
+            sy = self.dob.year
         else:
             if self.hist_year:
                 sy = self.hist_year
             else:
                 sy = ''
         if self.hist_enddate:
-            su = self.hist_enddate.year
+            su = self.doe.year
         elif self.hist_endyear:
             su = self.hist_endyear
         elif self.gone:
@@ -856,7 +856,6 @@ class Isik(models.Model):
             eesnimi = ''
         # Sünniaeg
         if self.hist_date:
-            # sy = self.hist_date.year
             sy = self.dob.year
         else:
             if self.hist_year:
@@ -865,7 +864,6 @@ class Isik(models.Model):
                 sy = ''
         # Surmaaeg
         if self.hist_enddate:
-            # su = self.hist_enddate.year
             su = self.doe.year
         elif self.hist_endyear:
             su = self.hist_endyear
