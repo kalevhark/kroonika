@@ -57,9 +57,9 @@ urlpatterns = [
     path('kaart/', views.kaart, name='kaart'),
     path('kaart/<str:aasta>/', views.kaart, name='kaart'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('valga437/', specials.special_valga437, name='special_valga437'),
+    # path('valga437/', specials.special_valga437, name='special_valga437'),
     # path('j6ul2020/', specials.special_j6ul2020, name='special_j6ul2020'),
-    path('j6ul2021/', specials.special_j6ul2021, name='special_j6ul2021'),
+    # path('j6ul2021/', specials.special_j6ul2021, name='special_j6ul2021'),
 ]
 
 # Haldusliidese pealkirjad
