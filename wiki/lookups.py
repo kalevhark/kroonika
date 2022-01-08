@@ -7,6 +7,7 @@ from django.db.models import F, Value, CharField
 from .models import (
     Artikkel, Isik, Organisatsioon, Objekt,
     Allikas, Viide,
+    Pilt,
     Kaardiobjekt
 )
 
@@ -149,3 +150,23 @@ class AllikasLookup(LookupChannel):
 #         for split in splits:
 #             queryset = queryset.filter(nimi__icontains=split)
 #         return queryset[:50]
+
+
+@ajax_select.register('pildid')
+class PiltLookup(LookupChannel):
+
+    model = Pilt
+
+    def get_query(self, q, request):
+        q = q.translate(str.maketrans(TRANSLATION))
+        splits = q.split(' ')
+        queryset = self.model.objects.all()
+        for split in splits:
+            queryset = queryset.filter(nimi__iregex=split)
+        return queryset[:50]
+
+    def format_match(self, item):
+        return f"{item} ({item.id})"
+
+    def format_item_display(self, item):
+        return f"{item} ({item.id})"

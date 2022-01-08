@@ -79,7 +79,7 @@ def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
         dst_fname = dst_path + sep + name_suffix + dst_ext
 
         # check extension
-        if dst_ext in ['.jpg', '.jpeg']:
+        if dst_ext in ['.jpg', '.jpeg', '.jfif']:
             filetype = 'JPEG'
         elif dst_ext == '.gif':
             filetype = 'GIF'

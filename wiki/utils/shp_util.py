@@ -102,6 +102,7 @@ def read_shp_to_db(aasta):
                     for shaperec in sf.iterShapeRecords():
                         rec = shaperec.record.as_dict()
                         geometry = shaperec.shape.__geo_interface__
+                        # kontrollitakse, kas selliste piiridega kaardiobjekt on juba andmebaasis
                         kontroll = Kaardiobjekt.objects.filter(kaart=kaart, geometry=geometry)
                         print(rec, end=' ')
                         if kontroll:
@@ -909,8 +910,10 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
 
 if __name__ == "__main__":
     # read_kaardiobjekt_csv_to_db('2021')
-    get_osm_data('Võru 5d')
-    get_shp_data('Võru 5d')
+    # geometry = get_osm_data('Maleva 3')
+    # print(geometry)
+    # geometry = get_shp_data('Maleva 3')
+    # print(geometry)
     # kaardiobjekt_match_db(20938)
     # read_shp_to_db(aasta='1905') # Loeb kaardikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1905') # Kirjutab andmebaasist kaardikihi shp faili
@@ -918,6 +921,7 @@ if __name__ == "__main__":
     # find_intersections()
     # update_objekt_from_csv()
     # shp_match_db()
+    pass
 
 """
 https://tools.ietf.org/html/rfc7946
