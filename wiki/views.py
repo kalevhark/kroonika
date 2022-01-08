@@ -122,6 +122,11 @@ def info(request):
     isik_qs = Isik.objects.daatumitega(request)
     organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
     objekt_qs = Objekt.objects.daatumitega(request)
+    kaardiobjektiga_objektid_ids = set(
+        kaardiobjekt.objekt.id
+        for kaardiobjekt
+        in Kaardiobjekt.objects.filter(objekt__isnull=False)
+    )
     andmebaasid = []
     # Allikad ja viited
     tyhjad_viited = Viide.objects.annotate(
@@ -176,7 +181,8 @@ def info(request):
                 'Objekt: ',
                 f'kirjeid {objekt_qs.count()} ',
                 f'viidatud {objekt_qs.filter(viited__isnull=False).distinct().count()} ',
-                f'pildiga {objekt_qs.filter(pilt__isnull=False).distinct().count()} '
+                f'pildiga {objekt_qs.filter(pilt__isnull=False).distinct().count()} ',
+                f'seotud kaardiga {objekt_qs.filter(id__in=kaardiobjektiga_objektid_ids).count()} '
             ]
         )
     )
