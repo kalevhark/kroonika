@@ -23,7 +23,11 @@ from django.db.models.functions import Extract, Trunc, ExtractDay
 
 from ipwhois import IPWhois
 
-from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt, Viide, Allikas
+from wiki.models import (
+    Artikkel, Isik, Organisatsioon, Objekt, Pilt,
+    Kaardiobjekt,
+    Viide, Allikas
+)
 
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
 def float_or_none(value):
@@ -168,6 +172,13 @@ def join(model_name, source_id, dest_id):
             print(pilt.id, pilt)
             pilt.objektid.add(new)
             # pilt.objektid.remove(old)
+        print('Kaardiobjektid:')
+        kaardiobjektid = Kaardiobjekt.objects.filter(objekt=old)
+        for kaardiobjekt in kaardiobjektid:
+            print(kaardiobjekt.id, kaardiobjekt)
+            kaardiobjekt.objekt = new
+            kaardiobjekt.save(update_fields=['objekt'])
+            # kaardiobjekt.objekt.remove(old)
     # Salvestame muudatused
     new.save()
 
