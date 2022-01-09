@@ -253,7 +253,11 @@ def info(request):
 
     # Moodulid, mis kasutusel
     import pkg_resources
-    env = dict(tuple(str(ws).split()) for ws in pkg_resources.working_set)
+    env = dict(
+        tuple(str(ws).split())
+        for ws
+        in pkg_resources.working_set
+    )
 
     context = {
         'andmebaasid': andmebaasid,
@@ -262,6 +266,7 @@ def info(request):
         'artikleid_kuus_max': artikleid_kuus_max,
         # 'meta_data': request.META,
         'session_data': request.session,
+        'cookies': request.COOKIES,
         'env': env,
         # 'a': a,
         'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
