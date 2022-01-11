@@ -743,7 +743,7 @@ class Organisatsioon(models.Model):
 
 
     class Meta:
-        ordering = ['nimi']
+        ordering = ['slug']
         verbose_name_plural = "Asutised"
 
 
