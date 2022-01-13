@@ -709,7 +709,8 @@ class PiltAdmin(AjaxSelectAdmin):
         'inp_date', 'created_by', 'mod_date', 'updated_by',
     ]
     list_display = [
-        'id',
+        # 'id',
+        'colored_id',
         'nimi',
         'kasutatud',
         'profiilipilt',
@@ -896,21 +897,19 @@ def create_modeladmin(modeladmin, model, name = None):
     return modeladmin
 
 
-class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
+class IsikPiltidetaAdmin(IsikAdmin):
     inlines = []
 
-    # Seotud pildid TODO: pole kasutuses
-    def seotud_pildid(self, obj):
-        return obj.pilt_set
+create_modeladmin(IsikPiltidetaAdmin, name='isikud-kiirparandusteks', model=Isik)
+
+
+class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
+    inlines = []
 
 create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-kiirparandusteks', model=Organisatsioon)
 
 class ObjektPiltidetaAdmin(ObjektAdmin):
     inlines = []
-
-    # Seotud pildid TODO: pole kasutuses
-    def seotud_pildid(self, obj):
-        return obj.pilt_set
 
 create_modeladmin(ObjektPiltidetaAdmin, name='kohad-kiirparandusteks', model=Objekt)
 

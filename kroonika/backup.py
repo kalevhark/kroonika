@@ -10,6 +10,7 @@ if __name__ == "__main__":
     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
     django.setup()
 
+from django.conf import settings
 from django.core import serializers
 
 from wiki.models import (
@@ -18,6 +19,7 @@ from wiki.models import (
     Viide, Allikas
 )
 
+MEDIA_DIR = settings.MEDIA_ROOT
 
 # Andmete varundamiseks offline kasutuseks
 # Loob valgalinn.ee ajalookroonika koopia json ja xml formaatides
@@ -258,59 +260,103 @@ if __name__ == "__main__":
 # Andmete varundamiseks offline kasutuseks
 # Loob valgalinn.ee ajalookroonika koopia json ja xml formaatides
 
-from reportlab.lib.styles import ParagraphStyle as PS
-from reportlab.platypus import PageBreak
-from reportlab.platypus.paragraph import Paragraph
-from reportlab.platypus.doctemplate import PageTemplate, BaseDocTemplate
-from reportlab.platypus.tableofcontents import TableOfContents, SimpleIndex
-from reportlab.platypus.frames import Frame
-from reportlab.lib.units import cm, inch, mm
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle as PS
+from reportlab.lib.units import cm, inch, mm
 from reportlab.pdfgen import canvas
+from reportlab.platypus import (
+    BaseDocTemplate,
+    Frame, FrameBreak,
+    Image, Paragraph, Spacer,
+    Table, TableStyle,
+    NextPageTemplate, CondPageBreak, PageBreak, PageTemplate, KeepTogether
+)
+from reportlab.platypus.tableofcontents import TableOfContents, SimpleIndex
 
 from wiki.models import KUUD
 
 PAGE_WIDTH, PAGE_HEIGHT = A4
+
+TOP_MARGIN = A4[1] - inch
+BOTTOM_MARGIN = inch
+LEFT_MARGIN = inch
+RIGHT_MARGIN = A4[0] - inch
+FRAME_WIDTH = RIGHT_MARGIN - LEFT_MARGIN
+FRAME_HEIGHT = TOP_MARGIN - BOTTOM_MARGIN
+
 styles = getSampleStyleSheet()
 
-# Custom Canvas class for automatically adding page-numbers
-# class MyCanvas(canvas.Canvas):
-#     def __init__(self, *args, **kwargs):
-#         canvas.Canvas.__init__(self, *args, **kwargs)
-#         self.pages = []
-#
-#     def showPage(self):
-#         self.pages.append(dict(self.__dict__))
-#         self._startPage()
-#
-#     def draw_page_frame(self):
-#         top_margin = A4[1] - inch
-#         bottom_margin = inch
-#         left_margin = inch
-#         right_margin = A4[0] - inch
-#         frame_width = right_margin - left_margin
-#
-#         self.line(left_margin, top_margin + 2, right_margin, top_margin + 2)
-#         self.drawString(left_margin, top_margin + 4, 'valgalinn.ee')
-#         self.line(left_margin, bottom_margin, right_margin, bottom_margin)
-#
-#     def draw_page_number(self, page_count):
-#         # Modify the content and styles according to the requirement
-#         page = "{curr_page} of {total_pages}".format(curr_page=self._pageNumber, total_pages=page_count)
-#         self.setFont("Helvetica", 10)
-#         # self.drawRightString(195*mm, 272*mm, page)
-#         self.drawCentredString(0.5*A4[0], 0.5 * inch, "%d" % self.getPageNumber())
-#
-#     def save(self):
-#         # Modify the save() function to add page-number before saving every page
-#         page_count = len(self.pages)
-#         for page in self.pages:
-#             self.__dict__.update(page)
-#             self.draw_page_frame()
-#             self.draw_page_number(page_count)
-#             canvas.Canvas.showPage(self)
-#         canvas.Canvas.save(self)
+# valgalinn.ee värvid
+TEXT_ARTIKKEL_COLOR = '#00985F' # cmyk(100%, 0%, 38%, 40%)
+TEXT_ISIK_COLOR = '#00aba9' # cmyk(100%, 0%, 1%, 33%)
+TEXT_ORGANISATSIOON_COLOR = '#2d89ef' # cmyk(81%, 43%, 0%, 6%)
+TEXT_OBJEKT_COLOR = '#2b5797' # cmyk(72%, 42%, 0%, 41%)
+
+h1 = PS(
+    name='Heading1',
+    fontSize=14,
+    leading=16,
+    spaceAfter=6,
+    spaceBefore=6,
+    keepWithNext=1
+)
+toc1 = PS(
+    name='TOC1',
+    fontSize=14,
+    leading=16,
+    spaceAfter=12,
+    spaceBefore=12,
+    keepWithNext=1
+)
+h2 = PS(
+    name='Heading2',
+    fontSize=14,
+    leading=16,
+    spaceAfter=12,
+    spaceBefore=12,
+    keepWithNext=1
+)
+toc2 = PS(
+    name='TOC2',
+    fontSize=14,
+    leading=16,
+    spaceAfter=6,
+    spaceBefore=6,
+    keepWithNext=1
+)
+
+h3 = PS(
+    name='Heading3',
+    fontSize=12,
+    leading=14,
+    # leftIndent=2*cm,
+    spaceAfter=12,
+    spaceBefore=12,
+    keepWithNext=1
+)
+toc3 = PS(
+    name='TOC3',
+    fontSize=12,
+    leading=14,
+    leftIndent=2 * cm,
+    spaceAfter=6,
+    spaceBefore=6
+)
+p = PS(
+    name='kirjeldus',
+    fontSize=10,
+    spaceAfter=6
+)
+v = PS(
+    name='viide',
+    fontSize=8
+)
+v_error = PS(
+    name='viide',
+    fontSize=8,
+    textColor='red'
+)
 
 # custom canvasmaker for multiple indecees
 def myCanvasMaker(indeces=[], canvasmaker=canvas.Canvas):
@@ -341,54 +387,148 @@ class MyDocTemplate(BaseDocTemplate):
             if style == 'Heading3':
                 self.notify('TOCEntry', (2, text, self.page))
 
-def story_artiklid(story, h1, h2, h3, p, v, objects=3):
+def story_seotud_viited(story, obj):
+    viited =  obj.viited.all()
+    if viited:
+        for viide in viited:
+            story.append(Paragraph(f'{viide}', v))
+    story.append(Spacer(18, 18))
+    return story
+
+def story_seotud_objectid(story, obj, seotud_model, seotud_objectid_index = ''):
+    seotud_model_verbose = seotud_model._meta.verbose_name.lower()
+    ids = [object.id for object in obj.__getattribute__(seotud_model_verbose).all()]
+    seotud_objectid = seotud_model.objects.daatumitega(request=None).filter(id__in=ids)
+    if seotud_objectid:
+        if not isinstance(obj, Artikkel):
+            story.append(Paragraph(f'Seotud {seotud_model_verbose}:', p))
+        for seotud_object in seotud_objectid:
+            seotud_object_clean = repr(seotud_object).replace(',', ',,').replace('"', '&quot')  # topeltkoma = ','
+            if not isinstance(obj, Artikkel):
+                story.append(
+                    Paragraph(
+                        f'<index name="{seotud_model_verbose}" item="{seotud_object_clean}" />{seotud_object}', v
+                    )
+                )
+            seotud_objectid_index += f'<index name="{seotud_model_verbose}" item="{seotud_object_clean}" />'
+    return story, seotud_objectid_index
+
+from reportlab.lib import utils
+def get_image_withwidth(path, width=inch):
+    img = utils.ImageReader(path)
+    iw, ih = img.getSize()
+    aspect = ih / float(iw)
+    return Image(path, width=width, height=(width * aspect))
+
+def get_image_withheight2(path, height=inch):
+    img = utils.ImageReader(path)
+    iw, ih = img.getSize()
+    aspect = ih / float(iw)
+    width = height / aspect
+    if width > FRAME_WIDTH / 2:
+        height = height * ((FRAME_WIDTH / 2) / float(width))
+        width = FRAME_WIDTH / 2
+    print(path, width, height)
+    return Image(path, width=width, height=height)
+
+from reportlab.lib.styles import ParagraphStyle
+def get_image_withheight(path, height=inch):
+    image = Image(path)
+    # print(image.imageHeight / 72, end=' ')
+    width, height = image._restrictSize(height, FRAME_WIDTH / 2)
+    # print(image.imageHeight/72, end=' ')
+    image = Image(path, width=width, height=height)
+    # print(image.imageHeight / 72, path)
+    # print(image.wrap(FRAME_WIDTH, FRAME_WIDTH), path)
+    return image
+
+def story_seotud_pildid(obj):
+    pilt = obj.profiilipilt()
+    flowables = []
+    if pilt:
+        pildi_fail = MEDIA_DIR / pilt.pilt.name
+        flowables.append(get_image_withheight(pildi_fail, height=2 * inch))
+        if pilt.viited.first():
+            flowables.append(Paragraph(f'Allikas: {pilt.viited.first()}', v))
+            fmt = v
+        else:
+            fmt = v_error
+        flowables.append(Paragraph(f'Fail: {pilt.pilt}', fmt))
+        flowables.append(Spacer(18, 18))
+
+        # if isinstance(obj, Artikkel):
+        #     hAlign = 'CENTER' # artiklite puhul pilt, viited ja asukoht joondada keskele
+        # else:
+        #     hAlign = 'LEFT' # Muude puhul objectide pilt, viited ja asukoht joondada vasakule
+        # for flowable in flowables:
+        #     flowable.hAlign = hAlign
+    return flowables
+
+def story_artiklid(story, objects=3):
     objs = Artikkel.objects.daatumitega(request=None)
     if objects > 0:
         objs = objs[:objects]
     jooksev_aasta = 0
+    jooksev_kuu = 0
     for obj in objs:
         if obj.hist_year != jooksev_aasta:
             jooksev_aasta = obj.hist_year
-            story.append(Paragraph(f'{obj.hist_year}', h2))
-        jooksev_kuu = 0
+            story.append(Paragraph(f'<font color="{TEXT_ARTIKKEL_COLOR}">{obj.hist_year}</font>', h2))
         if obj.hist_date:
-            hist_date = obj.hist_date.strftime('<strong>%d.%m.%Y</strong> ')
+            hist_dates = obj.hist_date.strftime('%d.%m.%Y')
             kuu = obj.hist_date.month
+            if obj.hist_enddate:
+                hist_dates = '-'.join([hist_dates, obj.hist_enddate.strftime('%d.%m.%Y')])
         else:
-            hist_date = ''
+            hist_dates = ''
             if obj.hist_month:
                 kuu = obj.hist_month
             else:
                 kuu = 0
-        if kuu and kuu != jooksev_kuu:
+        if obj.viited.exists():
+            color = TEXT_ARTIKKEL_COLOR
+        else:
+            color = 'red'
+        if hist_dates:
+            hist_dates = f'<font color="{color}"><strong>{hist_dates}</strong></font>'
+        if kuu != jooksev_kuu:
             jooksev_kuu = kuu
-            story.append(Paragraph(f'{KUUD[jooksev_kuu-1][1]}', h3))
+            if kuu > 0:
+                story.append(Paragraph(f'<font color="{TEXT_ARTIKKEL_COLOR}">{KUUD[jooksev_kuu-1][1]}</font>', h3))
 
-        isikud = obj.isikud.all()
-        isik_index = ''
-        if isikud:
-            for isik in isikud:
-                isik_clean = repr(isik).replace(',', ',,') # topeltkoma = ','
-                # story.append(Paragraph(f'<index name="isikud" item="{isik_clean}" />', v))
-                isik_index += f'<index name="isikud" item="{isik_clean}" />'
+        seotud_objectid_index = ''
+        story, seotud_objectid_index = story_seotud_objectid(
+            story, obj,
+            seotud_model=Isik,
+            seotud_objectid_index=seotud_objectid_index
+        )
+        story, seotud_objectid_index = story_seotud_objectid(
+            story, obj,
+            seotud_model=Organisatsioon,
+            seotud_objectid_index=seotud_objectid_index)
+        story, seotud_objectid_index = story_seotud_objectid(
+            story, obj,
+            seotud_model=Objekt,
+            seotud_objectid_index=seotud_objectid_index
+        )
 
-        organisatsioonid = obj.organisatsioonid.all()
-        organisatsioon_index = ''
-        if organisatsioonid:
-            for organisatsioon in organisatsioonid:
-                organisatsioon_clean = str(organisatsioon).replace(',', ',,').replace('"', '&quot') # topeltkoma = ','
-                # story.append(Paragraph(f'<index name="organisatsioonid" item="{organisatsioon_clean}" />', v))
-                organisatsioon_index += f'<index name="organisatsioonid" item="{organisatsioon_clean}" />'
+        body_text = ' '.join([hist_dates, obj.body_text]).strip()
+        profiilipilt = story_seotud_pildid(obj)
+        if profiilipilt:
+            story.append(KeepTogether(profiilipilt))
+            # kirjeldus = Paragraph(f'{body_text}{seotud_objectid_index}', p)
+            # data = [[profiilipilt, kirjeldus]]
+            # t = Table(data, hAlign='LEFT')
+            # t.setStyle(
+            #     TableStyle(
+            #         [
+            #             ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            #         ]
+            #     )
+            # )
+            # story.append(t)
 
-        objektid = obj.objektid.all()
-        objekt_index = ''
-        if objektid:
-            for objekt in objektid:
-                objekt_clean = str(objekt).replace(',', ',,') # topeltkoma = ','
-                # story.append(Paragraph(f'<index name="objektid" item="{objekt_clean}" />', v))
-                objekt_index += f'<index name="objektid" item="{objekt_clean}" />'
-
-        story.append(Paragraph(f'{hist_date}{obj.body_text}{isik_index}{organisatsioon_index}{objekt_index}', p))
+        story.append(Paragraph(f'{body_text}{seotud_objectid_index}', p))
 
         viited = obj.viited.all()
         if viited:
@@ -396,7 +536,7 @@ def story_artiklid(story, h1, h2, h3, p, v, objects=3):
                 story.append(Paragraph(f'{viide}', v))
     return story
 
-def story_isikud(story, h1, h2, h3, p, v, objects=3):
+def story_isikud(story, objects=3):
     objs = Isik.objects.daatumitega(request=None)
     if objects > 0:
         objs = objs[:objects]
@@ -404,120 +544,213 @@ def story_isikud(story, h1, h2, h3, p, v, objects=3):
     for obj in objs:
         if obj.perenimi[0].upper() != jooksev_t2ht:
             jooksev_t2ht = obj.perenimi[0].upper()
-            story.append(Paragraph(f'{obj.perenimi[0].upper()}', h2))
+            story.append(Paragraph(f'<font color="{TEXT_ISIK_COLOR}">{jooksev_t2ht}</font>', h2))
 
+        if obj.viited.exists():
+            color = TEXT_ISIK_COLOR
+        else:
+            color = 'red'
         isik_index = repr(obj).replace(',', ',,')  # topeltkoma = ','
-        story.append(Paragraph(f'<index name="isikud" item="{isik_index}" /><strong>{obj}</strong>', p))
+        story.append(
+            Paragraph(
+                f'<index name="isikud" item="{isik_index}" /><font color="{color}"><strong>{obj}</strong></font>', p
+            )
+        )
+        story.append(Paragraph(f'https://valgalinn.ee{obj.get_absolute_url()}', v))
+
+        # sünniandmed
+        daatumid = []
+        dob_string = ''
+        if obj.hist_date:
+            dob_string = obj.hist_date.strftime(settings.DATE_INPUT_FORMATS[0])
+        elif obj.hist_year:
+            dob_string = str(obj.hist_year)
+        if obj.synd_koht:
+            dob_string = ' '.join([dob_string, obj.synd_koht])
+        if dob_string:
+            daatumid.append(Paragraph(f'Sündinud: {dob_string}'))
+        # surmaandmed
+        doe_string = ''
+        if obj.hist_enddate:
+            doe_string = obj.hist_enddate.strftime(settings.DATE_INPUT_FORMATS[0])
+        elif obj.hist_endyear:
+            doe_string = str(obj.hist_enddate)
+        if obj.surm_koht:
+            doe_string = ' '.join([doe_string, obj.surm_koht])
+        if obj.maetud:
+            doe_string = ' '.join([doe_string, 'maetud:', obj.maetud])
+        if doe_string:
+            daatumid.append(Paragraph(f'Surnud: {doe_string}'))
+
+        profiilipilt = story_seotud_pildid(obj)
+        if profiilipilt:
+            # kirjeldus = Paragraph(f'{obj.kirjeldus}', p)
+            data = [[profiilipilt, daatumid]]
+            t = Table(data, hAlign='LEFT')
+            t.setStyle(
+                TableStyle(
+                    [
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ]
+                )
+            )
+            story.append(t)
         story.append(Paragraph(f'{obj.kirjeldus}', p))
 
-        viited =  obj.viited.all()
-        if viited:
-            for viide in viited:
-                story.append(Paragraph(f'{viide}', v))
-
-        organisatsioonid = obj.organisatsioonid.all()
-        if organisatsioonid:
-            for organisatsioon in organisatsioonid:
-                organisatsioon_index = str(organisatsioon).replace(',', ',,').replace('"', '&quot') # topeltkoma = ','
-                story.append(Paragraph(f'<index name="organisatsioonid" item="{organisatsioon_index}" />{organisatsioon}', p))
-
-        objektid = obj.objektid.all()
-        if objektid:
-            for objekt in objektid:
-                objekt_index = str(objekt).replace(',', ',,') # topeltkoma = ','
-                story.append(Paragraph(f'<index name="objektid" item="{objekt_index}" />{objekt}', v))
+        story = story_seotud_viited(story, obj)
+        story, _ = story_seotud_objectid(
+            story, obj,
+            seotud_model=Organisatsioon,
+            seotud_objectid_index=''
+        )
+        story, _ = story_seotud_objectid(
+            story, obj,
+            seotud_model=Objekt,
+            seotud_objectid_index=''
+        )
     return story
 
-from reportlab.platypus import BaseDocTemplate, Frame, Paragraph, NextPageTemplate, PageBreak, PageTemplate
-from reportlab.lib.units import inch
-from reportlab.lib.styles import getSampleStyleSheet
+def story_organisatsioonid(story, objects=3):
+    objs = Organisatsioon.objects.daatumitega(request=None)
+    if objects > 0:
+        objs = objs[:objects]
+    jooksev_t2ht = ''
+    for obj in objs:
+        if obj.slug[0].upper() != jooksev_t2ht: # kasutame slug välja, et ignoreerida jutumärke nime alguses
+            jooksev_t2ht = obj.slug[0].upper()
+            story.append(Paragraph(f'<font color="{TEXT_ORGANISATSIOON_COLOR}">{jooksev_t2ht}</font>', h2))
+        if obj.viited.exists():
+            color = TEXT_ORGANISATSIOON_COLOR
+        else:
+            color = 'red'
+        organisatsioon_index = repr(obj).replace(',', ',,').replace('"', '&quot')  # topeltkoma = ','
+        story.append(
+            Paragraph(
+                f'<index name="organisatsioonid" item="{organisatsioon_index}" /><font color="{color}"><strong>{obj}</strong></font>', p
+            )
+        )
+        story.append(Paragraph(f'https://valgalinn.ee{obj.get_absolute_url()}', v))
+
+        daatumid = []
+        # sünniandmed
+        dob_string = ''
+        if obj.hist_date:
+            dob_string = obj.hist_date.strftime(settings.DATE_INPUT_FORMATS[0])
+        elif obj.hist_year:
+            dob_string = str(obj.hist_year)
+        if dob_string:
+            daatumid.append(Paragraph(f'Asutatud: {dob_string}'))
+        # surmaandmed
+        doe_string = ''
+        if obj.hist_enddate:
+            doe_string = obj.hist_enddate.strftime(settings.DATE_INPUT_FORMATS[0])
+        elif obj.hist_endyear:
+            doe_string = str(obj.hist_endyear)
+        if doe_string:
+            daatumid.append(Paragraph(f'Lõpetatud: {doe_string}'))
+
+        profiilipilt = story_seotud_pildid(obj)
+        if profiilipilt:
+            # kirjeldus = Paragraph(f'{obj.kirjeldus}', p)
+            data = [[profiilipilt, daatumid]]
+            t = Table(data, hAlign='LEFT')
+            t.setStyle(
+                TableStyle(
+                    [
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ]
+                )
+            )
+            story.append(t)
+        story.append(Paragraph(f'{obj.kirjeldus}', p))
+
+        story = story_seotud_viited(story, obj)
+        story, _ = story_seotud_objectid(
+            story, obj,
+            seotud_model=Objekt,
+            seotud_objectid_index=''
+        )
+    return story
+
+def story_objektid(story, objects=3):
+    objs = Objekt.objects.daatumitega(request=None)
+    if objects > 0:
+        objs = objs[:objects]
+    jooksev_t2ht = ''
+    for obj in objs:
+        if obj.slug[0].upper() != jooksev_t2ht:
+            jooksev_t2ht = obj.slug[0].upper()
+            story.append(Paragraph(f'<font color="{TEXT_OBJEKT_COLOR}">{jooksev_t2ht}</font>', h2))
+        if obj.viited.exists():
+            color = TEXT_OBJEKT_COLOR
+        else:
+            color = 'red'
+        objekt_index = repr(obj).replace(',', ',,').replace('"', '&quot')  # topeltkoma = ','
+        story.append(
+            Paragraph(
+                f'<index name="objektid" item="{objekt_index}" /><font color="{color}"><strong>{obj}</strong></font>', p
+            )
+        )
+        story.append(Paragraph(f'https://valgalinn.ee{obj.get_absolute_url()}', v))
+
+        daatumid = []
+        # sünniandmed
+        dob_string = ''
+        if obj.hist_date:
+            dob_string = obj.hist_date.strftime(settings.DATE_INPUT_FORMATS[0])
+        elif obj.hist_year:
+            dob_string = str(obj.hist_year)
+        if dob_string:
+            daatumid.append(Paragraph(f'Ehitatud/avatud: {dob_string}'))
+        # surmaandmed
+        doe_string = ''
+        if obj.hist_enddate:
+            doe_string = obj.hist_enddate.strftime(settings.DATE_INPUT_FORMATS[0])
+        elif obj.hist_endyear:
+            doe_string = str(obj.hist_endyear)
+        if doe_string:
+            daatumid.append(Paragraph(f'Likvideeritud: {doe_string}'))
+
+        profiilipilt = story_seotud_pildid(obj)
+        if profiilipilt:
+            # kirjeldus = Paragraph(f'{obj.kirjeldus}', p)
+            data = [[profiilipilt, daatumid]]
+            t = Table(data, hAlign='LEFT')
+            t.setStyle(
+                TableStyle(
+                    [
+                        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ]
+                )
+            )
+            story.append(t)
+        story.append(Paragraph(f'{obj.kirjeldus}', p))
+
+        story = story_seotud_viited(story, obj)
+        story, _ = story_seotud_objectid(
+            story, obj,
+            seotud_model=Objekt,
+            seotud_objectid_index=''
+        )
+    return story
 
 def backup2pdf(objects=3):
-    # styles = getSampleStyleSheet()
-
-    h1 = PS(
-        name='Heading1',
-        fontSize=14,
-        leading=16,
-        spaceAfter=6,
-        spaceBefore=6,
-        keepWithNext=1
-    )
-    toc1 = PS(
-        name='TOC1',
-        fontSize=14,
-        leading=16,
-        spaceAfter=6,
-        spaceBefore=6,
-        keepWithNext=1
-    )
-    h2 = PS(
-        name='Heading2',
-        fontSize=14,
-        leading=16,
-        spaceAfter=6,
-        spaceBefore=6,
-        keepWithNext=1
-    )
-    toc2 = PS(
-        name='TOC2',
-        fontSize=14,
-        leading=16,
-        spaceAfter=6,
-        spaceBefore=6,
-        keepWithNext=1
-    )
-
-    h3 = PS(
-        name='Heading3',
-        fontSize=12,
-        leading=14,
-        # leftIndent=2*cm,
-        spaceAfter=6,
-        spaceBefore=6,
-        keepWithNext=1
-    )
-    toc3 = PS(
-        name='TOC3',
-        fontSize=12,
-        leading=14,
-        leftIndent=2 * cm,
-        spaceAfter=6,
-        spaceBefore=6
-    )
-    p = PS(
-        name='kirjeldus',
-        fontSize=10,
-        spaceAfter=6
-    )
-    v = PS(
-        name='viide',
-        fontSize=8
-    )
-
     doc = MyDocTemplate('mintoc.pdf')
 
     # normal frame as for SimpleFlowDocument
-    frameT = Frame(inch, inch, 6 * inch, 9 * inch, id='normal')
-
+    frameT = Frame(LEFT_MARGIN, BOTTOM_MARGIN, FRAME_WIDTH, FRAME_HEIGHT, id='normal')
     # Two Columns
-    frame1 = Frame(inch, inch, 6 * inch / 2 - 6, 9 * inch, id='col1')
-    frame2 = Frame(inch + 6 * inch / 2 + 6, inch, 6 * inch / 2 - 6, 9 * inch, id='col2')
+    frame1 = Frame(LEFT_MARGIN, BOTTOM_MARGIN, FRAME_WIDTH / 2 - 6, FRAME_HEIGHT, id='col1')
+    frame2 = Frame(LEFT_MARGIN + FRAME_WIDTH / 2 + 6, BOTTOM_MARGIN, FRAME_WIDTH / 2 - 6, FRAME_HEIGHT, id='col2')
 
     def headerfooter(canvas, doc):
         canvas.saveState()
 
-        top_margin = A4[1] - inch
-        bottom_margin = inch
-        left_margin = inch
-        right_margin = A4[0] - inch
-        frame_width = right_margin - left_margin
-
-        canvas.line(left_margin, top_margin + 2, right_margin, top_margin + 2)
+        canvas.line(LEFT_MARGIN, TOP_MARGIN + 2, RIGHT_MARGIN, TOP_MARGIN + 2)
         # canvas.drawString(left_margin, top_margin + 4, 'valgalinn.ee')
         canvas.drawCentredString(0.5 * A4[0], A4[1] - 0.5 * inch, 'valgalinn.ee')
 
-        canvas.line(left_margin, bottom_margin, right_margin, bottom_margin)
+        canvas.line(LEFT_MARGIN, BOTTOM_MARGIN, RIGHT_MARGIN, BOTTOM_MARGIN)
         canvas.drawCentredString(0.5 * A4[0], 0.5 * inch, "%d" % canvas.getPageNumber())
 
         canvas.restoreState()
@@ -534,17 +767,31 @@ def backup2pdf(objects=3):
     story.append(toc)
 
     story.append(PageBreak())
-    story.append(Paragraph('Lood', h1))
+    story.append(Paragraph(f'<font color="{TEXT_ARTIKKEL_COLOR}">Lood</font>', h1))
     story.append(NextPageTemplate('OneColPageNr'))
     story.append(PageBreak())
-    story = story_artiklid(story, h1, h2, h3, p, v, objects=objects)
+    story = story_artiklid(story, objects=objects)
 
     story.append(NextPageTemplate('OneCol'))
     story.append(PageBreak())
-    story.append(Paragraph('Isikud', h1))
+    story.append(Paragraph(f'<font color="{TEXT_ISIK_COLOR}">Isikud</font>', h1))
     story.append(NextPageTemplate('OneColPageNr'))
     story.append(PageBreak())
-    story = story_isikud(story, h1, h2, h3, p, v, objects=objects)
+    story = story_isikud(story, objects=objects)
+
+    story.append(NextPageTemplate('OneCol'))
+    story.append(PageBreak())
+    story.append(Paragraph(f'<font color="{TEXT_ORGANISATSIOON_COLOR}">Asutised</font>', h1))
+    story.append(NextPageTemplate('OneColPageNr'))
+    story.append(PageBreak())
+    story = story_organisatsioonid(story, objects=objects)
+
+    story.append(NextPageTemplate('OneCol'))
+    story.append(PageBreak())
+    story.append(Paragraph(f'<font color="{TEXT_OBJEKT_COLOR}">Kohad</font>', h1))
+    story.append(NextPageTemplate('OneColPageNr'))
+    story.append(PageBreak())
+    story = story_objektid(story, objects=objects)
 
     story.append(NextPageTemplate('OneCol'))
     story.append(PageBreak())
@@ -599,5 +846,5 @@ def backup2pdf(objects=3):
 
 
 if __name__ == "__main__":
-    backup2pdf(objects=100) # objects=0 = täiskoopia
+    backup2pdf(objects=500) # objects=0 = täiskoopia
     pass

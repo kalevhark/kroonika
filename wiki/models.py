@@ -354,7 +354,7 @@ class Viide(models.Model):
             viit = viit + ', ' + self.kohaviit
         else: # kui on ainult internetilink
             if self.url:
-                viit = viit + ', ' + self.url.split('/')[-1]
+                viit = viit + ', ' + self.url # .split('/')[-1]
         # Ilmumise aeg
         aeg = self.mod_date.strftime('%d.%m.%Y') # kasutame algselt viite kasutamise kuupäeva
         if self.hist_date: # kui olemas, võtame ilmumise kuupäeva
@@ -477,6 +477,9 @@ class Objekt(models.Model):
 
     objects = DaatumitegaManager()
 
+    def __repr__(self):
+        return self.nimi
+
     def __str__(self):
         if self.hist_date:
             try:
@@ -564,8 +567,9 @@ class Objekt(models.Model):
 
 
     class Meta:
-        ordering = ['nimi']
-        verbose_name_plural = "Kohad"
+        ordering = ['slug'] # erimärkidega nimetuste välistamiseks
+        verbose_name = 'objektid'
+        verbose_name_plural = "Kohad" # kasutame eesti keeles suupärasemaks tegemiseks
 
 
 class Organisatsioon(models.Model):
@@ -656,6 +660,9 @@ class Organisatsioon(models.Model):
 
     objects = DaatumitegaManager()
 
+    def __repr__(self):
+        return self.nimi
+
     def __str__(self):
         if self.hist_date:
             try:
@@ -743,8 +750,9 @@ class Organisatsioon(models.Model):
 
 
     class Meta:
-        ordering = ['slug']
-        verbose_name_plural = "Asutised"
+        ordering = ['slug'] # erimärkidega nimetuste välistamiseks
+        verbose_name = 'organisatsioonid'
+        verbose_name_plural = "Asutised" # kasutame eesti keeles suupärasemaks tegemiseks
 
 
 class Isik(models.Model):
@@ -979,7 +987,8 @@ class Isik(models.Model):
             'perenimi',
             'eesnimi'
         ]
-        verbose_name_plural = "Isikud"
+        verbose_name = 'isikud'
+        verbose_name_plural = "Isikud"  # kasutame eesti keeles suupärasemaks tegemiseks
 
 
 class Kroonika(models.Model):
@@ -1196,7 +1205,7 @@ class Artikkel(models.Model):
             'id'
         ]
         verbose_name = "Lugu"
-        verbose_name_plural = "Lood"
+        verbose_name_plural = "Lood" # kasutame eesti keeles suupärasemaks tegemiseks
 
     # Keywords
     @property
@@ -1403,13 +1412,6 @@ class Pilt(models.Model):
     def __repr__(self):
         return self.nimi
 
-
-    # def clean(self):
-    #     # Täidame tühja nimekoha failinimega ilma laiendita
-    #     if not self.nimi and self.pilt:
-    #         base = os.path.basename(self.pilt.name)
-    #         self.nimi = os.path.splitext(base)[0]
-
     def caption(self):
         tekst = self.kirjeldus or self.nimi # Kui on, siis kirjeldus, muidu pealkiri
         viide = self.viited.first()
@@ -1419,6 +1421,20 @@ class Pilt(models.Model):
 
     def link(self):
         return self.pilt.url
+
+    # Kui objectil puudub viide, siis punane
+    def colored_id(self):
+        if self.viited.exists():
+            color = ''
+        else:
+            color = 'red'
+        return format_html(
+            '<strong><span style="color: {};">{}</span></strong>',
+            color,
+            self.id
+        )
+
+    colored_id.short_description = 'ID'
 
     def save(self, *args, **kwargs):
         # Täidame tühja nimekoha failinimega ilma laiendita
