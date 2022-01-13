@@ -507,7 +507,7 @@ class Objekt(models.Model):
 
     # Kui objectil puudub viide, siis punane
     def colored_id(self):
-        if self.viited.count() != 0:
+        if self.viited.exists():
             color = ''
         elif not all(el.kroonika for el in self.artikkel_set.all()):
             color = ''
@@ -690,7 +690,7 @@ class Organisatsioon(models.Model):
 
     # Kui objectil puudub viide, siis punane
     def colored_id(self):
-        if self.viited.count() != 0:
+        if self.viited.exists():
             color = ''
         elif not all(el.kroonika for el in self.artikkel_set.all()):
             color = ''
@@ -908,7 +908,7 @@ class Isik(models.Model):
 
     # Kui objectil puudub viide, siis punane
     def colored_id(self):
-        if self.viited.count() != 0:
+        if self.viited.exists():
             color = ''
         elif not all(el.kroonika for el in self.artikkel_set.all()):
             color = ''
