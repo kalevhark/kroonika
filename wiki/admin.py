@@ -3,7 +3,8 @@
 from ajax_select.admin import AjaxSelectAdmin
 from django.contrib import admin
 from django.contrib.admin.templatetags.admin_list import _boolean_icon
-# from django.db.models import Count
+from django.db.models import Case, F, When, IntegerField
+from django.db.models.functions import ExtractDay
 from markdownx.admin import MarkdownxModelAdmin
 
 from .models import (
@@ -296,6 +297,9 @@ class ArtikkelAdmin(AjaxSelectAdmin):
     inlines = [
         PiltArtikkelInline,
     ]
+
+    def get_queryset(self, request):
+        return Artikkel.objects.daatumitega(request)
 
     # Kuupäevavälja vormindamiseks
     def format_hist_date(self, obj):

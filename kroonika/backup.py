@@ -392,6 +392,7 @@ def myCanvasMaker(indeces=[], canvasmaker=canvas.Canvas):
 class MyDocTemplate(BaseDocTemplate):
     def __init__(self, filename, **kw):
         self.allowSplitting = 0
+        self.section = ''
         BaseDocTemplate.__init__(self, filename, **kw)
         template = PageTemplate('normal', [Frame(inch, inch, FRAME_WIDTH, FRAME_HEIGHT, id='F1')])
         self.addPageTemplates(template)
@@ -407,17 +408,19 @@ class MyDocTemplate(BaseDocTemplate):
             style = flowable.style.name
             if style == 'Chapter':
                 self.notify('TOCEntry', (0, text, self.page))
-                key = f'ch_{text}' # % self.chapterNo
+                self.section = text.lower()
+                key = f'ch_{text}'
                 self.canv.bookmarkPage(key)
                 self.canv.addOutlineEntry(text, key, level=0, closed=0)
             if style == 'Heading1':
                 self.notify('TOCEntry', (0, text, self.page))
-                key = f'h1_{text}'  # % self.chapterNo
+                self.section = text.lower()
+                key = f'h1_{text}'
                 self.canv.bookmarkPage(key)
                 self.canv.addOutlineEntry(text, key, level=0, closed=0)
             if style == 'Heading2':
                 self.notify('TOCEntry', (1, text, self.page))
-                key = f'h2_{text}'  # % self.chapterNo
+                key = f'h2_{self.section}_{text}'
                 self.canv.bookmarkPage(key)
                 try:
                     self.canv.addOutlineEntry(text, key, level=1, closed=0)
