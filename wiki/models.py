@@ -26,7 +26,7 @@ from django.db.models import \
     Case, F, Func, Q, When, \
     Value, BooleanField, DateField, DateTimeField, DecimalField, IntegerField, \
     ExpressionWrapper
-
+from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
@@ -145,6 +145,20 @@ class DaatumitegaManager(models.Manager):
                 filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
             else:
                 filtered_queryset = initial_queryset
+
+            filtered_queryset = filtered_queryset.annotate(
+                search_month=Case(
+                    When(hist_month__isnull=True, then=0),
+                    When(hist_month__isnull=False, then=F('hist_month')),
+                    output_field=IntegerField()
+                ),
+                search_day=Case(
+                    When(hist_date__isnull=True, then=0),
+                    When(hist_date__isnull=False, then=ExtractDay('hist_date')),
+                    output_field=IntegerField()
+                )
+            ).order_by('hist_year', 'search_month', 'search_day')
+
         else:
             # Kui andmebaas on Isik, Organisatsioon, Objekt
             # if not (request.user.is_authenticated and request.user.is_staff):
