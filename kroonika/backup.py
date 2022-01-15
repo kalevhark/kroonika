@@ -254,13 +254,12 @@ def backup2serverless(objects=10):
     print('Lõpetasime:', datetime.now())
 
 if __name__ == "__main__":
-    # backup2serverless(objects=3) # objects=0 = täiskoopia
+    # backup2serverless(objects=10) # objects=0 = täiskoopia
     pass
 
 # Andmete varundamiseks offline kasutuseks
-# Loob valgalinn.ee ajalookroonika koopia json ja xml formaatides
+# Loob valgalinn.ee ajalookroonika koopia pdf formaadis
 
-from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle as PS
 from reportlab.lib.units import cm, inch, mm
@@ -275,17 +274,17 @@ from reportlab.platypus import (
 from reportlab.platypus.tableofcontents import TableOfContents, SimpleIndex
 
 # we know some glyphs are missing, suppress warnings
-import reportlab.rl_config
-reportlab.rl_config.warnOnMissingFontGlyphs = 0
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
-pdfmetrics.registerFont(TTFont('VeraBd', 'VeraBd.ttf'))
-pdfmetrics.registerFont(TTFont('VeraIt', 'VeraIt.ttf'))
-pdfmetrics.registerFont(TTFont('VeraBI', 'VeraBI.ttf'))
-
-from reportlab.pdfbase.pdfmetrics import registerFontFamily
-registerFontFamily('Vera',normal='Vera',bold='VeraBd',italic='VeraIt',boldItalic='VeraBI')
+# import reportlab.rl_config
+# reportlab.rl_config.warnOnMissingFontGlyphs = 0
+# from reportlab.pdfbase import pdfmetrics
+# from reportlab.pdfbase.ttfonts import TTFont
+# pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
+# pdfmetrics.registerFont(TTFont('VeraBd', 'VeraBd.ttf'))
+# pdfmetrics.registerFont(TTFont('VeraIt', 'VeraIt.ttf'))
+# pdfmetrics.registerFont(TTFont('VeraBI', 'VeraBI.ttf'))
+#
+# from reportlab.pdfbase.pdfmetrics import registerFontFamily
+# registerFontFamily('Vera',normal='Vera',bold='VeraBd',italic='VeraIt',boldItalic='VeraBI')
 
 from wiki.models import KUUD
 
@@ -500,7 +499,7 @@ def story_seotud_pildid(obj):
         flowables.append(Spacer(12, 12))
     return flowables
 
-def story_artiklid(story, objects=3, algus_aasta=0, l6pp_aasta=1899):
+def story_artiklid(story, objects=10, algus_aasta=0, l6pp_aasta=1899):
     filterset = {'hist_year__lte': l6pp_aasta}
     if algus_aasta:
         filterset['hist_year__gte'] = algus_aasta
@@ -575,7 +574,7 @@ def story_artiklid(story, objects=3, algus_aasta=0, l6pp_aasta=1899):
     print('Lugusid:', objs.count())
     return story
 
-def story_isikud(story, objects=3):
+def story_isikud(story, objects=10):
     objs = Isik.objects.daatumitega(request=None)
     if objects > 0:
         objs = objs[:objects]
@@ -659,7 +658,7 @@ def story_isikud(story, objects=3):
     print('Isikuid:', objs.count())
     return story
 
-def story_organisatsioonid(story, objects=3):
+def story_organisatsioonid(story, objects=10):
     objs = Organisatsioon.objects.daatumitega(request=None)
     if objects > 0:
         objs = objs[:objects]
@@ -731,7 +730,7 @@ def story_organisatsioonid(story, objects=3):
     print('Asutisi:', objs.count())
     return story
 
-def story_objektid(story, objects=3):
+def story_objektid(story, objects=10):
     objs = Objekt.objects.daatumitega(request=None)
     if objects > 0:
         objs = objs[:objects]
@@ -803,7 +802,7 @@ def story_objektid(story, objects=3):
     print('Kohti:', objs.count())
     return story
 
-def backup2pdf(objects=3, content='lood', algus_aasta=0, l6pp_aasta=1899):
+def backup2pdf_job(objects=10, content='lood', algus_aasta=0, l6pp_aasta=1899):
     dump_date = datetime.now().strftime(settings.DATE_INPUT_FORMATS[0])
 
     sisupealkiri = ''
@@ -956,10 +955,12 @@ def backup2pdf(objects=3, content='lood', algus_aasta=0, l6pp_aasta=1899):
     )
     print('valmis!')
 
+def backup2pdf(objects=10):
+    backup2pdf_job(objects=objects, content='lood', algus_aasta=0, l6pp_aasta=1899)
+    backup2pdf_job(objects=objects, content='lood', algus_aasta=1900, l6pp_aasta=1919)
+    backup2pdf_job(objects=objects, content='lood', algus_aasta=1920, l6pp_aasta=1930)
+    backup2pdf_job(objects=objects, content='lisad')
+
 if __name__ == "__main__":
-    objects = 100
-    backup2pdf(objects=objects, content='lood', algus_aasta=0, l6pp_aasta=1899) # objects=0 = täiskoopia
-    backup2pdf(objects=objects, content='lood', algus_aasta=1900, l6pp_aasta=1919)  # objects=0 = täiskoopia
-    backup2pdf(objects=objects, content='lood', algus_aasta=1920, l6pp_aasta=1930)  # objects=0 = täiskoopia
-    backup2pdf(objects=objects, content='lisad')  # objects=0 = täiskoopia
+    # backup2pdf(objects=10) # objects=0 = täiskoopia
     pass
