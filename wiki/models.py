@@ -916,8 +916,13 @@ class Isik(models.Model):
 
     def __repr__(self):
         lyhinimi = self.perenimi
-        if self.eesnimi:
-            lyhinimi += ', ' + self.eesnimi[0] + '.'
+        eesnimi = self.eesnimi
+        if eesnimi:
+            if eesnimi.split(' ')[0] in ['hr', 'pr', 'dr', 'prl']:
+                eesnimi = eesnimi.split(' ')[0]
+            else:
+                eesnimi = eesnimi[0] + '.'
+            lyhinimi += ', ' + eesnimi
         return lyhinimi
 
     # Kui objectil puudub viide, siis punane
@@ -937,10 +942,16 @@ class Isik(models.Model):
 
     @property
     def lyhinimi(self):
-        lyhinimi = self.perenimi
-        if self.eesnimi:
-            lyhinimi += ', ' + self.eesnimi[0] + '.'
-        return lyhinimi
+        # lyhinimi = self.perenimi
+        # eesnimi = self.eesnimi
+        # if eesnimi:
+        #     if eesnimi.split(' ')[0] in ['hr', 'pr', 'dr', 'prl']:
+        #         eesnimi = eesnimi.split(' ')[0]
+        #     else:
+        #         eesnimi = eesnimi[0] + '.'
+        #     lyhinimi += ', ' + eesnimi
+        # return lyhinimi
+        return repr(self)
 
     # Kui kirjelduses on vigase koha märge
     @property

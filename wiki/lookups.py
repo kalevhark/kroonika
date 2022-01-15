@@ -94,8 +94,6 @@ class ObjektLookup(LookupChannel):
         splits = q.split(' ')
         queryset = self.model.objects.daatumitega(request)
         for split in splits:
-            # pat = split.translate(str.maketrans(TRANSLATION))
-            # queryset = queryset.filter(nimi__icontains=split)
             queryset = queryset.filter(nimi__iregex=split)
         return queryset[:50]
 

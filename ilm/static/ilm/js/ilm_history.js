@@ -9,15 +9,15 @@ function container_history_andmed() {
     url: $("#container_history_andmed").attr("data-url"),
     dataType: 'json',
     success: function (data) {
-	  // console.log(data)
-	  text = data.parameetrid;
+      // console.log(data)
+      text = data.parameetrid;
     },
     error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
+	    alert(textstatus);
     },
-	complete: function () {
-	  document.getElementById("container_history_andmed").innerHTML = text;
-	}
+    complete: function () {
+      document.getElementById("container_history_andmed").innerHTML = text;
+    }
   });
 }
 
@@ -27,23 +27,22 @@ function container_history_aasta() {
     url: $("#container_history_aasta").attr("data-url"),
     dataType: 'json',
     timeout: 300000,
-	beforeSend: function() {
+	  beforeSend: function() {
       $("#loaderDiv1").show();
     },
     success: function (data) {
-	  if (data.tyhi) {
-	    document.getElementById("container_history_aasta").innerHTML = data.aasta + " kohta andmeid pole!";
-
-	  } else {
-	    var chart = Highcharts.chart("container_history_aasta", data);
-	  }
+      if (data.tyhi) {
+        document.getElementById("container_history_aasta").innerHTML = data.aasta + " kohta andmeid pole!";
+      } else {
+        var chart = Highcharts.chart("container_history_aasta", data);
+      }
     },
     error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
+	    alert(textstatus);
     },
-	complete: function () {
-	  $("#loaderDiv1").hide();
-	}
+    complete: function () {
+      $("#loaderDiv1").hide();
+    }
   });
 }
 
@@ -56,20 +55,20 @@ function container_history_kuud() {
     beforeSend: function() {
       $("#loaderDiv2").show();
     },
-	success: function (data) {
-	  if (data.tyhi) {
-	    document.getElementById("container_history_kuud").innerHTML = data.aasta + " kohta andmeid pole!";
+    success: function (data) {
+      if (data.tyhi) {
+        document.getElementById("container_history_kuud").innerHTML = data.aasta + " kohta andmeid pole!";
 
-	  } else {
-	    var chart = Highcharts.chart("container_history_kuud", data);
-	  }
+      } else {
+        var chart = Highcharts.chart("container_history_kuud", data);
+      }
     },
     error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
+	    alert(textstatus);
     },
-	complete: function () {
-	  $("#loaderDiv2").hide();
-	}
+    complete: function () {
+      $("#loaderDiv2").hide();
+    }
   });
 }
 
@@ -79,23 +78,24 @@ function container_history_kuu() {
     url: $("#container_history_kuu").attr("data-url"),
     dataType: 'json',
     timeout: 300000,
-	beforeSend: function() {
+	  beforeSend: function() {
       $("#loaderDiv3").show();
     },
     success: function (data) {
-	  if (data.tyhi) {
-	    document.getElementById("container_history_kuu").innerHTML = getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!";
-
-	  } else {
-	    var chart = Highcharts.chart("container_history_kuu", data);
-	  }
+      if (data.tyhi) {
+        document.getElementById("container_history_kuu").innerHTML = (
+          getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!"
+        );
+      } else {
+        var chart = Highcharts.chart("container_history_kuu", data);
+      }
     },
     error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
+	    alert(textstatus);
     },
-	complete: function () {
-	  $("#loaderDiv3").hide();
-	}
+    complete: function () {
+      $("#loaderDiv3").hide();
+    }
   });
 }
 
@@ -105,26 +105,27 @@ function container_history_p2ev() {
     url: $("#container_history_p2ev").attr("data-url"),
     dataType: 'json',
     timeout: 300000,
-	beforeSend: function() {
+	  beforeSend: function() {
       $("#loaderDiv4").show();
     },
     success: function (data) {
-	  if (data.tyhi) {
-	    if (data.p2ev != undefined) {
-		  var text = '<p>' + data.p2ev + ". " + getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!</p>"
-		} else {var text = ""};
-	    document.getElementById("container_history_p2ev").innerHTML = text;
-
-	  } else {
-	    var chart = Highcharts.chart("container_history_p2ev", data);
-	  }
+      if (data.tyhi) {
+        if (data.p2ev !== undefined) {
+          var text = '<p>' + data.p2ev + ". " + getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!</p>"
+        } else {
+          var text = ""
+        }
+        document.getElementById("container_history_p2ev").innerHTML = text;
+      } else {
+        var chart = Highcharts.chart("container_history_p2ev", data);
+      }
     },
     error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
+	    alert(textstatus);
     },
-	complete: function () {
-	  $("#loaderDiv4").hide();
-	}
+	  complete: function () {
+      $("#loaderDiv4").hide();
+    }
   });
 }
 
@@ -134,35 +135,37 @@ function container_history_p2evad() {
     url: $("#container_history_p2evad").attr("data-url"),
     dataType: 'json',
     timeout: 300000,
-	beforeSend: function() {
+	  beforeSend: function() {
       $("#loaderDiv5").show();
     },
     success: function (data) {
-	  if (data.tyhi) {
-	    if (data.p2ev != undefined) {
-		  var text = '<p>' + data.p2ev + ". " + getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!</p>"
-		} else {var text = ""};
-		document.getElementById("container_history_p2evad").innerHTML = text;
-	  } else {
-	    var chart = Highcharts.chart("container_history_p2evad", data);
-		chart.series[0].update({
-			dataLabels: {
-				enabled: true,
-				formatter: function () {
-					var color = (this.y<0?'#48AFE8':'#FF3333');
-					var temp = (this.y<0?"":"+") + this.y.toFixed(1) + '°C';
-					return '<span style="color:' + color + '">' + temp + '</span>';
-				}
-			}
-		});
-	  }
+      if (data.tyhi) {
+        if (data.p2ev !== undefined) {
+          var text = '<p>' + data.p2ev + ". " + getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!</p>"
+        } else {
+          var text = ""
+        }
+        document.getElementById("container_history_p2evad").innerHTML = text;
+      } else {
+        var chart = Highcharts.chart("container_history_p2evad", data);
+        chart.series[0].update({
+          dataLabels: {
+            enabled: true,
+            formatter: function () {
+              var color = (this.y<0?'#48AFE8':'#FF3333');
+              var temp = (this.y<0?"":"+") + this.y.toFixed(1) + '°C';
+              return '<span style="color:' + color + '">' + temp + '</span>';
+            }
+          }
+        });
+      }
     },
     error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
+	    alert(textstatus);
     },
-	complete: function () {
-	  $("#loaderDiv5").hide();
-	}
+    complete: function () {
+      $("#loaderDiv5").hide();
+    }
   });
 }
 
@@ -172,35 +175,37 @@ function container_history_aastad() {
     url: $("#container_history_aastad").attr("data-url"),
     dataType: 'json',
     timeout: 300000,
-	beforeSend: function() {
+	  beforeSend: function() {
       $("#loaderDiv6").show();
     },
     success: function (data) {
-	  if (data.tyhi) {
-	    if (data.p2ev != undefined) {
-		  var text = data.p2ev + ". " + getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!"
-		} else {var text = ""};
-		document.getElementById("container_history_aastad").innerHTML = text;
-	  } else {
-	    var chart = Highcharts.chart("container_history_aastad", data);
-		chart.series[0].update({
-			dataLabels: {
-				enabled: true,
-				formatter: function () {
-					var color = (this.y<0?'#48AFE8':'#FF3333');
-					var temp = (this.y<0?"":"+") + this.y.toFixed(1) + '°C';
-					return '<span style="color:' + color + '">' + temp + '</span>';
-				}
-			}
-		});
-	  }
+      if (data.tyhi) {
+        if (data.p2ev !== undefined) {
+          var text = data.p2ev + ". " + getMonth(data.kuu) + " " + data.aasta + " kohta andmeid pole!"
+        } else {
+          var text = ""
+        }
+        document.getElementById("container_history_aastad").innerHTML = text;
+      } else {
+        var chart = Highcharts.chart("container_history_aastad", data);
+        chart.series[0].update({
+          dataLabels: {
+            enabled: true,
+            formatter: function () {
+              var color = (this.y<0?'#48AFE8':'#FF3333');
+              var temp = (this.y<0?"":"+") + this.y.toFixed(1) + '°C';
+              return '<span style="color:' + color + '">' + temp + '</span>';
+            }
+          }
+        });
+      }
     },
     error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
+	    alert(textstatus);
     },
-	complete: function () {
-	  $("#loaderDiv6").hide();
-	}
+    complete: function () {
+      $("#loaderDiv6").hide();
+    }
   });
 }
 
@@ -213,20 +218,21 @@ function container_history_kuud_aastatekaupa() {
     beforeSend: function() {
       $("#loaderDiv7").show();
     },
-	success: function (data) {
-	  if (data.tyhi) {
-	    document.getElementById("container_history_kuud_aastatekaupa").innerHTML = data.aasta + " kohta andmeid pole!";
-
-	  } else {
-	    var chart = Highcharts.chart("container_history_kuud_aastatekaupa", data);
-	  }
+    success: function (data) {
+      if (data.tyhi) {
+        document.getElementById("container_history_kuud_aastatekaupa").innerHTML = (
+          data.aasta + " kohta andmeid pole!"
+        );
+      } else {
+        var chart = Highcharts.chart("container_history_kuud_aastatekaupa", data);
+      }
     },
     error: function (XMLHttpRequest, textstatus, errorThrown) {
-	  alert(textstatus);
+	    alert(textstatus);
     },
-	complete: function () {
-	  $("#loaderDiv7").hide();
-	}
+    complete: function () {
+      $("#loaderDiv7").hide();
+    }
   });
 }
 

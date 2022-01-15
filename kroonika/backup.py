@@ -311,7 +311,7 @@ C = PS(
     name='Chapter',
     parent=T
 )
-h1 = PS(
+H1 = PS(
     name='Heading1',
     fontSize=16,
     leading=16,
@@ -319,14 +319,14 @@ h1 = PS(
     spaceBefore=6,
     keepWithNext=1
 )
-toc1 = PS(
+TOC1 = PS(
     name='TOC1',
     fontSize=14,
     spaceAfter=12,
     spaceBefore=12,
-    parent=h1
+    parent=H1
 )
-h2 = PS(
+H2 = PS(
     name='Heading2',
     fontSize=14,
     leading=16,
@@ -334,15 +334,15 @@ h2 = PS(
     spaceBefore=12,
     keepWithNext=1
 )
-toc2 = PS(
+TOC2 = PS(
     name='TOC2',
     spaceAfter=6,
     spaceBefore=6,
     keepWithNext=1,
-    parent=h2
+    parent=H2
 )
 
-h3 = PS(
+H3 = PS(
     name='Heading3',
     fontSize=12,
     leading=14,
@@ -350,33 +350,33 @@ h3 = PS(
     spaceBefore=12,
     keepWithNext=1
 )
-toc3 = PS(
+TOC3 = PS(
     name='TOC3',
     leftIndent=2 * cm,
     spaceAfter=0,
     spaceBefore=0,
     keepWithNext=0,
-    parent=h3
+    parent=H3
 )
-p = PS(
+P = PS(
     name='kirjeldus',
     fontSize=10,
     spaceAfter=6
 )
-p_colored = PS(
+P_ARTIKKEL = PS(
     name='kirjeldus_colored',
     textColor=TEXT_ARTIKKEL_COLOR,
-    parent=p
+    parent=P
 )
-v = PS(
+V = PS(
     name='viide',
     fontSize=8
 )
-v_error = PS(
+V_ERROR = PS(
     name='viide_error',
     # fontSize=8,
     textColor='red',
-    parent=v
+    parent=V
 )
 
 # custom canvasmaker for multiple indecees
@@ -433,7 +433,7 @@ def story_seotud_viited(story, obj):
     viited =  obj.viited.all()
     if viited:
         for viide in viited:
-            story.append(Paragraph(f'{viide}', v))
+            story.append(Paragraph(f'{viide}', V))
     # story.append(Spacer(18, 18))
     return story
 
@@ -443,13 +443,13 @@ def story_seotud_objectid(story, obj, seotud_model, seotud_objectid_index = ''):
     seotud_objectid = seotud_model.objects.daatumitega(request=None).filter(id__in=ids)
     if seotud_objectid:
         if not isinstance(obj, Artikkel):
-            story.append(Paragraph(f'Seotud {seotud_model_verbose}:', p))
+            story.append(Paragraph(f'Seotud {seotud_model_verbose}:', P))
         for seotud_object in seotud_objectid:
             seotud_object_clean = repr(seotud_object).replace(',', ',,').replace('"', '&quot')  # topeltkoma = ','
             if not isinstance(obj, Artikkel):
                 story.append(
                     Paragraph(
-                        f'<index name="{seotud_model_verbose}" item="{seotud_object_clean}" />{seotud_object}', v
+                        f'<index name="{seotud_model_verbose}" item="{seotud_object_clean}" />{seotud_object}', V
                     )
                 )
             seotud_objectid_index += f'<index name="{seotud_model_verbose}" item="{seotud_object_clean}" />'
@@ -492,10 +492,10 @@ def story_seotud_pildid(obj):
         flowables.append(Spacer(6, 6))
         flowables.append(get_image_withheight(pildi_fail, height=2 * inch))
         if pilt.viited.first():
-            flowables.append(Paragraph(f'Allikas: {pilt.viited.first()}', v))
-            fmt = v
+            flowables.append(Paragraph(f'Allikas: {pilt.viited.first()}', V))
+            fmt = V
         else:
-            fmt = v_error
+            fmt = V_ERROR
         flowables.append(Paragraph(f'Fail: {pilt.pilt}', fmt))
         flowables.append(Spacer(12, 12))
     return flowables
@@ -513,18 +513,19 @@ def story_artiklid(story, objects=3, algus_aasta=0, l6pp_aasta=1899):
     for obj in objs:
         if obj.hist_year != jooksev_aasta:
             jooksev_aasta = obj.hist_year
-            story.append(Paragraph(f'<font color="{TEXT_ARTIKKEL_COLOR}">{obj.hist_year}</font>', h2))
+            story.append(Paragraph(f'<font color="{TEXT_ARTIKKEL_COLOR}">{obj.hist_year}</font>', H2))
         if obj.hist_date:
             hist_dates = obj.hist_date.strftime(settings.DATE_INPUT_FORMATS[0])
             kuu = obj.hist_date.month
             if obj.hist_enddate:
                 hist_dates = '-'.join([hist_dates, obj.hist_enddate.strftime('%d.%m.%Y')])
         else:
-            hist_dates = ''
             if obj.hist_month:
                 kuu = obj.hist_month
+                hist_dates = f'{obj.hist_year} {KUUD[obj.hist_month-1][1]}'
             else:
                 kuu = 0
+                hist_dates = str(obj.hist_year)
         if obj.viited.exists():
             color = TEXT_ARTIKKEL_COLOR
         else:
@@ -534,7 +535,7 @@ def story_artiklid(story, objects=3, algus_aasta=0, l6pp_aasta=1899):
         if kuu != jooksev_kuu:
             jooksev_kuu = kuu
             if kuu > 0:
-                story.append(Paragraph(f'<font color="{TEXT_ARTIKKEL_COLOR}">{KUUD[jooksev_kuu-1][1]}</font>', h3))
+                story.append(Paragraph(f'<font color="{TEXT_ARTIKKEL_COLOR}">{KUUD[jooksev_kuu-1][1]}</font>', H3))
 
         seotud_objectid_index = ''
         story, seotud_objectid_index = story_seotud_objectid(
@@ -559,18 +560,18 @@ def story_artiklid(story, objects=3, algus_aasta=0, l6pp_aasta=1899):
         if profiilipilt:
             story.append(KeepTogether(profiilipilt))
 
-        story.append(Paragraph(f'{body_text}{seotud_objectid_index}', p))
+        story.append(Paragraph(f'{body_text}{seotud_objectid_index}', P))
         url = obj.get_absolute_url()
         story.append(
             Paragraph(
-                f'<link href="https://valgalinn.ee{url}">https://valgalinn.ee{url}</link>', v
+                f'<link color="{TEXT_ARTIKKEL_COLOR}" href="https://valgalinn.ee{url}">https://valgalinn.ee{url}</link>', V
             )
         )
 
         viited = obj.viited.all()
         if viited:
             for viide in viited:
-                story.append(Paragraph(f'{viide}', v))
+                story.append(Paragraph(f'{viide}', V))
     print('Lugusid:', objs.count())
     return story
 
@@ -585,7 +586,7 @@ def story_isikud(story, objects=3):
             t2ht = 'V,W'
         if t2ht != jooksev_t2ht:
             jooksev_t2ht = t2ht
-            story.append(Paragraph(f'<font color="{TEXT_ISIK_COLOR}">{jooksev_t2ht}</font>', h2))
+            story.append(Paragraph(f'<font color="{TEXT_ISIK_COLOR}">{jooksev_t2ht}</font>', H2))
 
         if obj.viited.exists():
             color = TEXT_ISIK_COLOR
@@ -595,14 +596,14 @@ def story_isikud(story, objects=3):
         isik_index = repr(obj).replace(',', ',,')  # topeltkoma = ','
         story.append(
             Paragraph(
-                f'<index name="isikud" item="{isik_index}" /><font color="{color}"><strong>{obj}</strong></font>', p
+                f'<index name="isikud" item="{isik_index}" /><font color="{color}"><strong>{obj}</strong></font>', P
             )
         )
 
         url = obj.get_absolute_url()
         story.append(
             Paragraph(
-                f'<link href="https://valgalinn.ee{url}">https://valgalinn.ee{url}</link>', v
+                f'<link color="{TEXT_ISIK_COLOR}" href="https://valgalinn.ee{url}">https://valgalinn.ee{url}</link>', V
             )
         )
 
@@ -642,7 +643,7 @@ def story_isikud(story, objects=3):
                 )
             )
             story.append(t)
-        story.append(Paragraph(f'{obj.kirjeldus}', p))
+        story.append(Paragraph(f'{obj.kirjeldus}', P))
 
         story = story_seotud_viited(story, obj)
         story, _ = story_seotud_objectid(
@@ -669,7 +670,7 @@ def story_organisatsioonid(story, objects=3):
             t2ht = 'V,W'
         if t2ht != jooksev_t2ht: # kasutame slug välja, et ignoreerida jutumärke nime alguses
             jooksev_t2ht = t2ht
-            story.append(Paragraph(f'<font color="{TEXT_ORGANISATSIOON_COLOR}">{jooksev_t2ht}</font>', h2))
+            story.append(Paragraph(f'<font color="{TEXT_ORGANISATSIOON_COLOR}">{jooksev_t2ht}</font>', H2))
         if obj.viited.exists():
             color = TEXT_ORGANISATSIOON_COLOR
         else:
@@ -678,14 +679,14 @@ def story_organisatsioonid(story, objects=3):
         organisatsioon_index = repr(obj).replace(',', ',,').replace('"', '&quot')  # topeltkoma = ','
         story.append(
             Paragraph(
-                f'<index name="organisatsioonid" item="{organisatsioon_index}" /><font color="{color}"><strong>{obj}</strong></font>', p
+                f'<index name="organisatsioonid" item="{organisatsioon_index}" /><font color="{color}"><strong>{obj}</strong></font>', P
             )
         )
 
         url = obj.get_absolute_url()
         story.append(
             Paragraph(
-                f'<link href="https://valgalinn.ee{url}">https://valgalinn.ee{url}</link>', v
+                f'<link color="{TEXT_ORGANISATSIOON_COLOR}" href="https://valgalinn.ee{url}">https://valgalinn.ee{url}</link>', V
             )
         )
 
@@ -719,7 +720,7 @@ def story_organisatsioonid(story, objects=3):
                 )
             )
             story.append(t)
-        story.append(Paragraph(f'{obj.kirjeldus}', p))
+        story.append(Paragraph(f'{obj.kirjeldus}', P))
 
         story = story_seotud_viited(story, obj)
         story, _ = story_seotud_objectid(
@@ -741,7 +742,7 @@ def story_objektid(story, objects=3):
             t2ht = 'V,W'
         if t2ht != jooksev_t2ht:
             jooksev_t2ht = t2ht
-            story.append(Paragraph(f'<font color="{TEXT_OBJEKT_COLOR}">{jooksev_t2ht}</font>', h2))
+            story.append(Paragraph(f'<font color="{TEXT_OBJEKT_COLOR}">{jooksev_t2ht}</font>', H2))
         if obj.viited.exists():
             color = TEXT_OBJEKT_COLOR
         else:
@@ -750,14 +751,14 @@ def story_objektid(story, objects=3):
         objekt_index = repr(obj).replace(',', ',,').replace('"', '&quot')  # topeltkoma = ','
         story.append(
             Paragraph(
-                f'<index name="objektid" item="{objekt_index}" /><font color="{color}"><strong>{obj}</strong></font>', p
+                f'<index name="objektid" item="{objekt_index}" /><font color="{color}"><strong>{obj}</strong></font>', P
             )
         )
 
         url = obj.get_absolute_url()
         story.append(
             Paragraph(
-                f'<link href="https://valgalinn.ee{url}">https://valgalinn.ee{url}</link>', v
+                f'<link color="{TEXT_OBJEKT_COLOR}" href="https://valgalinn.ee{url}">https://valgalinn.ee{url}</link>', V
             )
         )
 
@@ -791,7 +792,7 @@ def story_objektid(story, objects=3):
                 )
             )
             story.append(t)
-        story.append(Paragraph(f'{obj.kirjeldus}', p))
+        story.append(Paragraph(f'{obj.kirjeldus}', P))
 
         story = story_seotud_viited(story, obj)
         story, _ = story_seotud_objectid(
@@ -861,13 +862,13 @@ def backup2pdf(objects=3, content='lood', algus_aasta=0, l6pp_aasta=1899):
     story.append(Spacer(inch, 1 * inch))
     story.append(Paragraph(f'valgalinn.ee väljatrükk - {sisupealkiri}', T))
     story.append(Spacer(inch, 3 * inch))
-    story.append(Paragraph(f'Valga {dump_date}', p))
+    story.append(Paragraph(f'Valga {dump_date}', P))
 
     #sisukord
     story.append(PageBreak())
-    story.append(Paragraph('Sisukord', h2))
+    story.append(Paragraph('Sisukord', H2))
     toc = TableOfContents()
-    toc.levelStyles = [toc1, toc2, toc3]
+    toc.levelStyles = [TOC1, TOC2, TOC3]
     story.append(toc)
 
     if content and content == 'lood':
@@ -907,7 +908,7 @@ def backup2pdf(objects=3, content='lood', algus_aasta=0, l6pp_aasta=1899):
     story.append(NextPageTemplate('TwoCol'))
 
     story.append(PageBreak())
-    story.append(Paragraph('Isikute register', h2))
+    story.append(Paragraph('Isikute register', H2))
     index_isikud = SimpleIndex(
         name='isikud',
         dot=' . ',
@@ -916,7 +917,7 @@ def backup2pdf(objects=3, content='lood', algus_aasta=0, l6pp_aasta=1899):
     story.append(index_isikud)
     story.append(PageBreak())
 
-    story.append(Paragraph('Asutiste register', h2))
+    story.append(Paragraph('Asutiste register', H2))
     index_organisatsioonid = SimpleIndex(
         name='organisatsioonid',
         dot=' . ',
@@ -925,7 +926,7 @@ def backup2pdf(objects=3, content='lood', algus_aasta=0, l6pp_aasta=1899):
     story.append(index_organisatsioonid)
     story.append(PageBreak())
 
-    story.append(Paragraph('Kohtade register', h2))
+    story.append(Paragraph('Kohtade register', H2))
     index_objektid = SimpleIndex(
         name='objektid',
         dot=' . ',
@@ -956,8 +957,9 @@ def backup2pdf(objects=3, content='lood', algus_aasta=0, l6pp_aasta=1899):
     print('valmis!')
 
 if __name__ == "__main__":
-    # backup2pdf(objects=0, content='lood', algus_aasta=0, l6pp_aasta=1899) # objects=0 = täiskoopia
-    # backup2pdf(objects=0, content='lood', algus_aasta=1900, l6pp_aasta=1919)  # objects=0 = täiskoopia
-    # backup2pdf(objects=0, content='lood', algus_aasta=1920, l6pp_aasta=1930)  # objects=0 = täiskoopia
-    backup2pdf(objects=0, content='lisad')  # objects=0 = täiskoopia
+    objects = 100
+    backup2pdf(objects=objects, content='lood', algus_aasta=0, l6pp_aasta=1899) # objects=0 = täiskoopia
+    backup2pdf(objects=objects, content='lood', algus_aasta=1900, l6pp_aasta=1919)  # objects=0 = täiskoopia
+    backup2pdf(objects=objects, content='lood', algus_aasta=1920, l6pp_aasta=1930)  # objects=0 = täiskoopia
+    backup2pdf(objects=objects, content='lisad')  # objects=0 = täiskoopia
     pass

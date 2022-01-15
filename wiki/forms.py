@@ -1,9 +1,6 @@
 from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, HTML, ButtonHolder
-# from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.db.models import Case, F, When, IntegerField
-from django.db.models.functions import ExtractDay
 from django.forms import (
     ModelForm,
     Textarea,
@@ -34,21 +31,6 @@ class PiltForm(ModelForm):
 
 
 class ArtikkelForm(ModelForm):
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.queryset = Artikkel.objects.annotate(
-    #         search_month=Case(
-    #             When(hist_month__isnull=True, then=0),
-    #             When(hist_month__isnull=False, then=F('hist_month')),
-    #             output_field=IntegerField()
-    #         ),
-    #         search_day=Case(
-    #             When(hist_date__isnull=True, then=0),
-    #             When(hist_date__isnull=False, then=ExtractDay('hist_date')),
-    #             output_field=IntegerField()
-    #         )
-    #     ).order_by('hist_year', 'search_month', 'search_day')
 
     isikud = AutoCompleteSelectMultipleField('isikud', required=False)
     organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
@@ -170,7 +152,6 @@ class VihjeForm(ModelForm):
                 HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >')
             ),
             ButtonHolder(
-                # HTML('<span class="hidden">✓ Saved data</span>'),
                 Submit('save', 'Saada'),
                 Submit('cancel', 'Loobu', onclick='showFeedback()', css_class='btn-default')
             )
