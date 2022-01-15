@@ -957,8 +957,9 @@ def backup2pdf_job(objects=10, content='lood', algus_aasta=0, l6pp_aasta=1899):
 
 def backup2pdf(objects=10):
     backup2pdf_job(objects=objects, content='lood', algus_aasta=0, l6pp_aasta=1899)
-    backup2pdf_job(objects=objects, content='lood', algus_aasta=1900, l6pp_aasta=1919)
-    backup2pdf_job(objects=objects, content='lood', algus_aasta=1920, l6pp_aasta=1930)
+    backup2pdf_job(objects=objects, content='lood', algus_aasta=1900, l6pp_aasta=1909)
+    backup2pdf_job(objects=objects, content='lood', algus_aasta=1910, l6pp_aasta=1919)
+    backup2pdf_job(objects=objects, content='lood', algus_aasta=1920, l6pp_aasta=1929)
     backup2pdf_job(objects=objects, content='lisad')
 
 if __name__ == "__main__":
