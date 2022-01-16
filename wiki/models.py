@@ -338,13 +338,17 @@ class Viide(models.Model):
         'Internet',
         blank=True,
     )
-    mod_date = models.DateTimeField( # Millal viidet kasutatud
+    # Tehnilised väljad
+    inp_date = models.DateTimeField( # selle j2rgi markdown j2rjestab!
+        'Lisatud',
+        auto_now_add=True
+    )
+    mod_date = models.DateTimeField(
         'Kasutatud',
         auto_now=True
     )
 
     class Meta:
-        # ordering = ['hist_date', 'hist_year']
         ordering = ['-id']
         verbose_name_plural = "Viited"
 
@@ -725,7 +729,13 @@ class Organisatsioon(models.Model):
     # Create a property that returns the markdown instead
     @property
     def formatted_markdown(self):
-        return markdownify(escape_numberdot(self.kirjeldus))
+        viited = ''
+        viitenr = 1
+        for viide in self.viited.all():
+            viited += f'\n[^{viitenr}]: {viide}'
+            viitenr += 1
+        # text = '\n[^2]: This is the first footnote.'
+        return markdownify(escape_numberdot(self.kirjeldus) + viited)
 
     def get_absolute_url(self):
         kwargs = {
