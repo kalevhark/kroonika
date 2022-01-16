@@ -133,7 +133,7 @@ class AllikasLookup(LookupChannel):
         splits = q.split(' ')
         queryset = self.model.objects.all()
         for split in splits:
-            queryset = queryset.filter(nimi__icontains=split)
+            queryset = queryset.filter(nimi__icontains=split).order_by('-id')
         return queryset[:20]
 
 

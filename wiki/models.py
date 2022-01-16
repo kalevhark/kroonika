@@ -349,7 +349,7 @@ class Viide(models.Model):
     )
 
     class Meta:
-        ordering = ['-id']
+        ordering = ['inp_date'] # NB! selle j2rgi j2rjestab viited markdownx!
         verbose_name_plural = "Viited"
 
     def __str__(self):
