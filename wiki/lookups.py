@@ -118,7 +118,7 @@ class ViideLookup(LookupChannel):
                 F('hist_year'),
                 output_field=CharField()
             )
-        )
+        ).order_by('-id')
         for split in splits:
             queryset = queryset.filter(full_viide__icontains=split)
         return queryset[:20]
@@ -133,7 +133,7 @@ class AllikasLookup(LookupChannel):
         splits = q.split(' ')
         queryset = self.model.objects.all()
         for split in splits:
-            queryset = queryset.filter(nimi__icontains=split).order_by('-id')
+            queryset = queryset.filter(nimi__icontains=split)
         return queryset[:20]
 
 
