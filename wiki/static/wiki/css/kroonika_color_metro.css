@@ -1,4 +1,4 @@
-/* html värvikirjeldused Valga ajalookroonika jaoks ver 2020.10
+/* html värvikirjeldused Valga ajalookroonika jaoks ver 2022.1
 
 Põhitooni roheline on Valga linna vapi ja lipu Pantone 340 värvikoodi alusel
 metro:
@@ -59,7 +59,12 @@ color:white;
 .text-organisatsioon {color:#2d89ef;}
 .text-objekt {color:#2b5797;}
 .text-pilt {color:#008CBA;}
-.text-viide {color:#A9A9A9;}
+
+.text-viide {color: black;}
+.text-viide ol {
+  padding-inline-start: 0;
+}
+.icon-viide {color:#A9A9A9;}
 
 .text-ukj {color:purple;}
 .text-ukj:hover {color:#00985F;}
@@ -86,6 +91,9 @@ color:white;
   background-color:white;
 }
 .hover-viide:hover {
-  color:#A9A9A9;
-  background-color:white;
+  /*color:#A9A9A9;*/
+  /*background-color:white;*/
+  color:#00985F;
+  margin-bottom: 0;
+  border-bottom: 1px dotted #000;
 }

@@ -111,6 +111,22 @@ def escape_numberdot(string):
     string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
     return string_modified
 
+# Lisab objecti tekstile markdown formaadis viited
+def add_markdownx_viited(obj):
+    viited = obj.viited.all()
+    viite_string = ''
+    if viited:
+        viite_string += '<hr><i class="fa fa-binoculars icon-viide" alt="Viited"></i>'
+        viitenr = 1
+        for viide in viited:
+            viite_string += f'\n[^{viitenr}]: '
+            if viide.url:
+                viite_string += f'<a class="hover-viide" href="{viide.url}" target="_blank">{viide}</a>'
+            else:
+                viite_string += f'<span>{viide}</span>'
+            viitenr += 1
+    return f'<div class="w3-panel w3-small text-viide">{viite_string}</div>'
+
 # map punctuation to space
 # Vajalik funktsiooni object2keywords jaoks
 translator = str.maketrans(string.punctuation, ' ' * len(string.punctuation))
@@ -386,6 +402,13 @@ class Viide(models.Model):
         viide = ' '.join([autorid, peatykk, allika_nimi, viit, aeg]).replace(' , ', ', ')
         return viide.strip()
 
+    @property
+    def markdownify(self):
+        viide = str(self)
+        if self.url:
+            return f'<a href="{self.url}">{viide}</a>'
+        else:
+            return viide
 
 class Objekt(models.Model):
     OBJEKTITYYP = (
@@ -544,9 +567,11 @@ class Objekt(models.Model):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
     # Create a property that returns the markdown instead
+    # Lisame siia ka viited
     @property
     def formatted_markdown(self):
-        return markdownify(escape_numberdot(self.kirjeldus))
+        viite_string = add_markdownx_viited(self)
+        return markdownify(escape_numberdot(self.kirjeldus) + viite_string)
 
     # Keywords
     @property
@@ -727,15 +752,11 @@ class Organisatsioon(models.Model):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
     # Create a property that returns the markdown instead
+    # Lisame siia ka viited
     @property
     def formatted_markdown(self):
-        viited = ''
-        viitenr = 1
-        for viide in self.viited.all():
-            viited += f'\n[^{viitenr}]: {viide}'
-            viitenr += 1
-        # text = '\n[^2]: This is the first footnote.'
-        return markdownify(escape_numberdot(self.kirjeldus) + viited)
+        viite_string = add_markdownx_viited(self)
+        return markdownify(escape_numberdot(self.kirjeldus) + viite_string)
 
     def get_absolute_url(self):
         kwargs = {
@@ -969,9 +990,11 @@ class Isik(models.Model):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
     # Create a property that returns the markdown instead
+    # Lisame siia ka viited
     @property
     def formatted_markdown(self):
-        return markdownify(escape_numberdot(self.kirjeldus))
+        viite_string = add_markdownx_viited(self)
+        return markdownify(escape_numberdot(self.kirjeldus) + viite_string)
 
     def get_absolute_url(self):
         kwargs = {
@@ -1291,9 +1314,11 @@ class Artikkel(models.Model):
         return tekst
 
     # Create a property that returns the markdown instead
+    # Lisame siia ka viited
     @property
     def formatted_markdown(self):
-        return markdownify(escape_numberdot(self.body_text))
+        viite_string = add_markdownx_viited(self)
+        return markdownify(escape_numberdot(self.body_text) + viite_string)
 
     # Create a property that returns the summary markdown instead
     @property
