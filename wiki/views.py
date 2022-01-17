@@ -2,6 +2,7 @@ from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
 from functools import reduce
 from operator import or_
+import pkg_resources
 from typing import Dict, Any
 
 from django.conf import settings
@@ -241,18 +242,11 @@ def info(request):
     # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
     # Koondnäitajad aastate ja kuude kaupa
-    # import json
     a = dict()
-    # artikleid_aasta_kaupa = artikkel_qs.\
-    #     filter(hist_searchdate__isnull=False).\
-    #     values('hist_year').\
-    #     annotate(Count('hist_year')).\
-    #     order_by('-hist_year')
-    # a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
     time_log['5'] = (datetime.now() - time).microseconds
 
     # Moodulid, mis kasutusel
-    import pkg_resources
+
     env = dict(
         tuple(str(ws).split())
         for ws
@@ -1107,7 +1101,7 @@ class ArtikkelYearArchiveView(YearArchiveView):
     allow_future = True
     allow_empty = True
     paginate_by = 20
-    ordering = ('hist_searchdate', 'id')
+    # ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
@@ -1257,7 +1251,7 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
     allow_future = True
     allow_empty = True
     paginate_by = 20
-    ordering = ('hist_searchdate', 'id')
+    # ordering = ('hist_searchdate', 'id')
 
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
@@ -1784,22 +1778,13 @@ def test(request):
     valik = request.META['QUERY_STRING']
     # TODO: Saata tühi vastus, kui pole konkreetset valikut
     data = dict()
-    # data['meta_server_addr'] = request.META['SERVER_ADDR']
     # Artiklite testandmed
-    # artikkel_qs = artikkel_qs_userfilter(request.user)
     artikkel_qs = Artikkel.objects.daatumitega(request)
     data['test_url_artiklid_id'] = [
         reverse('wiki:wiki_artikkel_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
         for obj
         in artikkel_qs
     ]
-    # queryset = (
-    #     Artikkel.objects
-    #         .filter(hist_searchdate__isnull=False)
-    #         .annotate(year=ExtractYear('hist_searchdate'))
-    #         .values('year')
-    # )
-    # aastad = list(set(el['year'] for el in queryset))
     queryset = (
         artikkel_qs.dates('hist_searchdate', 'year')
     )

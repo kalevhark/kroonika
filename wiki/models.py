@@ -322,11 +322,7 @@ class Viide(models.Model):
         blank=True,
         help_text='Artikli või peatüki pealkiri'
     )
-    # TODO: Wiki markup süsteem viitamiseks tekstis
-    # Kasutame Wiki markup süsteemi:
-    # <ref>Your Source</ref>
-    # <ref>[http://www.nytimes.com/article_name.html Article in ''The New York Times'']</ref>
-    # <ref>Name of author, [http://www.nytimes.com/article_name.html "Title of article"], ''The New York Times'', date</ref>
+    # TODO: Wiki markup süsteem viitamiseks tekstis, pole enam vaja
     marker = models.CharField( # Tekstis sisalduvad viite markerid
         'Marker',
         max_length=10,
