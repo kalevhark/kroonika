@@ -224,7 +224,7 @@
         },
 
         subtitle: {
-            text: 'Aastatel {{ andmed.hist_searchdate__min|date:"Y" }}-{{ andmed.hist_searchdate__max|date:"Y" }} kuude kaupa',
+            text: 'Aastatel {{ andmed.hist_year__min }}-{{ andmed.hist_year__max }} kuude kaupa',
             align: 'left',
             x: 40
         },
@@ -233,8 +233,8 @@
             title: {
                 text: 'aastad'
             },
-            min: {{ andmed.hist_searchdate__min|date:"Y" }},
-            max: {{ andmed.hist_searchdate__max|date:"Y" }},
+            min: {{ andmed.hist_year__min }},
+            max: {{ andmed.hist_year__max }},
             labels: {
                 align: 'left',
                 x: 5,

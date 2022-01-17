@@ -213,7 +213,7 @@ def info(request):
     # Artiklite ülevaade
     andmed = artikkel_qs.aggregate(Count('id'), Min('hist_year'), Max('hist_year'))
     perioodid = artikkel_qs. \
-        filter(hist_searchdate__isnull=False). \
+        filter(hist_year__isnull=False). \
         values('hist_searchdate__year', 'hist_searchdate__month'). \
         annotate(ct=Count('id')). \
         order_by('hist_searchdate__year', 'hist_searchdate__month')
