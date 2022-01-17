@@ -570,8 +570,11 @@ class Objekt(models.Model):
     # Lisame siia ka viited
     @property
     def formatted_markdown(self):
+        sisu = self.kirjeldus
+        if len(sisu) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+            sisu = '<br>'
         viite_string = add_markdownx_viited(self)
-        return markdownify(escape_numberdot(self.kirjeldus) + viite_string)
+        return markdownify(escape_numberdot(sisu) + viite_string)
 
     # Keywords
     @property
@@ -755,8 +758,11 @@ class Organisatsioon(models.Model):
     # Lisame siia ka viited
     @property
     def formatted_markdown(self):
+        sisu = self.kirjeldus
+        if len(sisu) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+            sisu = '<br>'
         viite_string = add_markdownx_viited(self)
-        return markdownify(escape_numberdot(self.kirjeldus) + viite_string)
+        return markdownify(escape_numberdot(sisu) + viite_string)
 
     def get_absolute_url(self):
         kwargs = {
@@ -993,8 +999,11 @@ class Isik(models.Model):
     # Lisame siia ka viited
     @property
     def formatted_markdown(self):
+        sisu = self.kirjeldus
+        if len(sisu) == 0: # markdownx korrektseks tööks vaja, et sisu ei oleks null
+            sisu = '<br>'
         viite_string = add_markdownx_viited(self)
-        return markdownify(escape_numberdot(self.kirjeldus) + viite_string)
+        return markdownify(escape_numberdot(sisu) + viite_string)
 
     def get_absolute_url(self):
         kwargs = {
