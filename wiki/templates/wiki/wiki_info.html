@@ -45,7 +45,7 @@
     <hr>
     {% if andmed.id__count > 0 %}
       <p>
-        Andmebaasis on {{ andmed.id__count }} lugu aastatest {{ andmed.hist_searchdate__min|date:"Y" }} kuni {{ andmed.hist_searchdate__max|date:"Y" }}.
+        Andmebaasis on {{ andmed.id__count }} lugu aastatest {{ andmed.hist_year__min }} kuni {{ andmed.hist_year__max }}.
       </p>
       <!--    Artiklite heatmap kuude kaupa-->
       <div id="container" style="float: left; height: 300px; min-width: 310px; max-width: 1000px; margin: 0 auto"></div>

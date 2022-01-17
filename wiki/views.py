@@ -115,14 +115,15 @@ def wiki_base_info(request):
 # Infolehekülg
 #
 def info(request):
-    # Filtreerime kasutaja järgi
     time = datetime.now()
     time_log = {}
     time_log['0'] = (datetime.now() - time).microseconds
+    # Filtreerime kasutaja järgi
     artikkel_qs = Artikkel.objects.daatumitega(request)
     isik_qs = Isik.objects.daatumitega(request)
     organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
     objekt_qs = Objekt.objects.daatumitega(request)
+
     kaardiobjektiga_objektid_ids = set(
         kaardiobjekt.objekt.id
         for kaardiobjekt
@@ -210,7 +211,7 @@ def info(request):
     )
     time_log['2'] = (datetime.now() - time).microseconds
     # Artiklite ülevaade
-    andmed = artikkel_qs.aggregate(Count('id'), Min('hist_searchdate'), Max('hist_searchdate'))
+    andmed = artikkel_qs.aggregate(Count('id'), Min('hist_year'), Max('hist_year'))
     perioodid = artikkel_qs. \
         filter(hist_searchdate__isnull=False). \
         values('hist_searchdate__year', 'hist_searchdate__month'). \
@@ -243,6 +244,12 @@ def info(request):
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
     # Koondnäitajad aastate ja kuude kaupa
     a = dict()
+    artikleid_aasta_kaupa = artikkel_qs.\
+        filter(hist_year__isnull=False).\
+        values('hist_year').\
+        annotate(Count('hist_year')).\
+        order_by('-hist_year')
+    a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
     time_log['5'] = (datetime.now() - time).microseconds
 
     # Moodulid, mis kasutusel
@@ -262,7 +269,7 @@ def info(request):
         'session_data': request.session,
         'cookies': request.COOKIES,
         'env': env,
-        # 'a': a,
+        'a': a,
         'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         'time_log': time_log,
     }

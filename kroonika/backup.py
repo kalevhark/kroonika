@@ -51,7 +51,7 @@ def serverless_save_viited(path, method, obj):
                     serverless_save_allikad(path, method, viide.allikas)
 
 # Salvestame ainult kasutatud pildid
-def serverless_save_pildid(path, method, obj, verbose_name_plural, base_dir, pildifailid):
+def serverless_save_pildid(path, method, obj, verbose_name_plural, pildifailid):
     filterset = {f'{verbose_name_plural}__in': [obj]}
     pildid = Pilt.objects.filter(**filterset)
     if pildid:
@@ -65,15 +65,15 @@ def serverless_save_pildid(path, method, obj, verbose_name_plural, base_dir, pil
                     serializer.serialize([pilt], stream=out)
                 serverless_save_viited(path, method, pilt)
             pildifail = str(pilt.pilt)
-            if Path.exists(base_dir / 'media' / pildifail) and (pildifail not in pildifailid):
+            if Path.exists(settings.MEDIA_ROOT / pildifail) and (pildifail not in pildifailid):
                 pildifailid.append(pildifail)
     return pildifailid
 
 # Kopeerime pildid BACKUP_DIRi
-def serverless_copy_pildid(pildifailid, BACKUP_DIR, BASE_DIR):
+def serverless_copy_pildid(pildifailid, BACKUP_DIR):
     Path(BACKUP_DIR / 'media').mkdir(parents=True, exist_ok=True)
     for fail in pildifailid:
-        src = Path(BASE_DIR / 'media' / fail)
+        src = Path(settings.MEDIA_ROOT / fail)
         dst = Path(BACKUP_DIR / 'media' / fail)
         dst_dir = dst.parent
         Path(dst_dir).mkdir(parents=True, exist_ok=True)
@@ -109,11 +109,19 @@ def serverless_make_index(objs, andmebaas, BACKUP_DIR):
     html_content_table_tbody = ET.SubElement(html_content_table, 'tbody')
 
     for obj in objs:
+        if isinstance(obj, Isik):
+            if obj.hist_date:
+                hist_month = obj.hist_date.month
+            else:
+                hist_month = None
+        else:
+            hist_month = obj.hist_month
         object = {
             'pk': str(obj.pk),
             'hist_year': str(obj.hist_year),
-            'hist_date': obj.hist_date.strftime('%Y-%m-%d') if obj.hist_date else str(obj.hist_date),
-            'hist_enddate': obj.hist_enddate.strftime('%Y-%m-%d') if obj.hist_enddate else str(obj.hist_enddate),
+            'hist_month': str(hist_month),
+            'hist_date': obj.hist_date.strftime(settings.DATE_INPUT_FORMATS[0]) if obj.hist_date else str(obj.hist_date),
+            'hist_enddate': obj.hist_enddate.strftime(settings.DATE_INPUT_FORMATS[0]) if obj.hist_enddate else str(obj.hist_enddate),
             'obj': str(obj),
             'JSON': f'json/{andmebaas["verbose_name_plural"]}/{andmebaas["acronym"]}_{obj.id}.json',
             'XML':  f'xml/{andmebaas["verbose_name_plural"]}/{andmebaas["acronym"]}_{obj.id}.xml'
@@ -164,9 +172,8 @@ def serverless_make_index(objs, andmebaas, BACKUP_DIR):
     tree = ET.ElementTree(html_content)
     tree.write(html_content_file_name, encoding = "UTF-8")
 
-def backup2serverless(objects=10):
+def backup2serverless(objects=10, aastani=1929):
     BASE_DIR = Path(__file__).resolve().parent
-    print('Alustasime:', datetime.now())
 
     # Loome backup kataloogistruktuuri
     now = datetime.now()
@@ -193,6 +200,8 @@ def backup2serverless(objects=10):
 
     for andmebaas in andmebaasid:
         objs = andmebaas['model'].objects.daatumitega(request=None)
+        if aastani and andmebaas['model'] == Artikkel:
+            objs = objs.filter(hist_year__lte=aastani)
         if objects > 0:
             objs = objs[:objects]
         print(f'Kopeerime {andmebaas["verbose_name_plural"]}:', len(objs), 'objekti...', end=' ')
@@ -212,7 +221,6 @@ def backup2serverless(objects=10):
                     method,
                     obj,
                     andmebaas['verbose_name_plural'],
-                    BASE_DIR,
                     pildifailid
                 )
                 file_name = BACKUP_DIR / method / andmebaas['verbose_name_plural'] / f'{andmebaas["acronym"]}_{obj.id}.{method}'
@@ -249,13 +257,12 @@ def backup2serverless(objects=10):
         print('OK')
 
     # kopeerime asjakohased pildid BACKUP_DIRi
-    serverless_copy_pildid(pildifailid, BACKUP_DIR, BASE_DIR)
-
-    print('Lõpetasime:', datetime.now())
+    serverless_copy_pildid(pildifailid, BACKUP_DIR)
 
 if __name__ == "__main__":
-    # backup2serverless(objects=10) # objects=0 = täiskoopia
-    pass
+    print('Alustasime:', datetime.now())
+    backup2serverless(objects=10, aastani=1929) # objects=0 = täiskoopia
+    print('Lõpetasime:', datetime.now())
 
 # Andmete varundamiseks offline kasutuseks
 # Loob valgalinn.ee ajalookroonika koopia pdf formaadis
@@ -956,12 +963,15 @@ def backup2pdf_job(objects=10, content='lood', algus_aasta=0, l6pp_aasta=1899):
     print('valmis!')
 
 def backup2pdf(objects=10):
-    backup2pdf_job(objects=objects, content='lood', algus_aasta=0, l6pp_aasta=1899)
-    backup2pdf_job(objects=objects, content='lood', algus_aasta=1900, l6pp_aasta=1909)
-    backup2pdf_job(objects=objects, content='lood', algus_aasta=1910, l6pp_aasta=1919)
-    backup2pdf_job(objects=objects, content='lood', algus_aasta=1920, l6pp_aasta=1929)
+    # backup2pdf_job(objects=objects, content='lood', algus_aasta=0, l6pp_aasta=1899)
+    # backup2pdf_job(objects=objects, content='lood', algus_aasta=1900, l6pp_aasta=1909)
+    # backup2pdf_job(objects=objects, content='lood', algus_aasta=1910, l6pp_aasta=1919)
+    # backup2pdf_job(objects=objects, content='lood', algus_aasta=1920, l6pp_aasta=1924)
+    # backup2pdf_job(objects=objects, content='lood', algus_aasta=1925, l6pp_aasta=1929)
+    # backup2pdf_job(objects=objects, content='lood', algus_aasta=1928, l6pp_aasta=1929)
     backup2pdf_job(objects=objects, content='lisad')
 
 if __name__ == "__main__":
-    # backup2pdf(objects=10) # objects=0 = täiskoopia
-    pass
+    print('Alustasime:', datetime.now())
+    # backup2pdf(objects=0) # objects=0 = täiskoopia
+    print('Lõpetasime:', datetime.now())
