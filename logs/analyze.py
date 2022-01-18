@@ -5,7 +5,7 @@ import re
 import sys
 import urllib.request
 
-from ipwhois import IPWhois
+from ipwhois import IPWhois, HTTPLookupError
 import pandas as pd
 import pytz
 
@@ -71,7 +71,11 @@ def whoisinfo(ip_addr=''):
 
 # Tagastab IP aadressi alusel hosti kirjelduse
 def whoisinfo_asn_description(rows):
-    return whoisinfo(rows.name)['asn_description']
+    try:
+        asn_description = whoisinfo(rows.name)['asn_description']
+    except HTTPLookupError:
+        print('Error:', rows.name)
+    return
 
 # Tagastab, kas on bot
 def is_bot(rows):
