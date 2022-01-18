@@ -74,8 +74,9 @@ def whoisinfo_asn_description(rows):
     try:
         asn_description = whoisinfo(rows.name)['asn_description']
     except HTTPLookupError:
+        asn_description = rows.name
         print('Error:', rows.name)
-    return
+    return asn_description
 
 # Tagastab, kas on bot
 def is_bot(rows):
