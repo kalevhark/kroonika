@@ -52,6 +52,7 @@ urlpatterns = [
     path('ilm/', include('ilm.urls'), name='ilm'),
     path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('markdownx/', include('markdownx.urls')),
+    path('privacy/', views.privacy, name='privacy'),
     path('schema/', schema_view),
     path('wiki/', include('wiki.urls')),
     path('kaart/', views.kaart, name='kaart'),

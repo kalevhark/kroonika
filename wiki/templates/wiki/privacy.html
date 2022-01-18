@@ -1,0 +1,47 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block title %}{{ block.super }} teave küpsiste kasutamise kohta{% endblock %}
+
+{% block src %}
+{% endblock %}
+
+{% block content %}
+  <div class="w3-container">
+    <h1>Küpsiste kasutamine</h1>
+    <p>
+      valgalinn.ee veebileht kasutab küpsiseid. Küpsis on väike tekstikujuline andmeplokk teie veebilehitsejas, mille veebileht salvestab teie arvutis olevasse küpsiste faili.
+    </p>
+    <p>
+      Küpsiseid on kahte tüüpi:
+    </p>
+    <ul>
+      <li>Püsivad küpsised, mis jäävad teie arvutis olevasse küpsiste faili püsivalt. Neid võidakse kasutada näiteks teie
+        kui veebilehe korduvkülastaja äratundmiseks ja veebilehe sisu kohandamiseks vastavalt teie vajadustele või
+        statistiliste andmete kogumiseks.</li>
+      <li>Seansiküpsised on ajutised ja kaovad, kui veebilehelt lahkute või oma veebilehitseja sulgete. Seansiküpsiseid
+        võidakse kasutada veebilehe teatud funktsioonide, nagu näiteks otsimiseks või tagasiside saatmise, võimaldamiseks.</li>
+    </ul>
+    <p>
+      valgalinn.ee kasutajad loetakse küpsistega nõustunuks, kui nende veebilehitseja seadistustes on küpsised lubatud. Kui te küpsistega ei nõustu, võivad mitmed veebilehe teenused ja funktsioonid olla piiratud.
+    </p>
+    <p>
+    Te saate alati ise otsustada, kas küpsised oma veebilehitsejas lubada või mitte. Kui te küpsiseid ei soovi, võite seadistada oma veebilehitseja nii, et see keelab automaatselt küpsised ära või teatab teile iga kord, kui veebileht palub luba küpsise lisamiseks. Vajalike seadistuste tegemiseks külastage mõnd allpool olevat linki.
+    </p>
+    <a href="http://support.microsoft.com/kb/278835">Internet Explorer</a><br />
+    <a href="https://support.google.com/chrome/answer/95647?hl=en">Chrome</a><br />
+    <a href="http://support.mozilla.org/en-US/kb/Clear%20Recent%20History">Firefox</a><br />
+    <a href="http://www.opera.com/browser/tutorials/security/privacy">Opera</a><br />
+    <a href="http://support.apple.com/kb/PH5042">Safari</a><br />
+    &nbsp;<br />
+    <p>
+      Käesolevaid tingimusi võidakse aeg-ajalt muuta ilma sellest ette teatamata, et kindlustada vastavus seadustele ja/või küpsistele.
+    </p>
+    <br />
+    <br />
+    <br />
+    <br />
+  </div>
+{% endblock %}
+
+{% block javascript %}{% endblock %}

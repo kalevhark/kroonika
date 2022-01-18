@@ -111,6 +111,14 @@ def wiki_base_info(request):
     }
     return JsonResponse(data)
 
+# cookie consent policy
+def privacy(request):
+    return render(
+        request,
+        'wiki/privacy.html',
+        {}
+    )
+
 #
 # Infolehekülg
 #
