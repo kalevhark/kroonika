@@ -193,7 +193,9 @@
           <small>{{ item }}:{{ value }}</small><br>
         {% endfor %}
       </div>
-      {{ time_log }}
+      {% for item, value in time_log.items %}
+        <small>{{ item }}:{{ value|duration }} </small>
+      {% endfor %}
     {% endif %}
   </div>
 {% endblock %}

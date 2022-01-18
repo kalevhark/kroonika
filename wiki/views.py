@@ -117,7 +117,7 @@ def wiki_base_info(request):
 def info(request):
     time = datetime.now()
     time_log = {}
-    time_log['0'] = (datetime.now() - time).microseconds
+    time_log['0'] = datetime.now() - time
     # Filtreerime kasutaja järgi
     artikkel_qs = Artikkel.objects.daatumitega(request)
     isik_qs = Isik.objects.daatumitega(request)
@@ -144,7 +144,7 @@ def info(request):
         num_obj=0,
         num_pilt=0
     ).count()
-    time_log['1'] = (datetime.now() - time).microseconds
+    time_log['1'] = datetime.now() - time
     andmebaasid.append(
         ' '.join(
             [
@@ -154,7 +154,7 @@ def info(request):
             ]
         )
     )
-    time_log['1a'] = (datetime.now() - time).microseconds
+    time_log['1a'] = datetime.now() - time
     andmebaasid.append(
         ' '.join(
             [
@@ -165,7 +165,7 @@ def info(request):
             ]
         )
     )
-    time_log['1b'] = (datetime.now() - time).microseconds
+    time_log['1b'] = datetime.now() - time
     andmebaasid.append(
         ' '.join(
             [
@@ -176,7 +176,7 @@ def info(request):
             ]
         )
     )
-    time_log['1c'] = (datetime.now() - time).microseconds
+    time_log['1c'] = datetime.now() - time
     andmebaasid.append(
         ' '.join(
             [
@@ -188,7 +188,7 @@ def info(request):
             ]
         )
     )
-    time_log['1d'] = (datetime.now() - time).microseconds
+    time_log['1d'] = datetime.now() - time
     andmebaasid.append(
         ' '.join(
             [
@@ -199,7 +199,7 @@ def info(request):
             ]
         )
     )
-    time_log['1e'] = (datetime.now() - time).microseconds
+    time_log['1e'] = datetime.now() - time
     andmebaasid.append(
         ' '.join(
             [
@@ -209,7 +209,7 @@ def info(request):
             ]
         )
     )
-    time_log['2'] = (datetime.now() - time).microseconds
+    time_log['2'] = datetime.now() - time
     # Artiklite ülevaade
     andmed = artikkel_qs.aggregate(Count('id'), Min('hist_year'), Max('hist_year'))
     perioodid = artikkel_qs. \
@@ -228,7 +228,7 @@ def info(request):
         artikleid_kuus_max = max([kuu_andmed[2] for kuu_andmed in artikleid_kuus])
     else:
         artikleid_kuus_max = 1 # kui ei ole artikleid sisestatud
-    time_log['3'] = (datetime.now() - time).microseconds
+    time_log['3'] = datetime.now() - time
     # TODO: Ajutine ümberkorraldamiseks
     revision_data: Dict[str, Any] = {}
     revision_data['kroonika'] = artikkel_qs.\
@@ -238,9 +238,8 @@ def info(request):
         filter(kroonika__isnull=False).\
         annotate(num_viited=Count('viited')).\
         filter(num_viited__gt=1)
-    time_log['4'] = (datetime.now() - time).microseconds
+    time_log['4'] = datetime.now() - time
 
-    # revision_data['viiteta'] = list(artikkel_qs.filter(viited__isnull=True).values_list('id', flat=True))
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
     # Koondnäitajad aastate ja kuude kaupa
     a = dict()
@@ -250,7 +249,7 @@ def info(request):
         annotate(Count('hist_year')).\
         order_by('-hist_year')
     a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
-    time_log['5'] = (datetime.now() - time).microseconds
+    time_log['5'] = datetime.now() - time
 
     # Moodulid, mis kasutusel
 
@@ -265,7 +264,6 @@ def info(request):
         'andmed': andmed,
         'artikleid_kuus': artikleid_kuus,
         'artikleid_kuus_max': artikleid_kuus_max,
-        # 'meta_data': request.META,
         'session_data': request.session,
         'cookies': request.COOKIES,
         'env': env,
