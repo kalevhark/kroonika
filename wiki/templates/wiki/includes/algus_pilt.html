@@ -3,7 +3,11 @@
   <div class="pilt-wiki-algus w3-hide-medium" >
 		<img
         class="pilt-{{ tyyp }}-small"
-        src="{{ obj.profiilipilt.pilt_thumbnail.url }}"
+        {% if obj.profiilipilt.pilt.width > 400 %}
+          src="{{ obj.profiilipilt.pilt_thumbnail.url }}"
+        {% else %}
+          src="{{ obj.profiilipilt.pilt.url }}"
+        {% endif %}
         alt="{{ obj.profiilipilt }}"
         title="{{ obj.profiilipilt }}"
     />
