@@ -1,7 +1,7 @@
 import csv
 from datetime import date, datetime, timedelta
 import json
-from pathlib import Path
+from pathlib import Path, PurePath
 import shutil
 
 if __name__ == "__main__":
@@ -9,6 +9,11 @@ if __name__ == "__main__":
     import django
     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
     django.setup()
+
+from django.conf import settings
+
+MEDIA_DIR = settings.MEDIA_ROOT
+
 
 from django.db.models import (
     Case, F, Q, Value, When,
@@ -683,3 +688,98 @@ def ilm_maxmin():
             'days_above20': days_above20
         }
 
+def clean_ophan_images():
+    # remove ophan pictures
+    import glob
+    from collections import Counter
+
+    # Returns a list of names in list files.
+    print("Pildid:")
+    files = glob.glob(str(MEDIA_DIR / 'pildid/**/*.*'), recursive=True)
+    print(type(files[0]))
+
+    print('Kokku:', len(files))
+    c = Counter(
+        [file.split('.')[-1] for file in files]
+    )
+    print(c)
+
+    def img_type(filename):
+        if 'icon' in filename:
+            return 'icon'
+        elif 'thumb' in filename:
+            return 'thumb'
+        else:
+            return 'other'
+
+    c = Counter(
+        [
+            img_type(file)
+            for file
+            in files]
+    )
+    print(c)
+
+    files_ok = []
+    pildid = Pilt.objects.all()
+    for pilt in pildid:
+        # pilt
+        pildifail = str(MEDIA_DIR / pilt.pilt.name)
+        try:
+            found = files.index(pildifail)
+        except:
+            found = -1
+            print(pildifail in files_ok, pildifail)
+        if found > -1:
+            files_ok.append(files.pop(found))
+        # thumb
+        pildifail = str(MEDIA_DIR / pilt.pilt_thumbnail.name)
+        if len(pilt.pilt_thumbnail.name) == 0:
+            print('null thumb', pilt.pilt.name)
+        if pildifail.find('thumb') < 0:
+            print('thumb', pildifail)
+        try:
+            found = files.index(pildifail)
+        except:
+            found = -1
+            print(pildifail in files_ok, pildifail)
+        if found > -1:
+            files_ok.append(files.pop(found))
+        # icon
+        pildifail = str(MEDIA_DIR / pilt.pilt_icon.name)
+        if len(pilt.pilt_icon.name) == 0:
+            print('null icon', pilt.pilt.name)
+        if pildifail.find('icon') < 0:
+            print('icon', pildifail)
+        try:
+            found = files.index(pildifail)
+        except:
+            found = -1
+            print(pildifail in files_ok, pildifail)
+        if found > -1:
+            files_ok.append(files.pop(found))
+
+    print(len(files_ok), len(files))
+    c = Counter(
+        [
+            img_type(file)
+            for file
+            in files_ok]
+    )
+    print(c)
+
+    Path(MEDIA_DIR / 'orphans').mkdir(parents=True, exist_ok=True)
+    print(MEDIA_DIR)
+    for fail in files:
+        src = Path(fail)
+        dst = PurePath(MEDIA_DIR, 'orphans', *src.parent.parts[-3:], src.name)
+        # print(dst)
+        dst_dir = dst.parent
+        Path(dst_dir).mkdir(parents=True, exist_ok=True)
+        shutil.copy(src, dst)
+        # os.remove(src)
+
+
+if __name__ == "__main__":
+    # clean_ophan_images()
+    pass
