@@ -1,11 +1,11 @@
 import csv
 from datetime import date, datetime, timedelta
 import json
+import os
 from pathlib import Path, PurePath
 import shutil
 
 if __name__ == "__main__":
-    import os
     import django
     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
     django.setup()
