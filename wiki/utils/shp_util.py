@@ -784,6 +784,10 @@ def make_objekt_leaflet_combo(objekt_id=1):
                 # tilelayer.zoom_start = zoom_start
 
         # Loome aluskaardi
+        kwargs = { # vajalikud mobiilis kerimise h6lbustamiseks
+            'dragging': '!L.Browser.mobile',
+            'tap': '!L.Browser.mobile'
+        }
         map = folium.Map(
             location=location,  # NB! tagurpidi: [lat, lon],
             zoom_start=zoom_start,
@@ -791,6 +795,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
             zoom_control=True,
             # control_scale=True,
             tiles=None,
+            **kwargs
         )
         # map_name = map.get_name()
 

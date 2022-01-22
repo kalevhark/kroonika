@@ -1,5 +1,7 @@
+from collections import Counter
 import csv
 from datetime import date, datetime, timedelta
+import glob
 import json
 import os
 from pathlib import Path, PurePath
@@ -690,8 +692,6 @@ def ilm_maxmin():
 
 def clean_ophan_images():
     # remove ophan pictures
-    import glob
-    from collections import Counter
 
     # Returns a list of names in list files.
     print("Pildid:")
