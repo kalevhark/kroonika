@@ -777,7 +777,7 @@ def clean_ophan_images():
         dst_dir = dst.parent
         Path(dst_dir).mkdir(parents=True, exist_ok=True)
         shutil.copy(src, dst)
-        # os.remove(src)
+        os.remove(src)
 
 
 if __name__ == "__main__":
