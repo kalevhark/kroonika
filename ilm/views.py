@@ -2111,7 +2111,13 @@ def mixed_ilmateade(request):
     chart['airtemperatures'] = andmed_eelnevad24h['airtemperatures']
     return JsonResponse(chart)
 
-def forecasts(request):
+# küsib Ilmateenistuse hetkeandmed
+def get_ilmateenistus_now():
+    hetkeilm = bdi.ilm_praegu()
+    return hetkeilm
+
+# küsib ilmaandmed ja moodustab nendest sõnastiku
+def get_forecasts():
     yAPI = utils.YrnoAPI()
     y = yAPI.yrno_forecasts
     o = utils.owm_onecall()
@@ -2128,15 +2134,8 @@ def forecasts(request):
         y_prec = None
         y_prec_color = ''
         y_icon = ''
-        # for hour in range(len(y['forecast']['dt'])):
-        #     if int(y['forecast']['dt'][hour]) == ref_dt:
-        #         # y_dt = y['forecast']['dt'][hour]
-        #         y_temp = y['forecast']['temperatures'][hour]
-        #         y_prec = y['forecast']['precipitations'][hour]
-        #         break
         y_data = y['forecast'].get(str(ref_dt), None)
         if y_data:
-            # i_dt = ref_dt
             y_temp = y_data['temperature']
             y_icon = y_data['symbol']
             y_prec = y_data['precipitation']
@@ -2146,14 +2145,6 @@ def forecasts(request):
         o_prec = None
         o_prec_color = ''
         o_icon = ''
-        # for hour in o['hourly']:
-        #     if int(hour['dt']) == ref_dt:
-        #         # o_dt = int(hour['dt'])
-        #         o_temp = hour['temp']
-        #         try:
-        #             o_prec = hour['rain']['1h']
-        #         except:
-        #             o_prec = '0.0'
         o_data = o['forecast'].get(str(ref_dt), None)
         if o_data:
             o_temp = o_data['temp']
@@ -2187,11 +2178,20 @@ def forecasts(request):
             'i_prec': str(i_prec),
             'i_prec_color': i_prec_color,
         }
+    return forecast
+
+# veebiversioon
+def forecasts(request):
+    forecast = get_forecasts()
     context = {
         'forecast': forecast
     }
     return render(request, 'ilm/forecasts.html', context)
 
+# API versioon
+def forecasts_api(request):
+    forecast = get_forecasts()
+    return JsonResponse(forecast)
 
 from ilm.utils import forecast_log_analyze
 def forecasts_quality(request):
