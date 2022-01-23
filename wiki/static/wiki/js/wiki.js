@@ -1,4 +1,4 @@
-// ver 2020.12
+// ver 2022.1
 
 // Tagastab eestikeelse kuunime
 function getEstonianMonthName(idx) {
