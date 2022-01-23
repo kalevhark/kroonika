@@ -1761,7 +1761,7 @@ def get_object_data4tooltip(request):
     model_name = request.GET.get('model')
     id = request.GET.get('obj_id')
     model = apps.get_model('wiki', model_name)
-    print(model, id)
+    # print(model, id)
     obj = model.objects.get(id=id)
     if obj.kirjeldus:
         content = f'<div><p><strong>{obj}</strong></p><p>{obj.kirjeldus.splitlines()[0]}</p></div>'
