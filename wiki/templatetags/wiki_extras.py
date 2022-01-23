@@ -117,9 +117,10 @@ def get_verbose_name_plural(object):
     return object._meta.verbose_name_plural.lower()
 
 # Sektsiooni nimi objectist
-# @register.filter
-# def verbose_name_plural(object):
-#     return object._meta.verbose_name_plural
+@register.filter
+def get_model_name(value):
+    name = str(value.__class__.__name__)
+    return name
 
 @register.filter
 def duration(td):

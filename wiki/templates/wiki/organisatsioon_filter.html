@@ -70,5 +70,11 @@
   	url = "{% url 'wiki:wiki_organisatsioon_filter' %}";
   	location.href=url
   }
+
+  $(document).ready(function(){
+    // initialize tooltips
+    var url = '{% url "wiki:get_object_data4tooltip" %}'
+    getObjectData4tooltip(url);
+  });
 </script>
 {% endblock %}

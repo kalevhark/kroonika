@@ -5,6 +5,7 @@ from operator import or_
 import pkg_resources
 from typing import Dict, Any
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -1753,6 +1754,20 @@ class ObjektDetailView(generic.DetailView):
             filter(objektid=self.object)
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
+
+
+# objectide nimel hiirega peatudes infoakna kuvamiseks
+def get_object_data4tooltip(request):
+    model_name = request.GET.get('model')
+    id = request.GET.get('obj_id')
+    model = apps.get_model('wiki', model_name)
+    print(model, id)
+    obj = model.objects.get(id=id)
+    if obj.kirjeldus:
+        content = f'<div><p><strong>{obj}</strong></p><p>{obj.kirjeldus.splitlines()[0]}</p></div>'
+    else:
+        content = str(obj)
+    return HttpResponse(content)
 
 def join_kaardiobjekt_with_objekt(request, kaardiobjekt_id, objekt_id):
     if request.user.is_authenticated and request.user.is_staff:

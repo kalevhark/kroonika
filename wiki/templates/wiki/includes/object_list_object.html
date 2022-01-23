@@ -1,5 +1,12 @@
-<a class="hover-{{model}}" href="{% url 'wiki:wiki_'|add:model|add:'_detail' pk=obj.id slug=obj.slug %}">
-  <strong> {{ obj }}</strong>
+{% load wiki_extras %}
+<a class="hover-{{model}} tooltip-content" href="{% url 'wiki:wiki_'|add:model|add:'_detail' pk=obj.id slug=obj.slug %}">
+  <span
+          title='Please wait..'
+          data-model='{{ obj|get_model_name }}'
+          data-id='{{ obj.id }}'
+          id='{{ obj|get_model_name }}_{{ obj.id }}'>
+    <strong> {{ obj }}</strong>
+  </span>
 </a>
 {% if obj.vanus_gen and obj.vanus_gen > 0 %}
   {% if obj.vanus_gen|divisibleby:"5" %}

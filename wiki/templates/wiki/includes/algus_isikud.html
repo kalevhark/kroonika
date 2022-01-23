@@ -28,9 +28,15 @@
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
     <a
-        class="hover-isik"
+        class="hover-isik tooltip-content"
         href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-      {{ obj }}
+        <span
+              title='{{ obj }}'
+              data-model='{{ obj|get_model_name }}'
+              data-id='{{ obj.id }}'
+              id='{{ obj|get_model_name }}_{{ obj.id }}'>
+          {{ obj }}
+        </span>
       {% if obj.vanus|divisibleby:"5" %}
         &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
       {% endif %}
@@ -50,8 +56,14 @@
     {% endif %}
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
-    <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-      {{ obj }}
+    <a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+      <span
+              title='{{ obj }}'
+              data-model='{{ obj|get_model_name }}'
+              data-id='{{ obj.id }}'
+              id='{{ obj|get_model_name }}_{{ obj.id }}'>
+        {{ obj }}
+      </span>
     </a>
     {% if obj.vanus|divisibleby:"5" %}
       &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
@@ -71,9 +83,14 @@
     {% endif %}
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
-    <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-       {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
-      &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+    <a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+      <span
+            title='{{ obj }}'
+            data-model='{{ obj|get_model_name }}'
+            data-id='{{ obj.id }}'
+            id='{{ obj|get_model_name }}_{{ obj.id }}'>
+        {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}  <b>{{ obj.vanus }}</b>
+      </span>
       {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
     </a>
   {% endfor %}
@@ -92,8 +109,14 @@
     <strong>&#9840;&nbsp;</strong>
     <strong>{% include 'wiki/includes/date_doe.html' with obj=obj %}</strong>
     &nbsp;
-    <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-      {{ obj }}
+    <a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+      <span
+            title='{{ obj }}'
+            data-model='{{ obj|get_model_name }}'
+            data-id='{{ obj.id }}'
+            id='{{ obj|get_model_name }}_{{ obj.id }}'>
+        {{ obj }}
+      </span>
     </a>
   {% endfor %}
 {% endif %}
@@ -110,8 +133,14 @@
     <strong>&#9840;&nbsp;</strong>
     <strong>{% include 'wiki/includes/date_doe.html' with obj=obj %}</strong>
     &nbsp;
-    <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-      {{ obj }}
+    <a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+      <span
+            title='{{ obj }}'
+            data-model='{{ obj|get_model_name }}'
+            data-id='{{ obj.id }}'
+            id='{{ obj|get_model_name }}_{{ obj.id }}'>
+        {{ obj }}
+      </span>
     </a>
   {% endfor %}
 {% endif %}
