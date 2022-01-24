@@ -29,17 +29,19 @@
     &nbsp;
     <a
         class="hover-isik tooltip-content"
-        href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-        <span
-              title='{{ obj }}'
-              data-model='{{ obj|get_model_name }}'
-              data-id='{{ obj.id }}'
-              id='{{ obj|get_model_name }}_{{ obj.id }}'>
-          {{ obj }}
-        </span>
-      {% if obj.vanus|divisibleby:"5" %}
-        &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-      {% endif %}
+        href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}"
+    >
+      <span
+            title='{{ obj }}'
+            data-model='{{ obj|get_model_name }}'
+            data-id='{{ obj.id }}'
+            id='{{ obj|get_model_name }}_{{ obj.id }}'
+      >
+        {{ obj }}
+        {% if obj.vanus|divisibleby:"5" %}
+          &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+        {% endif %}
+      </span>
       {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
     </a>
   {% endfor %}
@@ -61,14 +63,17 @@
               title='{{ obj }}'
               data-model='{{ obj|get_model_name }}'
               data-id='{{ obj.id }}'
-              id='{{ obj|get_model_name }}_{{ obj.id }}'>
+              id='{{ obj|get_model_name }}_{{ obj.id }}'
+      >
         {{ obj }}
+        {% if obj.vanus|divisibleby:"5" %}
+          &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+        {% endif %}
       </span>
+      {% if obj.vanus|divisibleby:"5" %}
+        {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
+      {% endif %}
     </a>
-    {% if obj.vanus|divisibleby:"5" %}
-      &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
-      {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
-    {% endif %}
   {% endfor %}
 {% endif %}
 {% if andmed.isik.juubilarid %}
@@ -88,7 +93,8 @@
             title='{{ obj }}'
             data-model='{{ obj|get_model_name }}'
             data-id='{{ obj.id }}'
-            id='{{ obj|get_model_name }}_{{ obj.id }}'>
+            id='{{ obj|get_model_name }}_{{ obj.id }}'
+      >
         {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}  <b>{{ obj.vanus }}</b>
       </span>
       {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
