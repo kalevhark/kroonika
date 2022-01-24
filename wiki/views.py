@@ -1764,13 +1764,13 @@ def get_object_data4tooltip(request):
     # print(model, id)
     obj = model.objects.get(id=id)
     if obj.kirjeldus:
-        content = f'<p><strong>{obj}</strong></p><p>{obj.kirjeldus_lyhike}</p>'
+        heading = f'<strong>{obj}</strong>'
         if obj.profiilipilt():
-            img = str(settings.MEDIA_ROOT / obj.profiilipilt().pilt_thumbnail.name)
-            img = f'<p>{img}</p>'
+            img = settings.MEDIA_URL + obj.profiilipilt().pilt_thumbnail.name
+            img = f'<img class="tooltip-content-img" src="{img}" alt="{obj.profiilipilt()}">'
         else:
             img = ''
-        content = f'<div>{content}{img}</div>'
+        content = f'<div><p>{heading}</p><p>{img}<small>{obj.kirjeldus_lyhike}</small><p></div>'
     else:
         content = str(obj)
     return HttpResponse(content)

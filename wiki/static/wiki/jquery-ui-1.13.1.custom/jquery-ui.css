@@ -94,12 +94,20 @@
 	padding: 8px;
 	position: absolute;
 	z-index: 9999;
-	max-width: 300px;
+	max-width: 400px;
 }
 body .ui-tooltip {
 	border-width: 2px;
 }
 
+/* custom img format in tooltip by KH */
+.tooltip-content-img {
+	float: left;
+	width: auto;
+	height: 100px;
+	margin-right: 15px;
+	padding-bottom: 8px;
+}
 /* Component containers
 ----------------------------------*/
 .ui-widget {
