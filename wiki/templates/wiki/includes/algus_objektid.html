@@ -33,18 +33,18 @@
       <br>
     {% endif %}
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
-{#    <a#}
-{#        class="hover-objekt"#}
-{#        href="{% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:'Y' month=obj.hist_date|date:'m' day=obj.hist_date|date:'d' %}"#}
-{#    >#}
-{#      <strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>#}
-{#    </a>#}
     &nbsp;
     <a
-        class="hover-objekt"
+        class="hover-objekt tooltip-content"
         href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}"
     >
-      {{ obj }}
+      <span
+            title='{{ obj }}'
+            data-model='{{ obj|get_model_name }}'
+            data-id='{{ obj.id }}'
+            id='{{ obj|get_model_name }}_{{ obj.id }}'>
+        {{ obj }}
+      </span>
       {% if obj.vanus|divisibleby:"5" %}
         &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
       {% endif %}
@@ -67,18 +67,18 @@
       <br>
     {% endif %}
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
-{#    <a#}
-{#        class="hover-objekt"#}
-{#        href="{% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:'Y' month=obj.hist_date|date:'m' day=obj.hist_date|date:'d' %}"#}
-{#    >#}
-{#      <strong>{{ obj.hist_date|date:"d.m.Y" }}</strong>#}
-{#    </a>#}
     &nbsp;
     <a
-        class="hover-objekt"
+        class="hover-objekt tooltip-content"
         href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}"
     >
-      {{ obj }}
+      <span
+            title='{{ obj }}'
+            data-model='{{ obj|get_model_name }}'
+            data-id='{{ obj.id }}'
+            id='{{ obj|get_model_name }}_{{ obj.id }}'>
+        {{ obj }}
+      </span>
     </a>
     {% if obj.vanus|divisibleby:"5" %}
       &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
@@ -99,23 +99,15 @@
       <br>
     {% endif %}
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
-{#    {% if obj.hist_date %}#}
-{#      <a class="hover-objekt"#}
-{#        href="{% url 'wiki:artikkel_day_archive' year=obj.hist_date|date:'Y' month=obj.hist_date|date:'m' day=obj.hist_date|date:'d' %}"#}
-{#      >#}
-{#        <b>{{ obj.hist_date|date:"d.m.Y" }}</b>#}
-{#      </a>#}
-{#    {% else %}#}
-{#      <a class="hover-objekt"#}
-{#        href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}"#}
-{#      >#}
-{#        <b>{{ obj.hist_year }}</b>#}
-{#      </a>#}
-{#    {% endif %}#}
     &nbsp;
-    <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
-      {{ obj.nimi }}
-      &nbsp;<b>{{ obj.vanus }}</b>
+    <a class="hover-objekt tooltip-content" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
+      <span
+            title='{{ obj }}'
+            data-model='{{ obj|get_model_name }}'
+            data-id='{{ obj.id }}'
+            id='{{ obj|get_model_name }}_{{ obj.id }}'>
+        {{ obj.nimi }}&nbsp;<b>{{ obj.vanus }}</b>
+      </span>
       {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
     </a>
   {% endfor %}

@@ -139,6 +139,23 @@ def object2keywords(obj):
     keywords = [word for word in words if len(word) > 2]
     return ','.join(settings.KROONIKA['KEYWORDS'] + [object_string] + keywords)
 
+# tagastab lühendatud kirjelduse content tooltipi jaoks
+# v6etakse esimene l6ik (reavahetuseni)
+# kui esimene lõik on pikem määratud tähtede arvust, siis lühendatakse s6nade kaupa
+def get_kirjeldus_lyhike(self):
+    kirjeldus = ''
+    if self.kirjeldus:
+        kirjeldus = str(self.kirjeldus)
+        kirjeldus = kirjeldus.splitlines()[0]
+        if len(kirjeldus) > 500:
+            splitid = kirjeldus.split(' ')
+            for n in range(len(splitid)):
+                kirjeldus = ' '.join(splitid[:n])
+                if len(kirjeldus) > 500:
+                    if len(kirjeldus) < len(str(self.kirjeldus)):
+                        kirjeldus += '...'
+                    break
+    return kirjeldus
 
 # Filtreerime kanded, mille kohta on teada daatumid, vastavalt valikule vkj/ukj
 # vastavalt kasutajaõigustele
@@ -542,6 +559,10 @@ class Objekt(models.Model):
         daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
 
+    @property
+    def kirjeldus_lyhike(self):
+        return get_kirjeldus_lyhike(self)
+
     # Kui objectil puudub viide, siis punane
     def colored_id(self):
         if self.viited.exists():
@@ -729,6 +750,10 @@ class Organisatsioon(models.Model):
             su = ''
         daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
+
+    @property
+    def kirjeldus_lyhike(self):
+        return get_kirjeldus_lyhike(self)
 
     # Kui objectil puudub viide, siis punane
     def colored_id(self):
@@ -958,6 +983,10 @@ class Isik(models.Model):
             lyhinimi += ', ' + eesnimi
         return lyhinimi
 
+    @property
+    def kirjeldus_lyhike(self):
+        return get_kirjeldus_lyhike(self)
+
     # Kui objectil puudub viide, siis punane
     def colored_id(self):
         if self.viited.exists():
@@ -975,15 +1004,6 @@ class Isik(models.Model):
 
     @property
     def lyhinimi(self):
-        # lyhinimi = self.perenimi
-        # eesnimi = self.eesnimi
-        # if eesnimi:
-        #     if eesnimi.split(' ')[0] in ['hr', 'pr', 'dr', 'prl']:
-        #         eesnimi = eesnimi.split(' ')[0]
-        #     else:
-        #         eesnimi = eesnimi[0] + '.'
-        #     lyhinimi += ', ' + eesnimi
-        # return lyhinimi
         return repr(self)
 
     # Kui kirjelduses on vigase koha märge
