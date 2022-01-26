@@ -1,4 +1,4 @@
-// ver 2021.12
+// ver 2022.1
 
 $( document ).ready(function() {
   // Vue otsimisäpp
@@ -12,6 +12,7 @@ $( document ).ready(function() {
       wiki_isik_filter_url: wiki_isik_filter_url,
       wiki_organisatsioon_filter_url: wiki_organisatsioon_filter_url,
       wiki_objekt_filter_url: wiki_objekt_filter_url,
+      wiki_tooltip_url: wiki_tooltip_url,
       artikkel_results: [],
       artikkel_results_count_all: 0,
       artikkel_results_count_1st_page: 0,
@@ -29,8 +30,8 @@ $( document ).ready(function() {
     watch: {
       // whenever question changes, this function will run
       question: function (newQuestion, oldQuestion) {
-        this.answer = 'Ootan kuni lõpetad trükkimise...'
-        this.debouncedGetAnswer()
+        this.answer = 'Ootan kuni lõpetad trükkimise...';
+        this.debouncedGetAnswer();
       }
     },
     created: function () {
@@ -50,6 +51,17 @@ $( document ).ready(function() {
       focusInput: function () {
         // Vajalik et saada sisestusväli automaatselt aktiivseks
         this.$refs.question.focus();
+      },
+      updateTooltips: function () {
+        if (this.isik_results_count_all > 0 || this.organisatsioon_results_count_all > 0 || this.objekt_results_count_all > 0) {
+          var elContentTooltipFields = $(".tooltip-content span");
+          if (elContentTooltipFields.length) {
+            // initialize tooltips
+            getObjectData4tooltip(wiki_tooltip_url);
+          } else {
+            setTimeout(this.updateTooltips, 1000); // try again in 300 milliseconds
+          }
+        }
       },
       getAnswer: function () {
         // Kontrollime kas iga fraasi pikkus on vähemalt kolm tähemärki
@@ -99,6 +111,7 @@ $( document ).ready(function() {
           if (vm.isik_results_count_all > 0) {
             // Kui leiti isikuid
             vm.isik_results = response.data.results;
+            vm.updateTooltips();
           }
         })
         .catch(function (error) {
@@ -120,6 +133,7 @@ $( document ).ready(function() {
           if (vm.organisatsioon_results_count_all > 0) {
             // Kui leiti organisatsioone
             vm.organisatsioon_results = response.data.results;
+            vm.updateTooltips();
           }
         })
         .catch(function (error) {
@@ -141,6 +155,7 @@ $( document ).ready(function() {
           if (vm.objekt_results_count_all > 0) {
             // Kui leiti objekte
             vm.objekt_results = response.data.results;
+            vm.updateTooltips();
           }
         })
         .catch(function (error) {

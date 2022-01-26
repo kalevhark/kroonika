@@ -301,11 +301,8 @@ def otsi(request):
         request,
         'wiki/wiki_otsi.html',
         {
-            # 'kroonika_url': settings.ROOT_URL,
             'question': question
         }
-        # {'kroonika_url': request.META['SCRIPT_NAME']}
-        # {'kroonika_url': request.META['HTTP_HOST'] + request.META['SCRIPT_NAME']}
     )
 
 #

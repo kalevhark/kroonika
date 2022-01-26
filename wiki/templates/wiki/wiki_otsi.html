@@ -15,6 +15,7 @@
     var wiki_isik_filter_url = "{% url 'wiki:wiki_isik_filter' %}"
     var wiki_organisatsioon_filter_url = "{% url 'wiki:wiki_organisatsioon_filter' %}"
     var wiki_objekt_filter_url = "{% url 'wiki:wiki_objekt_filter' %}"
+    var wiki_tooltip_url = '{% url "wiki:get_object_data4tooltip" %}';
     var question = "{{ question }}"
   </script>
 
@@ -72,11 +73,18 @@
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in isik_results">
               <a
-                  class="hover-isik"
+                  class="hover-isik tooltip-content"
                   style="text-decoration: none;"
                   v-bind:href="result.link"
-                  v-bind:title="result.kirjeldus.slice(0, 50)">
-                [[ result.eesnimi ]] [[ result.perenimi ]] [[ result.hist_year==='' ? '' : result.hist_year ]]
+                  v-bind:title="result.kirjeldus.slice(0, 50)"
+              >
+                <span
+                      v-bind:title="result"
+                      data-model='Isik'
+                      v-bind:data-id="result.id"
+                      v-bind:id="'Isik_'+result.id">
+                  [[ result.eesnimi ]] [[ result.perenimi ]] [[ result.hist_year==='' ? '' : result.hist_year ]]
+                </span>
               </a>
             </li>
           </ul>
@@ -114,11 +122,18 @@
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in organisatsioon_results">
                 <a
-                    class="hover-organisatsioon"
+                    class="hover-organisatsioon tooltip-content"
                     style="text-decoration: none;"
                     v-bind:href="result.link"
-                    v-bind:title="result.kirjeldus.slice(0, 50)">
-                  [[ result.nimi ]] [[ result.hist_year==='' ? '' : result.hist_year ]]
+                    v-bind:title="result.kirjeldus.slice(0, 50)"
+                >
+                  <span
+                        v-bind:title="result"
+                        data-model='Organisatsioon'
+                        v-bind:data-id="result.id"
+                        v-bind:id="'Organisatsioon_'+result.id">
+                    [[ result.nimi ]] [[ result.hist_year==='' ? '' : result.hist_year ]]
+                  </span>
                 </a>
             </li>
           </ul>
@@ -157,11 +172,18 @@
           <ul class="w3-ul">
             <li class="w3-padding-small" style="list-style-type:none;" v-for="result in objekt_results">
                 <a
-                    class="hover-objekt"
+                    class="hover-objekt tooltip-content"
                     style="text-decoration: none;"
                     v-bind:href="result.link"
-                    v-bind:title="result.kirjeldus.slice(0, 50)">
-                  [[ result.nimi ]] [[ result.hist_year==='' ? '' : result.hist_year ]]
+                    v-bind:title="result.kirjeldus.slice(0, 50)"
+                >
+                  <span
+                        v-bind:title="result"
+                        data-model='Objekt'
+                        v-bind:data-id="result.id"
+                        v-bind:id="'Objekt_'+result.id">
+                    [[ result.nimi ]] [[ result.hist_year==='' ? '' : result.hist_year ]]
+                  </span>
                 </a>
             </li>
           </ul>
@@ -216,5 +238,5 @@
 {% endblock %}
 
 {% block javascript %}
-  <script src="{% static 'wiki/js/wiki_otsi.js'%}?ver=2021.12"></script>
+  <script src="{% static 'wiki/js/wiki_otsi.js'%}?ver=2022.1"></script>
 {% endblock %}

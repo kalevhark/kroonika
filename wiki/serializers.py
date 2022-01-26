@@ -92,6 +92,7 @@ class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class IsikSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.ReadOnlyField()
     link = serializers.SerializerMethodField()
     url = ParameterisedHyperlinkedIdentityField(
         view_name='wiki:wiki_isik_detail',
@@ -114,6 +115,7 @@ class IsikSerializer(serializers.HyperlinkedModelSerializer):
         # }
 
 class ObjektSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.ReadOnlyField()
     link = serializers.SerializerMethodField()
     url = ParameterisedHyperlinkedIdentityField(
         view_name='wiki:wiki_objekt_detail',
@@ -133,6 +135,7 @@ class ObjektSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class OrganisatsioonSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.ReadOnlyField()
     link = serializers.SerializerMethodField()
     url = ParameterisedHyperlinkedIdentityField(
         view_name='wiki:wiki_organisatsioon_detail',

@@ -1,4 +1,4 @@
-// ver 2022.1
+// ver 2022.1.26
 
 // Tagastab eestikeelse kuunime
 function getEstonianMonthName(idx) {
@@ -237,36 +237,35 @@ function openTab(evt, tyyp, obj) {
 }
 
 function getObjectData4tooltip( url ){
-  elContentTooltipFields = $( ".tooltip-content span" );
+  var elContentTooltipFields = $( ".tooltip-content span" );
 
   // initialize tooltip
-    elContentTooltipFields.tooltip({
-      track: true,
-      open: function( event, ui ) {
-        var id = this.id;
-        var model = $(this).attr('data-model');
-        var obj_id = $(this).attr('data-id');
+  elContentTooltipFields.tooltip({
+    track: true,
+    open: function( event, ui ) {
+      var id = this.id;
+      var model = $(this).attr('data-model');
+      var obj_id = $(this).attr('data-id');
 
-        $.ajax({
-          url: url,
-          type:'get',
-          data:{
-            model:model,
-            obj_id:obj_id
-          },
-          success: function(response){
-            // Setting content option
-            $("#"+id).tooltip('option','content', response);
-          }
-        });
-      }
-    });
+      $.ajax({
+        url: url,
+        type:'get',
+        data:{
+          model:model,
+          obj_id:obj_id
+        },
+        success: function(response){
+          // Setting content option
+          $("#"+id).tooltip('option','content', response);
+        }
+      });
+    }
+  });
 
-    elContentTooltipFields.mouseout(function(){
-      // re-initializing tooltip
-      $(this).attr('title','...');
-      $(this).tooltip();
-      $('.ui-tooltip').hide();
-    });
-
-  }
+  elContentTooltipFields.mouseout(function(){
+    // re-initializing tooltip
+    $(this).attr('title','...');
+    $(this).tooltip();
+    $('.ui-tooltip').hide();
+  });
+}
