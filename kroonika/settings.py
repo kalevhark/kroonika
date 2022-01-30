@@ -218,6 +218,17 @@ OWM_APIKEY = config['OpenWeatherMap']['OWM_APIKEY']
 #     'objektid': ('wiki.lookups', 'ObjektLookup'),
 # }
 
+# Otsingutes kasutamiseks
+TRANSLATION = {
+    'w': '[vw]',
+    'v': '[vw]',
+    'y': '[yi]',
+    'i': '[yi]',
+    's': '[sšz]',
+    'š': '[sšz]',
+    'z': '[sšz]'
+}
+
 # AWS SES credentials
 EMAIL_HOST = config['aws_mail']['HOST']
 EMAIL_HOST_PASSWORD = config['aws_mail']['PASSWORD_SMTP']
@@ -228,3 +239,6 @@ DEFAULT_FROM_EMAIL = config['aws_mail']['DEFAULT_FROM_EMAIL']
 
 # Indicates the frontend framework django crispy forms use
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# ajax-select no js & css download
+# AJAX_SELECT_BOOTSTRAP  = False

@@ -1,8 +1,8 @@
-from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
+from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField, AutoCompleteField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, HTML, ButtonHolder
 from django.forms import (
-    ModelForm,
+    Form, ModelForm,
     Textarea,
     SelectMultiple,
     ValidationError,
@@ -167,3 +167,16 @@ class VihjeForm(ModelForm):
             'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
             'kontakt': Textarea(attrs={'cols': 40, 'rows': 1})
         }
+
+
+class V6rdleForm(Form):
+    vasak_object = AutoCompleteSelectField(
+        'isikud',
+        required=False,
+        help_text=''
+    )
+    parem_object = AutoCompleteSelectField(
+        'isikud',
+        required=False,
+        help_text=''
+    )

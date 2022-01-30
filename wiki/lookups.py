@@ -1,6 +1,7 @@
 import ajax_select
 from ajax_select import LookupChannel
 
+from django.conf import settings
 from django.db.models.functions import Concat
 from django.db.models import F, Value, CharField
 
@@ -11,10 +12,16 @@ from .models import (
     Kaardiobjekt
 )
 
-TRANSLATION = {
-    'w': '[vw]',
-    'v': '[vw]'
-}
+# TRANSLATION = {
+#     'w': '[vw]',
+#     'v': '[vw]',
+#     'y': '[yi]',
+#     'i': '[yi',
+#     's': '[sšz]',
+#     'š': '[sšz]',
+#     'z': '[sšz]'
+# }
+TRANSLATION = settings.TRANSLATION
 
 @ajax_select.register('artiklid')
 class ArtikkelLookup(LookupChannel):

@@ -46,7 +46,7 @@ from wiki.models import (
     Kaart, Kaardiobjekt
 )
 from wiki.forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, KaardiobjektForm
-from wiki.forms import VihjeForm
+from wiki.forms import VihjeForm, V6rdleForm
 
 from wiki.utils.shp_util import (
     make_objekt_leaflet_combo,
@@ -292,7 +292,7 @@ def info(request):
 # Avalehekülje otsing
 #
 def otsi(request):
-    try:
+    try: # TODO:ei tööta
         question = request.GET['search']
     except:
         question = ''
@@ -644,6 +644,54 @@ def inrange_dates_artikkel(qs, p2ev, kuu):
     kkpp_string = str(kuu).zfill(2)+str(p2ev).zfill(2)
     id_list = [art.id for art in q if kkpp_string in art.hist_dates_string]
     return qs.filter(id__in=id_list) # queryset
+
+#
+# Avalehekülje otsing
+#
+def v6rdle(request):
+    vasak_object_id = request.GET.get('vasak_object_id')
+    parem_object_id = request.GET.get('parem_object_id')
+    # print(vasak_object_id, parem_object_id)
+
+    form = V6rdleForm(request.GET)
+    return render(
+        request,
+        'wiki/wiki_v6rdle.html',
+        {
+            # 'object': Isik.objects.daatumitega(request).first(),
+            'form': form,
+            'vasak_object_id': vasak_object_id,
+            'parem_object_id': parem_object_id
+        }
+    )
+
+# objectide nimel hiirega peatudes infoakna kuvamiseks
+def get_v6rdle_object(request):
+    model_name = request.GET.get('model')
+    id = request.GET.get('obj_id')
+    model = apps.get_model('wiki', model_name)
+    object = model.objects.daatumitega(request).get(id=id)
+
+    # Objectiga seotud artiklid
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    model_filters = {
+        'Isik':           'isikud__id',
+        'Organisatsioon': 'organisatsioonid__id',
+        'Objekt':         'objektid__id'
+    }
+    filter = {
+        model_filters[model_name]: id
+    }
+    seotud_artiklid = artikkel_qs.filter(**filter)
+
+    return render(
+        request,
+        'wiki/wiki_v6rdle_isik.html',
+        {
+            'object': object,
+            'seotud_artiklid': seotud_artiklid
+        }
+    )
 
 #
 # Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse

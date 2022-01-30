@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Q
+
 import django_filters
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
@@ -29,10 +31,16 @@ from .serializers import (
 
 # from .views import artikkel_qs_userfilter
 
-TRANSLATION = {
-    'w': '[vw]',
-    'v': '[vw]'
-}
+# TRANSLATION = {
+#     'w': '[vw]',
+#     'v': '[vw]',
+#     'y': '[yi]',
+#     'i': '[yi',
+#     's': '[sšz]',
+#     'š': '[sšz]',
+#     'z': '[sšz]'
+# }
+TRANSLATION = settings.TRANSLATION
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

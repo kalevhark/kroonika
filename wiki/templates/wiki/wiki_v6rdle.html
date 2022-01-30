@@ -1,0 +1,99 @@
+{% extends "wiki/wiki_base.html" %}
+{% load i18n static %}
+{% load crispy_forms_tags %}
+{% load wiki_extras %}
+
+{% block title %}{{ block.super }} - võrdlus ja sidumine{% endblock %}
+
+{% block src %}
+  <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/widgets.css' %}" >
+{% endblock %}
+
+{% block content %}
+  <div class="w3-panel w3-card-4 w3-padding-16">
+    <form method="post" class="uniForm">
+      {% csrf_token %}
+      <div class="w3-half">
+        <div class="w3-row">
+          {{ form.vasak_object }}
+        </div>
+      </div>
+      <div class="w3-half">
+        <div class="w3-row">
+          {{ form.parem_object }}
+        </div>
+      </div>
+    </form>
+    {{ form.media }}
+  </div>
+
+  <div class="w3-container">
+    {#    Vasakpoolne osa#}
+    <div
+            id="v6rdle_vasak_object"
+            data-id="{{ vasak_object_id }}"
+            class="w3-half"
+    >
+      &nbsp;
+    </div>
+
+    {#  Parem pool#}
+    <div
+            id="v6rdle_parem_object"
+            data-id="{{ parem_object_id }}"
+            class="w3-half"
+    >
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  <script>
+    function get_content(id, div, model, url) {
+      $.ajax({
+        url: url,
+        type:'get',
+        data:{
+          model: model,
+          obj_id: id
+        },
+        success: function(response){
+          div.innerHTML = response;
+          div.setAttribute('data-id', id);
+        },
+        error: function (XMLHttpRequest, textstatus, errorThrown) {
+          div.innerHTML = textstatus;
+          div.setAttribute('data-id', 'None');
+        }
+      });
+    }
+
+    $(document).ready( function() {
+      var url = '{% url "wiki:get_v6rdle_object" %}'
+      const model = 'Isik';
+      const paanid = ['vasak', 'parem']
+
+      paanid.forEach( function( paan ) {
+        var el = document.getElementById("id_" + paan + "_object_on_deck");
+        var div = document.getElementById("v6rdle_" + paan + "_object");
+
+        el.addEventListener("DOMNodeInserted", function (event) {
+          var id = $("#id_" + paan + "_object").val();
+          // console.log('added id:' + id );
+          get_content(id, div, model, url);
+        }, false);
+
+        el.addEventListener("DOMNodeRemoved", function (event) {
+          // var current = div.getAttribute('data-id')
+          // console.log('removed, current is:' + current);
+          div.innerHTML = '&nbsp;';
+          div.setAttribute('data-id', 'None');
+        }, false);
+      });
+    });
+  </script>
+{% endblock %}
