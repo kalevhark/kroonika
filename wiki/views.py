@@ -649,19 +649,21 @@ def inrange_dates_artikkel(qs, p2ev, kuu):
 # Avalehekülje otsing
 #
 def v6rdle(request):
-    vasak_object_id = request.GET.get('vasak_object_id')
-    parem_object_id = request.GET.get('parem_object_id')
-    # print(vasak_object_id, parem_object_id)
+    vasak_object = request.GET.get('vasak_object')
+    parem_object = request.GET.get('parem_object')
+    initial_dict = {
+        "vasak_object": vasak_object,
+        "parem_object": parem_object,
+    }
+    form = V6rdleForm(request.GET, initial=initial_dict)
 
-    form = V6rdleForm(request.GET)
     return render(
         request,
         'wiki/wiki_v6rdle.html',
         {
-            # 'object': Isik.objects.daatumitega(request).first(),
             'form': form,
-            'vasak_object_id': vasak_object_id,
-            'parem_object_id': parem_object_id
+            'vasak_object_id': vasak_object,
+            'parem_object_id': parem_object
         }
     )
 

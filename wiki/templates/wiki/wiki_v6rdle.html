@@ -93,6 +93,12 @@
           div.innerHTML = '&nbsp;';
           div.setAttribute('data-id', 'None');
         }, false);
+
+        var preset_id = div.getAttribute('data-id');
+        console.log(preset_id);
+        if (preset_id !== 'None') {
+          get_content(preset_id, div, model, url);
+        }
       });
     });
   </script>
