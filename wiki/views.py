@@ -851,10 +851,13 @@ class ArtikkelDetailView(generic.DetailView):
         )
 
         # Järjestame artiklid kronoloogiliselt
-        obj_id = context['artikkel'].id
+        # obj_id = context['artikkel'].id
+        obj = super().get_object()
+        obj_id = obj.id
         loend = list(artikkel_qs.values_list('id', flat=True))
         # Leiame valitud artikli järjekorranumbri
         n = loend.index(obj_id)
+        print(n, loend[n-1], loend[n], loend[n+1])
         context['n'] = n
         if n > -1:
             # Leiame ajaliselt järgneva artikli

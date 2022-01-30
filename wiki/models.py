@@ -190,7 +190,7 @@ class DaatumitegaManager(models.Manager):
                     When(hist_date__isnull=False, then=ExtractDay('hist_date')),
                     output_field=IntegerField()
                 )
-            ).order_by('hist_year', 'search_month', 'search_day')
+            ).order_by('hist_year', 'search_month', 'search_day', 'id')
 
         else:
             # Kui andmebaas on Isik, Organisatsioon, Objekt
