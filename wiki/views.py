@@ -852,12 +852,12 @@ class ArtikkelDetailView(generic.DetailView):
 
         # Järjestame artiklid kronoloogiliselt
         # obj_id = context['artikkel'].id
-        obj = super().get_object()
-        obj_id = obj.id
+        # obj = super().get_object()
+        # obj_id = self.object.id
         loend = list(artikkel_qs.values_list('id', flat=True))
         # Leiame valitud artikli järjekorranumbri
-        n = loend.index(obj_id)
-        print(n, loend[n-1], loend[n], loend[n+1])
+        n = loend.index(self.object.id)
+        # print(n, loend[n-1], loend[n], loend[n+1])
         context['n'] = n
         if n > -1:
             # Leiame ajaliselt järgneva artikli
@@ -868,7 +868,7 @@ class ArtikkelDetailView(generic.DetailView):
                 context['prev_obj'] = artikkel_qs.get(id=loend[n - 1])
         return context
 
-    def get_object(self):
+    def get_object(self, **kwargs):
         obj = super().get_object()
         # Record the last accessed date
         obj.last_accessed = timezone.now()
