@@ -59,13 +59,6 @@
 
 <!-- Seotud artiklid: -->
 <div class="w3-row">
-  {% if seotud_artiklid %}
-    <button
-        class="w3-bar-item w3-button tablink background-artikkel"
-    >
-      <i class="fa fa-comment"></i> Lugusid {{ seotud_artiklid.count }}
-    </button>
-  {% endif %}
   <div
       id="artiklid_{{ object.id }}"
       class="seotud"

@@ -35,7 +35,7 @@
             title='{{ obj }}'
             data-model='{{ obj|get_model_name }}'
             data-id='{{ obj.id }}'
-            id='{{ obj|get_model_name }}_{{ obj.id }}'
+            id='{{ obj|get_model_name }}_{{ obj.id }}_selp2eval'
       >
         {{ obj }}
         {% if obj.vanus|divisibleby:"5" %}
@@ -63,7 +63,7 @@
               title='{{ obj }}'
               data-model='{{ obj|get_model_name }}'
               data-id='{{ obj.id }}'
-              id='{{ obj|get_model_name }}_{{ obj.id }}'
+              id='{{ obj|get_model_name }}_{{ obj.id }}_selkuul'
       >
         {{ obj }}
         {% if obj.vanus|divisibleby:"5" %}
@@ -93,7 +93,7 @@
             title='{{ obj }}'
             data-model='{{ obj|get_model_name }}'
             data-id='{{ obj.id }}'
-            id='{{ obj|get_model_name }}_{{ obj.id }}'
+            id='{{ obj|get_model_name }}_{{ obj.id }}_juubilarid'
       >
         {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}  <b>{{ obj.vanus }}</b>
       </span>
@@ -120,7 +120,7 @@
             title='{{ obj }}'
             data-model='{{ obj|get_model_name }}'
             data-id='{{ obj.id }}'
-            id='{{ obj|get_model_name }}_{{ obj.id }}'>
+            id='{{ obj|get_model_name }}_{{ obj.id }}_selp2evalsurnud'>
         {{ obj }}
       </span>
     </a>
@@ -144,7 +144,7 @@
             title='{{ obj }}'
             data-model='{{ obj|get_model_name }}'
             data-id='{{ obj.id }}'
-            id='{{ obj|get_model_name }}_{{ obj.id }}'>
+            id='{{ obj|get_model_name }}_{{ obj.id }}_selkuulsurnud'>
         {{ obj }}
       </span>
     </a>
