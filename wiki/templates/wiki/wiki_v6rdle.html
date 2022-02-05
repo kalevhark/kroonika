@@ -94,7 +94,6 @@
             >
               <span>liida andmed </span>
             </button>
-            <span class="w3-text-green" id="done-vasak"></span>
           {% endif %}
         </div>
       </div>
@@ -111,7 +110,6 @@
             >
               <span>liida andmed </span>
             </button>
-            <span class="w3-text-green" id="done-parem"></span>
           {% endif %}
         </div>
       </div>
@@ -140,121 +138,148 @@
 {% endblock %}
 
 {% block javascript %}
-  <script>
-    // Kontrollitakse kas valitud on kaks objecti ja aktiveeritakse/deaktiveeritakse liitmise nupud
-    function check_buttons() {
-      var bothOK = (
-        (document.getElementById("v6rdle_vasak_object").getAttribute('data-id') !== 'None') &&
-        (document.getElementById("v6rdle_parem_object").getAttribute('data-id') !== 'None')
-      );
-      const buttons = ['button-join-vasak', 'button-join-parem'];
-      if (bothOK) {
-        buttons.forEach( function( btnId ) {
+  {% if user.is_authenticated %}
+    <script>
+      // Kontrollitakse kas valitud on kaks objecti ja aktiveeritakse/deaktiveeritakse liitmise nupud
+      function check_buttons() {
+        var bothOK = (
+          (document.getElementById("v6rdle_vasak_object").getAttribute('data-id') !== 'None') &&
+          (document.getElementById("v6rdle_parem_object").getAttribute('data-id') !== 'None')
+        );
+        const buttons = ['button-join-vasak', 'button-join-parem'];
+        if (bothOK) {
+          buttons.forEach( function( btnId ) {
+              var btn = document.getElementById(btnId);
+              btn.disabled = false;
+              btn.classList.add(btnId);
+          });
+        } else {
+          buttons.forEach( function( btnId ) {
             var btn = document.getElementById(btnId);
-            btn.disabled = false;
-            btn.classList.add(btnId);
-        });
-      } else {
-        buttons.forEach( function( btnId ) {
-          var btn = document.getElementById(btnId);
-          btn.disabled = true;
-          btn.classList.remove(btnId);
+            btn.disabled = true;
+            btn.classList.remove(btnId);
+          });
+        }
+      }
+
+      // tuuakse ajax andmed objecti kohta
+      function get_content(id, div, model, url) {
+        $.ajax({
+          url: url,
+          type:'get',
+          data:{
+            model: model,
+            obj_id: id
+          },
+          success: function(response){
+            div.innerHTML = response;
+            div.setAttribute('data-id', id);
+          },
+          error: function (XMLHttpRequest, textstatus, errorThrown) {
+            div.innerHTML = textstatus;
+            div.setAttribute('data-id', 'None');
+          },
+          complete: function () {
+            check_buttons();
+          }
         });
       }
-    }
 
-    // tuuakse ajax andmed objecti kohta
-    function get_content(id, div, model, url) {
-      $.ajax({
-        url: url,
-        type:'get',
-        data:{
-          model: model,
-          obj_id: id
-        },
-        success: function(response){
-          div.innerHTML = response;
-          div.setAttribute('data-id', id);
-        },
-        error: function (XMLHttpRequest, textstatus, errorThrown) {
-          div.innerHTML = textstatus;
-          div.setAttribute('data-id', 'None');
-        },
-        complete: function () {
-          check_buttons();
+      function reply_click(clicked_id) {
+        var idVasak = document.getElementById("v6rdle_vasak_object").getAttribute('data-id');
+        var idParem = document.getElementById("v6rdle_parem_object").getAttribute('data-id');
+        // console.log(clicked_id, idVasak, idParem);
+        var paan, dst_id, src_id = String();
+        if (clicked_id === "button-join-vasak") {
+          paan = 'vasak';
+          dst_id = idVasak;
+          src_id = idParem;
+        } else {
+          paan = 'parem';
+          dst_id = idParem;
+          src_id = idVasak;
         }
-      });
-    }
+        const model_name = 'isik';
+        const model = 'Isik';
+        // update object
+        $.ajax({
+          url: '{% url "wiki:get_update_object_with_object" %}',
+          type: 'get',
+          data:{
+            model_name: model_name,
+            src_id: src_id,
+            dst_id: dst_id
+          },
+          // dataType: 'text',
+          timeout: 300000,
+          beforeSend: function() {
+            // $("#loaderDiv7").show();
+          },
+          success: function (data) {
+            // console.log(data);
+            if (data) {
+              // refresh updated object
+              const url = '{% url "wiki:get_v6rdle_object" %}'
+              var div = document.getElementById("v6rdle_" + paan + "_object");
+              get_content(dst_id, div, model, url);
 
-    function reply_click(clicked_id) {
-      var idVasak = document.getElementById("v6rdle_vasak_object").getAttribute('data-id');
-      var idParem = document.getElementById("v6rdle_parem_object").getAttribute('data-id');
-      console.log(clicked_id, idVasak, idParem);
-      var paan, id = String();
-      if (clicked_id === "button-join-vasak") {
-        paan = 'vasak';
-        id = idVasak;
-      } else {
-        paan = 'parem';
-        id = idParem;
+              const btn = document.getElementById(clicked_id);
+              // btn.disable = true;
+              var oldMsg = btn.innerHTML;
+              btn.innerHTML = 'Uuendatud id=' + data;
+              btn.classList.remove('background-' + model_name);
+              btn.classList.add('w3-pale-green');
+
+              setTimeout(function(){
+                document.getElementById(clicked_id).innerHTML = '';
+                btn.innerHTML = oldMsg;
+                btn.classList.remove('w3-pale-green');
+                btn.classList.add('background-' + model_name);
+                // btn.disable = false;
+              }, 3000);
+            }
+          },
+          error: function (XMLHttpRequest, textstatus, errorThrown) {
+            console.log(textstatus);
+          },
+          complete: function () {
+            // $("#loaderDiv7").hide();
+          }
+        });
       }
-      const url = '{% url "wiki:get_v6rdle_object" %}'
-      const model = 'Isik';
-      var div = document.getElementById("v6rdle_" + paan + "_object");
-      get_content(id, div, model, url);
 
-      // document.getElementById("done-" + paan).innerHTML = ' Tehtud!';
-      // setTimeout(function(){
-      //     document.getElementById("done-" + paan).innerHTML = '';
-      // }, 3000);
+      $(document).ready( function() {
+        var form = document.getElementById("v6rdle");
+        function handleForm(event) { event.preventDefault(); }
+        form.addEventListener('submit', handleForm);
 
-      const btn = document.getElementById(clicked_id);
-      // btn.disable = true;
-      var oldMsg = btn.innerHTML;
-      btn.innerHTML = 'Tehtud!';
-      btn.classList.remove('background-isik');
-      btn.classList.add('w3-pale-green');
+        const url = '{% url "wiki:get_v6rdle_object" %}'
+        const model = 'Isik';
+        const paanid = ['vasak', 'parem'];
 
-      setTimeout(function(){
-        document.getElementById(clicked_id).innerHTML = '';
-        btn.innerHTML = oldMsg;
-        btn.classList.remove('w3-pale-green');
-        btn.classList.add('background-isik');
-        // btn.disable = false;
-      }, 3000);
-    }
+        paanid.forEach( function( paan ) {
+          var el = document.getElementById("id_" + paan + "_object_on_deck");
+          var div = document.getElementById("v6rdle_" + paan + "_object");
 
-    $(document).ready( function() {
-      var form = document.getElementById("v6rdle");
-      function handleForm(event) { event.preventDefault(); }
-      form.addEventListener('submit', handleForm);
+          el.addEventListener("DOMNodeInserted", function (event) {
+            var id = $("#id_" + paan + "_object").val();
+            get_content(id, div, model, url);
+            check_buttons();
+          }, false);
 
-      const url = '{% url "wiki:get_v6rdle_object" %}'
-      const model = 'Isik';
-      const paanid = ['vasak', 'parem'];
+          el.addEventListener("DOMNodeRemoved", function (event) {
+            div.innerHTML = '&nbsp;'; // vajalik, et jääks tühi paan vasakule, kui objecti pole
+            div.setAttribute('data-id', 'None');
+            check_buttons();
+          }, false);
 
-      paanid.forEach( function( paan ) {
-        var el = document.getElementById("id_" + paan + "_object_on_deck");
-        var div = document.getElementById("v6rdle_" + paan + "_object");
-
-        el.addEventListener("DOMNodeInserted", function (event) {
-          var id = $("#id_" + paan + "_object").val();
-          get_content(id, div, model, url);
-          check_buttons();
-        }, false);
-
-        el.addEventListener("DOMNodeRemoved", function (event) {
-          div.innerHTML = '&nbsp;'; // vajalik, et jääks tühi paan vasakule, kui objecti pole
-          div.setAttribute('data-id', 'None');
-          check_buttons();
-        }, false);
-
-        var preset_id = div.getAttribute('data-id');
-        // console.log(preset_id);
-        if (preset_id !== 'None') {
-          get_content(preset_id, div, model, url);
-        }
+          var preset_id = div.getAttribute('data-id');
+          // console.log(preset_id);
+          if (preset_id !== 'None') {
+            get_content(preset_id, div, model, url);
+          }
+        });
       });
-    });
-  </script>
+    </script>
+  {% endif %}
 {% endblock %}

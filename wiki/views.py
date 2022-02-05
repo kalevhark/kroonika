@@ -1,7 +1,7 @@
 from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
-from functools import reduce
-from operator import or_
+# from functools import reduce
+# from operator import or_
 import pkg_resources
 from typing import Dict, Any
 
@@ -648,6 +648,9 @@ def inrange_dates_artikkel(qs, p2ev, kuu):
 #
 # Avalehekülje otsing
 #
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def v6rdle(request):
     vasak_object = request.GET.get('vasak_object')
     parem_object = request.GET.get('parem_object')
@@ -694,6 +697,175 @@ def get_v6rdle_object(request):
             'seotud_artiklid': seotud_artiklid
         }
     )
+
+
+#
+# Funktsioon duplikaatkirjete koondamiseks
+# Kasutamine:
+# python manage.py shell
+# import tools
+# update_object_with_object('andmebaas', kirje_id_kust_kopeerida, kirje_id_kuhu_kopeerida)
+#
+def update_object_with_object(model_name='', source_id='', dest_id=''):
+    if model_name == 'isik':
+        model = Isik
+    elif model_name == 'organisatsioon':
+        model = Organisatsioon
+    elif model_name == 'objekt':
+        model = Objekt
+    else:
+        return
+
+    # Doonorobjekt
+    old = model.objects.get(id=source_id)
+    print(f'Doonorobjekt: {old.id} {old}')
+
+    # Sihtobjekt
+    new = model.objects.get(id=dest_id)
+    print(f'Sihtobjekt: {new.id} {new}')
+
+    # Kirjeldus
+    sep = '\n\n+++\n\n'
+    if old.kirjeldus:
+        uus_kirjeldus = sep.join([new.kirjeldus, old.kirjeldus])
+        new.kirjeldus = uus_kirjeldus
+
+    # Daatumid
+    if old.hist_date:
+        if new.hist_date == None:
+            new.hist_date = old.hist_date
+    else:
+        if old.hist_year:
+            if new.hist_year == None:
+                new.hist_year = old.hist_year
+    if old.hist_enddate:
+        if new.hist_enddate == None:
+            new.hist_enddate = old.hist_enddate
+    else:
+        if old.hist_endyear:
+            if new.hist_endyear == None:
+                new.hist_endyear = old.hist_endyear
+
+    # Seotud viited
+    viited = old.viited.all()
+    print('Viited:')
+    for viide in viited:
+        print(viide.id, viide)
+        new.viited.add(viide)
+
+    # Seotud andmebaasid ja parameetrid
+    if model_name == 'isik':
+        if old.synd_koht:
+            if new.synd_koht == None:
+                print(old.synd_koht)
+                new.synd_koht = old.synd_koht
+        if old.surm_koht:
+            if new.surm_koht == None:
+                print(old.surm_koht)
+                new.surm_koht = old.surm_koht
+        if old.maetud:
+            if new.maetud == None:
+                print(old.maetud)
+                new.maetud = old.maetud
+
+        print('Artiklid:')
+        artiklid = Artikkel.objects.filter(isikud=old)
+        for art in artiklid:
+            print(art.id, art)
+            art.isikud.add(new)
+            # art.isikud.remove(old)
+        print('Organisatsioonid:')
+        organisatsioonid = old.organisatsioonid.all()
+        for organisatsioon in organisatsioonid:
+            print(organisatsioon.id, organisatsioon)
+            new.organisatsioonid.add(organisatsioon)
+        print('Objektid:')
+        objektid = old.objektid.all()
+        for objekt in objektid:
+            print(objekt.id, objekt)
+            new.objektid.add(objekt)
+        print('Pildid:')
+        pildid = Pilt.objects.filter(isikud=old)
+        for pilt in pildid:
+            print(pilt.id, pilt)
+            pilt.isikud.add(new)
+            # pilt.isikud.remove(old)
+    elif model_name == 'organisatsioon':
+        if old.hist_date == None:
+            if old.hist_month:
+                if new.month == None:
+                    print(old.month)
+                    new.month = old.month
+        print('Artiklid:')
+        artiklid = Artikkel.objects.filter(organisatsioonid=old)
+        for art in artiklid:
+            print(art.id, art)
+            art.organisatsioonid.add(new)
+            # art.organisatsioonid.remove(old)
+        print('Objektid:')
+        objektid = old.objektid.all()
+        for objekt in objektid:
+            print(objekt.id, objekt)
+            new.objektid.add(objekt)
+        print('Pildid:')
+        pildid = Pilt.objects.filter(organisatsioonid=old)
+        for pilt in pildid:
+            print(pilt.id, pilt)
+            pilt.organisatsioonid.add(new)
+            # pilt.organisatsioonid.remove(old)
+    elif model_name == 'objekt':
+        if old.hist_date == None:
+            if old.hist_month:
+                if new.month == None:
+                    print(old.month)
+                    new.month = old.month
+        if old.asukoht:
+            if new.asukoht == None:
+                print(old.asukoht)
+                new.asukoht = old.asukoht
+        print('Artiklid:')
+        artiklid = Artikkel.objects.filter(objektid=old)
+        for art in artiklid:
+            print(art.id, art)
+            art.objektid.add(new)
+            # art.objektid.remove(old)
+        print('Objektid:')
+        objektid = old.objektid.all()
+        for objekt in objektid:
+            if objekt != old:
+                print(objekt.id, objekt)
+                new.objektid.add(objekt)
+        print('Pildid:')
+        pildid = Pilt.objects.filter(objektid=old)
+        for pilt in pildid:
+            print(pilt.id, pilt)
+            pilt.objektid.add(new)
+            # pilt.objektid.remove(old)
+        print('Kaardiobjektid:')
+        kaardiobjektid = Kaardiobjekt.objects.filter(objekt=old)
+        for kaardiobjekt in kaardiobjektid:
+            print(kaardiobjekt.id, kaardiobjekt)
+            kaardiobjekt.objekt = new
+            kaardiobjekt.save(update_fields=['objekt'])
+    # Salvestame muudatused
+    new.save()
+    print(f'Uuendati objecti: {new} (id={new.id})')
+    return new.id
+
+def get_update_object_with_object(request):
+    if request and request.user.is_authenticated and request.user.is_staff:
+        model_name = request.GET.get('model_name')
+        source_id = request.GET.get('src_id')
+        dest_id = request.GET.get('dst_id')
+        # print(model_name, source_id, dest_id)
+        updated_object = update_object_with_object(
+            model_name=model_name,
+            source_id=source_id,
+            dest_id=dest_id
+        )
+        return JsonResponse(updated_object, safe=False)
+    else:
+        raise PermissionDenied
 
 #
 # Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse

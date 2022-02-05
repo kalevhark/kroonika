@@ -22,6 +22,7 @@ urlpatterns = [
     path('otsi/', views.otsi, name='otsi'),
     path('v6rdle/', views.v6rdle, name='v6rdle'),
     path('get_v6rdle_object/', views.get_v6rdle_object, name='get_v6rdle_object'),
+    path('get_update_object_with_object/', views.get_update_object_with_object, name='get_update_object_with_object'),
     path('feedback/', views.feedback, name='feedback'),
     path('kroonika/', ArtikkelArchiveIndexView.as_view(), name='artikkel_index_archive'),
     path('kroonika/infinite/', views.artikkel_index_archive_infinite, name='artikkel_index_archive_infinite'),
