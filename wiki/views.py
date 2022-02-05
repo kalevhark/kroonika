@@ -754,7 +754,7 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         new.viited.add(viide)
 
     # Seotud andmebaasid ja parameetrid
-    if model_name == 'isik':
+    if model == Isik:
         if old.synd_koht:
             if new.synd_koht == None:
                 print(old.synd_koht)
@@ -790,7 +790,7 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
             print(pilt.id, pilt)
             pilt.isikud.add(new)
             # pilt.isikud.remove(old)
-    elif model_name == 'organisatsioon':
+    elif model == Organisatsioon:
         if old.hist_date == None:
             if old.hist_month:
                 if new.month == None:
@@ -813,7 +813,7 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
             print(pilt.id, pilt)
             pilt.organisatsioonid.add(new)
             # pilt.organisatsioonid.remove(old)
-    elif model_name == 'objekt':
+    elif model == Objekt:
         if old.hist_date == None:
             if old.hist_month:
                 if new.month == None:
