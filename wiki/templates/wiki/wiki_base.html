@@ -556,6 +556,9 @@ $(document).ready( function() {
       dates[i].id = "_date_" + counter++;
     }
   }
+  // initialize tooltips
+  var url = '{% url "wiki:get_object_data4tooltip" %}'
+  getObjectData4tooltip(url);
 });
 </script>
 

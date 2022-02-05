@@ -1,189 +1,180 @@
 {% extends "wiki/wiki_base.html" %}
 {% load static %}
+{% load widget_tweaks %}
 {% load wiki_extras %}
 
 {% block title %}{{ block.super }} - {{ artikkel }}{% endblock %}
 
-{% block breadcrumb %}
-{% endblock %}
-
-{% block css %}
-  <style>
-  </style>
-{% endblock %}
+{% block css %}{% endblock %}
 
 {% block content %}
-{% load widget_tweaks %}
+  <div class="w3-cell-row w3-padding-16">
 
-<div class="w3-cell-row w3-padding-16">
-
-	<!-- Kronoloogiliselt eelnev artikkel -->
-	<div class="w3-third w3-cell w3-hover-white">
-		<div>
-			{% if prev_obj %}
-        <div class="w3-container w3-cell w3-cell-middle">
-          <a
-                  href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}"
-                  title="Liigu eelmisele loole"
-          >
-            <div class="w3-padding w3-xxlarge hover-artikkel">
-              <i class="fa fa-angle-left"></i>
-            </div>
-          </a>
-        </div>
-        <div class="w3-cell">
-          <strong>
-            {% include 'wiki/includes/date_range.html' with obj=prev_obj %}
-          </strong>
-          <br>
-          <a
-              class="hover-artikkel"
-              href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}"
-              title="Liigu eelmisele loole"
-          >
-            {{ prev_obj }}
-				  </a>
-        </div>
-			{% endif %}
-		</div>
-	</div>
-	<!-- Valitud artikkel viewport: large, medium -->
-	<div class="w3-third w3-cell w3-hide-small">
-		<div
-				class="w3-xlarge layout-row layout-align-center-center w3-hover-white"
-		>
-			<strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
-		</div>
-		<div class="layout-row layout-align-center-center">
-			{% if object.hist_date %}
-				<small>
-				{% if object.hist_date|vkj == True %}
-					{% if request.session.ukj == 'on' %}
-						vkj: {{ object.hist_date|date:'j.m.Y' }}
-					{% else %}
-						ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}
-					{% endif %}
-					{% if object.hist_enddate %}
-						-
-						{% if object.hist_enddate|vkj == True %}
-							{% if request.session.ukj == 'on' %}
-								{{ object.hist_enddate|date:'j.m.Y' }}
-							{% else %}
-								{{ object.hist_enddate|ukj|date:'j.m.Y' }}
-							{% endif %}
-						{% else %}
-							{{ object.hist_enddate|date:'j.m.Y' }}
-						{% endif %}
-					{% endif %}
-				{% endif %}
-				</small>
-			{% endif %}
-
-		</div>
-	</div>
-  <!-- Kronoloogiliselt järgnev artikkel -->
-	<div class="w3-third w3-cell w3-hover-white">
-		<div class="w3-right-align w3-right">
-			{% if next_obj %}
-        <div class="w3-container w3-rest w3-cell w3-cell-middle w3-right">
-          <a
-                  href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}"
-                  title="Liigu järgmisele loole"
-          >
-            <div class="w3-padding w3-xxlarge hover-artikkel">
-              <i class="fa fa-angle-right"></i>
-            </div>
-          </a>
-        </div>
-        <div class="w3-cell">
-          <strong>
-            {% include 'wiki/includes/date_range.html' with obj=next_obj %}
-          </strong>
-          <br>
-          <a
-              class="hover-artikkel"
-              href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}"
-              title="Liigu järgmisele loole"
-          >
-            {{ next_obj }}
-          </a>
-        </div>
-			{% endif %}
-		</div>
-	</div>
-</div>
-
-<div class="w3-panel w3-card-4 w3-light-grey" >
-	<div class="w3-cell-row w3-hide-large w3-hide-medium">
-		<!-- Valitud artikkel viewport: small -->
-		<div class="w3-third w3-cell">
-			<div
-					class="w3-xlarge layout-row layout-align-center-center"
-			>
-				<strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
-			</div>
-		</div>
-	</div>
-  <div class="w3-twothird w3-padding-16" >
-    <!-- Artikkel -->
-    <div class="w3-third">
-		  {% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
+    <!-- Kronoloogiliselt eelnev artikkel -->
+    <div class="w3-third w3-cell w3-hover-white">
+      <div>
+        {% if prev_obj %}
+          <div class="w3-container w3-cell w3-cell-middle">
+            <a
+                    href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}"
+                    title="Liigu eelmisele loole"
+            >
+              <div class="w3-padding w3-xxlarge hover-artikkel">
+                <i class="fa fa-angle-left"></i>
+              </div>
+            </a>
+          </div>
+          <div class="w3-cell">
+            <strong>
+              {% include 'wiki/includes/date_range.html' with obj=prev_obj %}
+            </strong>
+            <br>
+            <a
+                class="hover-artikkel"
+                href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}"
+                title="Liigu eelmisele loole"
+            >
+              {{ prev_obj }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
     </div>
-		<div class="w3-twothird">
-			{% include 'wiki/includes/vigane.html' %}
-			{{ object.formatted_markdown | safe }}
-{#			{% include 'wiki/includes/seotud_viited.html' %}#}
-		</div>
-		{% include 'wiki/includes/object_updated_edit.html' with model='artikkel' %}
+    <!-- Valitud artikkel viewport: large, medium -->
+    <div class="w3-third w3-cell w3-hide-small">
+      <div
+          class="w3-xlarge layout-row layout-align-center-center w3-hover-white"
+      >
+        <strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
+      </div>
+      <div class="layout-row layout-align-center-center">
+        {% if object.hist_date %}
+          <small>
+          {% if object.hist_date|vkj == True %}
+            {% if request.session.ukj == 'on' %}
+              vkj: {{ object.hist_date|date:'j.m.Y' }}
+            {% else %}
+              ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}
+            {% endif %}
+            {% if object.hist_enddate %}
+              -
+              {% if object.hist_enddate|vkj == True %}
+                {% if request.session.ukj == 'on' %}
+                  {{ object.hist_enddate|date:'j.m.Y' }}
+                {% else %}
+                  {{ object.hist_enddate|ukj|date:'j.m.Y' }}
+                {% endif %}
+              {% else %}
+                {{ object.hist_enddate|date:'j.m.Y' }}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+          </small>
+        {% endif %}
+
+      </div>
+    </div>
+    <!-- Kronoloogiliselt järgnev artikkel -->
+    <div class="w3-third w3-cell w3-hover-white">
+      <div class="w3-right-align w3-right">
+        {% if next_obj %}
+          <div class="w3-container w3-rest w3-cell w3-cell-middle w3-right">
+            <a
+                    href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}"
+                    title="Liigu järgmisele loole"
+            >
+              <div class="w3-padding w3-xxlarge hover-artikkel">
+                <i class="fa fa-angle-right"></i>
+              </div>
+            </a>
+          </div>
+          <div class="w3-cell">
+            <strong>
+              {% include 'wiki/includes/date_range.html' with obj=next_obj %}
+            </strong>
+            <br>
+            <a
+                class="hover-artikkel"
+                href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}"
+                title="Liigu järgmisele loole"
+            >
+              {{ next_obj }}
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
   </div>
-	<div class="w3-third w3-padding-16" >
-		{% include 'wiki/includes/seotud_isikud.html' %}
-		{% include 'wiki/includes/seotud_organisatsioonid.html' %}
-		{% include 'wiki/includes/seotud_objektid.html' %}
-		{% include 'wiki/includes/seotud_pildid.html' %}
-	</div>
-</div>
 
-
+  <div class="w3-panel w3-card-4 w3-light-grey" >
+    <div class="w3-cell-row w3-hide-large w3-hide-medium">
+      <!-- Valitud artikkel viewport: small -->
+      <div class="w3-third w3-cell">
+        <div
+            class="w3-xlarge layout-row layout-align-center-center"
+        >
+          <strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
+        </div>
+      </div>
+    </div>
+    <div class="w3-twothird w3-padding-16" >
+      <!-- Artikkel -->
+      <div class="w3-third">
+        {% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-postkaart-medium' %}
+      </div>
+      <div class="w3-twothird">
+        {% include 'wiki/includes/vigane.html' %}
+        {{ object.formatted_markdown | safe }}
+  {#			{% include 'wiki/includes/seotud_viited.html' %}#}
+      </div>
+      {% include 'wiki/includes/object_updated_edit.html' with model='artikkel' %}
+    </div>
+    <div class="w3-third w3-padding-16" >
+      {% include 'wiki/includes/seotud_isikud.html' %}
+      {% include 'wiki/includes/seotud_organisatsioonid.html' %}
+      {% include 'wiki/includes/seotud_objektid.html' %}
+      {% include 'wiki/includes/seotud_pildid.html' %}
+    </div>
+  </div>
 {% endblock %}
 
 {% block javascript %}
-<script src="{% static 'ilm/js/swiped-events.js' %}"></script>
-{% if next_obj %}
-	<script>
-	// Vasakule või paremale libistamisel liigume eelmisele või järgmisele loole
-	$(function(){
-		// Bind the swipeleftHandler callback function to the swipe event on
-		document.addEventListener('swiped-left', swipeleftHandler);
+  <script src="{% static 'ilm/js/swiped-events.js' %}"></script>
+  {% if next_obj %}
+    <script>
+    // Vasakule või paremale libistamisel liigume eelmisele või järgmisele loole
+    $(function(){
+      // Bind the swipeleftHandler callback function to the swipe event on
+      document.addEventListener('swiped-left', swipeleftHandler);
 
-		// Callback function references the event target and adds the 'swipeleft' class to it
-		function swipeleftHandler( event ){
-			if(event.handled !== true) // This will prevent event triggering more then once
-			{
-					window.open("{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}", "_self")
-					event.handled = true;
-			}
-			return false;
-		};
-	});
-	</script>
-{% endif %}
-{% if prev_obj %}
-	<script>
-	$(function(){
-		// Bind the swipeleftHandler callback function to the swipe event
-		document.addEventListener('swiped-right', swiperightHandler);
+      // Callback function references the event target and adds the 'swipeleft' class to it
+      function swipeleftHandler( event ){
+        if(event.handled !== true) // This will prevent event triggering more then once
+        {
+            window.open("{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}", "_self")
+            event.handled = true;
+        }
+        return false;
+      };
+    });
+    </script>
+  {% endif %}
+  {% if prev_obj %}
+    <script>
+    $(function(){
+      // Bind the swipeleftHandler callback function to the swipe event
+      document.addEventListener('swiped-right', swiperightHandler);
 
-		// Callback function references the event target and adds the 'swipeleft' class to it
-		function swiperightHandler( event ){
-			if(event.handled !== true) // This will prevent event triggering more then once
-			{
-					window.open("{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}", "_self")
-					event.handled = true;
-			}
-			return false;
-		}
-	});
-	</script>
-{% endif %}
+      // Callback function references the event target and adds the 'swipeleft' class to it
+      function swiperightHandler( event ){
+        if(event.handled !== true) // This will prevent event triggering more then once
+        {
+            window.open("{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}", "_self")
+            event.handled = true;
+        }
+        return false;
+      }
+    });
+    </script>
+  {% endif %}
 {% endblock %}

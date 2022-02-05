@@ -1,3 +1,4 @@
+{% load wiki_extras %}
 {% with organisatsioonid=seotud_organisatsioonid %}
   {% if organisatsioonid %}
     <!-- Loend seotud organisatsioonidest -->
@@ -6,7 +7,18 @@
       {% if forloop.counter > 1 %}
       &ensp;
       {% endif %}
-      <a class="hover-organisatsioon" href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}>{{ obj }}</a>
+      <a
+              class="hover-organisatsioon tooltip-content"
+              href={% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}
+      >
+        <span
+              title='{{ obj }}'
+              data-model='{{ obj|get_model_name }}'
+              data-id='{{ obj.id }}'
+              id='{{ obj|get_model_name }}_{{ obj.id }}'>
+          {{ obj }}
+        </span>
+      </a>
     {% endfor %}
     </p>
   {% endif %}
