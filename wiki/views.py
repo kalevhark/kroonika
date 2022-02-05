@@ -8,6 +8,7 @@ from typing import Dict, Any
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
@@ -648,8 +649,6 @@ def inrange_dates_artikkel(qs, p2ev, kuu):
 #
 # Avalehekülje otsing
 #
-from django.contrib.auth.decorators import login_required
-
 @login_required
 def v6rdle(request):
     vasak_object = request.GET.get('vasak_object')
