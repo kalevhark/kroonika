@@ -163,12 +163,12 @@
       }
 
       // tuuakse ajax andmed objecti kohta
-      function get_content(id, div, model, url) {
+      function get_content(id, div, model_name, url) {
         $.ajax({
           url: url,
           type:'get',
           data:{
-            model: model,
+            model_name: model_name,
             obj_id: id
           },
           success: function(response){
@@ -199,8 +199,8 @@
           dst_id = idParem;
           src_id = idVasak;
         }
-        const model_name = 'isik';
-        const model = 'Isik';
+        const model_name = 'Isik';
+        // const model = 'Isik';
         // update object
         $.ajax({
           url: '{% url "wiki:get_update_object_with_object" %}',
@@ -221,20 +221,20 @@
               // refresh updated object
               const url = '{% url "wiki:get_v6rdle_object" %}'
               var div = document.getElementById("v6rdle_" + paan + "_object");
-              get_content(dst_id, div, model, url);
+              get_content(dst_id, div, model_name, url);
 
               const btn = document.getElementById(clicked_id);
               // btn.disable = true;
               var oldMsg = btn.innerHTML;
               btn.innerHTML = 'Uuendatud id=' + data;
-              btn.classList.remove('background-' + model_name);
+              btn.classList.remove('background-' + model_name.toLowerCase());
               btn.classList.add('w3-pale-green');
 
               setTimeout(function(){
                 document.getElementById(clicked_id).innerHTML = '';
                 btn.innerHTML = oldMsg;
                 btn.classList.remove('w3-pale-green');
-                btn.classList.add('background-' + model_name);
+                btn.classList.add('background-' + model_name.toLowerCase());
                 // btn.disable = false;
               }, 3000);
             }

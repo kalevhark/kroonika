@@ -671,7 +671,7 @@ def v6rdle(request):
 
 # objectide nimel hiirega peatudes infoakna kuvamiseks
 def get_v6rdle_object(request):
-    model_name = request.GET.get('model')
+    model_name = request.GET.get('model_name')
     id = request.GET.get('obj_id')
     model = apps.get_model('wiki', model_name)
     object = model.objects.daatumitega(request).get(id=id)
@@ -706,14 +706,15 @@ def get_v6rdle_object(request):
 # update_object_with_object('andmebaas', kirje_id_kust_kopeerida, kirje_id_kuhu_kopeerida)
 #
 def update_object_with_object(model_name='', source_id='', dest_id=''):
-    if model_name == 'isik':
-        model = Isik
-    elif model_name == 'organisatsioon':
-        model = Organisatsioon
-    elif model_name == 'objekt':
-        model = Objekt
-    else:
-        return
+    model = apps.get_model('wiki', model_name)
+    # if model_name == 'isik':
+    #     model = Isik
+    # elif model_name == 'organisatsioon':
+    #     model = Organisatsioon
+    # elif model_name == 'objekt':
+    #     model = Objekt
+    # else:
+    #     return
 
     # Doonorobjekt
     old = model.objects.get(id=source_id)
