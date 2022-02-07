@@ -246,5 +246,5 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # AJAX_SELECT_BOOTSTRAP  = False
 
 # https://github.com/adamchainz/django-cors-headers
-# CORS_ALLOW_ALL_ORIGINS = True # Lubatakse k6ik
-CORS_URLS_REGEX = r"^/api/.*$"
+CORS_ALLOW_ALL_ORIGINS = True # Lubatakse k6ik
+# CORS_URLS_REGEX = r"^/api/.*$"
