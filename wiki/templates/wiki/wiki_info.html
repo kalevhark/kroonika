@@ -193,9 +193,16 @@
           <small>{{ item }}:{{ value }}</small><br>
         {% endfor %}
       </div>
-      {% for item, value in time_log.items %}
-        <small>{{ item }}:{{ value|duration }} </small>
-      {% endfor %}
+      <div>
+        {% for item, value in time_log.items %}
+          <small>{{ item }}:{{ value|duration }} </small>
+        {% endfor %}
+      </div>
+      <div>
+        {% for item, value in model_verbose_examples.items %}
+          <small>{{ item }}: {{ value }}</small><br>
+        {% endfor %}
+      </div>
     {% endif %}
   </div>
 {% endblock %}

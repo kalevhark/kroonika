@@ -269,6 +269,20 @@ def info(request):
         in pkg_resources.working_set
     )
 
+    model_example = Isik
+    model_example_obj = model_example.objects.daatumitega(request).first()
+
+    from .templatetags import wiki_extras
+    model_verbose_examples = {
+        'model': str(model_example), # Isik
+        'model_verbose_name': model_example_obj._meta.verbose_name, # 'isikud'
+        'model_verbose_name_plural': model_example_obj._meta.verbose_name_plural, # "Isikud"
+        'filter_to_model_name_lower': wiki_extras.to_model_name_lower(model_example_obj), # object.__class__.__name__.lower()
+        'filter_get_model_name': wiki_extras.get_model_name(model_example_obj), # str(value.__class__.__name__)
+        'simple_tag_model_name_isik': wiki_extras.model_name_isik(), # Isik._meta.verbose_name_plural
+        'simple_tag_get_verbose_name': wiki_extras.get_verbose_name(model_example_obj), # object._meta.verbose_name.lower()
+        'simple_tag_get_verbose_name_plural': wiki_extras.get_verbose_name_plural(model_example_obj), # object._meta.verbose_name_plural.lower()
+    }
     context = {
         'andmebaasid': andmebaasid,
         'andmed': andmed,
@@ -277,6 +291,7 @@ def info(request):
         'session_data': request.session,
         'cookies': request.COOKIES,
         'env': env,
+        'model_verbose_examples': model_verbose_examples,
         'a': a,
         'revision_data': revision_data, # TODO: Ajutine ümberkorraldamiseks
         'time_log': time_log,

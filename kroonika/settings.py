@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'crispy_forms', # Vormide kujundamiseks
     'markdownx', # MarkDown teksti kasutamiseks
     'ajax_select', # ajax selectväljad
+    'corsheaders', # https://github.com/adamchainz/django-cors-headers
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # https://github.com/adamchainz/django-cors-headers
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -242,3 +244,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # ajax-select no js & css download
 # AJAX_SELECT_BOOTSTRAP  = False
+
+# https://github.com/adamchainz/django-cors-headers
+# CORS_ALLOW_ALL_ORIGINS = True # Lubatakse k6ik
+CORS_URLS_REGEX = r"^/api/.*$"
