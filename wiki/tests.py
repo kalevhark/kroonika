@@ -452,8 +452,8 @@ class FilterViewTests(TestCase):
         self.assertEqual(len(response.context['object_list']), 2)
 
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.chrome.webdriver import WebDriver
+# from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+# from selenium.webdriver.chrome.webdriver import WebDriver
 
 # class MySeleniumTests(StaticLiveServerTestCase):
 #     # fixtures = ['user-data.json']
