@@ -1,3 +1,6 @@
+#
+# python manage.py test wiki
+#
 from datetime import datetime
 from functools import reduce
 from operator import or_
