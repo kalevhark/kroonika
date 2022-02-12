@@ -8,9 +8,9 @@ https://docs.djangoproject.com/en/2.1/howto/deployment/wsgi/
 """
 
 import os
-
 import sys
-print(sys.version_info[0],sys.version_info[1])
+
+print(f'Python{sys.version_info[0]}.{sys.version_info[1]}')
 
 from django.core.wsgi import get_wsgi_application
 
