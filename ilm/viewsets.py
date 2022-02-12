@@ -28,30 +28,36 @@ class IlmViewSet(viewsets.ModelViewSet):
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = IlmFilter
+    text = ''
 
     @action(detail=False)
-    def forecasts(self, request, pk=None):
+    def forecasts(self, request):
+        self.text = 'Ilmaennustus 48h'
         forecasts = get_forecasts()
         return Response(forecasts)
 
     @action(detail=False)
-    def now(self, request, pk=None):
+    def now(self, request):
+        self.text = 'Hetkeilm'
         hetkeilm = get_ilmateenistus_now()
         return Response(hetkeilm)
 
     def get_view_name(self) -> str:
-        return "Ilmaandmed"
+        return ' - '.join(["Ilmaandmed", self.text])
 
     def get_view_description(self, html=False) -> str:
-        text = """
-        Valga linna ilmaandmed:<br>
-        /api/i?y=aasta<br>
-        /api/i?y=aasta&m=kuu<br>
-        /api/i?y=aasta&m=kuu&d=päev<br>
-        /api/i?y=aasta&m=kuu&d=päev&h=tund<br>
-        /api/i/now/ - Valga linna hetkeilm<br>
-        /api/i/forecasts/ - Valga linna ilmaennustus kolmest allikast
-        """
+        if self.text:
+            text = self.text
+        else:
+            text = """
+            Valga linna ilmaandmed:<br>
+            /api/i?y=aasta<br>
+            /api/i?y=aasta&m=kuu<br>
+            /api/i?y=aasta&m=kuu&d=päev<br>
+            /api/i?y=aasta&m=kuu&d=päev&h=tund<br>
+            /api/i/now/ - Valga linna hetkeilm<br>
+            /api/i/forecasts/ - Valga linna ilmaennustus kolmest allikast
+            """
         if html:
             return mark_safe(f"<p>{text}</p>")
         else:
