@@ -308,10 +308,8 @@ def info(request):
 # Avalehekülje otsing
 #
 def otsi(request):
-    try: # TODO:ei tööta
-        question = request.GET.get('q')
-    except:
-        question = ''
+    question = request.GET.get('q', '')
+
 
     return render(
         request,

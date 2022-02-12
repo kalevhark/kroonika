@@ -74,7 +74,7 @@ class MyRouter(routers.DefaultRouter):
 router = MyRouter()
 
 # wiki
-# router.register(r'user', UserViewSet)
+router.register(r'user', UserViewSet)
 # router.register(r'kroonika', KroonikaViewSet)
 router.register(r'artikkel', ArtikkelViewSet)
 router.register(r'isik', IsikViewSet)

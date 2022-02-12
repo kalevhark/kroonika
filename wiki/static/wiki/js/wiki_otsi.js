@@ -46,6 +46,9 @@ $( document ).ready(function() {
     },
     mounted: function () {
       this.focusInput();
+      if (this.question.length > 0) {
+        this.getAnswer();
+      }
     },
     methods: {
       focusInput: function () {
