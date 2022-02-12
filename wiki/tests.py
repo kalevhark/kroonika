@@ -22,7 +22,7 @@ class WikiViewTests(TestCase):
 
     def test_info_view(self):
         time_start = datetime.now()
-        response = self.client.get(reverse('wiki:info'))
+        response = self.client.get(reverse('info'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3)
@@ -531,11 +531,19 @@ class UserLoginTestCase(AdminUserTestCase):
         #     username=self.user.username,
         #     password=self.user.password
         # )
+
+        response = self.client.post(
+            reverse('login'),
+            {'username': self.user.username, 'password': self.user.password}
+        )
+        self.assertEqual(response.status_code, 200)
+
         self.client.force_login(self.user)
         response = self.client.get(reverse('info'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Head uut aastat!")
+        self.assertContains(response, "Viiteta")
         self.client.logout()
+        self.assertContains(response, "Viiteta")
 
         response = self.client.post(
             reverse('login'),
@@ -549,9 +557,9 @@ class UserLoginTestCase(AdminUserTestCase):
         super().tearDown()
 
 
-class APITestListingCase(AdminUserTestCase):
+class APITestWikiListingCase(AdminUserTestCase):
     """
-    Organization List API Test Case
+    wiki API Test Case
     """
 
     def test_allrouters_listing_api(self):
@@ -613,6 +621,16 @@ class APITestListingCase(AdminUserTestCase):
         self.assertEquals(self.list_api_result.json()["slug"], slug)
         self.assertEquals(self.list_api_result.status_code, 200)
 
+    def tearDown(self) -> None:
+        # self.client.logout()
+        super().tearDown()
+
+
+class APITestIlmListingCase(TestCase):
+    """
+    ilm API Test Case
+    """
+
     def test_ilm_listing_api(self):
         self.list_api_result = self.client.get('/api/i/', format='json')
         self.assertTrue(self.list_api_result.json()["count"] > 0)
@@ -623,10 +641,32 @@ class APITestListingCase(AdminUserTestCase):
         self.assertEquals(self.list_api_result.status_code, 200)
         self.assertTrue("airtemperature" in self.list_api_result.json().keys())
 
-    def tearDown(self) -> None:
-        # self.client.logout()
-        # Organization.objects.filter().delete()
-        super().tearDown()
+    def test_ilm_forecasts_api(self):
+        self.list_api_result = self.client.get('/api/i/forecasts/', format='json')
+        self.assertEquals(self.list_api_result.status_code, 200)
+        self.assertTrue(len(self.list_api_result.json().keys()) > 0)
+
+    def test_ilm_year_api(self):
+        year = 2015
+        self.list_api_result = self.client.get('/api/i/', {'y': year}, format='json')
+        self.assertEquals(self.list_api_result.status_code, 200)
+        self.assertTrue(self.list_api_result.json()["count"] == 8759)
+
+    def test_ilm_month_api(self):
+        year = 2012
+        month = 2
+        self.list_api_result = self.client.get('/api/i/', {'y': year, 'm': month}, format='json')
+        self.assertEquals(self.list_api_result.status_code, 200)
+        self.assertTrue(self.list_api_result.json()["count"] == 696)
+
+    def test_ilm_day_api(self):
+        year = 2011
+        month = 3
+        day = 11
+        self.list_api_result = self.client.get('/api/i/', {'y': year, 'm': month, 'd': day}, format='json')
+        self.assertEquals(self.list_api_result.status_code, 200)
+        self.assertTrue(self.list_api_result.json()["count"] == 24)
+
 
 # from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 # from selenium.webdriver.chrome.webdriver import WebDriver

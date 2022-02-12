@@ -1,6 +1,9 @@
+from django.utils.safestring import mark_safe
+
 import django_filters
 from django_filters import rest_framework as filters
-from rest_framework import viewsets, generics
+
+from rest_framework import viewsets
 
 from .models import Ilm, Jaam
 from .serializers import IlmSerializer, JaamSerializer
@@ -36,26 +39,54 @@ class IlmViewSet(viewsets.ModelViewSet):
         hetkeilm = get_ilmateenistus_now()
         return Response(hetkeilm)
 
+    def get_view_name(self) -> str:
+        return "Ilmaandmed"
+
+    def get_view_description(self, html=False) -> str:
+        text = """
+        Valga linna ilmaandmed:<br>
+        /api/i?y=aasta<br>
+        /api/i?y=aasta&m=kuu<br>
+        /api/i?y=aasta&m=kuu&d=päev<br>
+        /api/i?y=aasta&m=kuu&d=päev&h=tund<br>
+        /api/i/now/ - Valga linna hetkeilm<br>
+        /api/i/forecasts/ - Valga linna ilmaennustus kolmest allikast
+        """
+        if html:
+            return mark_safe(f"<p>{text}</p>")
+        else:
+            return text
+
 
 class JaamViewSet(viewsets.ModelViewSet):
     queryset = Jaam.objects.all()
     serializer_class = JaamSerializer
 
-class ForecastsViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    A viewset that provides the standard actions
-    """
-    queryset = Ilm.objects.all()
-    serializer_class = IlmSerializer
-    lookup_field = 'pk'
+    def get_view_name(self) -> str:
+        return "Ilmajaamad"
 
-    @action(detail=True)
-    def group_names(self, request, pk=None):
-        """
-        Returns a list of all the group names that the given
-        user belongs to.
-        """
-        # user = self.get_object()
-        # groups = user.groups.all()
-        groups = [1,2,3]
-        return Response(groups)
+    def get_view_description(self, html=False) -> str:
+        text = "Valga linna ilmajaamad"
+        if html:
+            return mark_safe(f"<p>{text}</p>")
+        else:
+            return text
+
+# class ForecastsViewSet(viewsets.ReadOnlyModelViewSet):
+#     """
+#     A viewset that provides the standard actions
+#     """
+#     queryset = Ilm.objects.all()
+#     serializer_class = IlmSerializer
+#     lookup_field = 'pk'
+#
+#     @action(detail=True)
+#     def group_names(self, request, pk=None):
+#         """
+#         Returns a list of all the group names that the given
+#         user belongs to.
+#         """
+#         # user = self.get_object()
+#         # groups = user.groups.all()
+#         groups = [1,2,3]
+#         return Response(groups)

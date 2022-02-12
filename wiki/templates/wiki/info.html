@@ -155,12 +155,15 @@
       <li><a href="https://www.python.org/">Python</a></li>
       <li><a href="https://www.djangoproject.com/">Django</a></li>
       <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-      <li><a href="http://apache.org/">Apache</a></li>
+      <li><a href="https://vuejs.org//">Vue.js</a></li>
+      <li><a href="https://apache.org/">Apache</a></li>
       <li><a href="https://www.w3schools.com/">W3Schools</a></li>
     </ul>
     {% if user.is_authenticated %}
       Lisaks:
-      <p>{{ env }}</p>
+      {% for module in env %}
+        <p><small>{{ module }}</small></p>
+      {% endfor %}
       <div>
         <div>
           Revision: {{ revision_data.kroonika }}:
@@ -194,6 +197,7 @@
         {% endfor %}
       </div>
       <div>
+        loading:<br>
         {% for item, value in time_log.items %}
           <small>{{ item }}:{{ value|duration }} </small>
         {% endfor %}

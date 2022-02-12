@@ -299,7 +299,7 @@ def info(request):
 
     return render(
         request,
-        'wiki/wiki_info.html',
+        'wiki/info.html',
         context,
     )
 
@@ -309,7 +309,7 @@ def info(request):
 #
 def otsi(request):
     try: # TODO:ei tööta
-        question = request.GET['search']
+        question = request.GET.get('q')
     except:
         question = ''
 

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.utils.safestring import mark_safe
 
 import django_filters
 from django_filters import rest_framework as filters
@@ -86,6 +87,17 @@ class ArtikkelViewSet(viewsets.ModelViewSet):
         # return artikkel_qs_userfilter(self.request.user)
         return Artikkel.objects.daatumitega(self.request)
 
+    def get_view_name(self) -> str:
+        return "Lood"
+
+    def get_view_description(self, html=False) -> str:
+        text = "Valga linna kroonika"
+        if html:
+            return mark_safe(f"<p>{text}</p>")
+        else:
+            return text
+
+
 class IsikFilter(filters.FilterSet):
     perenimi = django_filters.CharFilter(field_name='perenimi', lookup_expr='icontains')
     eesnimi = django_filters.CharFilter(field_name='eesnimi', lookup_expr='icontains')
@@ -122,6 +134,7 @@ class IsikFilter(filters.FilterSet):
                     Q(perenimi__iregex=value)
                 )
 
+
 class IsikViewSet(viewsets.ModelViewSet):
     """
     retrieve:
@@ -140,6 +153,16 @@ class IsikViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Isik.objects.daatumitega(self.request)
+
+    def get_view_name(self) -> str:
+        return "Isikud"
+
+    def get_view_description(self, html=False) -> str:
+        text = "Inimesed"
+        if html:
+            return mark_safe(f"<p>{text}</p>")
+        else:
+            return text
 
 
 class ObjektFilter(filters.FilterSet):
@@ -169,6 +192,16 @@ class ObjektViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Objekt.objects.daatumitega(self.request)
 
+    def get_view_name(self) -> str:
+        return "Kohad"
+
+    def get_view_description(self, html=False) -> str:
+        text = "Hooned, rajatised jms."
+        if html:
+            return mark_safe(f"<p>{text}</p>")
+        else:
+            return text
+
 
 class OrganisatsioonFilter(filters.FilterSet):
     nimi = django_filters.CharFilter(field_name='nimi', lookup_expr='icontains')
@@ -197,20 +230,59 @@ class OrganisatsioonViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Organisatsioon.objects.daatumitega(self.request)
 
+    def get_view_name(self) -> str:
+        return "Asutised"
+
+    def get_view_description(self, html=False) -> str:
+        text = "Asutused, organisatsioonid, seltsid jms"
+        if html:
+            return mark_safe(f"<p>{text}</p>")
+        else:
+            return text
+
 
 class PiltViewSet(viewsets.ModelViewSet):
     queryset = Pilt.objects.all()
     serializer_class = PiltSerializer
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
 
+    def get_view_name(self) -> str:
+        return "Pildid"
+
+    def get_view_description(self, html=False) -> str:
+        text = "Kasutatud pildid"
+        if html:
+            return mark_safe(f"<p>{text}</p>")
+        else:
+            return text
 
 class AllikasViewSet(viewsets.ModelViewSet):
     queryset = Allikas.objects.all()
     serializer_class = AllikasSerializer
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
 
+    def get_view_name(self) -> str:
+        return "Allikad"
+
+    def get_view_description(self, html=False) -> str:
+        text = "Kasutatud allikad"
+        if html:
+            return mark_safe(f"<p>{text}</p>")
+        else:
+            return text
+
 
 class ViideViewSet(viewsets.ModelViewSet):
     queryset = Viide.objects.all()
     serializer_class = ViideSerializer
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
+
+    def get_view_name(self) -> str:
+        return "Viited"
+
+    def get_view_description(self, html=False) -> str:
+        text = "Kasutatud viited"
+        if html:
+            return mark_safe(f"<p>{text}</p>")
+        else:
+            return text
