@@ -1,12 +1,13 @@
 #
 # python manage.py test wiki
 #
+# testid teha: kaardivaade, v6rdle, otsi, special objektid
 from datetime import datetime
 from functools import reduce
 from operator import or_
 import urllib
 
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.urls import reverse
 
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
@@ -449,11 +450,183 @@ class FilterViewTests(TestCase):
     #         values_list('id', flat=True)
     #     self.model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
 
-    def test_filter_objekt_for_non_authented_user(self):
-        response = self.client.get('/wiki/objekt/', {'nimi_sisaldab': 'säde'})
+    def test_filter_isik_for_non_authented_user(self):
+        response = self.client.get('/wiki/isik/', {'nimi_sisaldab': 'märtson'})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context['object_list']), 2)
+        self.assertTrue(len(response.context['object_list']) > 0)
+        # Kas Johannes Märtson on leitav
+        response = self.client.get(
+            '/wiki/isik/',
+            {
+                'eesnimi__icontains': 'johannes',
+                'perenimi__icontains': 'märtson',
+                'nimi_sisaldab': ''
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['object_list']), 1)
+        # Mitu Härki leitakse
+        response = self.client.get(
+            '/wiki/isik/',
+            {
+                'eesnimi__icontains': '',
+                'perenimi__icontains': '',
+                'nimi_sisaldab': 'härk'
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context['object_list']) > 1)
 
+    def test_filter_organisatsioon_for_non_authented_user(self):
+        response = self.client.get('/wiki/organisatsioon/', {'nimi_sisaldab': 'säde selts'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['object_list']), 1)
+
+    def test_filter_objekt_for_non_authented_user(self):
+        response = self.client.get('/wiki/objekt/', {'nimi_sisaldab': 'Jaani kirik'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['object_list']), 1)
+
+from django.contrib.auth.models import User
+
+class AdminUserTestCase(TestCase):
+    """
+    This class is going to be inherited by other sub-classes.
+    """
+    def setUp(self) -> None:
+        self.user = User.objects.get(id=1)
+        # self.username = 'testuser'
+        # self.password = 'test1234'
+        # self.email = 'test@valgalinn.ee'
+        # self.firstname = 'Kalev'
+        # self.lastname = 'testib'
+        # self.user = User.objects.create_user(
+        #     username=self.username,
+        #     password=self.password,
+        #     first_name=self.firstname,
+        #     last_name=self.lastname,
+        #     is_staff=True,
+        #     is_active=True,
+        #     is_superuser=0
+        # )
+
+    def tearDown(self) -> None:
+        # self.user.delete()
+        pass
+
+
+class UserLoginTestCase(AdminUserTestCase):
+    """
+    This class is used to test the login functionality and
+    check whether a user is successfully getting logged in to the
+    system.
+    """
+
+    def setUp(self) -> None:
+        super().setUp()
+
+    def test_user_login(self):
+        self.client = Client()
+        # login = self.client.login(
+        #     username=self.user.username,
+        #     password=self.user.password
+        # )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('info'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Head uut aastat!")
+        self.client.logout()
+
+        response = self.client.post(
+            reverse('login'),
+            {'username': self.user.username, 'password': self.user.password}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(self.user.is_authenticated)
+
+    def tearDown(self) -> None:
+        self.client.logout()
+        super().tearDown()
+
+
+class APITestListingCase(AdminUserTestCase):
+    """
+    Organization List API Test Case
+    """
+
+    def test_allrouters_listing_api(self):
+        self.list_api_routers = self.client.get('/api/', format='json')
+        self.assertEquals(self.list_api_routers.status_code, 200)
+        routers = ['artikkel', 'isik', 'organisatsioon', 'objekt', 'pilt', 'i', 'j']
+        for router in routers:
+            self.assertTrue(router in self.list_api_routers.json().keys())
+
+    def test_artikkel_listing_api(self):
+        count = Artikkel.objects.daatumitega(request=None).count()
+        self.list_api_result = self.client.get('/api/artikkel/', format='json')
+        self.assertEquals(self.list_api_result.json()["count"], count)
+        self.assertEquals(self.list_api_result.status_code, 200)
+
+    def test_artikkel_detail_api(self):
+        id = 1000
+        slug = Artikkel.objects.get(id=id).slug
+        self.list_api_result = self.client.get(f'/api/artikkel/{id}/', format='json')
+        self.assertEquals(self.list_api_result.json()["slug"], slug)
+        self.assertEquals(self.list_api_result.status_code, 200)
+
+    def test_isik_listing_api(self):
+        count = Isik.objects.daatumitega(request=None).count()
+        self.list_api_result = self.client.get('/api/isik/', format='json')
+        self.assertEquals(self.list_api_result.json()["count"], count)
+        self.assertEquals(self.list_api_result.status_code, 200)
+
+    def test_isik_detail_api(self):
+        id = 19 # Johannes Märtson
+        slug = Isik.objects.get(id=id).slug
+        self.list_api_result = self.client.get(f'/api/isik/{id}/', format='json')
+        self.assertEquals(self.list_api_result.json()["slug"], slug)
+        self.assertEquals(self.list_api_result.status_code, 200)
+
+    def test_organisatsioon_listing_api(self):
+        count = Organisatsioon.objects.daatumitega(request=None).count()
+        self.list_api_result = self.client.get('/api/organisatsioon/', format='json')
+        self.assertEquals(self.list_api_result.json()["count"], count)
+        self.assertEquals(self.list_api_result.status_code, 200)
+
+    def test_organisatsioon_detail_api(self):
+        id = 13 # Säde selts
+        slug = Organisatsioon.objects.get(id=id).slug
+        self.list_api_result = self.client.get(f'/api/organisatsioon/{id}/', format='json')
+        self.assertEquals(self.list_api_result.json()["slug"], slug)
+        self.assertEquals(self.list_api_result.status_code, 200)
+
+    def test_objekt_listing_api(self):
+        count = Objekt.objects.daatumitega(request=None).count()
+        self.list_api_result = self.client.get('/api/objekt/', format='json')
+        self.assertEquals(self.list_api_result.json()["count"], count)
+        self.assertEquals(self.list_api_result.status_code, 200)
+
+    def test_objekt_detail_api(self):
+        id = 13 # Jaani kirik
+        slug = Objekt.objects.get(id=id).slug
+        self.list_api_result = self.client.get(f'/api/objekt/{id}/', format='json')
+        self.assertEquals(self.list_api_result.json()["slug"], slug)
+        self.assertEquals(self.list_api_result.status_code, 200)
+
+    def test_ilm_listing_api(self):
+        self.list_api_result = self.client.get('/api/i/', format='json')
+        self.assertTrue(self.list_api_result.json()["count"] > 0)
+        self.assertEquals(self.list_api_result.status_code, 200)
+
+    def test_ilm_now_api(self):
+        self.list_api_result = self.client.get('/api/i/now/', format='json')
+        self.assertEquals(self.list_api_result.status_code, 200)
+        self.assertTrue("airtemperature" in self.list_api_result.json().keys())
+
+    def tearDown(self) -> None:
+        # self.client.logout()
+        # Organization.objects.filter().delete()
+        super().tearDown()
 
 # from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 # from selenium.webdriver.chrome.webdriver import WebDriver

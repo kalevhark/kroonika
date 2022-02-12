@@ -43,6 +43,7 @@ schema_view = get_schema_view(title='Valga linna kroonika API')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.algus, name='algus'),
+    path('info/', views.info, name='info'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('ajax_select/', include(ajax_select_urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
