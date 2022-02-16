@@ -1,16 +1,142 @@
 #
 # python manage.py test wiki
 #
-# testid teha: kaardivaade, v6rdle, otsi, special objektid
+import configparser
 from datetime import datetime
 from functools import reduce
 from operator import or_
 import urllib
 
-from django.test import TestCase, Client
+from django.conf import settings
+from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
+
+from wiki import views
+
+# Access configparser to load variable values
+config = configparser.SafeConfigParser(allow_no_value=True)
+config.read('%s/settings.ini' % (settings.PROJECT_DIR))
+USERNAME = config['superuser']['USERNAME']
+PASSWORD = config['superuser']['PASSWORD']
+
+
+class UserTypeViewTest(TestCase):
+    def setUp(self) -> None:
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        # self.user = User.objects.create_user(
+        #     username='jacob',
+        #     email='jacob@…',
+        #     password='top_secret'
+        # )
+        self.user = User.objects.get(id=1)
+
+    def test_info_view(self) -> None:
+        # Create an instance of a GET request.
+        # request = RequestFactory().get('/')
+        # middleware = SessionMiddleware(lambda x: x)
+        # middleware.process_request(request)
+        # request.session.save()
+
+        # Recall that middleware are not supported. You can simulate a
+        # logged-in user by setting request.user manually.
+        self.request.user = self.user
+
+        response = views.info(self.request)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "session")
+
+        # Or you can simulate an anonymous user by setting request.user to
+        # an AnonymousUser instance.
+        self.request.user = AnonymousUser()
+        response = views.info(self.request)
+        # response = MyView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "session")
+
+    def test_recaptcha(self) -> None:
+        # request = self.factory.get('wiki_artikkel_filter')
+        self.request.user = self.user
+        recaptcha_check = views.check_recaptcha(self.request)
+        self.assertFalse(recaptcha_check)
+
+    def test_feedback(self) -> None:
+        # request = self.factory.get('wiki_artikkel_filter')
+        self.request.user = self.user
+        response = views.feedback(self.request)
+        self.assertEqual(response.status_code, 302)
+
+        self.request = self.factory.post(reverse('wiki:feedback'), {'kirjeldus': 'testkirjeldus', 'kontakt': 'testuser'})
+        response = views.feedback(self.request)
+        self.assertEqual(response.status_code, 302)
+
+    def test_object_count(self) -> None:
+        # Create an instance of a GET request.
+        request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(request)
+        request.session.save()
+
+        for model in [Artikkel, Isik, Organisatsioon, Objekt]:
+            # Recall that middleware are not supported. You can simulate a
+            # logged-in user by setting request.user manually.
+            request.user = self.user
+            count_all = model.objects.daatumitega(request).count()
+
+            # Or you can simulate an anonymous user by setting request.user to
+            # an AnonymousUser instance.
+            request.user = AnonymousUser()
+            count_restricted = model.objects.daatumitega(request).count()
+            self.assertTrue(count_all > count_restricted)
+
+    def tearDown(self) -> None:
+        # self.user.delete()
+        pass
+
+
+class DetailViewTest(TestCase):
+    def setUp(self) -> None:
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        # self.user = User.objects.create_user(
+        #     username='jacob',
+        #     email='jacob@…',
+        #     password='top_secret'
+        # )
+        self.user = User.objects.get(id=1)
+
+    def test_artikkel_context(self):
+        self.request.user = AnonymousUser()
+        art = Artikkel.objects.daatumitega(self.request).first()
+
+        # view = views.ArtikkelDetailView()
+        # view.setup(self.request, pk=art.pk, slug=art.slug)
+        # context = view.get_context_data()
+        # self.assertIn('n', context)
+
+        response = views.ArtikkelDetailView.as_view()(self.request, pk=art.pk, slug=art.slug)
+        self.assertEqual(response.status_code, 200)
+
+    def test_isik_context(self):
+        self.request.user = AnonymousUser()
+        art = Isik.objects.daatumitega(self.request).first()
+        response = views.IsikDetailView.as_view()(self.request, pk=art.pk, slug=art.slug)
+        self.assertEqual(response.status_code, 200)
+
 
 class WikiViewTests(TestCase):
     def test_algus_view(self):
@@ -27,12 +153,31 @@ class WikiViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3)
 
+    def test_otsi_view(self):
+        time_start = datetime.now()
+        response = self.client.get(reverse('wiki:otsi'))
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3)
+
+        response = self.client.get(reverse('wiki:otsi'), {'q': 'ter'})
+        self.assertEqual(response.status_code, 200)
+
     def test_kaart_view(self):
         time_start = datetime.now()
         response = self.client.get(reverse('kaart'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(time_stopp.seconds < 3)
+
+    def test_v6rdle_view(self):
+        response = self.client.post(reverse('wiki:v6rdle'), follow=True)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(
+            reverse('wiki:v6rdle'),
+            {'vasak_object': '19', 'parem_object': '20'},
+            follow = True
+        )
+        self.assertEqual(response.status_code, 200)
 
     # def test_j6ul2020_view(self):
     #    response = self.client.get(reverse('special_j6ul2020'))
@@ -543,7 +688,8 @@ class UserLoginTestCase(AdminUserTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Viiteta")
         self.client.logout()
-        self.assertContains(response, "Viiteta")
+        response = self.client.get(reverse('info'))
+        self.assertNotContains(response, "Viiteta")
 
         response = self.client.post(
             reverse('login'),
@@ -667,33 +813,385 @@ class APITestIlmListingCase(TestCase):
         self.assertEquals(self.list_api_result.status_code, 200)
         self.assertTrue(self.list_api_result.json()["count"] == 24)
 
+import configparser
+from datetime import datetime
+from functools import reduce
+from operator import or_
 
-# from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-# from selenium.webdriver.chrome.webdriver import WebDriver
+from django.conf import settings
+from django.contrib.auth.models import AnonymousUser, User
+from django.test import Client, RequestFactory, TestCase
+from django.urls import reverse
 
-# class MySeleniumTests(StaticLiveServerTestCase):
-#     # fixtures = ['user-data.json']
-#
-#     @classmethod
-#     def setUpClass(cls):
-#         super().setUpClass()
-#         cls.selenium = WebDriver()
-#         cls.selenium.implicitly_wait(10)
-#
-#     @classmethod
-#     def tearDownClass(cls):
-#         cls.selenium.quit()
-#         super().tearDownClass()
-#
-#     def test_login(self):
-#         from selenium.webdriver.support.wait import WebDriverWait
-#         timeout = 2
-#         self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
-#         username_input = self.selenium.find_element_by_name("username")
-#         username_input.send_keys('')
-#         password_input = self.selenium.find_element_by_name("password")
-#         password_input.send_keys('')
-#         self.selenium.find_element_by_xpath('//input[@value="login"]').click()
-#         # Wait until the response is received
-#         WebDriverWait(self.selenium, timeout).until(
-#             lambda driver: driver.find_element_by_tag_name('body'))
+from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
+
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium import webdriver
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+
+class SeleniumTestsChromeBase(StaticLiveServerTestCase):
+
+    # def test_driver_manager_chrome(self):
+    #     service = ChromeService(executable_path=ChromeDriverManager().install())
+    #     driver = webdriver.Chrome(service=service)
+    #     driver.quit()
+
+    fixtures = ['user-data.json']
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        service = ChromeService(executable_path=ChromeDriverManager().install())
+        cls.selenium = webdriver.Chrome(service=service)
+        cls.selenium.implicitly_wait(10)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def test_driver_manager_chrome(self):
+        service = ChromeService(executable_path=ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service)
+        driver.quit()
+
+class SeleniumTestsChromeLogin(SeleniumTestsChromeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_login(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/logout/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+        username_input = self.selenium.find_element(By.NAME, "username")
+        username_input.send_keys(USERNAME)
+        password_input = self.selenium.find_element(By.NAME, "password")
+        password_input.send_keys(PASSWORD)
+        self.selenium.find_element(By.XPATH, '//input[@value="login"]').click()
+
+
+class SeleniumTestsChromeOtsi(SeleniumTestsChromeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_otsi(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/wiki/otsi/'))
+
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Otsimiseks", el)
+
+        search_input = self.selenium.find_element(By.ID, "question")
+        search_input.send_keys('ta')
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Vähemalt", el)
+
+        search_input.send_keys('mm')
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Leidsime", el)
+
+        # search_input.clear()
+        search_input.send_keys(4 * Keys.BACK_SPACE)
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Vähemalt", el)
+
+        search_input.send_keys('õõõõõ')
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Leidsime 0 vastet", el)
+
+
+def getData(model):
+    detail_view_name = f'wiki:wiki_{model.__name__.lower()}_detail'
+    artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
+    initial_queryset = model.objects.all()
+    artikliga = initial_queryset. \
+        filter(artikkel__in=artikkel_qs). \
+        values_list('id', flat=True)
+    viitega = initial_queryset. \
+        filter(viited__isnull=False). \
+        values_list('id', flat=True)
+    viiteta_artiklita = initial_queryset. \
+        filter(viited__isnull=True, artikkel__isnull=True). \
+        values_list('id', flat=True)
+    model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
+    return initial_queryset, model_ids, detail_view_name
+
+
+class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.initial_queryset, cls.model_ids, cls.detail_view_name = getData(Isik)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_view_show_by_name_random(self):
+        SELECT_COUNT = 10
+        # Juhuslikud objectid kontrolliks
+        objs = self.initial_queryset.filter(id__in=self.model_ids).order_by('?')[:SELECT_COUNT]
+        for obj in objs:
+            cnt = obj.artikkel_set.count()
+            if cnt == 0:
+                continue
+            print(obj.id, cnt)
+            kwargs = {
+                'pk': obj.id,
+                'slug': obj.slug
+            }
+            path = reverse(self.detail_view_name, kwargs=kwargs)
+            self.selenium.get('%s%s' % (self.live_server_url, path))
+            # Kontrollime kas isiku nimi on avanenud lehel
+            el = self.selenium.find_element(By.TAG_NAME, "body").text
+            try:
+                nimi = obj.perenimi
+            except:
+                nimi = obj.nimi
+            self.assertIn(nimi, el)
+            # Kontrollime kas isikuga seotud objectid laeti
+            try:
+                el = self.selenium.find_element(By.ID, "loaderDiv1")
+                WebDriverWait(self.selenium, timeout=3).until(
+                    EC.visibility_of(el)
+                )
+                WebDriverWait(self.selenium, timeout=10).until_not(
+                    EC.visibility_of(el)
+                )
+            except TimeoutException:
+                pass
+            el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
+            self.assertIn("Lugusid", el)
+
+    def test_view_HTTP404_for_non_authented_user(self):
+        SELECT_COUNT = 10
+        # Juhuslikud objectid kontrolliks
+        objs = self.initial_queryset.exclude(id__in=self.model_ids).order_by('?')[:SELECT_COUNT]
+        for obj in objs:
+            kwargs = {
+                'pk': obj.id,
+                'slug': obj.slug
+            }
+            path = reverse(self.detail_view_name, kwargs=kwargs)
+            self.selenium.get('%s%s' % (self.live_server_url, path))
+            el = self.selenium.find_element(By.TAG_NAME, "body").text
+            try:
+                nimi = obj.perenimi
+            except:
+                nimi = obj.nimi
+            self.assertIn("ei leitud", el)
+
+
+class SeleniumTestsChromeDetailViewObjectObjekt(SeleniumTestsChromeDetailViewObjectIsik):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.initial_queryset, cls.model_ids, cls.detail_view_name = getData(Objekt)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_view_show_by_name_random(self):
+        super().test_view_show_by_name_random()
+
+    def test_view_HTTP404_for_non_authented_user(self):
+        super().test_view_HTTP404_for_non_authented_user()
+
+
+class SeleniumTestsChromeDetailViewObjectOrganisatsioon(SeleniumTestsChromeDetailViewObjectIsik):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.initial_queryset, cls.model_ids, cls.detail_view_name = getData(Organisatsioon)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_view_show_by_name_random(self):
+        super().test_view_show_by_name_random()
+
+    def test_view_HTTP404_for_non_authented_user(self):
+        super().test_view_HTTP404_for_non_authented_user()
+
+class SeleniumTestsChromeV6rdle(SeleniumTestsChromeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_v6rdle(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/info/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/wiki/v6rdle/'))
+    #     search_input = self.selenium.find_element(By.ID, "question")
+    #     search_input.send_keys('tamm')
+    #     self.selenium.implicitly_wait(3)
+
+
+from selenium.webdriver.edge.service import Service as EdgeService
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
+
+class SeleniumTestsEdgeBase(StaticLiveServerTestCase):
+
+    # def test_edge_session(self):
+    #     service = EdgeService(executable_path=EdgeChromiumDriverManager().install())
+    #     driver = webdriver.Edge(service=service)
+    #     driver.quit()
+
+    # fixtures = ['user-data.json']
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        service = EdgeService(executable_path=EdgeChromiumDriverManager().install())
+        cls.selenium = webdriver.Edge(service=service)
+        cls.selenium.implicitly_wait(10)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+
+class SeleniumTestsEdgeLogin(SeleniumTestsEdgeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_login(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/logout/'))
+        self.selenium.implicitly_wait(3)
+        self.selenium.get('%s%s' % (self.live_server_url, '/accounts/login/'))
+
+        username_input = self.selenium.find_element(By.NAME, "username")
+        username_input.send_keys('fakeuser')
+        password_input = self.selenium.find_element(By.NAME, "password")
+        password_input.send_keys('fakepassword')
+        self.selenium.implicitly_wait(3)
+        bodyText = self.selenium.find_element(By.TAG_NAME, 'body').text
+        self.assertTrue("Palun proovi uuesti" in bodyText)
+
+        username_input = self.selenium.find_element(By.NAME, "username")
+        username_input.send_keys(USERNAME)
+        password_input = self.selenium.find_element(By.NAME, "password")
+        password_input.send_keys(PASSWORD)
+        self.selenium.find_element(By.XPATH, '//input[@value="login"]').click()
+        self.selenium.implicitly_wait(3)
+        bodyText = self.selenium.find_element(By.TAG_NAME, 'body').text
+        self.assertFalse("Palun proovi uuesti" in bodyText)
+
+
+class SeleniumTestsEdgeOtsi(SeleniumTestsEdgeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_otsi(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/wiki/otsi/'))
+
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Otsimiseks", el)
+
+        search_input = self.selenium.find_element(By.ID, "question")
+        search_input.send_keys('ta')
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Vähemalt", el)
+
+        search_input.send_keys('mm')
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Leidsime", el)
+
+        # search_input.clear()
+        search_input.send_keys(4 * Keys.BACK_SPACE)
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Vähemalt", el)
+
+        search_input.send_keys('õõõõõ')
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Leidsime 0 vastet", el)

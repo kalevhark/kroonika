@@ -1,7 +1,11 @@
+import qrcode.image.svg
+
+import base64
 from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
 # from functools import reduce
 # from operator import or_
+from io import BytesIO
 import pkg_resources
 from typing import Dict, Any
 
@@ -36,6 +40,8 @@ from django.views.generic.edit import UpdateView
 import django_filters
 from django_filters.views import FilterView
 
+from PIL import Image, ImageOps
+import qrcode
 import requests
 
 from blog.models import Comment
@@ -309,14 +315,10 @@ def info(request):
 #
 def otsi(request):
     question = request.GET.get('q', '')
-
-
     return render(
         request,
         'wiki/wiki_otsi.html',
-        {
-            'question': question
-        }
+        {'question': question}
     )
 
 #
@@ -324,10 +326,10 @@ def otsi(request):
 #
 def feedback(request):
     # if this is a POST request we need to process the form data
-    a = request.META
+    # a = request.META
     http_referer = request.META.get('HTTP_REFERER', reverse('algus')) # mis objektilt tuli vihje
     remote_addr = request.META['REMOTE_ADDR'] # kasutaja IP aadress
-    http_user_agent = request.META['HTTP_USER_AGENT'] # kasutaja veebilehitseja
+    http_user_agent = request.META.get('HTTP_USER_AGENT', 'unknown') # kasutaja veebilehitseja
     if request.method == 'POST' and check_recaptcha(request):
         # create a form instance and populate it with data from the request:
         form = VihjeForm(request.POST)
@@ -1016,7 +1018,6 @@ class ArtikkelDetailView(generic.DetailView):
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
 
-
     def get_context_data(self, **kwargs):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
@@ -1036,13 +1037,9 @@ class ArtikkelDetailView(generic.DetailView):
         )
 
         # Järjestame artiklid kronoloogiliselt
-        # obj_id = context['artikkel'].id
-        # obj = super().get_object()
-        # obj_id = self.object.id
         loend = list(artikkel_qs.values_list('id', flat=True))
         # Leiame valitud artikli järjekorranumbri
         n = loend.index(self.object.id)
-        # print(n, loend[n-1], loend[n], loend[n+1])
         context['n'] = n
         if n > -1:
             # Leiame ajaliselt järgneva artikli
@@ -1751,6 +1748,7 @@ class IsikDetailView(generic.DetailView):
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
+
 #
 # object detailvaates ajax seotud objectide kuvamiseks
 #
@@ -2245,3 +2243,60 @@ def get_objekt_leaflet_combo(request, objekt_id):
 def get_kaardiobjekt_leaflet(request, kaardiobjekt_id):
     map_html = make_kaardiobjekt_leaflet(kaardiobjekt_id)
     return HttpResponse(map_html)
+
+def get_qrcode_from_uri(request):
+    uri = request.GET.get('uri')
+    # taking image which user wants
+    # in the QR code center
+    Logo_link = settings.BASE_DIR / 'wiki/static/wiki/img/android-chrome-192x192.png'
+
+    logo = Image.open(Logo_link)
+    new_image = Image.new("RGBA", logo.size, "WHITE")  # Create a white rgba background
+    new_image.paste(logo, (0, 0), logo)  # Paste the image on the background. Go to the links given below for details.
+    # new_image.convert('RGB').save('test.jpg', "JPEG")  # Save as JPEG
+    logo = new_image
+
+    # taking base width
+    basewidth = 100
+
+    # adjust image size
+    wpercent = (basewidth / float(logo.size[0]))
+    hsize = int((float(logo.size[1]) * float(wpercent)))
+    logo = logo.resize((basewidth - 30, hsize - 30), Image.ANTIALIAS)
+    logo = ImageOps.expand(logo, border=10, fill='white')
+    QRcode = qrcode.QRCode(
+        box_size=10,
+        error_correction=qrcode.constants.ERROR_CORRECT_H
+    )
+
+    # adding URL or text to QRcode
+    QRcode.add_data(uri)
+
+    # generating QR code
+    QRcode.make()
+
+    # taking color name from user
+    QRcolor = '#00985F'
+
+    # adding color to QR code
+    QRimg = QRcode.make_image(
+        fill_color=QRcolor, back_color="white").convert('RGB')
+
+    # set size of QR code
+    pos = ((QRimg.size[0] - logo.size[0]) // 2,
+           (QRimg.size[1] - logo.size[1]) // 2)
+    QRimg.paste(logo, pos)
+
+    # save the QR code generated
+    # QRimg.save('gfg_QR.png')
+
+    # print('QR code generated!')
+    stream = BytesIO()
+    QRimg.save(stream, "PNG")
+
+    image_data = base64.b64encode(stream.getvalue()).decode('utf-8')
+
+    # return HttpResponse(f'<img id="plt" src="data:image/png;base64, {image_data}"></img>')
+    # qrcode_image = f'<img id="qrcode" src="data:image/png;base64, {image_data}"></img>'
+    qrcode_image = f'data:image/png;base64, {image_data}'
+    return HttpResponse(qrcode_image)

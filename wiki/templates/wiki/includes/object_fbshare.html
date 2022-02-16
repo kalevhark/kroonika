@@ -1,12 +1,84 @@
 {% load static %}
-<div
-    class="fb-share-button"
-    data-href="{{ request.build_absolute_uri }}"
-    data-layout="button"
-    data-size="small">
-  <a
-      target="_blank"
-      href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri | urlencode }}%2F&amp;src=sdkpreparse"
-      class="fb-xfbml-parse-ignore">Jaga
-  </a>
+<a
+        class="icon-link round-corner facebook fill"
+        target="_blank"
+        href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri | urlencode }}%2F&amp;src=sdkpreparse"
+>
+  <i class="fa fa-facebook"></i>
+</a>
+<a
+        class="icon-link round-corner linkedin fill"
+        href="https://www.linkedin.com/shareArticle?mini=true&title=valgalinn.ee: {{ object }}&url={{ request.build_absolute_uri }}"
+>
+  <i class="fa fa-linkedin"></i>
+</a>
+<a
+        class="icon-link round-corner twitter fill"
+        href="https://twitter.com/intent/tweet?text=valgalinn.ee ({{ object }}): {{ request.build_absolute_uri }}"
+>
+  <i class="fa fa-twitter"></i>
+</a>
+<a
+        class="icon-link round-corner envelope fill"
+        href="mailto:?subject=valgalinn.ee: {{ object }}&body={{ object }}: {{ request.build_absolute_uri }}"
+>
+  <i class="fa fa-envelope"></i>
+</a>
+<a
+        class="icon-link round-corner qrcode fill"
+        onclick="showShareOptions(this)"
+        data-uri="{{ request.build_absolute_uri }}"
+>
+  <i class="fa fa-qrcode"></i>
+</a>
+<a
+        class="icon-link round-corner bug fill"
+        title="Märkasid viga või oskad täiendada?"
+        onclick="showFeedback()"
+>
+  <i class="fa fa-bug"></i>
+</a>
+
+<div id="shareModal_{{ object.id }}" class="modal">
+    <div class="w3-container w3-center">
+      <span
+              onclick="document.getElementById('shareModal_{{ object.id }}').style.display='none'"
+              class="close w3-display-topright"
+      >&times;</span>
+      <p>
+        {{ request.build_absolute_uri }}
+        <img
+                id="qrcode"
+                style="min-width: 250px; max-width: 500px;"
+                class="modal-content"
+                src=""
+        >
+        </img>
+      </p>
+  </div>
 </div>
+
+<script>
+  function showShareModal(uri) {
+    $.ajax(
+      {
+        // headers: {"X-CSRFToken":token},
+        type: "GET",
+        url: "{% url 'wiki:get_qrcode_from_uri' %}",
+        data: {'uri': uri},
+        success: function(response) {
+          // $("#qrcode").attr('src',"data:image/png;base64, " + response);
+          $("#qrcode").attr('src', response);
+        }
+       }
+    )
+		var x = document.getElementById("shareModal_{{ object.id }}");
+    x.style.display='block';
+	}
+
+  function showShareOptions(evt) {
+    uri = evt.dataset.uri;
+    console.log(uri);
+    showShareModal(uri);
+  }
+</script>

@@ -68,22 +68,22 @@ function toggleRightMenu() {
 function showFeedback() {
   // Sulgeme navigatsioonimenüü, kui see on avatud
   let rightMenu = document.getElementById("rightMenu");
-  if (rightMenu.className.indexOf("w3-show") != -1) {
+  if (rightMenu.className.indexOf("w3-show") !== -1) {
     toggleRightMenu();
-  };
+  }
   // Avame tagasisidevormi
   var x = document.getElementById("panelFeedBack");
-  if (x.className.indexOf("w3-show-block") == -1) {
+  if (x.className.indexOf("w3-show-block") === -1) {
     x.className += " w3-show-block";
 //    kirjeldusField = document.getElementById("id_kirjeldus");
     kirjeldusField = $("#id_kirjeldus");
     if (kirjeldusField.is(":visible")) {
       kirjeldusField.focus();
-    };
+    }
   } else {
     x.className = x.className.replace(" w3-show-block", "");
-  };
-};
+  }
+}
 
 // Küsib object kohta seotud andmed ja kuvab need detail vaates
 function wiki_object_detail_seotud() {
@@ -152,9 +152,9 @@ function changeIconColor(data) {
           elementIlmStartIcon.style.color = '#48AFE8';
         } else {
           elementIlmStartIcon.style.color = '#FF3333';
-        };
-  };
-};
+        }
+  }
+}
 
 // Ikoonide värvi muutmine, kui on vihje või kommentaar
 function showFeedBackInfo() {
@@ -195,13 +195,13 @@ function openLinks(evt, linkName) {
   let modelName = 'artikkel';
   if (linkName.indexOf("isik") >= 0) {
     modelName = 'isik';
-  };
+  }
   if (linkName.indexOf("organisatsioon") >= 0) {
     modelName = 'organisatsioon';
-  };
+  }
   if (linkName.indexOf("objekt") >= 0) {
     modelName = 'objekt';
-  };
+  }
   let newClassName = 'background-' + modelName;
   var i, x, tablinks;
   x = document.getElementsByClassName("seotud");

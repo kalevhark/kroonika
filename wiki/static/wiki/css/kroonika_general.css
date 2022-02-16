@@ -1,4 +1,4 @@
-/* ver 2022.01 */
+/* ver 2022.02 */
 html, body, p, h1, h2, h3, h4, h5 {
   font-family: "Raleway", sans-serif;
 }
@@ -2351,4 +2351,158 @@ input:checked:focus + .switch-left + .switch-right {
 .flip:hover>span:first-child {
 	color: transparent;
 	float: none;
+}
+
+/*
+Social Icons by https://codepen.io/thalseth
+*/
+.icon-link {
+  width: 30px;
+  height: 30px;
+  background-color: #666;
+  line-height: 30px;
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
+  cursor: pointer;
+  outline: none;
+  margin: 5px;
+  box-sizing: content-box;
+}
+
+.icon-link.fill.facebook {
+  background-color: #3b5998;
+}
+.icon-link.fill.facebook:hover {
+  background-color: #fff;
+}
+.icon-link.fill.facebook:hover .fa-facebook {
+  color: #3b5998;
+  transition: color 150ms ease-in-out;
+}
+
+.icon-link.fill.linkedin {
+  background-color: #007bb6;
+}
+.icon-link.fill.linkedin:hover {
+  background-color: #fff;
+}
+.icon-link.fill.linkedin:hover .fa-linkedin {
+  color: #007bb6;
+  transition: color 150ms ease-in-out;
+}
+
+.icon-link.fill.twitter {
+  background-color: #00aced;
+}
+.icon-link.fill.twitter:hover {
+  background-color: #fff;
+}
+.icon-link.fill.twitter:hover .fa-twitter {
+  color: #00aced;
+  transition: color 150ms ease-in-out;
+}
+
+.icon-link.fill.envelope {
+  background-color: #333;
+}
+.icon-link.fill.envelope:hover {
+  background-color: #fff;
+}
+.icon-link.fill.envelope:hover .fa-envelope {
+  color: #333;
+  transition: color 150ms ease-in-out;
+}
+
+.icon-link.fill.qrcode {
+  background-color: #00985F;
+}
+.icon-link.fill.qrcode:hover {
+  background-color: #fff;
+}
+.icon-link.fill.qrcode:hover .fa-qrcode {
+  color: #00985F;
+  transition: color 150ms ease-in-out;
+}
+
+.icon-link.fill.edit {
+  background-color: #00985F;
+}
+.icon-link.fill.edit:hover {
+  background-color: #fff;
+}
+.icon-link.fill.edit:hover .fa-edit {
+  color: #00985F;
+  transition: color 150ms ease-in-out;
+}
+
+.icon-link.round-corner {
+  border-radius: 5px;
+}
+.icon-link:hover {
+  transition: background-color 150ms ease-in-out;
+  height: 26px;
+  line-height: 26px;
+  width: 26px;
+  background-color: #fff;
+}
+
+.icon-link:hover.facebook {
+  border: 2px solid #3b5998;
+}
+.icon-link:hover.linkedin {
+  border: 2px solid #007bb6;
+}
+.icon-link:hover.twitter {
+  border: 2px solid #00aced;
+}
+.icon-link:hover.envelope {
+  border: 2px solid #333;
+}
+.icon-link:hover.qrcode {
+  border: 2px solid #00985F;
+}
+.icon-link:hover.bug {
+  border: 2px solid red;
+}
+.icon-link:hover.edit {
+  border: 2px solid #00985F;
+}
+
+.icon-link:hover .fa {
+  line-height: 26px;
+}
+.icon-link:hover .fa-facebook {
+  color: #3b5998;
+  transition: color 150ms ease-in-out;
+}
+.icon-link:hover .fa-linkedin {
+  color: #007bb6;
+  transition: color 150ms ease-in-out;
+}
+.icon-link:hover .fa-twitter {
+  color: #00aced;
+  transition: color 150ms ease-in-out;
+}
+.icon-link:hover .fa-envelope {
+  color: #333;
+  transition: color 150ms ease-in-out;
+}
+.icon-link:hover .fa-qrcode {
+  color: #00985F;
+  transition: color 150ms ease-in-out;
+}
+.icon-link:hover .fa-bug {
+  color: red;
+  transition: color 150ms ease-in-out;
+}
+.icon-link:hover .fa-edit {
+  color: #00985F;
+  transition: color 150ms ease-in-out;
+}
+
+.icon-link .fa {
+  color: #fff;
+  line-height: 30px;
+  font-size: 18px;
 }

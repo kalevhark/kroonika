@@ -3,35 +3,37 @@
 {% block title %}{{ block.super }} - sisselogimine{% endblock %}
 
 {% block content %}
-  {% if form.errors %}
-    <p>Sinu kasutanimi ja salasõna ei sobi. Palun proovi uuesti.</p>
-  {% endif %}
-
-  {% if next %}
-    {% if user.is_authenticated %}
-      <p>Sul ei ole selle lehe kasutajaõigusi. Edasipääsemiseks
-      palun kasuta kasutajakontot, millel on need olemas.</p>
-    {% else %}
-      <p>Jätkamiseks, palun logi sisse.</p>
+  <div class="w3-panel w3-padding-16 w3-card-4 w3-light-grey" >
+    {% if form.errors %}
+      <p>Sinu kasutanimi ja salasõna ei sobi. Palun proovi uuesti.</p>
     {% endif %}
-  {% endif %}
 
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <table>
-      <tr>
-        <td>{{ form.username.label_tag }}</td>
-        <td>{{ form.username }}</td>
-      </tr>
-      <tr>
-        <td>{{ form.password.label_tag }}</td>
-        <td>{{ form.password }}</td>
-      </tr>
-    </table>
-    <input type="submit" value="login" />
-    <input type="hidden" name="next" value="{{ next }}" />
-  </form>
+    {% if next %}
+      {% if user.is_authenticated %}
+        <p>Sul ei ole selle lehe kasutajaõigusi. Edasipääsemiseks
+        palun kasuta kasutajakontot, millel on need olemas.</p>
+      {% else %}
+        <p>Jätkamiseks, palun logi sisse.</p>
+      {% endif %}
+    {% endif %}
 
-  {# Assumes you setup the password_reset view in your URLconf #}
-  <!--  <p><a href="{% url 'password_reset' %}">Lost password?</a></p>-->
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <table>
+        <tr>
+          <td>{{ form.username.label_tag }}</td>
+          <td>{{ form.username }}</td>
+        </tr>
+        <tr>
+          <td>{{ form.password.label_tag }}</td>
+          <td>{{ form.password }}</td>
+        </tr>
+      </table>
+      <input type="submit" value="login" />
+      <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+
+    {# Assumes you setup the password_reset view in your URLconf #}
+    <!--  <p><a href="{% url 'password_reset' %}">Lost password?</a></p>-->
+  </div>
 {% endblock %}

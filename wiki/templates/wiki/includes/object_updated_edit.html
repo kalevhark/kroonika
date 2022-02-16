@@ -1,60 +1,45 @@
-<div class="w3-row">
-  <small>
-    {% include 'wiki/includes/object_fbshare.html' %}
-    <!--		Tagasiside saatmiseks -->
+{#    Kui kasutaja autenditud pakume muutmisvõimalust#}
+{% if user.is_authenticated %}
+  {% with update_url='wiki:'|add:model|add:'_update' %}
     <a
-        class="w3-button w3-padding-bottom w3-hover-white fa fa-bug"
-        title="Märkasid viga või oskad täiendada?"
-        onclick="showFeedback()">
-    </a>
-    <!--		Kui kasutaja autenditud pakume muutmisvõimalust -->
-    {% if user.is_authenticated %}
-      {% with update_url='wiki:'|add:model|add:'_update' %}
-        <a
-            class="w3-button w3-padding-bottom w3-hover-white fa fa-edit"
+            class="icon-link round-corner edit fill"
             href="{% url update_url pk=object.pk %}"
-        >
-        </a>
-      {% endwith %}
-      {% with change_url='admin:wiki_'|add:model|add:'_change' %}
-        <a
-            class="w3-button w3-padding-bottom w3-hover-white fa fa-adn"
-            href="{% url change_url object.id %}"
-        >
-        </a>
-      {% endwith %}
-    {% endif %}
-    <div
-        class="w3-button w3-padding-bottom w3-hover-white"
-        title="Viimane läbivaatamise aeg ja läbivaataja"
     >
-      {% if object.updated_by.username %}
-        {{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
-      {% else %}
-        {{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
-      {% endif %}
-    </div>
-    {% if object.total_accessed %}
-      <div
-          class="w3-button w3-padding-bottom w3-hover-white fa fa-eye"
-          title="Vaatamisi"
-      >
-        &nbsp;{{ object.total_accessed }}
-      </div>
-    {% endif %}
-  </small>
-  <!--		Tagasiside vorm -->
-<!--  {% load crispy_forms_tags %}-->
-<!--  <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">-->
-<!--    {% crispy feedbackform %}-->
-<!--  </div>-->
-
+      <i class="fa fa-edit"></i>
+    </a>
+  {% endwith %}
+  {% with change_url='admin:wiki_'|add:model|add:'_change' %}
+    <a
+            class="icon-link round-corner edit fill"
+            href="{% url change_url object.id %}"
+    >
+      <i class="fa fa-adn"></i>
+    </a>
+  {% endwith %}
+{% endif %}
+<div
+    class="w3-button w3-padding-bottom w3-hover-white w3-small"
+    title="Viimane läbivaatamise aeg ja läbivaataja"
+>
+  {% if object.updated_by.username %}
+    {{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
+  {% else %}
+    {{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
+  {% endif %}
 </div>
+{% if object.total_accessed %}
+  <div
+      class="w3-button w3-padding-bottom w3-hover-white w3-small fa fa-eye"
+      title="Vaatamisi"
+  >
+    &nbsp;{{ object.total_accessed }}
+  </div>
+{% endif %}
 
 <script>
 	function showFeedback() {
 		var x = document.getElementById("panelFeedBack");
-		if (x.className.indexOf("w3-show-block") == -1) {
+		if (x.className.indexOf("w3-show-block") === -1) {
 			x.className += " w3-show-block";
 			document.getElementById("id_kirjeldus").focus();
 		} else {

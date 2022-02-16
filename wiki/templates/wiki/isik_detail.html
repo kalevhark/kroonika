@@ -41,25 +41,29 @@
 
     <!-- Sisukaardi kirjeldav osa-->
     <div class="w3-twothird" >
-      <div class="w3-third">
-        {% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-portree-medium' %}
-      </div>
-      <!-- Sisukaardi tekstiosa-->
-      <div class="w3-twothird">
-        {% include 'wiki/includes/vigane.html' %}
-        <div>
-          {{ object.formatted_markdown | safe }}
+      <div class="w3-row">
+        <div class="w3-third">
+          {% include 'wiki/includes/object_detail_pilt.html' with cls='pilt-portree-medium' %}
         </div>
-        {% include 'wiki/includes/seotud_special_links.html' %}
-        {% include 'wiki/includes/mainitud_aastatel.html' %}
-{#        {% include 'wiki/includes/seotud_viited.html' %}#}
+        <!-- Sisukaardi tekstiosa-->
+        <div class="w3-twothird">
+          {% include 'wiki/includes/vigane.html' %}
+          <div>
+            {{ object.formatted_markdown | safe }}
+          </div>
+          {% include 'wiki/includes/seotud_special_links.html' %}
+          {% include 'wiki/includes/mainitud_aastatel.html' %}
+          <div class="w3-row w3-padding-16">
+            {% include 'wiki/includes/object_fbshare.html' %}
+            {% include 'wiki/includes/object_updated_edit.html' with model='isik' %}
+          </div>
+        </div>
       </div>
-      <!-- Andmete lisamise/muutmise andmed: -->
-      {% include 'wiki/includes/object_updated_edit.html' with model='isik' %}
-      <!-- Seotud objectide andmed -->
+      <div class="w3-row">
+        <!-- Seotud objectide andmed -->
       {% include 'wiki/includes/seotud_objects.html' %}
+      </div>
     </div>
-
     <!--  Sisukaardi otseseosed-->
     <div class="w3-third" >
       {% include 'wiki/includes/seotud_organisatsioonid.html' %}
