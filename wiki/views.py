@@ -2041,75 +2041,74 @@ def get_all_logged_in_users():
 #
 # JSON-vormis põhiobjektide lingid, et kontrollida kas töötavad
 #
-def test(request):
-    valik = request.META['QUERY_STRING']
-    # TODO: Saata tühi vastus, kui pole konkreetset valikut
-    data = dict()
-    # Artiklite testandmed
-    artikkel_qs = Artikkel.objects.daatumitega(request)
-    data['test_url_artiklid_id'] = [
-        reverse('wiki:wiki_artikkel_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
-        for obj
-        in artikkel_qs
-    ]
-    queryset = (
-        artikkel_qs.dates('hist_searchdate', 'year')
-    )
-    aastad = list(el.year for el in queryset)
-    data['test_url_artiklid_aasta'] = [
-        reverse('wiki:artikkel_year_archive', kwargs={'year': aasta})
-        for aasta
-        in aastad
-    ]
-    queryset = (
-        artikkel_qs.dates('hist_searchdate', 'month')
-    )
-    kuud = list((el.year, el.month) for el in queryset)
-    data['test_url_artiklid_kuu'] = [
-        reverse('wiki:artikkel_month_archive', kwargs={'year': kuu[0], 'month': kuu[1]})
-        for kuu
-        in kuud
-    ]
-    # Isikute testandmed
-    queryset = Isik.objects.all()
-    data['test_url_isikud_id'] = [
-        reverse('wiki:wiki_isik_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
-        for obj
-        in queryset
-    ]
-    # Organisatsioonide testandmed
-    queryset = Organisatsioon.objects.all()
-    data['test_url_organisatsioonid_id'] = [
-        reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
-        for obj
-        in queryset
-    ]
-    # Objektide testandmed
-    queryset = Objekt.objects.all()
-    data['test_url_objektid_id'] = [
-        reverse('wiki:wiki_objekt_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
-        for obj
-        in queryset
-    ]
-    # Viidete testandmed
-    queryset = Viide.objects.all()
-    data['test_url_viited_id'] = [
-        obj.url for obj in queryset if obj.url
-    ]
-    # Piltide testandmed
-    queryset = Pilt.objects.all()
-    # Pildifailid, millel puuduvad thumbnailid
-    data['test_url_pildid'] = [
-        obj.pilt.url
-        for obj
-        in queryset
-        # if len(obj.pilt_thumbnail.name)==0
-    ]
-    try:
-        urls = data[valik]
-    except:
-        urls = data
-    return JsonResponse(urls, safe=False)
+# def test(request):
+#     valik = request.META['QUERY_STRING']
+#     data = dict()
+#     # Artiklite testandmed
+#     artikkel_qs = Artikkel.objects.daatumitega(request)
+#     data['test_url_artiklid_id'] = [
+#         reverse('wiki:wiki_artikkel_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
+#         for obj
+#         in artikkel_qs
+#     ]
+#     queryset = (
+#         artikkel_qs.dates('hist_searchdate', 'year')
+#     )
+#     aastad = list(el.year for el in queryset)
+#     data['test_url_artiklid_aasta'] = [
+#         reverse('wiki:artikkel_year_archive', kwargs={'year': aasta})
+#         for aasta
+#         in aastad
+#     ]
+#     queryset = (
+#         artikkel_qs.dates('hist_searchdate', 'month')
+#     )
+#     kuud = list((el.year, el.month) for el in queryset)
+#     data['test_url_artiklid_kuu'] = [
+#         reverse('wiki:artikkel_month_archive', kwargs={'year': kuu[0], 'month': kuu[1]})
+#         for kuu
+#         in kuud
+#     ]
+#     # Isikute testandmed
+#     queryset = Isik.objects.all()
+#     data['test_url_isikud_id'] = [
+#         reverse('wiki:wiki_isik_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
+#         for obj
+#         in queryset
+#     ]
+#     # Organisatsioonide testandmed
+#     queryset = Organisatsioon.objects.all()
+#     data['test_url_organisatsioonid_id'] = [
+#         reverse('wiki:wiki_organisatsioon_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
+#         for obj
+#         in queryset
+#     ]
+#     # Objektide testandmed
+#     queryset = Objekt.objects.all()
+#     data['test_url_objektid_id'] = [
+#         reverse('wiki:wiki_objekt_detail', kwargs={'pk': obj.id, 'slug': obj.slug})
+#         for obj
+#         in queryset
+#     ]
+#     # Viidete testandmed
+#     queryset = Viide.objects.all()
+#     data['test_url_viited_id'] = [
+#         obj.url for obj in queryset if obj.url
+#     ]
+#     # Piltide testandmed
+#     queryset = Pilt.objects.all()
+#     # Pildifailid, millel puuduvad thumbnailid
+#     data['test_url_pildid'] = [
+#         obj.pilt.url
+#         for obj
+#         in queryset
+#         # if len(obj.pilt_thumbnail.name)==0
+#     ]
+#     try:
+#         urls = data[valik]
+#     except:
+#         urls = data
+#     return JsonResponse(urls, safe=False)
 
 def switch_vkj_ukj(request, ukj):
     # print('switch2:', ukj)
