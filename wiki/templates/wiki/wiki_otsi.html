@@ -127,6 +127,9 @@
                 </a>
               </li>
             </ul>
+            <div v-if="loader_get_next_results_isikud">
+              {% include 'wiki/includes/div_loader_book.html' with n='get_next_results_isikud' %}
+            </div>
             <a
                     class="hover-isik w3-button text-isik"
                     style="text-decoration: none;"
@@ -190,6 +193,9 @@
                 </a>
               </li>
             </ul>
+            <div v-if="loader_get_next_results_organisatsioonid">
+              {% include 'wiki/includes/div_loader_book.html' with n='get_next_results_organisatsioonid' %}
+            </div>
             <a
                     class="hover-organisatsioon w3-button text-organisatsioon"
                     style="text-decoration: none;"
@@ -254,6 +260,9 @@
                 </a>
               </li>
             </ul>
+            <div v-if="loader_get_next_results_objektid">
+              {% include 'wiki/includes/div_loader_book.html' with n='get_next_results_objektid' %}
+            </div>
             <a
                     class="hover-objekt w3-button text-objekt"
                     style="text-decoration: none;"
@@ -311,6 +320,9 @@
                 </a>
             </li>
           </ul>
+          <div v-if="loader_get_next_results_artiklid">
+            {% include 'wiki/includes/div_loader_book.html' with n='get_next_results_artiklid' %}
+          </div>
           <a
                   class="hover-artikkel w3-button text-artikkel"
                   style="text-decoration: none;"
