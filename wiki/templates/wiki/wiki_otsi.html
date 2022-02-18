@@ -25,6 +25,43 @@
 {% endblock %}
 
 {% block css %}
+  <style>
+    {#summary {#}
+    {#  font-size: 1rem;#}
+    {#  font-weight: 600;#}
+    {#  background-color: #fff;#}
+    {#  color: #333;#}
+    {#  padding: 1rem;#}
+    {#  margin-bottom: 1rem;#}
+    {#  outline: none;#}
+    {#  border-radius: 0.25rem;#}
+    {#  text-align: left;#}
+    {#  cursor: pointer;#}
+    {#  position: relative;#}
+    {#}#}
+
+    details > summary::after {
+      position: absolute;
+      content: "+";
+      right: 20px;
+      }
+      details[open] > summary::after {
+      position: absolute;
+      content: "-";
+      right: 20px;
+      }
+      details > summary::-webkit-details-marker {
+      display: none;
+      }
+
+      details[open] summary ~ * {
+      animation: sweep .5s ease-in-out;
+      }
+      @keyframes sweep {
+      0% {opacity: 0; margin-top: -10px}
+      100% {opacity: 1; margin-top: 0px}
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -39,158 +76,201 @@
       &nbsp;<span id="answer">[[ answer ]]</span>
     </div>
     <div class="w3-container w3-cell-row">
-      <div class="w3-cell" style="width:25%"> <!-- vasakpoolne veerg -->
+{#      <div class="w3-cell" style="width:25%"> <!-- vasakpoolne veerg -->#}
+      <div class="w3-quarter"> <!-- vasakpoolne veerg -->
         <div
                 id="leitud_isikud"
                 class="w3-cell-row w3-cell-top w3-hover-white"
                 v-if="isik_results_count_all>0"
         >
-          <div
-                  class="w3-padding-small"
-                  v-bind:style="isik_results_count_all>isik_results_count_1st_page ? '' : 'margin-bottom: 8px; margin-top: 8px;'"
-          >
-            <strong>
-              Isikuid:
-              <a
-                      class="hover-isik"
-                      style="text-decoration: none;"
-                      title="näita kõiki..."
-                      v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question">
-                [[ isik_results_count_all>isik_results_count_1st_page ? isik_results_count_1st_page + ' / ' : '' ]]
-                [[ isik_results_count_all ]]
-              </a>
-              <a
-                      class="hover-isik w3-button text-isik"
-                      style="text-decoration: none;"
-                      title="järgmised..."
-                      v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question + '&page=2'"
-                      v-if="isik_results_count_all>isik_results_count_1st_page"
-              >
-                näita veel...
-              </a>
-            </strong>
-          </div>
-          <ul class="w3-ul">
-            <li class="w3-padding-small" style="list-style-type:none;" v-for="result in isik_results">
-              <a
-                  class="hover-isik tooltip-content"
-                  style="text-decoration: none;"
-                  v-bind:href="result.link"
-                  v-bind:title="result.kirjeldus.slice(0, 50)"
-              >
+          <details open>
+            <summary
+                    class="w3-padding-small"
+                    v-bind:style="isik_results_count_all>isik_results_count_1st_page ? '' : 'margin-bottom: 8px; margin-top: 8px;'"
+            >
+              <strong>
+                Isikuid:
+                <a
+                        class="hover-isik"
+                        style="text-decoration: none;"
+                        title="näita kõiki..."
+                        v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question">
+                  [[ isik_results_count_all>isik_results_count_1st_page ? isik_results_count_1st_page + ' / ' : '' ]]
+                  [[ isik_results_count_all ]]
+                </a>
+{#                <a#}
+{#                        class="hover-isik w3-button text-isik"#}
+{#                        style="text-decoration: none;"#}
+{#                        title="järgmised..."#}
+{#                        v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
+{#                        v-if="isik_results_count_all>isik_results_count_1st_page"#}
+{#                >#}
+{#                  näita veel...#}
+{#                </a>#}
+              </strong>
+            </summary>
+            <ul class="w3-ul">
+              <li class="w3-padding-small" style="list-style-type:none;" v-for="result in isik_results">
+                <a
+                        class="hover-isik tooltip-content"
+                        style="text-decoration: none;"
+                        v-bind:href="result.link"
+                        v-bind:title="result.kirjeldus.slice(0, 50)"
+                >
                 <span
-                      v-bind:title="result"
-                      data-model='Isik'
-                      v-bind:data-id="result.id"
-                      v-bind:id="'Isik_'+result.id">
+                        v-bind:title="result"
+                        data-model='Isik'
+                        v-bind:data-id="result.id"
+                        v-bind:id="'Isik_'+result.id">
                   [[ result.eesnimi ]] [[ result.perenimi ]] [[ result.hist_year==='' ? '' : result.hist_year ]]
                 </span>
-              </a>
-            </li>
-          </ul>
+                </a>
+              </li>
+            </ul>
+            <a
+                    class="hover-isik w3-button text-isik"
+                    style="text-decoration: none;"
+                    id="get_next_results_isikud"
+                    title="järgmised..."
+{#                    v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
+                    @click="getNextResults($event.target.id)"
+                    v-if="isik_results_count_all>isik_results_count_1st_page"
+            >
+              näita veel...
+            </a>
+          </details>
         </div>
         <div
                 id="leitud_organisatsioonid"
-                class="w3-cell-row w3-hover-white"
+                class="summary w3-cell-row w3-hover-white"
                 v-if="organisatsioon_results_count_all>0"
         >
-          <div
-                  class="w3-padding-small"
-                  v-bind:style="organisatsioon_results_count_all>organisatsioon_results_count_1st_page ? '' : 'margin-bottom: 8px; margin-top: 8px;'"
-          >
-            <strong>
-              Asutisi:
-              <a
-                  class="hover-organisatsioon"
-                  style="text-decoration: none;"
-                  title="näita kõiki..."
-                  v-bind:href="wiki_organisatsioon_filter_url + '?nimi_sisaldab=' + question">
-                [[ organisatsioon_results_count_all>organisatsioon_results_count_1st_page ? organisatsioon_results_count_1st_page + ' / ' : '' ]]
-                [[ organisatsioon_results_count_all ]]
-              </a>
-              <a
-                  class="hover-organisatsioon w3-button text-organisatsioon"
-                  style="text-decoration: none;"
-                  title="järgmised..."
-                  v-bind:href="wiki_organisatsioon_filter_url + '?nimi_sisaldab=' + question + '&page=2'"
-                  v-if="organisatsioon_results_count_all>organisatsioon_results_count_1st_page"
-              >
-                näita veel...
-              </a>
-            </strong>
-          </div>
-          <ul class="w3-ul">
-            <li class="w3-padding-small" style="list-style-type:none;" v-for="result in organisatsioon_results">
+          <details open>
+            <summary
+                    class="w3-padding-small"
+                    v-bind:style="organisatsioon_results_count_all>organisatsioon_results_count_1st_page ? '' : 'margin-bottom: 8px; margin-top: 8px;'"
+            >
+              <strong>
+                Asutisi:
                 <a
-                    class="hover-organisatsioon tooltip-content"
-                    style="text-decoration: none;"
-                    v-bind:href="result.link"
-                    v-bind:title="result.kirjeldus.slice(0, 50)"
+                        class="hover-organisatsioon"
+                        style="text-decoration: none;"
+                        title="näita kõiki..."
+                        v-bind:href="wiki_organisatsioon_filter_url + '?nimi_sisaldab=' + question">
+                  [[ organisatsioon_results_count_all>organisatsioon_results_count_1st_page ?
+                  organisatsioon_results_count_1st_page + ' / ' : '' ]]
+                  [[ organisatsioon_results_count_all ]]
+                </a>
+{#                <a#}
+{#                        class="hover-organisatsioon w3-button text-organisatsioon"#}
+{#                        style="text-decoration: none;"#}
+{#                        title="järgmised..."#}
+{#                        v-bind:href="wiki_organisatsioon_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
+{#                        v-if="organisatsioon_results_count_all>organisatsioon_results_count_1st_page"#}
+{#                >#}
+{#                  näita veel...#}
+{#                </a>#}
+              </strong>
+            </summary>
+            <ul class="w3-ul">
+              <li class="w3-padding-small" style="list-style-type:none;" v-for="result in organisatsioon_results">
+                <a
+                        class="hover-organisatsioon tooltip-content"
+                        style="text-decoration: none;"
+                        v-bind:href="result.link"
+                        v-bind:title="result.kirjeldus.slice(0, 50)"
                 >
                   <span
-                        v-bind:title="result"
-                        data-model='Organisatsioon'
-                        v-bind:data-id="result.id"
-                        v-bind:id="'Organisatsioon_'+result.id">
+                          v-bind:title="result"
+                          data-model='Organisatsioon'
+                          v-bind:data-id="result.id"
+                          v-bind:id="'Organisatsioon_'+result.id">
                     [[ result.nimi ]] [[ result.hist_year==='' ? '' : result.hist_year ]]
                   </span>
                 </a>
-            </li>
-          </ul>
+              </li>
+            </ul>
+            <a
+                    class="hover-organisatsioon w3-button text-organisatsioon"
+                    style="text-decoration: none;"
+                    id="get_next_results_organisatsioonid"
+                    title="järgmised..."
+{#                    v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
+                    @click="getNextResults($event.target.id)"
+                    v-if="organisatsioon_results_count_all>organisatsioon_results_count_1st_page"
+            >
+              näita veel...
+            </a>
+          </details>
         </div>
         <div
                 id="leitud_objektid"
-                class="w3-cell-row w3-hover-white"
+                class="summary w3-cell-row w3-hover-white"
                 v-if="objekt_results_count_all>0"
         >
-          <div
-                  class="w3-padding-small"
-                  v-bind:style="objekt_results_count_all>objekt_results_count_1st_page ? '' : 'margin-bottom: 8px; margin-top: 8px;'"
-          >
-            <strong>
-              Kohti:
-              <a
-                  class="hover-objekt"
-                  style="text-decoration: none;"
-                  title="näita kõiki..."
-                  v-bind:href="wiki_objekt_filter_url + '?nimi_sisaldab=' + question"
-              >
-                [[ objekt_results_count_all>objekt_results_count_1st_page ? objekt_results_count_1st_page + ' / ' : '' ]]
-                [[ objekt_results_count_all ]]
-              </a>
-              <a
-                  class="hover-objekt w3-button text-objekt"
-                  style="text-decoration: none;"
-                  title="järgmised..."
-                  v-bind:href="wiki_objekt_filter_url + '?nimi_sisaldab=' + question + '&page=2'"
-                  v-if="objekt_results_count_all>objekt_results_count_1st_page"
-              >
-                näita veel...
-              </a>
-            </strong>
-          </div>
-          <ul class="w3-ul">
-            <li class="w3-padding-small" style="list-style-type:none;" v-for="result in objekt_results">
+          <details open>
+            <summary
+                    class="w3-padding-small"
+                    v-bind:style="objekt_results_count_all>objekt_results_count_1st_page ? '' : 'margin-bottom: 8px; margin-top: 8px;'"
+            >
+              <strong>
+                Kohti:
                 <a
-                    class="hover-objekt tooltip-content"
-                    style="text-decoration: none;"
-                    v-bind:href="result.link"
-                    v-bind:title="result.kirjeldus.slice(0, 50)"
+                        class="hover-objekt"
+                        style="text-decoration: none;"
+                        title="näita kõiki..."
+                        v-bind:href="wiki_objekt_filter_url + '?nimi_sisaldab=' + question"
+                >
+                  [[ objekt_results_count_all>objekt_results_count_1st_page ? objekt_results_count_1st_page + ' / ' : ''
+                  ]]
+                  [[ objekt_results_count_all ]]
+                </a>
+{#                <a#}
+{#                        class="hover-objekt w3-button text-objekt"#}
+{#                        style="text-decoration: none;"#}
+{#                        title="järgmised..."#}
+{#                        v-bind:href="wiki_objekt_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
+{#                        v-if="objekt_results_count_all>objekt_results_count_1st_page"#}
+{#                >#}
+{#                  näita veel...#}
+{#                </a>#}
+              </strong>
+            </summary>
+            <ul class="w3-ul faq__content">
+              <li class="w3-padding-small" style="list-style-type:none;" v-for="result in objekt_results">
+                <a
+                        class="hover-objekt tooltip-content"
+                        style="text-decoration: none;"
+                        v-bind:href="result.link"
+                        v-bind:title="result.kirjeldus.slice(0, 50)"
                 >
                   <span
-                        v-bind:title="result"
-                        data-model='Objekt'
-                        v-bind:data-id="result.id"
-                        v-bind:id="'Objekt_'+result.id">
+                          v-bind:title="result"
+                          data-model='Objekt'
+                          v-bind:data-id="result.id"
+                          v-bind:id="'Objekt_'+result.id">
                     [[ result.nimi ]] [[ result.hist_year==='' ? '' : result.hist_year ]]
                   </span>
                 </a>
-            </li>
-          </ul>
+              </li>
+            </ul>
+            <a
+                    class="hover-objekt w3-button text-objekt"
+                    style="text-decoration: none;"
+                    id="get_next_results_objektid"
+                    title="järgmised..."
+{#                    v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
+                    @click="getNextResults($event.target.id)"
+                    v-if="objekt_results_count_all>objekt_results_count_1st_page"
+            >
+              näita veel...
+            </a>
+          </details>
         </div>
       </div> <!-- vasakpoolne veerg -->
 
-      <div class="w3-cell"> <!-- parempoolne veerg -->
+{#      <div class="w3-cell"> <!-- parempoolne veerg -->#}
+      <div class="w3-threequarter"> <!-- parempoolne veerg -->
         <div
                 id="leitud_artiklid"
                 class="w3-cell-row w3-cell-top w3-hover-white"
@@ -210,15 +290,15 @@
                 [[ artikkel_results_count_all>artikkel_results_count_1st_page ? artikkel_results_count_1st_page + ' /' : '' ]]
                 [[ artikkel_results_count_all ]]
               </a>
-              <a
-                  class="hover-artikkel w3-button text-artikkel"
-                  style="text-decoration: none;"
-                  title="järgmised..."
-                  v-bind:href="wiki_artikkel_filter_url + '?artikkel_sisaldab=' + question + '&page=2'"
-                  v-if="artikkel_results_count_all>artikkel_results_count_1st_page"
-              >
-                näita veel...
-              </a>
+{#              <a#}
+{#                  class="hover-artikkel w3-button text-artikkel"#}
+{#                  style="text-decoration: none;"#}
+{#                  title="järgmised..."#}
+{#                  v-bind:href="wiki_artikkel_filter_url + '?artikkel_sisaldab=' + question + '&page=2'"#}
+{#                  v-if="artikkel_results_count_all>artikkel_results_count_1st_page"#}
+{#              >#}
+{#                näita veel...#}
+{#              </a>#}
             </strong>
           </div>
           <ul class="w3-ul">
@@ -231,6 +311,17 @@
                 </a>
             </li>
           </ul>
+          <a
+                  class="hover-artikkel w3-button text-artikkel"
+                  style="text-decoration: none;"
+                  id="get_next_results_artiklid"
+                  title="järgmised..."
+{#                    v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
+                  @click="getNextResults($event.target.id)"
+                  v-if="artikkel_results_count_all>artikkel_results_count_1st_page"
+          >
+            näita veel...
+          </a>
         </div>
       </div> <!-- parempoolne veerg -->
     </div>

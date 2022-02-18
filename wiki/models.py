@@ -162,10 +162,10 @@ def get_kirjeldus_lyhike(self):
 class DaatumitegaManager(models.Manager):
 
     def daatumitega(self, request):
-        if request:
+        try:
             user_is_staff = request.user.is_authenticated and request.user.is_staff
             ukj_state = request.session.get('ukj', 'off')
-        else:
+        except:
             user_is_staff = False
             ukj_state = 'off'
 

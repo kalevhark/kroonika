@@ -624,8 +624,9 @@ def algus(request):
     andmed['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
 
     # Kalendriandmed
-    user_calendar_view_last = request.session.get('user_calendar_view_last')
-    if not user_calendar_view_last:
+    try:
+        user_calendar_view_last = request.session.get('user_calendar_view_last')
+    except:
         t2na = timezone.now()
         user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
         request.session['user_calendar_view_last'] = user_calendar_view_last
@@ -1099,7 +1100,7 @@ class IsikUpdate(LoginRequiredMixin, UpdateView):
     model = Isik
     form_class = IsikForm
     pk_url_kwarg = 'pk'
-    
+
     def form_valid(self, form):
         objekt = form.save(commit=False)
         # Lisaja/muutja andmed
@@ -1150,7 +1151,7 @@ class OrganisatsioonUpdate(LoginRequiredMixin, UpdateView):
         objekt.save()
         form.save_m2m()
         return redirect('wiki:wiki_organisatsioon_detail', pk=self.object.id, slug=self.object.slug)
-    
+
 class ObjektUpdate(LoginRequiredMixin, UpdateView):
     redirect_field_name = 'next'
     model = Objekt
@@ -1313,7 +1314,7 @@ class ArtikkelFilterView(FilterView):
         context['object_list'] = artiklid
         context['filter'] = filter
         return context
-            
+
 
 #
 # Kronoloogia
@@ -1359,7 +1360,7 @@ class ArtikkelYearArchiveView(YearArchiveView):
         # Eelnev ja järgnev artikleid sisaldav aasta
         context['aasta_eelmine'] = artikkel_qs.filter(hist_year__lt=aasta).aggregate(Max('hist_year'))['hist_year__max']
         context['aasta_j2rgmine'] = artikkel_qs.filter(hist_year__gt=aasta).aggregate(Min('hist_year'))['hist_year__min']
-        
+
         # Leiame samal aastal sündinud isikud
         isik_qs = Isik.objects.daatumitega(self.request)
         syndinud_isikud = isik_qs.\
@@ -1825,7 +1826,7 @@ class OrganisatsioonFilterView(FilterView):
     filterset_fields = {
             'nimi',
             }
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         queryset = Organisatsioon.objects.daatumitega(self.request). \
@@ -1927,7 +1928,7 @@ class ObjektFilterView(FilterView):
     filterset_fields = {
             'nimi',
             }
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         queryset = Objekt.objects.daatumitega(self.request).\

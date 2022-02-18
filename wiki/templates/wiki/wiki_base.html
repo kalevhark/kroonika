@@ -372,14 +372,16 @@
             autocomplete="on"
             id="search"
             method="GET"
-            action="{% url 'wiki:wiki_artikkel_filter' %}"
+{#            action="{% url 'wiki:wiki_artikkel_filter' %}"#}
+            action="{% url 'wiki:otsi' %}"
         >
           {% csrf_token %}
           <label for="search-input">Otsi:</label>
           <input
               aria-label="Otsi"
               id="search-input"
-              name="artikkel_sisaldab"
+{#              name="artikkel_sisaldab"#}
+              name="q"
               placeholder="Sõna või fraas..."
               type="text"
           >

@@ -1,5 +1,14 @@
 from django.test import TestCase
-from django.urls import reverse
+from django.urls import reverse, resolve
+
+from . import views
+
+class WikiBaseUrlTests(TestCase):
+
+    def test_root_url_resolves_to_home_page_view(self):
+        found = resolve('/ilm/')
+        self.assertEqual(found.func, views.index)
+
 
 class IlmViewTests(TestCase):
     def test_ilm_view(self):

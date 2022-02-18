@@ -7,20 +7,58 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.middleware import SessionMiddleware
+from django.http import HttpRequest
 from django.test import Client, RequestFactory, TestCase
-from django.urls import reverse
+from django.urls import reverse, resolve
 
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 
 from wiki import views
 
+class WikiBaseUrlTests(TestCase):
+    def setUp(self) -> None:
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        # self.user = User.objects.get(id=1)
+        self.user = AnonymousUser()
+
+    def tearDown(self) -> None:
+        pass
+
+    def test_root_url_resolves_to_home_page_view(self):
+        found = resolve('/')
+        self.assertEqual(found.func, views.algus)
+
+    def test_info_url_resolves_to_info_page_view(self):
+        found = resolve('/info/')
+        self.assertEqual(found.func, views.info)
+
+    def test_kaart_url_resolves_to_kaart_page_view(self):
+        found = resolve('/kaart/')
+        self.assertEqual(found.func, views.kaart)
+
+    def test_home_page_returns_correct_html(self):
+        # request = HttpRequest()
+        response = views.algus(self.request)
+        html = response.content.decode('utf8')
+        self.assertTrue(html.startswith('<!DOCTYPE html>'))
+        # self.assertIn('<title>Valga linna kroonika</title>', html)
+        self.assertTrue(html.endswith('</html>'))
+
+
 class WikiBaseViewTests(TestCase):
+
     def test_algus_view(self):
         time_start = datetime.now()
         response = self.client.get(reverse('algus'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(time_stopp.seconds < 3)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}')
 
     def test_info_view(self):
         time_start = datetime.now()
@@ -65,6 +103,9 @@ class UserTypeUnitTest(TestCase):
         middleware.process_request(self.request)
         self.request.session.save()
         self.user = User.objects.get(id=1)
+
+    def tearDown(self) -> None:
+        pass
 
     def test_info_view_per_user_type(self) -> None:
         # Recall that middleware are not supported. You can simulate a
@@ -142,8 +183,6 @@ class UserTypeUnitTest(TestCase):
             count_restricted = model.objects.daatumitega(request).count()
             self.assertTrue(count_all > count_restricted)
 
-    def tearDown(self) -> None:
-        pass
 
 
 class AdminUserTestCase(TestCase):
