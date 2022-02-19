@@ -2188,16 +2188,20 @@ class KaardiobjektDetailView(generic.DetailView):
 
 # Kalendris näidatakse ainult neid lugusid, millel hist_date olemas
 def calendar_days_with_events_in_month(request):
-    artikkel_qs = Artikkel.objects.daatumitega(request).exclude(hist_date__isnull=True)
-    t2na = timezone.now()
-
     # Kasutaja kuuvalik
-    year = request.GET.get('year', t2na.year - 100)
-    month = request.GET.get('month', t2na.month)
+    year = request.GET.get('year')
+    month = request.GET.get('month')
+
+    try:
+        user_calendar_view_last = date(int(year), int(month), 1).strftime("%Y-%m")
+    except:
+        t2na = timezone.now()
+        user_calendar_view_last = date(t2na.year-100, t2na.month, 1).strftime("%Y-%m")
 
     # Salvestame kasutaja kuuvaliku
-    user_calendar_view_last = date(int(year), int(month), 1).strftime("%Y-%m")
     request.session['user_calendar_view_last'] = user_calendar_view_last
+
+    artikkel_qs = Artikkel.objects.daatumitega(request).exclude(hist_date__isnull=True)
 
     # Millistel päevade kohta valitud kuu ja aasta on kirjeid
     days_with_events_set = set(
@@ -2212,8 +2216,6 @@ def calendar_days_with_events_in_month(request):
     months_with_events_set = set(
         artikkel_qs.
             filter(dob__year=year).
-            # annotate(day=Extract('hist_date', 'month')).
-            # values_list('hist_month', flat=True)
             annotate(month=Extract('dob', 'month')).
             values_list('month', flat=True)
     )

@@ -101,6 +101,71 @@ class SeleniumTestsChromeOtsi(SeleniumTestsChromeBase):
         self.assertIn("Leidsime 0 vastet", el)
 
 
+
+class SeleniumTestsChromeOtsiGetNextResults(SeleniumTestsChromeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_otsi(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/wiki/otsi/'))
+
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Otsimiseks", el)
+
+        search_input = self.selenium.find_element(By.ID, "question")
+
+        search_input.send_keys('tamm')
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Leidsime", el)
+
+        self.selenium.find_element(By.ID, 'get_next_results_isikud').click()
+        time.sleep(3)
+        results = self.selenium.find_elements(By.XPATH, '//*[@id="leitud_isikud"]/details/ul/*')
+        print(results)
+        # self.assertTrue(len(results) > 0)
+        self.assertEqual(len(results), 40)
+
+        self.selenium.find_element(By.ID, 'get_next_results_artiklid').click()
+        time.sleep(3)
+        results = self.selenium.find_elements(By.XPATH, '//*[@id="leitud_artiklid"]/ul/*')
+        print(results)
+        self.assertEqual(len(results), 40)
+
+        # search_input.clear()
+        search_input.send_keys(4 * Keys.BACK_SPACE)
+        time.sleep(1)
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Vähemalt", el)
+
+        search_input.send_keys('õõõõõ')
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Leidsime 0 vastet", el)
+
+
 def getData(model):
     detail_view_name = f'wiki:wiki_{model.__name__.lower()}_detail'
     artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
