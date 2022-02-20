@@ -2188,15 +2188,19 @@ class KaardiobjektDetailView(generic.DetailView):
 
 # Kalendris näidatakse ainult neid lugusid, millel hist_date olemas
 def calendar_days_with_events_in_month(request):
-    # Kasutaja kuuvalik
-    year = request.GET.get('year')
-    month = request.GET.get('month')
+    t2na = timezone.now()
 
+    # Kasutaja kuuvalik ja selle loogikakontroll
     try:
-        user_calendar_view_last = date(int(year), int(month), 1).strftime("%Y-%m")
+        year = int(request.GET.get('year'))
+        month = int(request.GET.get('month'))
+        user_calendar_choice = date(int(year), int(month), 1)
     except:
-        t2na = timezone.now()
-        user_calendar_view_last = date(t2na.year-100, t2na.month, 1).strftime("%Y-%m")
+        year = t2na.year-100
+        month = t2na.month
+        user_calendar_choice = date(year, month, 1)
+
+    user_calendar_view_last = user_calendar_choice.strftime("%Y-%m")
 
     # Salvestame kasutaja kuuvaliku
     request.session['user_calendar_view_last'] = user_calendar_view_last

@@ -13,66 +13,96 @@ from selenium.webdriver.support.ui import WebDriverWait
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 
 from .base import SeleniumTestsChromeBase
+from .test_selenium_chrome import SeleniumTestsChromeOtsi, SeleniumTestsChromeOtsiGetNextResults
 
-class SeleniumTestsChromeProductionOtsi(SeleniumTestsChromeBase):
+class SeleniumTestsChromeProductionOtsi(SeleniumTestsChromeOtsi):
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.host_tobe_tested = 'https://valgalinn.ee'
 
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
 
     def test_otsi(self):
-        self.selenium.get('https://valgalinn.ee')
-        self.selenium.get('https://valgalinn.ee/wiki/otsi/')
+        super().test_otsi()
 
-        el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Otsimiseks", el)
+# class SeleniumTestsChromeProductionOtsi(SeleniumTestsChromeBase):
+#
+#     @classmethod
+#     def setUpClass(cls):
+#         super().setUpClass()
+#
+#     @classmethod
+#     def tearDownClass(cls):
+#         super().tearDownClass()
+#
+#     def test_otsi(self):
+#         self.selenium.get('https://valgalinn.ee')
+#         self.selenium.get('https://valgalinn.ee/wiki/otsi/')
+#
+#         el = self.selenium.find_element(By.ID, "answer").text
+#         self.assertIn("Otsimiseks", el)
+#
+#         search_input = self.selenium.find_element(By.ID, "question")
+#         search_input.send_keys('ta')
+#         try:
+#             WebDriverWait(self.selenium, timeout=3).until(
+#                 EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+#             )
+#         except TimeoutException:
+#             pass
+#         el = self.selenium.find_element(By.ID, "answer").text
+#         self.assertIn("Vähemalt", el)
+#
+#         search_input.send_keys('mm')
+#         try:
+#             WebDriverWait(self.selenium, timeout=3).until(
+#                 EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
+#             )
+#         except TimeoutException:
+#             pass
+#         el = self.selenium.find_element(By.ID, "answer").text
+#         self.assertIn("Leidsime", el)
+#
+#         # search_input.clear()
+#         search_input.send_keys(4 * Keys.BACK_SPACE)
+#         try:
+#             WebDriverWait(self.selenium, timeout=3).until(
+#                 EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+#             )
+#         except TimeoutException:
+#             pass
+#         el = self.selenium.find_element(By.ID, "answer").text
+#         self.assertIn("Vähemalt", el)
+#
+#         search_input.send_keys('õõõõõ')
+#         time.sleep(1)
+#         try:
+#             WebDriverWait(self.selenium, timeout=3).until(
+#                 EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
+#             )
+#         except TimeoutException:
+#             pass
+#         el = self.selenium.find_element(By.ID, "answer").text
+#         self.assertIn("Leidsime 0 vastet", el)
 
-        search_input = self.selenium.find_element(By.ID, "question")
-        search_input.send_keys('ta')
-        try:
-            WebDriverWait(self.selenium, timeout=3).until(
-                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
-            )
-        except TimeoutException:
-            pass
-        el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Vähemalt", el)
 
-        search_input.send_keys('mm')
-        try:
-            WebDriverWait(self.selenium, timeout=3).until(
-                EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
-            )
-        except TimeoutException:
-            pass
-        el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Leidsime", el)
+class SeleniumTestsChromeProductionOtsiGetNextResults(SeleniumTestsChromeOtsiGetNextResults):
 
-        # search_input.clear()
-        search_input.send_keys(4 * Keys.BACK_SPACE)
-        try:
-            WebDriverWait(self.selenium, timeout=3).until(
-                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
-            )
-        except TimeoutException:
-            pass
-        el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Vähemalt", el)
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.host_tobe_tested = 'https://valgalinn.ee'
 
-        search_input.send_keys('õõõõõ')
-        time.sleep(1)
-        try:
-            WebDriverWait(self.selenium, timeout=3).until(
-                EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
-            )
-        except TimeoutException:
-            pass
-        el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Leidsime 0 vastet", el)
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_otsi(self):
+        super().test_otsi()
 
 
 class SeleniumTestsChromeProductionDetailViewObject(SeleniumTestsChromeBase):

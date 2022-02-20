@@ -161,8 +161,8 @@
     </ul>
     {% if user.is_authenticated %}
       Lisaks:
-      {% for module in env %}
-        <p><small>{{ module }}</small></p>
+      {% for key, item in env.items %}
+        <br><small>{{ key }}: {{ item }}</small>
       {% endfor %}
       <div>
         <div>

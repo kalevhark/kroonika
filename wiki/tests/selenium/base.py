@@ -38,6 +38,7 @@ class SeleniumTestsChromeBase(StaticLiveServerTestCase):
         cls.selenium.implicitly_wait(10)
         cls.USERNAME = config['superuser']['USERNAME']
         cls.PASSWORD = config['superuser']['PASSWORD']
+        cls.host_tobe_tested = cls.live_server_url
 
     @classmethod
     def tearDownClass(cls):
@@ -67,6 +68,7 @@ class SeleniumTestsEdgeBase(StaticLiveServerTestCase):
         cls.selenium.implicitly_wait(10)
         cls.USERNAME = config['superuser']['USERNAME']
         cls.PASSWORD = config['superuser']['PASSWORD']
+        cls.host_tobe_tested = cls.live_server_url
 
     @classmethod
     def tearDownClass(cls):
