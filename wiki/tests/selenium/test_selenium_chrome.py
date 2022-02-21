@@ -78,6 +78,14 @@ class SeleniumTestsChromeOtsi(SeleniumTestsChromeBase):
         el = self.selenium.find_element(By.ID, "answer").text
         self.assertIn("Leidsime", el)
 
+        results = self.selenium.find_elements(By.XPATH, '//*[@id="leitud_isikud"]/details/ul/*')
+        self.assertEqual(len(results), 20)
+
+        # self.selenium.find_element(By.ID, 'get_next_results_artiklid').click()
+        # time.sleep(3)
+        results = self.selenium.find_elements(By.XPATH, '//*[@id="leitud_artiklid"]/ul/*')
+        self.assertEqual(len(results), 20)
+
         # search_input.clear()
         search_input.send_keys(4 * Keys.BACK_SPACE)
         time.sleep(3)
@@ -88,17 +96,14 @@ class SeleniumTestsChromeOtsi(SeleniumTestsChromeBase):
         except TimeoutException:
             pass
 
+        el = self.selenium.find_element(By.ID, "answer").text
+        self.assertIn("Vähemalt", el)
+
         results = self.selenium.find_elements(By.XPATH, '//*[@id="leitud_isikud"]/details/ul/*')
         self.assertEqual(len(results), 0)
 
-        self.selenium.find_element(By.ID, 'get_next_results_artiklid').click()
-        time.sleep(3)
         results = self.selenium.find_elements(By.XPATH, '//*[@id="leitud_artiklid"]/ul/*')
-        print(results)
         self.assertEqual(len(results), 0)
-
-        el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Vähemalt", el)
 
         search_input.send_keys('õõõõõ')
         try:
@@ -110,6 +115,11 @@ class SeleniumTestsChromeOtsi(SeleniumTestsChromeBase):
         el = self.selenium.find_element(By.ID, "answer").text
         self.assertIn("Leidsime 0 vastet", el)
 
+        results = self.selenium.find_elements(By.XPATH, '//*[@id="leitud_isikud"]/details/ul/*')
+        self.assertEqual(len(results), 0)
+
+        results = self.selenium.find_elements(By.XPATH, '//*[@id="leitud_artiklid"]/ul/*')
+        self.assertEqual(len(results), 0)
 
 
 class SeleniumTestsChromeOtsiGetNextResults(SeleniumTestsChromeBase):

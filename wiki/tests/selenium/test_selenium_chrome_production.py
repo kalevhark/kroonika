@@ -2,6 +2,9 @@ from datetime import datetime
 import time
 
 from django.apps import apps
+from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from selenium.common.exceptions import TimeoutException
@@ -14,6 +17,9 @@ from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 
 from .base import SeleniumTestsChromeBase
 from .test_selenium_chrome import SeleniumTestsChromeOtsi, SeleniumTestsChromeOtsiGetNextResults
+
+from django.http import HttpRequest
+
 
 class SeleniumTestsChromeProductionOtsi(SeleniumTestsChromeOtsi):
 
@@ -110,6 +116,15 @@ class SeleniumTestsChromeProductionDetailViewObject(SeleniumTestsChromeBase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        # Every test needs access to the request factory.
+        cls.factory = RequestFactory()
+        # Create an instance of a GET request.
+        cls.request = cls.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(cls.request)
+        cls.request.session.save()
+        # self.user = User.objects.get(id=1)
+        cls.request.user = AnonymousUser()
 
     @classmethod
     def tearDownClass(cls):
@@ -124,7 +139,7 @@ class SeleniumTestsChromeProductionDetailViewObject(SeleniumTestsChromeBase):
         ]
         for object in objectid:
             model = apps.get_model('wiki', object[0])
-            obj = model.objects.daatumitega(request=None).get(id=object[1])
+            obj = model.objects.daatumitega(request=self.request).get(id=object[1])
             detail_view_name = f'wiki:wiki_{model.__name__.lower()}_detail'
             kwargs = {
                 'pk': obj.id,
@@ -157,7 +172,7 @@ class SeleniumTestsChromeProductionDetailViewObject(SeleniumTestsChromeBase):
         # Juhuslikud objectid kontrolliks
         artiklid = [10, 100, 1000]
         for artikkel in artiklid:
-            obj = Artikkel.objects.daatumitega(request=None).get(id=artikkel)
+            obj = Artikkel.objects.daatumitega(request=self.request).get(id=artikkel)
             detail_view_name = f'wiki:wiki_artikkel_detail'
             kwargs = {
                 'pk': obj.id,

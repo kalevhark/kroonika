@@ -25,7 +25,7 @@ class WikiBaseUrlTests(TestCase):
         middleware.process_request(self.request)
         self.request.session.save()
         # self.user = User.objects.get(id=1)
-        self.user = AnonymousUser()
+        self.request.user = AnonymousUser()
 
     def tearDown(self) -> None:
         pass

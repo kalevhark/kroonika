@@ -19,13 +19,20 @@ class CalendarChoiceTest(UserTypeUnitTest):
 
     def setUp(self) -> None:
         super().setUp()
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        # self.user = User.objects.get(id=1)
+        self.request.user = AnonymousUser()
 
     def tearDown(self) -> None:
         super().tearDown()
 
     def test_calendar_choice_getter_empty(self) -> None:
-        # request = self.factory.get('wiki_artikkel_filter')
-        self.request.user = self.user
         self.request.GET = {}
         response = views.calendar_days_with_events_in_month(self.request)
         self.assertEqual(response.status_code, 200)

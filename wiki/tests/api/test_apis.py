@@ -14,6 +14,16 @@ class APITestWikiListingCase(TestCase):
     """
     wiki API Test Case
     """
+    def setUp(self) -> None:
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        # self.user = User.objects.get(id=1)
+        self.request.user = AnonymousUser()
 
     def test_allrouters_listing_api(self):
         self.list_api_routers = self.client.get('/api/', format='json')
@@ -23,7 +33,7 @@ class APITestWikiListingCase(TestCase):
             self.assertTrue(router in self.list_api_routers.json().keys())
 
     def test_artikkel_listing_api(self):
-        count = Artikkel.objects.daatumitega(request=None).count()
+        count = Artikkel.objects.daatumitega(request=self.request).count()
         self.list_api_result = self.client.get('/api/artikkel/', format='json')
         self.assertEquals(self.list_api_result.json()["count"], count)
         self.assertEquals(self.list_api_result.status_code, 200)
@@ -36,7 +46,7 @@ class APITestWikiListingCase(TestCase):
         self.assertEquals(self.list_api_result.status_code, 200)
 
     def test_isik_listing_api(self):
-        count = Isik.objects.daatumitega(request=None).count()
+        count = Isik.objects.daatumitega(request=self.request).count()
         self.list_api_result = self.client.get('/api/isik/', format='json')
         self.assertEquals(self.list_api_result.json()["count"], count)
         self.assertEquals(self.list_api_result.status_code, 200)
@@ -49,7 +59,7 @@ class APITestWikiListingCase(TestCase):
         self.assertEquals(self.list_api_result.status_code, 200)
 
     def test_organisatsioon_listing_api(self):
-        count = Organisatsioon.objects.daatumitega(request=None).count()
+        count = Organisatsioon.objects.daatumitega(request=self.request).count()
         self.list_api_result = self.client.get('/api/organisatsioon/', format='json')
         self.assertEquals(self.list_api_result.json()["count"], count)
         self.assertEquals(self.list_api_result.status_code, 200)
@@ -62,7 +72,7 @@ class APITestWikiListingCase(TestCase):
         self.assertEquals(self.list_api_result.status_code, 200)
 
     def test_objekt_listing_api(self):
-        count = Objekt.objects.daatumitega(request=None).count()
+        count = Objekt.objects.daatumitega(request=self.request).count()
         self.list_api_result = self.client.get('/api/objekt/', format='json')
         self.assertEquals(self.list_api_result.json()["count"], count)
         self.assertEquals(self.list_api_result.status_code, 200)
