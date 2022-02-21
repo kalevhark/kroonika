@@ -162,22 +162,41 @@ def get_kirjeldus_lyhike(self):
 class DaatumitegaManager(models.Manager):
 
     def daatumitega(self, request):
+        # Kontrollime kas kasutaja on autenditud ja admin
+        user_is_staff = request.user.is_authenticated and request.user.is_staff
+
+        ukj_state = ''
+        # Kas kalendrivalik on sessioonis olemas
         try:
-            user_is_staff = request.user.is_authenticated and request.user.is_staff
             ukj_state = request.session.get('ukj', 'off')
         except:
-            user_is_staff = False
             ukj_state = 'off'
+        finally:
+            if ukj_state not in ('on', 'off'):
+                ukj_state = 'off'
 
+        request.session['ukj'] = ukj_state
+
+        # Kasutaja Kalendriandmed
+        try:
+            user_calendar_view_last = request.session.get('user_calendar_view_last')
+        except:
+            t2na = timezone.now()
+            user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
+
+        request.session['user_calendar_view_last'] = user_calendar_view_last
+
+        # default queryset from model
         initial_queryset = super().get_queryset()
+
         # Filtreerime kasutaja järgi
         if initial_queryset.model.__name__ == 'Artikkel':
             # Kui andmebaas on Artikkel
             # if not (request.user.is_authenticated and request.user.is_staff):
-            if not user_is_staff:
-                filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
-            else:
+            if user_is_staff:
                 filtered_queryset = initial_queryset
+            else:
+                filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
 
             filtered_queryset = filtered_queryset.annotate(
                 search_month=Case(
@@ -204,14 +223,14 @@ class DaatumitegaManager(models.Manager):
                 #     Q(artikkel__in=artikkel_qs)
                 # ).distinct()
                 # Asendus eelmisele päringule, mis on kiirem
-                artikliga = initial_queryset.\
-                    filter(artikkel__in=artikkel_qs).\
+                artikliga = initial_queryset. \
+                    filter(artikkel__in=artikkel_qs). \
                     values_list('id', flat=True)
-                viitega = initial_queryset.\
-                    filter(viited__isnull=False).\
+                viitega = initial_queryset. \
+                    filter(viited__isnull=False). \
                     values_list('id', flat=True)
-                viiteta_artiklita = initial_queryset.\
-                    filter(viited__isnull=True, artikkel__isnull=True).\
+                viiteta_artiklita = initial_queryset. \
+                    filter(viited__isnull=True, artikkel__isnull=True). \
                     values_list('id', flat=True)
                 model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
                 filtered_queryset = initial_queryset.filter(id__in=model_ids)

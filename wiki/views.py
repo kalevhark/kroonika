@@ -623,13 +623,17 @@ def algus(request):
         order_by('-hist_year')
     andmed['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
 
-    # Kalendriandmed
-    try:
-        user_calendar_view_last = request.session.get('user_calendar_view_last')
-    except:
-        t2na = timezone.now()
-        user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
-        request.session['user_calendar_view_last'] = user_calendar_view_last
+    # # Kalendriandmed
+    # try:
+    #     user_calendar_view_last = request.session.get('user_calendar_view_last')
+    # except:
+    #     t2na = timezone.now()
+    #     user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
+    #     request.session['user_calendar_view_last'] = user_calendar_view_last
+    #     request.session['ukj'] = 'off'
+
+    user_calendar_view_last = request.session.get('user_calendar_view_last')
+    calendar_system = request.session.get('ukj')
 
     # Millistel kuude kohta valitud aastal on kirjeid
     years_with_events_set = set(
@@ -642,6 +646,7 @@ def algus(request):
     kalender = {
         'user_calendar_view_last': user_calendar_view_last,
         'calendar_days_with_events_in_month_url': reverse('wiki:calendar_days_with_events_in_month'),
+        'calendar_system': calendar_system,
         'years_with_events': years_with_events
     }
 

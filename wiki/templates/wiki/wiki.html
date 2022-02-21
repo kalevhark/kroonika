@@ -71,10 +71,11 @@
   var yearsWithEvents = {{ kalender.years_with_events }}
   var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"
   var userCalendarViewLast = '{{ kalender.user_calendar_view_last }}'
-  var calendarSystem = '{{ request.session.ukj }}'
+  {#var calendarSystem = '{{ request.session.ukj }}'#}
+  var calendarSystem = '{{ kalender.calendar_system }}'
 
   $( document ).ready(function() {
-    {#Kalendrividina käivitamine#}
+    {# Kalendrividina käivitamine #}
     GWDateTimePicker.init({
       targetId: "date-container"
     });

@@ -70,13 +70,16 @@ function getCalendar(theYear, theMonth) {
 
 var GWDateTimePicker = {
   init: function(param) {
-    var array = userCalendarViewLast.split('-'),
-        CYEAR = parseInt(array[0]),
-        CMONTH = parseInt(array[1]);
     var now = new Date,
-      // CYEAR = now.getFullYear() - 100,
-      // CMONTH = now.getMonth() + 1,
-      CDAY = now.getDate(),
+        userCalendarViewLastYearMonth = userCalendarViewLast.split('-');
+    if (userCalendarViewLastYearMonth.length === 2) { // kui on kujul YYYY-MM
+      var CYEAR = parseInt(userCalendarViewLastYearMonth[0]),
+          CMONTH = parseInt(userCalendarViewLastYearMonth[1]);
+    } else {
+      var CYEAR = now.getFullYear() - 100,
+          CMONTH = now.getMonth() + 1;
+    }
+    var CDAY = now.getDate(),
       $elements = {
         target: document.getElementById(param.targetId),
         wrapper: document.getElementById("gw--datetimepicker"),
@@ -317,8 +320,8 @@ var GWDateTimePicker = {
         if (calendarSystem !== 'on') { // Juhul kui vana kalendri järgi, siis üleminek 31.01 -> 14.02
           if (month === 0 && year === 1918) {
             daysNotThisMonth = 14;
-          };
-        };
+          }
+        }
 
         week = 0;
         line++;
