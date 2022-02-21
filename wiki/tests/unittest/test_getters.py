@@ -66,6 +66,15 @@ class CalendarChoiceTest(UserTypeUnitTest):
         self.assertTrue('days_with_events' in result.keys())
         self.assertEqual(result, result_default)
 
+        # empty parameters
+        kwargs = {'year': 'NaN', 'month': 'NaN'}
+        self.request.GET = kwargs
+        response = views.calendar_days_with_events_in_month(self.request)
+        result = json.loads(response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('days_with_events' in result.keys())
+        self.assertEqual(result, result_default)
+
     def test_calendar_choice_getter_equals_httprequest(self) -> None:
         # default response
         today = datetime.now()
