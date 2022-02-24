@@ -89,13 +89,25 @@ $( document ).ready(function() {
       },
       updateTooltips: function () {
         if (this.isik_results_count_all > 0 || this.organisatsioon_results_count_all > 0 || this.objekt_results_count_all > 0) {
-          var elContentTooltipFields = $(".tooltip-content span");
-          if (elContentTooltipFields.length) {
-            // initialize tooltips
-            getObjectData4tooltip(wiki_tooltip_url);
-          } else {
-            setTimeout(this.updateTooltips, 1000); // try again in 300 milliseconds
-          }
+          // var elContentTooltipFields = $(".tooltip-content span");
+          // console.log(elContentTooltipFields.length);
+          vm = this;
+          setTimeout(function () { // vajalik viivitus, et sisu laadida j6utakse
+            var elContentTooltipFields = $(".tooltip-content span");
+            // console.log('new', elContentTooltipFields.length);
+            if (elContentTooltipFields.length) {
+              // initialize tooltips
+              getObjectData4tooltip(wiki_tooltip_url);
+            } else {
+              setTimeout(vm.updateTooltips, 1000); // try again in 1000 milliseconds
+            }
+          }, 500);
+          // if (elContentTooltipFields.length) {
+          //   // initialize tooltips
+          //   getObjectData4tooltip(wiki_tooltip_url);
+          // } else {
+          //   setTimeout(this.updateTooltips, 1000); // try again in 1000 milliseconds
+          // }
         }
       },
       getAnswer: function () {
@@ -164,7 +176,6 @@ $( document ).ready(function() {
         axios.get(url, {
           params: {
             sisaldab: this.question,
-            // page: page
           }
         })
         .then(function (response) {
@@ -249,7 +260,7 @@ $( document ).ready(function() {
                   vm.loader_get_next_results_isikud = true;
                 },
                 success: function (response) {
-                  console.log(response);
+                  // console.log(response);
                   // vm.isik_results_count_all = response.data.count;
                   vm.isik_results_count_1st_page += response.results.length;
                   vm.isik_results_next_page = response.next;
@@ -270,29 +281,8 @@ $( document ).ready(function() {
                 }
               }
             );
-
-            // axios.get(url, {
-            //   params: {
-            //     sisaldab: this.question,
-            //   }
-            // })
-            // .then(function (response) {
-            //   // vm.isik_results_count_all = response.data.count;
-            //   vm.isik_results_count_1st_page += response.data.results.length;
-            //   vm.isik_results_next_page = response.data.next;
-            //   // vm.total_count = vm.total_count + vm.isik_results_count_all;
-            //   // vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
-            //   if (vm.isik_results_count_all > 0) {
-            //     // Kui leiti
-            //     vm.isik_results = vm.isik_results.concat(response.data.results);
-            //     vm.updateTooltips();
-            //   }
-            // })
-            // .catch(function (error) {
-            //   vm.answer = 'Viga! API kättesaamatu. ' + error;
-            // });
-
             break;
+
           case 'get_next_results_organisatsioonid':
             // Päring organisatsioonid
             url = vm.organisatsioon_results_next_page;
@@ -309,7 +299,7 @@ $( document ).ready(function() {
                   vm.loader_get_next_results_organisatsioonid = true;
                 },
                 success: function (response) {
-                  console.log(response);
+                  // console.log(response);
                   // vm.organisatsioon_results_count_all = response.data.count;
                   vm.organisatsioon_results_count_1st_page += response.results.length;
                   vm.organisatsioon_results_next_page = response.next;
@@ -327,32 +317,12 @@ $( document ).ready(function() {
                 },
                 complete: function () {
                   vm.loader_get_next_results_organisatsioonid = false;
+                  vm.updateTooltips();
                 }
               }
             );
-
-            // axios.get(url, {
-            //   params: {
-            //     sisaldab: this.question,
-            //   }
-            // })
-            // .then(function (response) {
-            //   // vm.organisatsioon_results_count_all = response.data.count;
-            //   vm.organisatsioon_results_count_1st_page += response.data.results.length;
-            //   vm.organisatsioon_results_next_page = response.data.next;
-            //   // vm.total_count = vm.total_count + vm.organisatsioon_results_count_all;
-            //   // vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
-            //   if (vm.organisatsioon_results_count_all > 0) {
-            //     // Kui leiti
-            //     vm.organisatsioon_results = vm.organisatsioon_results.concat(response.data.results);
-            //     vm.updateTooltips();
-            //   }
-            // })
-            // .catch(function (error) {
-            //   vm.answer = 'Viga! API kättesaamatu. ' + error;
-            // });
-
             break;
+
           case 'get_next_results_objektid':
             // Päring objektid
             url = vm.objekt_results_next_page;
@@ -369,7 +339,7 @@ $( document ).ready(function() {
                   vm.loader_get_next_results_objektid = true;
                 },
                 success: function (response) {
-                  console.log(response);
+                  // console.log(response);
                   // vm.objekt_results_count_all = response.data.count;
                   vm.objekt_results_count_1st_page += response.results.length;
                   vm.objekt_results_next_page = response.next;
@@ -390,29 +360,8 @@ $( document ).ready(function() {
                 }
               }
             );
-
-            // axios.get(url, {
-            //   params: {
-            //     sisaldab: this.question,
-            //   }
-            // })
-            // .then(function (response) {
-            //   // vm.objekt_results_count_all = response.data.count;
-            //   vm.objekt_results_count_1st_page += response.data.results.length;
-            //   vm.objekt_results_next_page = response.data.next;
-            //   // vm.total_count = vm.total_count + vm.objekt_results_count_all;
-            //   // vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
-            //   if (vm.objekt_results_count_all > 0) {
-            //     // Kui leiti
-            //     vm.objekt_results = vm.objekt_results.concat(response.data.results);
-            //     vm.updateTooltips();
-            //   }
-            // })
-            // .catch(function (error) {
-            //   vm.answer = 'Viga! API kättesaamatu. ' + error;
-            // });
-
             break;
+
           case 'get_next_results_artiklid':
             // Päring artiklid
             url = vm.artikkel_results_next_page;
@@ -430,7 +379,7 @@ $( document ).ready(function() {
                   // $("#loaderDiv_get_next_results_artiklid").show();
                 },
                 success: function (response) {
-                  console.log(response);
+                  // console.log(response);
                   // vm.artikkel_results_count_all = response.data.count;
                   vm.artikkel_results_count_1st_page += response.results.length;
                   vm.artikkel_results_next_page = response.next;
@@ -448,7 +397,6 @@ $( document ).ready(function() {
                 },
                 complete: function () {
                   vm.loader_get_next_results_artiklid = false;
-                  // $("#loaderDiv_get_next_results_artiklid").hide();
                 }
               }
             );
@@ -477,6 +425,7 @@ $( document ).ready(function() {
           default:
             break;
         }
+        vm.updateTooltips();
       }
     }
   })
