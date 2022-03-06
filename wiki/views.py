@@ -723,8 +723,8 @@ def get_v6rdle_object(request):
 # Funktsioon duplikaatkirjete koondamiseks
 # Kasutamine:
 # python manage.py shell
-# import tools
-# update_object_with_object('andmebaas', kirje_id_kust_kopeerida, kirje_id_kuhu_kopeerida)
+# from wiki.views import update_object_with_object as join
+# join('andmebaas', kirje_id_kust_kopeerida, kirje_id_kuhu_kopeerida)
 #
 def update_object_with_object(model_name='', source_id='', dest_id=''):
     model = apps.get_model('wiki', model_name)
