@@ -44,8 +44,9 @@ def logfile2df(logfile):
         quotechar='"',
         doublequote=True,
         names=names,
-        error_bad_lines=False
-        )
+        # error_bad_lines=False,
+        on_bad_lines='warn' # 'skip'
+    )
     # Teisendame kuup2evaveeruks
     df['time'] = df.apply(datestrings2date, axis=1)
     df['resp_size'] = df.apply(intorzero, axis=1)
