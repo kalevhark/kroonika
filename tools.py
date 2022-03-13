@@ -7,6 +7,9 @@ import os
 from pathlib import Path, PurePath
 import shutil
 
+import requests
+from bs4 import BeautifulSoup
+
 if __name__ == "__main__":
     import django
     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
@@ -656,7 +659,25 @@ def clean_ophan_images():
         shutil.copy(src, dst)
         os.remove(src)
 
+def get_vg_vilistlased():
+    base_url = 'https://www.valgagym.ee/vilistlased/lopetanud/list/loetelu/'
+    for aasta in range(1933, 2022):
+        suffix = ''
+        if aasta in [2004]:
+            suffix = '-'
+        if aasta in [1997, 2007, 2008]:
+            suffix = '-2'
+        url = f'{base_url}{aasta}-a{suffix}/'
+        r = requests.get(url)
+        html_doc = r.text
+        soup = BeautifulSoup(html_doc, 'html.parser')
+        cols = soup.find_all("div", class_="grid-cols-2")
+        klassid = soup.find_all("div", class_="class-row")
+        if aasta in [1940, 1945, 1966]:
+            klassid = [cols[0]]
+        print(aasta, len(cols), len(klassid))
+
 
 if __name__ == "__main__":
-    # clean_ophan_images()
+    get_vg_vilistlased()
     pass
