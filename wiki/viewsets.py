@@ -169,17 +169,39 @@ class ObjektFilter(filters.FilterSet):
     nimi = django_filters.CharFilter(field_name='nimi', lookup_expr='icontains')
     sisaldab = django_filters.CharFilter(method='filter_tags')
 
+    # def filter_tags(self, queryset, field_name, value):
+    #     # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
+    #     value = value.translate(str.maketrans(TRANSLATION))
+    #     tags = value.split(' ')
+    #     if len(tags) > 1:
+    #         for tag in tags:
+    #             queryset = queryset.filter(nimi__iregex=tag)
+    #         return queryset
+    #     else:
+    #         return queryset.filter(nimi__iregex=value)
+
     def filter_tags(self, queryset, field_name, value):
         # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
         value = value.translate(str.maketrans(TRANSLATION))
-        tags = value.split(' ')
-        if len(tags) > 1:
-            for tag in tags:
-                queryset = queryset.filter(nimi__iregex=tag)
-            return queryset
-        else:
-            return queryset.filter(nimi__iregex=value)
-
+        splits = value.split(' ')
+        # if len(splits) > 1:
+        #     for split in splits:
+        #         queryset = queryset.filter(
+        #             Q(nimi__iregex=split) |
+        #             Q(asukoht__iregex=split)
+        #         )
+        #     return queryset
+        # else:
+        #     return queryset.filter(
+        #             Q(nimi__iregex=value) |
+        #             Q(asukoht__iregex=value)
+        #         )
+        for split in splits:
+            queryset = queryset.filter(
+                Q(nimi__iregex=split) |
+                Q(asukoht__iregex=split)
+            )
+        return queryset
 
 class ObjektViewSet(viewsets.ModelViewSet):
     queryset = Objekt.objects.all()

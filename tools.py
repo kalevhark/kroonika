@@ -660,8 +660,12 @@ def clean_ophan_images():
         os.remove(src)
 
 def get_vg_vilistlased():
-    base_url = 'https://www.valgagym.ee/vilistlased/lopetanud/list/loetelu/'
+    # base_url = 'https://www.valgagym.ee/vilistlased/lopetanud/list/loetelu/'
+    base_url = 'https://www.valgagym.ee/kool/vilistlased/lopetanud/list/loetelu/'
+    data = {}
     for aasta in range(1933, 2022):
+        if aasta in [1939]:
+            continue # selle aasta andmed puuduvad
         suffix = ''
         if aasta in [2004]:
             suffix = '-'
@@ -673,10 +677,34 @@ def get_vg_vilistlased():
         soup = BeautifulSoup(html_doc, 'html.parser')
         cols = soup.find_all("div", class_="grid-cols-2")
         klassid = soup.find_all("div", class_="class-row")
-        if aasta in [1940, 1945, 1966]:
+        if aasta in [1940, 1945]:
             klassid = [cols[0]]
+        if aasta in [1966]:
+            varu = klassid
+            klassid = [cols[0]]
+            klassid.extend(varu)
         print(aasta, len(cols), len(klassid))
+        data[aasta] = {
+            'url': url,
+            'harud': {}
+        }
+        for klass in klassid:
+            haru = klass.h3
+            try:
+                haru = haru.text.strip()
+            except:
+                if aasta == 1966:
+                    haru = 'A'
+                else:
+                    haru = '-'
+            nimekiri = klass.find_all("p")
+            print(haru, nimekiri[0].text.split('\n')[:3])
+            data[aasta]['harud'][haru] = nimekiri[0].text.split('\n')
+        print()
 
+    import json
+    with open('vilistlased1933-2021.json', mode='w', encoding='utf8') as f:
+        json.dump(data, f)
 
 if __name__ == "__main__":
     get_vg_vilistlased()

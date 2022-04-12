@@ -12,8 +12,13 @@
         <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_filter' %}">
           <i class="fa fa-bank"></i>
         </a>
-        {{ object }}
+        {{ object.nimi }}
       </h4>
+      {% if object.asukoht %}
+        <h5>
+          Varasemad kohanimed: {{ object.asukoht }}
+        </h5>
+      {% endif %}
       <h5>
         {% if object.hist_date %}
           <strong>{{ object.hist_date }}</strong>

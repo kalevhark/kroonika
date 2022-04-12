@@ -601,7 +601,9 @@ class ObjektAdmin(AjaxSelectAdmin):
         # 'id',
         'colored_id',
         'seotud_kaardiga',
-        'nimi',
+        # 'nimi',
+        # 'asukoht',
+        '__str__',
         'hist_date',
         'hist_year',
         'hist_month',
@@ -609,7 +611,7 @@ class ObjektAdmin(AjaxSelectAdmin):
         'seotud_pilte',
         'seotud_viiteid',
     ]
-    search_fields = ['id', 'nimi']
+    search_fields = ['id', 'nimi', 'asukoht']
     fieldsets = [
         (None, {
             'fields': ['nimi', 'tyyp', 'asukoht', 'kirjeldus']

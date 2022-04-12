@@ -166,7 +166,7 @@ class SeleniumTestsChromeProductionDetailViewObject(SeleniumTestsChromeBase):
             except TimeoutException:
                 pass
             el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
-            self.assertIn("Lugusid", el)
+            self.assertIn("Lugusid", el, obj)
 
     def test_view_artikkel(self):
         # Juhuslikud objectid kontrolliks

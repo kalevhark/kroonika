@@ -843,7 +843,9 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         if old.asukoht:
             if new.asukoht == None:
                 print(old.asukoht)
-                new.asukoht = old.asukoht
+                # new.asukoht = old.asukoht
+                uus_asukoht = ' +++ '.join([new.asukoht, old.asukoht])
+                new.asukoht = uus_asukoht
         print('Artiklid:')
         artiklid = Artikkel.objects.filter(objektid=old)
         for art in artiklid:
@@ -1682,14 +1684,6 @@ class IsikFilter(django_filters.FilterSet):
     def nimi_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
         if self.data.get('nimi_sisaldab'):
-            # queryset = (
-            #         queryset.filter(
-            #             perenimi__icontains=self.data['nimi_sisaldab']
-            #         ) |
-            #         queryset.filter(
-            #             eesnimi__icontains=self.data['nimi_sisaldab']
-            #         )
-            # )
             queryset = queryset.annotate(nimi=Concat('eesnimi', Value(' '), 'perenimi'))
             fraasid = self.data.get('nimi_sisaldab', '').split(' ')
             for fraas in fraasid:
@@ -1908,13 +1902,24 @@ class ObjektFilter(django_filters.FilterSet):
     #         queryset = queryset.filter(nimi__iregex=r'{}'.format(otsi_fraas))
     #     return queryset
 
+    # def nimi_sisaldab_filter(self, queryset, name, value):
+    #     # päritud fraas nimes
+    #     if self.data.get('nimi_sisaldab'):
+    #         fraasid = self.data.get('nimi_sisaldab', '').split(' ')
+    #         for fraas in fraasid:
+    #             queryset = queryset.filter(
+    #                 nimi__icontains=fraas
+    #             )
+    #     return queryset
+
     def nimi_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
         if self.data.get('nimi_sisaldab'):
+            queryset = queryset.annotate(nimi_asukoht=Concat('nimi', Value(' '), 'asukoht'))
             fraasid = self.data.get('nimi_sisaldab', '').split(' ')
             for fraas in fraasid:
                 queryset = queryset.filter(
-                    nimi__icontains=fraas
+                    nimi_asukoht__icontains=fraas
                 )
         return queryset
 

@@ -464,7 +464,7 @@ class Objekt(models.Model):
         'Asukoht',
         max_length=200,
         blank=True,
-        help_text='Lähiaadress kaasajal'
+        help_text='Varasemad aadressikujud'
     )
     hist_date = models.DateField(
         'Valminud',
@@ -554,6 +554,12 @@ class Objekt(models.Model):
         return self.nimi
 
     def __str__(self):
+        # Moodustame nime
+        nimeosad = [self.nimi]
+        if self.asukoht:
+            nimeosad.append(f'({self.asukoht})')
+
+        # Lisame daatumid
         if self.hist_date:
             try:
                 sy = self.dob.year
@@ -571,12 +577,13 @@ class Objekt(models.Model):
                 su = self.hist_enddate.year
         elif self.hist_endyear:
             su = self.hist_endyear
-        elif self.gone:
+        elif sy and self.gone:
             su = '?'
         else:
             su = ''
-        daatumid = f' {sy}-{su}' if any([sy, su]) else ''
-        return self.nimi + daatumid
+        if any([sy, su]):
+            nimeosad.append(f'{sy}-{su}')
+        return ' '.join(nimeosad)
 
     @property
     def kirjeldus_lyhike(self):

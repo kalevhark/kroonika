@@ -58,7 +58,7 @@ class SeleniumTestsEdgeProductionDetailViewObject(SeleniumTestsEdgeBase):
                 nimi = obj.perenimi
             except:
                 nimi = obj.nimi
-            self.assertIn(nimi, el)
+            self.assertIn(nimi, el, obj)
             # Kontrollime kas isikuga seotud objectid laeti
             try:
                 el = self.selenium.find_element(By.ID, "loaderDiv1")
@@ -71,7 +71,7 @@ class SeleniumTestsEdgeProductionDetailViewObject(SeleniumTestsEdgeBase):
             except TimeoutException:
                 pass
             el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
-            self.assertIn("Lugusid", el)
+            self.assertIn("Lugusid", el, obj)
 
     def test_view_HTTP404_for_non_authented_user(self):
         pass
