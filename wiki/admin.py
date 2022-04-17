@@ -722,7 +722,7 @@ class PiltAdmin(AjaxSelectAdmin):
         'profiilipilt',
         'pilt',
         'pildi_suurus']
-    search_fields = ['nimi']
+    search_fields = ['id', 'nimi']
     filter_horizontal = (
         # 'viited',
         # 'allikad',
