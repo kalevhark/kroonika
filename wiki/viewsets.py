@@ -121,19 +121,24 @@ class IsikFilter(filters.FilterSet):
         # translation = {'w': '[vw]', 'v': '[vw]'}
         value = value.translate(str.maketrans(TRANSLATION))
         splits = value.split(' ')
-        if len(splits) > 1:
-            for split in splits:
-                queryset = queryset.filter(
-                    Q(eesnimi__iregex=split) |
-                    Q(perenimi__iregex=split)
-                )
-            return queryset
-        else:
-            return queryset.filter(
-                    Q(eesnimi__iregex=value) |
-                    Q(perenimi__iregex=value)
-                )
-
+        # if len(splits) > 1:
+        #     for split in splits:
+        #         queryset = queryset.filter(
+        #             Q(eesnimi__iregex=split) |
+        #             Q(perenimi__iregex=split)
+        #         )
+        #     return queryset
+        # else:
+        #     return queryset.filter(
+        #             Q(eesnimi__iregex=value) |
+        #             Q(perenimi__iregex=value)
+        #         )
+        for split in splits:
+            queryset = queryset.filter(
+                Q(eesnimi__iregex=split) |
+                Q(perenimi__iregex=split)
+            )
+        return queryset
 
 class IsikViewSet(viewsets.ModelViewSet):
     """
@@ -232,14 +237,17 @@ class OrganisatsioonFilter(filters.FilterSet):
     def filter_tags(self, queryset, field_name, value):
         # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
         value = value.translate(str.maketrans(TRANSLATION))
-        tags = value.split(' ')
-        if len(tags) > 1:
-            for tag in tags:
-                queryset = queryset.filter(nimi__iregex=tag)
-            return queryset
-        else:
-            return queryset.filter(nimi__iregex=value)
-
+        # tags = value.split(' ')
+        # if len(tags) > 1:
+        #     for tag in tags:
+        #         queryset = queryset.filter(nimi__iregex=tag)
+        #     return queryset
+        # else:
+        #     return queryset.filter(nimi__iregex=value)
+        splits = value.split(' ')
+        for split in splits:
+            queryset = queryset.filter(nimi__iregex=split)
+        return queryset
 
 class OrganisatsioonViewSet(viewsets.ModelViewSet):
     queryset = Organisatsioon.objects.all()
