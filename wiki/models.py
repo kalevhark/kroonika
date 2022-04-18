@@ -770,7 +770,7 @@ class Organisatsioon(models.Model):
                 su = self.hist_enddate.year
         elif self.hist_endyear:
             su = self.hist_endyear
-        elif self.gone:
+        elif sy and self.gone:
             su = '?'
         else:
             su = ''
@@ -991,7 +991,7 @@ class Isik(models.Model):
                 su = self.hist_enddate.year
         elif self.hist_endyear:
             su = self.hist_endyear
-        elif self.gone:
+        elif sy and self.gone:
             su = '?'
         else:
             su = ''
