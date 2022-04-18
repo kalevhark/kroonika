@@ -1575,9 +1575,13 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
 
 def artikkel_month_archive_otheryears(request, year, month):
     artikkel_qs = Artikkel.objects.daatumitega(request)
-    sel_kuul = artikkel_qs. \
-        exclude(hist_year=year). \
-        filter(Q(dob__month=month) | Q(doe__month=month) | Q(hist_month=month))
+    # sel_kuul = artikkel_qs. \
+    #     exclude(hist_year=year). \
+    #     filter(Q(dob__month=month) | Q(doe__month=month) | Q(hist_month=month))
+    sel_kuul_bydate_ids_list = artikkel_qs.filter(Q(dob__month=month) | Q(doe__month=month)).values_list('id', flat=True)
+    sel_kuul_bymonth_ids_list = artikkel_qs.filter(dob__isnull=True, hist_month=month).values_list('id', flat=True)
+    sel_kuul_ids = [*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list]
+    sel_kuul = artikkel_qs.filter(id__in=sel_kuul_ids)
     return render(request, 'wiki/includes/object_list.html', {'object_list': sel_kuul})
 
 class ArtikkelDayArchiveView(DayArchiveView):
