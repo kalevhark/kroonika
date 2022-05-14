@@ -19,11 +19,18 @@ from .models import (
 
 class PiltForm(ModelForm):
     viited = AutoCompleteSelectMultipleField('viited', required=False)
+
     isikud = AutoCompleteSelectMultipleField('isikud', required=False)
     organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
     artiklid = AutoCompleteSelectMultipleField('artiklid', required=False)
     allikad = AutoCompleteSelectMultipleField('allikad', required=False)
+
+    profiilipilt_isikud = AutoCompleteSelectMultipleField('isikud', required=False)
+    profiilipilt_organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
+    profiilipilt_objektid = AutoCompleteSelectMultipleField('objektid', required=False)
+    profiilipilt_artiklid = AutoCompleteSelectMultipleField('artiklid', required=False)
+    profiilipilt_allikad = AutoCompleteSelectMultipleField('allikad', required=False)
 
     class Meta:
         model = Pilt

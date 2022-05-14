@@ -827,7 +827,34 @@ def muis_viited_inuse():
         }
     return muis_viited
 
+import re
+def init_pilt_tyyp():
+    otsistringid = [f'_{otsistring}_' for otsistring in ['art', 'isik', 'org', 'obj']]
+    pattern = re.compile("|".join(re.escape(x) for x in otsistringid))
+    pildid = Pilt.objects.all()
+    for pilt in pildid:
+        if not pattern.findall(pilt.nimi, re.IGNORECASE):
+            pilt.tyyp = 'P'
+            pilt.save(update_fields=['tyyp'])
 
+def init_pilt_profiilipildid():
+    pildid = Pilt.objects.all()
+    for pilt in pildid:
+        if pilt.profiilipilt_allikas and pilt.allikad.all():
+            for obj in pilt.allikad.all():
+                pilt.profiilipilt_allikad.add(obj)
+        if pilt.profiilipilt_artikkel and pilt.artiklid.all():
+            for obj in pilt.artiklid.all():
+                pilt.profiilipilt_artiklid.add(obj)
+        if pilt.profiilipilt_isik and pilt.isikud.all():
+            for obj in pilt.isikud.all():
+                pilt.profiilipilt_isikud.add(obj)
+        if pilt.profiilipilt_organisatsioon and pilt.organisatsioonid.all():
+            for obj in pilt.organisatsioonid.all():
+                pilt.profiilipilt_organisatsioonid.add(obj)
+        if pilt.profiilipilt_objekt and pilt.objektid.all():
+            for obj in pilt.objektid.all():
+                pilt.profiilipilt_objektid.add(obj)
 
 if __name__ == "__main__":
     # get_vg_vilistlased()

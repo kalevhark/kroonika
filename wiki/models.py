@@ -1450,7 +1450,7 @@ class Pilt(models.Model):
     tyyp = models.CharField(
         max_length=1,
         choices=PILDITYYP,
-        default=PILT, # 'P'
+        default=TEKST, # 'T'
         help_text='Mis tüüpi pildifail (foto, tekstiskaneering, muu)'
     )
     allikad = models.ManyToManyField(

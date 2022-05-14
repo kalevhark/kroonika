@@ -721,7 +721,9 @@ class PiltAdmin(AjaxSelectAdmin):
         'kasutatud',
         'profiilipilt',
         'pilt',
-        'pildi_suurus']
+        'pildi_suurus'
+    ]
+    list_filter = ['tyyp']
     search_fields = ['id', 'nimi']
     filter_horizontal = (
         # 'viited',
@@ -734,7 +736,7 @@ class PiltAdmin(AjaxSelectAdmin):
     form = PiltForm
     fieldsets = [
         (None, {
-            'fields': ['nimi', 'autor', 'kirjeldus', 'pilt']
+            'fields': ['tyyp', 'nimi', 'autor', 'kirjeldus', 'pilt']
             }
          ),
         (None, {
@@ -764,6 +766,18 @@ class PiltAdmin(AjaxSelectAdmin):
                         'profiilipilt_isik',
                         'profiilipilt_organisatsioon',
                         'profiilipilt_objekt')]
+        }
+         ),
+        ('Profiilipildid', {
+            'fields': [
+                (
+                'profiilipilt_isikud',
+                'profiilipilt_organisatsioonid',
+                'profiilipilt_objektid',
+                'profiilipilt_allikad',
+                'profiilipilt_artiklid',
+                 )
+            ]
         }
          ),
         (None, {
