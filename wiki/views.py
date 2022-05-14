@@ -1043,6 +1043,9 @@ class ArtikkelDetailView(generic.DetailView):
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(
             artikkel=self.object
         )
+        context['seotud_pildid'] = Pilt.objects. \
+            filter(artiklid=self.object). \
+            order_by('-profiilipilt_artikkel', 'hist_year', 'hist_date')
 
         # Järjestame artiklid kronoloogiliselt
         loend = list(artikkel_qs.values_list('id', flat=True))
@@ -1749,6 +1752,9 @@ class IsikDetailView(generic.DetailView):
         context['seotud_organisatsioonid'] = Organisatsioon.objects.daatumitega(self.request).filter(
             isik=self.object)
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(isik=self.object)
+        context['seotud_pildid'] = Pilt.objects. \
+            filter(isikud=self.object). \
+            order_by('-profiilipilt_isik', 'hist_year', 'hist_date')
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
@@ -1869,10 +1875,13 @@ class OrganisatsioonDetailView(generic.DetailView):
         # Otseseosed objectidega
         # isik_related = self.object.isik_set.all().values_list('id', flat=True)
         # context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(id__in=isik_related)
-        context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(
-            organisatsioonid=self.object
-        )
-        context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(organisatsioon__id=self.object.id)
+        context['seotud_isikud'] = Isik.objects.daatumitega(self.request).\
+            filter(organisatsioonid=self.object)
+        context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).\
+            filter(organisatsioon__id=self.object.id)
+        context['seotud_pildid'] = Pilt.objects. \
+            filter(organisatsioonid=self.object). \
+            order_by('-profiilipilt_organisatsioon', 'hist_year', 'hist_date')
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
@@ -2000,6 +2009,9 @@ class ObjektDetailView(generic.DetailView):
         context['seotud_objektid'] = Objekt.objects.\
             daatumitega(self.request).\
             filter(objektid=self.object)
+        context['seotud_pildid'] = Pilt.objects. \
+            filter(objektid=self.object). \
+            order_by('-profiilipilt_objekt', 'hist_year', 'hist_date')
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 

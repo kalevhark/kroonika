@@ -706,6 +706,131 @@ def get_vg_vilistlased():
     with open('vilistlased1933-2021.json', mode='w', encoding='utf8') as f:
         json.dump(data, f)
 
+import time
+import xml.etree.ElementTree as ET
+
+import pandas as pd
+
+def get_muis_vamf():
+    with open('resource.rdf', 'r') as resource:
+        content = resource.read()
+        root = ET.fromstring(content)
+
+    muis_viited = muis_viited_inuse()
+    muis_vamf = []
+
+    for child in root:
+        # print(child.tag)
+        if 'E78' in child.tag:
+            n = 1
+            total = len(child)
+            for crm in child:
+                url = crm.attrib['{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource']
+                print(n, url)
+                r = requests.get(url)
+                html_doc = r.text
+                soup = BeautifulSoup(html_doc, 'html.parser')
+                table = soup.find_all("div", id="general_museaal")[0]
+                trs = table.find_all("tr")
+                number, nimetus, dateering, inuse = '', '', '', ''
+
+                for tr in trs:
+                    if tr.text.find('Number') == 0:
+                        number = tr.find_all('td')[0].text
+                        if number in muis_viited:
+                            inuse = 'OK'
+                    if tr.text.find('Nimetus') == 0:
+                        nimetus = tr.find_all('td')[0].text
+                    if tr.text.find('Dateering') == 0:
+                        dateering = tr.find_all('td')[0].text
+
+                pildiplokid = soup.find_all('table', class_='grp_block_table')
+                pilte = len(pildiplokid)
+
+                for pildiplokk in pildiplokid:
+                    trs = pildiplokk.find_all('tr')
+                    pisipilt_failinimi = trs[0].find_all('td')[0].text
+                    pisipilt_url = trs[0].find_all('td')[0].a.get('href')
+                    pisipilt_suurus = trs[1].find_all('td')[0].text
+                    if len(trs) > 3:
+                        suurpilt_failinimi = trs[3].find_all('td')[0].text
+                        suurpilt_url = trs[3].find_all('td')[0].a.get('href')
+                        suurpilt_suurus = trs[4].find_all('td')[0].text
+                    else:
+                        suurpilt_failinimi = ''
+                        suurpilt_url = ''
+                        suurpilt_suurus = ''
+                    # print(
+                    #     number,
+                    #     nimetus,
+                    #     inuse,
+                    #     pisipilt_failinimi,
+                    #     pisipilt_suurus,
+                    #     suurpilt_failinimi,
+                    #     suurpilt_suurus
+                    # )
+
+                    muis_vamf.append(
+                        [
+                            number,
+                            nimetus,
+                            dateering,
+                            inuse,
+                            pilte,
+                            url,
+                            pisipilt_failinimi,
+                            pisipilt_suurus,
+                            pisipilt_url,
+                            suurpilt_failinimi,
+                            suurpilt_suurus,
+                            suurpilt_url
+                        ]
+                    )
+                n += 1
+                time.sleep(1)
+    columns = [
+        'number',
+        'nimetus',
+        'dateering',
+        'inuse',
+        'pilte',
+        'url',
+        'pisipilt_failinimi',
+        'pisipilt_suurus',
+        'pisipilt_url',
+        'suurpilt_failinimi',
+        'suurpilt_suurus',
+        'suurpilt_url'
+    ]
+    df = pd.DataFrame(
+        muis_vamf,
+        columns=columns
+    )
+    print(df.shape)
+    df.to_excel(
+        "muis_vamf.xlsx",
+        sheet_name='muis_vamf'
+    )
+
+def muis_viited_inuse():
+    muis_viited = {}
+    from wiki.models import Pilt, Viide, Allikas
+    allikad = Allikas.objects.filter(id__in=[43, 33])
+    viited = Viide.objects.filter(allikas__in=allikad)
+    for viide in viited:
+        muis_viited[viide.kohaviit] = {
+            'art': [artikkel.id for artikkel in viide.artikkel_set.all() if viide.artikkel_set.all()],
+            'isik': [isik.id for isik in viide.isik_set.all() if viide.isik_set.all()],
+            'org': [organisatsioon.id for organisatsioon in viide.organisatsioon_set.all() if viide.organisatsioon_set.all()],
+            'obj': [objekt.id for objekt in viide.objekt_set.all() if viide.objekt_set.all()],
+            'pilt': [pilt.id for pilt in viide.pilt_set.all() if viide.pilt_set.all()],
+        }
+    return muis_viited
+
+
+
 if __name__ == "__main__":
-    get_vg_vilistlased()
+    # get_vg_vilistlased()
+    get_muis_vamf()
+    # muis_viited_inuse()
     pass

@@ -15,7 +15,8 @@
   }
 </script>
 
-{% with pildid=object.pilt_set.all %}
+{#{% with pildid=object.pilt_set.all %}#}
+{% with pildid=seotud_pildid %}
   {% if pildid %}
     <p>
       <i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
