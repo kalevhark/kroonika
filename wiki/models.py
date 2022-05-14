@@ -1381,6 +1381,14 @@ class Artikkel(models.Model):
 
 
 class Pilt(models.Model):
+    PILT = 'P'
+    TEKST = 'T'
+    MUU = 'M'
+    PILDITYYP = (
+        (PILT, 'Pilt'),  # foto, joonistus, skeem
+        (TEKST, 'Tekst'), # tekstiskaneering
+        (MUU, 'Muu')
+    )
     nimi = models.CharField(
         'Pealkiri',
         max_length=100,
@@ -1439,29 +1447,40 @@ class Pilt(models.Model):
         choices=KUUD,
         help_text="ja/või kuu"
     )
+    tyyp = models.CharField(
+        max_length=1,
+        choices=PILDITYYP,
+        default=PILT, # 'P'
+        help_text='Mis tüüpi pildifail (foto, tekstiskaneering, muu)'
+    )
     allikad = models.ManyToManyField(
         Allikas,
         blank=True,
+        related_name='pildid',
         verbose_name='Seotud allikad'
     )
     artiklid = models.ManyToManyField(
         Artikkel,
         blank=True,
+        related_name='pildid',
         verbose_name='Seotud artiklid'
     )
     isikud = models.ManyToManyField(
         Isik,
         blank=True,
+        related_name='pildid',
         verbose_name='Seotud isikud'
     )
     organisatsioonid = models.ManyToManyField(
         Organisatsioon,
         blank=True,
+        related_name='pildid',
         verbose_name='Seotud organisatsioonid'
     )
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
+        related_name='pildid',
         verbose_name='Seotud objektid'
     )
     # NB! Pildi puhul kasutatakse veebis ainult esimest viidet
@@ -1490,6 +1509,37 @@ class Pilt(models.Model):
     profiilipilt_objekt = models.BooleanField(
         'Objekti profiilipilt',
         default=False
+    )
+    # Millistele objectidel kuvatakse profiilipildina
+    profiilipilt_allikad = models.ManyToManyField(
+        Allikas,
+        blank=True,
+        related_name='profiilipildid',
+        verbose_name='Seotud allikad'
+    )
+    profiilipilt_artiklid = models.ManyToManyField(
+        Artikkel,
+        blank=True,
+        related_name='profiilipildid',
+        verbose_name='Seotud artiklid'
+    )
+    profiilipilt_isikud = models.ManyToManyField(
+        Isik,
+        blank=True,
+        related_name='profiilipildid',
+        verbose_name='Seotud isikud'
+    )
+    profiilipilt_organisatsioonid = models.ManyToManyField(
+        Organisatsioon,
+        blank=True,
+        related_name='profiilipildid',
+        verbose_name='Seotud organisatsioonid'
+    )
+    profiilipilt_objektid = models.ManyToManyField(
+        Objekt,
+        blank=True,
+        related_name='profiilipildid',
+        verbose_name='Seotud objektid'
     )
     # Tehnilised väljad
     inp_date = models.DateTimeField(
