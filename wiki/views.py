@@ -1030,9 +1030,11 @@ class ArtikkelDetailView(generic.DetailView):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas artiklile on määratud profiilipilt
-        context['profiilipilt'] = Pilt.objects.filter(
-            artiklid__id=self.object.id).filter(profiilipilt_artikkel=True).first()
-
+        # context['profiilipilt'] = Pilt.objects.filter(
+        #     artiklid__id=self.object.id).filter(profiilipilt_artikkel=True).first()
+        context['profiilipilt'] = Pilt.objects.\
+            filter(profiilipilt_artiklid__in=[self.object]).\
+            first()
         # Seotud objectid
         context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(
             artikkel=self.object
@@ -1045,7 +1047,7 @@ class ArtikkelDetailView(generic.DetailView):
         )
         context['seotud_pildid'] = Pilt.objects. \
             filter(artiklid=self.object). \
-            order_by('-profiilipilt_artikkel', 'hist_year', 'hist_date')
+            order_by('tyyp', '-profiilipilt_artikkel', 'hist_year', 'hist_date')
 
         # Järjestame artiklid kronoloogiliselt
         loend = list(artikkel_qs.values_list('id', flat=True))
@@ -1741,11 +1743,13 @@ class IsikDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
 
         # Kas isikule on määratud profiilipilt
-        context['profiilipilt'] = Pilt.objects.\
-            filter(isikud__id=self.object.id).\
-            filter(profiilipilt_isik=True).\
+        # context['profiilipilt'] = Pilt.objects.\
+        #     filter(isikud__id=self.object.id).\
+        #     filter(profiilipilt_isik=True).\
+        #     first()
+        context['profiilipilt'] = Pilt.objects. \
+            filter(profiilipilt_isikud__in=[self.object]). \
             first()
-
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Isik', self.object)
         # Otseseosed objektidega
@@ -1754,7 +1758,7 @@ class IsikDetailView(generic.DetailView):
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(isik=self.object)
         context['seotud_pildid'] = Pilt.objects. \
             filter(isikud=self.object). \
-            order_by('-profiilipilt_isik', 'hist_year', 'hist_date')
+            order_by('tyyp', '-profiilipilt_isik', 'hist_year', 'hist_date')
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
@@ -1867,8 +1871,11 @@ class OrganisatsioonDetailView(generic.DetailView):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas organisatsioonile on määratud profiilipilt
-        context['profiilipilt'] = Pilt.objects.filter(
-            organisatsioonid__id=self.object.id).filter(profiilipilt_organisatsioon=True).first()
+        # context['profiilipilt'] = Pilt.objects.filter(
+        #     organisatsioonid__id=self.object.id).filter(profiilipilt_organisatsioon=True).first()
+        context['profiilipilt'] = Pilt.objects. \
+            filter(profiilipilt_organisatsioonid__in=[self.object]). \
+            first()
 
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Organisatsioon', self.object)
@@ -1881,7 +1888,7 @@ class OrganisatsioonDetailView(generic.DetailView):
             filter(organisatsioon__id=self.object.id)
         context['seotud_pildid'] = Pilt.objects. \
             filter(organisatsioonid=self.object). \
-            order_by('-profiilipilt_organisatsioon', 'hist_year', 'hist_date')
+            order_by('tyyp', '-profiilipilt_organisatsioon', 'hist_year', 'hist_date')
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
@@ -1984,10 +1991,14 @@ class ObjektDetailView(generic.DetailView):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas objektile on määratud profiilipilt
-        context['profiilipilt'] = Pilt.objects.\
-            filter(objektid__id=self.object.id).\
-            filter(profiilipilt_objekt=True).\
+        # context['profiilipilt'] = Pilt.objects.\
+        #     filter(objektid__id=self.object.id).\
+        #     filter(profiilipilt_objekt=True).\
+        #     first()
+        context['profiilipilt'] = Pilt.objects. \
+            filter(profiilipilt_objektid__in=[self.object]). \
             first()
+
         # Kas objektil on kaardivaateid
         if self.request.user.is_authenticated and self.request.user.is_staff:
             context['seotud_kaardiobjektid'] = Kaardiobjekt.objects. \
@@ -2011,7 +2022,7 @@ class ObjektDetailView(generic.DetailView):
             filter(objektid=self.object)
         context['seotud_pildid'] = Pilt.objects. \
             filter(objektid=self.object). \
-            order_by('-profiilipilt_objekt', 'hist_year', 'hist_date')
+            order_by('tyyp', '-profiilipilt_objekt', 'hist_year', 'hist_date')
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
@@ -2025,9 +2036,13 @@ def get_object_data4tooltip(request):
     obj = model.objects.get(id=id)
     if obj.kirjeldus:
         heading = f'<strong>{obj}</strong>'
-        if obj.profiilipilt():
-            img = settings.MEDIA_URL + obj.profiilipilt().pilt_thumbnail.name
-            img = f'<img class="tooltip-content-img" src="{img}" alt="{obj.profiilipilt()}">'
+        # if obj.profiilipilt():
+        if obj.profiilipildid.exists():
+            # img = settings.MEDIA_URL + obj.profiilipilt().pilt_thumbnail.name
+            profiilipilt = obj.profiilipildid.first()
+            img = settings.MEDIA_URL + profiilipilt.pilt_thumbnail.name
+            # img = f'<img class="tooltip-content-img" src="{img}" alt="{obj.profiilipilt()}">'
+            img = f'<img class="tooltip-content-img" src="{img}" alt="{profiilipilt}">'
         else:
             img = ''
         content = f'<div><p>{heading}</p><p>{img}<small>{obj.kirjeldus_lyhike}</small><p></div>'

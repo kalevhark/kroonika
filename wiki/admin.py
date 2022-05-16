@@ -336,7 +336,8 @@ class ArtikkelAdmin(AjaxSelectAdmin):
 
     # Kui palju on objektiga seotud pilte
     def seotud_pilte(self, obj):
-        return obj.pilt_set.count()
+        # return obj.pilt_set.count()
+        return obj.pildid.count()
     seotud_pilte.short_description = 'Pilte'
 
     # Kui palju on objektiga seotud viiteid
@@ -494,7 +495,8 @@ class IsikAdmin(AjaxSelectAdmin):
 
     # Kui palju on isikuga seotud pilte
     def seotud_pilte(self, obj):
-        return obj.pilt_set.count()
+        # return obj.pilt_set.count()
+        return obj.pildid.count()
     seotud_pilte.short_description = 'Pilte'
 
     # Kui palju on objektiga seotud viiteid
@@ -567,7 +569,8 @@ class OrganisatsioonAdmin(AjaxSelectAdmin):
 
     # Kui palju on organisatsiooniga seotud pilte
     def seotud_pilte(self, obj):
-        return obj.pilt_set.count()
+        # return obj.pilt_set.count()
+        return obj.pildid.count()
     seotud_pilte.short_description = 'Pilte'
 
     # Kui palju on organisatsiooniga seotud viiteid
@@ -682,7 +685,8 @@ class ObjektAdmin(AjaxSelectAdmin):
 
     # Kui palju on objektiga seotud pilte
     def seotud_pilte(self, obj):
-        return obj.pilt_set.count()
+        # return obj.pilt_set.count()
+        return obj.pildid.count()
     seotud_pilte.short_description = 'Pilte'
 
     # Kui palju on objektiga seotud viiteid

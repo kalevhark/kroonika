@@ -1,16 +1,17 @@
-{% if obj.profiilipilt %}
+{#{% if obj.profiilipilt %}#}
+{% if obj.profiilipildid.exists %}
 {#  <!--  monitori ja mobiilversioon-->#}
-{#  <div class="pilt-wiki-algus w3-hide-medium" >#}
-  <div class="pilt-wiki-algus w3-block" >
+  {% with obj.profiilipildid.first as profiilipilt %}
+    <div class="pilt-wiki-algus w3-block" >
 		<img
         class="pilt-{{ tyyp }}-small"
-        {% if obj.profiilipilt.pilt.width > 400 %}
-          src="{{ obj.profiilipilt.pilt_thumbnail.url }}"
+        {% if profiilipilt.pilt.width > 400 %}
+          src="{{ profiilipilt.pilt_thumbnail.url }}"
         {% else %}
-          src="{{ obj.profiilipilt.pilt.url }}"
+          src="{{ profiilipilt.pilt.url }}"
         {% endif %}
-        alt="{{ obj.profiilipilt }}"
-        title="{{ obj.profiilipilt }}"
+        alt="{{ profiilipilt }}"
+        title="{{ profiilipilt }}"
     />
 		{% if tyyp == "portree" %}
         <small class="w3-hide-medium">
@@ -18,4 +19,22 @@
         </small>
     {% endif %}
 	</div>
+  {% endwith %}
+{#  <div class="pilt-wiki-algus w3-block" >#}
+{#		<img#}
+{#        class="pilt-{{ tyyp }}-small"#}
+{#        {% if obj.profiilipilt.pilt.width > 400 %}#}
+{#          src="{{ obj.profiilipilt.pilt_thumbnail.url }}"#}
+{#        {% else %}#}
+{#          src="{{ obj.profiilipilt.pilt.url }}"#}
+{#        {% endif %}#}
+{#        alt="{{ obj.profiilipilt }}"#}
+{#        title="{{ obj.profiilipilt }}"#}
+{#    />#}
+{#		{% if tyyp == "portree" %}#}
+{#        <small class="w3-hide-medium">#}
+{#          {{ obj.kirjeldus|truncatewords:10 }}#}
+{#        </small>#}
+{#    {% endif %}#}
+{#	</div>#}
 {% endif %}
