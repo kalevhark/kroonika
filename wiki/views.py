@@ -177,7 +177,8 @@ def info(request):
                 'Artikkel: ',
                 f'kirjeid {artikkel_qs.count()} ',
                 f'viidatud {artikkel_qs.filter(viited__isnull=False).distinct().count()} ',
-                f'pildiga {artikkel_qs.filter(pilt__isnull=False).distinct().count()} '
+                # f'pildiga {artikkel_qs.filter(pilt__isnull=False).distinct().count()} ',
+                f'pildiga {artikkel_qs.filter(pildid__isnull=False).distinct().count()} '
             ]
         )
     )
@@ -188,7 +189,8 @@ def info(request):
                 'Isik: ',
                 f'kirjeid {isik_qs.count()} ',
                 f'viidatud {isik_qs.filter(viited__isnull=False).distinct().count()} ',
-                f'pildiga {isik_qs.filter(pilt__isnull=False).distinct().count()} '
+                # f'pildiga {isik_qs.filter(pilt__isnull=False).distinct().count()} ',
+                f'pildiga {isik_qs.filter(pildid__isnull=False).distinct().count()} '
             ]
         )
     )
@@ -199,7 +201,8 @@ def info(request):
                 'Objekt: ',
                 f'kirjeid {objekt_qs.count()} ',
                 f'viidatud {objekt_qs.filter(viited__isnull=False).distinct().count()} ',
-                f'pildiga {objekt_qs.filter(pilt__isnull=False).distinct().count()} ',
+                # f'pildiga {objekt_qs.filter(pilt__isnull=False).distinct().count()} ',
+                f'pildiga {objekt_qs.filter(pildid__isnull=False).distinct().count()} ',
                 f'seotud kaardiga {objekt_qs.filter(id__in=kaardiobjektiga_objektid_ids).count()} '
             ]
         )
@@ -211,7 +214,8 @@ def info(request):
                 'Organisatsioon: ',
                 f'kirjeid {organisatsioon_qs.count()} ',
                 f'viidatud {organisatsioon_qs.filter(viited__isnull=False).distinct().count()} ',
-                f'pildiga {organisatsioon_qs.filter(pilt__isnull=False).distinct().count()} '
+                # f'pildiga {organisatsioon_qs.filter(pilt__isnull=False).distinct().count()} ',
+                f'pildiga {organisatsioon_qs.filter(pildid__isnull=False).distinct().count()} ',
             ]
         )
     )

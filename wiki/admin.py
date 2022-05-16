@@ -811,14 +811,20 @@ class PiltAdmin(AjaxSelectAdmin):
 
     def profiilipilt(self, obj):
         # Kas pilti kasutatakse profiilipildina?
+        # return _boolean_icon(
+        #     obj.profiilipilt_allikas or
+        #     obj.profiilipilt_artikkel or
+        #     obj.profiilipilt_isik or
+        #     obj.profiilipilt_organisatsioon or
+        #     obj.profiilipilt_objekt
+        # )
         return _boolean_icon(
-            obj.profiilipilt_allikas or
-            obj.profiilipilt_artikkel or
-            obj.profiilipilt_isik or
-            obj.profiilipilt_organisatsioon or
-            obj.profiilipilt_objekt
+            obj.profiilipilt_allikad.exists() or
+            obj.profiilipilt_artiklid.exists() or
+            obj.profiilipilt_isikud.exists() or
+            obj.profiilipilt_organisatsioonid.exists() or
+            obj.profiilipilt_objektid.exists()
         )
-
     def pildi_suurus(self, obj):
         return f'{obj.pilt_width_field}x{obj.pilt_height_field}',
 

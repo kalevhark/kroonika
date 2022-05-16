@@ -77,7 +77,11 @@ class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_artikkel_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
-    pilt_set = PiltListingField(
+    # pilt_set = PiltListingField(
+    #     many=True,
+    #     read_only=True,
+    # )
+    pildid = PiltListingField(
         many=True,
         read_only=True,
     )
@@ -98,8 +102,12 @@ class IsikSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_isik_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
-    pilt_set = PiltListingField(
-        many = True,
+    # pilt_set = PiltListingField(
+    #     many = True,
+    #     read_only=True,
+    # )
+    pildid = PiltListingField(
+        many=True,
         read_only=True,
     )
 
@@ -121,7 +129,11 @@ class ObjektSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_objekt_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
-    pilt_set = PiltListingField(
+    # pilt_set = PiltListingField(
+    #     many=True,
+    #     read_only=True,
+    # )
+    pildid = PiltListingField(
         many=True,
         read_only=True,
     )
@@ -141,7 +153,11 @@ class OrganisatsioonSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_organisatsioon_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
-    pilt_set = PiltListingField(
+    # pilt_set = PiltListingField(
+    #     many=True,
+    #     read_only=True,
+    # )
+    pildid = PiltListingField(
         many=True,
         read_only=True,
     )
