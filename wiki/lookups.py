@@ -33,6 +33,8 @@ class ArtikkelLookup(LookupChannel):
         splits = q.split(' ')
         queryset = self.model.objects.daatumitega(request).annotate(
             full_viide=Concat(
+                F('id'),
+                Value(' '),
                 F('body_text'),
                 Value(' '),
                 F('hist_date'),
@@ -45,6 +47,11 @@ class ArtikkelLookup(LookupChannel):
             queryset = queryset.filter(full_viide__iregex=split)
         return queryset[:50]
 
+    def format_match(self, item):
+        return f"({item.hist_year}:{item.id}) {item} "
+
+    def format_item_display(self, item):
+        return f"({item.hist_year}:{item.id}) {item}"
 
 @ajax_select.register('isikud')
 class IsikLookup(LookupChannel):
