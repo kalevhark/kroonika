@@ -333,7 +333,8 @@ class Allikas(models.Model):
         return self.nimi
 
     def profiilipilt(self):
-        return Pilt.objects.filter(allikad=self.id, profiilipilt_allikas=True).first()
+        # return Pilt.objects.filter(allikad=self.id, profiilipilt_allikas=True).first()
+        return Pilt.objects.filter(profiilipilt_allikad=self).first()
 
     class Meta:
         ordering = ['nimi']
@@ -640,7 +641,8 @@ class Objekt(models.Model):
             return None
 
     def profiilipilt(self):
-        return Pilt.objects.filter(objektid=self.id, profiilipilt_objekt=True).first()
+        # return Pilt.objects.filter(objektid=self.id, profiilipilt_objekt=True).first()
+        return Pilt.objects.filter(profiilipilt_objektid=self).first()
 
     def save(self, *args, **kwargs):
         # Loome slugi
@@ -832,7 +834,8 @@ class Organisatsioon(models.Model):
             return None
 
     def profiilipilt(self):
-        return Pilt.objects.filter(organisatsioonid=self.id, profiilipilt_organisatsioon=True).first()
+        # return Pilt.objects.filter(organisatsioonid=self.id, profiilipilt_organisatsioon=True).first()
+        return Pilt.objects.filter(profiilipilt_organisatsioonid=self).first()
 
     def save(self, *args, **kwargs):
         # Loome slugi
@@ -1076,7 +1079,8 @@ class Isik(models.Model):
     #         return None
 
     def profiilipilt(self):
-        return Pilt.objects.filter(isikud=self.id, profiilipilt_isik=True).first()
+        # return Pilt.objects.filter(isikud=self.id, profiilipilt_isik=True).first()
+        return Pilt.objects.filter(profiilipilt_isikud=self).first()
 
     def save(self, *args, **kwargs):
         # Loome slugi
@@ -1337,10 +1341,11 @@ class Artikkel(models.Model):
     headline.short_description = 'Lugu'
 
     def profiilipilt(self):
-        return Pilt.objects.filter(
-            artiklid=self.id,
-            profiilipilt_artikkel=True
-        ).first()
+        # return Pilt.objects.filter(
+        #     artiklid=self.id,
+        #     profiilipilt_artikkel=True
+        # ).first()
+        return Pilt.objects.filter(profiilipilt_artklid=self).first()
 
     # Kui tekstis on vigase koha märge
     @property

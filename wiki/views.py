@@ -178,7 +178,8 @@ def info(request):
                 f'kirjeid {artikkel_qs.count()} ',
                 f'viidatud {artikkel_qs.filter(viited__isnull=False).distinct().count()} ',
                 # f'pildiga {artikkel_qs.filter(pilt__isnull=False).distinct().count()} ',
-                f'pildiga {artikkel_qs.filter(pildid__isnull=False).distinct().count()} '
+                f'pildiga {artikkel_qs.filter(pildid__isnull=False).distinct().count()} ',
+                f'profiilipildiga {artikkel_qs.filter(profiilipildid__isnull=False).distinct().count()} ',
             ]
         )
     )
@@ -190,7 +191,8 @@ def info(request):
                 f'kirjeid {isik_qs.count()} ',
                 f'viidatud {isik_qs.filter(viited__isnull=False).distinct().count()} ',
                 # f'pildiga {isik_qs.filter(pilt__isnull=False).distinct().count()} ',
-                f'pildiga {isik_qs.filter(pildid__isnull=False).distinct().count()} '
+                f'pildiga {isik_qs.filter(pildid__isnull=False).distinct().count()} ',
+                f'profiilipildiga {isik_qs.filter(profiilipildid__isnull=False).distinct().count()} ',
             ]
         )
     )
@@ -203,6 +205,7 @@ def info(request):
                 f'viidatud {objekt_qs.filter(viited__isnull=False).distinct().count()} ',
                 # f'pildiga {objekt_qs.filter(pilt__isnull=False).distinct().count()} ',
                 f'pildiga {objekt_qs.filter(pildid__isnull=False).distinct().count()} ',
+                f'profiilipildiga {objekt_qs.filter(profiilipildid__isnull=False).distinct().count()} ',
                 f'seotud kaardiga {objekt_qs.filter(id__in=kaardiobjektiga_objektid_ids).count()} '
             ]
         )
@@ -216,6 +219,7 @@ def info(request):
                 f'viidatud {organisatsioon_qs.filter(viited__isnull=False).distinct().count()} ',
                 # f'pildiga {organisatsioon_qs.filter(pilt__isnull=False).distinct().count()} ',
                 f'pildiga {organisatsioon_qs.filter(pildid__isnull=False).distinct().count()} ',
+                f'profiilipildiga {organisatsioon_qs.filter(profiilipildid__isnull=False).distinct().count()} ',
             ]
         )
     )
