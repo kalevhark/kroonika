@@ -762,25 +762,23 @@ class PiltAdmin(AjaxSelectAdmin):
                 'artiklid',
                  )
             ]
-        }
-         ),
-        ('Profiilipilt', {
-            'fields': [('profiilipilt_allikas',
-                        'profiilipilt_artikkel',
-                        'profiilipilt_isik',
-                        'profiilipilt_organisatsioon',
-                        'profiilipilt_objekt')]
-        }
-         ),
+        }),
+        # ('Profiilipilt', {
+        #         'fields': [('profiilipilt_allikas',
+        #                     'profiilipilt_artikkel',
+        #                     'profiilipilt_isik',
+        #                     'profiilipilt_organisatsioon',
+        #                     'profiilipilt_objekt')]
+        # }),
         ('Profiilipildid', {
             'fields': [
                 (
-                'profiilipilt_isikud',
-                'profiilipilt_organisatsioonid',
-                'profiilipilt_objektid',
-                'profiilipilt_allikad',
-                'profiilipilt_artiklid',
-                 )
+                    'profiilipilt_artiklid',
+                    'profiilipilt_isikud',
+                    'profiilipilt_organisatsioonid',
+                    'profiilipilt_objektid',
+                    'profiilipilt_allikad',
+                )
             ]
         }
          ),
