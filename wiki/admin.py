@@ -740,7 +740,7 @@ class PiltAdmin(AjaxSelectAdmin):
     form = PiltForm
     fieldsets = [
         (None, {
-            'fields': ['tyyp', 'nimi', 'autor', 'kirjeldus', 'pilt']
+            'fields': ['tyyp', 'pilt', 'nimi', 'autor', 'kirjeldus']
             }
          ),
         (None, {
