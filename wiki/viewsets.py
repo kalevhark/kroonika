@@ -30,17 +30,6 @@ from .serializers import (
     ViideSerializer
 )
 
-# from .views import artikkel_qs_userfilter
-
-# TRANSLATION = {
-#     'w': '[vw]',
-#     'v': '[vw]',
-#     'y': '[yi]',
-#     'i': '[yi',
-#     's': '[sšz]',
-#     'š': '[sšz]',
-#     'z': '[sšz]'
-# }
 TRANSLATION = settings.TRANSLATION
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -64,7 +53,6 @@ class ArtikkelFilter(filters.FilterSet):
     sisaldab = django_filters.CharFilter(method='filter_tags')
 
     def filter_tags(self, queryset, field_name, value):
-        # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
         value = value.translate(str.maketrans(TRANSLATION))
         tags = value.split(' ')
         if len(tags) > 1:
@@ -84,7 +72,6 @@ class ArtikkelViewSet(viewsets.ModelViewSet):
     filter_class = ArtikkelFilter
 
     def get_queryset(self):
-        # return artikkel_qs_userfilter(self.request.user)
         return Artikkel.objects.daatumitega(self.request)
 
     def get_view_name(self) -> str:
@@ -117,22 +104,8 @@ class IsikFilter(filters.FilterSet):
         )
 
     def filter_tags(self, queryset, field_name, value):
-        # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
-        # translation = {'w': '[vw]', 'v': '[vw]'}
         value = value.translate(str.maketrans(TRANSLATION))
         splits = value.split(' ')
-        # if len(splits) > 1:
-        #     for split in splits:
-        #         queryset = queryset.filter(
-        #             Q(eesnimi__iregex=split) |
-        #             Q(perenimi__iregex=split)
-        #         )
-        #     return queryset
-        # else:
-        #     return queryset.filter(
-        #             Q(eesnimi__iregex=value) |
-        #             Q(perenimi__iregex=value)
-        #         )
         for split in splits:
             queryset = queryset.filter(
                 Q(eesnimi__iregex=split) |
@@ -150,7 +123,6 @@ class IsikViewSet(viewsets.ModelViewSet):
     """
     queryset = Isik.objects.all()
     serializer_class = IsikSerializer
-    # lookup_field = 'slug'
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
@@ -174,33 +146,9 @@ class ObjektFilter(filters.FilterSet):
     nimi = django_filters.CharFilter(field_name='nimi', lookup_expr='icontains')
     sisaldab = django_filters.CharFilter(method='filter_tags')
 
-    # def filter_tags(self, queryset, field_name, value):
-    #     # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
-    #     value = value.translate(str.maketrans(TRANSLATION))
-    #     tags = value.split(' ')
-    #     if len(tags) > 1:
-    #         for tag in tags:
-    #             queryset = queryset.filter(nimi__iregex=tag)
-    #         return queryset
-    #     else:
-    #         return queryset.filter(nimi__iregex=value)
-
     def filter_tags(self, queryset, field_name, value):
-        # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
         value = value.translate(str.maketrans(TRANSLATION))
         splits = value.split(' ')
-        # if len(splits) > 1:
-        #     for split in splits:
-        #         queryset = queryset.filter(
-        #             Q(nimi__iregex=split) |
-        #             Q(asukoht__iregex=split)
-        #         )
-        #     return queryset
-        # else:
-        #     return queryset.filter(
-        #             Q(nimi__iregex=value) |
-        #             Q(asukoht__iregex=value)
-        #         )
         for split in splits:
             queryset = queryset.filter(
                 Q(nimi__iregex=split) |
@@ -235,15 +183,7 @@ class OrganisatsioonFilter(filters.FilterSet):
     sisaldab = django_filters.CharFilter(method='filter_tags')
 
     def filter_tags(self, queryset, field_name, value):
-        # value.replace(' ', '+') # juhuks kui tühikutega eraldatud märksõnad
         value = value.translate(str.maketrans(TRANSLATION))
-        # tags = value.split(' ')
-        # if len(tags) > 1:
-        #     for tag in tags:
-        #         queryset = queryset.filter(nimi__iregex=tag)
-        #     return queryset
-        # else:
-        #     return queryset.filter(nimi__iregex=value)
         splits = value.split(' ')
         for split in splits:
             queryset = queryset.filter(nimi__iregex=split)

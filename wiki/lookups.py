@@ -106,9 +106,17 @@ class ObjektLookup(LookupChannel):
     def get_query(self, q, request):
         q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
-        queryset = self.model.objects.daatumitega(request)
+        # queryset = self.model.objects.daatumitega(request)
+        queryset = self.model.objects.daatumitega(request).annotate(
+            nimi_asukoht=Concat(
+                F('nimi'),
+                Value(' '),
+                F('asukoht'),
+                output_field=CharField()
+            )
+        )
         for split in splits:
-            queryset = queryset.filter(nimi__iregex=split)
+            queryset = queryset.filter(nimi_asukoht__iregex=split)
         return queryset[:50]
 
 
