@@ -68,6 +68,7 @@ class IsikForm(ModelForm):
     organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
     viited = AutoCompleteSelectMultipleField('viited', required=False)
+    eellased = AutoCompleteSelectMultipleField('isikud', required=False)
 
     class Meta:
         model = Isik
@@ -75,8 +76,7 @@ class IsikForm(ModelForm):
                   'kirjeldus',
                   'hist_date', 'synd_koht', 'hist_year',
                   'hist_enddate', 'surm_koht', 'hist_endyear', 'gone', 'maetud',
-                  'objektid',
-                  'organisatsioonid',
+                  'objektid', 'organisatsioonid', 'eellased',
                   'viited'
         )
         widgets = {
@@ -86,13 +86,14 @@ class IsikForm(ModelForm):
 class OrganisatsioonForm(ModelForm):
     viited = AutoCompleteSelectMultipleField('viited', required=False)
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
+    eellased = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
 
     class Meta:
         model = Organisatsioon
         fields = ('nimi', 'kirjeldus',
                   'hist_date', 'hist_year', 'hist_month',
                   'hist_enddate', 'hist_endyear', 'gone',
-                  'objektid',
+                  'objektid', 'eellased',
                   'viited'
         )
         widgets = {
@@ -104,13 +105,14 @@ class ObjektForm(ModelForm):
 
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
     viited = AutoCompleteSelectMultipleField('viited', required=False)
+    eellased = AutoCompleteSelectMultipleField('objektid', required=False)
 
     class Meta:
         model = Objekt
         fields = ('nimi', 'tyyp', 'asukoht', 'kirjeldus',
                   'hist_date', 'hist_year', 'hist_month',
                   'hist_enddate', 'hist_endyear', 'gone',
-                  'objektid',
+                  'objektid', 'eellased',
                   'viited',
         )
         widgets = {

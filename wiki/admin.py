@@ -431,7 +431,7 @@ class IsikAdmin(AjaxSelectAdmin):
         ('Seotud', {
             'fields': [
                 ('viited'),
-                ('organisatsioonid', 'objektid')
+                ('organisatsioonid', 'objektid', 'eellased')
             ]
             }
          ),
@@ -544,7 +544,7 @@ class OrganisatsioonAdmin(AjaxSelectAdmin):
         ('Seotud', {
             'fields': [
                 ('viited'),
-                ('objektid')
+                ('objektid', 'eellased')
             ]
         }
          ),
@@ -633,7 +633,7 @@ class ObjektAdmin(AjaxSelectAdmin):
         }
          ),
         ('Seotud', {
-            'fields': ['objektid']
+            'fields': ['objektid', 'eellased']
             }
          ),
         (None, {
