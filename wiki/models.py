@@ -514,6 +514,13 @@ class Objekt(models.Model):
         help_text='Koha või objekti kirjeldus'
     )
     # Seotud:
+    eellased = models.ManyToManyField(
+        "self",
+        blank=True,
+        verbose_name='Eellased',
+        related_name='j2rglane',
+        symmetrical=False
+    )
     objektid = models.ManyToManyField(
         "self",
         blank=True,
@@ -714,6 +721,13 @@ class Organisatsioon(models.Model):
         blank=True
     )
     # Seotud:
+    eellased = models.ManyToManyField(
+        "self",
+        blank=True,
+        verbose_name='Eellased',
+        related_name='j2rglane',
+        symmetrical=False
+    )
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
@@ -926,6 +940,13 @@ class Isik(models.Model):
         help_text="Elulugu"
     )
     # Seotud
+    eellased = models.ManyToManyField(
+        "self",
+        blank=True,
+        verbose_name='Eellased',
+        related_name='j2rglane',
+        symmetrical=False
+    )
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
