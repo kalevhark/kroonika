@@ -157,34 +157,53 @@ def get_kirjeldus_lyhike(self):
                     break
     return kirjeldus
 
+def add_calendarstatus(request):
+    if request:
+        # Kas kalendrivalik on sessioonis olemas
+        request.session['ukj'] = request.session.get('ukj', 'off')
+
+        # Kasutaja Kalendriandmed
+        t2na = timezone.now()
+        user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
+        request.session['user_calendar_view_last'] = request.session.get('user_calendar_view_last', user_calendar_view_last)
+
 # Filtreerime kanded, mille kohta on teada daatumid, vastavalt valikule vkj/ukj
 # vastavalt kasutajaõigustele
 class DaatumitegaManager(models.Manager):
 
-    def daatumitega(self, request):
+    def daatumitega(self, request=None):
         # Kontrollime kas kasutaja on autenditud ja admin
-        user_is_staff = request.user.is_authenticated and request.user.is_staff
+        # user_is_staff = request.user.is_authenticated and request.user.is_staff
+        user_is_staff = request and request.user.is_authenticated and request.user.is_staff
 
-        ukj_state = ''
-        # Kas kalendrivalik on sessioonis olemas
+        # ukj_state = ''
+        # # Kas kalendrivalik on sessioonis olemas
+        # try:
+        #     ukj_state = request.session.get('ukj', 'off')
+        # except:
+        #     ukj_state = 'off'
+        # finally:
+        #     if ukj_state not in ('on', 'off'):
+        #         ukj_state = 'off'
+        #
+        # request.session['ukj'] = ukj_state
+        #
+        # # Kasutaja Kalendriandmed
+        # try:
+        #     user_calendar_view_last = request.session.get('user_calendar_view_last')
+        # except:
+        #     t2na = timezone.now()
+        #     user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
+        #
+        # request.session['user_calendar_view_last'] = user_calendar_view_last
+
+        add_calendarstatus(request)
+        ukj_state = 'off'
+        # # Kas kalendrivalik on sessioonis olemas
         try:
-            ukj_state = request.session.get('ukj', 'off')
+            ukj_state = request.session.get('ukj')
         except:
-            ukj_state = 'off'
-        finally:
-            if ukj_state not in ('on', 'off'):
-                ukj_state = 'off'
-
-        request.session['ukj'] = ukj_state
-
-        # Kasutaja Kalendriandmed
-        try:
-            user_calendar_view_last = request.session.get('user_calendar_view_last')
-        except:
-            t2na = timezone.now()
-            user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
-
-        request.session['user_calendar_view_last'] = user_calendar_view_last
+            pass
 
         # default queryset from model
         initial_queryset = super().get_queryset()
