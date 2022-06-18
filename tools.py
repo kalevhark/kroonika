@@ -135,40 +135,23 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-Eduard Boisner,
-Adolf Jaakson,
-Arseni Jauhka,
-Richard Kalamees,
-Oskar-Richard Kalkun,
-Viktor Kirshbaum,
-Aleksander Kärema,
-Boris Köits,
-Alfred Must,
-Arseni Palu,
-Valter Peterson,
-Armin Ploomipuu,
-Elmar Sulsinberg,
-Karl Zirk,
-Elmar Tammark,
-Johann-Hendrik Visnapuu,
-Erich Vernik,
-Eduard-August Voišner,
+Johannes Akermann, Jaan Feldmann, Wiktor Jänes, Wiktor Kell, Sergius Kirshbaum, Wiktor Koop, Peeter Koff, Arnold Kreewald, Oskar Käsper, Jakob Kütt, Edgar Mirka, Peeter Mürk, Aleksander Raat (cum laude), Alfred Saapas, Jaan Tamm
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=1370)
+    art = Artikkel.objects.get(id=10590)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=8434)
+    pilt = Pilt.objects.get(id=8007)
     print(pilt)
     # Milline organisatsioon lisada isikule
-    org = Organisatsioon.objects.get(id=85) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, 2770=läti kesk, saksa eragymn, 19=6.algkool
+    org = Organisatsioon.objects.get(id=2743) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [12267, 12268]
+    viited_ids = [11942]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Valga poeglaste gümnaasiumi reaalharu lõpetaja 1932'
+    isik_kirjeldus = 'Valga tööstuskooli rauatöö osakonna lõpetaja 1931'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
