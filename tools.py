@@ -135,7 +135,7 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-Johannes Akermann, Jaan Feldmann, Wiktor Jänes, Wiktor Kell, Sergius Kirshbaum, Wiktor Koop, Peeter Koff, Arnold Kreewald, Oskar Käsper, Jakob Kütt, Edgar Mirka, Peeter Mürk, Aleksander Raat (cum laude), Alfred Saapas, Jaan Tamm
+Eduard Karjus, Julius Lõoke, Artur Teras, Woldi Wardul, Robert Wares
     """
     # Millise artikliga siduda isik
     art = Artikkel.objects.get(id=10590)
@@ -151,7 +151,7 @@ Johannes Akermann, Jaan Feldmann, Wiktor Jänes, Wiktor Kell, Sergius Kirshbaum,
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Valga tööstuskooli rauatöö osakonna lõpetaja 1931'
+    isik_kirjeldus = 'Valga tööstuskooli puutöö osakonna lõpetaja 1931'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
