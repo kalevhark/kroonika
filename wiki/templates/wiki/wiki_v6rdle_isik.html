@@ -3,47 +3,59 @@
 
 {#    Sisukaardi päis#}
 <div class="w3-row">
-  <h4 class="text-isik">
+  <h3 class="text-isik">
     <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
       <i class="fa fa-address-card-o"></i>
     </a>
     {{ object }}
-  </h4>
+  </h3>
   <div>
-    <ul class="w3-ul">
+    <table>
       {% if object.hist_date or object.hist_year or object.synd_koht %}
-        <li>
+        <tr>
+          <td><strong><i class="fa fa-asterisk"></i></td>
           {% if object.hist_date %}
-            <strong><i class="fa fa-asterisk"></i>{% include 'wiki/includes/kp.html' with sd=object.hist_date cs='isik' %}</strong>
-            {% if object.hist_date|vkj %}ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}{% endif %}
+            <td>
+              <strong>{% include 'wiki/includes/kp.html' with sd=object.hist_date cs='isik' %}</strong>
+              {% if object.hist_date|vkj %}ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}{% endif %}
+            </td>
           {% elif object.hist_year %}
-            <strong><i class="fa fa-asterisk"></i>{% include 'wiki/includes/kp.html' with y=object.hist_year cs="isik" %}</strong>
+            <td>
+              <strong><i class="fa fa-asterisk"></i>{% include 'wiki/includes/kp.html' with y=object.hist_year cs="isik" %}</strong>
+            </td>
           {% endif %}
           {% if object.synd_koht %}
-            {{ object.synd_koht }}
+            <td>{{ object.synd_koht }}</td>
           {% endif %}
-        </li>
+        </tr>
       {% endif %}
       {% if object.hist_enddate or object.endhist_year or object.surm_koht %}
-        <li>
+        <tr>
+          <td>&#9840;</td>
           {% if object.hist_enddate %}
-            <strong>&#9840;{% include 'wiki/includes/kp.html' with sd=object.hist_enddate cs="isik" %}</strong>
+            <td>
+              <strong>{% include 'wiki/includes/kp.html' with sd=object.hist_enddate cs="isik" %}</strong>
+            </td>
             {% if object.hist_enddate|vkj %}ukj: {{ object.hist_enddate|ukj|date:'j.m.Y' }}{% endif %}
           {% elif object.hist_endyear %}
-            <strong>&#9840;{% include 'wiki/includes/kp.html' with y=object.hist_endyear cs="isik" %}</strong>
+            <td>
+              <strong>&#9840;{% include 'wiki/includes/kp.html' with y=object.hist_endyear cs="isik" %}</strong>
+            </td>
           {% endif %}
           {% if object.surm_koht %}
-            {{ object.surm_koht }}
+            <td>{{ object.surm_koht }}</td>
           {% endif %}
-        </li>
+        </tr>
       {% endif %}
       {% if object.maetud %}
-        <li>maetud: <strong>{{ object.maetud }}</strong></li>
+        <tr>
+          <td colspan="3">maetud: <strong>{{ object.maetud }}</strong></td>
+        </tr>
       {% endif %}
-    </ul>
+    </table>
     {% if object.eellased.all %}
+      Eellased:
       <ul>
-        Eellased:
         {% for obj in object.eellased.all %}
           <li>{{ obj }}</li>
         {% endfor %}

@@ -1603,3 +1603,8 @@ Social Icons by https://codepen.io/thalseth
   line-height: 30px;
   font-size: 18px;
 }
+
+/*ajax_select.css kohendus*/
+.results_on_deck {
+  font-size: 12px;
+}
