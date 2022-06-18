@@ -782,6 +782,13 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         print(viide.id, viide)
         new.viited.add(viide)
 
+    # Seotud eellased
+    eellased = old.eellased.all()
+    print('Eellased:')
+    for eellane in eellased:
+        print(eellane.id, eellane)
+        new.eellased.add(eellane)
+
     # Seotud andmebaasid ja parameetrid
     if model == Isik:
         if old.synd_koht:

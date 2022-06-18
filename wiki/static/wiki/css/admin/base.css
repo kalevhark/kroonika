@@ -2,44 +2,44 @@
     DJANGO Admin styles
 */
 
-@import url(fonts.css);
+/*@import url(fonts.css);*/
 
-body {
-    margin: 0;
-    padding: 0;
-    font-size: 14px;
-    font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
-    color: #333;
-    background: #fff;
-}
+/*body {*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    font-size: 14px;*/
+/*    font-family: "Roboto","Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;*/
+/*    color: #333;*/
+/*    background: #fff;*/
+/*}*/
 
-/* LINKS */
+/*!* LINKS *!*/
 
-a:link, a:visited {
-    color: #447e9b;
-    text-decoration: none;
-}
+/*a:link, a:visited {*/
+/*    color: #447e9b;*/
+/*    text-decoration: none;*/
+/*}*/
 
-a:focus, a:hover {
-    color: #036;
-}
+/*a:focus, a:hover {*/
+/*    color: #036;*/
+/*}*/
 
-a:focus {
-    text-decoration: underline;
-}
+/*a:focus {*/
+/*    text-decoration: underline;*/
+/*}*/
 
-a img {
-    border: none;
-}
+/*a img {*/
+/*    border: none;*/
+/*}*/
 
-a.section:link, a.section:visited {
-    color: #fff;
-    text-decoration: none;
-}
+/*a.section:link, a.section:visited {*/
+/*    color: #fff;*/
+/*    text-decoration: none;*/
+/*}*/
 
-a.section:focus, a.section:hover {
-    text-decoration: underline;
-}
+/*a.section:focus, a.section:hover {*/
+/*    text-decoration: underline;*/
+/*}*/
 
 /* GLOBAL DEFAULTS */
 

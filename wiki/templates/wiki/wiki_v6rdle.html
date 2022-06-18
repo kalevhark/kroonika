@@ -10,8 +10,13 @@
 {% endblock %}
 
 {% block css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/base.css' %}" >
   <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/widgets.css' %}" >
   <style>
+    .results_on_deck {
+        font-size: 12px;
+    }
+
     .button-join {
       display: inline-block;
       border-radius: 4px;
