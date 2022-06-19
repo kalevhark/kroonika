@@ -1030,6 +1030,16 @@ def seotud_artiklikaudu(request, model, seotud_artiklid, object_self):
         andmed[seotud_object.id] = kirje
     return andmed
 
+# Lisame detailview jaoks contexti eellase ja j2rglase info
+# sisendiks on object
+def add_eellased_j2rglane2context(object, context):
+    qs = object.get_queryset()
+    eellased = object.object.eellased.all()
+    context['eellased'] = qs.filter(id__in=[obj.id for obj in eellased])
+    j2rglane = object.object.j2rglane.all()
+    context['j2rglane'] = qs.filter(id__in=[obj.id for obj in j2rglane])
+    return context
+
 #
 # Artikli vaatamiseks
 #
@@ -1768,12 +1778,17 @@ class IsikDetailView(generic.DetailView):
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Isik', self.object)
         # Otseseosed objektidega
-        context['seotud_organisatsioonid'] = Organisatsioon.objects.daatumitega(self.request).filter(
-            isik=self.object)
-        context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(isik=self.object)
+        context['seotud_organisatsioonid'] = Organisatsioon.objects.daatumitega(self.request).\
+            filter(isik=self.object)
+        context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).\
+            filter(isik=self.object)
         context['seotud_pildid'] = Pilt.objects. \
             filter(isikud=self.object). \
             order_by('tyyp', '-profiilipilt_isik', 'hist_year', 'hist_date')
+
+        # Lisame eellaste ja j2rglaste andmed
+        context = add_eellased_j2rglane2context(self, context)
+
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
@@ -1904,6 +1919,10 @@ class OrganisatsioonDetailView(generic.DetailView):
         context['seotud_pildid'] = Pilt.objects. \
             filter(organisatsioonid=self.object). \
             order_by('tyyp', '-profiilipilt_organisatsioon', 'hist_year', 'hist_date')
+
+        # Lisame eellaste ja j2rglaste andmed
+        context = add_eellased_j2rglane2context(self, context)
+
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 
@@ -2038,6 +2057,10 @@ class ObjektDetailView(generic.DetailView):
         context['seotud_pildid'] = Pilt.objects. \
             filter(objektid=self.object). \
             order_by('tyyp', '-profiilipilt_objekt', 'hist_year', 'hist_date')
+
+        # Lisame eellaste ja j2rglaste andmed
+        context = add_eellased_j2rglane2context(self, context)
+
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
         return context
 

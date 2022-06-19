@@ -171,6 +171,9 @@ def add_calendarstatus(request):
 # vastavalt kasutajaõigustele
 class DaatumitegaManager(models.Manager):
 
+    def get_queryset(self):
+        return super().get_queryset()
+
     def daatumitega(self, request=None):
         # Kontrollime kas kasutaja on autenditud ja admin
         # user_is_staff = request.user.is_authenticated and request.user.is_staff

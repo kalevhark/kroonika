@@ -61,6 +61,14 @@
         {% endfor %}
       </ul>
     {% endif %}
+    {% if object.j2rglane.all %}
+      Lapsed:
+      <ul>
+        {% for obj in object.j2rglane.all %}
+          <li>{{ obj }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
   </div>
 </div>
 
