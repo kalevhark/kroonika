@@ -1,6 +1,6 @@
 # import datetime
 
-from ajax_select.admin import AjaxSelectAdmin
+from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
 from django.contrib import admin
 from django.contrib.admin.templatetags.admin_list import _boolean_icon
 from django.db.models import Case, F, When, IntegerField
@@ -46,10 +46,10 @@ class PiltOrganisatsioonInline(admin.TabularInline):
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
 
-
+from django.urls import resolve
 #
 # Piltide lisamiseks objektide halduris
-#
+# AjaxSelectAdminTabularInline?
 class PiltObjektInline(admin.TabularInline):
     model = Pilt.objektid.through
     extra = 1
@@ -788,18 +788,19 @@ class PiltAdmin(AjaxSelectAdmin):
          ),
     ]
 
-    # def get_changeform_initial_data(self, request):
-    #     g = request.GET.items()
-    #     l = [el for el in g]
-    #     return {'kirjeldus': l}
+    # See töötab, aga vaja parent object!!
+    def get_changeform_initial_data(self, request):
+        g = request.GET.items()
+        l = [el for el in g]
+        print(self.form, l)
+        i = Isik.objects.get(id=13)
+        return {'kirjeldus': l, 'isikud': [i]}
 
-
-    # def formfield_for_dbfield(self, db_field, **kwargs):
-    #     field = super(PiltAdmin, self).formfield_for_dbfield(db_field, **kwargs)
-    #     print(f'{db_field}: {field.initial}')
-    #     if db_field.name == 'kirjeldus':
-    #         field.initial = f'{db_field}: {field}'
-    #     return field
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        field = super(PiltAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)
+        # event_id = request.resolver_match.kwargs # .get('object_id', None)
+        # print(f'{db_field}: {field}')
+        return field
 
     def link(self, obj):
         if obj.pilt:
