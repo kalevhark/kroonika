@@ -1,11 +1,12 @@
-# import datetime
-
 from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
 from django.contrib import admin
+from django.contrib.admin import site as admin_site
 from django.contrib.admin.templatetags.admin_list import _boolean_icon
-from django.db.models import Case, F, When, IntegerField
-from django.db.models.functions import ExtractDay
-from markdownx.admin import MarkdownxModelAdmin
+from django.contrib.admin.views.main import IS_POPUP_VAR, TO_FIELD_VAR
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+# from django.db.models import Case, F, When, IntegerField
+# from django.db.models.functions import ExtractDay
+# from markdownx.admin import MarkdownxModelAdmin
 
 from .models import (
     Allikas, Viide, Kroonika,
@@ -20,6 +21,58 @@ from .forms import (
 )
 
 
+class MyRelatedFieldWidgetWrapper(RelatedFieldWidgetWrapper):
+    """
+    This class is a wrapper to a given widget to add the add icon for the
+    admin interface.
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.parent_object = kwargs.get('parent_object')
+        try:
+            del kwargs['parent_object']  # superclass will choke on this
+        except:
+            pass
+        super(MyRelatedFieldWidgetWrapper, self).__init__(*args, **kwargs)
+
+    def get_context(self, name, value, attrs):
+        rel_opts = self.rel.model._meta
+        info = (rel_opts.app_label, rel_opts.model_name)
+        self.widget.choices = self.choices
+        related_field_name = self.rel.get_related_field().name
+        url_params = "&".join(
+            "%s=%s" % param
+            for param in [
+                (TO_FIELD_VAR, related_field_name),
+                (IS_POPUP_VAR, 1),
+                (self.parent_object.__class__.__name__.lower(), self.parent_object.id) # lisame viite parent objectile
+            ]
+        )
+        context = {
+            "rendered_widget": self.widget.render(name, value, attrs),
+            "is_hidden": self.is_hidden,
+            "name": name,
+            "url_params": url_params,
+            "model": rel_opts.verbose_name,
+            "can_add_related": self.can_add_related,
+            "can_change_related": self.can_change_related,
+            "can_delete_related": self.can_delete_related,
+            "can_view_related": self.can_view_related,
+            "model_has_limit_choices_to": self.rel.limit_choices_to,
+        }
+        if self.can_add_related:
+            context["add_related_url"] = self.get_related_url(info, "add")
+        if self.can_delete_related:
+            context["delete_related_template_url"] = self.get_related_url(
+                info, "delete", "__fk__"
+            )
+        if self.can_view_related or self.can_change_related:
+            context["view_related_url_params"] = f"{TO_FIELD_VAR}={related_field_name}"
+            context["change_related_template_url"] = self.get_related_url(
+                info, "change", "__fk__"
+            )
+        return context
+
 #
 # Piltide lisamiseks artiklite halduris
 #
@@ -28,6 +81,26 @@ class PiltArtikkelInline(admin.TabularInline):
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
 
+    def __init__(self, *args, **kwargs):
+        self.parent_object = kwargs.get('obj')
+        try:
+            del kwargs['obj']  # superclass will choke on this
+        except:
+            pass
+        super(PiltArtikkelInline, self).__init__(*args, **kwargs)
+
+    # lisame pildi lisamisel artikli viited, isikud, organisatsioonid, objektid
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super(PiltArtikkelInline, self).get_formset(request, obj, **kwargs)
+        if obj:
+            form = formset.form
+            form.base_fields['pilt'].widget = MyRelatedFieldWidgetWrapper(
+                form.base_fields['pilt'].widget,
+                self.model._meta.get_field('pilt').remote_field,
+                admin_site,
+                parent_object=obj
+            )
+        return formset
 
 #
 # Piltide lisamiseks isikute halduris
@@ -49,7 +122,6 @@ class PiltOrganisatsioonInline(admin.TabularInline):
 from django.urls import resolve
 #
 # Piltide lisamiseks objektide halduris
-# AjaxSelectAdminTabularInline?
 class PiltObjektInline(admin.TabularInline):
     model = Pilt.objektid.through
     extra = 1
@@ -227,6 +299,7 @@ class ViideAdmin(admin.ModelAdmin):
 
 # class ArtikkelAdmin(MarkdownxModelAdmin):
 class ArtikkelAdmin(AjaxSelectAdmin):
+
     form = ArtikkelForm
     readonly_fields = [
         'hist_searchdate',
@@ -713,6 +786,7 @@ class KroonikaAdmin(admin.ModelAdmin):
 
 # class PiltAdmin(admin.ModelAdmin):
 class PiltAdmin(AjaxSelectAdmin):
+
     readonly_fields = [
         'pilt_height_field',
         'pilt_width_field',
@@ -763,13 +837,6 @@ class PiltAdmin(AjaxSelectAdmin):
                  )
             ]
         }),
-        # ('Profiilipilt', {
-        #         'fields': [('profiilipilt_allikas',
-        #                     'profiilipilt_artikkel',
-        #                     'profiilipilt_isik',
-        #                     'profiilipilt_organisatsioon',
-        #                     'profiilipilt_objekt')]
-        # }),
         ('Profiilipildid', {
             'fields': [
                 (
@@ -788,19 +855,27 @@ class PiltAdmin(AjaxSelectAdmin):
          ),
     ]
 
-    # See töötab, aga vaja parent object!!
+    # Kui alusobjektiks on Artikkel object, siis lisatakse sealt viited, isikud, organisatsioonid, objektid
     def get_changeform_initial_data(self, request):
-        g = request.GET.items()
-        l = [el for el in g]
-        print(self.form, l)
-        i = Isik.objects.get(id=13)
-        return {'kirjeldus': l, 'isikud': [i]}
+        parent_object_id = request.GET.get('artikkel', None)
+        if parent_object_id:
+            artikkel = Artikkel.objects.daatumitega(request).get(id=int(parent_object_id))
+            viited = artikkel.viited.values_list('id', flat=True)
+            isikud = artikkel.isikud.values_list('id', flat=True)
+            organisatsioonid = artikkel.organisatsioonid.values_list('id', flat=True)
+            objektid = artikkel.objektid.values_list('id', flat=True)
+        else:
+            viited = []
+            isikud = []
+            organisatsioonid = []
+            objektid = []
 
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        field = super(PiltAdmin, self).formfield_for_dbfield(db_field, request, **kwargs)
-        # event_id = request.resolver_match.kwargs # .get('object_id', None)
-        # print(f'{db_field}: {field}')
-        return field
+        return {
+            'viited': viited,
+            'isikud': isikud,
+            'organisatsioonid': organisatsioonid,
+            'objektid': objektid
+        }
 
     def link(self, obj):
         if obj.pilt:
@@ -810,13 +885,6 @@ class PiltAdmin(AjaxSelectAdmin):
 
     def profiilipilt(self, obj):
         # Kas pilti kasutatakse profiilipildina?
-        # return _boolean_icon(
-        #     obj.profiilipilt_allikas or
-        #     obj.profiilipilt_artikkel or
-        #     obj.profiilipilt_isik or
-        #     obj.profiilipilt_organisatsioon or
-        #     obj.profiilipilt_objekt
-        # )
         return _boolean_icon(
             obj.profiilipilt_allikad.exists() or
             obj.profiilipilt_artiklid.exists() or
@@ -839,24 +907,19 @@ class PiltAdmin(AjaxSelectAdmin):
 
     def save_model(self, request, obj, form, change):
         # Admin moodulis lisamise/muutmise automaatsed väljatäited
-        objekt = form.save(commit=False)
+        object = form.save(commit=False)
         # Lisaja/muutja andmed
-        if not objekt.id:
-            objekt.created_by = request.user
+        if not object.id:
+            object.created_by = request.user
         else:
-            objekt.updated_by = request.user
+            object.updated_by = request.user
         # # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        # if objekt.hist_date:
-        #     objekt.hist_year = objekt.hist_date.year
-        #     objekt.hist_month = objekt.hist_date.month
-        objekt.save()
+        # if object.hist_date:
+        #     object.hist_year = object.hist_date.year
+        #     object.hist_month = object.hist_date.month
+        object.save()
         form.save_m2m()
-        return objekt
-
-    # def formfield_for_manytomany(self, db_field, request, **kwargs):
-    #     if db_field.name == "artiklid":
-    #         kwargs["queryset"] = Artikkel.objects.annotate('hist_year=1911)
-    #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
+        return object
 
 
 class VihjeAdmin(admin.ModelAdmin):
