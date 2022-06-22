@@ -120,7 +120,7 @@ class PiltIsikInline(AjaxSelectAdminTabularInline):
 #
 # Piltide lisamiseks organisatsioonide halduris
 #
-class PiltOrganisatsioonInline(admin.TabularInline):
+class PiltOrganisatsioonInline(AjaxSelectAdminTabularInline):
     model = Pilt.organisatsioonid.through
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
@@ -131,7 +131,7 @@ class PiltOrganisatsioonInline(admin.TabularInline):
 
 #
 # Piltide lisamiseks objektide halduris
-class PiltObjektInline(admin.TabularInline):
+class PiltObjektInline(AjaxSelectAdminTabularInline):
     model = Pilt.objektid.through
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
