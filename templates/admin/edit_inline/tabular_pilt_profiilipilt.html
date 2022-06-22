@@ -1,14 +1,11 @@
-{% load wiki_extras %}
 id:{{ inline_admin_form.form.instance.pilt.id }}
 {% if inline_admin_form.form.instance.pilt.profiilipilt_allikas %} ALL{% endif %}
-{#{% if inline_admin_form.form.instance.pilt.profiilipilt_artikkel %}#}
 {% if inline_admin_form.form.instance.artikkel in inline_admin_form.form.instance.pilt.profiilipilt_artiklid.all %}
   <span style="{% if inline_admin_form.form.instance.artikkel in inline_admin_form.form.instance.pilt.artiklid.all %}
     color: white; background: green;
   {% endif %}padding: 2px;">
     ART
   </span>{% endif %}
-{#{% if inline_admin_form.form.instance.pilt.profiilipilt_isik %}#}
 {% if inline_admin_form.form.instance.isik in inline_admin_form.form.instance.pilt.profiilipilt_isikud.all %}
   <span style="{% if inline_admin_form.form.instance.isik in inline_admin_form.form.instance.pilt.isikud.all %}
     color: white; background: green;
@@ -16,14 +13,12 @@ id:{{ inline_admin_form.form.instance.pilt.id }}
     ISIK
   </span>
 {% endif %}
-{#{% if inline_admin_form.form.instance.pilt.profiilipilt_organisatsioon %}#}
 {% if inline_admin_form.form.instance.organisatsioon in inline_admin_form.form.instance.pilt.profiilipilt_organisatsioonid.all %}
   <span style="{% if inline_admin_form.form.instance.organisatsioon in inline_admin_form.form.instance.pilt.organisatsioonid.all %}
     color: white; background: green;
   {% endif %}padding: 2px;">
     ORG
   </span>{% endif %}
-{#{% if inline_admin_form.form.instance.pilt.profiilipilt_objekt %}#}
 {% if inline_admin_form.form.instance.objekt in inline_admin_form.form.instance.pilt.profiilipilt_objektid.all %}
   <span style="{% if inline_admin_form.form.instance.objekt in inline_admin_form.form.instance.pilt.objektid.all %}
     color: white; background: green;
@@ -31,3 +26,7 @@ id:{{ inline_admin_form.form.instance.pilt.id }}
     OBJ
   </span>
 {% endif %}
+{#KUi vajalik seotud objkt:#}
+{#{% load wiki_extras %#}
+{#->{{ inline_admin_form.model_admin.parent_object|get_model_name }}#}
+{#{{ inline_admin_form.model_admin.parent_object.id }}#}

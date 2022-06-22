@@ -73,13 +73,20 @@ class MyRelatedFieldWidgetWrapper(RelatedFieldWidgetWrapper):
             )
         return context
 
+from ajax_select import make_ajax_form
 #
 # Piltide lisamiseks artiklite halduris
 #
-class PiltArtikkelInline(admin.TabularInline):
+class PiltArtikkelInline(AjaxSelectAdminTabularInline):
     model = Pilt.artiklid.through
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
+    # form = make_ajax_form(
+    #     Pilt.artiklid.through, {
+    #         'pilt': 'pildid',
+    #     },
+    #     show_help_text=True
+    # )
 
     def __init__(self, *args, **kwargs):
         self.parent_object = kwargs.get('obj')
