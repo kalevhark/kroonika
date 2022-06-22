@@ -124,9 +124,7 @@ def get_model_name(value):
 
 @register.filter
 def duration(td):
-
     total_seconds = int(td.total_seconds())
-
     days = total_seconds // 86400
     remaining_hours = total_seconds % 86400
     remaining_minutes = remaining_hours % 3600

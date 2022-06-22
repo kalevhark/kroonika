@@ -1,3 +1,4 @@
+from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
 from django.contrib import admin
 from django.contrib.admin import site as admin_site
@@ -38,7 +39,7 @@ class MyRelatedFieldWidgetWrapper(RelatedFieldWidgetWrapper):
     def get_context(self, name, value, attrs):
         rel_opts = self.rel.model._meta
         info = (rel_opts.app_label, rel_opts.model_name)
-        self.widget.choices = self.choices
+        # self.widget.choices = self.choices
         related_field_name = self.rel.get_related_field().name
         url_params = "&".join(
             "%s=%s" % param
@@ -73,7 +74,6 @@ class MyRelatedFieldWidgetWrapper(RelatedFieldWidgetWrapper):
             )
         return context
 
-from ajax_select import make_ajax_form
 #
 # Piltide lisamiseks artiklite halduris
 #
@@ -107,10 +107,14 @@ class PiltArtikkelInline(AjaxSelectAdminTabularInline):
 #
 # Piltide lisamiseks isikute halduris
 #
-class PiltIsikInline(admin.TabularInline):
+class PiltIsikInline(AjaxSelectAdminTabularInline):
     model = Pilt.isikud.through
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
+    form = make_ajax_form(Pilt.isikud.through, {
+        'isik': 'isikud',
+        'pilt': 'pildid'
+    })
 
 
 #
@@ -120,7 +124,10 @@ class PiltOrganisatsioonInline(admin.TabularInline):
     model = Pilt.organisatsioonid.through
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
-
+    form = make_ajax_form(Pilt.organisatsioonid.through, {
+        'organisatsioon': 'organisatsioonid',
+        'pilt': 'pildid'
+    })
 
 #
 # Piltide lisamiseks objektide halduris
@@ -128,6 +135,10 @@ class PiltObjektInline(admin.TabularInline):
     model = Pilt.objektid.through
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
+    form = make_ajax_form(Pilt.objektid.through, {
+        'objekt': 'objektid',
+        'pilt': 'pildid'
+    })
 
 
 class AllikasAdmin(admin.ModelAdmin):
@@ -1022,3 +1033,15 @@ class KaardiobjektAdmin(AjaxSelectAdmin):
     ]
 
 admin.site.register(Kaardiobjekt, KaardiobjektAdmin)
+
+from django.contrib import admin
+from ajax_select import make_ajax_form
+# from yourapp.models import YourModel
+
+@admin.register(Pilt.artiklid.through)
+class YourModelAdmin(AjaxSelectAdmin):
+
+    form = make_ajax_form(Pilt.artiklid.through, {
+        'artikkel': 'artiklid',  # ManyToManyField
+        'pilt':'pildid'      # ForeignKeyField
+    })
