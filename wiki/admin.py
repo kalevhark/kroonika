@@ -1,10 +1,23 @@
+import json
+
 from ajax_select import make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
+from ajax_select.fields import AutoCompleteSelectWidget
+from ajax_select.registry import registry
+
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin import site as admin_site
 from django.contrib.admin.templatetags.admin_list import _boolean_icon
 from django.contrib.admin.views.main import IS_POPUP_VAR, TO_FIELD_VAR
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+from django.forms.utils import flatatt
+from django.template.defaultfilters import force_escape
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.module_loading import import_string
+from django.utils.safestring import mark_safe
+
 # from django.db.models import Case, F, When, IntegerField
 # from django.db.models.functions import ExtractDay
 # from markdownx.admin import MarkdownxModelAdmin
@@ -21,7 +34,7 @@ from .forms import (
     KaartForm, KaardiobjektForm
 )
 
-
+# EI OLE KASUTUSEL
 class MyRelatedFieldWidgetWrapper(RelatedFieldWidgetWrapper):
     """
     This class is a wrapper to a given widget to add the add icon for the
@@ -75,9 +88,102 @@ class MyRelatedFieldWidgetWrapper(RelatedFieldWidgetWrapper):
         return context
 
 #
+# Vajalikud MyAutoCompleteSelectWidget jaoks
+#
+json_encoder = import_string(
+    getattr(
+        settings,
+        'AJAX_SELECT_JSON_ENCODER',
+        'django.core.serializers.json.DjangoJSONEncoder'
+    )
+)
+
+def make_plugin_options(lookup, channel_name, widget_plugin_options, initial):
+    """ Make a JSON dumped dict of all options for the jQuery ui plugin."""
+    po = {}
+    if initial:
+        po['initial'] = initial
+    po.update(getattr(lookup, 'plugin_options', {}))
+    po.update(widget_plugin_options)
+    if not po.get('source'):
+        po['source'] = reverse('ajax_lookup', kwargs={'channel': channel_name})
+
+    # allow html unless explicitly set
+    if po.get('html') is None:
+        po['html'] = True
+
+    return {
+        'plugin_options': mark_safe(json.dumps(po, cls=json_encoder)),
+        'data_plugin_options': force_escape(
+                json.dumps(po, cls=json_encoder)
+        )
+    }
+
+# Kohandatud, et lisada parent object
+class MyAutoCompleteSelectWidget(AutoCompleteSelectWidget):
+    """
+    Widget to search for a model and return it as text for use in a CharField.
+    """
+    def __init__(self, channel, help_text='', show_help_text=True, plugin_options=None, *args, **kwargs):
+        self.parent_object = kwargs.get('parent_object')
+        try:
+            del kwargs['parent_object']  # superclass will choke on this
+        except:
+            pass
+        super(MyAutoCompleteSelectWidget, self).__init__(
+            channel, *args, **kwargs
+        )
+
+    def render(self, name, value, attrs=None, renderer=None, **_kwargs):
+        value = value or ''
+
+        final_attrs = self.build_attrs(self.attrs)
+        final_attrs.update(attrs or {})
+        final_attrs.pop('required', None)
+        self.html_id = final_attrs.pop('id', name)
+
+        current_repr = ''
+        initial = None
+        lookup = registry.get(self.channel)
+        if value:
+            objs = lookup.get_objects([value])
+            try:
+                obj = objs[0]
+            except IndexError:
+                raise Exception(f"{lookup} cannot find object:{value}")
+            current_repr = lookup.format_item_display(obj)
+            initial = [current_repr, obj.pk]
+
+        if self.show_help_text:
+            help_text = self.help_text
+        else:
+            help_text = ''
+
+        context = {
+            'name': name,
+            'html_id': self.html_id,
+            'current_id': value,
+            'current_repr': current_repr,
+            'help_text': help_text,
+            'extra_attrs': mark_safe(flatatt(final_attrs)),
+            'func_slug': self.html_id.replace("-", ""),
+            'add_link': self.add_link,
+            'parent_object': self.parent_object # lisatud parent object
+        }
+        context.update(
+                make_plugin_options(lookup, self.channel, self.plugin_options, initial))
+        templates = (
+            f'ajax_select/autocompleteselect_{self.channel}.html',
+            'ajax_select/autocompleteselect.html')
+        out = render_to_string(templates, context)
+        return mark_safe(out)
+
+
+#
 # Piltide lisamiseks artiklite halduris
 #
-class PiltArtikkelInline(AjaxSelectAdminTabularInline):
+# EI OLE KASUTUSEL
+class PiltArtikkelInline(admin.TabularInline):
     model = Pilt.artiklid.through
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
@@ -104,6 +210,40 @@ class PiltArtikkelInline(AjaxSelectAdminTabularInline):
         return formset
 
 
+#
+# Piltide lisamiseks artiklite halduris ver 2
+#
+class PiltArtikkelInline2(AjaxSelectAdminTabularInline):
+    model = Pilt.artiklid.through
+    extra = 1
+    template = 'admin/edit_inline/tabular_pilt.html'
+    form = make_ajax_form(Pilt.artiklid.through, {
+        'artikkel': 'artiklid',
+        'pilt': 'pildid'
+    })
+
+    def __init__(self, *args, **kwargs):
+        self.parent_object = kwargs.get('obj')
+        try:
+            del kwargs['obj']  # superclass will choke on this
+        except:
+            pass
+        super(PiltArtikkelInline2, self).__init__(*args, **kwargs)
+
+    def get_formset(self, request, obj=None, **kwargs):
+        from ajax_select.fields import autoselect_fields_check_can_add
+        formset = super().get_formset(request, obj, **kwargs)
+        if obj:
+            form = formset.form
+            form.base_fields['pilt'].widget = MyAutoCompleteSelectWidget(
+                'pildid',
+                help_text = '',
+                show_help_text = True,
+                plugin_options = None,
+                parent_object = obj
+            )
+        autoselect_fields_check_can_add(formset.form, self.model, request.user)
+        return formset
 #
 # Piltide lisamiseks isikute halduris
 #
@@ -365,7 +505,7 @@ class ArtikkelAdmin(AjaxSelectAdmin):
          ),
     ]
     inlines = [
-        PiltArtikkelInline,
+        PiltArtikkelInline2,
     ]
 
     def get_queryset(self, request):
