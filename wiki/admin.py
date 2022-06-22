@@ -81,12 +81,6 @@ class PiltArtikkelInline(AjaxSelectAdminTabularInline):
     model = Pilt.artiklid.through
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
-    # form = make_ajax_form(
-    #     Pilt.artiklid.through, {
-    #         'pilt': 'pildid',
-    #     },
-    #     show_help_text=True
-    # )
 
     def __init__(self, *args, **kwargs):
         self.parent_object = kwargs.get('obj')
@@ -109,6 +103,7 @@ class PiltArtikkelInline(AjaxSelectAdminTabularInline):
             )
         return formset
 
+
 #
 # Piltide lisamiseks isikute halduris
 #
@@ -126,7 +121,7 @@ class PiltOrganisatsioonInline(admin.TabularInline):
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
 
-from django.urls import resolve
+
 #
 # Piltide lisamiseks objektide halduris
 class PiltObjektInline(admin.TabularInline):
@@ -183,11 +178,6 @@ class ViideAdmin(admin.ModelAdmin):
         'kohaviit',
         'short_url',
         'seotud_objects',
-        # 'seotud_artikleid',
-        # 'seotud_isikuid',
-        # 'seotud_organisatsioone',
-        # 'seotud_objekte',
-        # 'seotud_pilte',
     ]
     ordering = ['-id']
     search_fields = [
@@ -304,7 +294,6 @@ class ViideAdmin(admin.ModelAdmin):
     short_url.short_description = 'Link'
 
 
-# class ArtikkelAdmin(MarkdownxModelAdmin):
 class ArtikkelAdmin(AjaxSelectAdmin):
 
     form = ArtikkelForm
@@ -334,12 +323,6 @@ class ArtikkelAdmin(AjaxSelectAdmin):
         'body_text',
         'id'
     ]
-    filter_horizontal = [
-        # 'viited',
-        # 'isikud',
-        # 'organisatsioonid',
-        # 'objektid',
-    ]
     fieldsets = [
         (None, {
             'fields': [('body_text')]
@@ -349,10 +332,6 @@ class ArtikkelAdmin(AjaxSelectAdmin):
             'fields': [('hist_date', 'hist_year', 'hist_month', 'hist_enddate')]
             }
          ),
-        # ('Viited', {
-        #     'fields': [('viited')]
-        # }
-        #  ),
         ('Seotud', {
             'fields': [('viited'), ('isikud', 'organisatsioonid', 'objektid')]
             }
