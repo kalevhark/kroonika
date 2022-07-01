@@ -118,7 +118,8 @@ def config(path='', filename='utils/database.ini', section='postgresql'):
 # Ilmateenistuse viimase mõõtmise andmed veebist
 def ilm_praegu():
     jaam = 'Valga'
-    href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
+    # href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
+    href = 'https://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
     r = requests.get(href)
     try:
         root = ET.fromstring(r.text)
@@ -153,7 +154,8 @@ def get_maxmin_airtemperature(dt_utc):
     p2ev = dt_loc.strftime("%d.%m.%Y")
     tund = dt_loc.strftime("%H")
 
-    url = 'https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/maxmin-ohutemp/'
+    # url = 'https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/maxmin-ohutemp/'
+    url = 'https://vana.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/maxmin-ohutemp/'
     params = {
         'lang': 'et',
         r'filter%5BmaxDate%5D': p2ev,
@@ -218,7 +220,8 @@ def ilmaandmed_veebist(dt_utc):
             'phenomenon_observer',
             'precipitations',
             'visibility']
-    href = 'http://ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
+    # href = 'http://ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
+    href = 'http://vana.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
     dt = utc2eesti_aeg(dt_utc)
     # print(dt)
     p2ev = dt.strftime("%d.%m.%Y")
@@ -494,7 +497,8 @@ def ilmateenistus_forecast():
     # pattern = re.compile(r"callback\((.*)\);", re.DOTALL)
     # matches = pattern.search(soup.text)
     # data = json.loads(matches.group(1))
-    url = "http://www.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php/?coordinates=57.7747649934758;26.0331527813654"
+    # url = "http://www.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php/?coordinates=57.7747649934758;26.0331527813654"
+    url = "http://vana.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php/?coordinates=57.7747649934758;26.0331527813654"
     r = requests.get(url)
     data = json.loads(r.text)
     hours = [hour for hour in data['forecast']['tabular']['time']]
