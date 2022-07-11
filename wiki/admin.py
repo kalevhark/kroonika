@@ -1004,6 +1004,7 @@ class PiltAdmin(AjaxSelectAdmin):
             organisatsioonid = artikkel.organisatsioonid.values_list('id', flat=True)
             objektid = artikkel.objektid.values_list('id', flat=True)
         else:
+            # artikkel = None
             viited = []
             isikud = []
             organisatsioonid = []
@@ -1013,7 +1014,8 @@ class PiltAdmin(AjaxSelectAdmin):
             'viited': viited,
             'isikud': isikud,
             'organisatsioonid': organisatsioonid,
-            'objektid': objektid
+            'objektid': objektid,
+            # 'artiklid': [artikkel]
         }
 
     def link(self, obj):
