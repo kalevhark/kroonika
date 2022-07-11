@@ -269,6 +269,7 @@ class PiltOrganisatsioonInline(AjaxSelectAdminTabularInline):
         'pilt': 'pildid'
     })
 
+
 #
 # Piltide lisamiseks objektide halduris
 class PiltObjektInline(AjaxSelectAdminTabularInline):
@@ -993,11 +994,12 @@ class PiltAdmin(AjaxSelectAdmin):
     ]
 
     # Kui alusobjektiks on Artikkel object, siis lisatakse sealt viited, isikud, organisatsioonid, objektid
+    # Artikkel tuleb enne salvestada koos seostega!
     def get_changeform_initial_data(self, request):
         parent_object_id = request.GET.get('artikkel', None)
         if parent_object_id:
             artikkel = Artikkel.objects.daatumitega(request).get(id=int(parent_object_id))
-            viited = artikkel.viited.values_list('id', flat=True)
+            viited = artikkel.viited.all() # values_list('id', flat=True)
             isikud = artikkel.isikud.values_list('id', flat=True)
             organisatsioonid = artikkel.organisatsioonid.values_list('id', flat=True)
             objektid = artikkel.objektid.values_list('id', flat=True)

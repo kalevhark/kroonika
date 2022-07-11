@@ -221,11 +221,12 @@ def ilmaandmed_veebist(dt_utc):
             'precipitations',
             'visibility']
     # href = 'http://ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
-    href = 'http://vana.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
+    # href = 'http://vana.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
+    href = 'https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
     dt = utc2eesti_aeg(dt_utc)
     # print(dt)
     p2ev = dt.strftime("%d.%m.%Y")
-    tund = dt.strftime("%H")
+    tund = dt.strftime("%H:00")
     # Päringu aadress
     p2ring = ''.join(
         [href,
