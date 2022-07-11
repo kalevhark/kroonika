@@ -250,6 +250,7 @@ def ilmaandmed_veebist(dt_utc):
         elif hasattr(e, 'code'):
             print('The server couldn\'t fulfill the request.')
             print('Error code: ', e.code)
+        return andmed
     else:
         # Struktueerime
         soup = BeautifulSoup(response, 'html.parser')
@@ -261,9 +262,11 @@ def ilmaandmed_veebist(dt_utc):
         #         # Kui vastus vale kellaajaga või kuupäevaga, saadame tagasi tühja tabeli
         #         return andmed
         kontroll_datetime_soup = soup.find(attrs={'class': 'utc-info'}) # UTC 11.07.2022 20:00
-        # kontroll_datetime = datetime.strptime(kontroll_datetime_soup.text, 'UTC %d.%m.%Y %H:%M')
-        print(kontroll_datetime_soup.text)
-        # print(kontroll_datetime == dt_utc)
+        kontroll_datetime = datetime.strptime(kontroll_datetime_soup.text.strip(), 'UTC %d.%m.%Y %H:%M')
+        if kontroll_datetime != dt_utc:
+            print(dt, 'Vale!')
+            # Kui vastus vale kellaajaga või kuupäevaga, saadame tagasi tühja tabeli
+            return andmed
         # Leiame lehelt tabeli
         table = soup.table
         # Leiame tabelist rea
