@@ -1764,7 +1764,7 @@ def mixed_ilmateade(request):
     moon_str = ephem_data.get_moon_str(d)
     ilmastring_now = andmed_eelnevad24h['ilmastring']
     ilmastring_fore = andmed_j2rgnevad48h['meta']['lastupdate'].strftime("%d.%m.%Y %H:%M")
-    graafik_title = f'Mõõtmised: {ilmastring_now}; Prognoos: {ilmastring_fore}; {sun_str} {moon_str}'
+    graafik_title = f'Mõõtmised: {ilmastring_now}; Prognoos: {ilmastring_fore}<br>{sun_str} {moon_str}'
     
     graafik_subtitle = (
         'Allikad: ' +
