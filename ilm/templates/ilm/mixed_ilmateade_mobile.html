@@ -34,9 +34,7 @@
         src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{weather.current.weather.0.icon}}.png"
         alt="{{ weather.current.kirjeldus }}"
     />
-    <p class="font-bold text-5xl temperature colored-{% if weather.current.temp > 0 %}positive{% else %}negative{% endif %} ml-1 mr-4">
-      {{ weather.current.temp|floatformat:1 }}°C
-    </p>
+    <p class="font-bold text-5xl temperature colored-{% if weather.current.temp > 0 %}positive{% else %}negative{% endif %} ml-1 mr-4">{{ weather.current.temp|floatformat:1 }}°C</p>
   </section>
   <section class="mt-5 py-3 px-2 flex justify-around text-gray-700 bg-yellow-400">
     <p class="wind flex items-center">{{ weather.current.wind_speed }} m/s</p>
