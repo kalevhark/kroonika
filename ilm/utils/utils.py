@@ -252,7 +252,7 @@ def ilmaandmed_veebist(dt_utc):
             print('Error code: ', e.code)
         return andmed
     else:
-        # Struktueerime
+        # Struktueerime ja kontrollime
         soup = BeautifulSoup(response, 'html.parser')
         # kontroll_hour = soup.find(attrs={"name": "filter[hour]"})
         # kontroll_date = soup.find(attrs={"name": "filter[date]"})
@@ -263,9 +263,14 @@ def ilmaandmed_veebist(dt_utc):
         #         return andmed
         kontroll_datetime_soup = soup.find(attrs={'class': 'utc-info'}) # formaat: 'UTC 11.07.2022 20:00'
         kontroll_datetime = datetime.strptime(kontroll_datetime_soup.text.strip(), 'UTC %d.%m.%Y %H:%M')
-        if any([kontroll_datetime.month != dt_utc.month, kontroll_datetime.day != dt_utc.day, kontroll_datetime.hour != dt_utc.hour]):
+        if any([
+            kontroll_datetime.year != dt_utc.year,
+            kontroll_datetime.month != dt_utc.month,
+            kontroll_datetime.day != dt_utc.day,
+            kontroll_datetime.hour != dt_utc.hour
+        ]):
             print(dt, 'Vale!')
-            # Kui vastus vale kellaajaga või kuupäevaga, saadame tagasi tühja tabeli
+            # Kui vastus vale kellaaja või kuupäevaga, saadame tagasi tühja tabeli
             return andmed
         # Leiame lehelt tabeli
         table = soup.table

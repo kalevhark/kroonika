@@ -1991,7 +1991,7 @@ def mixed_ilmateade(request):
                 'enabled': True,
                 'style': {
                     'fontSize': '8px',
-                    'color': 'gray'
+                    # 'color': 'gray'
                 }
             },
             'lineWidth' : 2, 
@@ -2011,7 +2011,7 @@ def mixed_ilmateade(request):
                 'enabled': True,
                 'style': {
                     'fontSize': '8px',
-                    'color': 'gray'
+                    # 'color': 'gray'
                 }
             },
             'data': 24 * [None] + [round(el[2]-el[1], 1) for el in andmed_j2rgnevad48h['series']['precipitations']], # err prec
