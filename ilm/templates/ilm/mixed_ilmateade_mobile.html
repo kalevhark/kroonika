@@ -71,13 +71,9 @@
       <tr>
         <td>{{ day.dt|timestamp_to_time|date:"d.m" }}</td>
         <td class="temperature">
-          <span class="temperature colored-{% if day.temp.min > 0 %}positive{% else %}negative{% endif %}">
-            {{ day.temp.min|floatformat:1 }}
-          </span>
+          <span class="temperature colored-{% if day.temp.min > 0 %}positive{% else %}negative{% endif %}">{{ day.temp.min|floatformat:1 }}</span>
           -
-          <span class="temperature colored-{% if day.temp.max > 0 %}positive{% else %}negative{% endif %}">
-            {{ day.temp.max|floatformat:1 }}
-          </span>
+          <span class="temperature colored-{% if day.temp.max > 0 %}positive{% else %}negative{% endif %}">{{ day.temp.max|floatformat:1 }}</span>
           °C
         </td>
         <td class="rain {{ day.precipitation_color }}">{{ day.rain|floatformat:1 }}</td>
