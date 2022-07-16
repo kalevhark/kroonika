@@ -14,8 +14,8 @@ try:
 except:
     pass
 
-from urllib.request import Request, urlopen
-from urllib.error import URLError
+# from urllib.request import Request, urlopen
+# from urllib.error import URLError
 
 import pytz
 import requests
@@ -84,10 +84,13 @@ def utc2eesti_aeg(dt):
     eesti_aeg = pytz.timezone('Europe/Tallinn')
     return dt.astimezone(eesti_aeg)
 
-# Teisendab datetim naive -> aware:
-def naive2aware(dt, tz=''):
-    pass
-
+# from zoneinfo import ZoneInfo
+# # Teisendab datetim naive -> aware:
+# # Eesti aeg = ZoneInfo('Europe/Tallinn')
+# # UTC = ZoneInfo()
+# def naive2aware(dt, tz=ZoneInfo('Europe/Tallinn')):
+#     if dt.tzinfo == None:
+#         return dt.astimezone(tz)
 
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
 def float_or_none(value):
@@ -207,9 +210,9 @@ def get_maxmin_airtemperature(dt_utc):
 
 
 # Ilmateenistuse etteantud täistunni mõõtmise andmed veebist
-def ilmaandmed_veebist(dt_naive):
+def ilmaandmed_veebist(dt):
     """
-    Tagastab etteantud ajahetke (dt_naive) viimase möödunud täistunni ilmaandmed
+    Tagastab etteantud dt (aware v6i naive) viimase möödunud täistunni ilmaandmed
     ilmateenistus.ee veebilehelt
     """
     jaam = 'Valga'
@@ -225,11 +228,8 @@ def ilmaandmed_veebist(dt_naive):
             'phenomenon_observer',
             'precipitations',
             'visibility']
-    # href = 'http://ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
-    # href = 'http://vana.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
     href = 'https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
-    dt = utc2eesti_aeg(dt_naive)
-    # print(dt, dt_naive)
+    # dt = utc2eesti_aeg(dt_naive)
     p2ev = dt.strftime("%d.%m.%Y")
     tund = dt.strftime("%H:00")
     # Päringu aadress
@@ -240,69 +240,70 @@ def ilmaandmed_veebist(dt_naive):
          '&filter[hour]=',
          tund]
     )
-    andmed = dict()
     # Loeme veebist andmed
-    req = Request(
-        p2ring,
-        headers={'User-Agent': 'Mozilla/5.0'}
-    )
-    try:
-        response = urlopen(req).read()
-    except URLError as e:
-        if hasattr(e, 'reason'):
-            print('We failed to reach a server.')
-            print('Reason: ', e.reason)
-        elif hasattr(e, 'code'):
-            print('The server couldn\'t fulfill the request.')
-            print('Error code: ', e.code)
-        return {}
-    else:
-        # Struktueerime ja kontrollime
+    # req = Request(
+    #     p2ring,
+    #     headers={'User-Agent': 'Mozilla/5.0'}
+    # )
+    # try:
+    #     response = urlopen(req).read()
+    # except URLError as e:
+    #     if hasattr(e, 'reason'):
+    #         print('We failed to reach a server.')
+    #         print('Reason: ', e.reason)
+    #     elif hasattr(e, 'code'):
+    #         print('The server couldn\'t fulfill the request.')
+    #         print('Error code: ', e.code)
+    #     return {}
+
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    req = requests.get(p2ring, headers=headers)
+    response = req.text
+
+    if req.status_code == requests.codes.ok and response.find(jaam) > 0:
+        # Struktueerime ja kontrollime vastavust
         soup = BeautifulSoup(response, 'html.parser')
-        # kontroll_hour = soup.find(attrs={"name": "filter[hour]"})
-        # kontroll_date = soup.find(attrs={"name": "filter[date]"})
-        # if kontroll_hour:
-        #     if kontroll_hour['value'].zfill(2) != tund.zfill(2) or kontroll_date['value'] != p2ev:
-        #         print(dt, 'Vale!')
-        #         # Kui vastus vale kellaajaga või kuupäevaga, saadame tagasi tühja tabeli
-        #         return andmed
         kontroll_datetime_soup = soup.find(attrs={'class': 'utc-info'}) # formaat: 'UTC 11.07.2022 20:00'
         kontroll_datetime = datetime.strptime(kontroll_datetime_soup.text.strip(), 'UTC %d.%m.%Y %H:%M')
-        # print(kontroll_datetime_soup.text.strip(), kontroll_datetime)
         if any([
-            kontroll_datetime.year != dt_naive.year,
-            kontroll_datetime.month != dt_naive.month,
-            kontroll_datetime.day != dt_naive.day,
-            kontroll_datetime.hour != dt_naive.hour
+            kontroll_datetime.year != dt.astimezone(timezone.utc).year,
+            kontroll_datetime.month != dt.astimezone(timezone.utc).month,
+            kontroll_datetime.day != dt.astimezone(timezone.utc).day,
+            kontroll_datetime.hour != dt.astimezone(timezone.utc).hour
         ]):
-            print(dt, 'Vale!')
+            print(dt, f'Vale! {dt} vs {kontroll_datetime}')
             # Kui vastus vale kellaaja või kuupäevaga, saadame tagasi tühja tabeli
             return {}
-        # Leiame lehelt tabeli
-        table = soup.table
-        # Leiame tabelist rea
-        row = table.find(string=re.compile(jaam))
-        data = row.find_parent().find_next_siblings()
-        for i in range(len(data)):
-            # print(dt_naive, data[i])
-            if data[i]: # kui andmeväli pole tühi
-                if cols[i] in ['phenomenon', 'phenomenon_observer']: # tekstiväli
-                    andmed[cols[i]] = data[i].text.strip()
-                else: # numbriväli
-                    value = data[i].text.strip().replace(',', '.')
-                    andmed[cols[i]] = float_or_none(value)
-            else:
-                andmed[cols[i]] = None
+    else:
+        print(dt, f'Viga: {req.status_code} {jaam}={response.find(jaam)}')
+        return {}
 
-        # andmed['station'] = Jaam.objects.filter(name=jaam).first()
-        andmed['station_id'] = 1
-        andmed['timestamp'] = pytz.timezone('Europe/Tallinn').localize(
-            datetime(dt.year, dt.month, dt.day, dt.hour))
-        # küsime andmed maxmin andmed juurde
-        maxmin_andmed = get_maxmin_airtemperature(dt_naive)
-        if maxmin_andmed:
-            andmed['airtemperature_max'] = maxmin_andmed['airtemperature_max']
-            andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
+    andmed = dict()
+    # Leiame lehelt tabeli
+    table = soup.table
+    # Leiame tabelist rea
+    row = table.find(string=re.compile(jaam))
+    data = row.find_parent().find_next_siblings()
+    for i in range(len(data)):
+        # print(dt_naive, data[i])
+        if data[i]: # kui andmeväli pole tühi
+            if cols[i] in ['phenomenon', 'phenomenon_observer']: # tekstiväli
+                andmed[cols[i]] = data[i].text.strip()
+            else: # numbriväli
+                value = data[i].text.strip().replace(',', '.')
+                andmed[cols[i]] = float_or_none(value)
+        else:
+            andmed[cols[i]] = None
+    # andmed['station'] = Jaam.objects.filter(name=jaam).first()
+    andmed['station_id'] = 1
+    andmed['timestamp'] = pytz.timezone('Europe/Tallinn').\
+        localize(datetime(dt.year, dt.month, dt.day, dt.hour))
+    # küsime andmed maxmin andmed juurde
+    maxmin_andmed = get_maxmin_airtemperature(dt)
+    if maxmin_andmed:
+        andmed['airtemperature_max'] = maxmin_andmed['airtemperature_max']
+        andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
+    # print(andmed)
     return andmed
 
 def yrno_48h():
@@ -816,4 +817,4 @@ class YrnoAPI():
             return ''
 
 if __name__ == "__main__":
-    ilmaandmed_veebist(datetime(2022, 7, 16, 10))
+    ilmaandmed_veebist(datetime(2022, 7, 16, 14))
