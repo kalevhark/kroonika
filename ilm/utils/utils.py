@@ -208,13 +208,15 @@ def get_maxmin_airtemperature(dt_utc):
         print(error)
     return maxmin_data
 
-
+from zoneinfo import ZoneInfo
 # Ilmateenistuse etteantud täistunni mõõtmise andmed veebist
 def ilmaandmed_veebist(dt):
     """
     Tagastab etteantud dt (aware v6i naive) viimase möödunud täistunni ilmaandmed
     ilmateenistus.ee veebilehelt
     """
+    if dt.tzinfo != None:
+        dt = dt.astimezone(tz=ZoneInfo('Europe/Tallinn'))
     jaam = 'Valga'
     cols = ['airtemperature',
             'relativehumidity',
