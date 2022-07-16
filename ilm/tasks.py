@@ -5,7 +5,7 @@
 # Käivitamiseks:
 # /python-env-path-to/python3 /path-to-ilm-app/utils/update.py
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import os
 from pathlib import Path
 # import re
@@ -661,10 +661,12 @@ def update_maxmin_rolling(path=''):
             conn.close()
     return
 
+from zoneinfo import ZoneInfo
 def update_lasthours(path, verbose=False, hours=72):
+    now = datetime.now(tz=ZoneInfo('Europe/Tallinn'))
     # Kontrollime 72 tunni andmete olemasolu, vajadusel lisame
     for hour in range(71, -1, -1): # Viimase 72 tunni andmed
-        observation_time = datetime.now() - timedelta(hours=hour)
+        observation_time = now - timedelta(hours=hour)
         observation = check_observation_exists(observation_time, path)
         # print(observation_time, end=': ')
         if not observation:
