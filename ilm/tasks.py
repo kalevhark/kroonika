@@ -663,7 +663,7 @@ def update_maxmin_rolling(path=''):
 
 from zoneinfo import ZoneInfo
 def update_lasthours(path, verbose=False, hours=72):
-    now = datetime.now(tz=ZoneInfo('Europe/Tallinn'))
+    now = datetime.now()
     # Kontrollime 72 tunni andmete olemasolu, vajadusel lisame
     for hour in range(71, -1, -1): # Viimase 72 tunni andmed
         observation_time = now - timedelta(hours=hour)
