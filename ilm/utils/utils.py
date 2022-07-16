@@ -240,7 +240,8 @@ def ilmaandmed_veebist(dt):
          '?filter[date]=',
          p2ev,
          '&filter[hour]=',
-         tund]
+         tund,
+         '&x=x']
     )
     # Loeme veebist andmed
     # req = Request(
@@ -318,7 +319,7 @@ def ilmaandmed_veebist(dt):
     if maxmin_andmed:
         andmed['airtemperature_max'] = maxmin_andmed['airtemperature_max']
         andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
-    # print(dt, andmed)
+    print(dt, andmed)
     return andmed
 
 def yrno_48h():
@@ -834,4 +835,4 @@ class YrnoAPI():
 if __name__ == "__main__":
     ilmaandmed_veebist(datetime(2022, 7, 16, 13))
     ilmaandmed_veebist(datetime(2022, 7, 16, 15))
-    ilmaandmed_veebist(datetime(2022, 7, 16, 16))
+    ilmaandmed_veebist(datetime(2022, 7, 16, 20))
