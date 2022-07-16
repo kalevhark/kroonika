@@ -233,15 +233,14 @@ def ilmaandmed_veebist(dt):
     href = 'https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
     # dt = utc2eesti_aeg(dt_naive)
     p2ev = dt.strftime("%d.%m.%Y")
-    tund = dt.strftime("%H")
+    tund = dt.strftime("%H:00")
     # Päringu aadress
     p2ring = ''.join(
         [
             href,
-            '?filter[date]=',
-            p2ev,
-            '&filter[hour]=',
-            tund
+            f'?filter[date]={p2ev}',
+            f'&filter[hour]={tund}',
+            f'&filter[maxDate]={p2ev}&filter[minDate]=30.01.2004'
         ]
     )
     # Loeme veebist andmed
@@ -311,6 +310,7 @@ def ilmaandmed_veebist(dt):
             andmed[cols[i]] = None
     # andmed['station'] = Jaam.objects.filter(name=jaam).first()
     if andmed['airtemperature'] == None and andmed['airpressure'] == None: # Kui andmed puudulikud
+        print(dt, 'tühi vastus')
         return {}
     andmed['station_id'] = 1
     andmed['timestamp'] = pytz.timezone('Europe/Tallinn').\
@@ -320,7 +320,7 @@ def ilmaandmed_veebist(dt):
     if maxmin_andmed:
         andmed['airtemperature_max'] = maxmin_andmed['airtemperature_max']
         andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
-    # print(dt, andmed)
+    print(dt, andmed)
     return andmed
 
 def yrno_48h():
@@ -834,5 +834,5 @@ class YrnoAPI():
             return ''
 
 if __name__ == "__main__":
-    ilmaandmed_veebist(datetime(2022, 7, 16, 13))
+    ilmaandmed_veebist(datetime(2022, 7, 16, 22))
     ilmaandmed_veebist(datetime(2022, 7, 16, 21))
