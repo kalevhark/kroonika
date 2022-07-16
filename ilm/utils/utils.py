@@ -310,6 +310,8 @@ def ilmaandmed_veebist(dt):
         else:
             andmed[cols[i]] = None
     # andmed['station'] = Jaam.objects.filter(name=jaam).first()
+    if andmed['airtemperature'] == None and andmed['airpressure'] == None: # Kui andmed puudulikud
+        return {}
     andmed['station_id'] = 1
     andmed['timestamp'] = pytz.timezone('Europe/Tallinn').\
         localize(datetime(dt.year, dt.month, dt.day, dt.hour))
