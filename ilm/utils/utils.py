@@ -234,6 +234,7 @@ def ilmaandmed_veebist(dt):
     )
     # Loeme veebist andmed
 
+    # proovime filter p2ringut ja kui see ei 6nnestu, siis viimaste andmete p2ringut
     for link in [p2ring, href]:
         try:
             with urllib.request.urlopen(link) as req:
