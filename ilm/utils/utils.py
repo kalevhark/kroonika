@@ -286,7 +286,7 @@ def ilmaandmed_veebist(dt):
                 andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
             break
         else:
-            print(dt, f'Vale! {dt} vs {kontroll_datetime}')
+            # print(dt, f'Vale! {dt} vs {kontroll_datetime}')
             # Kui vastus vale kellaaja või kuupäevaga, saadame tagasi tühja tabeli
             andmed = {}
 
