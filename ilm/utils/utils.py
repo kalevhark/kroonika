@@ -229,7 +229,7 @@ def ilmaandmed_veebist(dt_naive):
     # href = 'http://vana.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
     href = 'https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
     dt = utc2eesti_aeg(dt_naive)
-    print(dt, dt_naive)
+    # print(dt, dt_naive)
     p2ev = dt.strftime("%d.%m.%Y")
     tund = dt.strftime("%H:00")
     # Päringu aadress
@@ -268,7 +268,7 @@ def ilmaandmed_veebist(dt_naive):
         #         return andmed
         kontroll_datetime_soup = soup.find(attrs={'class': 'utc-info'}) # formaat: 'UTC 11.07.2022 20:00'
         kontroll_datetime = datetime.strptime(kontroll_datetime_soup.text.strip(), 'UTC %d.%m.%Y %H:%M')
-        print(kontroll_datetime_soup.text.strip(), kontroll_datetime)
+        # print(kontroll_datetime_soup.text.strip(), kontroll_datetime)
         if any([
             kontroll_datetime.year != dt_naive.year,
             kontroll_datetime.month != dt_naive.month,
@@ -284,7 +284,7 @@ def ilmaandmed_veebist(dt_naive):
         row = table.find(string=re.compile(jaam))
         data = row.find_parent().find_next_siblings()
         for i in range(len(data)):
-            print(dt_naive, data[i])
+            # print(dt_naive, data[i])
             if data[i]: # kui andmeväli pole tühi
                 if cols[i] in ['phenomenon', 'phenomenon_observer']: # tekstiväli
                     andmed[cols[i]] = data[i].text.strip()
