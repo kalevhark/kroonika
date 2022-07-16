@@ -311,8 +311,7 @@ class IlmateenistusData():
     #     return andmed
 
     def viimase24h_andmed(self, jaam, hetke_aeg):
-        # d = pytz.timezone('Europe/Tallinn').localize(datetime.now())
-        d = datetime.now(tz=ZoneInfo('Europe/Tallinn'))
+        d = pytz.timezone('Europe/Tallinn').localize(datetime.now())
         # tunniloendur
         algus = hetke_aeg - timedelta(hours=23)
         # andmeloendid

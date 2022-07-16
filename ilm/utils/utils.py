@@ -236,12 +236,13 @@ def ilmaandmed_veebist(dt):
     tund = dt.strftime("%H")
     # Päringu aadress
     p2ring = ''.join(
-        [href,
-         '?filter[date]=',
-         p2ev,
-         '&filter[hour]=',
-         tund,
-         '&x=x']
+        [
+            href,
+            '?filter[date]=',
+            p2ev,
+            '&filter[hour]=',
+            tund
+        ]
     )
     # Loeme veebist andmed
     # req = Request(
@@ -261,8 +262,6 @@ def ilmaandmed_veebist(dt):
 
     headers = {
         'User-Agent': 'Mozilla/5.0',
-        'Cache-Control': 'no-cache',
-        "Pragma": "no-cache"
     }
 
     import urllib.request, urllib.error
@@ -319,7 +318,7 @@ def ilmaandmed_veebist(dt):
     if maxmin_andmed:
         andmed['airtemperature_max'] = maxmin_andmed['airtemperature_max']
         andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
-    # print(dt, andmed)
+    print(dt, andmed)
     return andmed
 
 def yrno_48h():
@@ -834,5 +833,4 @@ class YrnoAPI():
 
 if __name__ == "__main__":
     ilmaandmed_veebist(datetime(2022, 7, 16, 13))
-    ilmaandmed_veebist(datetime(2022, 7, 16, 15))
-    ilmaandmed_veebist(datetime(2022, 7, 16, 20))
+    ilmaandmed_veebist(datetime(2022, 7, 16, 21))
