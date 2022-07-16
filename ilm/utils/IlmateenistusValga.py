@@ -262,106 +262,52 @@ class IlmateenistusData():
         # Tagastab kahe kuupäeva vahe tundides
         return (l6pp-algus).days * 24 + (l6pp-algus).seconds/3600
 
-    def ilm_praegu(self):        
-        # Loeme Ilmateenistuse viimase mõõtmise andmed veebist
-        jaam = 'Valga'
-        href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
-        r = requests.get(href)
-        try:
-            root = ET.fromstring(r.text)
-        except:
-            # Kontrollime kas vaatlusandmed ikkagi olemas
-            observation_exists = r.text.find('<observations')
-            if observation_exists > 0:
-                root = ET.fromstring(r.text[observation_exists:])
-            else:
-                return None # Andmeid ei õnnestunud online saada
-        # Loeme soovitud jaama andmed
-        station = root.findall("./station/[name='"+jaam+"']")
-        i = dict()
-        # Mõõtmise aeg
-        dt = datetime.fromtimestamp(int(root.attrib['timestamp']))
-        i['timestamp'] = pytz.timezone('Europe/Tallinn').localize(dt)
-        for el in station:
-            for it in el:
-                data = it.text
-                # Kui ei ole tekstiväli, siis teisendame float tüübiks
-                if it.tag not in ['name',
-                                  'station',
-                                  'phenomenon',
-                                  'phenomenon_observer']:
-                    data = float_or_none(data)
-                i[it.tag] = data
-        return i
+    # def ilm_praegu(self):
+    #     # Loeme Ilmateenistuse viimase mõõtmise andmed veebist
+    #     jaam = 'Valga'
+    #     href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
+    #     r = requests.get(href)
+    #     try:
+    #         root = ET.fromstring(r.text)
+    #     except:
+    #         # Kontrollime kas vaatlusandmed ikkagi olemas
+    #         observation_exists = r.text.find('<observations')
+    #         if observation_exists > 0:
+    #             root = ET.fromstring(r.text[observation_exists:])
+    #         else:
+    #             return None # Andmeid ei õnnestunud online saada
+    #     # Loeme soovitud jaama andmed
+    #     station = root.findall("./station/[name='"+jaam+"']")
+    #     i = dict()
+    #     # Mõõtmise aeg
+    #     dt = datetime.fromtimestamp(int(root.attrib['timestamp']))
+    #     i['timestamp'] = pytz.timezone('Europe/Tallinn').localize(dt)
+    #     for el in station:
+    #         for it in el:
+    #             data = it.text
+    #             # Kui ei ole tekstiväli, siis teisendame float tüübiks
+    #             if it.tag not in ['name',
+    #                               'station',
+    #                               'phenomenon',
+    #                               'phenomenon_observer']:
+    #                 data = float_or_none(data)
+    #             i[it.tag] = data
+    #     return i
 
-    def ilmaandmed_veebist(self, d):
-        """
-        Tagastab etteantud ajahetke (d) viimase möödunud täistunni ilmaandmed
-        ilmateenistus.ee veebilehelt
-        """
-        # jaam = 'Valga'
-        # cols = ['airtemperature',
-        #         'relativehumidity',
-        #         'airpressure',
-        #         'airpressure_delta',
-        #         'winddirection',
-        #         'windspeed',
-        #         'windspeedmax',
-        #         'cloudiness',
-        #         'phenomenon',
-        #         'phenomenon_observer',
-        #         'precipitations',
-        #         'visibility']
-        # href = 'http://ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/'
-        # p2ev = d.strftime("%d.%m.%Y")
-        # tund = d.strftime("%H")
-        # # Päringu aadress
-        # p2ring = ''.join(
-        #     [href,
-        #      '?filter[date]=',
-        #      p2ev,
-        #      '&filter[hour]=',
-        #      tund]
-        # )
-        # # Loeme veebist andmed
-        # req = Request(p2ring, headers={'User-Agent': 'Mozilla/5.0'})
-        # webpage = urlopen(req).read()
-        # # Struktueerime
-        # soup = BeautifulSoup(webpage, 'html.parser')
-        # kontroll_hour = soup.find(attrs={"name": "filter[hour]"})
-        # kontroll_date = soup.find(attrs={"name": "filter[date]"})
-        # andmed = dict()
-        # if kontroll_hour:
-        #     if kontroll_hour['value'].zfill(2) != tund.zfill(2) or kontroll_date['value'] != p2ev:
-        #         # Kui vastus vale kellaajaga või kuupäevaga, saadame tagasi tühja tabeli
-        #         return andmed
-        # # Leiame lehelt tabeli
-        # table = soup.table
-        # # Leiame tabelist rea
-        # row = table.find(string=re.compile(jaam))
-        # data = row.find_parent().find_next_siblings()
-        # for i in range(len(data)):
-        #     if data[i]: # kui andmeväli pole tühi
-        #         if cols[i] in ['phenomenon', 'phenomenon_observer']: # tekstiväli
-        #             andmed[cols[i]] = data[i].text.strip()
-        #         else: # numbriväli
-        #             value = data[i].text.strip().replace(',', '.')
-        #             andmed[cols[i]] = float_or_none(value)
-        #     else:
-        #         andmed[cols[i]] = None
-        #
-        # andmed['station'] = Jaam.objects.filter(name=jaam).first()
-        # andmed['timestamp'] = pytz.timezone('Europe/Tallinn').localize(
-        #     datetime(d.year, d.month, d.day, d.hour))
-
-        dt_utc = d.astimezone(pytz.utc)
-        andmed = utils.ilmaandmed_veebist(dt_utc)
-        # Ilmaandmed andmebaasi juhul kui põhiandmed olemas
-        if andmed['airtemperature'] != None:
-            i = Ilm(**andmed)
-            i.save()
-            print('Salvestan andmebaasi:', d)
-        return andmed
+    # def ilmaandmed_veebist(self, d):
+    #     """
+    #     Tagastab etteantud ajahetke (d) viimase möödunud täistunni ilmaandmed
+    #     ilmateenistus.ee veebilehelt
+    #     """
+    #     # dt_utc = d.astimezone(pytz.utc)
+    #     # andmed = utils.ilmaandmed_veebist(dt_utc)
+    #     andmed = utils.ilmaandmed_veebist(d)
+    #     # Ilmaandmed andmebaasi juhul kui põhiandmed olemas
+    #     if andmed and andmed['airtemperature'] != None:
+    #         i = Ilm(**andmed)
+    #         i.save()
+    #         print('Salvestan andmebaasi:', d)
+    #     return andmed
 
     def viimase24h_andmed(self, jaam, hetke_aeg):
         d = pytz.timezone('Europe/Tallinn').localize(datetime.now())
@@ -398,8 +344,14 @@ class IlmateenistusData():
                     veebiandmed['precipitations'] = float_or_none(veebiandmed['precipitations'])
                     allikas = 'D:'
                 else: # Kui ei, siis hangitakse veebist
-                    veebiandmed = self.ilmaandmed_veebist(algus)
-                    allikas = 'W:'
+                    # veebiandmed = self.ilmaandmed_veebist(algus)
+                    veebiandmed = utils.ilmaandmed_veebist(algus)
+                    # Ilmaandmed andmebaasi juhul kui põhiandmed olemas
+                    if veebiandmed and veebiandmed['airtemperature'] != None:
+                        i = Ilm(**veebiandmed)
+                        i.save()
+                        print('Salvestan andmebaasi:', algus)
+                    # allikas = 'W:'
                 if veebiandmed:
                     if veebiandmed['airtemperature'] != None:
                         self.cache24h[algus] = veebiandmed
@@ -425,7 +377,8 @@ class IlmateenistusData():
             algus += timedelta(hours=1)
 
         # Lisame viimase mõõtmise andmed
-        i = self.ilm_praegu()
+        # i = self.ilm_praegu()
+        i = utils.ilm_praegu()
         if i and i['airtemperature']: # Kui andmed saadi
             tund = self.mitutundi(
                 hetke_aeg - timedelta(hours=23),
@@ -485,7 +438,6 @@ def add_data(failinimi):
         reader = csv.DictReader(csvfile, delimiter=',', fieldnames=field_names)
         firstline = True
         for row in reader:
-            
             if firstline:    #skip first line
                 firstline = False
                 continue
