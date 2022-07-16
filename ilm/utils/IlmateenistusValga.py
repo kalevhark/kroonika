@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import re
 from urllib.request import Request, urlopen
+from zoneinfo import ZoneInfo
 
 from astral import LocationInfo, moon
 from astral.sun import sun
@@ -310,7 +311,8 @@ class IlmateenistusData():
     #     return andmed
 
     def viimase24h_andmed(self, jaam, hetke_aeg):
-        d = pytz.timezone('Europe/Tallinn').localize(datetime.now())
+        # d = pytz.timezone('Europe/Tallinn').localize(datetime.now())
+        d = datetime.now(tz=ZoneInfo('Europe/Tallinn'))
         # tunniloendur
         algus = hetke_aeg - timedelta(hours=23)
         # andmeloendid

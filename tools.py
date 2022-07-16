@@ -1,11 +1,12 @@
 from collections import Counter
 import csv
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 import glob
 import json
 import os
 from pathlib import Path, PurePath
 import shutil
+from zoneinfo import ZoneInfo
 
 import requests
 from bs4 import BeautifulSoup
@@ -835,8 +836,26 @@ def init_pilt_profiilipildid():
             for obj in pilt.objektid.all():
                 pilt.profiilipilt_objektid.add(obj)
 
+
+def ilmajama():
+    print('Nullist:')
+    print('datetime naive [datetime.now()]:', datetime.now())
+    dt_naive = datetime.now()
+    print('datetime UTC   [datetime.now(timezone.utc)]:', datetime.now(timezone.utc))
+    dt_utc = datetime.now(timezone.utc)
+    print('datetime Eesti [datetime.now(tz=ZoneInfo("Europe/Tallintoolsn")]:', datetime.now(tz=ZoneInfo('Europe/Tallinn')))
+    dt_eesti = datetime.now(tz=ZoneInfo('Europe/Tallinn'))
+    print('Teisendused:')
+    dt_utc_uus = dt_naive.astimezone(timezone.utc)
+    print(f'naive -> utc [dt_naive.astimezone(timezone.utc)]: {dt_naive} -> {dt_naive.astimezone(timezone.utc)}')
+    dt_eesti_uus = dt_naive.astimezone(ZoneInfo("Europe/Tallinn"))
+    print(f'naive -> Eesti [dt_naive.astimezone(ZoneInfo("Europe/Tallinn"))]: {dt_naive} -> {dt_naive.astimezone(ZoneInfo("Europe/Tallinn"))}')
+    print(f'UTC   -> Eesti [dt_utc.astimezone(ZoneInfo("Europe/Tallinn"))]: {dt_utc} -> {dt_utc.astimezone(ZoneInfo("Europe/Tallinn"))}')
+    print(f'{dt_eesti_uus} == {dt_utc_uus} -> {dt_eesti_uus == dt_utc_uus}')
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
-    get_muis_vamf()
+    # get_muis_vamf()
     # muis_viited_inuse()
+    ilmajama()
     pass
