@@ -256,26 +256,39 @@ def ilmaandmed_veebist(dt):
     #         print('Error code: ', e.code)
     #     return {}
 
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    req = requests.get(p2ring, headers=headers)
-    response = req.text
+    headers = {
+        'User-Agent': 'Mozilla/5.0',
+        'Cache-Control': 'no-cache',
+        "Pragma": "no-cache"
+    }
 
-    if req.status_code == requests.codes.ok and response.find(jaam) > 0:
-        # Struktueerime ja kontrollime vastavust
-        soup = BeautifulSoup(response, 'html.parser')
-        kontroll_datetime_soup = soup.find(attrs={'class': 'utc-info'}) # formaat: 'UTC 11.07.2022 20:00'
-        kontroll_datetime = datetime.strptime(kontroll_datetime_soup.text.strip(), 'UTC %d.%m.%Y %H:%M')
-        if any([
-            kontroll_datetime.year != dt.astimezone(timezone.utc).year,
-            kontroll_datetime.month != dt.astimezone(timezone.utc).month,
-            kontroll_datetime.day != dt.astimezone(timezone.utc).day,
-            kontroll_datetime.hour != dt.astimezone(timezone.utc).hour
-        ]):
-            print(dt, f'Vale! {dt} vs {kontroll_datetime}')
-            # Kui vastus vale kellaaja või kuupäevaga, saadame tagasi tühja tabeli
-            return {}
-    else:
-        print(dt, f'Viga: {req.status_code} {jaam}={response.find(jaam)}')
+    import urllib.request, urllib.error
+    try:
+        with urllib.request.urlopen(p2ring) as req:
+            response = req.read()
+    except urllib.error.HTTPError as e:
+        if e.code != 200:
+            print(f'{p2ring} base webservices are not available')
+            ## can add authentication here
+        else:
+            print('http error', e)
+        return {}
+
+    # req = requests.get(p2ring, headers=headers)
+    # response = req.text
+
+    # Struktueerime ja kontrollime vastavust
+    soup = BeautifulSoup(response, 'html.parser')
+    kontroll_datetime_soup = soup.find(attrs={'class': 'utc-info'}) # formaat: 'UTC 11.07.2022 20:00'
+    kontroll_datetime = datetime.strptime(kontroll_datetime_soup.text.strip(), 'UTC %d.%m.%Y %H:%M')
+    if any([
+        kontroll_datetime.year != dt.astimezone(timezone.utc).year,
+        kontroll_datetime.month != dt.astimezone(timezone.utc).month,
+        kontroll_datetime.day != dt.astimezone(timezone.utc).day,
+        kontroll_datetime.hour != dt.astimezone(timezone.utc).hour
+    ]):
+        print(dt, f'Vale! {dt} vs {kontroll_datetime}')
+        # Kui vastus vale kellaaja või kuupäevaga, saadame tagasi tühja tabeli
         return {}
 
     andmed = dict()
@@ -303,7 +316,7 @@ def ilmaandmed_veebist(dt):
     if maxmin_andmed:
         andmed['airtemperature_max'] = maxmin_andmed['airtemperature_max']
         andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
-    # print(andmed)
+    # print(dt, andmed)
     return andmed
 
 def yrno_48h():
@@ -817,4 +830,6 @@ class YrnoAPI():
             return ''
 
 if __name__ == "__main__":
-    ilmaandmed_veebist(datetime(2022, 7, 16, 14))
+    ilmaandmed_veebist(datetime(2022, 7, 16, 13))
+    ilmaandmed_veebist(datetime(2022, 7, 16, 15))
+    ilmaandmed_veebist(datetime(2022, 7, 16, 16))
