@@ -674,7 +674,7 @@ def update_lasthours(path, verbose=False, hours=72):
             if ilm_observation_veebist:
                 id = insert_new_observations(ilm_observation_veebist, path)
                 if verbose:
-                    print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+                    print(f'{ilm_observation_veebist["timestamp"]} lisatud {id} {ilm_observation_veebist["airtemperature"]}')
             else:
                 if verbose:
                     print(f'{observation_time} uuendamine ebaõnnestus')

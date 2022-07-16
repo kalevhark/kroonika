@@ -318,7 +318,7 @@ def ilmaandmed_veebist(dt):
     if maxmin_andmed:
         andmed['airtemperature_max'] = maxmin_andmed['airtemperature_max']
         andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
-    print(dt, andmed)
+    # print(dt, andmed)
     return andmed
 
 def yrno_48h():
