@@ -1783,7 +1783,7 @@ def mixed_ilmateade(request):
             'align': 'left',
             'style': {"fontSize": "12px"},
             'x': 30,
-            'y': 40
+            'y': 20
         },
 	
 	    'subtitle': {
@@ -1856,7 +1856,7 @@ def mixed_ilmateade(request):
                     'format': '{value:%d.%m}',
                     'align': 'left',
                     'x': 3,
-                    'y': -5
+                    'y': 0
                 },
                 'opposite': True,
                 'tickLength': 20,
