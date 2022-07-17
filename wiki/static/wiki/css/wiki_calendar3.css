@@ -1,6 +1,10 @@
 /* ver 2021.1 */
 @charset "UTF-8";
 
+#wiki_calendar {
+  transition: all 0.3s ease-in-out ;
+}
+
 #gw--datetimepicker {
   margin-top: 0px;
   width: auto;

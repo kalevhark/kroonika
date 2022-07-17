@@ -78,7 +78,11 @@
     {# Kalendrividina käivitamine #}
     GWDateTimePicker.init({
       targetId: "date-container"
-    });
+    })
+    // toome kalendri nähtavale
+    var x = document.getElementById("wiki_calendar");
+    // x.style.display = "table";
+    x.style.opacity = "1";
   });
 </script>
 {% endblock %}
