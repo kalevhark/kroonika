@@ -200,7 +200,7 @@ def get_maxmin_airtemperature(dt_utc):
 
 from zoneinfo import ZoneInfo
 # Ilmateenistuse etteantud täistunni mõõtmise andmed veebist
-def ilmaandmed_veebist(dt):
+def ilmaandmed_veebist(dt, verbose=False):
     """
     Tagastab etteantud dt (aware v6i naive) viimase möödunud täistunni ilmaandmed
     ilmateenistus.ee veebilehelt
@@ -236,15 +236,23 @@ def ilmaandmed_veebist(dt):
 
     # proovime filter p2ringut ja kui see ei 6nnestu, siis viimaste andmete p2ringut
     for link in [p2ring, href]:
-        try:
-            with urllib.request.urlopen(link) as req:
-                response = req.read()
-        except urllib.error.HTTPError as e:
-            if e.code != 200:
-                print(f'{link} base webservices are not available')
-                ## can add authentication here
-            else:
-                print('http error', e)
+        # Alternatiiv 1
+        # try:
+        #     with urllib.request.urlopen(link) as req:
+        #         response = req.read()
+        # except urllib.error.HTTPError as e:
+        #     if e.code != 200:
+        #         print(f'{link} base webservices are not available')
+        #         ## can add authentication here
+        #     else:
+        #         print('http error', e)
+        #     return {}
+        # Alternatiiv 2
+        req = requests.get(link)
+        if req.status_code == requests.codes.ok:
+            response = req.text
+        else:
+            print(f'{link} base webservices are not available')
             return {}
 
         # Struktueerime ja kontrollime vastavust
@@ -291,7 +299,8 @@ def ilmaandmed_veebist(dt):
             # Kui vastus vale kellaaja või kuupäevaga, saadame tagasi tühja tabeli
             andmed = {}
 
-    # print(dt, andmed)
+    if verbose:
+        print(dt, andmed)
     return andmed
 
 def yrno_48h():
@@ -805,5 +814,5 @@ class YrnoAPI():
             return ''
 
 if __name__ == "__main__":
-    ilmaandmed_veebist(datetime(2022, 7, 16, 22))
-    ilmaandmed_veebist(datetime(2022, 7, 16, 21))
+    ilmaandmed_veebist(datetime(2022, 7, 16, 22), verbose=True)
+    ilmaandmed_veebist(datetime(2022, 7, 16, 23), verbose=True)
