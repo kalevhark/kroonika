@@ -236,24 +236,27 @@ def ilmaandmed_veebist(dt, verbose=False):
 
     # proovime filter p2ringut ja kui see ei 6nnestu, siis viimaste andmete p2ringut
     for link in [p2ring, href]:
-        # Alternatiiv 1
-        # try:
-        #     with urllib.request.urlopen(link) as req:
-        #         response = req.read()
-        # except urllib.error.HTTPError as e:
-        #     if e.code != 200:
-        #         print(f'{link} base webservices are not available')
-        #         ## can add authentication here
-        #     else:
-        #         print('http error', e)
-        #     return {}
-        # Alternatiiv 2
-        req = requests.get(link)
-        if req.status_code == requests.codes.ok:
-            response = req.text
+        # Kasutame vaheldumisi kahte erinevat strateegiat
+        if datetime.now().hour%2 == 0:
+            # Alternatiiv 1
+            try:
+                with urllib.request.urlopen(link) as req:
+                    response = req.read()
+            except urllib.error.HTTPError as e:
+                if e.code != 200:
+                    print(f'{link} base webservices are not available')
+                    ## can add authentication here
+                else:
+                    print('http error', e)
+                return {}
         else:
-            print(f'{link} base webservices are not available')
-            return {}
+            # Alternatiiv 2
+            req = requests.get(link)
+            if req.status_code == requests.codes.ok:
+                response = req.text
+            else:
+                print(f'{dt}: {link} base webservices are not available')
+                return {}
 
         # Struktueerime ja kontrollime vastavust
         soup = BeautifulSoup(response, 'html.parser')
@@ -295,7 +298,7 @@ def ilmaandmed_veebist(dt, verbose=False):
                 andmed['airtemperature_min'] = maxmin_andmed['airtemperature_min']
             break
         else:
-            # print(dt, f'Vale! {dt} vs {kontroll_datetime}')
+            print(f'{dt}: {link} Vale! {dt} vs {kontroll_datetime}')
             # Kui vastus vale kellaaja või kuupäevaga, saadame tagasi tühja tabeli
             andmed = {}
 
