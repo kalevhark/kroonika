@@ -19,6 +19,7 @@
           Varasemad kohanimed: {{ object.asukoht }}
         </h5>
       {% endif %}
+      {% if object.gone %}hävinud/lammutatud{% endif %}
       <h5>
         {% if object.hist_date %}
           <strong>{{ object.hist_date }}</strong>

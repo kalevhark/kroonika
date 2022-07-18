@@ -1,10 +1,10 @@
-/* ver 2022.06 */
+/* ver 2022.07 */
 html, body, p, h1, h2, h3, h4, h5 {
   font-family: "Raleway", sans-serif;
 }
 
 h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}
-h3,h4,h5,h6{font-weight:400;margin:10px 0}
+h3,h4,h5,h6{font-weight:600;margin:10px 0}
 
 a {
   text-decoration: none;
