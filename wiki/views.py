@@ -736,14 +736,6 @@ def get_v6rdle_object(request):
 #
 def update_object_with_object(model_name='', source_id='', dest_id=''):
     model = apps.get_model('wiki', model_name)
-    # if model_name == 'isik':
-    #     model = Isik
-    # elif model_name == 'organisatsioon':
-    #     model = Organisatsioon
-    # elif model_name == 'objekt':
-    #     model = Objekt
-    # else:
-    #     return
 
     # Doonorobjekt
     old = model.objects.get(id=source_id)
@@ -826,6 +818,11 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
             print(pilt.id, pilt)
             pilt.isikud.add(new)
             # pilt.isikud.remove(old)
+        print('Profiilipildid:')
+        pildid = Pilt.objects.filter(profiilipilt_isikud=old)
+        for pilt in pildid:
+            print(pilt.id, pilt)
+            pilt.profiilipilt_isikud.add(new)
     elif model == Organisatsioon:
         if old.hist_date == None:
             if old.hist_month:
@@ -837,7 +834,6 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         for art in artiklid:
             print(art.id, art)
             art.organisatsioonid.add(new)
-            # art.organisatsioonid.remove(old)
         print('Objektid:')
         objektid = old.objektid.all()
         for objekt in objektid:
@@ -848,7 +844,11 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         for pilt in pildid:
             print(pilt.id, pilt)
             pilt.organisatsioonid.add(new)
-            # pilt.organisatsioonid.remove(old)
+        print('Profiilipildid:')
+        pildid = Pilt.objects.filter(profiilipilt_organisatsioonid=old)
+        for pilt in pildid:
+            print(pilt.id, pilt)
+            pilt.profiilipilt_organisatsioonid.add(new)
     elif model == Objekt:
         if old.hist_date == None:
             if old.hist_month:
@@ -866,7 +866,6 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         for art in artiklid:
             print(art.id, art)
             art.objektid.add(new)
-            # art.objektid.remove(old)
         print('Objektid:')
         objektid = old.objektid.all()
         for objekt in objektid:
@@ -878,7 +877,11 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         for pilt in pildid:
             print(pilt.id, pilt)
             pilt.objektid.add(new)
-            # pilt.objektid.remove(old)
+        print('Pildid:')
+        pildid = Pilt.objects.filter(profiilpilt_objektid=old)
+        for pilt in pildid:
+            print(pilt.id, pilt)
+            pilt.profiilpilt_objektid.add(new)
         print('Kaardiobjektid:')
         kaardiobjektid = Kaardiobjekt.objects.filter(objekt=old)
         for kaardiobjekt in kaardiobjektid:
