@@ -939,8 +939,10 @@ class PiltAdmin(AjaxSelectAdmin):
         'pilt',
         'pildi_suurus'
     ]
-    list_filter = ['tyyp']
-    search_fields = ['id', 'nimi']
+    list_filter = [
+        'tyyp'
+    ]
+    search_fields = ['id', 'nimi', 'viited__kohaviit']
     filter_horizontal = (
         # 'viited',
         # 'allikad',
@@ -1063,6 +1065,41 @@ class PiltAdmin(AjaxSelectAdmin):
         return object
 
 
+class VihjeDoneListFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = 'Läbivaatamise staatus'
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'end_date'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            ('OK', 'Korras'),
+            ('NOK', 'Tegemata'),
+        )
+
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        # Compare the requested value (either 'OK' or 'NOK')
+        # to decide how to filter the queryset.
+        if self.value() == 'NOK':
+            return queryset.filter(end_date__isnull=True)
+        if self.value() == 'OK':
+            return queryset.filter(end_date__isnull=False)
+
+
 class VihjeAdmin(admin.ModelAdmin):
     readonly_fields = ['inp_date']
     fieldsets = [
@@ -1080,7 +1117,7 @@ class VihjeAdmin(admin.ModelAdmin):
             'fields': [('inp_date', 'end_date')]}),
     ]
     list_filter = [
-        'end_date'
+        VihjeDoneListFilter,
     ]
     list_display = [
         'id',
@@ -1130,21 +1167,21 @@ def create_modeladmin(modeladmin, model, name = None):
     return modeladmin
 
 
-class IsikPiltidetaAdmin(IsikAdmin):
-    inlines = []
-
-create_modeladmin(IsikPiltidetaAdmin, name='isikud-kiirparandusteks', model=Isik)
-
-
-class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
-    inlines = []
-
-create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-kiirparandusteks', model=Organisatsioon)
-
-class ObjektPiltidetaAdmin(ObjektAdmin):
-    inlines = []
-
-create_modeladmin(ObjektPiltidetaAdmin, name='kohad-kiirparandusteks', model=Objekt)
+# class IsikPiltidetaAdmin(IsikAdmin):
+#     inlines = []
+#
+# create_modeladmin(IsikPiltidetaAdmin, name='isikud-kiirparandusteks', model=Isik)
+#
+#
+# class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
+#     inlines = []
+#
+# create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-kiirparandusteks', model=Organisatsioon)
+#
+# class ObjektPiltidetaAdmin(ObjektAdmin):
+#     inlines = []
+#
+# create_modeladmin(ObjektPiltidetaAdmin, name='kohad-kiirparandusteks', model=Objekt)
 
 
 class KaartAdmin(AjaxSelectAdmin):
