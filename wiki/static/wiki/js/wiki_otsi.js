@@ -1,4 +1,4 @@
-// ver 2022.2
+// ver 2022.7
 
 $( document ).ready(function() {
   // Vue otsimisäpp
@@ -57,6 +57,10 @@ $( document ).ready(function() {
       this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
     },
     mounted: function () {
+      // toome otsingu nähtavale
+      var x = document.getElementById("kroonika-api");
+      x.style.opacity = "1";
+
       this.focusInput();
       if (this.question.length > 0) {
         this.getAnswer();

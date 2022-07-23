@@ -16,6 +16,7 @@ from .forms import NameForm
 from .models import Ilm
 from .utils import utils, IlmateenistusValga
 import ilm.utils.ephem_util as ephem_data
+# import ilm.utils.utils
 
 bdi = IlmateenistusValga.IlmateenistusData()
 
@@ -2114,7 +2115,8 @@ def mixed_ilmateade(request):
 
 # küsib Ilmateenistuse hetkeandmed
 def get_ilmateenistus_now():
-    hetkeilm = bdi.ilm_praegu()
+    # hetkeilm = bdi.ilm_praegu()
+    hetkeilm = utils.ilm_praegu()
     return hetkeilm
 
 # küsib ilmaandmed ja moodustab nendest sõnastiku
