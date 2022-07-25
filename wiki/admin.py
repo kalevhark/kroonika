@@ -915,7 +915,7 @@ class ObjektAdmin(AjaxSelectAdmin):
         return _boolean_icon(
             not (obj.gone or obj.hist_enddate or obj.hist_endyear)
         )
-    seotud_kaardiga.short_description = 'Säilinud'
+    s2ilinud.short_description = 'Säilinud'
 
 
 class KroonikaAdmin(admin.ModelAdmin):
