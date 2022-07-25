@@ -815,12 +815,12 @@ class ObjektAdmin(AjaxSelectAdmin):
         # 'id',
         'colored_id',
         'seotud_kaardiga',
+        's2ilinud',
         'nimi',
         'asukoht',
         # '__str__',
         'hist_date',
         'hist_year',
-        'hist_month',
         'seotud_artikleid',
         'seotud_pilte',
         'seotud_viiteid',
@@ -910,6 +910,12 @@ class ObjektAdmin(AjaxSelectAdmin):
             obj.kaardiobjekt_set.count() > 0
         )
     seotud_kaardiga.short_description = 'Kaardiga'
+
+    def s2ilinud(self, obj):
+        return _boolean_icon(
+            not (obj.gone or obj.hist_enddate or obj.hist_endyear)
+        )
+    seotud_kaardiga.short_description = 'Säilinud'
 
 
 class KroonikaAdmin(admin.ModelAdmin):
