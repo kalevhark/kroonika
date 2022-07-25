@@ -815,9 +815,9 @@ class ObjektAdmin(AjaxSelectAdmin):
         # 'id',
         'colored_id',
         'seotud_kaardiga',
-        # 'nimi',
-        # 'asukoht',
-        '__str__',
+        'nimi',
+        'asukoht',
+        # '__str__',
         'hist_date',
         'hist_year',
         'hist_month',
@@ -1217,9 +1217,8 @@ admin.site.register(Kaardiobjekt, KaardiobjektAdmin)
 
 from django.contrib import admin
 from ajax_select import make_ajax_form
-# from yourapp.models import YourModel
 
-@admin.register(Pilt.artiklid.through)
+# @admin.register(Pilt.artiklid.through)
 class YourModelAdmin(AjaxSelectAdmin):
 
     form = make_ajax_form(Pilt.artiklid.through, {
