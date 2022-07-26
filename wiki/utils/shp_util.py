@@ -800,6 +800,8 @@ def make_objekt_leaflet_combo(objekt_id=1):
             **kwargs
         )
         # map_name = map.get_name()
+        map.default_css = LEAFLET_DEFAULT_CSS
+        map.default_js = LEAFLET_DEFAULT_JS
 
         for aasta in feature_group.keys():
             # Lisame kaardi leaflet combosse
@@ -884,6 +886,8 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
             tiles=kaardiobjekt.kaart.tiles,
             attr=f'{kaardiobjekt.kaart.__str__()}',
         )
+        map.default_css = LEAFLET_DEFAULT_CSS
+        map.default_js = LEAFLET_DEFAULT_JS
 
         # lisame vektorkihid
         geometry = kaardiobjekt.geometry
