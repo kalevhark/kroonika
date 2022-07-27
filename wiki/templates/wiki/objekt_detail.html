@@ -16,11 +16,11 @@
       </h4>
       {% if object.asukoht %}
         <h5>
-          Varasemad kohanimed: {{ object.asukoht }}
+          Varasemad aadressi= või nimekujud: {{ object.asukoht }}
         </h5>
       {% endif %}
       {% if object.gone or object.hist_enddate or object.hist_endyear %}
-        hävinud/lammutatud
+        kaasajal pole olemas või on nime muudetud
       {% endif %}
       <h5>
         {% if object.hist_date %}
