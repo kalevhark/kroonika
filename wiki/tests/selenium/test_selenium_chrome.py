@@ -304,7 +304,7 @@ class SeleniumTestsChromeDetailViewObjectOrganisatsioon(SeleniumTestsChromeDetai
         super().test_view_HTTP404_for_non_authented_user()
 
 
-class SeleniumTestsChromeV6rdle(SeleniumTestsChromeBase):
+class SeleniumTestsChromeV6rdleIsik(SeleniumTestsChromeBase):
 
     @classmethod
     def setUpClass(cls):
@@ -317,10 +317,10 @@ class SeleniumTestsChromeV6rdle(SeleniumTestsChromeBase):
     def test_v6rdle(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         self.selenium.get('%s%s' % (self.live_server_url, '/info/'))
-        self.selenium.get('%s%s' % (self.live_server_url, '/wiki/v6rdle/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/wiki/v6rdle/isik/'))
 
         # kontrollime kas n6utakse sisselogimist
-        self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/accounts/login/?next=/wiki/v6rdle/'))
+        self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/accounts/login/?next=/wiki/v6rdle/isik/'))
         el = self.selenium.find_element(By.TAG_NAME, "body").text
         self.assertIn("logi sisse", el)
 
@@ -377,3 +377,74 @@ class SeleniumTestsChromeV6rdle(SeleniumTestsChromeBase):
         self.assertTrue(button_parem.is_enabled())
 
 
+class SeleniumTestsChromeV6rdleObjekt(SeleniumTestsChromeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_v6rdle(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/info/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/wiki/v6rdle/objekt/'))
+
+        # kontrollime kas n6utakse sisselogimist
+        self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/accounts/login/?next=/wiki/v6rdle/objekt/'))
+        el = self.selenium.find_element(By.TAG_NAME, "body").text
+        self.assertIn("logi sisse", el)
+
+        # logime sisse
+        username_input = self.selenium.find_element(By.NAME, "username")
+        username_input.send_keys(self.USERNAME)
+        password_input = self.selenium.find_element(By.NAME, "password")
+        password_input.send_keys(self.PASSWORD)
+        self.selenium.find_element(By.XPATH, '//input[@value="login"]').click()
+
+        # kontrollime kas sisselogimine 6nnestus
+        button_vasak = self.selenium.find_element(By.ID, "button-join-vasak")
+        self.assertTrue(button_vasak)
+        button_parem = self.selenium.find_element(By.ID, "button-join-vasak")
+        self.assertTrue(button_parem)
+
+        # kontrollime kas sidumise nupud on disabled olekus
+        self.assertFalse(button_vasak.is_enabled())
+        self.assertFalse(button_parem.is_enabled())
+
+        # sisestame esimese objekti otsingusse
+        search_input = self.selenium.find_element(By.ID, "id_vasak_object_text")
+        search_input.send_keys('Uus')
+        time.sleep(2)
+        search_input.send_keys(Keys.ARROW_DOWN + Keys.ENTER)
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "v6rdle_vasak_object"), "Uus")
+            )
+        except TimeoutException:
+            pass
+
+        # kontrollime kas sidumise nupud on endiselt disabled olekus
+        button_vasak = self.selenium.find_element(By.ID, "button-join-vasak")
+        button_parem = self.selenium.find_element(By.ID, "button-join-vasak")
+        self.assertFalse(button_vasak.is_enabled())
+        self.assertFalse(button_parem.is_enabled())
+
+        search_input = self.selenium.find_element(By.ID, "id_parem_object_text")
+        search_input.send_keys('vabaduse')
+        time.sleep(2)
+        search_input.send_keys(Keys.ARROW_DOWN + Keys.ENTER)
+        try:
+            WebDriverWait(self.selenium, timeout=3).until(
+                EC.text_to_be_present_in_element((By.ID, "v6rdle_parem_object"), "Vabaduse")
+            )
+        except TimeoutException:
+            pass
+
+        # kontrollime kas sidumise nupud on enabled olekus
+        button_vasak = self.selenium.find_element(By.ID, "button-join-vasak")
+        button_parem = self.selenium.find_element(By.ID, "button-join-vasak")
+        self.assertTrue(button_vasak.is_enabled())
+        self.assertTrue(button_parem.is_enabled())

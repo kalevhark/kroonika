@@ -21,6 +21,7 @@ urlpatterns = [
     # path('info/', views.info, name='info'),
     path('otsi/', views.otsi, name='otsi'),
     path('v6rdle/', views.v6rdle, name='v6rdle'),
+    path('v6rdle/<str:model>/', views.v6rdle),
     path('get_v6rdle_object/', views.get_v6rdle_object, name='get_v6rdle_object'),
     path('get_update_object_with_object/', views.get_update_object_with_object, name='get_update_object_with_object'),
     path('feedback/', views.feedback, name='feedback'),

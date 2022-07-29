@@ -27,7 +27,7 @@ from django.db.models import \
     ExpressionWrapper
 from django.db.models import Count, Max, Min
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
@@ -53,7 +53,7 @@ from wiki.models import (
     Kaart, Kaardiobjekt
 )
 from wiki.forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, KaardiobjektForm
-from wiki.forms import VihjeForm, V6rdleForm
+from wiki.forms import VihjeForm, V6rdleFormIsik, V6rdleFormObjekt
 
 from wiki.utils.shp_util import (
     make_objekt_leaflet_combo,
@@ -679,20 +679,28 @@ def inrange_dates_artikkel(qs, p2ev, kuu):
 # Avalehekülje otsing
 #
 @login_required
-def v6rdle(request):
+def v6rdle(request, model='isik'):
+    if model not in ['isik', 'objekt']:
+        raise Http404('Sellist lehte ei ole')
     vasak_object = request.GET.get('vasak_object')
     parem_object = request.GET.get('parem_object')
     initial_dict = {
         "vasak_object": vasak_object,
         "parem_object": parem_object,
     }
-    form = V6rdleForm(request.GET, initial=initial_dict)
+    if model == 'isik':
+        form = V6rdleFormIsik(request.GET, initial=initial_dict)
+    elif model == 'objekt':
+        form = V6rdleFormObjekt(request.GET, initial=initial_dict)
+    else:
+        raise Http404('Sellist lehte ei ole')
 
     return render(
         request,
         'wiki/wiki_v6rdle.html',
         {
             'form': form,
+            'model': model,
             'vasak_object_id': vasak_object,
             'parem_object_id': parem_object
         }
@@ -708,9 +716,9 @@ def get_v6rdle_object(request):
     # Objectiga seotud artiklid
     artikkel_qs = Artikkel.objects.daatumitega(request)
     model_filters = {
-        'Isik':           'isikud__id',
-        'Organisatsioon': 'organisatsioonid__id',
-        'Objekt':         'objektid__id'
+        'isik':           'isikud__id',
+        'organisatsioon': 'organisatsioonid__id',
+        'objekt':         'objektid__id'
     }
     filter = {
         model_filters[model_name]: id
@@ -719,7 +727,7 @@ def get_v6rdle_object(request):
 
     return render(
         request,
-        'wiki/wiki_v6rdle_isik.html',
+        f'wiki/wiki_v6rdle_{model_name.lower()}.html',
         {
             'object': object,
             'seotud_artiklid': seotud_artiklid
@@ -748,7 +756,10 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
     # Kirjeldus
     sep = '\n\n+++\n\n'
     if old.kirjeldus:
-        uus_kirjeldus = sep.join([new.kirjeldus, old.kirjeldus])
+        if new.kirjeldus:
+            uus_kirjeldus = sep.join([new.kirjeldus, old.kirjeldus])
+        else:
+            uus_kirjeldus = old.kirjeldus
         new.kirjeldus = uus_kirjeldus
 
     # Daatumid
@@ -757,14 +768,14 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
             new.hist_date = old.hist_date
     else:
         if old.hist_year:
-            if new.hist_year == None:
+            if not new.hist_year:
                 new.hist_year = old.hist_year
     if old.hist_enddate:
-        if new.hist_enddate == None:
+        if not new.hist_enddate:
             new.hist_enddate = old.hist_enddate
     else:
         if old.hist_endyear:
-            if new.hist_endyear == None:
+            if not new.hist_endyear:
                 new.hist_endyear = old.hist_endyear
 
     # Seotud viited
@@ -781,18 +792,22 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         print(eellane.id, eellane)
         new.eellased.add(eellane)
 
+    # Surnud/Likvideeritud
+    if model in [Isik, Organisatsioon, Objekt]:
+        if old.gone:
+            new.gone = old.gone
     # Seotud andmebaasid ja parameetrid
     if model == Isik:
         if old.synd_koht:
-            if new.synd_koht == None:
+            if not new.synd_koht:
                 print(old.synd_koht)
                 new.synd_koht = old.synd_koht
         if old.surm_koht:
-            if new.surm_koht == None:
+            if not new.surm_koht:
                 print(old.surm_koht)
                 new.surm_koht = old.surm_koht
         if old.maetud:
-            if new.maetud == None:
+            if not new.maetud:
                 print(old.maetud)
                 new.maetud = old.maetud
 
@@ -824,9 +839,9 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
             print(pilt.id, pilt)
             pilt.profiilipilt_isikud.add(new)
     elif model == Organisatsioon:
-        if old.hist_date == None:
+        if not old.hist_date:
             if old.hist_month:
-                if new.month == None:
+                if not new.month:
                     print(old.month)
                     new.month = old.month
         print('Artiklid:')
@@ -850,17 +865,18 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
             print(pilt.id, pilt)
             pilt.profiilipilt_organisatsioonid.add(new)
     elif model == Objekt:
-        if old.hist_date == None:
+        if not old.hist_date:
             if old.hist_month:
-                if new.month == None:
+                if not new.month:
                     print(old.month)
                     new.month = old.month
         if old.asukoht:
-            if new.asukoht == None:
-                print(old.asukoht)
-                # new.asukoht = old.asukoht
+            print(old.asukoht)
+            if new.asukoht:
                 uus_asukoht = ' +++ '.join([new.asukoht, old.asukoht])
-                new.asukoht = uus_asukoht
+            else:
+                uus_asukoht = old.asukoht
+            new.asukoht = uus_asukoht
         print('Artiklid:')
         artiklid = Artikkel.objects.filter(objektid=old)
         for art in artiklid:
@@ -878,10 +894,10 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
             print(pilt.id, pilt)
             pilt.objektid.add(new)
         print('Pildid:')
-        pildid = Pilt.objects.filter(profiilpilt_objektid=old)
+        pildid = Pilt.objects.filter(profiilipilt_objektid=old)
         for pilt in pildid:
             print(pilt.id, pilt)
-            pilt.profiilpilt_objektid.add(new)
+            pilt.profiilipilt_objektid.add(new)
         print('Kaardiobjektid:')
         kaardiobjektid = Kaardiobjekt.objects.filter(objekt=old)
         for kaardiobjekt in kaardiobjektid:

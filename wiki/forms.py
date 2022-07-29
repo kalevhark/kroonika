@@ -4,10 +4,11 @@ from crispy_forms.layout import Submit, Layout, Fieldset, HTML, ButtonHolder
 from django.forms import (
     Form, ModelForm,
     Textarea,
-    SelectMultiple,
+    # SelectMultiple,
     ValidationError,
-    CharField,
-    ModelMultipleChoiceField,
+    # CharField,
+    ChoiceField, RadioSelect, Select
+    # ModelMultipleChoiceField,
 )
 
 from .models import (
@@ -178,7 +179,7 @@ class VihjeForm(ModelForm):
         }
 
 
-class V6rdleForm(Form):
+class V6rdleFormIsik(Form):
     vasak_object = AutoCompleteSelectField(
         'isikud',
         required=False,
@@ -190,4 +191,16 @@ class V6rdleForm(Form):
         help_text=''
     )
 
+
+class V6rdleFormObjekt(Form):
+    vasak_object = AutoCompleteSelectField(
+        'objektid',
+        required=False,
+        help_text=''
+    )
+    parem_object = AutoCompleteSelectField(
+        'objektid',
+        required=False,
+        help_text=''
+    )
 

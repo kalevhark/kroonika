@@ -88,7 +88,7 @@
           {% if user.is_authenticated %}
             <button
                     id="button-join-vasak"
-                    class="background-isik button-join"
+                    class="background-{{ model }} button-join"
                     style="vertical-align:middle"
                     disabled
                     onClick="reply_click(this.id)"
@@ -104,7 +104,7 @@
           {% if user.is_authenticated %}
             <button
                     id="button-join-parem"
-                    class="background-isik button-join"
+                    class="background-{{ model }} button-join"
                     style="vertical-align:middle"
                     disabled
                     onClick="reply_click(this.id)"
@@ -187,9 +187,9 @@
       }
 
       function reply_click(clicked_id) {
+        const modelName = '{{ model }}'
         var idVasak = document.getElementById("v6rdle_vasak_object").getAttribute('data-id');
         var idParem = document.getElementById("v6rdle_parem_object").getAttribute('data-id');
-        // console.log(clicked_id, idVasak, idParem);
         var paan, dst_id, src_id = String();
         if (clicked_id === "button-join-vasak") {
           paan = 'vasak';
@@ -200,42 +200,38 @@
           dst_id = idParem;
           src_id = idVasak;
         }
-        const model_name = 'Isik';
-        // const model = 'Isik';
         // update object
         $.ajax({
           url: '{% url "wiki:get_update_object_with_object" %}',
           type: 'get',
           data:{
-            model_name: model_name,
+            model_name: modelName,
             src_id: src_id,
             dst_id: dst_id
           },
-          // dataType: 'text',
           timeout: 300000,
           beforeSend: function() {
             // $("#loaderDiv7").show();
           },
           success: function (data) {
-            // console.log(data);
             if (data) {
               // refresh updated object
               const url = '{% url "wiki:get_v6rdle_object" %}'
               var div = document.getElementById("v6rdle_" + paan + "_object");
-              get_content(dst_id, div, model_name, url);
+              get_content(dst_id, div, modelName, url);
 
               const btn = document.getElementById(clicked_id);
               // btn.disable = true;
               var oldMsg = btn.innerHTML;
               btn.innerHTML = 'Uuendatud id=' + data;
-              btn.classList.remove('background-' + model_name.toLowerCase());
+              btn.classList.remove('background-' + modelName.toLowerCase());
               btn.classList.add('w3-pale-green');
 
               setTimeout(function(){
                 document.getElementById(clicked_id).innerHTML = '';
                 btn.innerHTML = oldMsg;
                 btn.classList.remove('w3-pale-green');
-                btn.classList.add('background-' + model_name.toLowerCase());
+                btn.classList.add('background-' + modelName.toLowerCase());
                 // btn.disable = false;
               }, 3000);
             }
@@ -255,8 +251,8 @@
         form.addEventListener('submit', handleForm);
 
         const url = '{% url "wiki:get_v6rdle_object" %}'
-        const model = 'Isik';
         const paanid = ['vasak', 'parem'];
+        const modelName = '{{ model }}'
 
         paanid.forEach( function( paan ) {
           var el = document.getElementById("id_" + paan + "_object_on_deck");
@@ -264,7 +260,7 @@
 
           el.addEventListener("DOMNodeInserted", function (event) {
             var id = $("#id_" + paan + "_object").val();
-            get_content(id, div, model, url);
+            get_content(id, div, modelName, url);
             check_buttons();
           }, false);
 
@@ -277,7 +273,7 @@
           var preset_id = div.getAttribute('data-id');
           // console.log(preset_id);
           if (preset_id !== 'None') {
-            get_content(preset_id, div, model, url);
+            get_content(preset_id, div, modelName, url);
           }
         });
       });
