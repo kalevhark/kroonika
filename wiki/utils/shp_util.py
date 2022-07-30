@@ -40,9 +40,12 @@ DEFAULT_MAP_ZOOM_START = 16
 DEFAULT_MIN_ZOOM = 13
 
 GEOJSON_STYLE = {
-    'H': {'fill': 'red', 'color': 'red', 'weight': 1}, # hoonestus
-    'A': {'fill': None, 'color': 'red', 'weight': 3}, # ala
-    'M': {'fill': None, 'color': 'red', 'weight': 3}, # muu
+    'H': {'fill': 'lightgreen', 'color': 'lightgreen', 'weight': 3}, # hoonestus
+    'A': {'fill': None, 'color': 'lightgreen', 'weight': 3}, # ala
+    'M': {'fill': None, 'color': 'lightgreen', 'weight': 3}, # muu
+    'HH': {'fill': 'red', 'color': 'red', 'weight': 3}, # hoonestus (puudub kaasajal)
+    'AH': {'fill': None, 'color': 'red', 'weight': 3}, # ala (puudub kaasajal)
+    'MH': {'fill': None, 'color': 'red', 'weight': 3}, # muu (puudub kaasajal)
 }
 
 # https://python-visualization.github.io/folium/modules.html#module-folium.map
@@ -715,10 +718,10 @@ def make_objekt_leaflet_combo(objekt_id=1):
 
     if kaart_ids:
         kaardid = Kaart.objects.filter(id__in=kaart_ids)
-        gone = DEFAULT_MAP.id not in kaart_ids # Objekti kaasajal pole?
+        objekt_missing_on_defaultmap = DEFAULT_MAP.id not in kaart_ids # Objekti kaasajal pole?
         hiliseim_kaart_aasta = max([kaart.aasta for kaart in kaardid])
 
-        if gone:
+        if objekt_missing_on_defaultmap:
             # Lisame vaate, millel näitame virtuaalset asukohta tänapäeval
             kaardid = kaardid | Kaart.objects.filter(id=DEFAULT_MAP.id)
 
@@ -734,7 +737,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
                 overlay=False
             )
 
-            if kaart == DEFAULT_MAP and gone:
+            if kaart == DEFAULT_MAP and objekt_missing_on_defaultmap:
                 folium.TileLayer(
                     location=location,
                     name=aasta,
@@ -765,14 +768,18 @@ def make_objekt_leaflet_combo(objekt_id=1):
                         "name": name,
                         "features": [geometry]
                     }
-                    style = GEOJSON_STYLE[tyyp]
+                    if obj.gone: # objekti kaasajal pole
+                        tyyp_style = f'{kaardiobjekt.tyyp}H'  # 'HH'-hoonestus, 'AH'-ala, 'MH'-muu
+                    else: # objekt kaasajal olemas
+                        tyyp_style = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
+                    style = GEOJSON_STYLE[tyyp_style]
                     f = json.dumps(feature_collection)
                     folium.GeoJson(
                         f,
                         name=name,
                         style_function=lambda x: style
                     ).add_to(feature_group[aasta])
-                    if kaart.aasta == hiliseim_kaart_aasta and gone:
+                    if kaart.aasta == hiliseim_kaart_aasta and objekt_missing_on_defaultmap:
                         folium.GeoJson(
                             f,
                             name=name,
