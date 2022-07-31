@@ -930,6 +930,7 @@ class KroonikaAdmin(admin.ModelAdmin):
 
 # class PiltAdmin(admin.ModelAdmin):
 class PiltAdmin(AjaxSelectAdmin):
+    save_on_top = True
 
     readonly_fields = [
         'pilt_height_field',
