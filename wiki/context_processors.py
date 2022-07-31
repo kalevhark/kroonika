@@ -5,3 +5,4 @@ def add_vihjevorm(request):
         'feedbackform': VihjeForm()
     }
 
+
