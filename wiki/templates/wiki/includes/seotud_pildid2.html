@@ -1,6 +1,11 @@
+{% load static %}
 <!-- Pildigalerii -->
 {% with pildid=seotud_pildid %}
   {% if pildid %}
+    {% block src %}
+      <script src="{% static 'ilm/js/swiped-events.js' %}"></script>
+    {% endblock %}
+
     {#    Pildirida #}
     <p>
       <i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
@@ -96,7 +101,7 @@
         }
       }
 
-      // Profiilipildi peal klikkimisel avaneb modaal
+      {#Profiilipildi peal klikkimisel avaneb modaal#}
       var img = document.getElementById("profiiliPilt");
       img.onclick = function(){
         var profiilipiltId = this.getAttribute("data-pilt-id");
@@ -110,7 +115,31 @@
         openModal();
         currentSlide(parseInt(pildItemNr));
       }
-      </script>
+
+      {#Vasakule või paremale libistamisel vahetame pilte#}
+      $(function(){
+        document.addEventListener('swiped-left', swipeHandler);
+        document.addEventListener('swiped-right', swipeHandler);
+
+        function swipeHandler( event ){
+          if(event.handled !== true) // This will prevent event triggering more then once
+          {
+            if ($(event.target).is('img')) {
+              switch (event.type) {
+                case "swiped-left":
+                  plusSlides(1);
+                  break;
+                case "swiped-right":
+                  plusSlides(-1);
+                  break;
+              }
+              event.handled = true;
+            }
+          }
+          return false;
+        }
+      });
+    </script>
 
   {% endif %}
 {% endwith %}
