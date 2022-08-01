@@ -855,6 +855,17 @@ def ilmajama():
     print(f'UTC   -> Eesti [dt_utc.astimezone(ZoneInfo("Europe/Tallinn"))]: {dt_utc} -> {dt_utc2eesti_uus}')
     print(f'{dt_eesti_uus} == {dt_utc_uus} -> {dt_eesti_uus == dt_utc_uus}')
 
+def check_profiilipildid_notin_pildid():
+    for model in [Artikkel, Isik, Organisatsioon, Objekt]:
+        objs = model.objects.all()
+        for obj in objs:
+            profiilipildid = obj.profiilipildid.all()
+            if profiilipildid.count() > 0:
+                for pilt in profiilipildid:
+                    if pilt not in obj.pildid.all():
+                        print(model, 'obj:', obj.id, 'pilt:', pilt.id)
+
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
