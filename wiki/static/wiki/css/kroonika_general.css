@@ -390,7 +390,7 @@ ul.no-bullets li {
   display: none;
   position: fixed;
   z-index: 1;
-  padding-top: 100px;
+  padding-top: 25px;
   left: 0;
   top: 0;
   width: 100%;
@@ -402,7 +402,8 @@ ul.no-bullets li {
 /* Modal Content */
 .modal-content {
   position: relative;
-  background-color: #fefefe;
+  /*background-color: #fefefe;*/
+  background-color: black;
   margin: auto;
   padding: 0;
   width: 90%;
@@ -503,9 +504,12 @@ ul.no-bullets li {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
-/*img {*/
-/*  margin-bottom: -4px;*/
-/*}*/
+img.pilt-pildimodal {
+  position: relative;          /* where the next element will be automatically positioned */
+  display: inline-block;       /* causes element width to shrink to fit content */
+  left: 50%;                   /* moves left side of image/element to center of parent element */
+  transform: translate(-50%);  /* centers image/element on "left: 50%" position */
+}
 
 .caption-container {
   text-align: center;

@@ -37,7 +37,7 @@
                     src="{{ obj.pilt.url }}"
                     data-pilt-id="{{ obj.id }}"
                     data-pilt-itemnr="{{ forloop.counter }}"
-                    style="width:100%;"
+                    style="width:{% if obj.pilt.width > obj.pilt.height %}100{% else %}60{% endif %}%;"
             />
           </div>
         {% endfor %}
@@ -115,18 +115,18 @@
   {% endif %}
 {% endwith %}
 
-<script>
-  function showPilt(imgs) {
-    var expandImg = document.getElementById("profiiliPilt");
-    var imgText = document.getElementById("imgtext");
-    expandImg.src = imgs.getAttribute("data-img-big");
-    expandImg.alt = imgs.alt;
-    expandImg.title = imgs.title;
-    imgText.innerHTML = imgs.alt;
-    expandImg.parentElement.style.display = "block";
-
+{#<script>#}
+{#  function showPilt(imgs) {#}
+{#    var expandImg = document.getElementById("profiiliPilt");#}
+{#    var imgText = document.getElementById("imgtext");#}
+{#    expandImg.src = imgs.getAttribute("data-img-big");#}
+{#    expandImg.alt = imgs.alt;#}
+{#    expandImg.title = imgs.title;#}
+{#    imgText.innerHTML = imgs.alt;#}
+{#    expandImg.parentElement.style.display = "block";#}
+{##}
     {# Avatakse modal aken pildi näitamiseks #}
     {#  modal on object_detail_pilt.html -> <div id="myModal" class="modal">#}
-    imgToModal(imgs);
-  }
-</script>
+{#    imgToModal(imgs);#}
+{#  }#}
+{#</script>#}
