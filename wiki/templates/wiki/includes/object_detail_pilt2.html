@@ -1,0 +1,19 @@
+{# Muutuja: cls: pilt-portree-medium, pilt-postkaart-medium #}
+<!-- Sisukaardi pildiosa-->
+<div
+    class="w3-margin-right w3-center"
+    style="display: {% if profiilipilt %}block{% else %}none{% endif %}">
+  <img
+    class="{{cls}} pilt-detail"
+    id="profiiliPilt"
+    src="{{ profiilipilt.pilt.url }}"
+    alt="{{ profiilipilt.caption }}"
+    title="{{ profiilipilt }}"
+    data-pilt-id="{{ profiilipilt.id }}"
+  />
+  <small>
+    <div class="w3-center" id="imgtext">
+      {{ profiilipilt.caption }}
+    </div>
+  </small>
+</div>

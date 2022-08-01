@@ -1,0 +1,132 @@
+<!-- Pildigalerii -->
+{% with pildid=seotud_pildid %}
+  {% if pildid %}
+    {#    Pildirida #}
+    <p>
+      <i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
+      <div>
+      {% for obj in pildid %}
+        <a href="#">
+          <img
+            class="pilt-pildirida"
+            src="{{ obj.pilt_icon.url }}"
+            alt="{{ obj.caption }}"
+            data-pilt-id="{{ obj.id }}"
+            data-pilt-itemnr="{{ forloop.counter }}"
+            title="{{ obj }}"
+            data-img-big="{{ obj.pilt.url }}"
+            onclick="openModal();currentSlide({{ forloop.counter }})"
+          >
+        </a>
+      {% endfor %}
+      </div>
+    </p>
+
+    {#    Modal #}
+    <div id="myModal" class="modal">
+      {% if pildid.count > 1 %}
+        <span class="numbertext" id="numbertext"></span>
+      {% endif %}
+      <span class="close cursor" onclick="closeModal()">&times;</span>
+
+      <div class="modal-content">
+        {% for obj in pildid %}
+          <div class="mySlides">
+            <img
+                    class="pilt-pildimodal"
+                    src="{{ obj.pilt.url }}"
+                    data-pilt-id="{{ obj.id }}"
+                    data-pilt-itemnr="{{ forloop.counter }}"
+                    style="width:100%;"
+            />
+          </div>
+        {% endfor %}
+
+        {% if pildid.count > 1 %}
+          <a class="previmage" onclick="plusSlides(-1)">&#10094;</a>
+          <a class="nextimage" onclick="plusSlides(1)">&#10095;</a>
+        {% endif %}
+
+        <div class="caption-container">
+          <p id="captionmodal">Pildiallkiri</p>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+      function openModal() {
+        {# Järgnev tagab, et navbar ei tuleks modal akna peale #}
+        document.getElementsByTagName("header")[0].style.zIndex = 0;
+
+        document.getElementById("myModal").style.display = "block";
+      }
+
+      function closeModal() {
+        document.getElementById("myModal").style.display = "none";
+      }
+
+      var slideIndex = 1;
+      showSlides(slideIndex);
+
+      function plusSlides(n) {
+        showSlides(slideIndex += n);
+      }
+
+      function currentSlide(n) {
+        showSlides(slideIndex = n);
+      }
+
+      function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        var dots = document.getElementsByClassName("pilt-pildirida");
+        var captionText = document.getElementById("captionmodal");
+
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        slides[slideIndex-1].style.display = "block";
+        captionText.innerHTML = dots[slideIndex-1].alt;
+        if (1 < slides.length) {
+          var numberText = document.getElementById("numbertext");
+          numberText.innerHTML = dots[slideIndex - 1].getAttribute("data-pilt-itemnr") + " / {{ pildid.count }}";
+        }
+      }
+
+      // Profiilipildi peal klikkimisel avaneb modaal
+      var img = document.getElementById("profiiliPilt");
+      img.onclick = function(){
+        var profiilipiltId = this.getAttribute("data-pilt-id");
+        var dots = document.getElementsByClassName("pilt-pildirida");
+        for (i = 0; i < dots.length; i++) {
+            if (dots[i].getAttribute("data-pilt-id") === profiilipiltId) {
+              var pildItemNr = dots[i].getAttribute("data-pilt-itemnr");
+              break;
+            }
+        }
+        openModal();
+        currentSlide(parseInt(pildItemNr));
+      }
+      </script>
+
+  {% endif %}
+{% endwith %}
+
+<script>
+  function showPilt(imgs) {
+    var expandImg = document.getElementById("profiiliPilt");
+    var imgText = document.getElementById("imgtext");
+    expandImg.src = imgs.getAttribute("data-img-big");
+    expandImg.alt = imgs.alt;
+    expandImg.title = imgs.title;
+    imgText.innerHTML = imgs.alt;
+    expandImg.parentElement.style.display = "block";
+
+    {# Avatakse modal aken pildi näitamiseks #}
+    {#  modal on object_detail_pilt.html -> <div id="myModal" class="modal">#}
+    imgToModal(imgs);
+  }
+</script>

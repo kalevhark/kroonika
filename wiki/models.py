@@ -1615,14 +1615,17 @@ class Pilt(models.Model):
     )
 
     def __str__(self):
-        tekst = self.kirjeldus or self.nimi # Kui on, siis kirjeldus, muidu pealkiri
+        tekst = self.nimi # Kui on, siis kirjeldus, muidu pealkiri
         return tekst
 
     def __repr__(self):
         return self.nimi
 
     def caption(self):
-        tekst = self.kirjeldus or self.nimi # Kui on, siis kirjeldus, muidu pealkiri
+        tekst = self.nimi
+        kirjeldus = self.kirjeldus
+        if kirjeldus:
+            tekst = f'{tekst} {kirjeldus}'
         viide = self.viited.first()
         if viide:
             tekst = f'{tekst} (Allikas: {viide})'
