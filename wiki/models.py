@@ -111,6 +111,36 @@ def escape_numberdot(string):
     string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
     return string_modified
 
+# Töötleb pilditagid [pilt_nnnn] markdown piltideks
+def add_markdownx_pildid(string):
+    # Otsime kõik pilditagid
+    pattern = re.compile(r'\[pilt_[0-9]*]')
+    pildi_tagid = re.finditer(pattern, string)
+    for pildi_tag_leitud in pildi_tagid:
+        pildi_tag = pildi_tag_leitud[0] # '[pilt_nnnn]'
+        pildi_id = int(pildi_tag.split('_')[-1][:-1])
+        pilt = Pilt.objects.get(id=pildi_id)
+        print(pildi_id, pilt)
+        if pilt:
+            pildi_url = pilt.pilt.url
+            pildi_caption = pilt.caption()
+            pildi_markdown = ''.join(
+                [
+                    '<div class="w3-row">',
+                    f'<img src="{pildi_url}"',
+                    f' class="pilt-pildidtekstis"',
+                    f' alt="{pildi_caption}"',
+                    f' data-pilt-id="{ pilt.id }"',
+                    f'>',
+                    f'<p><small>{pildi_caption}',
+                    f'</small></p>',
+                    '</div>'
+                 ]
+            )
+            string = string.replace(pildi_tag, pildi_markdown)
+    return string
+
+
 # Lisab objecti tekstile markdown formaadis viited
 def add_markdownx_viited(obj):
     viited = obj.viited.all()
@@ -1416,8 +1446,10 @@ class Artikkel(models.Model):
     # Lisame siia ka viited
     @property
     def formatted_markdown(self):
+        tekst = self.body_text
+        tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
-        return markdownify(escape_numberdot(self.body_text) + viite_string)
+        return markdownify(escape_numberdot(tekst) + viite_string)
 
     # Create a property that returns the summary markdown instead
     @property

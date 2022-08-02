@@ -61,9 +61,8 @@
 
     <script>
       function openModal() {
-        {# Järgnev tagab, et navbar ei tuleks modal akna peale #}
+        {# Järgnev rida tagab, et navbar ei tuleks modal akna peale #}
         document.getElementsByTagName("header")[0].style.zIndex = 0;
-
         document.getElementById("myModal").style.display = "block";
       }
 
@@ -85,35 +84,49 @@
       function showSlides(n) {
         var i;
         var slides = document.getElementsByClassName("mySlides");
-        var dots = document.getElementsByClassName("pilt-pildirida");
+        var pildirida = document.getElementsByClassName("pilt-pildirida");
         var captionText = document.getElementById("captionmodal");
-
         if (n > slides.length) {slideIndex = 1}
         if (n < 1) {slideIndex = slides.length}
         for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
         }
         slides[slideIndex-1].style.display = "block";
-        captionText.innerHTML = dots[slideIndex-1].alt;
+        captionText.innerHTML = pildirida[slideIndex-1].alt;
         if (1 < slides.length) {
           var numberText = document.getElementById("numbertext");
-          numberText.innerHTML = dots[slideIndex - 1].getAttribute("data-pilt-itemnr") + " / {{ pildid.count }}";
+          numberText.innerHTML = pildirida[slideIndex - 1].getAttribute("data-pilt-itemnr") + " / {{ pildid.count }}";
         }
       }
 
-      {#Profiilipildi peal klikkimisel avaneb modaal#}
-      var img = document.getElementById("profiiliPilt");
-      img.onclick = function(){
-        var profiilipiltId = this.getAttribute("data-pilt-id");
-        var dots = document.getElementsByClassName("pilt-pildirida");
-        for (i = 0; i < dots.length; i++) {
-            if (dots[i].getAttribute("data-pilt-id") === profiilipiltId) {
-              var pildItemNr = dots[i].getAttribute("data-pilt-itemnr");
+      {# Pildile klikkimisel leitakse vaste modaalakna pildireast ja avatakse valitud pilt #}
+      function showPilt(event) {
+        if ($(event.target).is('img')) {
+          var piltId = event.target.getAttribute("data-pilt-id");
+          var pildirida = document.getElementsByClassName("pilt-pildirida");
+          var pildItemNr = null;
+          for (i = 0; i < pildirida.length; i++) {
+            if (pildirida[i].getAttribute("data-pilt-id") === piltId) {
+              pildItemNr = pildirida[i].getAttribute("data-pilt-itemnr");
               break;
             }
+          }
+          if (pildItemNr) {
+            openModal();
+            currentSlide(parseInt(pildItemNr));
+          }
         }
-        openModal();
-        currentSlide(parseInt(pildItemNr));
+      }
+
+      {# Profiilipildi peal klikkimisel avaneb modaal #}
+      var img = document.getElementById("profiiliPilt");
+      if (img) {img.onclick = showPilt;}
+
+      {# Lisame object sisus olevatele piltidele klikkimisel modaalakna avamise #}
+      var pildidtekstis = document.getElementsByClassName("pilt-pildidtekstis");
+      for (i = 0; i < pildidtekstis.length; i++) {
+        pildidtekstis[i].classList.add("pilt-detail");
+        pildidtekstis[i].onclick = showPilt;
       }
 
       {#Vasakule või paremale libistamisel vahetame pilte#}
@@ -143,19 +156,3 @@
 
   {% endif %}
 {% endwith %}
-
-{#<script>#}
-{#  function showPilt(imgs) {#}
-{#    var expandImg = document.getElementById("profiiliPilt");#}
-{#    var imgText = document.getElementById("imgtext");#}
-{#    expandImg.src = imgs.getAttribute("data-img-big");#}
-{#    expandImg.alt = imgs.alt;#}
-{#    expandImg.title = imgs.title;#}
-{#    imgText.innerHTML = imgs.alt;#}
-{#    expandImg.parentElement.style.display = "block";#}
-{##}
-    {# Avatakse modal aken pildi näitamiseks #}
-    {#  modal on object_detail_pilt.html -> <div id="myModal" class="modal">#}
-{#    imgToModal(imgs);#}
-{#  }#}
-{#</script>#}
