@@ -2,24 +2,25 @@
 {% with objektid=seotud_objektid %}
   {% if objektid %}
     <!-- Loend seotud objektidest -->
-    <p><i class="fa fa-bank w3-xlarge text-objekt"></i>
-    {% for obj in objektid %}
-      {% if forloop.counter > 1 %}
-      &ensp;
-      {% endif %}
-      <a
-              class="hover-objekt tooltip-content"
-              href={% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}
-      >
-        <span
-              title='{{ obj }}'
-              data-model='{{ obj|get_model_name }}'
-              data-id='{{ obj.id }}'
-              id='{{ obj|get_model_name }}_{{ obj.id }}'>
-          {{ obj }}
-        </span>
-      </a>
-    {% endfor %}
+    <p>
+      <i class="fa fa-bank w3-xlarge text-objekt"></i>
+      {% for obj in objektid %}
+        {% if forloop.counter > 1 %}
+        &ensp;
+        {% endif %}
+        <a
+                class="hover-objekt tooltip-content"
+                href={% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}
+        >
+          <span
+                title='{{ obj }}'
+                data-model='{{ obj|get_model_name }}'
+                data-id='{{ obj.id }}'
+                id='{{ obj|get_model_name }}_{{ obj.id }}'>
+            {{ obj }}
+          </span>
+        </a>
+      {% endfor %}
     </p>
   {% endif %}
 {% endwith %}

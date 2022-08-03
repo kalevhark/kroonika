@@ -50,12 +50,12 @@
         <!-- Sisukaardi tekstiosa-->
         <div class="w3-twothird">
           {% include 'wiki/includes/vigane.html' %}
-          <div>
+          <div class="w3-margin-right">
             {{ object.formatted_markdown | safe }}
           </div>
           {% include 'wiki/includes/seotud_special_links.html' %}
           {% include 'wiki/includes/mainitud_aastatel.html' %}
-          <div class="w3-row w3-padding-16">
+          <div class="w3-row">
             {% include 'wiki/includes/object_fbshare.html' %}
             {% include 'wiki/includes/object_updated_edit.html' with model='objekt' %}
           </div>

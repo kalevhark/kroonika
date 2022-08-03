@@ -120,7 +120,6 @@ def add_markdownx_pildid(string):
         pildi_tag = pildi_tag_leitud[0] # '[pilt_nnnn]'
         pildi_id = int(pildi_tag.split('_')[-1][:-1])
         pilt = Pilt.objects.get(id=pildi_id)
-        print(pildi_id, pilt)
         if pilt:
             pildi_url = pilt.pilt.url
             pildi_caption = pilt.caption()
@@ -673,11 +672,12 @@ class Objekt(models.Model):
     # Lisame siia ka viited
     @property
     def formatted_markdown(self):
-        sisu = self.kirjeldus
-        if len(sisu) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
-            sisu = '<br>'
+        tekst = self.kirjeldus
+        if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+            tekst = '<br>'
+        tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
-        return markdownify(escape_numberdot(sisu) + viite_string)
+        return markdownify(escape_numberdot(tekst) + viite_string)
 
     # Keywords
     @property
@@ -873,11 +873,12 @@ class Organisatsioon(models.Model):
     # Lisame siia ka viited
     @property
     def formatted_markdown(self):
-        sisu = self.kirjeldus
-        if len(sisu) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
-            sisu = '<br>'
+        tekst = self.kirjeldus
+        if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+            tekst = '<br>'
+        tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
-        return markdownify(escape_numberdot(sisu) + viite_string)
+        return markdownify(escape_numberdot(tekst) + viite_string)
 
     def get_absolute_url(self):
         kwargs = {
@@ -1113,15 +1114,26 @@ class Isik(models.Model):
     def vigane(self):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
+    # # Create a property that returns the markdown instead
+    # # Lisame siia ka viited
+    # @property
+    # def formatted_markdown(self):
+    #     sisu = self.kirjeldus
+    #     if len(sisu) == 0: # markdownx korrektseks tööks vaja, et sisu ei oleks null
+    #         sisu = '<br>'
+    #     viite_string = add_markdownx_viited(self)
+    #     return markdownify(escape_numberdot(sisu) + viite_string)
+
     # Create a property that returns the markdown instead
     # Lisame siia ka viited
     @property
     def formatted_markdown(self):
-        sisu = self.kirjeldus
-        if len(sisu) == 0: # markdownx korrektseks tööks vaja, et sisu ei oleks null
-            sisu = '<br>'
+        tekst = self.kirjeldus
+        if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+            tekst = '<br>'
+        tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
-        return markdownify(escape_numberdot(sisu) + viite_string)
+        return markdownify(escape_numberdot(tekst) + viite_string)
 
     def get_absolute_url(self):
         kwargs = {

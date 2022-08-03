@@ -9,8 +9,7 @@
 
 {% block content %}
   <div class="w3-cell-row w3-padding-16">
-
-    <!-- Kronoloogiliselt eelnev artikkel -->
+    {# Kronoloogiliselt eelnev artikkel #}
     <div class="w3-third w3-cell w3-hover-white">
       <div>
         {% if prev_obj %}
@@ -40,7 +39,7 @@
         {% endif %}
       </div>
     </div>
-    <!-- Valitud artikkel viewport: large, medium -->
+    {# Valitud artikkel viewport: large, medium #}
     <div class="w3-third w3-cell w3-hide-small">
       <div
           class="w3-xlarge layout-row layout-align-center-center w3-hover-white"
@@ -71,10 +70,19 @@
           {% endif %}
           </small>
         {% endif %}
-
       </div>
     </div>
-    <!-- Kronoloogiliselt järgnev artikkel -->
+    {#  Valitud artikkel viewport: small #}
+    <div class="w3-cell-row w3-hide-large w3-hide-medium">
+      <div class="w3-third w3-cell">
+        <div
+            class="w3-xlarge layout-row layout-align-center-center"
+        >
+          <strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
+        </div>
+      </div>
+    </div>
+    {# Kronoloogiliselt järgnev artikkel #}
     <div class="w3-third w3-cell w3-hover-white">
       <div class="w3-right-align w3-right">
         {% if next_obj %}
@@ -114,24 +122,16 @@
       </div>
       <div class="w3-twothird">
         {% include 'wiki/includes/vigane.html' %}
-        {{ object.formatted_markdown | safe }}
+        <div class="w3-margin-right">
+          {{ object.formatted_markdown | safe }}
+        </div>
         <div class="w3-row">
           {% include 'wiki/includes/object_fbshare.html' %}
           {% include 'wiki/includes/object_updated_edit.html' with model='artikkel' %}
         </div>
       </div>
     </div>
-    <div class="w3-cell-row w3-hide-large w3-hide-medium">
-      <!-- Valitud artikkel viewport: small -->
-      <div class="w3-third w3-cell">
-        <div
-            class="w3-xlarge layout-row layout-align-center-center"
-        >
-          <strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
-        </div>
-      </div>
-    </div>
-    <div class="w3-third w3-padding-16" >
+    <div class="w3-third" >
       {% include 'wiki/includes/seotud_isikud.html' %}
       {% include 'wiki/includes/seotud_organisatsioonid.html' %}
       {% include 'wiki/includes/seotud_objektid.html' %}
@@ -144,39 +144,39 @@
   <script src="{% static 'ilm/js/swiped-events.js' %}"></script>
   {% if next_obj %}
     <script>
-    // Vasakule või paremale libistamisel liigume eelmisele või järgmisele loole
-    $(function(){
-      // Bind the swipeleftHandler callback function to the swipe event on
-      document.addEventListener('swiped-left', swipeleftHandler);
+      // Vasakule või paremale libistamisel liigume eelmisele või järgmisele loole
+      $(function(){
+        // Bind the swipeleftHandler callback function to the swipe event on
+        document.addEventListener('swiped-left', swipeleftHandler);
 
-      // Callback function references the event target and adds the 'swipeleft' class to it
-      function swipeleftHandler( event ){
-        if(event.handled !== true) // This will prevent event triggering more then once
-        {
-            window.open("{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}", "_self")
-            event.handled = true;
+        // Callback function references the event target and adds the 'swipeleft' class to it
+        function swipeleftHandler( event ){
+          if(event.handled !== true) // This will prevent event triggering more then once
+          {
+              window.open("{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}", "_self")
+              event.handled = true;
+          }
+          return false;
         }
-        return false;
-      }
-    });
+      });
     </script>
   {% endif %}
   {% if prev_obj %}
     <script>
-    $(function(){
-      // Bind the swipeleftHandler callback function to the swipe event
-      document.addEventListener('swiped-right', swiperightHandler);
+      $(function(){
+        // Bind the swipeleftHandler callback function to the swipe event
+        document.addEventListener('swiped-right', swiperightHandler);
 
-      // Callback function references the event target and adds the 'swipeleft' class to it
-      function swiperightHandler( event ){
-        if(event.handled !== true) // This will prevent event triggering more then once
-        {
-            window.open("{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}", "_self")
-            event.handled = true;
+        // Callback function references the event target and adds the 'swipeleft' class to it
+        function swiperightHandler( event ){
+          if(event.handled !== true) // This will prevent event triggering more then once
+          {
+              window.open("{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}", "_self")
+              event.handled = true;
+          }
+          return false;
         }
-        return false;
-      }
-    });
+      });
     </script>
   {% endif %}
 {% endblock %}

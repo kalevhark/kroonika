@@ -936,6 +936,10 @@ class PiltAdmin(AjaxSelectAdmin):
         'pilt_height_field',
         'pilt_width_field',
         'inp_date', 'created_by', 'mod_date', 'updated_by',
+        'pildid_tekstis_artiklid',
+        'pildid_tekstis_isikud',
+        'pildid_tekstis_organisatsioonid',
+        'pildid_tekstis_objektid',
     ]
     list_display = [
         # 'id',
@@ -950,14 +954,6 @@ class PiltAdmin(AjaxSelectAdmin):
         'tyyp'
     ]
     search_fields = ['id', 'nimi', 'viited__kohaviit']
-    filter_horizontal = (
-        # 'viited',
-        # 'allikad',
-        # 'artiklid',
-        # 'isikud',
-        # 'organisatsioonid',
-        # 'objektid'
-    )
     form = PiltForm
     fieldsets = [
         (None, {
@@ -968,10 +964,6 @@ class PiltAdmin(AjaxSelectAdmin):
             'fields': ['hist_date', 'hist_year', 'hist_month']
             }
          ),
-        # ('Viited', {
-        #     'fields': [('viited')]
-        # }
-        #  ),
         ('Seotud', {
             'fields': [
                 ('viited'),
@@ -996,10 +988,23 @@ class PiltAdmin(AjaxSelectAdmin):
             ]
         }
          ),
-        (None, {
-            'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
-            }
+        ('Tekstisisesed', {
+            'fields': [
+                (
+                    'pildid_tekstis_artiklid',
+                    'pildid_tekstis_isikud',
+                    'pildid_tekstis_organisatsioonid',
+                    'pildid_tekstis_objektid',
+                ),
+            ]
+        }
          ),
+        (None, {
+            'fields': [
+                ('created_by', 'inp_date', 'updated_by', 'mod_date'),
+            ]
+        }
+        ),
     ]
 
     # Kui alusobjektiks on Artikkel object, siis lisatakse sealt viited, isikud, organisatsioonid, objektid
@@ -1013,7 +1018,6 @@ class PiltAdmin(AjaxSelectAdmin):
             organisatsioonid = artikkel.organisatsioonid.values_list('id', flat=True)
             objektid = artikkel.objektid.values_list('id', flat=True)
         else:
-            # artikkel = None
             viited = []
             isikud = []
             organisatsioonid = []
@@ -1024,7 +1028,6 @@ class PiltAdmin(AjaxSelectAdmin):
             'isikud': isikud,
             'organisatsioonid': organisatsioonid,
             'objektid': objektid,
-            # 'artiklid': [artikkel]
         }
 
     def link(self, obj):
@@ -1047,13 +1050,40 @@ class PiltAdmin(AjaxSelectAdmin):
 
     def kasutatud(self, obj):
         # Mitu korda on pildile viidatud
+        # pildi_tag = f'[pilt_{obj.id}]'
         return (
             obj.artiklid.count() +
+            # Artikkel.objects.filter(body_text__icontains=pildi_tag).count() +
             obj.isikud.count() +
             obj.organisatsioonid.count() +
             obj.objektid.count() +
             obj.allikad.count()
         )
+
+    def pildid_tekstis_artiklid(self, obj):
+        pildi_tag = f'[pilt_{obj.id}]'
+        id_list = list(Artikkel.objects.filter(body_text__icontains=pildi_tag).values_list('id', flat=True))
+        return ', '.join([str(el) for el in id_list])
+    pildid_tekstis_artiklid.short_description = 'Artiklites'
+
+    def pildid_tekstis_isikud(self, obj):
+        pildi_tag = f'[pilt_{obj.id}]'
+        id_list = list(Isik.objects.filter(kirjeldus__icontains=pildi_tag).values_list('id', flat=True))
+        return ', '.join([str(el) for el in id_list])
+    pildid_tekstis_isikud.short_description = 'Isikutel'
+
+    def pildid_tekstis_organisatsioonid(self, obj):
+        pildi_tag = f'[pilt_{obj.id}]'
+        id_list = list(Organisatsioon.objects.filter(kirjeldus__icontains=pildi_tag).values_list('id', flat=True))
+        return ', '.join([str(el) for el in id_list])
+    pildid_tekstis_organisatsioonid.short_description = 'Organisatsioonidel'
+
+    def pildid_tekstis_objektid(self, obj):
+        pildi_tag = f'[pilt_{obj.id}]'
+        id_list = list(Objekt.objects.filter(kirjeldus__icontains=pildi_tag).values_list('id', flat=True))
+        return ', '.join([str(el) for el in id_list])
+    pildid_tekstis_objektid.short_description = 'Objektidel'
+
 
     def save_model(self, request, obj, form, change):
         # Admin moodulis lisamise/muutmise automaatsed väljatäited
