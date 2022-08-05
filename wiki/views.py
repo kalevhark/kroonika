@@ -1095,8 +1095,6 @@ class ArtikkelDetailView(generic.DetailView):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas artiklile on määratud profiilipilt
-        # context['profiilipilt'] = Pilt.objects.filter(
-        #     artiklid__id=self.object.id).filter(profiilipilt_artikkel=True).first()
         context['profiilipilt'] = Pilt.objects.\
             filter(profiilipilt_artiklid__in=[self.object]).\
             first()
@@ -1110,9 +1108,9 @@ class ArtikkelDetailView(generic.DetailView):
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(
             artikkel=self.object
         )
-        context['seotud_pildid'] = Pilt.objects. \
-            filter(artiklid=self.object). \
-            order_by('tyyp', '-profiilipilt_artikkel', 'hist_year', 'hist_date')
+        context['seotud_pildid'] = Pilt.objects.sorted(). \
+            filter(artiklid=self.object) #. \
+            # order_by('tyyp', '-profiilipilt_artikkel', 'hist_year', 'hist_date')
 
         # Järjestame artiklid kronoloogiliselt
         loend = list(artikkel_qs.values_list('id', flat=True))
@@ -1808,10 +1806,6 @@ class IsikDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
 
         # Kas isikule on määratud profiilipilt
-        # context['profiilipilt'] = Pilt.objects.\
-        #     filter(isikud__id=self.object.id).\
-        #     filter(profiilipilt_isik=True).\
-        #     first()
         context['profiilipilt'] = Pilt.objects. \
             filter(profiilipilt_isikud__in=[self.object]). \
             first()
@@ -1822,9 +1816,9 @@ class IsikDetailView(generic.DetailView):
             filter(isik=self.object)
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).\
             filter(isik=self.object)
-        context['seotud_pildid'] = Pilt.objects. \
-            filter(isikud=self.object). \
-            order_by('tyyp', '-profiilipilt_isik', 'hist_year', 'hist_date')
+        context['seotud_pildid'] = Pilt.objects.sorted(). \
+            filter(isikud=self.object) #. \
+            # order_by('tyyp', '-profiilipilt_isik', 'hist_year', 'hist_date')
 
         # Lisame eellaste ja j2rglaste andmed
         context = add_eellased_j2rglane2context(self, context)
@@ -2061,14 +2055,9 @@ class ObjektDetailView(generic.DetailView):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas objektile on määratud profiilipilt
-        # context['profiilipilt'] = Pilt.objects.\
-        #     filter(objektid__id=self.object.id).\
-        #     filter(profiilipilt_objekt=True).\
-        #     first()
         context['profiilipilt'] = Pilt.objects. \
             filter(profiilipilt_objektid__in=[self.object]). \
             first()
-
         # Kas objektil on kaardivaateid
         if self.request.user.is_authenticated and self.request.user.is_staff:
             context['seotud_kaardiobjektid'] = Kaardiobjekt.objects. \
@@ -2090,9 +2079,9 @@ class ObjektDetailView(generic.DetailView):
         context['seotud_objektid'] = Objekt.objects.\
             daatumitega(self.request).\
             filter(objektid=self.object)
-        context['seotud_pildid'] = Pilt.objects. \
-            filter(objektid=self.object). \
-            order_by('tyyp', '-profiilipilt_objekt', 'hist_year', 'hist_date')
+        context['seotud_pildid'] = Pilt.objects.sorted(). \
+            filter(objektid=self.object) #. \
+            # order_by('tyyp', '-profiilipilt_objekt', 'hist_year', 'hist_date')
 
         # Lisame eellaste ja j2rglaste andmed
         context = add_eellased_j2rglane2context(self, context)
