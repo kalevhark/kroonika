@@ -1941,8 +1941,6 @@ class OrganisatsioonDetailView(generic.DetailView):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
         # Kas organisatsioonile on määratud profiilipilt
-        # context['profiilipilt'] = Pilt.objects.filter(
-        #     organisatsioonid__id=self.object.id).filter(profiilipilt_organisatsioon=True).first()
         context['profiilipilt'] = Pilt.objects. \
             filter(profiilipilt_organisatsioonid__in=[self.object]). \
             first()
@@ -1950,15 +1948,13 @@ class OrganisatsioonDetailView(generic.DetailView):
         # Mainimine läbi aastate
         context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Organisatsioon', self.object)
         # Otseseosed objectidega
-        # isik_related = self.object.isik_set.all().values_list('id', flat=True)
-        # context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(id__in=isik_related)
         context['seotud_isikud'] = Isik.objects.daatumitega(self.request).\
             filter(organisatsioonid=self.object)
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).\
             filter(organisatsioon__id=self.object.id)
         context['seotud_pildid'] = Pilt.objects. \
-            filter(organisatsioonid=self.object). \
-            order_by('tyyp', '-profiilipilt_organisatsioon', 'hist_year', 'hist_date')
+            filter(organisatsioonid=self.object) # . \
+            # order_by('tyyp', '-profiilipilt_organisatsioon', 'hist_year', 'hist_date')
 
         # Lisame eellaste ja j2rglaste andmed
         context = add_eellased_j2rglane2context(self, context)

@@ -200,35 +200,12 @@ def add_calendarstatus(request):
 # vastavalt kasutajaõigustele
 class DaatumitegaManager(models.Manager):
 
-    def get_queryset(self):
-        return super().get_queryset()
+    # def get_queryset(self):
+    #     return super().get_queryset()
 
     def daatumitega(self, request=None):
         # Kontrollime kas kasutaja on autenditud ja admin
-        # user_is_staff = request.user.is_authenticated and request.user.is_staff
         user_is_staff = request and request.user.is_authenticated and request.user.is_staff
-
-        # ukj_state = ''
-        # # Kas kalendrivalik on sessioonis olemas
-        # try:
-        #     ukj_state = request.session.get('ukj', 'off')
-        # except:
-        #     ukj_state = 'off'
-        # finally:
-        #     if ukj_state not in ('on', 'off'):
-        #         ukj_state = 'off'
-        #
-        # request.session['ukj'] = ukj_state
-        #
-        # # Kasutaja Kalendriandmed
-        # try:
-        #     user_calendar_view_last = request.session.get('user_calendar_view_last')
-        # except:
-        #     t2na = timezone.now()
-        #     user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
-        #
-        # request.session['user_calendar_view_last'] = user_calendar_view_last
-
         add_calendarstatus(request)
         ukj_state = 'off'
         # # Kas kalendrivalik on sessioonis olemas
@@ -250,18 +227,23 @@ class DaatumitegaManager(models.Manager):
                 filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
 
             filtered_queryset = filtered_queryset.annotate(
+                search_year=Case(
+                    When(hist_date__isnull=False, then=ExtractYear('hist_date')),
+                    When(hist_year__isnull=False, then=F('hist_year')),
+                    When(hist_year__isnull=True, then=0),
+                ),
                 search_month=Case(
-                    When(hist_month__isnull=True, then=0),
+                    When(hist_date__isnull=False, then=ExtractMonth('hist_date')),
                     When(hist_month__isnull=False, then=F('hist_month')),
+                    When(hist_month__isnull=True, then=0),
                     output_field=IntegerField()
                 ),
                 search_day=Case(
-                    When(hist_date__isnull=True, then=0),
                     When(hist_date__isnull=False, then=ExtractDay('hist_date')),
+                    When(hist_date__isnull=True, then=0),
                     output_field=IntegerField()
                 )
-            ).order_by('hist_year', 'search_month', 'search_day', 'id')
-
+            ).order_by('search_year', 'search_month', 'search_day', 'id')
         else:
             # Kui andmebaas on Isik, Organisatsioon, Objekt
             # if not (request.user.is_authenticated and request.user.is_staff):
@@ -1471,6 +1453,34 @@ class Artikkel(models.Model):
             summary = summary[:summary.find('\n')]
         return markdownify(escape_numberdot(summary[:100]) + "...")
 
+class PiltSortedManager(models.Manager):
+
+    def sorted(self, request):
+        # queryset = Pilt.objects.all()
+        queryset = super().get_queryset()
+        queryset = queryset.annotate(
+            search_year=Case(
+                When(hist_date__isnull=False, then=ExtractYear('hist_date')),
+                When(hist_year__isnull=False, then=F('hist_year')),
+                When(viited__hist_date__isnull=False, then=ExtractYear('hist_date')),
+                When(hist_month__isnull=True, then=0),
+                output_field=IntegerField()
+            ),
+            search_month=Case(
+                When(hist_date__isnull=False, then=ExtractMonth('hist_date')),
+                When(hist_month__isnull=False, then=F('hist_month')),
+                When(viited__hist_date__isnull=False, then=ExtractMonth('hist_date')),
+                When(hist_month__isnull=True, then=0),
+                output_field=IntegerField()
+            ),
+            search_day=Case(
+                When(hist_date__isnull=False, then=ExtractDay('hist_date')),
+                When(viited__hist_date__isnull=False, then=ExtractDay('hist_date')),
+                When(hist_date__isnull=True, then=0),
+                output_field=IntegerField()
+            )
+        ).order_by('tyyp', 'search_year', 'search_month', 'search_day', 'id').asc(nulls_last=True)
+        return queryset
 
 class Pilt(models.Model):
     PILT = 'P'
@@ -1581,7 +1591,7 @@ class Pilt(models.Model):
         blank=True,
         verbose_name='Viited'
     )
-    # Kas näidatakse objekti (artikkel, isik, organisatsioon, objekt, kroonika) profiilipildina
+    # Kas näidatakse objecti profiilipildina (pole kasutusel)
     profiilipilt_allikas = models.BooleanField(
         'Allika profiilipilt',
         default=False
@@ -1602,7 +1612,7 @@ class Pilt(models.Model):
         'Objekti profiilipilt',
         default=False
     )
-    # Millistele objectidel kuvatakse profiilipildina
+    # Millistele objectidel kuvatakse profiilipildina (uus lahendus)
     profiilipilt_allikad = models.ManyToManyField(
         Allikas,
         blank=True,
@@ -1658,9 +1668,10 @@ class Pilt(models.Model):
         verbose_name='Muutja'
     )
 
+    objects = PiltSortedManager()
+
     def __str__(self):
-        tekst = self.nimi # Kui on, siis kirjeldus, muidu pealkiri
-        return tekst
+        return self.nimi
 
     def __repr__(self):
         return self.nimi
