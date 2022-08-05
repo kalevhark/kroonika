@@ -1455,31 +1455,40 @@ class Artikkel(models.Model):
 
 class PiltSortedManager(models.Manager):
 
-    def sorted(self, request):
-        # queryset = Pilt.objects.all()
-        queryset = super().get_queryset()
-        queryset = queryset.annotate(
+    # J2rjestame pildid kronoloogiliselt pildi hist_date, hist_year, kui need puuduvad, siis viite hist_date, hist_year
+    def sorted(self):
+        queryset = self.annotate(
             search_year=Case(
                 When(hist_date__isnull=False, then=ExtractYear('hist_date')),
                 When(hist_year__isnull=False, then=F('hist_year')),
-                When(viited__hist_date__isnull=False, then=ExtractYear('hist_date')),
-                When(hist_month__isnull=True, then=0),
+                When(viited=None, then=0),
+                When(viited__hist_date__isnull=False, then=ExtractYear(Max('viited__hist_date'))),
+                When(viited__hist_year__isnull=False, then=Max('viited__hist_year')),
+                # When(hist_year__isnull=True, then=0),
                 output_field=IntegerField()
             ),
             search_month=Case(
                 When(hist_date__isnull=False, then=ExtractMonth('hist_date')),
                 When(hist_month__isnull=False, then=F('hist_month')),
-                When(viited__hist_date__isnull=False, then=ExtractMonth('hist_date')),
-                When(hist_month__isnull=True, then=0),
+                When(viited=None, then=0),
+                When(viited__hist_date__isnull=False, then=ExtractMonth(Max('viited__hist_date'))),
+                # When(hist_month__isnull=True, then=0),
                 output_field=IntegerField()
             ),
             search_day=Case(
                 When(hist_date__isnull=False, then=ExtractDay('hist_date')),
-                When(viited__hist_date__isnull=False, then=ExtractDay('hist_date')),
-                When(hist_date__isnull=True, then=0),
+                When(viited=None, then=0),
+                When(viited__hist_date__isnull=False, then=ExtractDay(Max('viited__hist_date'))),
+                # When(hist_date__isnull=True, then=0),
                 output_field=IntegerField()
             )
-        ).order_by('tyyp', 'search_year', 'search_month', 'search_day', 'id').asc(nulls_last=True)
+        ).order_by(
+            'tyyp',
+            F('search_year').asc(nulls_last=True),
+            'search_month',
+            'search_day',
+            'id'
+        )
         return queryset
 
 class Pilt(models.Model):

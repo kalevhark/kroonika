@@ -1952,7 +1952,7 @@ class OrganisatsioonDetailView(generic.DetailView):
             filter(organisatsioonid=self.object)
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).\
             filter(organisatsioon__id=self.object.id)
-        context['seotud_pildid'] = Pilt.objects. \
+        context['seotud_pildid'] = Pilt.objects.sorted(). \
             filter(organisatsioonid=self.object) # . \
             # order_by('tyyp', '-profiilipilt_organisatsioon', 'hist_year', 'hist_date')
 

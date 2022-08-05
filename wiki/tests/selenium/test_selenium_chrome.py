@@ -220,7 +220,7 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
             cnt = obj.artikkel_set.count()
             if cnt == 0:
                 continue
-            print(obj.id, cnt)
+            print(f'{obj.id}:{obj} {cnt} lugu')
             kwargs = {
                 'pk': obj.id,
                 'slug': obj.slug
@@ -246,7 +246,6 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
             except TimeoutException:
                 pass
             el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
-            # self.assertIn("Lugusid", el)
             self.assertTrue(len(el) > 0)
 
     def test_view_HTTP404_for_non_authented_user(self):
