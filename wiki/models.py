@@ -160,7 +160,7 @@ def add_markdown_objectid(string):
         url = obj.get_absolute_url()
         data_attrs = f'data-model="{model_name}" data-id="{obj.id}"'
         span = f'<span id="{model_name}_{obj.id}_pos{pos}" title="{obj}" {data_attrs}>{tekst}</span>'
-        html = f'<a class="hover-{model_name} tooltip-content" href="{url}">{span}</a>'
+        html = f'<a class="text-{model_name} hover-{model_name} tooltip-content" href="{url}">{span}</a>'
         string = string.replace(tag[0], html, 1)
     return string
 
