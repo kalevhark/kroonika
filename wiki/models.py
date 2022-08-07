@@ -568,7 +568,13 @@ class Objekt(models.Model):
     kirjeldus = MarkdownxField(
         'Kirjeldus',
         blank=True,
-        help_text='Koha või objekti kirjeldus'
+        help_text = '<br>'.join(
+        [
+            'Koha või objekti kirjeldus (MarkDown on toetatud);',
+            'Pildi lisamiseks: [pilt_nnnn];',
+            'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
+        ]
+    )
     )
     # Seotud:
     eellased = models.ManyToManyField(
@@ -777,7 +783,14 @@ class Organisatsioon(models.Model):
         help_text='Lõpetatud/likvideeritud'
     )
     kirjeldus=MarkdownxField(
-        blank=True
+        blank=True,
+        help_text='<br>'.join(
+            [
+                'Asutise kirjeldus (MarkDown on toetatud);',
+                'Pildi lisamiseks: [pilt_nnnn];',
+                'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
+            ]
+        )
     )
     # Seotud:
     eellased = models.ManyToManyField(
@@ -998,7 +1011,13 @@ class Isik(models.Model):
     )
     kirjeldus=MarkdownxField(
         blank=True,
-        help_text="Elulugu"
+        help_text='<br>'.join(
+            [
+                'Isiku kirjeldus ja elulugu (MarkDown on toetatud);',
+                'Pildi lisamiseks: [pilt_nnnn];',
+                'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
+            ]
+        )
     )
     # Seotud
     eellased = models.ManyToManyField(
@@ -1285,7 +1304,13 @@ class Artikkel(models.Model):
     # Sisu
     body_text = MarkdownxField(
         'Lugu',
-        help_text='Tekst'
+        help_text='<br>'.join(
+            [
+                'Tekst (MarkDown on toetatud);',
+                'Pildi lisamiseks: [pilt_nnnn];',
+                'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
+            ]
+        )
     )
     # Seotud:
     isikud = models.ManyToManyField(
