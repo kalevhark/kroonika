@@ -10,7 +10,6 @@ from pathlib import Path
 # To avoid unwanted migrations in the future, either explicitly set DEFAULT_AUTO_FIELD to AutoField
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
-# PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = Path(__file__).resolve().parent
 print(PROJECT_DIR)
 
@@ -31,7 +30,7 @@ SERVER_TYPE = config['django'].get('SERVER_TYPE', '')
 
 ALLOWED_HOSTS = [
     'valgalinn.ee', 'www.valgalinn.ee', '18.217.172.167', # a1.medium
-    'test.valgalinn.ee', '18.217.179.154', # t4g.nano
+    # 'test.valgalinn.ee', '18.217.179.154', # t4g.nano
     '127.0.0.1', 'localhost',
 ]
 
@@ -76,7 +75,6 @@ ROOT_URLCONF = 'kroonika.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -99,7 +97,6 @@ LOGOUT_REDIRECT_URL = 'algus'
 DATABASES = {
     'default': {
         'ENGINE':   'django.db.backends.postgresql',
-        # 'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME':     'kroonika_db',
         'USER':     config['postgresql']['PSQL_USER'],
         'PASSWORD': config['postgresql']['PSQL_PSWD'],
@@ -148,11 +145,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATIC_ROOT = BASE_DIR / 'static/'
 STATIC_URL = '/static/'
 
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_ROOT = BASE_DIR / 'media/'
 MEDIA_URL = '/media/'
 
