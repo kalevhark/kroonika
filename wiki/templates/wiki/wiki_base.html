@@ -490,22 +490,24 @@ function showCalendarTypeSwitch() {
   });
 }
 
+{% if COOKIE_CONSENT_INUSE %}
 function showCookieConsent(){
   //Change these values
-  var msg = (
+  const msg = (
     'valgalinn.ee kasutab mugavama sirvimise huvides küpsiseid. ' +
     '<a href="{% url 'privacy' %}">Lisateave.</a>'
   );
-  var closeBtnMsg = "Nõustun";
-  var privacyLink = "https://www.google.com";
+  const cname = 'CookieOK';
+  const closeBtnMsg = "Sain aru";
+  // var privacyLink = "https://www.google.com";
 
   //check cookies
   if(document.cookie){
     var cookieString = document.cookie;
     var cookieList = cookieString.split(";");
-    // if cookie named OKCookie is found, return
+    // if cookie named [cname] is found, return
     for(x = 0; x < cookieList.length; x++){
-      if (cookieList[x].indexOf("OKCookie") !== -1){return}
+      if (cookieList[x].indexOf(cname) !== -1){return}
     }
   }
 
@@ -533,12 +535,19 @@ function showCookieConsent(){
   okC.classList.add("okcBeginAnimate");
 
   function closeCookie(){
+    const now = new Date();
     var cookieExpire = new Date();
     cookieExpire.setFullYear(cookieExpire.getFullYear() +2);
-    document.cookie="OKCookie=1; expires=" + cookieExpire.toGMTString() + "; path=/";
+    const elements = [
+      cname + '=' + now.getTime(),
+      'expires=' + cookieExpire.toGMTString(),
+      'path=/'
+    ];
+    document.cookie=elements.join('; ')
     docRoot.removeChild(okC);
   }
 }
+{% endif %}
 
 $(document).ready( function() {
   // Navigatsiooniribal kalendrivalikute lyliti
@@ -546,7 +555,7 @@ $(document).ready( function() {
   // Navigatsiooniribal ikoonide värvimisega info andmine
   showFeedBackInfo();
   // Cookie consent
-  // showCookieConsent();
+  {% if COOKIE_CONSENT_INUSE %}showCookieConsent();{% endif %}
   // Navigatsiooniriba asukoha kontrollimiseks
   window.addEventListener('scroll', throttle(onScroll, 25));
   // Kuupäevaväljade unikaalsete id-de lisamine

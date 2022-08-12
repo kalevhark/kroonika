@@ -210,15 +210,21 @@ def get_kirjeldus_lyhike(self):
                     break
     return kirjeldus
 
-def add_calendarstatus(request):
+# def add_calendarstatus(request):
+def get_calendarstatus(request):
     if request:
-        # Kas kalendrivalik on sessioonis olemas
-        request.session['ukj'] = request.session.get('ukj', 'off')
+        # kalendrivalik ukj='on' v6i ukj='off'
+        # request.session['ukj'] = request.session.get('ukj', 'off')
+        ukj_state = request.session.get('ukj', 'off')
+        request.session['ukj'] = ukj_state
 
-        # Kasutaja Kalendriandmed
+        # viimane kalendrivalik 'yyyy-m'
         t2na = timezone.now()
         user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
         request.session['user_calendar_view_last'] = request.session.get('user_calendar_view_last', user_calendar_view_last)
+    else:
+        ukj_state = 'off'
+    return ukj_state
 
 # Filtreerime kanded, mille kohta on teada daatumid, vastavalt valikule vkj/ukj
 # vastavalt kasutajaõigustele
@@ -230,14 +236,17 @@ class DaatumitegaManager(models.Manager):
     def daatumitega(self, request=None):
         # Kontrollime kas kasutaja on autenditud ja admin
         user_is_staff = request and request.user.is_authenticated and request.user.is_staff
-        add_calendarstatus(request)
-        ukj_state = 'off'
-        # # Kas kalendrivalik on sessioonis olemas
-        try:
-            ukj_state = request.session.get('ukj')
-        except:
-            pass
 
+        # add_calendarstatus(request)
+        # ukj_state = 'off'
+        # # # Kas kalendrivalik on sessioonis olemas
+        # try:
+        #     ukj_state = request.session.get('ukj')
+        # except:
+        #     pass
+
+        # kalendrisüsteemi valik
+        ukj_state = get_calendarstatus(request)
         # default queryset from model
         initial_queryset = super().get_queryset()
 

@@ -70,8 +70,10 @@
   var calendar_days_with_events_in_month_url = "{% url 'wiki:calendar_days_with_events_in_month' %}"
   var yearsWithEvents = {{ kalender.years_with_events }}
   var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"
-  var userCalendarViewLast = '{{ kalender.user_calendar_view_last }}'
-  var calendarSystem = '{{ kalender.calendar_system }}'
+  // var userCalendarViewLast = '{{ kalender.user_calendar_view_last }}'
+  var userCalendarViewLast = '{{ request.session.user_calendar_view_last }}'
+  // var calendarSystem = '{{ kalender.calendar_system }}'
+  var calendarSystem = '{{ request.session.ukj }}'
 
   $( document ).ready(function() {
     {# Kalendrividina käivitamine #}

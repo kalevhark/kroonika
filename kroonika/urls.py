@@ -27,7 +27,6 @@ from rest_framework.schemas import get_schema_view
 from .sitemaps import StaticViewSitemap, ArtikkelSitemap, IsikSitemap, OrganisatsioonSitemap, ObjektSitemap
 from .routers import router
 from wiki import views, specials
-
 # sitemaps.xml
 sitemaps = {
     'static': StaticViewSitemap,

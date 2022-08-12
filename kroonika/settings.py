@@ -83,7 +83,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'wiki.context_processors.add_vihjevorm' # Tagasiside vormi lisamine kõigile lehtedele
+                'wiki.context_processors.add_vihjevorm', # Tagasiside vormi lisamine kõigile lehtedele
+                'wiki.context_processors.get_cookie_consent_inuse', # cookie consent FF oleku lisamine
             ],
         },
     },
@@ -245,3 +246,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # https://github.com/adamchainz/django-cors-headers
 CORS_ALLOW_ALL_ORIGINS = True # Lubatakse k6ik
 CORS_URLS_REGEX = r"^/api/.*$"
+
+# cookie consent in use?
+COOKIE_CONSENT_INUSE = False
