@@ -16,30 +16,30 @@
       <div class="w3-bar">
         {% if obj.isikud.exists %}
           <button
-              class="w3-bar-item w3-button tablink isik {{ obj.id }}"
+              class="w3-bar-item w3-button tablink isik {{ obj.id }} text-isik"
               onclick="openTab(event,'isik', {{ obj.id }})">
             <i class="fa fa-address-card-o"></i> {{ obj.isikud.count }}
           </button>
         {% endif %}
         {% if obj.organisatsioonid.exists %}
           <button
-              class="w3-bar-item w3-button tablink organisatsioon {{ obj.id }}"
+              class="w3-bar-item w3-button tablink organisatsioon {{ obj.id }}{% if not obj.isikud.exists %} text-organisatsioon{% endif %}"
               onclick="openTab(event,'organisatsioon', {{ obj.id }})">
             <i class="fa fa-group"></i> {{ obj.organisatsioonid.count }}
           </button>
         {% endif %}
         {% if obj.objektid.exists %}
           <button
-              class="w3-bar-item w3-button tablink objekt {{ obj.id }}"
+              class="w3-bar-item w3-button tablink objekt {{ obj.id }}{% if not obj.isikud.exists and not obj.organisatsioonid.exists %} text-objekt{% endif %}"
               onclick="openTab(event,'objekt', {{ obj.id }})">
             <i class="fa fa-bank"></i> {{ obj.objektid.count }}
           </button>
         {% endif %}
-        {% if obj.pilt_set.exists %}
+        {% if obj.pildid.sorted.exists %}
           <button
               class="w3-bar-item w3-button tablink pilt {{ obj.id }}"
               onclick="openTab(event,'pilt', {{ obj.id }})">
-            <i class="fa fa-camera-retro"></i> {{ obj.pilt_set.count }}
+            <i class="fa fa-camera-retro"></i> {{ obj.pildid.sorted.count }}
           </button>
         {% endif %}
       </div>
@@ -55,7 +55,11 @@
         {% endfor %}
       </div>
 
-      <div id="organisatsioon{{ obj.id }}" class="w3-container sisu organisatsioon {{ obj.id }}" style="display:none">
+      <div
+              id="organisatsioon{{ obj.id }}"
+              class="w3-container sisu organisatsioon {{ obj.id }}"
+              style="display:{% if obj.isikud.exists %}none{% else %}block{% endif %}"
+      >
         {% for organisatsioon in obj.organisatsioonid.all %}
           {% if forloop.counter > 1 %}
             &ensp;
@@ -66,7 +70,10 @@
         {% endfor %}
       </div>
 
-      <div id="objekt{{ obj.id }}" class="w3-container sisu objekt {{ obj.id }}" style="display:none">
+      <div
+              id="objekt{{ obj.id }}"
+              class="w3-container sisu objekt {{ obj.id }}"
+              style="display:{% if obj.isikud.exists or obj.organisatsioonid.exists %}none{% else %}block{% endif %}">
         {% for objekt in obj.objektid.all %}
           {% if forloop.counter > 1 %}
             &ensp;
@@ -77,12 +84,16 @@
         {% endfor %}
       </div>
 
-      <div id="pilt{{ obj.id }}" class="w3-container sisu pilt {{ obj.id }}" style="display:none">
-        {% for pilt in obj.pilt_set.all %}
+      <div
+              id="pilt{{ obj.id }}"
+              class="w3-container sisu pilt {{ obj.id }}"
+              style="display:{% if obj.isikud.exists or obj.organisatsioonid.exists or obj.objektid.exists %}none{% else %}block{% endif %}"
+      >
+        {% for pilt in obj.pildid.sorted.all %}
           {% if forloop.counter > 1 %}
             &ensp;
           {% endif %}
-          <!-- Vaja lisada pildirida! -->
+          {# Vaja lisada pildirida! #}
           <a class="hover-pilt" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
             <img class="pilt-pildirida" src="{{ pilt.pilt_icon.url }}" alt="{{ pilt }}" title="{{ pilt }}">
           </a>
@@ -93,22 +104,3 @@
 {% empty %}
   Ei leitud midagi
 {% endfor %}
-
-<script>
-{#function openTab(evt, tyyp, obj) {#}
-{#  var i, x, tablinks;#}
-{#  x = document.getElementsByClassName("sisu " + obj);#}
-{#  for (i = 0; i < x.length; i++) {#}
-{#      x[i].style.display = "none";#}
-{#  }#}
-{#  tablinks = document.getElementsByClassName("tablink " + obj);#}
-{#  for (i = 0; i < tablinks.length; i++) {#}
-{#    tablinks[i].className = tablinks[i].className.replace(" text-isik", "");#}
-{#	  tablinks[i].className = tablinks[i].className.replace(" text-organisatsioon", "");#}
-{#	  tablinks[i].className = tablinks[i].className.replace(" text-objekt", "");#}
-{#	  tablinks[i].className = tablinks[i].className.replace(" text-pilt", "");#}
-{#  }#}
-{#  document.getElementById(tyyp + obj).style.display = "block";#}
-{#  evt.currentTarget.className += " text-"+tyyp;#}
-{#}#}
-</script>

@@ -202,6 +202,9 @@ function openLinks(evt, linkName) {
   if (linkName.indexOf("objekt") >= 0) {
     modelName = 'objekt';
   }
+  if (linkName.indexOf("pilt") >= 0) {
+    modelName = 'pilt';
+  }
   let newClassName = 'background-' + modelName;
   var i, x, tablinks;
   x = document.getElementsByClassName("seotud");
