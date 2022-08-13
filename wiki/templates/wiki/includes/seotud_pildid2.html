@@ -32,7 +32,7 @@
       {% if pildid.count > 1 %}
         <span class="numbertext" id="numbertext"></span>
       {% endif %}
-      <span class="close cursor" onclick="closeModal()">&times;</span>
+      <span id="button-close-modal" class="close cursor" onclick="closeModal()">&times;</span>
 
       <div class="modal-content">
         {% for obj in pildid %}
@@ -64,10 +64,21 @@
         {# Järgnev rida tagab, et navbar ei tuleks modal akna peale #}
         document.getElementsByTagName("header")[0].style.zIndex = 0;
         document.getElementById("myModal").style.display = "block";
+        // var modal = document.getElementById("myModal")
+        window.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape') {
+            closeModal();
+          }
+        })
+        $(document).click(function (e) {
+          if ($(e.target).is('#myModal')) {
+              closeModal();
+          }
+        });
       }
 
       function closeModal() {
-        document.getElementById("myModal").style.display = "none";
+        $('#myModal').fadeOut(200, "linear");
       }
 
       var slideIndex = 1;
