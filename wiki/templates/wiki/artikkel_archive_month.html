@@ -112,13 +112,12 @@
         <h5><i class="fa fa-comment w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} teistel aastatel:</h5>
       </div>
     </div>
-{#    {% include 'wiki/includes/object_list.html' with object_list=sel_kuul %}#}
-    {% include 'wiki/includes/div_loader_book.html' %}
     <div class="w3-padding-16"
           id="artikkel_month_archive_otheryears"
           data-url="{% url 'wiki:artikkel_month_archive_otheryears' year=month|date:"Y" month=month|date:"m" %}"
     >
       See päring on mahukas ja võib võtta aega...
+      {% include 'wiki/includes/div_loader_book.html' %}
     </div>
   </div>
 {% endif %}

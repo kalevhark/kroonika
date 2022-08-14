@@ -11,95 +11,106 @@
         </a>
       </div>
     </div>
-
-    <div class="w3-rest w3-hide-small">
-      <div class="w3-bar">
-        {% if obj.isikud.exists %}
-          <button
-              class="w3-bar-item w3-button tablink isik {{ obj.id }} text-isik"
-              onclick="openTab(event,'isik', {{ obj.id }})">
-            <i class="fa fa-address-card-o"></i> {{ obj.isikud.count }}
-          </button>
-        {% endif %}
-        {% if obj.organisatsioonid.exists %}
-          <button
-              class="w3-bar-item w3-button tablink organisatsioon {{ obj.id }}{% if not obj.isikud.exists %} text-organisatsioon{% endif %}"
-              onclick="openTab(event,'organisatsioon', {{ obj.id }})">
-            <i class="fa fa-group"></i> {{ obj.organisatsioonid.count }}
-          </button>
-        {% endif %}
-        {% if obj.objektid.exists %}
-          <button
-              class="w3-bar-item w3-button tablink objekt {{ obj.id }}{% if not obj.isikud.exists and not obj.organisatsioonid.exists %} text-objekt{% endif %}"
-              onclick="openTab(event,'objekt', {{ obj.id }})">
-            <i class="fa fa-bank"></i> {{ obj.objektid.count }}
-          </button>
-        {% endif %}
-        {% if obj.pildid.sorted.exists %}
-          <button
-              class="w3-bar-item w3-button tablink pilt {{ obj.id }}"
-              onclick="openTab(event,'pilt', {{ obj.id }})">
-            <i class="fa fa-camera-retro"></i> {{ obj.pildid.sorted.count }}
-          </button>
-        {% endif %}
-      </div>
-
-      <div id="isik{{ obj.id }}" class="w3-container sisu isik {{ obj.id }}">
-        {% for isik in obj.isikud.all %}
-          {% if forloop.counter > 1 %}
-            &ensp;
+    {% with obj_isikud_count=obj.isikud.count obj_organisatsioonid_count=obj.organisatsioonid.count obj_objektid_count=obj.objektid.count obj_pildid_count=obj.pildid.sorted.count %}
+      <div class="w3-rest w3-hide-small">
+        <div class="w3-bar">
+          {% if obj_isikud_count > 0 %}
+            <button
+                class="w3-bar-item w3-button tablink isik {{ obj.id }} text-isik"
+                onclick="openTab(event,'isik', {{ obj.id }})">
+              <i class="fa fa-address-card-o"></i> {{ obj_isikud_count }}
+            </button>
           {% endif %}
-          <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=isik.id slug=isik.slug %}">
-            {{ isik }}
-          </a>
-        {% endfor %}
-      </div>
-
-      <div
-              id="organisatsioon{{ obj.id }}"
-              class="w3-container sisu organisatsioon {{ obj.id }}"
-              style="display:{% if obj.isikud.exists %}none{% else %}block{% endif %}"
-      >
-        {% for organisatsioon in obj.organisatsioonid.all %}
-          {% if forloop.counter > 1 %}
-            &ensp;
+          {% if obj_organisatsioonid_count > 0 %}
+            <button
+                class="w3-bar-item w3-button tablink organisatsioon {{ obj.id }}{% if obj_isikud_count == 0 %} text-organisatsioon{% endif %}"
+                onclick="openTab(event,'organisatsioon', {{ obj.id }})">
+              <i class="fa fa-group"></i> {{ obj_organisatsioonid_count }}
+            </button>
           {% endif %}
-          <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=organisatsioon.id slug=organisatsioon.slug %}">
-            {{ organisatsioon }}
-          </a>
-        {% endfor %}
-      </div>
-
-      <div
-              id="objekt{{ obj.id }}"
-              class="w3-container sisu objekt {{ obj.id }}"
-              style="display:{% if obj.isikud.exists or obj.organisatsioonid.exists %}none{% else %}block{% endif %}">
-        {% for objekt in obj.objektid.all %}
-          {% if forloop.counter > 1 %}
-            &ensp;
+          {% if obj_objektid_count > 0 %}
+            <button
+                class="w3-bar-item w3-button tablink objekt {{ obj.id }}{% if obj_isikud_count == 0 and obj_organisatsioonid_count == 0 %} text-objekt{% endif %}"
+                onclick="openTab(event,'objekt', {{ obj.id }})">
+              <i class="fa fa-bank"></i> {{ obj_objektid_count }}
+            </button>
           {% endif %}
-          <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=objekt.id  slug=objekt.slug %}">
-            {{ objekt }}
-          </a>
-        {% endfor %}
-      </div>
-
-      <div
-              id="pilt{{ obj.id }}"
-              class="w3-container sisu pilt {{ obj.id }}"
-              style="display:{% if obj.isikud.exists or obj.organisatsioonid.exists or obj.objektid.exists %}none{% else %}block{% endif %}"
-      >
-        {% for pilt in obj.pildid.sorted.all %}
-          {% if forloop.counter > 1 %}
-            &ensp;
+          {% if obj_pildid_count > 0 %}
+            <button
+                class="w3-bar-item w3-button tablink pilt {{ obj.id }}{% if obj_isikud_count == 0 and obj_organisatsioonid_count == 0 and obj_objektid_count == 0 %} text-objekt{% endif %}"
+                onclick="openTab(event,'pilt', {{ obj.id }})">
+              <i class="fa fa-camera-retro"></i> {{ obj_pildid_count }}
+            </button>
           {% endif %}
-          {# Vaja lisada pildirida! #}
-          <a class="hover-pilt" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
-            <img class="pilt-pildirida" src="{{ pilt.pilt_icon.url }}" alt="{{ pilt }}" title="{{ pilt }}">
-          </a>
-        {% endfor %}
+        </div>
+
+        <div
+                id="isik{{ obj.id }}"
+                class="w3-container sisu isik {{ obj.id }}"
+        >
+          {% if obj_isikud_count > 0 %}
+            {% for isik in obj.isikud.all %}
+              {% if forloop.counter > 1 %}
+                &ensp;
+              {% endif %}
+              <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=isik.id slug=isik.slug %}">
+                {{ isik }}
+              </a>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <div
+                id="organisatsioon{{ obj.id }}"
+                class="w3-container sisu organisatsioon {{ obj.id }}"
+                style="display:{% if obj.isikud.exists %}none{% else %}block{% endif %}"
+        >
+          {% if obj_organisatsioonid_count > 0 %}
+            {% for organisatsioon in obj.organisatsioonid.all %}
+              {% if forloop.counter > 1 %}
+                &ensp;
+              {% endif %}
+              <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=organisatsioon.id slug=organisatsioon.slug %}">
+                {{ organisatsioon }}
+              </a>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <div
+                id="objekt{{ obj.id }}"
+                class="w3-container sisu objekt {{ obj.id }}"
+                style="display:{% if obj.isikud.exists or obj.organisatsioonid.exists %}none{% else %}block{% endif %}">
+          {% if obj_objektid_count > 0 %}
+            {% for objekt in obj.objektid.all %}
+              {% if forloop.counter > 1 %}
+                &ensp;
+              {% endif %}
+              <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=objekt.id  slug=objekt.slug %}">
+                {{ objekt }}
+              </a>
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        <div
+                id="pilt{{ obj.id }}"
+                class="w3-container sisu pilt {{ obj.id }}"
+                style="display:{% if obj.isikud.exists or obj.organisatsioonid.exists or obj.objektid.exists %}none{% else %}block{% endif %}"
+        >
+          {% if obj_pildid_count > 0 %}
+            {% for pilt in obj.pildid.sorted.all %}
+              {% if forloop.counter > 1 %}
+                &ensp;
+              {% endif %}
+              <a class="hover-pilt" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
+                <img class="pilt-pildirida" src="{{ pilt.pilt_icon.url }}" alt="{{ pilt }}" title="{{ pilt }}">
+              </a>
+            {% endfor %}
+          {% endif %}
+        </div>
       </div>
-    </div>
+    {% endwith %}
   </div>
 {% empty %}
   Ei leitud midagi
