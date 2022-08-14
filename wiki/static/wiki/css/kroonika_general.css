@@ -1,5 +1,5 @@
-/* ver 2022.08 */
-html, body, p, h1, h2, h3, h4, h5 {
+/* ver 2022.08.14 */
+html, body, p, h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", sans-serif;
 }
 
@@ -232,7 +232,7 @@ ul.no-bullets li {
 }
 
 /* Kasutamiseks uudisvoos */
-figure .pilt-wiki-algus {
+.pilt-wiki-algus {
   width: 100%;
   max-height: 200px;
   overflow: hidden;
