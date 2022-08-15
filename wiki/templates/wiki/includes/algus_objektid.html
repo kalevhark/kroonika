@@ -106,7 +106,7 @@
             data-model='{{ obj|get_model_name }}'
             data-id='{{ obj.id }}'
             id='{{ obj|get_model_name }}_{{ obj.id }}_juubilarid'>
-        {{ obj.nimi }}&nbsp;<b>{{ obj.vanus }}</b>
+        {{ obj }}&nbsp;<b>{{ obj.vanus }}</b>
       </span>
       {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
     </a>
