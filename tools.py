@@ -204,7 +204,7 @@ def massikanne_from_json():
 
     harud = data[aasta]['harud']
     for haru in harud:
-        print(haru)
+        print(f'**{haru}**')
         # Isiku kirjeldus
         isik_kirjeldus = f'Valga ühisgümnaasiumi {haru.lower()} lõpetaja {aasta}'
         isikud = harud[haru]
@@ -220,17 +220,17 @@ def massikanne_from_json():
                     eesnimi = isik_eesnimi,
                     kirjeldus = isik_kirjeldus
                 )
-                # uus_isik.save()
+                uus_isik.save()
                 print(uus_isik)
                 # Lisame isikule seotud organisatsiooni
-                # uus_isik.organisatsioonid.add(org)
+                uus_isik.organisatsioonid.add(org)
                 # Lisame isikule seotud viite(d)
-                # for viide in viited:
-                #    uus_isik.viited.add(viide)
+                for viide in viited:
+                   uus_isik.viited.add(viide)
                 # Lisame isiku artiklile
-                # art.isikud.add(uus_isik)
+                art.isikud.add(uus_isik)
                 # Lisame isiku pildile
-                # pilt.isikud.add(uus_isik)
+                pilt.isikud.add(uus_isik)
 
 # Ühe sisuga artiklite lisamiseks
 def lisa_artikkel_20200321():
