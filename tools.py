@@ -178,6 +178,60 @@ Irina Elias, Marie Kubjas, Senta Karlson, Aleftina Kaska, Amalie Hanson, Wera Ti
             # Lisame isiku pildile
             pilt.isikud.add(uus_isik)
 
+# Isikukirjete tekitamiseks artikli juurde
+# import tools
+# tools.massikanne_from_json()
+def massikanne_from_json():
+    # Millise aasta lend
+    aasta = '1933'
+    # Millise artikliga siduda isik
+    art = Artikkel.objects.get(id=1435)
+    print(art)
+    # Millise pildiga siduda isik
+    pilt = Pilt.objects.get(id=9268)
+    print(pilt)
+    # Milline organisatsioon lisada isikule
+    org = Organisatsioon.objects.get(
+        id=2777)  # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
+    print(org)
+    # Milline viide lisada isikule
+    viited_ids = [12938, 12939]
+    viited = Viide.objects.filter(id__in=viited_ids)
+    print(viited)
+    # Loeme lendude andmed
+    with open('vilistlased1933-2021.json', mode='r', encoding='utf8') as f:
+        data = json.load(f)
+
+    harud = data[aasta]['harud']
+    for haru in harud:
+        print(haru)
+        # Isiku kirjeldus
+        isik_kirjeldus = f'Valga ühisgümnaasiumi {haru.lower()} lõpetaja {aasta}'
+        isikud = harud[haru]
+        for isik in isikud:
+            # Loome uue isiku
+            isik_nimi = isik.strip().split(',')
+            isik_eesnimi = isik_nimi[1].strip()
+            isik_perenimi = isik_nimi[0].strip()
+            if isik_eesnimi or isik_perenimi:
+                # print(isik_eesnimi, isik_perenimi)
+                uus_isik = Isik(
+                    perenimi = isik_perenimi,
+                    eesnimi = isik_eesnimi,
+                    kirjeldus = isik_kirjeldus
+                )
+                # uus_isik.save()
+                print(uus_isik)
+                # Lisame isikule seotud organisatsiooni
+                # uus_isik.organisatsioonid.add(org)
+                # Lisame isikule seotud viite(d)
+                # for viide in viited:
+                #    uus_isik.viited.add(viide)
+                # Lisame isiku artiklile
+                # art.isikud.add(uus_isik)
+                # Lisame isiku pildile
+                # pilt.isikud.add(uus_isik)
+
 # Ühe sisuga artiklite lisamiseks
 def lisa_artikkel_20200321():
     hist_years = [1384, 1385, 1387, 1391, 1393, 1396, 1398, 1410, 1412]
@@ -684,7 +738,6 @@ def get_vg_vilistlased():
             data[aasta]['harud'][haru] = nimekiri[0].text.split('\n')
         print()
 
-    import json
     with open('vilistlased1933-2021.json', mode='w', encoding='utf8') as f:
         json.dump(data, f)
 
@@ -870,5 +923,6 @@ if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
     # muis_viited_inuse()
-    ilmajama()
+    # ilmajama()
+    massikanne_from_json()
     pass
