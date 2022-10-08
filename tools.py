@@ -136,23 +136,23 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-Eduard Karjus, Julius Lõoke, Artur Teras, Woldi Wardul, Robert Wares
+Irina Elias, Marie Kubjas, Senta Karlson, Aleftina Kaska, Amalie Hanson, Wera Tints, Selma Kongo, Linda Pärk, Miili Püwi, Salme Puustus
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=10590)
+    art = Artikkel.objects.get(id=1436)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=8007)
+    pilt = Pilt.objects.get(id=9268)
     print(pilt)
     # Milline organisatsioon lisada isikule
-    org = Organisatsioon.objects.get(id=2743) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
+    org = Organisatsioon.objects.get(id=2768) # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [11942]
+    viited_ids = [12938]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Valga tööstuskooli puutöö osakonna lõpetaja 1931'
+    isik_kirjeldus = 'Valga naiskutsekooli õmblemise osakonna lõpetaja 1933'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
