@@ -57,6 +57,27 @@ KUUD = (
 
 VIGA_TEKSTIS = '[?]'
 
+PREDECESSOR_DESCENDANT_NAMES = {
+    'Isik': {
+        'predecessor_name': 'Vanem',
+        'predecessor_name_plural': 'Vanemad',
+        'descendant_name': 'Laps',
+        'descendant_name_plural': 'Lapsed'
+    },
+    'Organisatsioon': {
+        'predecessor_name': 'Eelkäija',
+        'predecessor_name_plural': 'Eelkäijad',
+        'descendant_name': 'Järeltulija',
+        'descendant_name_plural': 'Järeltulijad'
+    },
+    'Objekt': {
+        'predecessor_name': 'Eelkäija',
+        'predecessor_name_plural': 'Eelkäijad',
+        'descendant_name': 'Järeltulija',
+        'descendant_name_plural': 'Järeltulijad'
+    },
+}
+
 def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
     """
     make thumbnail image and field from source image field

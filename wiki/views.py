@@ -1070,14 +1070,33 @@ def seotud_artiklikaudu(request, model, seotud_artiklid, object_self):
         andmed[seotud_object.id] = kirje
     return andmed
 
+from wiki.models import PREDECESSOR_DESCENDANT_NAMES
 # Lisame detailview jaoks contexti eellase ja j2rglase info
 # sisendiks on object
 def add_eellased_j2rglane2context(object, context):
     qs = object.get_queryset()
+    model_name = str(qs.model.__name__)
+    print(model_name)
     eellased = object.object.eellased.all()
-    context['eellased'] = qs.filter(id__in=[obj.id for obj in eellased])
+    eellased_qs = qs.filter(id__in=[obj.id for obj in eellased])
+    if len(eellased_qs) > 1:
+        eellased_label = PREDECESSOR_DESCENDANT_NAMES[model_name]['predecessor_name_plural']
+    else:
+        eellased_label = PREDECESSOR_DESCENDANT_NAMES[model_name]['predecessor_name']
     j2rglane = object.object.j2rglane.all()
-    context['j2rglane'] = qs.filter(id__in=[obj.id for obj in j2rglane])
+    j2rglane_qs = qs.filter(id__in=[obj.id for obj in j2rglane])
+    if len(j2rglane_qs) > 1:
+        j2rglane_label = PREDECESSOR_DESCENDANT_NAMES[model_name]['descendant_name_plural']
+    else:
+        j2rglane_label = PREDECESSOR_DESCENDANT_NAMES[model_name]['descendant_name']
+    context['eellased'] = {
+        'qs': eellased_qs,
+        'label': eellased_label
+    }
+    context['j2rglane'] = {
+        'qs': j2rglane_qs,
+        'label': j2rglane_label
+    }
     return context
 
 #

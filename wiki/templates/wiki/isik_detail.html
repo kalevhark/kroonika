@@ -43,10 +43,8 @@
           <br>maetud: <strong>{{ object.maetud }}</strong>
         {% endif %}
       </h5>
-
-      {% include 'wiki/includes/object_detail_eellased_j2rglane.html' with qs=eellased title="Vanemad" %}
-      {% include 'wiki/includes/object_detail_eellased_j2rglane.html' with qs=j2rglane title="Lapsed" %}
-
+      {% include 'wiki/includes/object_detail_eellased_j2rglane.html' with qs=eellased.qs label=eellased.label %}
+      {% include 'wiki/includes/object_detail_eellased_j2rglane.html' with qs=j2rglane.qs label=j2rglane.label %}
     </div>
 
     <!-- Sisukaardi kirjeldav osa-->
