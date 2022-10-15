@@ -5,19 +5,7 @@
     <h5>
       Täna 100 aastat tagasi...
     </h5>
-    {% if andmed.artikkel.100_aastat_tagasi %}
-      <div>
-        {% for obj in andmed.artikkel.100_aastat_tagasi %}
-          {% if forloop.counter > 1 %}
-            <br>
-          {% endif %}
-          <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
-            <strong>... </strong>{{ obj.body_text|truncatewords:10 }}
-            {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
-          </a>
-        {% endfor %}
-      </div>
-    {% endif %}
+
     {% if andmed.isik.100_aastat_tagasi %}
       <div style="padding-top: 0.5em;">
         {% for obj in andmed.isik.100_aastat_tagasi %}
@@ -25,7 +13,7 @@
             <br>
           {% endif %}
           <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-            ...sündis {{ obj }}
+            ...sündis <strong>{{ obj }}</strong>
             {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
           </a>
         {% endfor %}
@@ -38,7 +26,7 @@
             <br>
           {% endif %}
           <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
-            ...asutati {{ obj }}
+            ...asutati <strong>{{ obj }}</strong>
             {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
           </a>
         {% endfor %}
@@ -51,7 +39,20 @@
             <br>
           {% endif %}
           <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
-            ...valmis {{ obj }}
+            ...valmis <strong>{{ obj }}</strong>
+            {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if andmed.artikkel.100_aastat_tagasi %}
+      <div>
+        {% for obj in andmed.artikkel.100_aastat_tagasi %}
+          {% if forloop.counter > 1 %}
+            <br>
+          {% endif %}
+          <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
+            <strong>... </strong>{{ obj.body_text|truncatewords:10 }}
             {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
           </a>
         {% endfor %}
