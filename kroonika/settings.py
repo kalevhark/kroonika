@@ -11,7 +11,7 @@ from pathlib import Path
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 PROJECT_DIR = Path(__file__).resolve().parent
-print(PROJECT_DIR)
+print('settings.PROJECT_DIR:', PROJECT_DIR)
 
 # Access configparser to load variable values
 config = configparser.SafeConfigParser(allow_no_value=True)

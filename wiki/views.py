@@ -1076,7 +1076,6 @@ from wiki.models import PREDECESSOR_DESCENDANT_NAMES
 def add_eellased_j2rglane2context(object, context):
     qs = object.get_queryset()
     model_name = str(qs.model.__name__)
-    print(model_name)
     eellased = object.object.eellased.all()
     eellased_qs = qs.filter(id__in=[obj.id for obj in eellased])
     if len(eellased_qs) > 1:
