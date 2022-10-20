@@ -62,13 +62,12 @@
       Otsi:
       <input
           id="question"
-          placeholder="fraas..."
+          placeholder="sõna(osa)..."
           v-model="question"
           ref="question" />
       &nbsp;<span id="answer">[[ answer ]]</span>
     </div>
     <div class="w3-container w3-cell-row">
-{#      <div class="w3-cell" style="width:25%"> <!-- vasakpoolne veerg -->#}
       <div class="w3-quarter"> <!-- vasakpoolne veerg -->
         <div
                 id="leitud_isikud"
@@ -90,15 +89,6 @@
                   [[ isik_results_count_all>isik_results_count_1st_page ? isik_results_count_1st_page + ' / ' : '' ]]
                   [[ isik_results_count_all ]]
                 </a>
-{#                <a#}
-{#                        class="hover-isik w3-button text-isik"#}
-{#                        style="text-decoration: none;"#}
-{#                        title="järgmised..."#}
-{#                        v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
-{#                        v-if="isik_results_count_all>isik_results_count_1st_page"#}
-{#                >#}
-{#                  näita veel...#}
-{#                </a>#}
               </strong>
             </summary>
             <ul class="w3-ul">
@@ -156,15 +146,6 @@
                   organisatsioon_results_count_1st_page + ' / ' : '' ]]
                   [[ organisatsioon_results_count_all ]]
                 </a>
-{#                <a#}
-{#                        class="hover-organisatsioon w3-button text-organisatsioon"#}
-{#                        style="text-decoration: none;"#}
-{#                        title="järgmised..."#}
-{#                        v-bind:href="wiki_organisatsioon_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
-{#                        v-if="organisatsioon_results_count_all>organisatsioon_results_count_1st_page"#}
-{#                >#}
-{#                  näita veel...#}
-{#                </a>#}
               </strong>
             </summary>
             <ul class="w3-ul">
@@ -193,7 +174,6 @@
                     style="text-decoration: none;"
                     id="get_next_results_organisatsioonid"
                     title="järgmised..."
-{#                    v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
                     @click="getNextResults($event.target.id)"
                     v-if="organisatsioon_results_count_all>organisatsioon_results_count_1st_page"
             >
@@ -223,15 +203,6 @@
                   ]]
                   [[ objekt_results_count_all ]]
                 </a>
-{#                <a#}
-{#                        class="hover-objekt w3-button text-objekt"#}
-{#                        style="text-decoration: none;"#}
-{#                        title="järgmised..."#}
-{#                        v-bind:href="wiki_objekt_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
-{#                        v-if="objekt_results_count_all>objekt_results_count_1st_page"#}
-{#                >#}
-{#                  näita veel...#}
-{#                </a>#}
               </strong>
             </summary>
             <ul class="w3-ul faq__content">
@@ -260,7 +231,6 @@
                     style="text-decoration: none;"
                     id="get_next_results_objektid"
                     title="järgmised..."
-{#                    v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
                     @click="getNextResults($event.target.id)"
                     v-if="objekt_results_count_all>objekt_results_count_1st_page"
             >
@@ -270,7 +240,6 @@
         </div>
       </div> <!-- vasakpoolne veerg -->
 
-{#      <div class="w3-cell"> <!-- parempoolne veerg -->#}
       <div class="w3-threequarter"> <!-- parempoolne veerg -->
         <div
                 id="leitud_artiklid"
@@ -291,15 +260,6 @@
                 [[ artikkel_results_count_all>artikkel_results_count_1st_page ? artikkel_results_count_1st_page + ' /' : '' ]]
                 [[ artikkel_results_count_all ]]
               </a>
-{#              <a#}
-{#                  class="hover-artikkel w3-button text-artikkel"#}
-{#                  style="text-decoration: none;"#}
-{#                  title="järgmised..."#}
-{#                  v-bind:href="wiki_artikkel_filter_url + '?artikkel_sisaldab=' + question + '&page=2'"#}
-{#                  v-if="artikkel_results_count_all>artikkel_results_count_1st_page"#}
-{#              >#}
-{#                näita veel...#}
-{#              </a>#}
             </strong>
           </div>
           <ul class="w3-ul">
@@ -320,7 +280,6 @@
                   style="text-decoration: none;"
                   id="get_next_results_artiklid"
                   title="järgmised..."
-{#                    v-bind:href="wiki_isik_filter_url + '?nimi_sisaldab=' + question + '&page=2'"#}
                   @click="getNextResults($event.target.id)"
                   v-if="artikkel_results_count_all>artikkel_results_count_1st_page"
           >
@@ -333,5 +292,5 @@
 {% endblock %}
 
 {% block javascript %}
-  <script src="{% static 'wiki/js/wiki_otsi.js'%}?ver=2022.7"></script>
+  <script src="{% static 'wiki/js/wiki_otsi.js'%}?ver=2022.10"></script>
 {% endblock %}
