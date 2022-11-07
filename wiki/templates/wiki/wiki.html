@@ -23,6 +23,12 @@
 {#      <div class="w3-container w3-hover-white w3-padding-16 w3-center">#}
 {#        {% include 'wiki/special/algus_message_438.html' %}#}
 {#      </div>#}
+{#      <div#}
+{#              class="w3-container w3-hover-white w3-center"#}
+{#              style="border-radius: 1rem;"#}
+{#      >#}
+{#        {% include 'wiki/special/algus_message_j6ul2022.html' %}#}
+{#      </div>#}
 {#      <div class="w3-container w3-hover-white w3-padding-16 w3-center">#}
 {#        {% include 'wiki/includes/algus_message.html' %}#}
 {#      </div>#}
@@ -67,6 +73,9 @@
 <script src="{% static 'ilm/js/swiped-events.js' %}"></script>
 <script src="{% static 'wiki/js/wiki_calendar3.js'%}"></script>
 <script>
+  {#J6ul2022#}
+  {#showLights();#}
+
   var calendar_days_with_events_in_month_url = "{% url 'wiki:calendar_days_with_events_in_month' %}"
   var yearsWithEvents = {{ kalender.years_with_events }}
   var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"

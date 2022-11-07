@@ -1659,7 +1659,8 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         )
         return context
 
-def artikkel_month_archive_otheryears(request, year, month):
+def artikkel_month_archive_otheryears(request, year, month, start):
+    kirjeid = 50
     artikkel_qs = Artikkel.objects.daatumitega(request)
     # sel_kuul = artikkel_qs. \
     #     exclude(hist_year=year). \
@@ -1667,8 +1668,16 @@ def artikkel_month_archive_otheryears(request, year, month):
     sel_kuul_bydate_ids_list = artikkel_qs.filter(Q(dob__month=month) | Q(doe__month=month)).values_list('id', flat=True)
     sel_kuul_bymonth_ids_list = artikkel_qs.filter(dob__isnull=True, hist_month=month).values_list('id', flat=True)
     sel_kuul_ids = [*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list]
-    sel_kuul = artikkel_qs.filter(id__in=sel_kuul_ids)
-    return render(request, 'wiki/includes/object_list.html', {'object_list': sel_kuul})
+    sel_kuul = artikkel_qs.filter(id__in=sel_kuul_ids) # [start:start+kirjeid]
+    return render(
+        request,
+        'wiki/includes/object_list.html',
+        {
+            'object_list': sel_kuul,
+            'start': start,
+            'kirjeid': kirjeid
+        }
+    )
 
 class ArtikkelDayArchiveView(DayArchiveView):
     # queryset = Artikkel.objects.all()
@@ -2113,22 +2122,34 @@ def get_object_data4tooltip(request):
     model_name = request.GET.get('model')
     id = request.GET.get('obj_id')
     model = apps.get_model('wiki', model_name)
-    # print(model, id)
     obj = model.objects.get(id=id)
-    if obj.kirjeldus:
-        heading = f'<strong>{obj}</strong>'
-        # if obj.profiilipilt():
-        if obj.profiilipildid.exists():
-            # img = settings.MEDIA_URL + obj.profiilipilt().pilt_thumbnail.name
-            profiilipilt = obj.profiilipildid.first()
-            img = settings.MEDIA_URL + profiilipilt.pilt_thumbnail.name
-            # img = f'<img class="tooltip-content-img" src="{img}" alt="{obj.profiilipilt()}">'
-            img = f'<img class="tooltip-content-img" src="{img}" alt="{profiilipilt}">'
+    content = str(obj)
+    if model in [Isik, Objekt, Organisatsioon]:
+        if obj.kirjeldus:
+            heading = f'<strong>{obj}</strong>'
+            if obj.profiilipildid.exists():
+                profiilipilt = obj.profiilipildid.first()
+                img = settings.MEDIA_URL + profiilipilt.pilt_thumbnail.name
+                img = f'<img class="tooltip-content-img" src="{img}" alt="{profiilipilt}">'
+            else:
+                img = ''
+            content = f'<div><p>{heading}</p><p>{img}<small>{obj.kirjeldus_lyhike}</small><p></div>'
+    elif model == Artikkel:
+        if obj.hist_date:
+            dob = obj.hist_date.strftime('%d.%m.%Y')
+        elif obj.hist_month:
+            dob = f'{obj.get_hist_month_display()} {obj.hist_year}'
         else:
-            img = ''
-        content = f'<div><p>{heading}</p><p>{img}<small>{obj.kirjeldus_lyhike}</small><p></div>'
-    else:
-        content = str(obj)
+            dob = str(obj.hist_year)
+        if obj.hist_enddate:
+            doe = obj.hist_enddate.strftime('%d.%m.%Y')
+        else:
+            doe = None
+        if all([dob, doe]):
+            heading = f'<strong>{dob}-{doe}</strong>'
+        else:
+            heading = f'<strong>{dob}</strong>'
+        content = f'<div><p>{heading}</p><p><small>{obj.formatted_markdown}</small><p></div>'
     return HttpResponse(content)
 
 def join_kaardiobjekt_with_objekt(request, kaardiobjekt_id, objekt_id):

@@ -61,12 +61,12 @@ class SeleniumTestsChromeOtsi(SeleniumTestsChromeBase):
         search_input.send_keys('ta')
         try:
             WebDriverWait(self.selenium, timeout=3).until(
-                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+                EC.text_to_be_present_in_element((By.ID, "answer"), "vähemalt")
             )
         except TimeoutException:
             pass
         el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Vähemalt", el)
+        self.assertIn("vähemalt", el)
 
         search_input.send_keys('mm')
         try:
@@ -91,13 +91,13 @@ class SeleniumTestsChromeOtsi(SeleniumTestsChromeBase):
         time.sleep(3)
         try:
             WebDriverWait(self.selenium, timeout=3).until(
-                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+                EC.text_to_be_present_in_element((By.ID, "answer"), "vähemalt")
             )
         except TimeoutException:
             pass
 
         el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Vähemalt", el)
+        self.assertIn("vähemalt", el)
 
         results = self.selenium.find_elements(By.XPATH, '//*[@id="leitud_isikud"]/details/ul/*')
         self.assertEqual(len(results), 0)
@@ -166,12 +166,12 @@ class SeleniumTestsChromeOtsiGetNextResults(SeleniumTestsChromeBase):
         time.sleep(1)
         try:
             WebDriverWait(self.selenium, timeout=3).until(
-                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+                EC.text_to_be_present_in_element((By.ID, "answer"), "vähemalt")
             )
         except TimeoutException:
             pass
         el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Vähemalt", el)
+        self.assertIn("vähemalt", el)
 
         search_input.send_keys('õõõõõ')
         try:

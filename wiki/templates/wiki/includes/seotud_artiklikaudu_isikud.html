@@ -1,3 +1,4 @@
+{% load wiki_extras %}
 {% if seotud_isikud_artiklikaudu %}
 <!-- Loend seotud isikutest, mis on nimetatud samas artiklis -->
   <div>
@@ -9,8 +10,15 @@
 			{% if forloop.counter > 1 %}
 				<br>
 			{% endif %}
-			<a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-				<strong>{{ obj.nimi }}</strong>
+			<a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+{#				<strong>{{ obj.nimi }}</strong>#}
+        <span
+              title='{{ obj.nimi }}'
+              data-model='Isik'
+              data-id='{{ obj.id }}'
+              id='Isik_{{ obj.id }}_seotud_artiklikaudu_isikud'>
+          {{ obj.nimi }}
+        </span>
 			</a>
 			&nbsp;&ndash;&nbsp;
 			{% include 'wiki/includes/seotud_artiklikaudu_artiklid.html' with model_id='isik' %}

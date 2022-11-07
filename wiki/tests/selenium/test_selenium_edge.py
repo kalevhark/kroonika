@@ -69,12 +69,12 @@ class SeleniumTestsEdgeOtsi(SeleniumTestsEdgeBase):
         search_input.send_keys('ta')
         try:
             WebDriverWait(self.selenium, timeout=3).until(
-                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+                EC.text_to_be_present_in_element((By.ID, "answer"), "vähemalt")
             )
         except TimeoutException:
             pass
         el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Vähemalt", el)
+        self.assertIn("vähemalt", el)
 
         search_input.send_keys('mm')
         try:
@@ -91,12 +91,12 @@ class SeleniumTestsEdgeOtsi(SeleniumTestsEdgeBase):
         time.sleep(1)
         try:
             WebDriverWait(self.selenium, timeout=3).until(
-                EC.text_to_be_present_in_element((By.ID, "answer"), "Vähemalt")
+                EC.text_to_be_present_in_element((By.ID, "answer"), "vähemalt")
             )
         except TimeoutException:
             pass
         el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("Vähemalt", el)
+        self.assertIn("vähemalt", el)
 
         search_input.send_keys('õõõõõ')
         try:

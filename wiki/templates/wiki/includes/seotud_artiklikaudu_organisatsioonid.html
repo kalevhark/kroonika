@@ -10,8 +10,15 @@
 			{% if forloop.counter > 1 %}
 				<br>
 			{% endif %}
-			<a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
-				<strong>{{ obj.nimi }}</strong>
+			<a class="hover-organisatsioon tooltip-content" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
+{#				<strong>{{ obj.nimi }}</strong>#}
+        <span
+              title='{{ obj.nimi }}'
+              data-model='Organisatsioon'
+              data-id='{{ obj.id }}'
+              id='Organisatsioon_{{ obj.id }}_seotud_kaudu_organisatsioonid'>
+          {{ obj.nimi }}
+        </span>
 			</a>
 			&nbsp;&ndash;&nbsp;
 			{% include 'wiki/includes/seotud_artiklikaudu_artiklid.html' with model_id='organisatsioon' %}

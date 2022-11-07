@@ -109,15 +109,29 @@
       class="seotud">
     <div class="w3-cell-row w3-container background-artikkel w3-text-white">
       <div class="w3-cell w3-cell-middle">
-        <h5><i class="fa fa-comment w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} teistel aastatel:</h5>
+        <h5><i class="fa fa-comment w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} teistel aastatel ({{ sel_kuul.count }}):</h5>
       </div>
     </div>
     <div class="w3-padding-16"
           id="artikkel_month_archive_otheryears"
-          data-url="{% url 'wiki:artikkel_month_archive_otheryears' year=month|date:"Y" month=month|date:"m" %}"
+          data-url="{% url 'wiki:artikkel_month_archive_otheryears' year=month|date:"Y" month=month|date:"m" start=0 %}"
     >
-      <div class="w3-container">See päring on mahukas ja võib võtta aega...</div>
-      {% include 'wiki/includes/div_loader_book.html' %}
+      <div id="artikkel_month_archive_otheryears_content"></div>
+{#      <div id="artikkel_month_archive_otheryears_content_next">#}
+{#        <a#}
+{#                class="hover-isik w3-button text-isik"#}
+{#                style="text-decoration: none;"#}
+{#                id="get_artikkel_month_archive_otheryears_content_next"#}
+{#                title="järgmised..."#}
+{#                onclick="artikkel_month_archive_otheryears()"#}
+{#        >#}
+{#          näita veel...#}
+{#        </a>#}
+{#      </div>#}
+      <div id="artikkel_month_archive_otheryears_loader">
+        <div class="w3-container">See päring on mahukas ja võib võtta aega...</div>
+        {% include 'wiki/includes/div_loader_book.html' %}
+      </div>
     </div>
   </div>
 {% endif %}
@@ -171,23 +185,27 @@
   <script>
   // Laadime samal kuul teistel aastatel
   // Küsib object kohta seotud andmed ja kuvab need detail vaates
-function artikkel_month_archive_otheryears() {
+  function artikkel_month_archive_otheryears() {
     // Küsime andmed
+    var url = $("#artikkel_month_archive_otheryears").attr("data-url");
     $.ajax({
-      url: $("#artikkel_month_archive_otheryears").attr("data-url"),
+      url: url,
       dataType: 'html',
       timeout: 300000,
       beforeSend: function() {
-        $("#loaderDiv1").show();
+        {#$("#loaderDiv1").show();#}
+        $("#artikkel_month_archive_otheryears_loader").show();
       },
       success: function (data) {
-        document.getElementById("artikkel_month_archive_otheryears").innerHTML = data;
+        console.log(url);
+        document.getElementById("artikkel_month_archive_otheryears_content").innerHTML = data;
       },
       error: function (XMLHttpRequest, textstatus, errorThrown) {
         console.log(textstatus);
       },
       complete: function () {
-        $("#loaderDiv1").hide();
+        {#$("#loaderDiv1").hide();#}
+        $("#artikkel_month_archive_otheryears_loader").hide();
         // Kuupäevaväljade unikaalsete id-de lisamine
         let dates = document.body.getElementsByClassName('date');
         // console.dir(dates);
@@ -197,10 +215,12 @@ function artikkel_month_archive_otheryears() {
             dates[i].id = "_date_" + counter++;
           }
         }
+        getObjectData4tooltip(get_object_data4tooltip_url);
       }
     });
-  };
+  }
 
+  var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
   artikkel_month_archive_otheryears();
 </script>
 {% endblock %}

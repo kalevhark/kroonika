@@ -105,16 +105,16 @@ function wiki_object_detail_seotud() {
       $("#loaderDiv1").hide();
       // Kuupäevaväljade unikaalsete id-de lisamine
       let dates = document.body.getElementsByClassName('date');
-      // console.dir(dates);
       let counter = 0;
       for (let i = 0; i < dates.length; i++) {
         if (!dates[i].id) {
           dates[i].id = "_date_" + counter++;
         }
       }
+      getObjectData4tooltip(get_object_data4tooltip_url);
     }
     });
-  };
+  }
 
 // lülitab sisse valitud kuupäevaväljad lehel class=date-highlighted
 function hoverDate(x) {
@@ -171,23 +171,23 @@ function showFeedBackInfo() {
           if (data.feedbacks > 0) {
             elementFeedbackIcon.style.color = '#48AFE8';
             elementFeedbackIcon.title = data.feedbacks + ' tagasiside' + (data.feedbacks > 1 ? 't' : '') + ' viimase 24h jooksul';
-          };
-        };
+          }
+        }
         // Värvime blogi ikooni, kui on perioodil kommentaare
         elementBlogIcon = document.getElementById("wiki_base_blog");
         if (elementBlogIcon !== undefined) {
           if (data.comments > 0) {
             elementBlogIcon.style.color = '#48AFE8';
             elementBlogIcon.title = data.comments + ' kommentaar' + (data.comments > 1 ? 'i' : '') + ' viimase 24h jooksul';
-          };
-        };
+          }
+        }
       },
 	  error: function (XMLHttpRequest, textstatus, errorThrown)
       {
         window.setTimeout(wiki_base_info, 600000);
       }
 	});
-};
+}
 
 
 // Avab objektivaadete alamvalikud
@@ -239,9 +239,8 @@ function openTab(evt, tyyp, obj) {
   evt.currentTarget.className += " text-"+tyyp;
 }
 
-function getObjectData4tooltip( url ){
+function getObjectData4tooltip( url ) {
   var elContentTooltipFields = $( ".tooltip-content span" );
-
   // initialize tooltip
   elContentTooltipFields.tooltip({
     track: true,
@@ -249,7 +248,6 @@ function getObjectData4tooltip( url ){
       var id = this.id;
       var model = $(this).attr('data-model');
       var obj_id = $(this).attr('data-id');
-
       $.ajax({
         url: url,
         type:'get',
@@ -260,6 +258,9 @@ function getObjectData4tooltip( url ){
         success: function(response){
           // Setting content option
           $("#"+id).tooltip('option','content', response);
+        },
+        error: function (XMLHttpRequest, textstatus, errorThrown) {
+          console.log(errorThrown);
         }
       });
     }

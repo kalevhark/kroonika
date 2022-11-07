@@ -1,0 +1,28 @@
+{% load static %}
+<a
+    href="{% url 'special_j6ul2022' %}"
+    title="Vaata pühadetervitust"
+>
+{#  <div#}
+{#        class="holidays-title-small"#}
+{#  >#}
+{#    {% now "Y" as current_year %}#}
+{#    <strong>{% if current_year == '2022' %}Ilusat jõuluaega!{% else %}Head uut aastat!{% endif %}</strong>#}
+{#  </div>#}
+  <section class='addLights' style='border-radius: 1rem;'>
+    <img
+          style="width: 100%; margin-top: 1em"
+          src="{% static 'wiki/img/special/VaMF808_21_1_j6ul2022_icon.jpg' %}"
+          alt='Talvine Valga vaade üle Pedeli Valge maja suunas (VaM F 808:21, Valga Muuseum)'
+    />
+    <div
+        class="holidays-title-small"
+  >
+    {% now "Y" as current_year %}
+    <strong>{% if current_year == '2022' %}Ilusat jõuluaega!{% else %}Head uut aastat!{% endif %}</strong>
+  </div>
+  </section>
+  <div class="w3-tiny">
+    Talvine Valga vaade üle Pedeli Valge maja suunas (VaM F 808:21, Valga Muuseum)
+  </div>
+</a>

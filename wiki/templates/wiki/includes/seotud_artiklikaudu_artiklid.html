@@ -8,7 +8,7 @@
   >
     {{ artikkel.hist_year }}
     <span class="tooltiptext w3-hide-medium w3-hide-small">
-      {% if artikkel. %}dob
+      {% if artikkel.dob %}
         {{ artikkel.dob|date:"d.m.Y" }}
       {% else %}
         {% if artikkel.hist_month %}{% include 'wiki/includes/kuu.html' with kuu=artikkel.hist_month|stringformat:"02d" %} {% endif %}{{ artikkel.hist_year }}

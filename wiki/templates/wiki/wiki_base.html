@@ -104,7 +104,8 @@
   <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=grecaptcha_onload"></script>
   <!-- wiki teegid -->
   <script src="{% static 'wiki/js/wiki.js'%}?ver=2022.1.26"></script>
-
+  <!-- Jõulud 2022 -->
+  <script src="{% static 'wiki/js/special/wiki_special_j6ul2022.js'%}?ver=2022.11.05"></script>
   {% block src %}{% endblock %}
 
   <!-- CSS -->
@@ -118,6 +119,8 @@
   <!--  Alternatiivsed värvivalikud metro või colorful-->
   <link rel="stylesheet" href="{% static 'wiki/css/kroonika_color_metro.css' %}?ver=2022.2">
   <!-- <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}> -->
+  <!-- Jõulud 2022 -->
+  <link rel="stylesheet" href="{% static 'wiki/css/special/wiki_special_j6ul2022.css' %}?ver=2022.11.05">
 
   {% block css %}{% endblock %}
 
@@ -568,8 +571,9 @@ $(document).ready( function() {
     }
   }
   // initialize tooltips
-  var url = '{% url "wiki:get_object_data4tooltip" %}'
-  getObjectData4tooltip(url);
+  {#var url = '{% url "wiki:get_object_data4tooltip" %}'#}
+  var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
+  getObjectData4tooltip(get_object_data4tooltip_url);
 });
 </script>
 

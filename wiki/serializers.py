@@ -72,6 +72,7 @@ class PiltListingField(serializers.RelatedField):
 
 
 class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.ReadOnlyField()
     link = serializers.SerializerMethodField()
     url = ParameterisedHyperlinkedIdentityField(
         view_name='wiki:wiki_artikkel_detail',

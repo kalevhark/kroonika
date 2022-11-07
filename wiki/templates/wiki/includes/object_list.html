@@ -1,13 +1,21 @@
+{% load wiki_extras %}
 {% for obj in object_list %}
   <div class="w3-cell-row w3-hover-white w3-padding-small infinite-item">
     <div class="w3-third">
       <div class="w3-cell w3-cell-middle w3-mobile">
         <strong>{% include 'wiki/includes/date_range.html' with obj=obj %}</strong>
         &nbsp;<a
-          class="hover-artikkel"
+          class="hover-artikkel tooltip-content"
           href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}"
         >
-        {{ obj.body_text|truncatewords:10 }}
+          <span
+                title='{{ obj }}'
+                data-model='{{ obj|get_model_name }}'
+                data-id='{{ obj.id }}'
+                id='{{ obj|get_model_name }}_{{ obj.id }}_object_list'
+          >
+            {{ obj.body_text|truncatewords:10 }}
+          </span>
         </a>
       </div>
     </div>
