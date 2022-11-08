@@ -5,7 +5,13 @@
 
 {% block title %}{{ block.super }} - {{ pyhadesoov }}{% endblock %}
 
-{% block css %}{% endblock %}
+{% block css %}
+  <style>
+    .Site {
+        background-color: #FAEBD7;
+    }
+  </style>
+{% endblock %}
 
 {% block og_image %}
   <meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/special/VaMF808_21_1_j6ul2022_fb.png' %}" />
@@ -56,6 +62,7 @@
   <script>
     $(document).ready(function() {
       showLights();
+      $("body").removeClass("w3-light-grey");
       var divGreeting = document.getElementById("divGreeting");
       var textLength = divGreeting.innerText.length;
       if (textLength > 41) {
