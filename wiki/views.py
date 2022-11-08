@@ -1661,7 +1661,7 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
 
 def artikkel_month_archive_otheryears(request, year, month):
     start = int(request.GET.get('start', 0))
-    kirjeid = 50
+    kirjeid = 300
     artikkel_qs = Artikkel.objects.daatumitega(request)
     # sel_kuul = artikkel_qs. \
     #     exclude(hist_year=year). \
@@ -1671,23 +1671,22 @@ def artikkel_month_archive_otheryears(request, year, month):
     # sel_kuul_ids = [*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list]
     sel_kuul_ids = {*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list}
     kirjeid_kokku = len(sel_kuul_ids)
-    if start > kirjeid_kokku: # kui kysitakse rohkem, kui kirjeid on
-        start = 0
-    if (kirjeid_kokku - (start + kirjeid)) < kirjeid:
-        kirjeid = kirjeid_kokku - (start + kirjeid)
+    # if start > kirjeid_kokku: # kui kysitakse rohkem, kui kirjeid on
+    #     start = 0
     qs = artikkel_qs.filter(id__in=sel_kuul_ids)
     if qs.exists():
         sel_kuul = qs[start:start+kirjeid]
     else:
         sel_kuul = qs
+    l6puni = kirjeid_kokku - start - kirjeid
     return render(
         request,
         'wiki/includes/object_list.html',
         {
             'object_list': sel_kuul,
             'kirjeid_kokku': kirjeid_kokku,
-            'start': start,
-            'kirjeid': kirjeid
+            'start': start+kirjeid,
+            'kirjeid': kirjeid if l6puni>kirjeid else l6puni
         }
     )
 
