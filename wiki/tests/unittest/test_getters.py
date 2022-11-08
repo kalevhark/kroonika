@@ -1,3 +1,4 @@
+import html
 from datetime import datetime
 import json
 
@@ -100,3 +101,42 @@ class CalendarChoiceTest(UserTypeUnitTest):
         self.assertEqual(response.status_code, 200)
         self.assertTrue('days_with_events' in result.keys())
         self.assertEqual(result, result_default)
+
+class LoadObjectListTest(UserTypeUnitTest):
+
+    def setUp(self) -> None:
+        super().setUp()
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        # self.user = User.objects.get(id=1)
+        self.request.user = AnonymousUser()
+
+    def tearDown(self) -> None:
+        super().tearDown()
+
+    def test_artikkel_month_archive_otheryears(self) -> None:
+        # random response
+        today = datetime.now()
+        year = today.year - 100
+        month = today.month
+        kwargs = {'start': 0}
+        self.request.GET = kwargs
+        response = views.artikkel_month_archive_otheryears(self.request, year=year, month=month)
+        result_random = response.content
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(result_random) > 0)
+        self.assertIn('näita veel'.encode('utf8'), result_random)
+
+        kwargs = {'start': 2000}
+        self.request.GET = kwargs
+        response = views.artikkel_month_archive_otheryears(self.request, year=year, month=month)
+        result_overload = response.content
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(result_overload) > 0)
+        self.assertIn('näita veel'.encode('utf8'), result_overload)
+        self.assertEqual(result_overload, result_random)

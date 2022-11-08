@@ -114,20 +114,9 @@
     </div>
     <div class="w3-padding-16"
           id="artikkel_month_archive_otheryears"
-          data-url="{% url 'wiki:artikkel_month_archive_otheryears' year=month|date:"Y" month=month|date:"m" start=0 %}"
+          data-url="{% url 'wiki:artikkel_month_archive_otheryears' year=month|date:"Y" month=month|date:"m" %}"
     >
       <div id="artikkel_month_archive_otheryears_content"></div>
-{#      <div id="artikkel_month_archive_otheryears_content_next">#}
-{#        <a#}
-{#                class="hover-isik w3-button text-isik"#}
-{#                style="text-decoration: none;"#}
-{#                id="get_artikkel_month_archive_otheryears_content_next"#}
-{#                title="järgmised..."#}
-{#                onclick="artikkel_month_archive_otheryears()"#}
-{#        >#}
-{#          näita veel...#}
-{#        </a>#}
-{#      </div>#}
       <div id="artikkel_month_archive_otheryears_loader">
         <div class="w3-container">See päring on mahukas ja võib võtta aega...</div>
         {% include 'wiki/includes/div_loader_book.html' %}
@@ -183,44 +172,43 @@
 
 {% block javascript %}
   <script>
-  // Laadime samal kuul teistel aastatel
-  // Küsib object kohta seotud andmed ja kuvab need detail vaates
-  function artikkel_month_archive_otheryears() {
-    // Küsime andmed
-    var url = $("#artikkel_month_archive_otheryears").attr("data-url");
-    $.ajax({
-      url: url,
-      dataType: 'html',
-      timeout: 300000,
-      beforeSend: function() {
-        {#$("#loaderDiv1").show();#}
-        $("#artikkel_month_archive_otheryears_loader").show();
-      },
-      success: function (data) {
-        console.log(url);
-        document.getElementById("artikkel_month_archive_otheryears_content").innerHTML = data;
-      },
-      error: function (XMLHttpRequest, textstatus, errorThrown) {
-        console.log(textstatus);
-      },
-      complete: function () {
-        {#$("#loaderDiv1").hide();#}
-        $("#artikkel_month_archive_otheryears_loader").hide();
-        // Kuupäevaväljade unikaalsete id-de lisamine
-        let dates = document.body.getElementsByClassName('date');
-        // console.dir(dates);
-        let counter = 0;
-        for (let i = 0; i < dates.length; i++) {
-          if (!dates[i].id) {
-            dates[i].id = "_date_" + counter++;
+    // Laadime samal kuul teistel aastatel
+    // Küsib object kohta seotud andmed ja kuvab need detail vaates
+    function artikkel_month_archive_otheryears(start) {
+      // Küsime andmed
+      var url = $("#artikkel_month_archive_otheryears").attr("data-url");
+      $.ajax({
+        url: url,
+        data:{start: start},
+        dataType: 'html',
+        timeout: 300000,
+        beforeSend: function() {
+          $("#artikkel_month_archive_otheryears_content_next").remove();
+          $("#artikkel_month_archive_otheryears_loader").show();
+        },
+        success: function (data) {
+          var divSelKuul = document.getElementById("artikkel_month_archive_otheryears_content")
+          divSelKuul.innerHTML = divSelKuul.innerHTML + data;
+        },
+        error: function (XMLHttpRequest, textstatus, errorThrown) {
+          console.log(textstatus);
+        },
+        complete: function () {
+          $("#artikkel_month_archive_otheryears_loader").hide();
+          // Kuupäevaväljade unikaalsete id-de lisamine
+          let dates = document.body.getElementsByClassName('date');
+          let counter = 0;
+          for (let i = 0; i < dates.length; i++) {
+            if (!dates[i].id) {
+              dates[i].id = "_date_" + counter++;
+            }
           }
+          getObjectData4tooltip(get_object_data4tooltip_url);
         }
-        getObjectData4tooltip(get_object_data4tooltip_url);
-      }
-    });
-  }
+      });
+    }
 
-  var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
-  artikkel_month_archive_otheryears();
-</script>
+    var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
+    artikkel_month_archive_otheryears(0);
+  </script>
 {% endblock %}

@@ -1659,7 +1659,8 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         )
         return context
 
-def artikkel_month_archive_otheryears(request, year, month, start):
+def artikkel_month_archive_otheryears(request, year, month):
+    start = int(request.GET.get('start', 0))
     kirjeid = 50
     artikkel_qs = Artikkel.objects.daatumitega(request)
     # sel_kuul = artikkel_qs. \
@@ -1667,13 +1668,24 @@ def artikkel_month_archive_otheryears(request, year, month, start):
     #     filter(Q(dob__month=month) | Q(doe__month=month) | Q(hist_month=month))
     sel_kuul_bydate_ids_list = artikkel_qs.filter(Q(dob__month=month) | Q(doe__month=month)).values_list('id', flat=True)
     sel_kuul_bymonth_ids_list = artikkel_qs.filter(dob__isnull=True, hist_month=month).values_list('id', flat=True)
-    sel_kuul_ids = [*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list]
-    sel_kuul = artikkel_qs.filter(id__in=sel_kuul_ids) # [start:start+kirjeid]
+    # sel_kuul_ids = [*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list]
+    sel_kuul_ids = {*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list}
+    kirjeid_kokku = len(sel_kuul_ids)
+    if start > kirjeid_kokku: # kui kysitakse rohkem, kui kirjeid on
+        start = 0
+    if (kirjeid_kokku - (start + kirjeid)) < kirjeid:
+        kirjeid = kirjeid_kokku - (start + kirjeid)
+    qs = artikkel_qs.filter(id__in=sel_kuul_ids)
+    if qs.exists():
+        sel_kuul = qs[start:start+kirjeid]
+    else:
+        sel_kuul = qs
     return render(
         request,
         'wiki/includes/object_list.html',
         {
             'object_list': sel_kuul,
+            'kirjeid_kokku': kirjeid_kokku,
             'start': start,
             'kirjeid': kirjeid
         }

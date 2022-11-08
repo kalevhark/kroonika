@@ -123,3 +123,16 @@
 {% empty %}
   Ei leitud midagi
 {% endfor %}
+{% if kirjeid_kokku > start|add:kirjeid %}
+  <div id="artikkel_month_archive_otheryears_content_next">
+    <a
+            class="hover-isik w3-button text-isik"
+            style="text-decoration: none;"
+            id="get_artikkel_month_archive_otheryears_content_next"
+            title="laadi järgmised {{ kirjeid }}..."
+            onclick="artikkel_month_archive_otheryears({{ start|add:kirjeid }})"
+    >
+      näita veel...
+    </a>
+  </div>
+{% endif %}

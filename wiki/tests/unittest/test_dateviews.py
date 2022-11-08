@@ -64,7 +64,7 @@ class WikiDateViewTests(TestCase):
         )
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(time_stopp.seconds < 3)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}')
 
     def test_day_view(self):
         time_start = datetime.now()
@@ -76,4 +76,4 @@ class WikiDateViewTests(TestCase):
         )
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(time_stopp.seconds < 3)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}')

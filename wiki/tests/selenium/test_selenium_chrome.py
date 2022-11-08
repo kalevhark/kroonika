@@ -447,3 +447,39 @@ class SeleniumTestsChromeV6rdleObjekt(SeleniumTestsChromeBase):
         button_parem = self.selenium.find_element(By.ID, "button-join-vasak")
         self.assertTrue(button_vasak.is_enabled())
         self.assertTrue(button_parem.is_enabled())
+
+
+class SeleniumTestsChromeMonthView(SeleniumTestsChromeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_artikkel_month_archive_otheryears_content(self):
+        self.selenium.get('%s%s' % (self.host_tobe_tested, '/wiki/kroonika/1903/11/'))
+
+        el = self.selenium.find_element(By.ID, "artikkel_month_archive_otheryears_content")
+        # self.assertTrue(len(el.text) == 0)
+        # self.assertIn("Otsimiseks", el)
+
+        try:
+            WebDriverWait(self.selenium, timeout=1).until(
+                EC.text_to_be_present_in_element((By.ID, "artikkel_month_archive_otheryears_content"), "näita veel")
+            )
+        except TimeoutException:
+            pass
+        el = self.selenium.find_element(By.ID, "artikkel_month_archive_otheryears_content")
+        initial_pack_len = len(el.text)
+        self.assertTrue(initial_pack_len > 0)
+        self.assertIn("näita veel", el.text)
+
+        self.selenium.find_element(By.ID, 'get_artikkel_month_archive_otheryears_content_next').click()
+        time.sleep(3)
+        el = self.selenium.find_element(By.ID, "artikkel_month_archive_otheryears_content")
+        pack_len = len(el.text)
+        self.assertTrue(pack_len > initial_pack_len)
+        self.assertIn("näita veel", el.text)
