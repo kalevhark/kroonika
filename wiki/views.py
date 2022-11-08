@@ -1661,7 +1661,7 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
 
 def artikkel_month_archive_otheryears(request, year, month):
     start = int(request.GET.get('start', 0))
-    kirjeid = 300
+    kirjeid = 50
     artikkel_qs = Artikkel.objects.daatumitega(request)
     # sel_kuul = artikkel_qs. \
     #     exclude(hist_year=year). \
