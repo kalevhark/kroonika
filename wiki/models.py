@@ -491,9 +491,8 @@ class Viide(models.Model):
     def __str__(self):
         # Viite autorid
         autorid = ''
-        if self.allikas.autorid:
-            for obj in self.allikas.autorid.all():
-                autorid = ', '.join([obj.lyhinimi])
+        if self.allikas.autorid.exists():
+            autorid = ', '.join([obj.lyhinimi for obj in self.allikas.autorid.all()])
         # Viite kohaviida andmed
         if self.allikas.nimi:
             allika_nimi = self.allikas.nimi
@@ -519,7 +518,7 @@ class Viide(models.Model):
             else: # kui viite ilmumisaastat pole, siis allika ilmumisaasta
                 if self.allikas.hist_year:
                     aeg = str(self.allikas.hist_year)
-        viide = ' '.join([autorid, peatykk, allika_nimi, viit, aeg]).replace(' , ', ', ')
+        viide = ', '.join([autorid, peatykk, allika_nimi, viit, aeg]).replace(' , ', ', ')
         return viide.strip()
 
     @property
