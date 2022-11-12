@@ -39,7 +39,7 @@ DEFAULT_MAP = Kaart.objects.filter(aasta='2021').first() # Vaikimisi Stamen Tone
 DEFAULT_MAP_ZOOM_START = 16
 DEFAULT_MIN_ZOOM = 13
 
-BLUEVIOLET = '#8A2BE2'
+# BLUEVIOLET = '#8A2BE2'
 FUCHSIA = '#FF00FF'
 
 GEOJSON_STYLE = {
