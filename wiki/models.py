@@ -519,6 +519,8 @@ class Viide(models.Model):
                 if self.allikas.hist_year:
                     aeg = str(self.allikas.hist_year)
         viide = ', '.join([autorid, peatykk, allika_nimi, viit, aeg]).replace(' , ', ', ')
+        while viide.find(',,') > 0:
+            viide = viide.replace(',,', ',')
         return viide.strip()
 
     @property
