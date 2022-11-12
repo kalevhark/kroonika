@@ -489,25 +489,31 @@ class Viide(models.Model):
         verbose_name_plural = "Viited"
 
     def __str__(self):
+        parts = []
         # Viite autorid
-        autorid = ''
+        # autorid = ''
         if self.allikas.autorid.exists():
             autorid = ', '.join([obj.lyhinimi for obj in self.allikas.autorid.all()])
+            parts.append(autorid.strip())
         # Viite kohaviida andmed
         if self.allikas.nimi:
             allika_nimi = self.allikas.nimi
-        else:
-            allika_nimi = ''
-        viit = ''
+            parts.append(allika_nimi.strip())
+        # else:
+        #    allika_nimi = ''
+        # viit = ''
         if self.peatykk:
             peatykk = self.peatykk
-        else:
-            peatykk = ''
+            parts.append(peatykk.strip())
+        # else:
+        #     peatykk = ''
         if self.kohaviit: # kui on füüsiline asukoht
-            viit = viit + ', ' + self.kohaviit
+            # viit = viit + ', ' + self.kohaviit
+            parts.append(self.kohaviit.strip())
         else: # kui on ainult internetilink
             if self.url:
-                viit = viit + ', ' + self.url # .split('/')[-1]
+                # viit = viit + ', ' + self.url # .split('/')[-1]
+                parts.append(self.url.strip())
         # Ilmumise aeg
         aeg = self.mod_date.strftime('%d.%m.%Y') # kasutame algselt viite kasutamise kuupäeva
         if self.hist_date: # kui olemas, võtame ilmumise kuupäeva
@@ -518,10 +524,12 @@ class Viide(models.Model):
             else: # kui viite ilmumisaastat pole, siis allika ilmumisaasta
                 if self.allikas.hist_year:
                     aeg = str(self.allikas.hist_year)
-        viide = ', '.join([autorid, peatykk, allika_nimi, viit, aeg]).replace(' , ', ', ')
-        while viide.find(',,') > 0:
-            viide = viide.replace(',,', ',')
-        return viide.strip()
+        parts.append(aeg.strip())
+        # viide = ', '.join([autorid, peatykk, allika_nimi, viit, aeg]).replace(' , ', ', ')
+        viide = ', '.join(parts) # .replace(' , ', ', ')
+        # while viide.find(',,') > 0:
+        #     viide = viide.replace(',,', ',')
+        return viide # .strip()
 
     @property
     def markdownify(self):
