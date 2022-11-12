@@ -39,10 +39,13 @@ DEFAULT_MAP = Kaart.objects.filter(aasta='2021').first() # Vaikimisi Stamen Tone
 DEFAULT_MAP_ZOOM_START = 16
 DEFAULT_MIN_ZOOM = 13
 
+BLUEVIOLET = '#8A2BE2'
+FUCHSIA = '#FF00FF'
+
 GEOJSON_STYLE = {
-    'H': {'fill': 'lightgreen', 'color': 'lightgreen', 'weight': 3}, # hoonestus
-    'A': {'fill': None, 'color': 'lightgreen', 'weight': 3}, # ala
-    'M': {'fill': None, 'color': 'lightgreen', 'weight': 3}, # muu
+    'H': {'fill': 'lightgreen', 'color': FUCHSIA, 'weight': 3}, # hoonestus
+    'A': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # ala
+    'M': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # muu
     'HH': {'fill': 'red', 'color': 'red', 'weight': 3}, # hoonestus (puudub kaasajal)
     'AH': {'fill': None, 'color': 'red', 'weight': 3}, # ala (puudub kaasajal)
     'MH': {'fill': None, 'color': 'red', 'weight': 3}, # muu (puudub kaasajal)
