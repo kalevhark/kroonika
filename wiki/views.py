@@ -1839,6 +1839,17 @@ class IsikDetailView(generic.DetailView):
     def get_queryset(self):
         return Isik.objects.daatumitega(self.request)
 
+    def get_object(self, **kwargs):
+        pk = self.kwargs.get('pk')
+        special_objects = [  # TODO: Vajalik p2ring teha andmebaasist
+            62,  # Johan Müllerson
+        ]
+        if pk and pk in special_objects:
+            object = self.get_queryset().get(pk=pk)
+        else:
+            object = super().get_object(**kwargs)
+        return object
+
     def get_context_data(self, **kwargs):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
@@ -1969,6 +1980,17 @@ class OrganisatsioonDetailView(generic.DetailView):
     def get_queryset(self):
         return Organisatsioon.objects.daatumitega(self.request)
 
+    def get_object(self, **kwargs):
+        pk = self.kwargs.get('pk')
+        special_objects = [  # TODO: Vajalik p2ring teha andmebaasist
+            13,  # Säde selts
+        ]
+        if pk and pk in special_objects:
+            object = self.get_queryset().get(pk=pk)
+        else:
+            object = super().get_object(**kwargs)
+        return object
+
     def get_context_data(self, **kwargs):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
@@ -2088,6 +2110,25 @@ class ObjektDetailView(generic.DetailView):
 
     def get_queryset(self):
         return Objekt.objects.daatumitega(self.request)
+
+    def get_object(self, **kwargs):
+        pk = self.kwargs.get('pk')
+        special_objects = [  # TODO: Vajalik p2ring teha andmebaasist
+            13, # Kesk 21, Jaani kirik
+            23, # Kesk 11, raekoda
+            24, # Riia 5
+            29, # Tartu 2, vesiveski
+            81, # J. Kuperjanovi 9, Moreli maja
+            102, # Kesk 22, linnakooli hoone
+            187, # Kesk 19, Klasmanni maja
+            256, # Aia 12, Zenckeri villa
+            354, # J. Kuperjanovi 12, lõvidega maja
+        ]
+        if pk and pk in special_objects:
+            object = self.get_queryset().get(pk=pk)
+        else:
+            object = super().get_object(**kwargs)
+        return object
 
     def get_context_data(self, **kwargs):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)

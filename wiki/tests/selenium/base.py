@@ -23,6 +23,26 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 config = configparser.SafeConfigParser(allow_no_value=True)
 config.read('%s/settings.ini' % (settings.PROJECT_DIR))
 
+SPECIAL_OBJECTS = {
+    'isik': [
+        62, # Johann Müllerson
+    ],
+    'organisatsioon': [
+        13, # Säde selts
+    ],
+    'objekt': [  # TODO: Vajalik p2ring teha andmebaasist
+        13,  # Kesk 21, Jaani kirik
+        23,  # Kesk 11, raekoda
+        24,  # Riia 5
+        29,  # Tartu 2, vesiveski
+        81,  # J. Kuperjanovi 9, Moreli maja
+        102,  # Kesk 22, linnakooli hoone
+        187,  # Kesk 19, Klasmanni maja
+        # 256,  # Aia 12, Zenckeri villa
+        354,  # J. Kuperjanovi 12, lõvidega maja
+    ]
+}
+
 class SeleniumTestsChromeBase(StaticLiveServerTestCase):
 
     # def test_driver_manager_chrome(self):

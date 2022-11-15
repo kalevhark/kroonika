@@ -126,6 +126,22 @@ class IsikViewTests(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+    def test_view_special_url_exists_at_desired_location(self):
+        pk = 62 # Johann Müllerson
+        isik = Isik.objects.get(pk=pk)
+        url = f'/wiki/isik/{isik.id}-{isik.slug}/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        url = '/wiki/isik/62-johann-müllerson/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        url = '/wiki/isik/62-suva/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        url = '/wiki/isik/62/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
     def test_view_url_response_time(self):
         time_start = datetime.now()
         isik = Isik.objects.get(id=self.test_object_id)
@@ -303,6 +319,22 @@ class ObjektViewTests(TestCase):
         url = f'/wiki/objekt/{obj.id}-{obj.slug}/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    def test_view_special_url_exists_at_desired_location(self):
+        pk = 13 # Jaani kirik
+        obj = Objekt.objects.get(pk=pk)
+        url = f'/wiki/objekt/{obj.id}-{obj.slug}/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        url = '/wiki/objekt/13-kesk-21/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        url = '/wiki/objekt/13-suva/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        url = '/wiki/objekt/13/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
 
     def test_view_url_response_time(self):
         time_start = datetime.now()

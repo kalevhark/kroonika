@@ -13,7 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 
-from .base import SeleniumTestsChromeBase
+from .base import SeleniumTestsChromeBase, SPECIAL_OBJECTS
 
 class SeleniumTestsChromeLogin(SeleniumTestsChromeBase):
 
@@ -212,6 +212,80 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
     def tearDownClass(cls):
         super().tearDownClass()
 
+    def test_view_show_by_name_special_objects_pk_slug(self, object='isik'):
+        special_objects = SPECIAL_OBJECTS[object]
+        # Ankurdatud objektid kontrolliks
+        objs = self.initial_queryset.filter(id__in=special_objects)
+        # Kontrollime kas ankurdatud objektid on leitavad pk+slug urli kaudu
+        for obj in objs:
+            cnt = obj.artikkel_set.count()
+            if cnt == 0:
+                continue
+            print(f'{obj.id}:{obj} {cnt} lugu')
+            kwargs = {
+                'pk': obj.id,
+                'slug': obj.slug
+            }
+            path = reverse(self.detail_view_name, kwargs=kwargs)
+            self.selenium.get('%s%s' % (self.live_server_url, path))
+            # Kontrollime kas isiku nimi on avanenud lehel
+            el = self.selenium.find_element(By.TAG_NAME, "body").text
+            try:
+                nimi = obj.perenimi
+            except:
+                nimi = obj.nimi
+            self.assertIn(nimi, el)
+            # Kontrollime kas isikuga seotud objectid laeti
+            try:
+                el = self.selenium.find_element(By.ID, "loaderDiv1")
+                WebDriverWait(self.selenium, timeout=3).until(
+                    EC.visibility_of(el)
+                )
+                WebDriverWait(self.selenium, timeout=10).until_not(
+                    EC.visibility_of(el)
+                )
+            except TimeoutException:
+                pass
+            el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
+            self.assertTrue(len(el) > 0)
+
+    def test_view_show_by_name_special_objects_pk_suvaslug(self, object='isik'):
+        special_objects = SPECIAL_OBJECTS[object]
+        # Ankurdatud objektid kontrolliks
+        objs = self.initial_queryset.filter(id__in=special_objects)
+        # Kontrollime kas ankurdatud objektid on leitavad pk+slug urli kaudu
+        for obj in objs:
+            cnt = obj.artikkel_set.count()
+            if cnt == 0:
+                continue
+            print(f'{obj.id}:{obj} {cnt} lugu')
+            kwargs = {
+                'pk': obj.id,
+                'slug': 'suva'
+            }
+            path = reverse(self.detail_view_name, kwargs=kwargs)
+            self.selenium.get('%s%s' % (self.live_server_url, path))
+            # Kontrollime kas isiku nimi on avanenud lehel
+            el = self.selenium.find_element(By.TAG_NAME, "body").text
+            try:
+                nimi = obj.perenimi
+            except:
+                nimi = obj.nimi
+            self.assertIn(nimi, el)
+            # Kontrollime kas isikuga seotud objectid laeti
+            try:
+                el = self.selenium.find_element(By.ID, "loaderDiv1")
+                WebDriverWait(self.selenium, timeout=3).until(
+                    EC.visibility_of(el)
+                )
+                WebDriverWait(self.selenium, timeout=10).until_not(
+                    EC.visibility_of(el)
+                )
+            except TimeoutException:
+                pass
+            el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
+            self.assertTrue(len(el) > 0)
+
     def test_view_show_by_name_random(self):
         SELECT_COUNT = 10
         # Juhuslikud objectid kontrolliks
@@ -281,6 +355,12 @@ class SeleniumTestsChromeDetailViewObjectObjekt(SeleniumTestsChromeDetailViewObj
     def test_view_show_by_name_random(self):
         super().test_view_show_by_name_random()
 
+    def test_view_show_by_name_special_objects_pk_slug(self, object='objekt'):
+        super().test_view_show_by_name_special_objects_pk_slug(object='objekt')
+
+    def test_view_show_by_name_special_objects_pk_suvaslug(self, object='objekt'):
+        super().test_view_show_by_name_special_objects_pk_suvaslug(object='objekt')
+
     def test_view_HTTP404_for_non_authented_user(self):
         super().test_view_HTTP404_for_non_authented_user()
 
@@ -298,6 +378,12 @@ class SeleniumTestsChromeDetailViewObjectOrganisatsioon(SeleniumTestsChromeDetai
 
     def test_view_show_by_name_random(self):
         super().test_view_show_by_name_random()
+
+    def test_view_show_by_name_special_objects_pk_slug(self, object='organisatsioon'):
+        super().test_view_show_by_name_special_objects_pk_slug(object='organisatsioon')
+
+    def test_view_show_by_name_special_objects_pk_suvaslug(self, object='organisatsioon'):
+        super().test_view_show_by_name_special_objects_pk_suvaslug(object='organisatsioon')
 
     def test_view_HTTP404_for_non_authented_user(self):
         super().test_view_HTTP404_for_non_authented_user()
