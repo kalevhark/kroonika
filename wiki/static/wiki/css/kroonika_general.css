@@ -309,7 +309,7 @@ ul.no-bullets li {
 /* The Modal (background) */
 .modal {
   display: none;
-  position: absolute;
+  position: fixed;
   z-index: 1;
   padding-top: 100px;
   /*left: 0;*/
