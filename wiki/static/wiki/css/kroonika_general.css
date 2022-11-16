@@ -354,7 +354,7 @@ ul.no-bullets li {
 @media only screen and (max-width: 700px){
   .modal-content {
     width: 100%;
-    top: 30px;
+    top: 50px;
   }
 }
 
@@ -372,7 +372,7 @@ ul.no-bullets li {
 @media only screen and (max-width: 700px){
   .close {
     position: absolute;          /* where the next element will be automatically positioned */
-    top: 0;
+    top: 50px;
   }
 }
 
