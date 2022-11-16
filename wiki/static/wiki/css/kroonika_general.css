@@ -363,9 +363,12 @@ ul.no-bullets li {
 /* The Close Button */
 .close {
   color: white;
-  position: absolute;
-  top: 10px;
-  right: 25px;
+  position: fixed;
+  /*top: 10px;*/
+  /*right: 25px;*/
+  top: 30px;
+    left: 50%;                   /* moves left side of image/element to center of parent element */
+    transform: translate(-50%);
   font-size: 50px;
   font-weight: bold;
 }
