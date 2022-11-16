@@ -40,21 +40,21 @@
 </a>
 
 <div id="shareModal_{{ object.id }}" class="modal">
-    <div class="w3-container w3-center">
+    <div class="w3-container w3-center modal-content">
       <span
               onclick="document.getElementById('shareModal_{{ object.id }}').style.display='none'"
               class="close w3-display-topright"
       >&times;</span>
-      <p>
-        {{ request.build_absolute_uri }}
+{#      <p>#}
+{#        {{ request.build_absolute_uri }}#}
         <img
                 id="qrcode"
                 style="min-width: 250px; max-width: 500px;"
-                class="modal-content"
+{#                class="modal-content"#}
                 src=""
         >
         </img>
-      </p>
+{#      </p>#}
   </div>
 </div>
 
