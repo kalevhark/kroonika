@@ -242,7 +242,7 @@ function openTab(evt, tyyp, obj) {
 function getObjectData4tooltip( url ) {
   $(function() {
     let isMobile = window.matchMedia("only screen and (max-width: 768px)").matches;
-    if (isMobile) {
+    if (!isMobile) {
       var elContentTooltipFields = $( ".tooltip-content span" );
       // initialize tooltip
       elContentTooltipFields.tooltip({
