@@ -41,7 +41,7 @@
                     class="pilt-pildimodal"
                     src="{{ obj.pilt.url }}"
                     data-pilt-id="{{ obj.id }}"
-                    data-pilt-itemnr="{{ forloop.counter0 }}"
+                    data-pilt-itemnr="{{ forloop.counter }}"
                     style="width:{% if obj.pilt.width > obj.pilt.height %}100{% else %}60{% endif %}%;"
             />
           </div>
@@ -64,7 +64,6 @@
         {# Järgnev rida tagab, et navbar ei tuleks modal akna peale #}
         document.getElementsByTagName("header")[0].style.zIndex = 0;
         document.getElementById("myModal").style.display = "block";
-        // var modal = document.getElementById("myModal")
         window.addEventListener('keydown', function (event) {
           if (event.key === 'Escape') {
             closeModal();
@@ -81,7 +80,7 @@
         $('#myModal').fadeOut(200, "linear");
       }
 
-      var slideIndex = 0;
+      var slideIndex = 1;
       showSlides(slideIndex);
 
       function plusSlides(n) {
@@ -93,20 +92,19 @@
       }
 
       function showSlides(n) {
-        var i;
         var slides = document.getElementsByClassName("mySlides");
         var pildirida = document.getElementsByClassName("pilt-pildirida");
         var captionText = document.getElementById("captionmodal");
-        if (n > slides.length) {slideIndex = 0}
-        if (n < 0) {slideIndex = slides.length}
-        for (i = 0; i < slides.length; i++) {
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        for (var i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
         }
         slides[slideIndex-1].style.display = "block";
         captionText.innerHTML = pildirida[slideIndex-1].alt;
-        if (1 < slides.length) {
+        if (slides.length > 1) {
           var numberText = document.getElementById("numbertext");
-          numberText.innerHTML = pildirida[slideIndex - 1].getAttribute("data-pilt-itemnr") + " / {{ pildid.count }}";
+          numberText.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-itemnr") + " / {{ pildid.count }}";
         }
       }
 
@@ -115,7 +113,7 @@
         if ($(event.target).is('img')) {
           var piltId = event.target.getAttribute("data-pilt-id");
           var pildirida = document.getElementsByClassName("pilt-pildirida");
-          var pildItemNr = null;
+          var pildItemNr = 1;
           for (i = 0; i < pildirida.length; i++) {
             if (pildirida[i].getAttribute("data-pilt-id") === piltId) {
               pildItemNr = pildirida[i].getAttribute("data-pilt-itemnr");

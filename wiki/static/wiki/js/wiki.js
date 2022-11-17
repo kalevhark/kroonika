@@ -240,36 +240,42 @@ function openTab(evt, tyyp, obj) {
 }
 
 function getObjectData4tooltip( url ) {
-  var elContentTooltipFields = $( ".tooltip-content span" );
-  // initialize tooltip
-  elContentTooltipFields.tooltip({
-    track: true,
-    open: function( event, ui ) {
-      var id = this.id;
-      var model = $(this).attr('data-model');
-      var obj_id = $(this).attr('data-id');
-      $.ajax({
-        url: url,
-        type:'get',
-        data:{
-          model:model,
-          obj_id:obj_id
-        },
-        success: function(response){
-          // Setting content option
-          $("#"+id).tooltip('option','content', response);
-        },
-        error: function (XMLHttpRequest, textstatus, errorThrown) {
-          console.log(errorThrown);
+  $(function() {
+    let isMobile = window.matchMedia("only screen and (max-width: 768px)").matches;
+    if (isMobile) {
+      var elContentTooltipFields = $( ".tooltip-content span" );
+      // initialize tooltip
+      elContentTooltipFields.tooltip({
+        track: true,
+        open: function( event, ui ) {
+          var id = this.id;
+          var model = $(this).attr('data-model');
+          var obj_id = $(this).attr('data-id');
+          $.ajax({
+            url: url,
+            type:'get',
+            data:{
+              model:model,
+              obj_id:obj_id
+            },
+            success: function(response){
+              // Setting content option
+              $("#"+id).tooltip('option','content', response);
+            },
+            error: function (XMLHttpRequest, textstatus, errorThrown) {
+              console.log(errorThrown);
+            }
+          });
         }
+      });
+
+      elContentTooltipFields.mouseout(function(){
+        // re-initializing tooltip
+        $(this).attr('title','...');
+        $(this).tooltip();
+        $('.ui-tooltip').hide();
       });
     }
   });
 
-  elContentTooltipFields.mouseout(function(){
-    // re-initializing tooltip
-    $(this).attr('title','...');
-    $(this).tooltip();
-    $('.ui-tooltip').hide();
-  });
 }
