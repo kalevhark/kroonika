@@ -41,7 +41,7 @@
                     class="pilt-pildimodal"
                     src="{{ obj.pilt.url }}"
                     data-pilt-id="{{ obj.id }}"
-                    data-pilt-itemnr="{{ forloop.counter }}"
+                    data-pilt-itemnr="{{ forloop.counter0 }}"
                     style="width:{% if obj.pilt.width > obj.pilt.height %}100{% else %}60{% endif %}%;"
             />
           </div>
@@ -81,7 +81,7 @@
         $('#myModal').fadeOut(200, "linear");
       }
 
-      var slideIndex = 1;
+      var slideIndex = 0;
       showSlides(slideIndex);
 
       function plusSlides(n) {
@@ -97,8 +97,8 @@
         var slides = document.getElementsByClassName("mySlides");
         var pildirida = document.getElementsByClassName("pilt-pildirida");
         var captionText = document.getElementById("captionmodal");
-        if (n > slides.length) {slideIndex = 1}
-        if (n < 1) {slideIndex = slides.length}
+        if (n > slides.length) {slideIndex = 0}
+        if (n < 0) {slideIndex = slides.length}
         for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
         }
