@@ -26,7 +26,7 @@
 </a>
 <a
         class="icon-link round-corner qrcode fill"
-        onclick="showShareOptions(this)"
+        onclick="showShareQRCodeOptions(this)"
         data-uri="{{ request.build_absolute_uri }}"
 >
   <i class="fa fa-qrcode"></i>
@@ -39,47 +39,88 @@
   <i class="fa fa-bug"></i>
 </a>
 
-<div id="shareModal_{{ object.id }}" class="modal">
-    <div class="w3-container w3-center modal-content">
-      <span
-              onclick="document.getElementById('shareModal_{{ object.id }}').style.display='none'"
-              class="close w3-display-topright"
-      >&times;</span>
+{#<div id="shareModal_{{ object.id }}" class="modal">#}
+{#    <div class="w3-container w3-center modal-content">#}
+{#      <span#}
+{#              onclick="document.getElementById('shareModal_{{ object.id }}').style.display='none'"#}
+{#              class="close w3-display-topright"#}
+{#      >&times;</span>#}
 {#      <p>#}
 {#        {{ request.build_absolute_uri }}#}
+{#        <img#}
+{#                id="qrcode"#}
+{#                style="min-width: 250px; max-width: 500px;"#}
+{#                style="max-width: 90%; height: auto;"#}
+{#                class="modal-content"#}
+{#                src=""#}
+{#        >#}
+{#        </img>#}
+{#      </p>#}
+{#  </div>#}
+{#</div>#}
+
+<div id="shareQRCodeModal_{{ object.id }}" class="modal">
+  <span id="button-close-modal" class="close cursor" onclick="closeQRCodeModal()">&times;</span>
+  <div class="modal-content">
+      <div class="mySlides">
         <img
                 id="qrcode"
-{#                style="min-width: 250px; max-width: 500px;"#}
-                style="max-width: 90%; height: auto;"
-{#                class="modal-content"#}
+{#                class="pilt-pildimodal"#}
                 src=""
-        >
-        </img>
-{#      </p>#}
+                style="width: 90%;"
+        />
+      </div>
   </div>
 </div>
 
 <script>
-  function showShareModal(uri) {
+  function openQRCodeModal(uri) {
+    {# Järgnev rida tagab, et navbar ei tuleks modal akna peale #}
+    document.getElementsByTagName("header")[0].style.zIndex = 0;
     $.ajax(
       {
-        // headers: {"X-CSRFToken":token},
         type: "GET",
         url: "{% url 'wiki:get_qrcode_from_uri' %}",
         data: {'uri': uri},
         success: function(response) {
-          // $("#qrcode").attr('src',"data:image/png;base64, " + response);
           $("#qrcode").attr('src', response);
+          document.getElementById("shareQRCodeModal_{{ object.id }}").style.display = "block";
+          window.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+              closeQRCodeModal();
+            }
+          })
+          $(document).click(function (e) {
+            if ($(e.target).is('#shareQRCodeModal_{{ object.id }}')) {
+                closeQRCodeModal();
+            }
+          });
         }
        }
     )
-		var x = document.getElementById("shareModal_{{ object.id }}");
-    x.style.display='block';
-	}
+  }
 
-  function showShareOptions(evt) {
+  function closeQRCodeModal() {
+    $('#shareQRCodeModal_{{ object.id }}').fadeOut(200, "linear");
+  }
+
+  {#function showQRCodeModal(uri) {#}
+  {#  $.ajax(#}
+  {#    {#}
+  {#      type: "GET",#}
+  {#      url: "{% url 'wiki:get_qrcode_from_uri' %}",#}
+  {#      data: {'uri': uri},#}
+  {#      success: function(response) {#}
+  {#        $("#qrcode").attr('src', response);#}
+  {#      }#}
+  {#     }#}
+  {#  )#}
+	{#	var x = document.getElementById("shareQRCodeModal_{{ object.id }}");#}
+  {#  x.style.display='block';#}
+	// {#}#}
+
+  function showShareQRCodeOptions(evt) {
     uri = evt.dataset.uri;
-    console.log(uri);
-    showShareModal(uri);
+    openQRCodeModal(uri);
   }
 </script>

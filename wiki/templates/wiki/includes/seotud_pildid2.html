@@ -148,7 +148,8 @@
         function swipeHandler( event ){
           if(event.handled !== true) // This will prevent event triggering more then once
           {
-            if ($(event.target).is('img')) {
+            // if ($(event.target).is('img')) {
+              if ($(event.target).hasClass('pilt-pildimodal')) {
               switch (event.type) {
                 case "swiped-left":
                   plusSlides(1);
