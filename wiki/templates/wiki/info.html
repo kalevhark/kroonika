@@ -12,36 +12,48 @@
 
 {% block content %}
   <div class="w3-container">
-    <!--		Tagasiside vorm -->
-    {% load crispy_forms_tags %}
-    <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">
-      {% crispy feedbackform %}
+{#    <!--		Tagasiside vorm -->#}
+{#    {% load crispy_forms_tags %}#}
+{#    <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">#}
+{#      {% crispy feedbackform %}#}
+{#    </div>#}
+    <div class="w3-row">
+      <div class="w3-quarter">
+        <div class="w3-panel w3-center">
+          <img
+                  src="{% static 'wiki/img/valgalinn_ee_logo.png' %}"
+                  style='max-height:250px;'
+                  alt="valgalinn.ee logo">
+        </div>
+      </div>
+      <div class="w3-threequarter">
+        <p>
+          Valga linna kroonika seotuna isikute, organisatsioonide ja objektidega on kasutamiseks informatsioonilistel ja hariduslikel eesmärkidel. Kogutud ja esitatud materjalid võivad olla ebatäpsed, mistõttu nende kasutamine on iga kasutaja enda riskil.
+        </p>
+        <p>
+          Viidatud materjalid võivad olla nende autorite omand ja nende kasutamisel tuleb viidata algallikale.
+        </p>
+        <p>
+          Kirjaviis ja kohanimed on algallikast. Mõnel juhul on selguse huvides tänapäevane termin või nimi lisatud.
+          Kuupäevade puhul on kasutatud sel hetkel kehtinud kalendrit.
+          <ul>
+            <li>
+              Ülevaade kalendrite kasutamisest ajaloos on
+              <a target="blank" href="https://en.wikipedia.org/wiki/List_of_adoption_dates_of_the_Gregorian_calendar_per_country">siin</a>
+            </li>
+            <li>
+              Kalendriarvutaja on
+              <a target="blank" href="https://stevemorse.org/jcal/julian.html">siin</a>
+            </li>
+          </ul>
+        </p>
+        <p style="clear: left;">
+          Parandatud on ilmsed vead. Vastukäivate andmete puhul on järjekord:
+          <br>
+          Arhiivimaterjalid -> Teatmeteosed -> Uurimused -> Ajakirjandus -> Vikipeedia -> muud andmeallikad
+        </p>
+      </div>
     </div>
-    <p>
-      Valga linna kroonika seotuna isikute, organisatsioonide ja objektidega on kasutamiseks informatsioonilistel ja hariduslikel eesmärkidel. Kogutud ja esitatud materjalid võivad olla ebatäpsed, mistõttu nende kasutamine on iga kasutaja enda riskil.
-    </p>
-    <p>
-      Viidatud materjalid võivad olla nende autorite omand ja nende kasutamisel tuleb viidata algallikale.
-    </p>
-    <p>
-      Kirjaviis ja kohanimed on algallikast. Mõnel juhul on selguse huvides tänapäevane termin või nimi lisatud.
-      Kuupäevade puhul on kasutatud sel hetkel kehtinud kalendrit.
-      <ul>
-        <li>
-          Ülevaade kalendrite kasutamisest ajaloos on
-          <a target="blank" href="https://en.wikipedia.org/wiki/List_of_adoption_dates_of_the_Gregorian_calendar_per_country">siin</a>
-        </li>
-        <li>
-          Kalendriarvutaja on
-          <a target="blank" href="https://stevemorse.org/jcal/julian.html">siin</a>
-        </li>
-      </ul>
-    </p>
-    <p style="clear: left;">
-      Parandatud on ilmsed vead. Vastukäivate andmete puhul on järjekord:
-      <br>
-      Arhiivimaterjalid -> Teatmeteosed -> Uurimused -> Ajakirjandus -> Vikipeedia -> muud andmeallikad
-    </p>
     <hr>
     {% if andmed.id__count > 0 %}
       <p>
@@ -155,14 +167,74 @@
     Andmebaasi- ja veebilahenduse tegi {% kalev %}.<br>
 
     Abiks:
-    <ul>
-      <li><a href="https://www.python.org/">Python</a></li>
-      <li><a href="https://www.djangoproject.com/">Django</a></li>
-      <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-      <li><a href="https://vuejs.org//">Vue.js</a></li>
-      <li><a href="https://apache.org/">Apache</a></li>
-      <li><a href="https://www.w3schools.com/">W3Schools</a></li>
-      <li><a href="https://www.jetbrains.com/pycharm/">JetBrains PyCharm</a></li>
+    <ul class="w3-ul">
+      <li>
+        <a href="https://www.jetbrains.com/pycharm/">
+          <img
+                  src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png"
+                  alt="JetBrains Logo (Main) logo."
+                  height="80px" width="auto"
+          >
+          JetBrains PyCharm
+        </a>
+      </li>
+      <li>
+        <a href="https://www.python.org/">
+          <img
+                  src="https://www.python.org/static/community_logos/python-powered-w-200x80.png"
+                  alt="Python Logo."
+{#                  height="80px" width="auto"#}
+          >
+        </a>
+      </li>
+      <li>
+        <a href="https://www.djangoproject.com/">
+          <img
+                  src="https://static.djangoproject.com/img/logos/django-logo-negative.png"
+                  alt="Django Logo."
+                  height="80px" width="auto"
+          >
+        </a>
+      </li>
+      <li>
+        <a href="https://www.postgresql.org/">
+          <img
+                  src="https://www.postgresql.org/media/img/about/press/elephant.png"
+                  alt="PostgreSQL Logo."
+                  height="80px" width="auto"
+          >
+          PostgreSQL
+        </a>
+      </li>
+      <li>
+        <a href="https://vuejs.org/">
+          <img
+                  src="https://avatars.githubusercontent.com/u/6128107?s=200&v=4"
+                  alt="VueJS Logo."
+                  height="80px" width="auto"
+          >
+          Vue.js
+        </a>
+      </li>
+      <li>
+        <a href="https://apache.org/">
+          <img
+                  src="https://www.apache.org/logos/res/httpd/httpd.png"
+                  alt="Apache Logo."
+                  height="80px" width="auto"
+          >
+        </a>
+      </li>
+      <li>
+        <a href="https://www.w3schools.com/">
+          <img
+                  src="https://cdn.shopify.com/s/files/1/0274/1783/7625/files/W3Schools_Logo_RGB_480x450.png"
+                  alt="W3Schools Logo."
+                  height="80px" width="auto"
+          >
+          W3Schools
+        </a>
+      </li>
     </ul>
     {% if user.is_authenticated %}
       Lisaks:
