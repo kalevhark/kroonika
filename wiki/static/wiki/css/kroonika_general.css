@@ -1685,3 +1685,60 @@ Social Icons by https://codepen.io/thalseth
 .results_on_deck {
   font-size: 12px;
 }
+
+/*Linkide kopeerimine lõikelauale*/
+.link-copy-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.link-copy-tooltip .link-copy-tooltiptext {
+  visibility: hidden;
+  width: 140px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -75px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.link-copy-tooltip .link-copy-tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.link-copy-tooltip:hover .link-copy-tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.link-copy-tooltip-container {
+  position: relative;
+  margin-top: -25px;
+}
+
+.link-copy-tooltip button {
+  font-size: 18px;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.link-copy-tooltip button:hover {
+  background: #00985F;
+  color: #fff;
+}

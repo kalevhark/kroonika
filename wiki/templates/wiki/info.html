@@ -10,6 +10,8 @@
   <script src="https://code.highcharts.com/modules/exporting.js"></script>
 {% endblock %}
 
+(% block css %}(% endblock %}
+
 {% block content %}
   <div class="w3-container">
 {#    <!--		Tagasiside vorm -->#}
@@ -23,7 +25,16 @@
           <img
                   src="{% static 'wiki/img/valgalinn_ee_logo.png' %}"
                   style='max-height:250px;'
-                  alt="valgalinn.ee logo">
+                  alt="valgalinn.ee logo"
+          >
+        </div>
+        <div class="link-copy-tooltip-container">
+          <div class="link-copy-tooltip">
+            <button onclick="getLinkCopy()" onmouseout="outFunc()">
+              <span class="link-copy-tooltiptext" id="linkCopyTooltip">Kopeeri logo link</span>
+              <i class="fa fa-clone"></i>
+            </button>
+          </div>
         </div>
       </div>
       <div class="w3-threequarter">
@@ -294,6 +305,21 @@
   </script>
   <script src="{% static 'wiki/js/wiki_calendar.js'%}"></script>
 
+  <script>
+    function getLinkCopy() {
+      var linkCopyUrl = "{{ request.scheme }}://{{ request.site }}{% static 'wiki/img/valgalinn_ee_logo.png' %}"
+      navigator.clipboard.writeText(linkCopyUrl);
+      var tooltip = document.getElementById("linkCopyTooltip");
+      tooltip.innerHTML = "Kopeeritud lõikelauale";
+    }
+
+    function outFunc() {
+      setTimeout(function () {
+        var tooltip = document.getElementById("linkCopyTooltip");
+        tooltip.innerHTML = "Kopeeri logo link";
+      }, 2500);
+    }
+  </script>
   <script>
     // Artiklite heatmap aastate ja kuude kaupa
     Highcharts.chart('container', {
