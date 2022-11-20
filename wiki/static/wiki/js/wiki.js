@@ -1,4 +1,4 @@
-// ver 2022.11.20
+// ver 2022.11.20a
 
 // Tagastab eestikeelse kuunime
 function getEstonianMonthName(idx) {
@@ -283,7 +283,7 @@ function getObjectData4tooltip( url ) {
 // Linkide kopeerimine lõikelauale
 // button onclick="getLinkCopy(this)" onmouseout="outLinkCopy()"
 function getLinkCopy(btn) {
-  var linkCopyUrl = 'btn.getAttribute("data-url")'
+  var linkCopyUrl = btn.getAttribute("data-url")
   navigator.clipboard.writeText(linkCopyUrl);
   var tooltip = document.getElementById("linkCopyTooltip");
   tooltip.innerHTML = "Kopeeritud lõikelauale";
