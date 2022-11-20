@@ -165,13 +165,13 @@ def add_markdownx_pildid(string):
             string = string.replace(tag[0], html)
     return string
 
-# Töötleb lingiitagid [Duck Duck Go]([isik_nnnn]) linkideks
+# Töötleb lingitagid [Duck Duck Go]([isik_nnnn]) linkideks
 def add_markdown_objectid(string):
     """
     @param string:
     @return:
     """
-    pattern = re.compile(rf'\[([\wÀ-ÿ\s\"]+)\]\(\[(isik|organisatsioon|objekt)_([0-9]*)\]\)')
+    pattern = re.compile(rf'\[([\wÀ-ÿ\s\"\-]+)\]\(\[(isik|organisatsioon|objekt)_([0-9]*)\]\)')
     tagid = re.finditer(pattern, string)
     for tag in tagid:
         tekst, model_name, id = tag.groups()
