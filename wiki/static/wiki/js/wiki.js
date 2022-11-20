@@ -1,4 +1,4 @@
-// ver 2022.1.26
+// ver 2022.11.20
 
 // Tagastab eestikeelse kuunime
 function getEstonianMonthName(idx) {
@@ -278,4 +278,20 @@ function getObjectData4tooltip( url ) {
     }
   });
 
+}
+
+// Linkide kopeerimine lõikelauale
+// button onclick="getLinkCopy(this)" onmouseout="outLinkCopy()"
+function getLinkCopy(btn) {
+  var linkCopyUrl = 'btn.getAttribute("data-url")'
+  navigator.clipboard.writeText(linkCopyUrl);
+  var tooltip = document.getElementById("linkCopyTooltip");
+  tooltip.innerHTML = "Kopeeritud lõikelauale";
+}
+
+function outLinkCopy() {
+  setTimeout(function () {
+    var tooltip = document.getElementById("linkCopyTooltip");
+    tooltip.innerHTML = "Kopeeri link";
+  }, 2500);
 }
