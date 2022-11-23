@@ -39,6 +39,21 @@
 >
   <i class="fa fa-bug"></i>
 </a>
+{#<div class="link-copy-tooltip">#}
+{#  <a#}
+{#          onclick="getLinkCopy(this)"#}
+{#          onmouseout="outLinkCopy()"#}
+{#          data-uri="{{ request.build_absolute_uri }}"#}
+{#          style="border: 2px solid;"#}
+{#  >#}
+{#    <span#}
+{#            class="link-copy-tooltiptext"#}
+{#            id="linkCopyTooltip">#}
+{#      Kopeeri link#}
+{#    </span>#}
+{#    <i class="fa fa-clone"></i>#}
+{#  </a>#}
+{#</div>#}
 
 <div id="shareQRCodeModal_{{ object.id }}" class="modal w3-center">
   <span id="button-close-modal" class="close cursor" onclick="closeQRCodeModal()">&times;</span>

@@ -1690,6 +1690,7 @@ Social Icons by https://codepen.io/thalseth
 .link-copy-tooltip {
   position: relative;
   display: inline-block;
+  color: #00985F;
 }
 
 .link-copy-tooltip .link-copy-tooltiptext {
@@ -1730,15 +1731,22 @@ Social Icons by https://codepen.io/thalseth
   margin-top: -25px;
 }
 
-.link-copy-tooltip button {
-  font-size: 18px;
+.link-copy-tooltip a {
   border: none;
-  outline: none;
-  border-radius: 10px;
+  border-radius: 5px;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
   cursor: pointer;
+  outline: none;
+  box-sizing: content-box;
 }
 
-.link-copy-tooltip button:hover {
+.link-copy-tooltip a:hover {
   background: #00985F;
   color: #fff;
+  border: 2px solid #00985F;
 }

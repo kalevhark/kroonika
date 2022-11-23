@@ -30,7 +30,7 @@
         </div>
         <div class="link-copy-tooltip-container">
           <div class="link-copy-tooltip">
-            <button
+            <a
                     onclick="getLinkCopy(this)"
                     onmouseout="outLinkCopy()"
                     data-uri="{{ request.scheme }}://{{ request.site }}{% static 'wiki/img/valgalinn_ee_logo.png' %}"
@@ -41,7 +41,7 @@
                 Kopeeri link
               </span>
               <i class="fa fa-clone"></i>
-            </button>
+            </a>
           </div>
         </div>
       </div>
