@@ -260,6 +260,7 @@ function getObjectData4tooltip( url ) {
             },
             success: function(response){
               // Setting content option
+              console.log(response);
               $("#"+id).tooltip('option','content', response);
             },
             error: function (XMLHttpRequest, textstatus, errorThrown) {

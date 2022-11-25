@@ -1,4 +1,4 @@
-// ver 2022.10
+// ver 2022.11
 
 $( document ).ready(function() {
   // Vue otsimisäpp
@@ -206,7 +206,7 @@ $( document ).ready(function() {
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
           if (vm.artikkel_results_count_all > 0) {
             vm.artikkel_results = response.data.results;
-            console.log(vm.artikkel_results);
+            // console.log(vm.artikkel_results);
           }
         })
         .catch(function (error) {
