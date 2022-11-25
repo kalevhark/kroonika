@@ -206,6 +206,7 @@ $( document ).ready(function() {
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
           if (vm.artikkel_results_count_all > 0) {
             vm.artikkel_results = response.data.results;
+            vm.updateTooltips();
             // console.log(vm.artikkel_results);
           }
         })
