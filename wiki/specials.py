@@ -1,4 +1,6 @@
 # Arhiiv taaskasutamise jaoks:
+import urllib.parse
+
 from django.shortcuts import render
 
 #
@@ -77,7 +79,7 @@ def special_j6ul2021(request):
     )
 
 #
-# Jõulutervituse lehekülg 2021
+# Jõulutervituse lehekülg 2022
 #
 def special_j6ul2022(request):
     tervitaja = request.META['QUERY_STRING']
@@ -86,7 +88,8 @@ def special_j6ul2022(request):
     # Filtreerime välja FB lisa
     tervitaja = '&'.join([tykk.replace('+', ' ') for tykk in tykid if 'fbclid=' not in tykk])
     # eemaldame urlist tyhiku asendaja
-    tervitaja = tervitaja.replace('%20', ' ')
+    # tervitaja = tervitaja.replace('%20', ' ')
+    tervitaja = urllib.parse.unquote(tervitaja)
     if tervitaja:
         tervitaja = tervitaja[:20]
         if tervitaja == 'XKH':
