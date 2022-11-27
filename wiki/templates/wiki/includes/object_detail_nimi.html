@@ -1,0 +1,13 @@
+<a
+        class="copylink w3-tooltip"
+        onclick="getLinkCopy(this)"
+        data-uri="{{ request.build_absolute_uri }}"
+>
+  {{ object.nimi }}
+  <span
+          class="copylink-confirmation w3-text"
+          id="linkCopyTooltip"
+  >
+    <i class="fa fa-clone"></i>
+  </span>
+</a>

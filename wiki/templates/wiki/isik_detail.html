@@ -12,7 +12,7 @@
         <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
           <i class="fa fa-address-card-o"></i>
         </a>
-        {{ object }}
+        {% include 'wiki/includes/object_detail_nimi.html' %}
       </h4>
       <h5>
         {% if object.hist_date or object.hist_year or object.synd_koht %}

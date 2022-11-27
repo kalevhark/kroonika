@@ -1754,3 +1754,21 @@ Social Icons by https://codepen.io/thalseth
   color: #fff;
   border: 2px solid #00985F;
 }
+
+/* objecti detailvaates nimel lingi kopeerimiseks lõikelauale */
+a.copylink {
+  text-decoration: none;
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  cursor: copy;
+}
+
+span.copylink-confirmation {
+  font-size:16px;
+  width:auto;
+  padding: 0 8px;
+  font-weight: normal;
+  display: table-cell;
+  vertical-align: middle;
+}

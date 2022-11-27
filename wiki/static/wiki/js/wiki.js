@@ -286,12 +286,19 @@ function getLinkCopy(btn) {
   var linkCopyUrl = btn.getAttribute("data-uri")
   navigator.clipboard.writeText(linkCopyUrl);
   var tooltip = document.getElementById("linkCopyTooltip");
-  tooltip.innerHTML = "Kopeeritud lõikelauale";
+  if (tooltip !== null) {
+    var tooltipInnerHTMLOld = tooltip.innerHTML;
+    tooltip.classList.add("w3-pale-green");
+    tooltip.innerHTML = "kopeeritud lõikelauale";
+    setTimeout(function () {
+      tooltip.innerHTML = tooltipInnerHTMLOld;
+      tooltip.classList.remove("w3-pale-green");
+    }, 2500);
+  }
 }
 
 function outLinkCopy() {
-  setTimeout(function () {
-    var tooltip = document.getElementById("linkCopyTooltip");
-    tooltip.innerHTML = "Kopeeri link";
-  }, 2500);
+  var tooltip = document.getElementById("linkCopyTooltip");
+  tooltip.classList.remove("w3-pale-green");
+  tooltip.innerHTML = "kopeeri link";
 }

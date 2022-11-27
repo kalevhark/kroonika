@@ -12,7 +12,7 @@
         <a style="text-decoration: none;" href="{% url 'wiki:wiki_organisatsioon_filter' %}">
           <i class="fa fa-group"></i>
         </a>
-        {{ object }}
+        {% include 'wiki/includes/object_detail_nimi.html' %}
       </h4>
       <h5>
         {% if object.hist_date %}

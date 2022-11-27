@@ -1171,6 +1171,11 @@ class Isik(models.Model):
         )
     colored_id.short_description = 'ID'
 
+    # @property
+    def nimi(self):
+        isikunimi = ' '.join(nimi for nimi in [self.eesnimi, self.perenimi] if nimi)
+        return isikunimi
+
     @property
     def lyhinimi(self):
         return repr(self)
