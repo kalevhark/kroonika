@@ -121,6 +121,14 @@
         {% include 'wiki/includes/object_detail_pilt2.html' with cls='pilt-postkaart-medium' %}
       </div>
       <div class="w3-twothird">
+        <div class="w3-row text-artikkel">
+          <h4>
+            <a style="text-decoration: none;" href="{% url 'wiki:otsi' %}">
+              <i class="fa fa-comment"></i>
+            </a>
+            {% include 'wiki/includes/object_detail_nimi.html' %}
+          </h4>
+        </div>
         {% include 'wiki/includes/vigane.html' %}
         <div class="w3-margin-right">
           {{ object.formatted_markdown | safe }}

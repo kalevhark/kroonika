@@ -1550,6 +1550,18 @@ class Artikkel(models.Model):
             summary = summary[:summary.find('\n')]
         return markdownify(escape_numberdot(summary[:100]) + "...")
 
+    def nimi(self):
+        dates = []
+        if self.hist_date:
+            dates.append(self.dob.strftime('%d.%m.%Y'))
+        elif self.hist_month:
+            dates.append(f'{self.get_hist_month_display()} {self.hist_year}')
+        else:
+            dates.append(str(self.hist_year))
+        if self.hist_enddate:
+            dates.append(self.doe.strftime('%d.%m.%Y'))
+        return '-'.join(date for date in dates)
+
 class PiltSortedManager(models.Manager):
 
     # J2rjestame pildid kronoloogiliselt pildi hist_date, hist_year, kui need puuduvad, siis viite hist_date, hist_year
