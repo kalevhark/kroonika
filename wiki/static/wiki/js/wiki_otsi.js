@@ -1,4 +1,4 @@
-// ver 2022.11
+// ver 2022.11.27
 
 $( document ).ready(function() {
   // Vue otsimisäpp
@@ -92,7 +92,7 @@ $( document ).ready(function() {
         this.total_count = 0;
       },
       updateTooltips: function () {
-        if (this.isik_results_count_all > 0 || this.organisatsioon_results_count_all > 0 || this.objekt_results_count_all > 0) {
+        if (this.artikkel_results_count_all > 0 || this.isik_results_count_all > 0 || this.organisatsioon_results_count_all > 0 || this.objekt_results_count_all > 0) {
           vm = this;
           setTimeout(function () { // vajalik viivitus, et sisu laadida j6utakse
             var elContentTooltipFields = $(".tooltip-content span");
