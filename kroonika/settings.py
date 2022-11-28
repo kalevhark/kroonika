@@ -233,6 +233,9 @@ TRANSLATION = {
     'z': '[sšz]'
 }
 
+# Kasutamiseks genereeritud piltidel
+DEFAULT_FONT = "wiki/css/fonts/Raleway/Raleway-Regular.ttf"
+
 # AWS SES credentials
 EMAIL_HOST = config['aws_mail']['HOST']
 EMAIL_HOST_PASSWORD = config['aws_mail']['PASSWORD_SMTP']

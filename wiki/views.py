@@ -1043,11 +1043,11 @@ def get_mainitud_aastatel_chart(mainitud_aastatel_data):
     graph = ''
     if len(mainitud_aastatel_data) > 0:
         plt.switch_backend('AGG')
-        # if settings.DEBUG: alternatiiv
-        stores = finders.AppDirectoriesFinder(app_names={'wiki'}).storages
-        fpath = Path(stores["wiki"].path("wiki/css/fonts/Raleway/Raleway-Regular.ttf"))
-        # else:
-        #   fpath = Path(settings.STATIC_ROOT / "wiki/css/fonts/Raleway/Raleway-Regular.ttf")
+        font_ttf_file = settings.DEFAULT_FONT # "wiki/css/fonts/Raleway/Raleway-Regular.ttf"
+        fpath = Path(settings.STATIC_ROOT / font_ttf_file)
+        if not fpath.is_file(): # kui on DEV versioon
+            stores = finders.AppDirectoriesFinder(app_names={'wiki'}).storages
+            fpath = Path(stores["wiki"].path(font_ttf_file))
         fig, ax = plt.subplots(figsize=(5, 2))
         # ax.set_title(f'This is a special font: {fpath.name}', font=fpath)
         # ax.set_xlabel('This is the default font')
