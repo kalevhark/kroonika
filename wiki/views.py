@@ -1051,13 +1051,12 @@ def get_mainitud_aastatel_chart(mainitud_aastatel_data):
         fig, ax = plt.subplots(figsize=(5, 2))
         # ax.set_title(f'This is a special font: {fpath.name}', font=fpath)
         # ax.set_xlabel('This is the default font')
-        plt.xticks(font=fpath)
-        plt.yticks(font=fpath)
-
         plt.bar(list(mainitud_aastatel_data.keys()), mainitud_aastatel_data.values(), color='g')
         max_mainimisi = max(mainitud_aastatel_data.values()) + 1
         step = math.ceil(max_mainimisi / 10)
-        plt.yticks(range(1, max_mainimisi, step))
+        plt.xticks(font=fpath)
+        plt.yticks(range(1, max_mainimisi, step), font=fpath)
+        # Pildi salvestamine baidijadana
         buffer = BytesIO()
         plt.savefig(buffer, format='png', transparent=True, bbox_inches='tight')
         buffer.seek(0)
