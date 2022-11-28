@@ -1,11 +1,9 @@
-import qrcode.image.svg
-
 import base64
 from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
-# from functools import reduce
-# from operator import or_
 from io import BytesIO
+import math
+from pathlib import Path
 import pkg_resources
 from typing import Dict, Any
 
@@ -16,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
-# from django.core import serializers
+from django.contrib.staticfiles import finders
 from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -40,8 +38,10 @@ from django.views.generic.edit import UpdateView
 import django_filters
 from django_filters.views import FilterView
 
+import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
 import qrcode
+import qrcode.image.svg
 import requests
 
 from blog.models import Comment
@@ -1013,7 +1013,7 @@ def mis_kuul(kuu, l6pp='s'):
             ]
     return kuud[kuu - 1] + l6pp
 
-def mainitud_aastatel(qs, model, obj):
+def get_mainitud_aastatel(qs, model, obj):
     # Artiklites mainimine läbi aastate
     if model == 'Isik':
         filter = qs.filter(isikud__id=obj.id)
@@ -1038,6 +1038,34 @@ def mainitud_aastatel(qs, model, obj):
             )
         )
     )
+
+def get_mainitud_aastatel_chart(mainitud_aastatel_data):
+    graph = ''
+    if len(mainitud_aastatel_data) > 0:
+        plt.switch_backend('AGG')
+        # if settings.DEBUG: alternatiiv
+        stores = finders.AppDirectoriesFinder(app_names={'wiki'}).storages
+        fpath = Path(stores["wiki"].path("wiki/css/fonts/Raleway/Raleway-Regular.ttf"))
+        # else:
+        #   fpath = Path(settings.STATIC_ROOT / "wiki/css/fonts/Raleway/Raleway-Regular.ttf")
+        fig, ax = plt.subplots(figsize=(5, 2))
+        # ax.set_title(f'This is a special font: {fpath.name}', font=fpath)
+        # ax.set_xlabel('This is the default font')
+        plt.xticks(font=fpath)
+        plt.yticks(font=fpath)
+
+        plt.bar(list(mainitud_aastatel_data.keys()), mainitud_aastatel_data.values(), color='g')
+        max_mainimisi = max(mainitud_aastatel_data.values()) + 1
+        step = math.ceil(max_mainimisi / 10)
+        plt.yticks(range(1, max_mainimisi, step))
+        buffer = BytesIO()
+        plt.savefig(buffer, format='png', transparent=True, bbox_inches='tight')
+        buffer.seek(0)
+        image_png = buffer.getvalue()
+        graph = base64.b64encode(image_png)
+        graph = graph.decode('utf-8')
+        buffer.close()
+    return graph
 
 def seotud_artiklikaudu(request, model, seotud_artiklid, object_self):
     queryset = model.objects.daatumitega(request)
@@ -1859,7 +1887,9 @@ class IsikDetailView(generic.DetailView):
             filter(profiilipilt_isikud__in=[self.object]). \
             first()
         # Mainimine läbi aastate
-        context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Isik', self.object)
+        mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, 'Isik', self.object)
+        # context['mainitud_aastatel'] = mainitud_aastatel_data
+        context['mainitud_aastatel_chart'] = get_mainitud_aastatel_chart(mainitud_aastatel_data)
         # Otseseosed objektidega
         context['seotud_organisatsioonid'] = Organisatsioon.objects.daatumitega(self.request).\
             filter(isik=self.object)
@@ -2000,7 +2030,10 @@ class OrganisatsioonDetailView(generic.DetailView):
             first()
 
         # Mainimine läbi aastate
-        context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Organisatsioon', self.object)
+        # context['mainitud_aastatel'] = get_mainitud_aastatel(artikkel_qs, 'Organisatsioon', self.object)
+        mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, 'Organisatsioon', self.object)
+        # context['mainitud_aastatel'] = mainitud_aastatel_data
+        context['mainitud_aastatel_chart'] = get_mainitud_aastatel_chart(mainitud_aastatel_data)
         # Otseseosed objectidega
         context['seotud_isikud'] = Isik.objects.daatumitega(self.request).\
             filter(organisatsioonid=self.object)
@@ -2147,7 +2180,10 @@ class ObjektDetailView(generic.DetailView):
                 filter(objekt__id=self.object.id).\
                 exists()
         # Mainimine läbi aastate
-        context['mainitud_aastatel'] = mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
+        # context['mainitud_aastatel'] = get_mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
+        mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
+        # context['mainitud_aastatel'] = mainitud_aastatel_data
+        context['mainitud_aastatel_chart'] = get_mainitud_aastatel_chart(mainitud_aastatel_data)
         # Otseseosed objektidega
         context['seotud_isikud'] = Isik.objects.\
             daatumitega(self.request).\
