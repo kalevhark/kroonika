@@ -1,9 +1,6 @@
 {% if mainitud_aastatel_chart %}
-  <div class="w3-padding-16">
+  <div>
     Mainimisi aastatel:<br>
-{#    {% for aasta, kordi in mainitud_aastatel.items %}#}
-{#      {{ aasta }}: {{ kordi }}&nbsp#}
-{#    {% endfor %}#}
     <img src="data:image/png;base64, {{mainitud_aastatel_chart|safe}}" alt="" id="img">
   </div>
 {% endif %}
