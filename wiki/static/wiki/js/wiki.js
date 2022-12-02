@@ -246,7 +246,7 @@ function getObjectData4tooltip( url ) {
       var elContentTooltipFields = $( ".tooltip-content span" );
       // initialize tooltip
       elContentTooltipFields.tooltip({
-        track: true,
+        track: false,
         open: function( event, ui ) {
           var id = this.id;
           var model = $(this).attr('data-model');

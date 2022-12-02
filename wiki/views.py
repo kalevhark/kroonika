@@ -1923,8 +1923,9 @@ def object_detail_seotud(request, model, id):
         model_filters[model]: id
     }
     seotud_artiklid = artikkel_qs.filter(**filter)
-
     context['seotud_artiklid'] = seotud_artiklid
+    seotud_artiklid_kokku = len(seotud_artiklid)
+    context['seotud_artiklid_kokku'] = seotud_artiklid_kokku
 
     context['seotud_isikud_artiklikaudu'] = seotud_artiklikaudu(
         request,
@@ -2213,14 +2214,14 @@ def get_object_data4tooltip(request):
     content = str(obj)
     if model in [Isik, Objekt, Organisatsioon]:
         if obj.kirjeldus:
-            heading = f'<strong>{obj}</strong>'
+            heading = f'{obj}'
             if obj.profiilipildid.exists():
                 profiilipilt = obj.profiilipildid.first()
                 img = settings.MEDIA_URL + profiilipilt.pilt_thumbnail.name
                 img = f'<img class="tooltip-content-img" src="{img}" alt="{profiilipilt}">'
             else:
                 img = ''
-            content = f'<div><p>{heading}</p><p>{img}<small>{obj.kirjeldus_lyhike}</small><p></div>'
+            content = f'<div>{heading}<p>{img}<small>{obj.kirjeldus_lyhike}</small><p></div>'
     elif model == Artikkel:
         if obj.hist_date:
             dob = obj.hist_date.strftime('%d.%m.%Y')
@@ -2236,7 +2237,7 @@ def get_object_data4tooltip(request):
             heading = f'<strong>{dob}-{doe}</strong>'
         else:
             heading = f'<strong>{dob}</strong>'
-        content = f'<div><p>{heading}</p><p><small>{obj.formatted_markdown}</small><p></div>'
+        content = f'<div>{heading}<p><small>{obj.formatted_markdown}</small><p></div>'
     return HttpResponse(content)
 
 def join_kaardiobjekt_with_objekt(request, kaardiobjekt_id, objekt_id):
