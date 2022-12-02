@@ -269,12 +269,12 @@ function getObjectData4tooltip( url ) {
         }
       });
 
-      elContentTooltipFields.mouseout(function(){
-        // re-initializing tooltip
-        $(this).attr('title','...');
-        $(this).tooltip();
-        $('.ui-tooltip').hide();
-      });
+      // elContentTooltipFields.mouseout(function(){
+      //   // re-initializing tooltip
+      //   $(this).attr('title','...');
+      //   $(this).tooltip();
+      //   $('.ui-tooltip').hide();
+      // });
     }
   });
 
