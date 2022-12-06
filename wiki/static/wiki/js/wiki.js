@@ -271,8 +271,8 @@ function getObjectData4tooltip( url ) {
 
       elContentTooltipFields.mouseout(function(){
         // re-initializing tooltip
-        $(this).attr('title','...');
-        $(this).tooltip();
+        // $(this).attr('title','...');
+        // $(this).tooltip();
         window.setTimeout($('.ui-tooltip').hide(), 1000);
       });
     }
