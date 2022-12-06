@@ -39,6 +39,8 @@ import django_filters
 from django_filters.views import FilterView
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+
 from PIL import Image, ImageOps
 import qrcode
 import qrcode.image.svg
@@ -1051,6 +1053,7 @@ def get_mainitud_aastatel_chart(mainitud_aastatel_data):
         fig, ax = plt.subplots(figsize=(5, 2))
         # ax.set_title(f'This is a special font: {fpath.name}', font=fpath)
         # ax.set_xlabel('This is the default font')
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         plt.bar(
             list(mainitud_aastatel_data.keys()), mainitud_aastatel_data.values(),
             color='g'
