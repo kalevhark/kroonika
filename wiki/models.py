@@ -203,7 +203,6 @@ def add_markdownx_viited(obj):
 
 # Parandab markdownify renderdamise vea
 def fix_markdownified_text(text):
-    print(text)
     # k6rvaldame ülearuse horisontaaleraldaja
     text = text.replace('<hr />', '')
     # k6rvaldame vale <p> tagi algusest
