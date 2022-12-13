@@ -218,7 +218,7 @@
                           data-model='Objekt'
                           v-bind:data-id="result.id"
                           v-bind:id="'Objekt_'+result.id">
-                    [[ result.nimi ]][[ result.asukoht==='' ? '' : ' (' + result.asukoht + ')']] [[ result.hist_year==='' ? '' : result.hist_year ]]
+                    [[ result.nimi ]][[ result.asukoht === null ? '' : ' (' + result.asukoht + ')']] [[ result.hist_year==='' ? '' : result.hist_year ]]
                   </span>
                 </a>
               </li>
