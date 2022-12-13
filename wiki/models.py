@@ -203,12 +203,15 @@ def add_markdownx_viited(obj):
 
 # Parandab markdownify renderdamise vea
 def fix_markdownified_text(text):
+    print(text)
     # k6rvaldame ülearuse horisontaaleraldaja
     text = text.replace('<hr />', '')
-    # k6rvaldame <p></p> tagid
-    text = text.replace('<p>', '').replace('</p>', '')
+    # k6rvaldame vale <p> tagi algusest
+    text = text[3:]
+    # k6rvaldame vale </p> tagi
+    text = text.replace('</p>\n<div class="footnote">', '\n<div class="footnote">')
     # k6rvaldame vigase </div> tagi
-    text = text.replace('</span></div>', '</span>')
+    text = text.replace('</div>&#160;', '&#160;')
     # lisame l6ppu </div> tagi
     text = text + '</div>'
     return text
