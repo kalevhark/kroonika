@@ -57,7 +57,11 @@
         <div class="w3-twothird">
           {% include 'wiki/includes/vigane.html' %}
           <div class="w3-margin-right">
-            {{ object.formatted_markdown | safe }}
+            {% if object.kirjeldus %}
+              {{ object.formatted_markdown | safe }}
+            {% else %}
+              &nbsp;
+            {% endif %}
           </div>
           {% include 'wiki/includes/seotud_special_links.html' %}
           {% include 'wiki/includes/object_detail_mainitud_aastatel.html' %}
