@@ -1,7 +1,8 @@
 {% extends "wiki/wiki_base.html" %}
 {% load static %}
 
-{% block extra_head %}
+{% block css %}
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/base.css' %}?ver=2022.12" >
 {% endblock %}
 
 {% block content %}

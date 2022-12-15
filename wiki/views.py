@@ -335,8 +335,6 @@ def otsi(request):
 # Tagasiside vormi töötlemine
 #
 def feedback(request):
-    # if this is a POST request we need to process the form data
-    # a = request.META
     http_referer = request.META.get('HTTP_REFERER', reverse('algus')) # mis objektilt tuli vihje
     remote_addr = request.META['REMOTE_ADDR'] # kasutaja IP aadress
     http_user_agent = request.META.get('HTTP_USER_AGENT', 'unknown') # kasutaja veebilehitseja
