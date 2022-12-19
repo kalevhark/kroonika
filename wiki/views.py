@@ -2475,7 +2475,8 @@ def calendar_days_with_events_in_month(request):
     )
 
 def kaart(request, aasta=None):
-    map_html = make_big_maps_leaflet(aasta)
+    objekt_id = request.GET.get('objekt_id')
+    map_html = make_big_maps_leaflet(aasta, objekt_id=objekt_id)
     return render(
         request,
         'wiki/kaart.html',
