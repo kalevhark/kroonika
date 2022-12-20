@@ -199,18 +199,29 @@ def write_db_to_shp(aasta='1912'):
                     w.write(r.read())
 
 # Hoonestuse andmed OpenStreetMap kaardilt OverPass API abil
-def get_osm_data(asukoht=None):
-    if asukoht:
+def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9', city='Valga linn'):
+    if street and housenumber:
         # print(asukoht, end=' ')
-        street, housenumber = split_address(asukoht)
+        # street, housenumber = split_address(aadress)
+
+        query = """
+                (
+          way(id: 214327417, 228359022, 228899964);
+        );
+        """ # Kesk 12 hooned
+
+        query = f"""
+        area['admin_level'='2']['name'='{country}']->.searchArea;
+        area['admin_level'='{admin_level}']['name'='{city}'](area.searchArea)->.searchArea;
+        (
+            nwr["building"]["addr:street"~"{street}"]["addr:housenumber"="{housenumber}"](area.searchArea);
+        );
+        """
+
         # Pärime andmed operpass APIst
         overpass_query = f"""
         [out:json][timeout:25];
-        area['admin_level'='2']['name'='Eesti']->.searchArea;
-        area['admin_level'='9']['name'='Valga linn'](area.searchArea)->.searchArea; 
-        ( 
-            nwr["building"]["addr:street"~"{street}"]["addr:housenumber"="{housenumber}"](area.searchArea); 
-        );
+        {query}
         out body center;
         >;
         out center;
@@ -591,8 +602,8 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
                 objektiga_kaardid = [kaardiobjekt.kaart.aasta for kaardiobjekt in objektiga_kaardiobjektid]
                 objektiga_kaart_max = max(objektiga_kaardid)
                 # objektiga_kaart_min = min(objektiga_kaardid)
-    else:
-        obj = Objekt.objects.none()
+    # else:
+    #     obj = Objekt.objects.none()
 
     zoom_start = DEFAULT_MAP_ZOOM_START
 
@@ -614,7 +625,7 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
 
         map_name = map.get_name()
 
-        feature_groups = {}
+        feature_groups = {} # erinevate aastate kaardid
 
         for kaart in kaardid:
             kaart_aasta = kaart.aasta
@@ -625,7 +636,7 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
             elif kaart_aasta == DEFAULT_MAP.aasta and objektiga_kaardid and obj.gone:
                 color = GEOJSON_STYLE['HH']['color']
                 name = f'<span style="color: {color};">{kaart_aasta}</span>' # red
-                tyyp_style = lambda x: f'{x}H' # hoone hävinud
+                tyyp_style = lambda x: f'{x}H' # objekt hävinud
             else:
                 name = f'<span style="color: #A9A9A9;">{kaart_aasta}</span>' # darkgrey
 
@@ -1237,7 +1248,8 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
 
 if __name__ == "__main__":
     # read_kaardiobjekt_csv_to_db('2021')
-    # geometry = get_osm_data('Maleva 3')
+    # geometry = get_osm_data(street='Rigas', housenumber='9', admin_level='7', country='Latvija', city='Valka')
+    geometry = get_osm_data(street='Kesk', housenumber='12')
     # print(geometry)
     # geometry = get_shp_data('Maleva 3')
     # print(geometry)
