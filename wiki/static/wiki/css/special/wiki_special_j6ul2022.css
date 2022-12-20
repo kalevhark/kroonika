@@ -1,4 +1,4 @@
-/*ver=2022.11.05*/
+/*ver=2022.12.20*/
 
 /*@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap');*/
 
@@ -56,7 +56,7 @@ div.image-wrapper {
 }
 
 .holidays-title-small {
-  font-size: 1.5em;
+  font-size: 1.2em;
   color: red;
   /*font-family: 'Mountains of Christmas', cursive;*/
   font-family: '1942', monospace;
