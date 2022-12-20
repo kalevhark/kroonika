@@ -575,6 +575,7 @@ def get_object_data4tooltip(obj):
 
 def make_big_maps_leaflet(aasta=None, objekt_id=None):
     kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
+    objektiga_kaardid = []
     objektiga_kaart_max = DEFAULT_MAP
     obj = Objekt.objects.none()
 
@@ -617,10 +618,20 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
 
         for kaart in kaardid:
             kaart_aasta = kaart.aasta
+            tyyp_style = lambda x: x
+            if kaart_aasta in objektiga_kaardid:
+                color = GEOJSON_STYLE['H']['color']
+                name = f'<span style="color: {color};">{kaart_aasta}</span>' # fuchsia
+            elif kaart_aasta == DEFAULT_MAP.aasta and objektiga_kaardid and obj.gone:
+                color = GEOJSON_STYLE['HH']['color']
+                name = f'<span style="color: {color};">{kaart_aasta}</span>' # red
+                tyyp_style = lambda x: f'{x}H' # hoone hävinud
+            else:
+                name = f'<span style="color: #A9A9A9;">{kaart_aasta}</span>' # darkgrey
 
             # loome kaardikihi
             feature_group = folium.FeatureGroup(
-                name=kaart_aasta,
+                name=name,
                 overlay=False,
             )
             feature_groups[kaart_aasta] = feature_group.get_name()
@@ -647,6 +658,8 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
                     kaardiobjektid = obj.kaardiobjekt_set.filter(kaart=kaart)
 
                 for kaardiobjekt in kaardiobjektid:
+                    # feature_group.name = f'{kaart_aasta}'
+                    # kaart_aasta = kaardiobjekt.kaart.aasta
                     geometry = kaardiobjekt.geometry
                     tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
                     name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
@@ -655,11 +668,7 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
                         "name": name,
                         "features": [geometry]
                     }
-                    if obj.gone: # objekti kaasajal pole
-                        tyyp_style = f'{kaardiobjekt.tyyp}H'  # 'HH'-hoonestus, 'AH'-ala, 'MH'-muu
-                    else: # objekt kaasajal olemas
-                        tyyp_style = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-                    style = GEOJSON_STYLE[tyyp_style]
+                    style = GEOJSON_STYLE[tyyp_style(tyyp)]
                     f = json.dumps(feature_collection)
                     folium.GeoJson(
                         f,
@@ -699,7 +708,8 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
             geojson.add_to(map)
 
         # Lisame kihtide kontrolli
-        folium.LayerControl().add_to(map)
+        layer_control = folium.LayerControl()
+        layer_control.add_to(map)
 
         # Lisame infonupu
         leafletJsButton(
@@ -765,16 +775,18 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
         # map.get_root().html.add_child(Element("<h1>Hello world</h1>"))
 
         el = folium.MacroElement().add_to(map)
-        js = map_name + """
-        .on('baselayerchange', function (eventLayer) {
-            // console.log(eventLayer.name);
-        });\n
-        """
+        # js = map_name + """
+        # .on('baselayerchange', function (eventLayer) {
+        #     // console.log(eventLayer.name);
+        # });\n
+        # """
+        js = ''
 
         if aasta:
             for kaart in feature_groups.keys():
                 fg = feature_groups[kaart]
                 if kaart == aasta:
+                    # js += f'console.log({layer_control.get_name()});\n'
                     js += f'{map_name}.addLayer({fg});\n'
                 else:
                     js += f'{map_name}.removeLayer({fg});\n'
