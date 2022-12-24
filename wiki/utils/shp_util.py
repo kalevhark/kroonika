@@ -629,14 +629,12 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
 
         for kaart in kaardid:
             kaart_aasta = kaart.aasta
-            tyyp_style = lambda x: x
             if kaart_aasta in objektiga_kaardid:
                 color = GEOJSON_STYLE['H']['color']
                 name = f'<span style="color: {color};">{kaart_aasta}</span>' # fuchsia
             elif kaart_aasta == DEFAULT_MAP.aasta and objektiga_kaardid and obj.gone:
                 color = GEOJSON_STYLE['HH']['color']
                 name = f'<span style="color: {color};">{kaart_aasta}</span>' # red
-                tyyp_style = lambda x: f'{x}H' # objekt hävinud
             else:
                 name = f'<span style="color: #A9A9A9;">{kaart_aasta}</span>' # darkgrey
 
@@ -660,17 +658,17 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
 
             # lisame kaardikihile vektorkihi kui on objekti kaardiobjektid
             if obj:
+                tyyp_style = lambda x: x
                 if kaart == DEFAULT_MAP:
                     kaardiobjektid = obj.kaardiobjekt_set.filter(kaart__aasta__exact=objektiga_kaart_max)
                     if obj.gone:
                         tilelayer_stamen_toner = folium.TileLayer("Stamen Toner")
                         tilelayer.tiles = tilelayer_stamen_toner.tiles
+                        tyyp_style = lambda x: f'{x}H'  # objekt hävinud
                 else:
                     kaardiobjektid = obj.kaardiobjekt_set.filter(kaart=kaart)
 
                 for kaardiobjekt in kaardiobjektid:
-                    # feature_group.name = f'{kaart_aasta}'
-                    # kaart_aasta = kaardiobjekt.kaart.aasta
                     geometry = kaardiobjekt.geometry
                     tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
                     name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
@@ -681,12 +679,14 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
                     }
                     style = GEOJSON_STYLE[tyyp_style(tyyp)]
                     f = json.dumps(feature_collection)
-                    folium.GeoJson(
+                    geojson = folium.GeoJson(
                         f,
                         name=name,
                         style_function=lambda x: style,
-                        tooltip=get_object_data4tooltip(obj)
-                    ).add_to(feature_group)
+                        tooltip=get_object_data4tooltip(obj),
+                        highlight_function=lambda x: {"fillOpacity": 0.5},
+                    )
+                    geojson.add_to(feature_group)
 
             # Lisame kaardile kirjelduse tootipi
             kwargs = {
@@ -1247,9 +1247,10 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
 
 
 if __name__ == "__main__":
+    make_big_maps_leaflet(aasta=1824, objekt_id=970)
     # read_kaardiobjekt_csv_to_db('2021')
     # geometry = get_osm_data(street='Rigas', housenumber='9', admin_level='7', country='Latvija', city='Valka')
-    geometry = get_osm_data(street='Kesk', housenumber='12')
+    # geometry = get_osm_data(street='Kesk', housenumber='12')
     # print(geometry)
     # geometry = get_shp_data('Maleva 3')
     # print(geometry)
