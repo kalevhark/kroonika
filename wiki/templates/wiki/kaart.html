@@ -16,7 +16,38 @@
 {% block title %}{{ block.super }} ajaloolised kaardid{% endblock %}
 
 {% block content %}
-  <div class="w3-container">
-    {{ kaart|safe }}
+  <div id="bigmap" class="w3-container">
+    <p class="w3-center">Joonistame kaarte...</p>
+    {% include 'wiki/includes/div_loader_book.html' %}
+    {#    {{ kaart|safe }}#}
   </div>
+{% endblock %}
+
+{% block javascript %}
+  <script>
+  $(document).ready( function() {
+    var getBigLeafletMapUrl = '{% url "get_big_leaflet_map" %}';
+    var kaartAasta = {% if aasta %}{{ aasta }}{% else %}null{% endif %};
+    var objektId = {% if objekt %}{{ objekt }}{% else %}null{% endif %};
+    // console.log(kaartAasta, objektId);
+    $.ajax({
+      url: getBigLeafletMapUrl,
+      type:'get',
+      data:{
+        aasta: kaartAasta,
+        objekt: objektId
+      },
+      success: function(response){
+        // Setting content option
+        // console.log(response);
+        // $("#bigmap").innerHTML(response);
+        var bigmap = document.getElementById('bigmap');
+        bigmap.innerHTML = response;
+      },
+      error: function (XMLHttpRequest, textstatus, errorThrown) {
+        console.log(errorThrown);
+      }
+    });
+  });
+  </script>
 {% endblock %}

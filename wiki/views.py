@@ -2474,13 +2474,24 @@ def calendar_days_with_events_in_month(request):
         safe=False
     )
 
+def get_big_leaflet_map(request):
+    aasta = request.GET.get('aasta')
+    objekt = request.GET.get('objekt')
+    print(aasta, objekt)
+    map_html = make_big_maps_leaflet(aasta, objekt=objekt)
+    return HttpResponse(map_html)
+
 def kaart(request, aasta=None):
-    objekt_id = request.GET.get('objekt_id')
-    map_html = make_big_maps_leaflet(aasta, objekt_id=objekt_id)
+    objekt = request.GET.get('objekt')
+    # map_html = make_big_maps_leaflet(aasta, objekt=objekt)
     return render(
         request,
         'wiki/kaart.html',
-        {'kaart': map_html},
+        {
+            'aasta': aasta,
+            'objekt': objekt,
+            # 'kaart': map_html
+        },
     )
 
 # Tagastab objekti kõigi olemasolevate aastate kaardid

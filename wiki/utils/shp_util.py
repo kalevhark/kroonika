@@ -603,30 +603,31 @@ def get_object_data4tooltip(obj):
     content = f'<div class="kaardiobjekt-tooltip">{heading}{img}</div>'
     return content
 
-def make_big_maps_leaflet(aasta=None, objekt_id=None):
+def make_big_maps_leaflet(aasta=None, objekt=None):
     kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
-    objektiga_kaardid = []
-    objektiga_kaart_max = DEFAULT_MAP
-
-    # Kas vaja näidata kaartidel objekti?
-    obj = Objekt.objects.none()
-    if objekt_id:
-        try:
-            obj = Objekt.objects.get(id=objekt_id)
-        except ObjectDoesNotExist:
-            pass
-        if obj:
-            objektiga_kaardiobjektid = obj.kaardiobjekt_set.filter()
-            if objektiga_kaardiobjektid:
-                objektiga_kaardid = [kaardiobjekt.kaart.aasta for kaardiobjekt in objektiga_kaardiobjektid]
-                objektiga_kaart_max = max(objektiga_kaardid)
-                # objektiga_kaart_min = min(objektiga_kaardid)
-
-
     if aasta and Kaart.objects.filter(aasta=aasta).count()==0:
-        aastad = ', '.join([kaart.aasta for kaart in kaardid])
-        return f'<p><strong>{aasta}</strong>. aasta kaarti ei ole. Vali järgmistest: {aastad}</p>'
+        tekst = f'<h4>{aasta}. aasta kaarti ei ole. Vali järgmistest:</h4>'
+        for kaart in kaardid:
+            href = reverse('kaart')
+            tekst += f'<p class="hover-objekt"><a href="{href}{kaart.aasta}">{kaart}</a><p>'
+        return tekst
     else:
+        # Kas vaja näidata kaartidel objekti?
+        obj = Objekt.objects.none()
+        objektiga_kaardid = []
+        objektiga_kaart_max = DEFAULT_MAP
+        if objekt:
+            try:
+                obj = Objekt.objects.get(id=objekt)
+            except ObjectDoesNotExist:
+                pass
+            if obj:
+                objektiga_kaardiobjektid = obj.kaardiobjekt_set.filter()
+                if objektiga_kaardiobjektid:
+                    objektiga_kaardid = [kaardiobjekt.kaart.aasta for kaardiobjekt in objektiga_kaardiobjektid]
+                    objektiga_kaart_max = max(objektiga_kaardid)
+                    # objektiga_kaart_min = min(objektiga_kaardid)
+
         # Loome aluskaardi
         # zoom_start = DEFAULT_MAP_ZOOM_START
         map = folium.Map(
@@ -905,14 +906,15 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
         # v2ike h2kk, mis muudab vaikimis veateksti
         map_html = map_html.replace(
             '<span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span>',
-            '<span style="color:#565656">Kaarti laetakse. Kui see kiri jääb nähtavaks, tekkis laadimisel viga</span>',
+            # '<span style="color:#565656">Kaarti laetakse. Kui see kiri jääb nähtavaks, tekkis laadimisel viga</span>',
+            '',
             1
         )
         return map_html
 
 # Konkreetse objekti erinevate aastate kaardid koos
-def make_objekt_leaflet_combo(objekt_id=1):
-    obj = Objekt.objects.get(id=objekt_id)
+def make_objekt_leaflet_combo(objekt=1):
+    obj = Objekt.objects.get(id=objekt)
     # Kõigi kaartide ids, kus objekt märgitud: tulemus: <QuerySet ['1', '2', '3']>
     kaart_ids = obj.kaardiobjekt_set.values_list('kaart__id', flat=True)
 
@@ -941,7 +943,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
             tile_kwargs = {
                 'url': url,
                 'aasta': aasta,
-                'objektId': objekt_id
+                'objektId': objekt
             }
             if kaart == DEFAULT_MAP and objekt_missing_on_defaultmap:
                 folium.TileLayer(
@@ -1043,7 +1045,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
                 style_function=lambda x: style2
             ).add_to(map)
 
-        # Lisame infonupu
+        # Lisame nupu kaardivaate avamiseks
         leafletJsButton(
             object="""
                 {
@@ -1056,7 +1058,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
                                 map.eachLayer(function(layer) {
                                     if ( layer instanceof L.TileLayer ) {
                                         window.open(
-                                          layer.options.url + layer.options.aasta + '?objekt_id=' + layer.options.objektId,
+                                          layer.options.url + layer.options.aasta + '?objekt=' + layer.options.objektId,
                                           '_blank' // <- This is what makes it open in a new window.
                                         );
                                     }
@@ -1074,6 +1076,13 @@ def make_objekt_leaflet_combo(objekt_id=1):
         map_html = map._repr_html_()
         # v2ike h2kk, mis muudab vertikaalset suurust
         map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
+        # v2ike h2kk, mis muudab vaikimis veateksti
+        map_html = map_html.replace(
+            '<span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span>',
+            # '<span style="color:#565656">Kaarti laetakse. Kui see kiri jääb nähtavaks, tekkis laadimisel viga</span>',
+            '',
+            1
+        )
         return map_html
 
 # Konkreetse kaardiobjekti kaart
