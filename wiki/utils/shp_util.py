@@ -719,54 +719,60 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
                     geojson.add_to(feature_group)
 
             # Loome kaardi olemasolevate m2rgtud kaardiobjektide kihi
-            if kaart != DEFAULT_MAP: # kaasaja kaardil kaardiobjekte liiga palju
+            if kaart == DEFAULT_MAP: # kaasaja kaardil kaardiobjekte liiga palju
+                kaardiobjektid = Kaardiobjekt.objects.\
+                    filter(kaart=kaart).\
+                    filter(objekt__isnull=False).\
+                    filter(objekt__gone__exact=False)
+            else:
                 kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart)
-                if kaardiobjektid:
-                    feature_group_kaardiobjektid = folium.FeatureGroup(
-                        name=f'<span class="kaart-control-layers">Kaardiobjektid {kaart.aasta}</span>',
-                        show=False
-                    )
-                    for kaardiobjekt in kaardiobjektid:
-                        tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-                        tooltip = f'<div class="kaardiobjekt-tooltip">{kaardiobjekt}</div>'
-                        fillColor = GEOJSON_STYLE[tyyp]["fill"]
-                        color = GEOJSON_STYLE[tyyp]["color"]
-                        weight = GEOJSON_STYLE[tyyp]["weight"]
-                        if kaardiobjekt.objekt: # kui seotud objektiga
-                            tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
-                            if kaardiobjekt.objekt.gone: # hävinud
-                                fillColor = GEOJSON_STYLE[f'{tyyp}H']["fill"]
-                                color = GEOJSON_STYLE[f'{tyyp}H']["color"]
-                                weight = GEOJSON_STYLE[f'{tyyp}H']["weight"]
-                            else: # alles
-                                fillColor = GEOJSON_STYLE[f'{tyyp}E']["fill"]
-                                color = GEOJSON_STYLE[f'{tyyp}E']["color"]
-                                weight = GEOJSON_STYLE[f'{tyyp}E']["weight"]
-                        geometry = kaardiobjekt.geometry
-                        name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
-                        feature_collection = {
-                            "type": "FeatureCollection",
-                            "name": name,
-                            "features": [geometry]
-                        }
-                        f = json.dumps(feature_collection)
-                        geojson = folium.GeoJson(
-                            f,
-                            name=name,
-                            style_function=lambda x, fillColor=fillColor, color=color: {
-                                "fillColor": fillColor,
-                                "color": color,
-                                "weight": weight
-                            },
-                            tooltip=tooltip,
-                            highlight_function=lambda x: {"fillOpacity": 0.5},
-                        )
-                        geojson.add_to(feature_group_kaardiobjektid)
-                    # end for kaardiobjekt in kaardiobjektid:
 
-                    feature_group_kaardiobjektid.add_to(map)
-                    feature_groups_kaardiobjektid[aasta] = feature_group_kaardiobjektid
-                # end if kaardiobjektid:
+            if kaardiobjektid:
+                feature_group_kaardiobjektid = folium.FeatureGroup(
+                    name=f'<span class="kaart-control-layers">Kaardiobjektid {kaart.aasta}</span>',
+                    show=False
+                )
+                for kaardiobjekt in kaardiobjektid:
+                    tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
+                    tooltip = f'<div class="kaardiobjekt-tooltip">{kaardiobjekt}</div>'
+                    fillColor = GEOJSON_STYLE[tyyp]["fill"]
+                    color = GEOJSON_STYLE[tyyp]["color"]
+                    weight = GEOJSON_STYLE[tyyp]["weight"]
+                    if kaardiobjekt.objekt: # kui seotud objektiga
+                        tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
+                        if kaardiobjekt.objekt.gone: # hävinud
+                            fillColor = GEOJSON_STYLE[f'{tyyp}H']["fill"]
+                            color = GEOJSON_STYLE[f'{tyyp}H']["color"]
+                            weight = GEOJSON_STYLE[f'{tyyp}H']["weight"]
+                        else: # alles
+                            fillColor = GEOJSON_STYLE[f'{tyyp}E']["fill"]
+                            color = GEOJSON_STYLE[f'{tyyp}E']["color"]
+                            weight = GEOJSON_STYLE[f'{tyyp}E']["weight"]
+                    geometry = kaardiobjekt.geometry
+                    name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
+                    feature_collection = {
+                        "type": "FeatureCollection",
+                        "name": name,
+                        "features": [geometry]
+                    }
+                    f = json.dumps(feature_collection)
+                    geojson = folium.GeoJson(
+                        f,
+                        name=name,
+                        style_function=lambda x, fillColor=fillColor, color=color: {
+                            "fillColor": fillColor,
+                            "color": color,
+                            "weight": weight
+                        },
+                        tooltip=tooltip,
+                        highlight_function=lambda x: {"fillOpacity": 0.5},
+                    )
+                    geojson.add_to(feature_group_kaardiobjektid)
+                # end for kaardiobjekt in kaardiobjektid:
+
+                feature_group_kaardiobjektid.add_to(map)
+                feature_groups_kaardiobjektid[aasta] = feature_group_kaardiobjektid
+            # end if kaardiobjektid:
 
             # Lisame kaardile kirjelduse tootipi
             kwargs = {
