@@ -25,8 +25,10 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 
-from branca.element import CssLink, Figure, JavascriptLink, MacroElement
+from branca.element import CssLink, Element, Figure, JavascriptLink, MacroElement
+
 import folium
+
 import jinja2
 import pyproj
 import requests
@@ -43,14 +45,18 @@ DEFAULT_MIN_ZOOM = 13
 
 # BLUEVIOLET = '#8A2BE2'
 FUCHSIA = '#FF00FF'
+OBJEKT_COLOR = '#2b5797'
 
 GEOJSON_STYLE = {
-    'H': {'fill': 'lightgreen', 'color': FUCHSIA, 'weight': 3}, # hoonestus
-    'A': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # ala
-    'M': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # muu
+    'H': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # hoonestus (default)
+    'A': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # ala (default)
+    'M': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # muu (default)
     'HH': {'fill': 'red', 'color': 'red', 'weight': 3}, # hoonestus (puudub kaasajal)
     'AH': {'fill': None, 'color': 'red', 'weight': 3}, # ala (puudub kaasajal)
     'MH': {'fill': None, 'color': 'red', 'weight': 3}, # muu (puudub kaasajal)
+    'HE': {'fill': OBJEKT_COLOR, 'color': OBJEKT_COLOR, 'weight': 3}, # hoonestus (olemas kaasajal)
+    'AE': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # ala (olemas kaasajal)
+    'ME': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # muu (olemas kaasajal)
 }
 
 # https://python-visualization.github.io/folium/modules.html#module-folium.map
@@ -69,22 +75,35 @@ LEAFLET_DEFAULT_JS = [
     ('awesome_markers', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js')
 ]
 
-LEAFLET_DEFAULT_CSS_ver_1_93 = [
-    ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"),
-    ("jquery", "https://code.jquery.com/jquery-1.12.4.min.js"),
-    ("bootstrap","https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js",),
-    ("awesome_markers", "https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js",),
-]
+# Kroonika default font kasutamiseks + custom elementide css
+LEAFLET_DEFAULT_HEADER = Element(
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">'
+    '<style>'
+    '.kaart-control-layers,'
+    '.kaardiobjekt-tooltip,'
+    '.kaart-tooltip {'
+    '  font-size: 14px;'
+    '  font-family: "Raleway", sans-serif;'
+    '}'
+    '</style>'
+)
 
-LEAFLET_DEFAULT_JS_ver_1_93 = [
-    ("leaflet_css", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"),
-    ("bootstrap_css", "https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css",),
-    # glyphicons came from Bootstrap 3 and are used for Awesome Markers
-    ("glyphicons_css", "https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css",),
-    ("awesome_markers_font_css", "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css",),
-    ("awesome_markers_css", "https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css",),
-    ("awesome_rotate_css", "https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css",),
-]
+# LEAFLET_DEFAULT_CSS_ver_1_93 = [
+#     ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"),
+#     ("jquery", "https://code.jquery.com/jquery-1.12.4.min.js"),
+#     ("bootstrap","https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js",),
+#     ("awesome_markers", "https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js",),
+# ]
+#
+# LEAFLET_DEFAULT_JS_ver_1_93 = [
+#     ("leaflet_css", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"),
+#     ("bootstrap_css", "https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css",),
+#     # glyphicons came from Bootstrap 3 and are used for Awesome Markers
+#     ("glyphicons_css", "https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css",),
+#     ("awesome_markers_font_css", "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css",),
+#     ("awesome_markers_css", "https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css",),
+#     ("awesome_rotate_css", "https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css",),
+# ]
 
 
 # crs to degree converter init
@@ -581,62 +600,64 @@ def get_object_data4tooltip(obj):
         img = f'<br /><img class="tooltip-content-img" src="{img}" alt="{profiilipilt}">'
     else:
         img = ''
-    content = f'<div>{heading}{img}</div>'
+    content = f'<div class="kaardiobjekt-tooltip">{heading}{img}</div>'
     return content
 
 def make_big_maps_leaflet(aasta=None, objekt_id=None):
     kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
     objektiga_kaardid = []
     objektiga_kaart_max = DEFAULT_MAP
-    obj = Objekt.objects.none()
 
+    # Kas vaja näidata kaartidel objekti?
+    obj = Objekt.objects.none()
     if objekt_id:
         try:
             obj = Objekt.objects.get(id=objekt_id)
         except ObjectDoesNotExist:
             pass
-
         if obj:
             objektiga_kaardiobjektid = obj.kaardiobjekt_set.filter()
             if objektiga_kaardiobjektid:
                 objektiga_kaardid = [kaardiobjekt.kaart.aasta for kaardiobjekt in objektiga_kaardiobjektid]
                 objektiga_kaart_max = max(objektiga_kaardid)
                 # objektiga_kaart_min = min(objektiga_kaardid)
-    # else:
-    #     obj = Objekt.objects.none()
 
-    zoom_start = DEFAULT_MAP_ZOOM_START
 
     if aasta and Kaart.objects.filter(aasta=aasta).count()==0:
         aastad = ', '.join([kaart.aasta for kaart in kaardid])
         return f'<p><strong>{aasta}</strong>. aasta kaarti ei ole. Vali järgmistest: {aastad}</p>'
     else:
         # Loome aluskaardi
+        # zoom_start = DEFAULT_MAP_ZOOM_START
         map = folium.Map(
             location=DEFAULT_CENTER,  # NB! tagurpidi: [lat, lon],
-            zoom_start=zoom_start,
+            zoom_start=DEFAULT_MAP_ZOOM_START,
             min_zoom=DEFAULT_MIN_ZOOM,
             zoom_control=True,
             control_scale=True,
             tiles=None,
         )
+
+
+        # Teegid mida kasutatakse folium leaflet moodulis
         map.default_css = LEAFLET_DEFAULT_CSS
         map.default_js = LEAFLET_DEFAULT_JS
+        LEAFLET_DEFAULT_HEADER.add_to(map.get_root().header)
 
         map_name = map.get_name()
-
         feature_groups = {} # erinevate aastate kaardid
+        feature_groups_kaardiobjektid = {} # erinevate aastate kaartidel m2rgitud kaardiobjektid
 
         for kaart in kaardid:
             kaart_aasta = kaart.aasta
             if kaart_aasta in objektiga_kaardid:
-                color = GEOJSON_STYLE['H']['color']
-                name = f'<span style="color: {color};">{kaart_aasta}</span>' # fuchsia
+                color = GEOJSON_STYLE['HE']['color']
+                name = f'<span class="kaart-control-layers" style="color: {color};">{kaart_aasta}</span>' # fuchsia
             elif kaart_aasta == DEFAULT_MAP.aasta and objektiga_kaardid and obj.gone:
                 color = GEOJSON_STYLE['HH']['color']
-                name = f'<span style="color: {color};">{kaart_aasta}</span>' # red
+                name = f'<span class="kaart-control-layers" style="color: {color};">{kaart_aasta}</span>' # red
             else:
-                name = f'<span style="color: #A9A9A9;">{kaart_aasta}</span>' # darkgrey
+                name = f'<span class="kaart-control-layers" style="color: #A9A9A9;">{kaart_aasta}</span>' # darkgrey
 
             # loome kaardikihi
             feature_group = folium.FeatureGroup(
@@ -650,21 +671,18 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
                 location=DEFAULT_CENTER,
                 # name=kaart.aasta,
                 tiles=kaart.tiles,
-                zoom_start=zoom_start,
+                zoom_start=DEFAULT_MAP_ZOOM_START,
                 min_zoom=DEFAULT_MIN_ZOOM,
                 attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
                 id=kaart.aasta
             )
 
-            # lisame kaardikihile vektorkihi kui on objekti kaardiobjektid
-            if obj:
-                tyyp_style = lambda x: x
+            if obj: # lisame kaardikihile vektorkihi kui on objekti kaardiobjektid
                 if kaart == DEFAULT_MAP:
                     kaardiobjektid = obj.kaardiobjekt_set.filter(kaart__aasta__exact=objektiga_kaart_max)
                     if obj.gone:
                         tilelayer_stamen_toner = folium.TileLayer("Stamen Toner")
                         tilelayer.tiles = tilelayer_stamen_toner.tiles
-                        tyyp_style = lambda x: f'{x}H'  # objekt hävinud
                 else:
                     kaardiobjektid = obj.kaardiobjekt_set.filter(kaart=kaart)
 
@@ -672,21 +690,82 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
                     geometry = kaardiobjekt.geometry
                     tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
                     name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
+                    if kaart == DEFAULT_MAP and obj.gone:
+                        fillColor = GEOJSON_STYLE[f'{tyyp}H']["fill"]
+                        color = GEOJSON_STYLE[f'{tyyp}H']["color"]
+                        weight = GEOJSON_STYLE[f'{tyyp}H']["weight"]
+                    else:
+                        fillColor = GEOJSON_STYLE[f'{tyyp}E']["fill"]
+                        color = GEOJSON_STYLE[f'{tyyp}E']["color"]
+                        weight = GEOJSON_STYLE[f'{tyyp}E']["weight"]
                     feature_collection = {
                         "type": "FeatureCollection",
                         "name": name,
                         "features": [geometry]
                     }
-                    style = GEOJSON_STYLE[tyyp_style(tyyp)]
                     f = json.dumps(feature_collection)
                     geojson = folium.GeoJson(
                         f,
                         name=name,
-                        style_function=lambda x: style,
+                        style_function=lambda x, fillColor=fillColor, color=color: {
+                            "fillColor": fillColor,
+                            "color": color,
+                            "weight": weight
+                        },
                         tooltip=get_object_data4tooltip(obj),
                         highlight_function=lambda x: {"fillOpacity": 0.5},
                     )
                     geojson.add_to(feature_group)
+
+            # Loome kaardi olemasolevate m2rgtud kaardiobjektide kihi
+            if kaart != DEFAULT_MAP: # kaasaja kaardil kaardiobjekte liiga palju
+                kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart)
+                if kaardiobjektid:
+                    feature_group_kaardiobjektid = folium.FeatureGroup(
+                        name=f'<span class="kaart-control-layers">Kaardiobjektid {kaart.aasta}</span>',
+                        show=False
+                    )
+                    for kaardiobjekt in kaardiobjektid:
+                        tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
+                        tooltip = f'<div class="kaardiobjekt-tooltip">{kaardiobjekt}</div>'
+                        fillColor = GEOJSON_STYLE[tyyp]["fill"]
+                        color = GEOJSON_STYLE[tyyp]["color"]
+                        weight = GEOJSON_STYLE[tyyp]["weight"]
+                        if kaardiobjekt.objekt: # kui seotud objektiga
+                            tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
+                            if kaardiobjekt.objekt.gone: # hävinud
+                                fillColor = GEOJSON_STYLE[f'{tyyp}H']["fill"]
+                                color = GEOJSON_STYLE[f'{tyyp}H']["color"]
+                                weight = GEOJSON_STYLE[f'{tyyp}H']["weight"]
+                            else: # alles
+                                fillColor = GEOJSON_STYLE[f'{tyyp}E']["fill"]
+                                color = GEOJSON_STYLE[f'{tyyp}E']["color"]
+                                weight = GEOJSON_STYLE[f'{tyyp}E']["weight"]
+                        geometry = kaardiobjekt.geometry
+                        name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
+                        feature_collection = {
+                            "type": "FeatureCollection",
+                            "name": name,
+                            "features": [geometry]
+                        }
+                        f = json.dumps(feature_collection)
+                        geojson = folium.GeoJson(
+                            f,
+                            name=name,
+                            style_function=lambda x, fillColor=fillColor, color=color: {
+                                "fillColor": fillColor,
+                                "color": color,
+                                "weight": weight
+                            },
+                            tooltip=tooltip,
+                            highlight_function=lambda x: {"fillOpacity": 0.5},
+                        )
+                        geojson.add_to(feature_group_kaardiobjektid)
+                    # end for kaardiobjekt in kaardiobjektid:
+
+                    feature_group_kaardiobjektid.add_to(map)
+                    feature_groups_kaardiobjektid[aasta] = feature_group_kaardiobjektid
+                # end if kaardiobjektid:
 
             # Lisame kaardile kirjelduse tootipi
             kwargs = {
@@ -708,17 +787,25 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
         style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
         with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
             src = json.load(gf)
-            geojson = folium.GeoJson(src, name="Valga ja Valka piirid (2021)", style_function=lambda x: style1)
+            geojson = folium.GeoJson(
+                src,
+                name=f'<span class="kaart-control-layers">linnapiirid (2021)</span>',
+                style_function=lambda x: style1
+            )
             geojson.add_to(map)
 
         # Tänavatevõrk tänapäeval
         style2 = {'fill': None, 'color': 'orange', 'weight': 2}
         with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
             src = json.load(gf)
-            geojson = folium.GeoJson(src, name="teedevõrk (2021)", style_function=lambda x: style2)
+            geojson = folium.GeoJson(
+                src,
+                name=f'<span class="kaart-control-layers">tänavad (2021)</span>',
+                style_function=lambda x: style2
+            )
             geojson.add_to(map)
 
-        # Lisame kihtide kontrolli
+        # Lisame kihtide kontrolli kaartide jaoks
         layer_control = folium.LayerControl()
         layer_control.add_to(map)
 
@@ -809,9 +896,6 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
         {{% endmacro %}}'''.format(js))
 
         map_html = map._repr_html_()
-        # map.save("ajutine.html")
-        # print(map.__dir__())
-
         # v2ike h2kk, mis muudab vertikaalset suuruse sõltuvaks css-ist
         map_html = map_html.replace(
             'style="position:relative;width:100%;height:0;padding-bottom:60%;"',
@@ -824,178 +908,7 @@ def make_big_maps_leaflet(aasta=None, objekt_id=None):
             '<span style="color:#565656">Kaarti laetakse. Kui see kiri jääb nähtavaks, tekkis laadimisel viga</span>',
             1
         )
-        # with open(f"ajutine.html", "w") as f:
-        #     f.write(map_html)
-
         return map_html
-
-# Konkreetse objekti erinevate aastate kaardid koos
-# def make_objekt_leaflet_combo_vana(objekt_id=1):
-#     obj = Objekt.objects.get(id=objekt_id)
-#     # Kõigi kaartide ids, kus objekt märgitud: tulemus: <QuerySet ['1', '2', '3']>
-#     kaart_ids = obj.kaardiobjekt_set.values_list('kaart__id', flat=True)
-#
-#     if kaart_ids:
-#         kaardid = Kaart.objects.filter(id__in=kaart_ids)
-#         objekt_missing_on_defaultmap = DEFAULT_MAP.id not in kaart_ids # Objekti kaasajal pole?
-#         hiliseim_kaart_aasta = max([kaart.aasta for kaart in kaardid])
-#
-#         if objekt_missing_on_defaultmap:
-#             # Lisame vaate, millel näitame virtuaalset asukohta tänapäeval
-#             kaardid = kaardid | Kaart.objects.filter(id=DEFAULT_MAP.id)
-#
-#         feature_group = {}
-#         zoom_start = DEFAULT_MAP_ZOOM_START
-#         location = DEFAULT_CENTER
-#
-#         for kaart in kaardid:
-#             aasta = kaart.aasta
-#
-#             feature_group[aasta] = folium.FeatureGroup(
-#                 name=aasta,
-#                 overlay=False
-#             )
-#
-#             if kaart == DEFAULT_MAP and objekt_missing_on_defaultmap:
-#                 folium.TileLayer(
-#                     location=location,
-#                     name=aasta,
-#                     tiles="Stamen Toner",
-#                     zoom_start=zoom_start,
-#                     min_zoom=DEFAULT_MIN_ZOOM
-#                 ).add_to(feature_group[aasta])
-#             else:
-#                 kaardiobjektid = obj.kaardiobjekt_set.filter(kaart=kaart)
-#                 if kaardiobjektid[0].geometry:
-#                     location = kaardiobjektid[0].centroid
-#                 folium.TileLayer(
-#                     location=location,
-#                     name=aasta,
-#                     tiles=kaart.tiles,
-#                     zoom_start=zoom_start,
-#                     min_zoom=DEFAULT_MIN_ZOOM,
-#                     attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
-#                 ).add_to(feature_group[aasta])
-#
-#                 # lisame vektorkihid
-#                 for kaardiobjekt in kaardiobjektid:
-#                     geometry = kaardiobjekt.geometry
-#                     tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-#                     name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
-#                     feature_collection = {
-#                         "type": "FeatureCollection",
-#                         "name": name,
-#                         "features": [geometry]
-#                     }
-#                     if obj.gone: # objekti kaasajal pole
-#                         tyyp_style = f'{kaardiobjekt.tyyp}H'  # 'HH'-hoonestus, 'AH'-ala, 'MH'-muu
-#                     else: # objekt kaasajal olemas
-#                         tyyp_style = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-#                     style = GEOJSON_STYLE[tyyp_style]
-#                     f = json.dumps(feature_collection)
-#                     folium.GeoJson(
-#                         f,
-#                         name=name,
-#                         style_function=lambda x: style
-#                     ).add_to(feature_group[aasta])
-#                     if kaart.aasta == hiliseim_kaart_aasta and objekt_missing_on_defaultmap:
-#                         folium.GeoJson(
-#                             f,
-#                             name=name,
-#                             style_function=lambda x: style
-#                         ).add_to(feature_group[DEFAULT_MAP.aasta])
-#                     # Kui on antud zoomimise tase, siis kasutame seda
-#                     if kaardiobjekt.zoom and (zoom_start > kaardiobjekt.zoom):
-#                         zoom_start = kaardiobjekt.zoom
-#
-#                 # Parandame zoomi, kui mõnel kihil on määratud TODO: ei toimi
-#                 # tilelayer.zoom_start = zoom_start
-#
-#         # Loome aluskaardi
-#         kwargs = { # vajalikud mobiilis kerimise h6lbustamiseks
-#             'dragging': '!L.Browser.mobile',
-#             'tap': '!L.Browser.mobile'
-#         }
-#         map = folium.Map(
-#             location=location,  # NB! tagurpidi: [lat, lon],
-#             zoom_start=zoom_start,
-#             min_zoom=DEFAULT_MIN_ZOOM,
-#             zoom_control=True,
-#             # control_scale=True,
-#             tiles=None,
-#             **kwargs
-#         )
-#         # map_name = map.get_name()
-#         map.default_css = LEAFLET_DEFAULT_CSS
-#         map.default_js = LEAFLET_DEFAULT_JS
-#
-#         for aasta in feature_group.keys():
-#             # Lisame kaardi leaflet combosse
-#             feature_group[aasta].add_to(map)
-#             # print(feature_group[aasta].get_name())
-#
-#         # Piirid tänapäeval
-#         style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
-#         with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
-#             src = json.load(gf)
-#             folium.GeoJson(src, name="administratiivpiirid (2021)", style_function=lambda x: style1).add_to(map)
-#
-#         # Tänavatevõrk tänapäeval
-#         style2 = {'fill': None, 'color': 'orange', 'weight': 2}
-#         with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
-#             src = json.load(gf)
-#             folium.GeoJson(src, name="teedevõrk (2021)", style_function=lambda x: style2).add_to(map)
-#
-#         # Lisame kihtide kontrolli
-#         folium.LayerControl().add_to(map)
-#
-#         # Legendi lisamiseks TODO: Hetkel ei kasuta
-#         # import branca
-#         #
-#         # legend_html = '''
-#         # {% macro html(this, kwargs) %}
-#         # <div style="
-#         #     position: fixed;
-#         #     bottom: 50px;
-#         #     left: 50px;
-#         #     width: 250px;
-#         #     height: 80px;
-#         #     z-index:9999;
-#         #     font-size:14px;
-#         #     ">
-#         #     <p><a style="color:#000000;font-size:150%;margin-left:20px;">&diams;</a>&emsp;[aasta]</p>
-#         # </div>
-#         # <div style="
-#         #     position: fixed;
-#         #     bottom: 50px;
-#         #     left: 50px;
-#         #     width: 150px;
-#         #     height: 80px;
-#         #     z-index:9998;
-#         #     font-size:14px;
-#         #     background-color: #ffffff;
-#         #
-#         #     opacity: 0.7;
-#         #     ">
-#         # </div>
-#         # <script>
-#         #
-#         # </script>
-#         # {% endmacro %}
-#         # '''
-#         # legend = branca.element.MacroElement()
-#         # legend._template = branca.element.Template(legend_html)
-#         # map.get_root().add_child(legend)
-#
-#         # map.save("index.html")
-#         map_html = map._repr_html_()
-#
-#         # v2ike h2kk, mis muudab vertikaalset suurust
-#         map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
-#         # with open(f"ajutine_{objekt_id}.html", "w") as f:
-#         #     f.write(map_html)
-#         # map.save(f"ajutine_{objekt_id}.html")
-#         return map_html
 
 # Konkreetse objekti erinevate aastate kaardid koos
 def make_objekt_leaflet_combo(objekt_id=1):
@@ -1021,7 +934,7 @@ def make_objekt_leaflet_combo(objekt_id=1):
             url = reverse('kaart')
 
             feature_group[aasta] = folium.FeatureGroup(
-                name=aasta,
+                name=f'<span class="kaart-control-layers">{aasta}</span>',
                 overlay=False
             )
 
@@ -1101,26 +1014,34 @@ def make_objekt_leaflet_combo(objekt_id=1):
             tiles=None,
             **kwargs
         )
-        # map_name = map.get_name()
+
         map.default_css = LEAFLET_DEFAULT_CSS
         map.default_js = LEAFLET_DEFAULT_JS
+        LEAFLET_DEFAULT_HEADER.add_to(map.get_root().header)
 
         for aasta in feature_group.keys():
             # Lisame kaardi leaflet combosse
             feature_group[aasta].add_to(map)
-            # print(feature_group[aasta].get_name())
 
         # Piirid tänapäeval
         style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
         with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
             src = json.load(gf)
-            folium.GeoJson(src, name="administratiivpiirid (2021)", style_function=lambda x: style1).add_to(map)
+            folium.GeoJson(
+                src,
+                name=f'<span class="kaart-control-layers">linnapiirid (2021)</span>',
+                style_function=lambda x: style1
+            ).add_to(map)
 
         # Tänavatevõrk tänapäeval
         style2 = {'fill': None, 'color': 'orange', 'weight': 2}
         with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
             src = json.load(gf)
-            folium.GeoJson(src, name="teedevõrk (2021)", style_function=lambda x: style2).add_to(map)
+            folium.GeoJson(
+                src,
+                name=f'<span class="kaart-control-layers">tänavad (2021)</span>',
+                style_function=lambda x: style2
+            ).add_to(map)
 
         # Lisame infonupu
         leafletJsButton(
@@ -1150,52 +1071,9 @@ def make_objekt_leaflet_combo(objekt_id=1):
         # Lisame kihtide kontrolli
         folium.LayerControl().add_to(map)
 
-        # Legendi lisamiseks TODO: Hetkel ei kasuta
-        # import branca
-        #
-        # legend_html = '''
-        # {% macro html(this, kwargs) %}
-        # <div style="
-        #     position: fixed;
-        #     bottom: 50px;
-        #     left: 50px;
-        #     width: 250px;
-        #     height: 80px;
-        #     z-index:9999;
-        #     font-size:14px;
-        #     ">
-        #     <p><a style="color:#000000;font-size:150%;margin-left:20px;">&diams;</a>&emsp;[aasta]</p>
-        # </div>
-        # <div style="
-        #     position: fixed;
-        #     bottom: 50px;
-        #     left: 50px;
-        #     width: 150px;
-        #     height: 80px;
-        #     z-index:9998;
-        #     font-size:14px;
-        #     background-color: #ffffff;
-        #
-        #     opacity: 0.7;
-        #     ">
-        # </div>
-        # <script>
-        #
-        # </script>
-        # {% endmacro %}
-        # '''
-        # legend = branca.element.MacroElement()
-        # legend._template = branca.element.Template(legend_html)
-        # map.get_root().add_child(legend)
-
-        # map.save("index.html")
         map_html = map._repr_html_()
-
         # v2ike h2kk, mis muudab vertikaalset suurust
         map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
-        # with open(f"ajutine_{objekt_id}.html", "w") as f:
-        #     f.write(map_html)
-        # map.save(f"ajutine_{objekt_id}.html")
         return map_html
 
 # Konkreetse kaardiobjekti kaart
@@ -1237,12 +1115,8 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
         folium.LayerControl().add_to(map)
 
         map_html = map._repr_html_()
-
         # v2ike h2kk, mis muudab vertikaalset suurust
         map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
-        # with open(f"ajutine_{objekt_id}.html", "w") as f:
-        #     f.write(map_html)
-        # map.save(f"ajutine_{kaardiobjekt_id}.html")
         return map_html
 
 
@@ -1262,6 +1136,7 @@ if __name__ == "__main__":
     # update_objekt_from_csv()
     # shp_match_db()
     pass
+
 
 """
 https://tools.ietf.org/html/rfc7946

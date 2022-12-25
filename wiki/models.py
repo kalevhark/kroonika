@@ -1988,13 +1988,14 @@ class Kaart(models.Model):
 
     @property
     def kirjeldus_html(self):
-        return '<br>'.join(
+        kirjeldus = '<br>'.join(
             [
                 f'<h4>{self.aasta} {self.nimi}</h4>',
                 markdownify(escape_numberdot(self.kirjeldus)),
                 f'Allikas: {self.viited.first()}'
             ]
         )
+        return f'<div class="kaart-tooltip">{kirjeldus}</div>'
 
 
     class Meta:
