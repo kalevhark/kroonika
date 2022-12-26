@@ -79,6 +79,7 @@ LEAFLET_DEFAULT_JS = [
 
 # Kroonika default font kasutamiseks + custom elementide css
 LEAFLET_DEFAULT_HEADER = Element(
+    '<frame-options policy="SAMEORIGIN" />'
     '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">'
     '<style>'
     '.kaart-control-layers,'
@@ -592,12 +593,12 @@ class leafletJsButton(MacroElement):
         )
 
 # objektide markeril hiirega peatudes infoakna kuvamiseks
-def get_object_data4tooltip(obj):
-    heading = f'{obj}'
-    if obj.gone:
+def get_object_data4tooltip(objekt):
+    heading = f'{objekt}'
+    if objekt.gone:
         heading += '<br /><span style="color: red;">hävinud</span>'
-    if obj.profiilipildid.exists():
-        profiilipilt = obj.profiilipildid.first()
+    if objekt.profiilipildid.exists():
+        profiilipilt = objekt.profiilipildid.first()
         img = settings.MEDIA_URL + profiilipilt.pilt_thumbnail.name
         img = f'<br /><img class="tooltip-content-img" src="{img}" alt="{profiilipilt}">'
     else:
@@ -605,10 +606,23 @@ def get_object_data4tooltip(obj):
     content = f'<div class="kaardiobjekt-tooltip">{heading}{img}</div>'
     return content
 
-# objektide markeril hiirega peatudes infoakna kuvamiseks
-def get_object_data4popup(obj):
-    href = obj.get_absolute_url()
-    content = f'<div class="kaardiobjekt-tooltip">Loe rohkem <a href="{href}">{obj}</a></div>'
+# objektide markeril hiirega klikkides infoakna kuvamiseks
+def get_object_data4popup(objekt):
+    href = objekt.get_absolute_url()
+    content = f'<div class="kaardiobjekt-tooltip">Loe rohkem: <a href="{href}" target="_blank">{objekt}</a></div>'
+    return content
+
+# kaardiobjektide markeril hiirega peatudes infoakna kuvamiseks
+def get_kaardiobjekt_data4tooltip(kaardiobjekt):
+    heading = f'<p>{kaardiobjekt.kaart}</p>'
+    parts = []
+    aadressiobjekt = ' '.join([kaardiobjekt.tn, kaardiobjekt.nr]).strip()
+    if aadressiobjekt:
+        parts.append(f'{kaardiobjekt.get_tyyp_display()}: {aadressiobjekt}')
+    if kaardiobjekt.lisainfo:
+        parts.append(kaardiobjekt.lisainfo)
+    body = '<br />'.join(parts)
+    content = f'<div class="kaardiobjekt-tooltip">{heading}{body}</div>'
     return content
 
 def make_big_maps_leaflet(aasta=None, objekt=None):
@@ -742,7 +756,7 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
                 )
                 for kaardiobjekt in kaardiobjektid:
                     tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-                    tooltip = f'<div class="kaardiobjekt-tooltip">{kaardiobjekt}</div>'
+                    tooltip = get_kaardiobjekt_data4tooltip(kaardiobjekt) # f'<div class="kaardiobjekt-tooltip">{kaardiobjekt}</div>'
                     popup = None
                     fillColor = GEOJSON_STYLE[tyyp]["fill"]
                     color = GEOJSON_STYLE[tyyp]["color"]
