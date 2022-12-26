@@ -61,7 +61,8 @@ GEOJSON_STYLE = {
 
 # https://python-visualization.github.io/folium/modules.html#module-folium.map
 LEAFLET_DEFAULT_CSS = [
-    ('leaflet_css', 'https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css'),
+    # ('leaflet_css', 'https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css'),
+    ("leaflet_css", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"),
     ('bootstrap_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'),
     ('bootstrap_theme_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css'),
     ('awesome_markers_font_css', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'),
@@ -69,7 +70,8 @@ LEAFLET_DEFAULT_CSS = [
     ('awesome_rotate_css', 'https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css')
 ]
 LEAFLET_DEFAULT_JS = [
-    ('leaflet', 'https://unpkg.com/leaflet@1.8.0/dist/leaflet.js'),
+    # ('leaflet', 'https://unpkg.com/leaflet@1.8.0/dist/leaflet.js'),
+    ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"),
     ('jquery', 'https://code.jquery.com/jquery-1.12.4.min.js'),
     ('bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'),
     ('awesome_markers', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js')
@@ -603,6 +605,12 @@ def get_object_data4tooltip(obj):
     content = f'<div class="kaardiobjekt-tooltip">{heading}{img}</div>'
     return content
 
+# objektide markeril hiirega peatudes infoakna kuvamiseks
+def get_object_data4popup(obj):
+    href = obj.get_absolute_url()
+    content = f'<div class="kaardiobjekt-tooltip">Loe rohkem <a href="{href}">{obj}</a></div>'
+    return content
+
 def make_big_maps_leaflet(aasta=None, objekt=None):
     kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
     if aasta and Kaart.objects.filter(aasta=aasta).count()==0:
@@ -735,11 +743,16 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
                 for kaardiobjekt in kaardiobjektid:
                     tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
                     tooltip = f'<div class="kaardiobjekt-tooltip">{kaardiobjekt}</div>'
+                    popup = None
                     fillColor = GEOJSON_STYLE[tyyp]["fill"]
                     color = GEOJSON_STYLE[tyyp]["color"]
                     weight = GEOJSON_STYLE[tyyp]["weight"]
                     if kaardiobjekt.objekt: # kui seotud objektiga
                         tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
+                        popup = folium.Popup(
+                            get_object_data4popup(kaardiobjekt.objekt),
+                            max_width="100%"
+                        )
                         if kaardiobjekt.objekt.gone: # hävinud
                             fillColor = GEOJSON_STYLE[f'{tyyp}H']["fill"]
                             color = GEOJSON_STYLE[f'{tyyp}H']["color"]
@@ -765,6 +778,7 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
                             "weight": weight
                         },
                         tooltip=tooltip,
+                        popup=popup,
                         highlight_function=lambda x: {"fillOpacity": 0.5},
                     )
                     geojson.add_to(feature_group_kaardiobjektid)
@@ -797,7 +811,8 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
             geojson = folium.GeoJson(
                 src,
                 name=f'<span class="kaart-control-layers">linnapiirid (2021)</span>',
-                style_function=lambda x: style1
+                style_function=lambda x: style1,
+                # embed=False
             )
             geojson.add_to(map)
 
@@ -808,7 +823,8 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
             geojson = folium.GeoJson(
                 src,
                 name=f'<span class="kaart-control-layers">tänavad (2021)</span>',
-                style_function=lambda x: style2
+                style_function=lambda x: style2,
+                # embed=False
             )
             geojson.add_to(map)
 
