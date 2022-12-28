@@ -700,18 +700,17 @@ def add_objekt2map(feature_groups_kaardid, obj):
     # end if obj:
     return feature_groups_kaardid
 
-#                 if kaart_aasta in objektiga_kaardid:
-#                     color = GEOJSON_STYLE['HE']['color']
-#                     name = f'<span class="kaart-control-layers" style="color: {color};">{kaart_aasta}</span>' # fuchsia
-#                 elif kaart_aasta == DEFAULT_MAP.aasta and objektiga_kaardid and obj.gone:
-#                     color = GEOJSON_STYLE['HH']['color']
-#                     name = f'<span class="kaart-control-layers" style="color: {color};">{kaart_aasta}</span>' # red
-#                 else:
-#                     name = f'<span class="kaart-control-layers" style="color: #A9A9A9;">{kaart_aasta}</span>' # darkgrey
+def get_objekt_centroid_location(obj, aasta):
+    objekt_centroid_location = None
+    try:
+        objekt_centroid_location = Kaardiobjekt.objects.filter(kaart__aasta=aasta, objekt=obj).first().centroid
+    except:
+        kaardiobjektid = Kaardiobjekt.objects.filter(objekt=obj)
+        if kaardiobjektid:
+            objekt_centroid_location = kaardiobjektid.first().centroid
+    return objekt_centroid_location
 
-#                     for kaardiobjekt in kaardiobjektid:
-
-def get_big_maps_default(kaardid, obj):
+def get_big_maps_default(kaardid, obj, aasta):
     feature_groups_kaardid = {} # erinevate aastate kaardid
     feature_groups_kaardiobjektid = {} # erinevate aastate kaartidel m2rgitud kaardiobjektid
 
@@ -833,6 +832,9 @@ def get_big_maps_default(kaardid, obj):
 
     if obj:
         feature_groups_kaardid = add_objekt2map(feature_groups_kaardid, obj)
+        objekt_centroid_location = get_objekt_centroid_location(obj, aasta)
+        if objekt_centroid_location:
+            map.location = objekt_centroid_location
 
     for fgs in [feature_groups_kaardid, feature_groups_kaardiobjektid]:
         for fg in fgs.values():
@@ -976,7 +978,7 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
         else: # Konstrueerime kaardi
             # map_constructor = get_big_maps_default(kaardid)
             # map = map_constructor['map']
-            map = get_big_maps_default(kaardid, obj)
+            map = get_big_maps_default(kaardid, obj, aasta)
             # feature_groups_kaardid = map_constructor['feature_groups_kaardid']
             # feature_groups_kaardiobjektid = map_constructor['feature_groups_kaardiobjektid']
             # for fgs in [feature_groups_kaardid, feature_groups_kaardiobjektid]:
