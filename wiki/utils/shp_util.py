@@ -19,6 +19,7 @@ else:
 
 import csv
 import json
+import pickle
 import re
 import time
 
@@ -626,12 +627,19 @@ def get_kaardiobjekt_data4tooltip(kaardiobjekt):
     content = f'<div class="kaardiobjekt-tooltip">{heading}{body}</div>'
     return content
 
-import pickle
-from pathlib import Path
+def add_objekt2map(feature_groups_kaardid, obj):
+    if obj:
+        print(obj)
+        for kaart_aasta in sorted(feature_groups_kaardid.keys()):
+            kaardiobjektid = Kaardiobjekt.objects.filter(kaart__aasta__exact=kaart_aasta, objekt=obj)
+            if kaardiobjektid:
+                pass # kuvame blue objektid
+            elif kaart_aasta == DEFAULT_MAP.aasta:
+                pass
 
-def get_big_maps_default(kaardid):
+    return feature_groups_kaardid
 
-
+def get_big_maps_default(kaardid, obj):
     feature_groups_kaardid = {} # erinevate aastate kaardid
     feature_groups_kaardiobjektid = {} # erinevate aastate kaartidel m2rgitud kaardiobjektid
 
@@ -751,6 +759,9 @@ def get_big_maps_default(kaardid):
     map.default_js = LEAFLET_DEFAULT_JS
     LEAFLET_DEFAULT_HEADER.add_to(map.get_root().header)
 
+    if obj:
+        feature_groups_kaardid = add_objekt2map(feature_groups_kaardid, obj)
+
     for fgs in [feature_groups_kaardid, feature_groups_kaardiobjektid]:
         for fg in fgs.values():
             fg.add_to(map)
@@ -837,9 +848,10 @@ def get_big_maps_default(kaardid):
     js += 'const basemaps = {' + ', '.join(basemaps) + '};\n'
     js += f'const href = {map_name}._container.baseURI;\n'
     js += 'const url = new URL(href);\n'
-    js += 'var r = /\d+/;\n'
-    js += 'var kaartAasta = url.pathname.match(r);\n'
-    js += 'var kaartObjekt = url.search.match(r);\n'
+    js += 'var r = /\/kaart\/(\d+)\//;\n'
+    js += 'var kaartAasta = url.pathname.match(r)[1];\n'
+    # js += 'r = /\?objekt=(\d+)/;\n'
+    # js += 'var kaartObjekt = url.search.match(r)[1];\n'
     # js += 'console.log(kaartAasta, kaartObjekt);\n'
     js += """
             if (kaartAasta) {
@@ -879,15 +891,20 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
             tekst += f'<p class="hover-objekt"><a href="{href}{kaart.aasta}">{kaart}</a><p>'
         return tekst
     else:
+        obj = Objekt.objects.none()
+        if objekt:
+            try:
+                obj = Objekt.objects.get(id=objekt)
+            except ObjectDoesNotExist:
+                pass
         path = UTIL_DIR / 'geojson' / "big_maps_default.pickle"
-        if path.is_file():
+        if not obj and path.is_file(): # kui ei ole objekti vaja näidata ja on kaardipaki salvestus
             with open(path, 'rb') as f:
-                    map_html = pickle.load(f)
-        else:
-            # Konstrueerime kaardi
+                map_html = pickle.load(f)
+        else: # Konstrueerime kaardi
             # map_constructor = get_big_maps_default(kaardid)
             # map = map_constructor['map']
-            map = get_big_maps_default(kaardid)
+            map = get_big_maps_default(kaardid, obj)
             # feature_groups_kaardid = map_constructor['feature_groups_kaardid']
             # feature_groups_kaardiobjektid = map_constructor['feature_groups_kaardiobjektid']
             # for fgs in [feature_groups_kaardid, feature_groups_kaardiobjektid]:
@@ -967,10 +984,11 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
             # {{% endmacro %}}'''.format(js))
 
             map_html = map._repr_html_()
-            # Salvestame default mapi
-            path = UTIL_DIR / 'geojson' / "big_maps_default.pickle"
-            with open(path, 'wb') as f:
-                pickle.dump(map_html, f, pickle.HIGHEST_PROTOCOL)
+            if not obj: # kui ei ole objektiga kaardipakk
+                # Salvestame default mapi
+                path = UTIL_DIR / 'geojson' / "big_maps_default.pickle"
+                with open(path, 'wb') as f:
+                    pickle.dump(map_html, f, pickle.HIGHEST_PROTOCOL)
 
         # v2ike h2kk, mis muudab vertikaalset suuruse sõltuvaks css-ist
         map_html = map_html.replace(
