@@ -3,7 +3,7 @@
 #
 # Ilmaandmete regulaarseks uuendamiseks andmebaasis
 # Käivitamiseks:
-# /python-env-path-to/python3 /path-to-ilm-app/utils/update.py
+# /python-env-path-to/python3 /path-to-ilm-app/tasks.py
 
 from datetime import datetime, timedelta, timezone
 import os
