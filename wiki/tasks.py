@@ -29,7 +29,8 @@ except: # kui käivitatakse lokaalselt
     from utils import shp_util
 
 if __name__ == '__main__':
-    path = UTIL_DIR / 'geojson' / "big_maps_default.pickle"
-    if path.is_file():
-        os.remove(path)
-    shp_util.make_big_maps_leaflet(aasta=None, objekt=None)
+    # path = UTIL_DIR / 'geojson' / "big_maps_default.pickle"
+    # if path.is_file():
+    #     os.remove(path)
+    # shp_util.make_big_maps_leaflet(aasta=None, objekt=None)
+    shp_util.kaardiobjektid2geojson()
