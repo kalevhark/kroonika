@@ -58,7 +58,10 @@ GEOJSON_STYLE = {
     'MH': {'fill': None, 'color': 'red', 'weight': 3}, # muu (puudub kaasajal)
     'HE': {'fill': OBJEKT_COLOR, 'color': OBJEKT_COLOR, 'weight': 3}, # hoonestus (olemas kaasajal)
     'AE': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # ala (olemas kaasajal)
-    'ME': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # muu (olemas kaasajal)
+    'ME': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # muu (olemas kaasajal),
+    'HV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # hoonestus (virtual)
+    'AV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # ala (virtual)
+    'MV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # muu (virtual)
 }
 
 # https://python-visualization.github.io/folium/modules.html#module-folium.map
@@ -629,73 +632,139 @@ def get_kaardiobjekt_data4tooltip(kaardiobjekt):
 
 def add_objekt2map(feature_groups_kaardid, obj):
     if obj:
-        objektiga_kaart_aasta_max = DEFAULT_MAP.aasta
+        # objektiga_kaart_aasta_max = DEFAULT_MAP.aasta
         queryset = Kaardiobjekt.objects.filter(objekt=obj)
         objektiga_kaardid_aastad = [kaardiobjekt.kaart.aasta for kaardiobjekt in queryset]
         if objektiga_kaardid_aastad:
             objektiga_kaart_aasta_max = max(objektiga_kaardid_aastad)
-            for kaart_aasta in feature_groups_kaardid.keys():
-                if kaart_aasta == DEFAULT_MAP.aasta:
-                    kaardiobjektid = queryset.filter(kaart__aasta__exact=objektiga_kaart_aasta_max)
+            maatriks = {}
+            maatriks[objektiga_kaart_aasta_max] = {
+                'qs': queryset.filter(kaart__aasta__exact=objektiga_kaart_aasta_max),
+                'status': 'E'
+            }
+            for kaart_aasta in [aasta for aasta in sorted(feature_groups_kaardid.keys()) if aasta != objektiga_kaart_aasta_max]:
+                qs = queryset.filter(kaart__aasta__exact=kaart_aasta)
+                if qs:
+                    maatriks[kaart_aasta] = {
+                        'qs': qs,
+                        'status': 'E'
+                    }
                 else:
-                    kaardiobjektid = queryset.filter(kaart__aasta__exact=kaart_aasta)
-                if kaardiobjektid:
-                    fg = feature_groups_kaardid[kaart_aasta]
-                    color = GEOJSON_STYLE['HE']['color']
-                    if kaart_aasta == DEFAULT_MAP.aasta and obj.gone:
-                        color = GEOJSON_STYLE['HH']['color']
-                        tilelayers = [key for key in fg._children.keys() if key.find('tile_layer_') == 0]
-                        if tilelayers:
-                            for tilelayer in tilelayers:
-                                fg._children[tilelayer].tiles = folium.TileLayer('Stamen Toner').tiles
-                    name = f'<span class="kaart-control-layers" style="color: {color};">{kaart_aasta}</span>'  # fuchsia
-                    fg.layer_name = name
+                    status = 'V'
+                    if kaart_aasta > objektiga_kaart_aasta_max and obj.gone:
+                        status = 'H'
+                    maatriks[kaart_aasta] = {
+                        'qs': maatriks[objektiga_kaart_aasta_max]['qs'],
+                        'status': status,
+                    }
 
-                    for kaardiobjekt in kaardiobjektid:
-                        tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-                        tooltip = get_kaardiobjekt_data4tooltip(kaardiobjekt)
-                        popup = None
-                        fillColor = GEOJSON_STYLE[tyyp]["fill"]
-                        color = GEOJSON_STYLE[tyyp]["color"]
-                        weight = GEOJSON_STYLE[tyyp]["weight"]
-                        if kaardiobjekt.objekt:  # kui seotud objektiga
-                            tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
-                            popup = folium.Popup(
-                                get_object_data4popup(kaardiobjekt.objekt),
-                                max_width="100%"
-                            )
-                            if kaart_aasta == DEFAULT_MAP.aasta and kaardiobjekt.objekt.gone:  # hävinud
-                                fillColor = GEOJSON_STYLE[f'{tyyp}H']["fill"]
-                                color = GEOJSON_STYLE[f'{tyyp}H']["color"]
-                                weight = GEOJSON_STYLE[f'{tyyp}H']["weight"]
-                            else:  # alles
-                                fillColor = GEOJSON_STYLE[f'{tyyp}E']["fill"]
-                                color = GEOJSON_STYLE[f'{tyyp}E']["color"]
-                                weight = GEOJSON_STYLE[f'{tyyp}E']["weight"]
-                        geometry = kaardiobjekt.geometry
-                        name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
-                        feature_collection = {
-                            "type": "FeatureCollection",
-                            "name": name,
-                            "features": [geometry]
-                        }
-                        f = json.dumps(feature_collection)
-                        geojson = folium.GeoJson(
-                            f,
-                            name=name,
-                            style_function=lambda x, fillColor=fillColor, color=color: {
-                                "fillColor": fillColor,
-                                "color": color,
-                                "weight": weight
-                            },
-                            tooltip=tooltip,
-                            popup=popup,
-                            highlight_function=lambda x: {"fillOpacity": 0.5},
+            for kaart_aasta in maatriks.keys():
+                fg = feature_groups_kaardid[kaart_aasta]
+                status = maatriks[kaart_aasta]['status']
+                color = GEOJSON_STYLE[f'H{status}']['color']
+                if kaart_aasta == DEFAULT_MAP.aasta:
+                    # color = GEOJSON_STYLE['HH']['color']
+                    tilelayers = [key for key in fg._children.keys() if key.find('tile_layer_') == 0]
+                    if tilelayers:
+                        for tilelayer in tilelayers:
+                            fg._children[tilelayer].tiles = folium.TileLayer('Stamen Toner').tiles
+                name = f'<span class="kaart-control-layers" style="color: {color};">{kaart_aasta}</span>'
+                fg.layer_name = name
+                kaardiobjektid = maatriks[kaart_aasta]['qs']
+
+                for kaardiobjekt in kaardiobjektid:
+                    tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
+                    tooltip = get_kaardiobjekt_data4tooltip(kaardiobjekt)
+                    popup = None
+                    style = GEOJSON_STYLE[f'{tyyp}{status}']
+                    if kaardiobjekt.objekt:  # kui seotud objektiga
+                        tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
+                        popup = folium.Popup(
+                            get_object_data4popup(kaardiobjekt.objekt),
+                            max_width="100%"
                         )
-                        geojson.add_to(feature_groups_kaardid[kaart_aasta])
-                    # end for kaardiobjekt in kaardiobjektid:
-                # end if kaardiobjektid
-            # end for kaart_aasta in feature_groups_kaardid.keys()
+                    geometry = kaardiobjekt.geometry
+                    name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
+                    feature_collection = {
+                        "type": "FeatureCollection",
+                        "name": name,
+                        "features": [geometry]
+                    }
+                    f = json.dumps(feature_collection)
+                    geojson = folium.GeoJson(
+                        f,
+                        name=name,
+                        style_function=lambda x, style=style: style,
+                        tooltip=tooltip,
+                        popup=popup,
+                        highlight_function=lambda x: {"fillOpacity": 0.5},
+                    )
+                    geojson.add_to(feature_groups_kaardid[kaart_aasta])
+                # end for kaardiobjekt in kaardiobjektid:
+            # end for kaart_aasta in maatriks.keys():
+
+        # if objektiga_kaardid_aastad:
+        #     kaardiobjektid = queryset.filter(kaart__aasta__exact=objektiga_kaart_aasta_max)
+        #     for kaart_aasta in sorted(feature_groups_kaardid.keys(), reverse=True): # kaardid hilisemast varasemaini
+        #         if kaart_aasta != DEFAULT_MAP.aasta:
+        #             kaardiobjektid = queryset.filter(kaart__aasta__exact=kaart_aasta)
+        #         if kaardiobjektid:
+        #             fg = feature_groups_kaardid[kaart_aasta]
+        #             color = GEOJSON_STYLE['HE']['color']
+        #             if kaart_aasta == DEFAULT_MAP.aasta and obj.gone:
+        #                 color = GEOJSON_STYLE['HH']['color']
+        #                 tilelayers = [key for key in fg._children.keys() if key.find('tile_layer_') == 0]
+        #                 if tilelayers:
+        #                     for tilelayer in tilelayers:
+        #                         fg._children[tilelayer].tiles = folium.TileLayer('Stamen Toner').tiles
+        #             name = f'<span class="kaart-control-layers" style="color: {color};">{kaart_aasta}</span>'  # fuchsia
+        #             fg.layer_name = name
+        #
+        #             for kaardiobjekt in kaardiobjektid:
+        #                 tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
+        #                 tooltip = get_kaardiobjekt_data4tooltip(kaardiobjekt)
+        #                 popup = None
+        #                 fillColor = GEOJSON_STYLE[tyyp]["fill"]
+        #                 color = GEOJSON_STYLE[tyyp]["color"]
+        #                 weight = GEOJSON_STYLE[tyyp]["weight"]
+        #                 if kaardiobjekt.objekt: # kui seotud objektiga
+        #                     tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
+        #                     popup = folium.Popup(
+        #                         get_object_data4popup(kaardiobjekt.objekt),
+        #                         max_width="100%"
+        #                     )
+        #                     if kaart_aasta == DEFAULT_MAP.aasta and kaardiobjekt.objekt.gone:  # hävinud
+        #                         fillColor = GEOJSON_STYLE[f'{tyyp}H']["fill"]
+        #                         color = GEOJSON_STYLE[f'{tyyp}H']["color"]
+        #                         weight = GEOJSON_STYLE[f'{tyyp}H']["weight"]
+        #                     else:  # alles
+        #                         fillColor = GEOJSON_STYLE[f'{tyyp}E']["fill"]
+        #                         color = GEOJSON_STYLE[f'{tyyp}E']["color"]
+        #                         weight = GEOJSON_STYLE[f'{tyyp}E']["weight"]
+        #                 geometry = kaardiobjekt.geometry
+        #                 name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
+        #                 feature_collection = {
+        #                     "type": "FeatureCollection",
+        #                     "name": name,
+        #                     "features": [geometry]
+        #                 }
+        #                 f = json.dumps(feature_collection)
+        #                 geojson = folium.GeoJson(
+        #                     f,
+        #                     name=name,
+        #                     style_function=lambda x, fillColor=fillColor, color=color: {
+        #                         "fillColor": fillColor,
+        #                         "color": color,
+        #                         "weight": weight
+        #                     },
+        #                     tooltip=tooltip,
+        #                     popup=popup,
+        #                     highlight_function=lambda x: {"fillOpacity": 0.5},
+        #                 )
+        #                 geojson.add_to(feature_groups_kaardid[kaart_aasta])
+        #             # end for kaardiobjekt in kaardiobjektid:
+        #         # end if kaardiobjektid
+        #     end for kaart_aasta in feature_groups_kaardid.keys()
         # end if objektiga_kaardid_aastad:
     # end if obj:
     return feature_groups_kaardid
@@ -770,9 +839,10 @@ def get_big_maps_default(kaardid, obj, aasta):
                 tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
                 tooltip = get_kaardiobjekt_data4tooltip(kaardiobjekt) # f'<div class="kaardiobjekt-tooltip">{kaardiobjekt}</div>'
                 popup = None
-                fillColor = GEOJSON_STYLE[tyyp]["fill"]
-                color = GEOJSON_STYLE[tyyp]["color"]
-                weight = GEOJSON_STYLE[tyyp]["weight"]
+                # fillColor = GEOJSON_STYLE[tyyp]["fill"]
+                # color = GEOJSON_STYLE[tyyp]["color"]
+                # weight = GEOJSON_STYLE[tyyp]["weight"]
+                style = GEOJSON_STYLE[tyyp]
                 if kaardiobjekt.objekt: # kui seotud objektiga
                     tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
                     popup = folium.Popup(
@@ -780,13 +850,15 @@ def get_big_maps_default(kaardid, obj, aasta):
                         max_width="100%"
                     )
                     if kaardiobjekt.objekt.gone: # hävinud
-                        fillColor = GEOJSON_STYLE[f'{tyyp}H']["fill"]
-                        color = GEOJSON_STYLE[f'{tyyp}H']["color"]
-                        weight = GEOJSON_STYLE[f'{tyyp}H']["weight"]
+                        # fillColor = GEOJSON_STYLE[f'{tyyp}H']["fill"]
+                        # color = GEOJSON_STYLE[f'{tyyp}H']["color"]
+                        # weight = GEOJSON_STYLE[f'{tyyp}H']["weight"]
+                        style = GEOJSON_STYLE[f'{tyyp}H']
                     else: # alles
-                        fillColor = GEOJSON_STYLE[f'{tyyp}E']["fill"]
-                        color = GEOJSON_STYLE[f'{tyyp}E']["color"]
-                        weight = GEOJSON_STYLE[f'{tyyp}E']["weight"]
+                        # fillColor = GEOJSON_STYLE[f'{tyyp}E']["fill"]
+                        # color = GEOJSON_STYLE[f'{tyyp}E']["color"]
+                        # weight = GEOJSON_STYLE[f'{tyyp}E']["weight"]
+                        style = GEOJSON_STYLE[f'{tyyp}E']
                 geometry = kaardiobjekt.geometry
                 name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
                 feature_collection = {
@@ -798,11 +870,12 @@ def get_big_maps_default(kaardid, obj, aasta):
                 geojson = folium.GeoJson(
                     f,
                     name=name,
-                    style_function=lambda x, fillColor=fillColor, color=color, weight=weight: {
-                        "fillColor": fillColor,
-                        "color": color,
-                        "weight": weight
-                    },
+                    # style_function=lambda x, fillColor=fillColor, color=color, weight=weight: {
+                    #     "fillColor": fillColor,
+                    #     "color": color,
+                    #     "weight": weight
+                    # },
+                    style_function=lambda x, style=style: style,
                     tooltip=tooltip,
                     popup=popup,
                     highlight_function=lambda x: {"fillOpacity": 0.5},
