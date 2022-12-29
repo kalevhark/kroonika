@@ -51,7 +51,7 @@ FUCHSIA = '#FF00FF'
 OBJEKT_COLOR = '#2b5797'
 
 GEOJSON_STYLE = {
-    'H': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # hoonestus (default)
+    'H': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 3}, # hoonestus (default)
     'A': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # ala (default)
     'M': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # muu (default)
     'HH': {'fill': 'red', 'color': 'red', 'weight': 3}, # hoonestus (puudub kaasajal)
@@ -60,7 +60,7 @@ GEOJSON_STYLE = {
     'HE': {'fill': OBJEKT_COLOR, 'color': OBJEKT_COLOR, 'weight': 3}, # hoonestus (olemas kaasajal)
     'AE': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # ala (olemas kaasajal)
     'ME': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # muu (olemas kaasajal),
-    'HV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # hoonestus (virtual)
+    'HV': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # hoonestus (virtual)
     'AV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # ala (virtual)
     'MV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # muu (virtual)
 }
