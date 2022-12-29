@@ -662,7 +662,7 @@ def add_objekt2map(feature_groups_kaardid, obj):
                 fg = feature_groups_kaardid[kaart_aasta]
                 status = maatriks[kaart_aasta]['status']
                 color = GEOJSON_STYLE[f'H{status}']['color']
-                if kaart_aasta == DEFAULT_MAP.aasta:
+                if kaart_aasta == DEFAULT_MAP.aasta and obj.gone:
                     # color = GEOJSON_STYLE['HH']['color']
                     tilelayers = [key for key in fg._children.keys() if key.find('tile_layer_') == 0]
                     if tilelayers:
