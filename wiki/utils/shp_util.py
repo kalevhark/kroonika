@@ -17,9 +17,7 @@ else:
     from django.conf import settings
     UTIL_DIR = settings.BASE_DIR / 'wiki' / 'utils'
 
-import csv
 import json
-import pickle
 import re
 import time
 
@@ -171,35 +169,35 @@ def read_shp_to_db(aasta):
     else:
         print('Sellist kaarti ei ole andmebaasis')
 
-# Loeb kaardid csv failist andmebaasi
-def read_kaart_csv_to_db():
-    user = User.objects.get(id=1)
-    with open(UTIL_DIR / 'kaart.csv', encoding='utf-8', newline='') as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=';', quotechar="'")
-        for row in reader:
-            # print(row)
-            o = Kaart.objects.create(created_by=user, **row)
-            print(o)
-
-# Loeb kaardid csv failist andmebaasi
-def read_kaardiobjekt_csv_to_db(aasta):
-    # Kaardiobjekt.objects.all().delete()
-    user = User.objects.get(id=1)
-    kaart = Kaart.objects.filter(aasta=aasta).first()
-    with open(UTIL_DIR / 'kaardiobjekt.csv', encoding='utf-8', newline='') as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=';', quotechar="'", escapechar='|')
-        for row in reader:
-            # print(row)
-            geometry = json.loads(row['geometry'])
-            o = Kaardiobjekt.objects.create(
-                kaart=kaart,
-                tyyp=row['tyyp'],
-                tn=row['tn'],
-                nr=row['nr'],
-                geometry=geometry,
-                created_by=user
-            )
-            print(o)
+# # Loeb kaardid csv failist andmebaasi
+# def read_kaart_csv_to_db():
+#     user = User.objects.get(id=1)
+#     with open(UTIL_DIR / 'kaart.csv', encoding='utf-8', newline='') as csvfile:
+#         reader = csv.DictReader(csvfile, delimiter=';', quotechar="'")
+#         for row in reader:
+#             # print(row)
+#             o = Kaart.objects.create(created_by=user, **row)
+#             print(o)
+#
+# # Loeb kaardid csv failist andmebaasi
+# def read_kaardiobjekt_csv_to_db(aasta):
+#     # Kaardiobjekt.objects.all().delete()
+#     user = User.objects.get(id=1)
+#     kaart = Kaart.objects.filter(aasta=aasta).first()
+#     with open(UTIL_DIR / 'kaardiobjekt.csv', encoding='utf-8', newline='') as csvfile:
+#         reader = csv.DictReader(csvfile, delimiter=';', quotechar="'", escapechar='|')
+#         for row in reader:
+#             # print(row)
+#             geometry = json.loads(row['geometry'])
+#             o = Kaardiobjekt.objects.create(
+#                 kaart=kaart,
+#                 tyyp=row['tyyp'],
+#                 tn=row['tn'],
+#                 nr=row['nr'],
+#                 geometry=geometry,
+#                 created_by=user
+#             )
+#             print(o)
 
 # Kirjutab andmebaasist kaardikihi shp faili
 def write_db_to_shp(aasta='1912'):
@@ -450,15 +448,6 @@ def find_intersections(id=1):
         if poly.intersects(p):
             new = '+' if o.objekt else '*'
             print(new, objekt, obj, o)
-
-def update_objekt_from_csv():
-    with open('objekt.csv', encoding='utf-8', newline='') as csvfile:
-        reader = csv.DictReader(csvfile, fieldnames=['id', 'tyyp', 'nimi', 'asukoht', 'kir', 'objs', 'muuta'], delimiter=';')
-        for row in reader:
-            if row['muuta'] == 'X':
-                obj = Objekt.objects.filter(id=row['id']).first()
-                if obj:
-                    print(row['asukoht'], '->', obj.asukoht)
 
 # Kaardiobjekt geojson failideks
 def kaardiobjektid2geojson():
@@ -767,7 +756,6 @@ def add_kaardiobjektid2map(map, kaardid):
 
 def add_objekt2map(feature_groups_kaardid, obj):
     if obj:
-        # objektiga_kaart_aasta_max = DEFAULT_MAP.aasta
         queryset = Kaardiobjekt.objects.filter(objekt=obj)
         objektiga_kaardid_aastad = [kaardiobjekt.kaart.aasta for kaardiobjekt in queryset]
         if objektiga_kaardid_aastad:
@@ -853,7 +841,6 @@ def get_objekt_centroid_location(obj, aasta):
 
 def get_big_maps_default(kaardid, obj, aasta):
     feature_groups_kaardid = {} # erinevate aastate kaardid
-    # feature_groups_kaardiobjektid = {} # erinevate aastate kaartidel m2rgitud kaardiobjektid
 
     for kaart in kaardid:
         kaart_aasta = kaart.aasta
@@ -893,61 +880,6 @@ def get_big_maps_default(kaardid, obj, aasta):
         tilelayer.add_to(feature_group)
         feature_groups_kaardid[kaart_aasta] = feature_group
 
-        # # Loome kaardi olemasolevate m2rgtud kaardiobjektide kihi
-        # if kaart == DEFAULT_MAP: # kaasaja kaardil kaardiobjekte liiga palju
-        #     kaardiobjektid = Kaardiobjekt.objects.\
-        #         filter(kaart=kaart).\
-        #         filter(objekt__isnull=False).\
-        #         filter(objekt__gone__exact=False)
-        # else:
-        #     kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart)
-        #
-        # if kaardiobjektid:
-        #     feature_group_kaardiobjektid = folium.FeatureGroup(
-        #         name=f'<span class="kaart-control-layers">Kaardiobjektid {kaart_aasta}</span>',
-        #         show=False
-        #     )
-        #     for kaardiobjekt in kaardiobjektid:
-        #         tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-        #         tooltip = get_kaardiobjekt_data4tooltip(kaardiobjekt) # f'<div class="kaardiobjekt-tooltip">{kaardiobjekt}</div>'
-        #         popup = None
-        #         style = GEOJSON_STYLE[tyyp]
-        #         if kaardiobjekt.objekt: # kui seotud objektiga
-        #             tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
-        #             popup = folium.Popup(
-        #                 get_object_data4popup(kaardiobjekt.objekt),
-        #                 max_width="100%"
-        #             )
-        #             if kaardiobjekt.objekt.gone: # hävinud
-        #                 style = GEOJSON_STYLE[f'{tyyp}H']
-        #             else: # alles
-        #                 style = GEOJSON_STYLE[f'{tyyp}E']
-        #         geometry = kaardiobjekt.geometry
-        #         name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
-        #         feature_collection = {
-        #             "type": "FeatureCollection",
-        #             "name": name,
-        #             "features": [geometry]
-        #         }
-        #         f = json.dumps(feature_collection)
-        #         geojson = folium.GeoJson(
-        #             f,
-        #             name=name,
-        #             style_function=lambda x, style=style: style,
-        #             tooltip=tooltip,
-        #             popup=popup,
-        #             highlight_function=lambda x: {"fillOpacity": 0.5},
-        #         )
-        #         geojson.add_to(feature_group_kaardiobjektid)
-        #     # end for kaardiobjekt in kaardiobjektid:
-        # end if kaardiobjektid:
-
-        # fg = get_kaardiobjektid4kaart(kaart)
-        # fg = None
-        # if fg:
-        #     feature_groups_kaardiobjektid[kaart_aasta] = fg
-
-
     # Loome aluskaardi
     map = folium.Map(
         location=DEFAULT_CENTER,  # NB! tagurpidi: [lat, lon],
@@ -956,7 +888,6 @@ def get_big_maps_default(kaardid, obj, aasta):
         zoom_control=True,
         control_scale=True,
         tiles=None,
-        # defaultKaart='xxxx',
     )
 
     # Teegid mida kasutatakse folium leaflet moodulis
@@ -970,9 +901,6 @@ def get_big_maps_default(kaardid, obj, aasta):
         if objekt_centroid_location:
             map.location = objekt_centroid_location
 
-    # for fgs in [feature_groups_kaardid, feature_groups_kaardiobjektid]:
-    #     for fg in fgs.values():
-    #         fg.add_to(map)
     for fg in feature_groups_kaardid.values():
         fg.add_to(map)
 
@@ -1045,36 +973,51 @@ def get_big_maps_default(kaardid, obj, aasta):
     layer_control = folium.LayerControl()
     layer_control.add_to(map)
 
-    # Lisame täiendavat javascripti urliga valitud aasta kaarti näitamiseks
+    # Lisame täiendavat javascripti
     el = folium.MacroElement().add_to(map)
     map_name = map.get_name()
-
-    # js = map_name + """
-    #         .on('baselayerchange', function (eventLayer) {
-    #             console.log(eventLayer);
-    #         });\n
-    #         """
     basemaps = [f'{key}: {item.get_name()}' for key, item in feature_groups_kaardid.items()]
-    js = ''
+
+    js = f'const map = {map_name};\n'
     js += 'const basemaps = {' + ', '.join(basemaps) + '};\n'
-    js += f'const href = {map_name}._container.baseURI;\n'
-    js += 'const url = new URL(href);\n'
-    js += 'var r = /\/kaart\/(\d+)\//;\n'
-    js += 'var kaartAasta = url.pathname.match(r)[1];\n'
-    # js += 'r = /\?objekt=(\d+)/;\n'
-    # js += 'var kaartObjekt = url.search.match(r)[1];\n'
-    # js += 'console.log(kaartAasta, kaartObjekt);\n'
-    js += """
-        if (kaartAasta) {
-            for (let key in basemaps) {
-              if (key == kaartAasta) {
-                xxx.addLayer(basemaps[key]);\n
-              } else {
-                xxx.removeLayer(basemaps[key]);\n
-              }
-            }
-        };\n
-        """.replace('xxx', map_name)
+
+    with open(UTIL_DIR / 'wiki_kaart.js') as jsf:
+        js += jsf.read()
+
+    # js += map_name + """
+    #     .on('baselayerchange', function (eventLayer) {
+    #         console.log(eventLayer);
+    #         sayHello();
+    #         const testElements = document.getElementsByClassName('leaflet-control-layers-list');
+    #         const testDivs = Array.prototype.filter.call(
+    #           testElements,
+    #           (testElement) => testElement.nodeName === 'DIV',
+    #         );
+    #         console.log(testElements[0]);
+    #     });\n
+    #     """
+
+    # basemaps = [f'{key}: {item.get_name()}' for key, item in feature_groups_kaardid.items()]
+    # # js = ''
+    # js += 'const basemaps = {' + ', '.join(basemaps) + '};\n'
+    # js += f'const href = {map_name}._container.baseURI;\n'
+    # js += 'const url = new URL(href);\n'
+    # js += 'var r = /\/kaart\/(\d+)\//;\n'
+    # js += 'var kaartAasta = url.pathname.match(r)[1];\n'
+    # # js += 'r = /\?objekt=(\d+)/;\n' :TODO see on vale regex!
+    # # js += 'var kaartObjekt = url.search.match(r)[1];\n'
+    # # js += 'console.log(kaartAasta, kaartObjekt);\n'
+    # js += """
+    #     if (kaartAasta) {
+    #         for (let key in basemaps) {
+    #           if (key == kaartAasta) {
+    #             xxx.addLayer(basemaps[key]);\n
+    #           } else {
+    #             xxx.removeLayer(basemaps[key]);\n
+    #           }
+    #         }
+    #     };\n
+    #     """.replace('xxx', map_name)
 
     # Lisab javascripti <script> tagi lõppu
     el._template = jinja2.Template('''
@@ -1082,17 +1025,10 @@ def get_big_maps_default(kaardid, obj, aasta):
             {0}
         {{% endmacro %}}'''.format(js))
 
-
-    # map_constructor = {
-    #     'map': map,
-    #     'feature_groups_kaardid': feature_groups_kaardid,
-    #     'feature_groups_kaardiobjektid': feature_groups_kaardiobjektid
-    # }
-    # return map_constructor
     return map
 
 def make_big_maps_leaflet(aasta=None, objekt=None):
-    # start = datetime.datetime.now()
+    start = datetime.datetime.now()
 
     kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
     if aasta and Kaart.objects.filter(aasta=aasta).count()==0:
@@ -1128,8 +1064,6 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
             1
         )
 
-    # stopp = datetime.datetime.now()
-    # print(start, stopp)
     return map_html
 
 # def make_big_maps_leaflet_old(aasta=None, objekt=None):
@@ -1660,7 +1594,7 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
 
 if __name__ == "__main__":
     # make_big_maps_leaflet(aasta=1824, objekt=970)
-    kaardiobjektid2geojson()
+    # kaardiobjektid2geojson()
     # read_kaardiobjekt_csv_to_db('2021')
     # geometry = get_osm_data(street='Rigas', housenumber='9', admin_level='7', country='Latvija', city='Valka')
     # geometry = get_osm_data(street='Kesk', housenumber='12')
