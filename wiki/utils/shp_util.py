@@ -1552,8 +1552,11 @@ def make_objekt_leaflet_combo(objekt=1):
         return map_html
 
 # Konkreetse kaardiobjekti kaart
-def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
-    kaardiobjekt = Kaardiobjekt.objects.get(id=kaardiobjekt_id)
+def make_kaardiobjekt_leaflet(kaardiobjekt_id):
+    try:
+        kaardiobjekt = Kaardiobjekt.objects.get(id=kaardiobjekt_id)
+    except:
+        return
     if kaardiobjekt:
         zoom_start = kaardiobjekt.zoom if kaardiobjekt.zoom else DEFAULT_MAP_ZOOM_START
         # Loome aluskaardi
@@ -1562,12 +1565,36 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id=1):
             zoom_start=zoom_start,
             min_zoom=DEFAULT_MIN_ZOOM,
             zoom_control=True,
-            name=kaardiobjekt.kaart.aasta,
-            tiles=kaardiobjekt.kaart.tiles,
-            attr=f'{kaardiobjekt.kaart.__str__()}',
+            # name=kaardiobjekt.kaart.aasta,
+            tiles=None,
+            # attr=f'{kaardiobjekt.kaart.__str__()}',
         )
+
         map.default_css = LEAFLET_DEFAULT_CSS
         map.default_js = LEAFLET_DEFAULT_JS
+
+
+        feature_group_kaardiobjekt = folium.FeatureGroup(
+            name=f'<span class="kaart-control-layers">{kaardiobjekt.kaart.aasta}</span>',
+            overlay=False
+        )
+        folium.TileLayer(
+            # name=kaardiobjekt.kaart.aasta,
+            tiles=kaardiobjekt.kaart.tiles,
+            attr=f'{kaardiobjekt.kaart.__str__()}<br>{kaardiobjekt.kaart.viited.first()}',
+        ).add_to(feature_group_kaardiobjekt)
+        feature_group_kaardiobjekt.add_to(map)
+
+        feature_group_default = folium.FeatureGroup(
+            name=f'<span class="kaart-control-layers">{DEFAULT_MAP.aasta}</span>',
+            overlay=False
+        )
+        folium.TileLayer(
+            # name=DEFAULT_MAP.aasta,
+            tiles=DEFAULT_MAP.tiles,
+            attr=f'{DEFAULT_MAP.__str__()}<br>{DEFAULT_MAP.viited.first()}',
+        ).add_to(feature_group_default)
+        feature_group_default.add_to(map)
 
         # lisame vektorkihid
         geometry = kaardiobjekt.geometry
