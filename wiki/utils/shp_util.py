@@ -203,24 +203,27 @@ def read_shp_to_db(aasta):
 def write_db_to_shp(aasta='1912'):
     kaart = Kaart.objects.filter(aasta=aasta).first()
     if kaart:
-        kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart, objekt__isnull=False)
+        print(os.getcwd())
+        # kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart, objekt__isnull=False)
+        kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart)
         print(kaardiobjektid)
         if kaardiobjektid:
             with shapefile.Writer(aasta + '_uus') as w:
-                with shapefile.Reader(aasta) as r:
+                with shapefile.Reader('shp_template') as r:
                     w.fields = r.fields[1:]  # skip first deletion field
                 for kaardiobjekt in kaardiobjektid:
+                    objekt = kaardiobjekt.objekt.id if kaardiobjekt.objekt else None
                     w.record(
                         tn=kaardiobjekt.tn,
                         nr=kaardiobjekt.nr,
                         lisainfo=kaardiobjekt.lisainfo,
                         tyyp=kaardiobjekt.tyyp,
-                        kroonika_objekt=kaardiobjekt.objekt.id
+                        kroonika_objekt=objekt
                     )
                     w.shape(kaardiobjekt.geometry)
                 print(w.recNum, w.shpNum)
             # Lisame projektsioonifaili
-            with open(f'{aasta}.prj') as r:
+            with open('shp_template.prj') as r:
                 with open(f'{aasta}_uus.prj', 'w') as w:
                     w.write(r.read())
 
@@ -1602,8 +1605,8 @@ if __name__ == "__main__":
     # geometry = get_shp_data('Maleva 3')
     # print(geometry)
     # kaardiobjekt_match_db(20938)
-    # read_shp_to_db(aasta='1905') # Loeb kaardikihi shp failist andmebaasi
-    # write_db_to_shp(aasta='1905') # Kirjutab andmebaasist kaardikihi shp faili
+    read_shp_to_db(aasta='1800') # Loeb kaardikihi shp failist andmebaasi
+    # write_db_to_shp(aasta='1800') # Kirjutab andmebaasist kaardikihi shp faili
     # save_current_data() # Salvestame andmebaasi värsked andmed OpenStreetMapist ja Maa-ameti andmefailist
     # find_intersections()
     # update_objekt_from_csv()
