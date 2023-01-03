@@ -31,6 +31,7 @@ from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMont
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 
 from markdownx.models import MarkdownxField
@@ -39,6 +40,8 @@ from markdownx.utils import markdownify
 from PIL import Image
 
 from shapely.geometry import shape
+
+# from wiki.utils.shp_util import make_kaardiobjekt_leaflet
 
 KUUD = (
         (1, 'jaanuar'),
@@ -1621,6 +1624,7 @@ class PiltSortedManager(models.Manager):
         )
         return queryset
 
+
 class Pilt(models.Model):
     PILT = 'P'
     TEKST = 'T'
@@ -1841,6 +1845,12 @@ class Pilt(models.Model):
         )
 
     colored_id.short_description = 'ID'
+
+    def image_preview(self):
+        if self.pilt_thumbnail:
+            return mark_safe('<img src="{0}" width="150" height="150" />'.format(self.pilt_thumbnail.url))
+        else:
+            return '(No image)'
 
     def save(self, *args, **kwargs):
         # Täidame tühja nimekoha failinimega ilma laiendita
@@ -2119,6 +2129,13 @@ class Kaardiobjekt(models.Model):
             self.id
         )
     colored_id.short_description = 'ID'
+
+    def image_preview(self):
+        if self.geometry:
+        #     map_html = make_kaardiobjekt_leaflet(self.id)
+        #     return mark_safe(map_html)
+        # else:
+            return '(No image)'
 
     class Meta:
         ordering = ['kaart', 'tn', 'nr']

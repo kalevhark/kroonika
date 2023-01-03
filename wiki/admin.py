@@ -933,6 +933,7 @@ class PiltAdmin(AjaxSelectAdmin):
     save_on_top = True
 
     readonly_fields = [
+        'image_preview',
         'pilt_height_field',
         'pilt_width_field',
         'inp_date', 'created_by', 'mod_date', 'updated_by',
@@ -1002,6 +1003,7 @@ class PiltAdmin(AjaxSelectAdmin):
         (None, {
             'fields': [
                 ('created_by', 'inp_date', 'updated_by', 'mod_date'),
+                ('image_preview',)
             ]
         }
         ),
@@ -1236,6 +1238,10 @@ admin.site.register(Kaart, KaartAdmin)
 class KaardiobjektAdmin(AjaxSelectAdmin):
 
     form=KaardiobjektForm
+
+    readonly_fields = [
+        'image_preview',
+    ]
 
     list_display = (
         'colored_id',

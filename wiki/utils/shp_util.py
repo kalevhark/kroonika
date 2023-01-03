@@ -1573,7 +1573,6 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id):
         map.default_css = LEAFLET_DEFAULT_CSS
         map.default_js = LEAFLET_DEFAULT_JS
 
-
         feature_group_kaardiobjekt = folium.FeatureGroup(
             name=f'<span class="kaart-control-layers">{kaardiobjekt.kaart.aasta}</span>',
             overlay=False

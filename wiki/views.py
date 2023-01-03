@@ -490,15 +490,16 @@ def algus(request):
             filter(doe__month = kuu).\
             order_by(ExtractDay('doe'))
         a['sel_kuul_surnud_kirjeid'] = len(a['sel_kuul_surnud'])
-        juubilarid = [
-            isik.id
-            for isik
-            in isik_qs
-            if (isik.vanus() and (isik.vanus()%5==0))
-        ]
-        a['juubilarid'] = isik_qs.\
-            filter(id__in=juubilarid).\
-            order_by('hist_year', 'dob')
+        # juubilarid = [
+        #     isik.id
+        #     for isik
+        #     in isik_qs
+        #     if (isik.vanus() and (isik.vanus()%5==0))
+        # ]
+        # a['juubilarid'] = isik_qs.\
+        #     filter(id__in=juubilarid).\
+        #     order_by('hist_year', 'dob')
+        a['juubilarid'] = get_isikud_juubilarid(request)
     andmed['isik'] = a
 
     # Andmebaas Organisatsioon andmed veebi
@@ -1808,6 +1809,33 @@ class ArtikkelDayArchiveView(DayArchiveView):
         )
         return context
 
+
+def get_isikud_juubilarid(request, aasta=timezone.now().year):
+    isik_qs = Isik.objects.daatumitega(request)
+    # Leiame selle aasta juubilarid
+    syndinud_isikud_date = isik_qs. \
+        annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
+    juubilarid_isikud_ids_date = [
+        isik.id
+        for isik
+        in syndinud_isikud_date
+        if (isik.dob and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
+    ]
+    syndinud_isikud_year = isik_qs. \
+        filter(hist_date__isnull=True). \
+        annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
+    juubilarid_isikud_ids_year = [
+        isik.id
+        for isik
+        in syndinud_isikud_year
+        if (isik.hist_year and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
+    ]
+    juubilarid_isikud_ids = juubilarid_isikud_ids_date + juubilarid_isikud_ids_year
+    juubilarid_isikud = isik_qs. \
+        filter(id__in=juubilarid_isikud_ids). \
+        annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+        order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+    return juubilarid_isikud
 
 #
 # Isikute otsimiseks/filtreerimiseks
