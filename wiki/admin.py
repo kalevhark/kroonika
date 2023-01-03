@@ -1250,7 +1250,7 @@ class KaardiobjektAdmin(AjaxSelectAdmin):
     form=KaardiobjektForm
 
     readonly_fields = [
-        'image_preview',
+        'get_leaflet',
     ]
 
     list_display = (

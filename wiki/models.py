@@ -11,6 +11,7 @@
 from datetime import date, datetime, timedelta
 from functools import reduce
 from io import BytesIO
+import json
 from operator import or_
 import os
 import os.path
@@ -34,14 +35,14 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 
+import folium
+
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
 
 from PIL import Image
 
 from shapely.geometry import shape
-
-# from wiki.utils.shp_util import make_kaardiobjekt_leaflet
 
 KUUD = (
         (1, 'jaanuar'),
@@ -2012,6 +2013,7 @@ class Kaart(models.Model):
         ordering = ['-aasta']
         verbose_name_plural = "Kaardid"
 
+DEFAULT_MAP = Kaart.objects.filter(aasta=settings.DEFAULT_MAP_AASTA).first()
 
 class Kaardiobjekt(models.Model):
     TYYP = (
@@ -2130,12 +2132,69 @@ class Kaardiobjekt(models.Model):
         )
     colored_id.short_description = 'ID'
 
-    def image_preview(self):
+    def get_leaflet(self):
         if self.geometry:
-        #     map_html = make_kaardiobjekt_leaflet(self.id)
-        #     return mark_safe(map_html)
-        # else:
+            zoom_start = self.zoom if self.zoom else settings.DEFAULT_MAP_ZOOM_START
+            # Loome aluskaardi
+            map = folium.Map(
+                location=self.centroid, # kaardiobjekt.centroid,  # NB! tagurpidi: [lat, lon],
+                zoom_start=zoom_start,
+                min_zoom=settings.DEFAULT_MIN_ZOOM,
+                zoom_control=True,
+                tiles=None,
+            )
+
+            map.default_css = settings.LEAFLET_DEFAULT_CSS
+            map.default_js = settings.LEAFLET_DEFAULT_JS
+
+            feature_group_kaardiobjekt = folium.FeatureGroup(
+                name=f'<span class="kaart-control-layers">{self.kaart.aasta}</span>',
+                overlay=False
+            )
+            folium.TileLayer(
+                tiles=self.kaart.tiles,
+                attr=f'{self.kaart.__str__()}<br>{self.kaart.viited.first()}',
+            ).add_to(feature_group_kaardiobjekt)
+            feature_group_kaardiobjekt.add_to(map)
+
+            feature_group_default = folium.FeatureGroup(
+                name=f'<span class="kaart-control-layers">{DEFAULT_MAP.aasta}</span>',
+                overlay=False
+            )
+            folium.TileLayer(
+                tiles=DEFAULT_MAP.tiles,
+                attr=f'{DEFAULT_MAP.__str__()}<br>{DEFAULT_MAP.viited.first()}',
+            ).add_to(feature_group_default)
+            feature_group_default.add_to(map)
+
+            # lisame vektorkihid
+            geometry = self.geometry
+            tyyp = self.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
+            name = f'{self.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
+            feature_collection = {
+                "type": "FeatureCollection",
+                "name": name,
+                "features": [geometry]
+            }
+            style = settings.GEOJSON_STYLE[tyyp]
+            f = json.dumps(feature_collection)
+            folium.GeoJson(
+                f,
+                name=name,
+                style_function=lambda x: style
+            ).add_to(map)
+
+            # Lisame kihtide kontrolli
+            folium.LayerControl().add_to(map)
+
+            map_html = map._repr_html_()
+            # v2ike h2kk, mis muudab vertikaalset suurust
+            map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
+            return mark_safe(map_html)
+        else:
             return '(No image)'
+
+    get_leaflet.short_description = 'Leaflet kaart'
 
     class Meta:
         ordering = ['kaart', 'tn', 'nr']

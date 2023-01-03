@@ -256,3 +256,61 @@ CORS_URLS_REGEX = r"^/api/.*$"
 
 # cookie consent in use?
 COOKIE_CONSENT_INUSE = False
+
+# leafleti jaoks
+DEFAULT_CENTER = (57.7769268, 26.0308911) # {'lon': 26.0308911, 'lat': 57.7769268} # Jaani kiriku koordinaadid
+# DEFAULT_MAP = Kaart.objects.filter(aasta='2021').first() # Vaikimisi OpenStreetMap internetikaart
+DEFAULT_MAP_AASTA = '2021'
+DEFAULT_MAP_ZOOM_START = 16
+DEFAULT_MIN_ZOOM = 13
+
+FUCHSIA = '#FF00FF'
+OBJEKT_COLOR = '#2b5797'
+
+GEOJSON_STYLE = {
+    'H': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 3}, # hoonestus (default)
+    'A': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # ala (default)
+    'M': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # muu (default)
+    'HH': {'fill': 'red', 'color': 'red', 'weight': 3}, # hoonestus (puudub kaasajal)
+    'AH': {'fill': None, 'color': 'red', 'weight': 3}, # ala (puudub kaasajal)
+    'MH': {'fill': None, 'color': 'red', 'weight': 3}, # muu (puudub kaasajal)
+    'HE': {'fill': OBJEKT_COLOR, 'color': OBJEKT_COLOR, 'weight': 3}, # hoonestus (olemas kaasajal)
+    'AE': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # ala (olemas kaasajal)
+    'ME': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # muu (olemas kaasajal),
+    'HV': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # hoonestus (virtual)
+    'AV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # ala (virtual)
+    'MV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # muu (virtual)
+}
+
+# https://python-visualization.github.io/folium/modules.html#module-folium.map
+LEAFLET_DEFAULT_CSS = [
+    # ('leaflet_css', 'https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css'),
+    ("leaflet_css", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"),
+    ('bootstrap_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'),
+    ('bootstrap_theme_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css'),
+    ('awesome_markers_font_css', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'),
+    ('awesome_markers_css', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css'),
+    ('awesome_rotate_css', 'https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css')
+]
+LEAFLET_DEFAULT_JS = [
+    # ('leaflet', 'https://unpkg.com/leaflet@1.8.0/dist/leaflet.js'),
+    ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"),
+    ('jquery', 'https://code.jquery.com/jquery-1.12.4.min.js'),
+    ('bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'),
+    ('awesome_markers', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js')
+]
+
+from branca.element import Element
+# Kroonika default font kasutamiseks + custom elementide css
+LEAFLET_DEFAULT_HEADER = Element(
+    '<frame-options policy="SAMEORIGIN" />'
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">'
+    '<style>'
+    '.kaart-control-layers,'
+    '.kaardiobjekt-tooltip,'
+    '.kaart-tooltip {'
+    '  font-size: 14px;'
+    '  font-family: "Raleway", sans-serif;'
+    '}'
+    '</style>'
+)

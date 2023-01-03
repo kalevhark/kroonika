@@ -21,7 +21,6 @@ import json
 import re
 import time
 
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 
@@ -39,79 +38,66 @@ from shapely.geometry.polygon import Polygon
 from wiki.models import Kaart, Kaardiobjekt, Objekt
 
 OVERPASS_URL = "http://overpass-api.de/api/interpreter"
-DEFAULT_CENTER = (57.7769268, 26.0308911) # {'lon': 26.0308911, 'lat': 57.7769268} # Jaani kiriku koordinaadid
-DEFAULT_MAP = Kaart.objects.filter(aasta='2021').first() # Vaikimisi Stamen Toner internetikaart
-DEFAULT_MAP_ZOOM_START = 16
-DEFAULT_MIN_ZOOM = 13
 
-# BLUEVIOLET = '#8A2BE2'
-FUCHSIA = '#FF00FF'
-OBJEKT_COLOR = '#2b5797'
+# DEFAULT_CENTER = (57.7769268, 26.0308911) # {'lon': 26.0308911, 'lat': 57.7769268} # Jaani kiriku koordinaadid
+DEFAULT_CENTER = settings.DEFAULT_CENTER
+DEFAULT_MAP = Kaart.objects.filter(aasta=settings.DEFAULT_MAP_AASTA).first() # Vaikimii OpenStreetMap
+# DEFAULT_MAP_ZOOM_START = 16
+DEFAULT_MAP_ZOOM_START = settings.DEFAULT_MAP_ZOOM_START
+# DEFAULT_MIN_ZOOM = 13
+DEFAULT_MIN_ZOOM = settings.DEFAULT_MIN_ZOOM
 
-GEOJSON_STYLE = {
-    'H': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 3}, # hoonestus (default)
-    'A': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # ala (default)
-    'M': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # muu (default)
-    'HH': {'fill': 'red', 'color': 'red', 'weight': 3}, # hoonestus (puudub kaasajal)
-    'AH': {'fill': None, 'color': 'red', 'weight': 3}, # ala (puudub kaasajal)
-    'MH': {'fill': None, 'color': 'red', 'weight': 3}, # muu (puudub kaasajal)
-    'HE': {'fill': OBJEKT_COLOR, 'color': OBJEKT_COLOR, 'weight': 3}, # hoonestus (olemas kaasajal)
-    'AE': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # ala (olemas kaasajal)
-    'ME': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # muu (olemas kaasajal),
-    'HV': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # hoonestus (virtual)
-    'AV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # ala (virtual)
-    'MV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # muu (virtual)
-}
+# FUCHSIA = '#FF00FF'
+# OBJEKT_COLOR = '#2b5797'
 
+# GEOJSON_STYLE = {
+#     'H': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 3}, # hoonestus (default)
+#     'A': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # ala (default)
+#     'M': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # muu (default)
+#     'HH': {'fill': 'red', 'color': 'red', 'weight': 3}, # hoonestus (puudub kaasajal)
+#     'AH': {'fill': None, 'color': 'red', 'weight': 3}, # ala (puudub kaasajal)
+#     'MH': {'fill': None, 'color': 'red', 'weight': 3}, # muu (puudub kaasajal)
+#     'HE': {'fill': OBJEKT_COLOR, 'color': OBJEKT_COLOR, 'weight': 3}, # hoonestus (olemas kaasajal)
+#     'AE': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # ala (olemas kaasajal)
+#     'ME': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # muu (olemas kaasajal),
+#     'HV': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # hoonestus (virtual)
+#     'AV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # ala (virtual)
+#     'MV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # muu (virtual)
+# }
+GEOJSON_STYLE = settings.GEOJSON_STYLE
 # https://python-visualization.github.io/folium/modules.html#module-folium.map
-LEAFLET_DEFAULT_CSS = [
-    # ('leaflet_css', 'https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css'),
-    ("leaflet_css", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"),
-    ('bootstrap_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'),
-    ('bootstrap_theme_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css'),
-    ('awesome_markers_font_css', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'),
-    ('awesome_markers_css', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css'),
-    ('awesome_rotate_css', 'https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css')
-]
-LEAFLET_DEFAULT_JS = [
-    # ('leaflet', 'https://unpkg.com/leaflet@1.8.0/dist/leaflet.js'),
-    ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"),
-    ('jquery', 'https://code.jquery.com/jquery-1.12.4.min.js'),
-    ('bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'),
-    ('awesome_markers', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js')
-]
-
-# Kroonika default font kasutamiseks + custom elementide css
-LEAFLET_DEFAULT_HEADER = Element(
-    '<frame-options policy="SAMEORIGIN" />'
-    '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">'
-    '<style>'
-    '.kaart-control-layers,'
-    '.kaardiobjekt-tooltip,'
-    '.kaart-tooltip {'
-    '  font-size: 14px;'
-    '  font-family: "Raleway", sans-serif;'
-    '}'
-    '</style>'
-)
-
-# LEAFLET_DEFAULT_CSS_ver_1_93 = [
-#     ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"),
-#     ("jquery", "https://code.jquery.com/jquery-1.12.4.min.js"),
-#     ("bootstrap","https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js",),
-#     ("awesome_markers", "https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js",),
-# ]
-#
-# LEAFLET_DEFAULT_JS_ver_1_93 = [
+# LEAFLET_DEFAULT_CSS = [
+#     # ('leaflet_css', 'https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css'),
 #     ("leaflet_css", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"),
-#     ("bootstrap_css", "https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css",),
-#     # glyphicons came from Bootstrap 3 and are used for Awesome Markers
-#     ("glyphicons_css", "https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css",),
-#     ("awesome_markers_font_css", "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css",),
-#     ("awesome_markers_css", "https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css",),
-#     ("awesome_rotate_css", "https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css",),
+#     ('bootstrap_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'),
+#     ('bootstrap_theme_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css'),
+#     ('awesome_markers_font_css', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'),
+#     ('awesome_markers_css', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css'),
+#     ('awesome_rotate_css', 'https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css')
 # ]
-
+LEAFLET_DEFAULT_CSS = settings.LEAFLET_DEFAULT_CSS
+# LEAFLET_DEFAULT_JS = [
+#     # ('leaflet', 'https://unpkg.com/leaflet@1.8.0/dist/leaflet.js'),
+#     ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"),
+#     ('jquery', 'https://code.jquery.com/jquery-1.12.4.min.js'),
+#     ('bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'),
+#     ('awesome_markers', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js')
+# ]
+LEAFLET_DEFAULT_JS = settings.LEAFLET_DEFAULT_JS
+# Kroonika default font kasutamiseks + custom elementide css
+# LEAFLET_DEFAULT_HEADER = Element(
+#     '<frame-options policy="SAMEORIGIN" />'
+#     '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">'
+#     '<style>'
+#     '.kaart-control-layers,'
+#     '.kaardiobjekt-tooltip,'
+#     '.kaart-tooltip {'
+#     '  font-size: 14px;'
+#     '  font-family: "Raleway", sans-serif;'
+#     '}'
+#     '</style>'
+# )
+LEAFLET_DEFAULT_HEADER = settings.LEAFLET_DEFAULT_HEADER
 
 # crs to degree converter init
 proj = pyproj.Transformer.from_crs(3301, 4326, always_xy=True)
@@ -1558,66 +1544,64 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id):
     except:
         return
     if kaardiobjekt:
-        zoom_start = kaardiobjekt.zoom if kaardiobjekt.zoom else DEFAULT_MAP_ZOOM_START
-        # Loome aluskaardi
-        map = folium.Map(
-            location=kaardiobjekt.centroid, # kaardiobjekt.centroid,  # NB! tagurpidi: [lat, lon],
-            zoom_start=zoom_start,
-            min_zoom=DEFAULT_MIN_ZOOM,
-            zoom_control=True,
-            # name=kaardiobjekt.kaart.aasta,
-            tiles=None,
-            # attr=f'{kaardiobjekt.kaart.__str__()}',
-        )
-
-        map.default_css = LEAFLET_DEFAULT_CSS
-        map.default_js = LEAFLET_DEFAULT_JS
-
-        feature_group_kaardiobjekt = folium.FeatureGroup(
-            name=f'<span class="kaart-control-layers">{kaardiobjekt.kaart.aasta}</span>',
-            overlay=False
-        )
-        folium.TileLayer(
-            # name=kaardiobjekt.kaart.aasta,
-            tiles=kaardiobjekt.kaart.tiles,
-            attr=f'{kaardiobjekt.kaart.__str__()}<br>{kaardiobjekt.kaart.viited.first()}',
-        ).add_to(feature_group_kaardiobjekt)
-        feature_group_kaardiobjekt.add_to(map)
-
-        feature_group_default = folium.FeatureGroup(
-            name=f'<span class="kaart-control-layers">{DEFAULT_MAP.aasta}</span>',
-            overlay=False
-        )
-        folium.TileLayer(
-            # name=DEFAULT_MAP.aasta,
-            tiles=DEFAULT_MAP.tiles,
-            attr=f'{DEFAULT_MAP.__str__()}<br>{DEFAULT_MAP.viited.first()}',
-        ).add_to(feature_group_default)
-        feature_group_default.add_to(map)
-
-        # lisame vektorkihid
-        geometry = kaardiobjekt.geometry
-        tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-        name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
-        feature_collection = {
-            "type": "FeatureCollection",
-            "name": name,
-            "features": [geometry]
-        }
-        style = GEOJSON_STYLE[tyyp]
-        f = json.dumps(feature_collection)
-        folium.GeoJson(
-            f,
-            name=name,
-            style_function=lambda x: style
-        ).add_to(map)
-
-        # Lisame kihtide kontrolli
-        folium.LayerControl().add_to(map)
-
-        map_html = map._repr_html_()
-        # v2ike h2kk, mis muudab vertikaalset suurust
-        map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
+        map_html = kaardiobjekt.get_leaflet()
+        # zoom_start = kaardiobjekt.zoom if kaardiobjekt.zoom else DEFAULT_MAP_ZOOM_START
+        # # Loome aluskaardi
+        # map = folium.Map(
+        #     location=kaardiobjekt.centroid, # kaardiobjekt.centroid,  # NB! tagurpidi: [lat, lon],
+        #     zoom_start=zoom_start,
+        #     min_zoom=DEFAULT_MIN_ZOOM,
+        #     zoom_control=True,
+        #     tiles=None,
+        # )
+        #
+        # map.default_css = LEAFLET_DEFAULT_CSS
+        # map.default_js = LEAFLET_DEFAULT_JS
+        #
+        # feature_group_kaardiobjekt = folium.FeatureGroup(
+        #     name=f'<span class="kaart-control-layers">{kaardiobjekt.kaart.aasta}</span>',
+        #     overlay=False
+        # )
+        # folium.TileLayer(
+        #     tiles=kaardiobjekt.kaart.tiles,
+        #     attr=f'{kaardiobjekt.kaart.__str__()}<br>{kaardiobjekt.kaart.viited.first()}',
+        # ).add_to(feature_group_kaardiobjekt)
+        # feature_group_kaardiobjekt.add_to(map)
+        #
+        # feature_group_default = folium.FeatureGroup(
+        #     name=f'<span class="kaart-control-layers">{DEFAULT_MAP.aasta}</span>',
+        #     overlay=False
+        # )
+        # folium.TileLayer(
+        #     # name=DEFAULT_MAP.aasta,
+        #     tiles=DEFAULT_MAP.tiles,
+        #     attr=f'{DEFAULT_MAP.__str__()}<br>{DEFAULT_MAP.viited.first()}',
+        # ).add_to(feature_group_default)
+        # feature_group_default.add_to(map)
+        #
+        # # lisame vektorkihid
+        # geometry = kaardiobjekt.geometry
+        # tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
+        # name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
+        # feature_collection = {
+        #     "type": "FeatureCollection",
+        #     "name": name,
+        #     "features": [geometry]
+        # }
+        # style = GEOJSON_STYLE[tyyp]
+        # f = json.dumps(feature_collection)
+        # folium.GeoJson(
+        #     f,
+        #     name=name,
+        #     style_function=lambda x: style
+        # ).add_to(map)
+        #
+        # # Lisame kihtide kontrolli
+        # folium.LayerControl().add_to(map)
+        #
+        # map_html = map._repr_html_()
+        # # v2ike h2kk, mis muudab vertikaalset suurust
+        # map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
         return map_html
 
 
