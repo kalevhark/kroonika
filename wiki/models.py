@@ -762,7 +762,7 @@ class Objekt(models.Model):
         }
         return reverse('wiki:wiki_objekt_detail', kwargs=kwargs)
 
-    def vanus(self, d=timezone.now()):
+    def vanus(self, d=datetime.now()):
         if self.hist_date:
             return d.year - self.dob.year
         elif self.hist_year:
@@ -973,7 +973,7 @@ class Organisatsioon(models.Model):
     def keywords(self):
         return object2keywords(self)
 
-    def vanus(self, d=timezone.now()):
+    def vanus(self, d=datetime.now()):
         if self.hist_date:
             return d.year - self.dob.year
         elif self.hist_year:
@@ -1242,7 +1242,7 @@ class Isik(models.Model):
     def keywords(self):
         return object2keywords(self)
 
-    def vanus(self, d=timezone.now()):
+    def vanus(self, d=datetime.now()):
         if self.hist_date:
             return d.year - self.dob.year # arvutatakse vastavalt vkj või ukj järgi
         elif self.hist_year:

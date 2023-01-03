@@ -35,62 +35,62 @@ from .forms import (
 )
 
 # EI OLE KASUTUSEL
-class MyRelatedFieldWidgetWrapper(RelatedFieldWidgetWrapper):
-    """
-    This class is a wrapper to a given widget to add the add icon for the
-    admin interface.
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.parent_object = kwargs.get('parent_object')
-        try:
-            del kwargs['parent_object']  # superclass will choke on this
-        except:
-            pass
-        super(MyRelatedFieldWidgetWrapper, self).__init__(*args, **kwargs)
-
-    def get_context(self, name, value, attrs):
-        rel_opts = self.rel.model._meta
-        info = (rel_opts.app_label, rel_opts.model_name)
-        # self.widget.choices = self.choices
-        related_field_name = self.rel.get_related_field().name
-        url_params = "&".join(
-            "%s=%s" % param
-            for param in [
-                (TO_FIELD_VAR, related_field_name),
-                (IS_POPUP_VAR, 1),
-                (self.parent_object.__class__.__name__.lower(), self.parent_object.id) # lisame viite parent objectile
-            ]
-        )
-        context = {
-            "rendered_widget": self.widget.render(name, value, attrs),
-            "is_hidden": self.is_hidden,
-            "name": name,
-            "url_params": url_params,
-            "model": rel_opts.verbose_name,
-            "can_add_related": self.can_add_related,
-            "can_change_related": self.can_change_related,
-            "can_delete_related": self.can_delete_related,
-            "can_view_related": self.can_view_related,
-            "model_has_limit_choices_to": self.rel.limit_choices_to,
-        }
-        if self.can_add_related:
-            context["add_related_url"] = self.get_related_url(info, "add")
-        if self.can_delete_related:
-            context["delete_related_template_url"] = self.get_related_url(
-                info, "delete", "__fk__"
-            )
-        if self.can_view_related or self.can_change_related:
-            context["view_related_url_params"] = f"{TO_FIELD_VAR}={related_field_name}"
-            context["change_related_template_url"] = self.get_related_url(
-                info, "change", "__fk__"
-            )
-        return context
+# class MyRelatedFieldWidgetWrapper(RelatedFieldWidgetWrapper):
+#     """
+#     This class is a wrapper to a given widget to add the add icon for the
+#     admin interface.
+#     """
+# 
+#     def __init__(self, *args, **kwargs):
+#         self.parent_object = kwargs.get('parent_object')
+#         try:
+#             del kwargs['parent_object']  # superclass will choke on this
+#         except:
+#             pass
+#         super(MyRelatedFieldWidgetWrapper, self).__init__(*args, **kwargs)
+# 
+#     def get_context(self, name, value, attrs):
+#         rel_opts = self.rel.model._meta
+#         info = (rel_opts.app_label, rel_opts.model_name)
+#         # self.widget.choices = self.choices
+#         related_field_name = self.rel.get_related_field().name
+#         url_params = "&".join(
+#             "%s=%s" % param
+#             for param in [
+#                 (TO_FIELD_VAR, related_field_name),
+#                 (IS_POPUP_VAR, 1),
+#                 (self.parent_object.__class__.__name__.lower(), self.parent_object.id) # lisame viite parent objectile
+#             ]
+#         )
+#         context = {
+#             "rendered_widget": self.widget.render(name, value, attrs),
+#             "is_hidden": self.is_hidden,
+#             "name": name,
+#             "url_params": url_params,
+#             "model": rel_opts.verbose_name,
+#             "can_add_related": self.can_add_related,
+#             "can_change_related": self.can_change_related,
+#             "can_delete_related": self.can_delete_related,
+#             "can_view_related": self.can_view_related,
+#             "model_has_limit_choices_to": self.rel.limit_choices_to,
+#         }
+#         if self.can_add_related:
+#             context["add_related_url"] = self.get_related_url(info, "add")
+#         if self.can_delete_related:
+#             context["delete_related_template_url"] = self.get_related_url(
+#                 info, "delete", "__fk__"
+#             )
+#         if self.can_view_related or self.can_change_related:
+#             context["view_related_url_params"] = f"{TO_FIELD_VAR}={related_field_name}"
+#             context["change_related_template_url"] = self.get_related_url(
+#                 info, "change", "__fk__"
+#             )
+#         return context
 
 #
-# Vajalikud MyAutoCompleteSelectWidget jaoks
+# Vajalikud PiltAutoCompleteSelectWidget jaoks
 #
-json_encoder = import_string(
+JSON_ENCODER = import_string(
     getattr(
         settings,
         'AJAX_SELECT_JSON_ENCODER',
@@ -113,14 +113,22 @@ def make_plugin_options(lookup, channel_name, widget_plugin_options, initial):
         po['html'] = True
 
     return {
-        'plugin_options': mark_safe(json.dumps(po, cls=json_encoder)),
+        'plugin_options': mark_safe(
+            json.dumps(
+                po,
+                cls=JSON_ENCODER
+            )
+        ),
         'data_plugin_options': force_escape(
-                json.dumps(po, cls=json_encoder)
+            json.dumps(
+                po,
+                cls=JSON_ENCODER
+            )
         )
     }
 
 # Kohandatud, et lisada parent object
-class MyAutoCompleteSelectWidget(AutoCompleteSelectWidget):
+class PiltAutoCompleteSelectWidget(AutoCompleteSelectWidget):
     """
     Widget to search for a model and return it as text for use in a CharField.
     """
@@ -130,7 +138,7 @@ class MyAutoCompleteSelectWidget(AutoCompleteSelectWidget):
             del kwargs['parent_object']  # superclass will choke on this
         except:
             pass
-        super(MyAutoCompleteSelectWidget, self).__init__(
+        super(PiltAutoCompleteSelectWidget, self).__init__(
             channel, *args, **kwargs
         )
 
@@ -183,37 +191,37 @@ class MyAutoCompleteSelectWidget(AutoCompleteSelectWidget):
 # Piltide lisamiseks artiklite halduris
 #
 # EI OLE KASUTUSEL
-class PiltArtikkelInline(admin.TabularInline):
-    model = Pilt.artiklid.through
-    extra = 1
-    template = 'admin/edit_inline/tabular_pilt.html'
-
-    def __init__(self, *args, **kwargs):
-        self.parent_object = kwargs.get('obj')
-        try:
-            del kwargs['obj']  # superclass will choke on this
-        except:
-            pass
-        super(PiltArtikkelInline, self).__init__(*args, **kwargs)
-
-    # lisame pildi lisamisel artikli viited, isikud, organisatsioonid, objektid
-    def get_formset(self, request, obj=None, **kwargs):
-        formset = super(PiltArtikkelInline, self).get_formset(request, obj, **kwargs)
-        if obj:
-            form = formset.form
-            form.base_fields['pilt'].widget = MyRelatedFieldWidgetWrapper(
-                form.base_fields['pilt'].widget,
-                self.model._meta.get_field('pilt').remote_field,
-                admin_site,
-                parent_object=obj
-            )
-        return formset
+# class PiltArtikkelInline(admin.TabularInline):
+#     model = Pilt.artiklid.through
+#     extra = 1
+#     template = 'admin/edit_inline/tabular_pilt.html'
+#
+#     def __init__(self, *args, **kwargs):
+#         self.parent_object = kwargs.get('obj')
+#         try:
+#             del kwargs['obj']  # superclass will choke on this
+#         except:
+#             pass
+#         super(PiltArtikkelInline, self).__init__(*args, **kwargs)
+#
+#     # lisame pildi lisamisel artikli viited, isikud, organisatsioonid, objektid
+#     def get_formset(self, request, obj=None, **kwargs):
+#         formset = super(PiltArtikkelInline, self).get_formset(request, obj, **kwargs)
+#         if obj:
+#             form = formset.form
+#             form.base_fields['pilt'].widget = MyRelatedFieldWidgetWrapper(
+#                 form.base_fields['pilt'].widget,
+#                 self.model._meta.get_field('pilt').remote_field,
+#                 admin_site,
+#                 parent_object=obj
+#             )
+#         return formset
 
 
 #
 # Piltide lisamiseks artiklite halduris ver 2
 #
-class PiltArtikkelInline2(AjaxSelectAdminTabularInline):
+class PiltArtikkelInline(AjaxSelectAdminTabularInline):
     model = Pilt.artiklid.through
     extra = 1
     template = 'admin/edit_inline/tabular_pilt.html'
@@ -228,14 +236,14 @@ class PiltArtikkelInline2(AjaxSelectAdminTabularInline):
             del kwargs['obj']  # superclass will choke on this
         except:
             pass
-        super(PiltArtikkelInline2, self).__init__(*args, **kwargs)
+        super(PiltArtikkelInline, self).__init__(*args, **kwargs)
 
     def get_formset(self, request, obj=None, **kwargs):
         from ajax_select.fields import autoselect_fields_check_can_add
         formset = super().get_formset(request, obj, **kwargs)
         if obj:
             form = formset.form
-            form.base_fields['pilt'].widget = MyAutoCompleteSelectWidget(
+            form.base_fields['pilt'].widget = PiltAutoCompleteSelectWidget(
                 'pildid',
                 help_text = '',
                 show_help_text = True,
@@ -244,6 +252,8 @@ class PiltArtikkelInline2(AjaxSelectAdminTabularInline):
             )
         autoselect_fields_check_can_add(formset.form, self.model, request.user)
         return formset
+
+
 #
 # Piltide lisamiseks isikute halduris
 #
@@ -506,7 +516,7 @@ class ArtikkelAdmin(AjaxSelectAdmin):
          ),
     ]
     inlines = [
-        PiltArtikkelInline2,
+        PiltArtikkelInline,
     ]
 
     def get_queryset(self, request):
@@ -1258,13 +1268,13 @@ class KaardiobjektAdmin(AjaxSelectAdmin):
 
 admin.site.register(Kaardiobjekt, KaardiobjektAdmin)
 
-from django.contrib import admin
-from ajax_select import make_ajax_form
-
-# @admin.register(Pilt.artiklid.through)
-class YourModelAdmin(AjaxSelectAdmin):
-
-    form = make_ajax_form(Pilt.artiklid.through, {
-        'artikkel': 'artiklid',  # ManyToManyField
-        'pilt':'pildid'      # ForeignKeyField
-    })
+# from django.contrib import admin
+# from ajax_select import make_ajax_form
+#
+# # @admin.register(Pilt.artiklid.through)
+# class YourModelAdmin(AjaxSelectAdmin):
+#
+#     form = make_ajax_form(Pilt.artiklid.through, {
+#         'artikkel': 'artiklid',  # ManyToManyField
+#         'pilt':'pildid'      # ForeignKeyField
+#     })

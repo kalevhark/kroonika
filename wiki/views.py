@@ -490,16 +490,8 @@ def algus(request):
             filter(doe__month = kuu).\
             order_by(ExtractDay('doe'))
         a['sel_kuul_surnud_kirjeid'] = len(a['sel_kuul_surnud'])
-        # juubilarid = [
-        #     isik.id
-        #     for isik
-        #     in isik_qs
-        #     if (isik.vanus() and (isik.vanus()%5==0))
-        # ]
-        # a['juubilarid'] = isik_qs.\
-        #     filter(id__in=juubilarid).\
-        #     order_by('hist_year', 'dob')
-        a['juubilarid'] = get_isikud_juubilarid(request)
+        juubilarid = get_juubilarid(isik_qs)
+        a['juubilarid'] = juubilarid
     andmed['isik'] = a
 
     # Andmebaas Organisatsioon andmed veebi
@@ -524,15 +516,17 @@ def algus(request):
             filter(dob__month = kuu).\
             order_by(ExtractDay('dob'))
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
-        juubilarid = [
-            organisatsioon.id
-            for organisatsioon
-            in organisatsioon_qs
-            if (organisatsioon.vanus() and (organisatsioon.vanus() % 5 == 0))
-        ]
-        a['juubilarid'] = organisatsioon_qs.\
-            filter(id__in=juubilarid).\
-            order_by('hist_year', 'dob')
+        # juubilarid = [
+        #     organisatsioon.id
+        #     for organisatsioon
+        #     in organisatsioon_qs
+        #     if (organisatsioon.vanus() and (organisatsioon.vanus() % 5 == 0))
+        # ]
+        # a['juubilarid'] = organisatsioon_qs.\
+        #     filter(id__in=juubilarid).\
+        #     order_by('hist_year', 'dob')
+        juubilarid = get_juubilarid(organisatsioon_qs)
+        a['juubilarid'] = juubilarid
     andmed['organisatsioon'] = a
 
     # Andmebaas Objekt andmed veebi
@@ -557,15 +551,17 @@ def algus(request):
             filter(dob__month = kuu).\
             order_by(ExtractDay('dob'))
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
-        juubilarid = [
-            objekt.id
-            for objekt
-            in objekt_qs
-            if (objekt.vanus() and (objekt.vanus() % 5 == 0))
-        ]
-        a['juubilarid'] = objekt_qs.\
-            filter(id__in=juubilarid).\
-            order_by('hist_year', 'dob')
+        # juubilarid = [
+        #     objekt.id
+        #     for objekt
+        #     in objekt_qs
+        #     if (objekt.vanus() and (objekt.vanus() % 5 == 0))
+        # ]
+        # a['juubilarid'] = objekt_qs.\
+        #     filter(id__in=juubilarid).\
+        #     order_by('hist_year', 'dob')
+        juubilarid = get_juubilarid(objekt_qs)
+        a['juubilarid'] = juubilarid
     andmed['objekt'] = a
 
     # Andmebaas Kaart andmed veebi
@@ -1504,28 +1500,29 @@ class ArtikkelYearArchiveView(YearArchiveView):
             Isik._meta.verbose_name_plural.lower()
         )
         # Leiame selle aasta juubilarid
-        syndinud_isikud_date = isik_qs. \
-            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
-        juubilarid_isikud_ids_date = [
-            isik.id
-            for isik
-            in syndinud_isikud_date
-            if (isik.dob and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
-        ]
-        syndinud_isikud_year = isik_qs. \
-            filter(hist_date__isnull=True). \
-            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
-        juubilarid_isikud_ids_year = [
-            isik.id
-            for isik
-            in syndinud_isikud_year
-            if (isik.hist_year and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
-        ]
-        juubilarid_isikud_ids = juubilarid_isikud_ids_date + juubilarid_isikud_ids_year
-        juubilarid_isikud = isik_qs. \
-            filter(id__in=juubilarid_isikud_ids). \
-            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
-            order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+        # syndinud_isikud_date = isik_qs. \
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
+        # juubilarid_isikud_ids_date = [
+        #     isik.id
+        #     for isik
+        #     in syndinud_isikud_date
+        #     if (isik.dob and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
+        # ]
+        # syndinud_isikud_year = isik_qs. \
+        #     filter(hist_date__isnull=True). \
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
+        # juubilarid_isikud_ids_year = [
+        #     isik.id
+        #     for isik
+        #     in syndinud_isikud_year
+        #     if (isik.hist_year and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
+        # ]
+        # juubilarid_isikud_ids = juubilarid_isikud_ids_date + juubilarid_isikud_ids_year
+        # juubilarid_isikud = isik_qs. \
+        #     filter(id__in=juubilarid_isikud_ids). \
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+        #     order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+        juubilarid_isikud = get_juubilarid(isik_qs, aasta=aasta)
         context['juubilarid_isikud'] = juubilarid_isikud
         context['juubilarid_isikud_pealkiri'] = '{0}. aasta juubilarid {1}'.format(
             aasta,
@@ -1553,28 +1550,29 @@ class ArtikkelYearArchiveView(YearArchiveView):
             Organisatsioon._meta.verbose_name_plural.lower()
         )
         # Leiame selle aasta juubilarid organisatsioonid
-        syndinud_organisatsioonid_date = organisatsioon_qs. \
-            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
-        juubilarid_organisatsioonid_ids_date = [
-            organisatsioon.id
-            for organisatsioon
-            in syndinud_organisatsioonid_date
-            if (organisatsioon.dob and organisatsioon.vanus_gen > 0 and organisatsioon.vanus_gen % 5 == 0)
-        ]
-        syndinud_organisatsioonid_year = organisatsioon_qs. \
-            filter(hist_date__isnull=True). \
-            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
-        juubilarid_organisatsioonid_ids_year = [
-            organisatsioon.id
-            for organisatsioon
-            in syndinud_organisatsioonid_year
-            if (organisatsioon.hist_year and organisatsioon.vanus_gen > 0 and organisatsioon.vanus_gen % 5 == 0)
-        ]
-        juubilarid_organisatsioonid_ids = juubilarid_organisatsioonid_ids_date + juubilarid_organisatsioonid_ids_year
-        juubilarid_organisatsioonid = organisatsioon_qs. \
-            filter(id__in=juubilarid_organisatsioonid_ids). \
-            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
-            order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+        # syndinud_organisatsioonid_date = organisatsioon_qs. \
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
+        # juubilarid_organisatsioonid_ids_date = [
+        #     organisatsioon.id
+        #     for organisatsioon
+        #     in syndinud_organisatsioonid_date
+        #     if (organisatsioon.dob and organisatsioon.vanus_gen > 0 and organisatsioon.vanus_gen % 5 == 0)
+        # ]
+        # syndinud_organisatsioonid_year = organisatsioon_qs. \
+        #     filter(hist_date__isnull=True). \
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
+        # juubilarid_organisatsioonid_ids_year = [
+        #     organisatsioon.id
+        #     for organisatsioon
+        #     in syndinud_organisatsioonid_year
+        #     if (organisatsioon.hist_year and organisatsioon.vanus_gen > 0 and organisatsioon.vanus_gen % 5 == 0)
+        # ]
+        # juubilarid_organisatsioonid_ids = juubilarid_organisatsioonid_ids_date + juubilarid_organisatsioonid_ids_year
+        # juubilarid_organisatsioonid = organisatsioon_qs. \
+        #     filter(id__in=juubilarid_organisatsioonid_ids). \
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+        #     order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+        juubilarid_organisatsioonid = get_juubilarid(organisatsioon_qs, aasta=aasta)
         context['juubilarid_organisatsioonid'] = juubilarid_organisatsioonid
         context['juubilarid_organisatsioonid_pealkiri'] = '{0}. aasta juubilarid {1}'.format(
             aasta,
@@ -1593,28 +1591,29 @@ class ArtikkelYearArchiveView(YearArchiveView):
             Objekt._meta.verbose_name_plural.lower()
         )
         # Leiame selle aasta juubilarid objektid
-        syndinud_objektid_date = objekt_qs. \
-            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
-        juubilarid_objektid_ids_date = [
-            objekt.id
-            for objekt
-            in syndinud_objektid_date
-            if (objekt.dob and objekt.vanus_gen > 0 and objekt.vanus_gen % 5 == 0)
-        ]
-        syndinud_objektid_year = objekt_qs. \
-            filter(hist_date__isnull=True). \
-            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
-        juubilarid_objektid_ids_year = [
-            objekt.id
-            for objekt
-            in syndinud_objektid_year
-            if (objekt.hist_year and objekt.vanus_gen > 0 and objekt.vanus_gen % 5 == 0)
-        ]
-        juubilarid_objektid_ids = juubilarid_objektid_ids_date + juubilarid_objektid_ids_year
-        juubilarid_objektid = objekt_qs. \
-            filter(id__in=juubilarid_objektid_ids). \
-            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
-            order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+        # syndinud_objektid_date = objekt_qs. \
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
+        # juubilarid_objektid_ids_date = [
+        #     objekt.id
+        #     for objekt
+        #     in syndinud_objektid_date
+        #     if (objekt.dob and objekt.vanus_gen > 0 and objekt.vanus_gen % 5 == 0)
+        # ]
+        # syndinud_objektid_year = objekt_qs. \
+        #     filter(hist_date__isnull=True). \
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
+        # juubilarid_objektid_ids_year = [
+        #     objekt.id
+        #     for objekt
+        #     in syndinud_objektid_year
+        #     if (objekt.hist_year and objekt.vanus_gen > 0 and objekt.vanus_gen % 5 == 0)
+        # ]
+        # juubilarid_objektid_ids = juubilarid_objektid_ids_date + juubilarid_objektid_ids_year
+        # juubilarid_objektid = objekt_qs. \
+        #     filter(id__in=juubilarid_objektid_ids). \
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+        #     order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+        juubilarid_objektid = get_juubilarid(objekt_qs, aasta=aasta)
         context['juubilarid_objektid'] = juubilarid_objektid
         context['juubilarid_objektid_pealkiri'] = '{0}. aasta juubilarid {1}'.format(
             aasta,
@@ -1810,32 +1809,41 @@ class ArtikkelDayArchiveView(DayArchiveView):
         return context
 
 
-def get_isikud_juubilarid(request, aasta=timezone.now().year):
-    isik_qs = Isik.objects.daatumitega(request)
+def get_juubilarid(qs, aasta=timezone.now().year):
     # Leiame selle aasta juubilarid
-    syndinud_isikud_date = isik_qs. \
-        annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
-    juubilarid_isikud_ids_date = [
-        isik.id
-        for isik
-        in syndinud_isikud_date
-        if (isik.dob and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
+    # syndinud_date = qs. \
+    #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
+    # juubilarid_ids_date = [
+    #     object.id
+    #     for object
+    #     in syndinud_date
+    #     if (object.dob and object.vanus_gen > 0 and object.vanus_gen % 5 == 0)
+    # ]
+    # syndinud_year = qs. \
+    #     filter(hist_date__isnull=True). \
+    #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
+    # juubilarid_ids_year = [
+    #     object.id
+    #     for object
+    #     in syndinud_year
+    #     if (object.hist_year and object.vanus_gen > 0 and object.vanus_gen % 5 == 0)
+    # ]
+    # juubilarid_ids = juubilarid_ids_date + juubilarid_ids_year
+    # juubilarid = qs. \
+    #     filter(id__in=juubilarid_ids). \
+    #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+    #     order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
+    juubilarid_ids = [
+        object.id
+        for object
+        in qs
+        if (object.vanus(datetime(aasta, 1, 1)) and (object.vanus(datetime(aasta, 1, 1)) % 5 == 0))
     ]
-    syndinud_isikud_year = isik_qs. \
-        filter(hist_date__isnull=True). \
-        annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
-    juubilarid_isikud_ids_year = [
-        isik.id
-        for isik
-        in syndinud_isikud_year
-        if (isik.hist_year and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
-    ]
-    juubilarid_isikud_ids = juubilarid_isikud_ids_date + juubilarid_isikud_ids_year
-    juubilarid_isikud = isik_qs. \
-        filter(id__in=juubilarid_isikud_ids). \
+    juubilarid = qs. \
+        filter(id__in=juubilarid_ids). \
         annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
-        order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
-    return juubilarid_isikud
+        order_by('hist_year', 'dob')
+    return juubilarid
 
 #
 # Isikute otsimiseks/filtreerimiseks
