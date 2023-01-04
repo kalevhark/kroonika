@@ -35,15 +35,13 @@
       </div>
       <!-- Sisukaardi andmete osa-->
       <div class="w3-twothird">
-        <h5>
-          {{ object.kaart }}
-          <br>
-          <ol>
-          {% for part in object.geometry.coordinates %}
-            <li>{{ part }}</li>
-          {% endfor %}
-          </ol>
-        </h5>
+        <h5>{{ object.kaart }}</h5><br />
+        Koordinaadid (CRS: EPSG:3301):<br />
+        <ol>
+        {% for part in object.geometry.coordinates %}
+          <li><code>{{ part }}</code></li>
+        {% endfor %}
+        </ol>
       </div>
       <!-- Andmete lisamise/muutmise andmed: -->
       {% include 'wiki/includes/object_updated_edit.html' with model='kaardiobjekt' %}

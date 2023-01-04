@@ -100,6 +100,7 @@ LEAFLET_DEFAULT_JS = settings.LEAFLET_DEFAULT_JS
 LEAFLET_DEFAULT_HEADER = settings.LEAFLET_DEFAULT_HEADER
 
 # crs to degree converter init
+# Kasutatav CRS: EPSG:3301 - Estonian Coordinate System of 1997 - Projected
 proj = pyproj.Transformer.from_crs(3301, 4326, always_xy=True)
 
 def split_address(aadress):
@@ -491,7 +492,7 @@ def kaardiobjektid2geojson():
                 href = ''
                 if objekt:
                     tooltip = get_object_data4tooltip(objekt)
-                    popup = get_object_data4popup(objekt)
+                    popup = get_object_data4popup(kaardiobjekt)
                     status = 'E'
                     href = objekt.get_absolute_url()
                     if objekt.gone:
@@ -663,14 +664,32 @@ def get_object_data4tooltip(objekt):
     return content
 
 # objektide markeril hiirega klikkides infoakna kuvamiseks
-def get_object_data4popup(objekt):
-    href = objekt.get_absolute_url()
-    content = f'<div class="kaardiobjekt-tooltip">Loe rohkem: <a href="{href}" target="_blank">{objekt}</a></div>'
+def get_object_data4popup(kaardiobjekt):
+    # kaardiobjekt_href = kaardiobjekt.get_absolute_url()
+    # kaardiobjekt_link = f"""
+    # <br />
+    # <small><a href="{kaardiobjekt_href}" target="_blank">{kaardiobjekt}</a></small>
+    # """
+    kaardiobjekt_link = ''
+    objekt = kaardiobjekt.objekt
+    if objekt:
+        objekt_href = objekt.get_absolute_url()
+        objekt_link = f"""
+        <br />
+        <a href="{objekt_href}" target="_blank">{objekt}</a>
+        """
+    else:
+        objekt_link = ''
+    content = f"""
+    <div class="kaardiobjekt-tooltip">Loe rohkem: 
+      {objekt_link}{kaardiobjekt_link}
+    </div>
+    """
     return content
 
 # kaardiobjektide markeril hiirega peatudes infoakna kuvamiseks
 def get_kaardiobjekt_data4tooltip(kaardiobjekt):
-    heading = f'<p>{kaardiobjekt.kaart}</p>'
+    heading = f'{kaardiobjekt.kaart}'
     parts = []
     aadressiobjekt = ' '.join([kaardiobjekt.tn, kaardiobjekt.nr]).strip()
     if aadressiobjekt:
@@ -678,7 +697,11 @@ def get_kaardiobjekt_data4tooltip(kaardiobjekt):
     if kaardiobjekt.lisainfo:
         parts.append(kaardiobjekt.lisainfo)
     body = '<br />'.join(parts)
-    content = f'<div class="kaardiobjekt-tooltip">{heading}{body}</div>'
+    content = f"""
+    <div class='kaardiobjekt-tooltip'>
+      {heading}<br /><a href='{kaardiobjekt.get_absolute_url()}' target='_blank'>{body}</a>
+    </div>
+    """
     return content
 
 # def get_kaardiobjektid4kaart(kaart):
@@ -1635,7 +1658,7 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id):
 
 if __name__ == "__main__":
     # make_big_maps_leaflet(aasta=1824, objekt=970)
-    # kaardiobjektid2geojson()
+    kaardiobjektid2geojson()
     # read_kaardiobjekt_csv_to_db('2021')
     # geometry = get_osm_data(street='Rigas', housenumber='9', admin_level='7', country='Latvija', city='Valka')
     # geometry = get_osm_data(street='Kesk', housenumber='12')
@@ -1643,7 +1666,7 @@ if __name__ == "__main__":
     # geometry = get_shp_data('Maleva 3')
     # print(geometry)
     # kaardiobjekt_match_db(20938)
-    read_shp_to_db(aasta='1912', do=True) # Loeb kaardikihi shp failist andmebaasi
+    # read_shp_to_db(aasta='1912') # Loeb kaardikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1800') # Kirjutab andmebaasist kaardikihi shp faili
     # save_current_data() # Salvestame andmebaasi värsked andmed OpenStreetMapist ja Maa-ameti andmefailist
     # find_intersections()
