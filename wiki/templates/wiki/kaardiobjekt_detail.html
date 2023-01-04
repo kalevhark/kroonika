@@ -19,6 +19,7 @@
           </a>
         {% endif %}
       </h4>
+      <h5>Kaart: {{ object.kaart }}</h5><br />
     </div>
 
     <!-- Sisukaardi kirjeldav osa-->
@@ -35,12 +36,11 @@
       </div>
       <!-- Sisukaardi andmete osa-->
       <div class="w3-twothird">
-        <h5>{{ object.kaart }}</h5><br />
         Koordinaadid (CRS: EPSG:3301):<br />
         <ol>
-        {% for part in object.geometry.coordinates %}
-          <li><code>{{ part }}</code></li>
-        {% endfor %}
+          {% for part in object.geometry.coordinates %}
+            <li>{{ part }}</li>
+          {% endfor %}
         </ol>
       </div>
       <!-- Andmete lisamise/muutmise andmed: -->
@@ -64,10 +64,20 @@
                       data-url="{% url 'wiki:join_kaardiobjekt_with_objekt' kaardiobjekt_id=match.kaardiobjekt.id objekt_id=object.objekt.id %}"
                     {% endif %}
             >
-              {{ match.kaardiobjekt }} {{ match.kattuvus }}
+              <a
+                      style="text-decoration: none;"
+                      class="hover-kaardiobjekt"
+                      href="{% url 'wiki:wiki_kaardiobjekt_detail' pk=match.kaardiobjekt.pk %}"
+              >
+                <strong>{{ match.kaardiobjekt }}</strong>
+              </a> {{ match.kattuvus }}
               {% if match.kaardiobjekt.objekt %}
                 ->
-                <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_detail' pk=match.kaardiobjekt.objekt.pk slug=match.kaardiobjekt.objekt.slug  %}">
+                <a
+                        style="text-decoration: none;"
+                        class="hover-objekt"
+                        href="{% url 'wiki:wiki_objekt_detail' pk=match.kaardiobjekt.objekt.pk slug=match.kaardiobjekt.objekt.slug  %}"
+                >
                   <strong>{{ match.kaardiobjekt.objekt }}</strong>
                 </a>
               {% else %}
