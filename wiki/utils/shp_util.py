@@ -126,32 +126,60 @@ def shp_crs_to_degree(coordinates, reverse=False):
 ###
 # Abifunktsioonid haldamiseks
 ###
+def get_kattuvus(kaardiobjekt_geometry, shp_geometry):
+    shape = kaardiobjekt_geometry['coordinates'][0]
+    kaardiobjekt_polygon = Polygon(shape)
+    shape = shp_geometry['coordinates'][0]
+    shp_polygon = Polygon(shape)
+    if kaardiobjekt_polygon.is_valid and shp_polygon.is_valid:
+        if kaardiobjekt_polygon.intersects(shp_polygon):
+            kattuvus = round(kaardiobjekt_polygon.intersection(shp_polygon).area/kaardiobjekt_polygon.area, 2)
+            return kattuvus
 
 # Loeb kaardikihi shp failist andmebaasi
-def read_shp_to_db(aasta):
+def read_shp_to_db(aasta, do=False):
     kaart = Kaart.objects.filter(aasta=aasta).first()
     if kaart:
-        lisatud = 0
-        olemas = 0
-        with open(UTIL_DIR / f'{aasta}.shp', 'rb') as shp_file:
-            with open(UTIL_DIR / f'{aasta}.dbf', 'rb') as dbf_file:
-                with shapefile.Reader(shp=shp_file, dbf=dbf_file) as sf:
-                    # existing Shape objects
-                    for shaperec in sf.iterShapeRecords():
-                        rec = shaperec.record.as_dict()
-                        geometry = shaperec.shape.__geo_interface__
-                        # kontrollitakse, kas selliste piiridega kaardiobjekt on juba andmebaasis
-                        kontroll = Kaardiobjekt.objects.filter(kaart=kaart, geometry=geometry)
-                        print(rec, end=' ')
-                        if kontroll:
-                            print('olemas')
-                            olemas += 1
-                        else:
-                            print('lisame:')
-                            lisatud += 1
-                            o = Kaardiobjekt.objects.create(kaart=kaart, geometry=geometry, **rec)
-                            print(o)
-        print(f'Olemas {olemas}, lisatud {lisatud}')
+        # analüüsime olemasolevaid objekte
+        print('kaardiobjekte kokku:', Kaardiobjekt.objects.filter(kaart=kaart).count())
+        print('sh seotud:', Kaardiobjekt.objects.filter(kaart=kaart).filter(objekt__isnull=False).count())
+        if do:
+            # kustutame objektiga sidumata kardiobjektid
+            d = Kaardiobjekt.objects.filter(kaart=kaart).filter(objekt__isnull=True).delete()
+            print('kustutatud:', d)
+            # kysime valitud kaardi kaardiobjektid
+            kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart)
+            lisatud = 0
+            olemas = 0
+            vigu = 0
+            with open(UTIL_DIR / f'{aasta}.shp', 'rb') as shp_file:
+                with open(UTIL_DIR / f'{aasta}.dbf', 'rb') as dbf_file:
+                    with shapefile.Reader(shp=shp_file, dbf=dbf_file) as sf:
+                        # existing Shape objects
+                        for shaperec in sf.iterShapeRecords():
+                            rec = shaperec.record.as_dict()
+                            geometry = shaperec.shape.__geo_interface__
+                            tyyp = rec['tyyp']
+                            if tyyp not in ['A', 'H']:
+                                print('vigane', rec)
+                                vigu += 1
+                                continue
+                            # kontrollitakse, kas selliste piiridega kaardiobjekt on juba andmebaasis
+                            kattuv = False
+                            for kaardiobjekt in kaardiobjektid:
+                                kattuvus = get_kattuvus(kaardiobjekt.geometry, geometry)
+                                if kattuvus and kattuvus > 0.2 and kaardiobjekt.tyyp == tyyp:
+                                    kattuv = True
+                                    ko = kaardiobjekt
+                                    break
+                            if kattuv:
+                                print('olemas:', kattuvus, rec, ko)
+                                olemas += 1
+                            else:
+                                lisatud += 1
+                                o = Kaardiobjekt.objects.create(kaart=kaart, geometry=geometry, **rec)
+                                print('lisame:', rec, o)
+            print(f'Olemas {olemas}, lisatud {lisatud}, vigu {vigu}')
     else:
         print('Sellist kaarti ei ole andmebaasis')
 
@@ -1615,7 +1643,7 @@ if __name__ == "__main__":
     # geometry = get_shp_data('Maleva 3')
     # print(geometry)
     # kaardiobjekt_match_db(20938)
-    read_shp_to_db(aasta='1800') # Loeb kaardikihi shp failist andmebaasi
+    read_shp_to_db(aasta='1912', do=True) # Loeb kaardikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1800') # Kirjutab andmebaasist kaardikihi shp faili
     # save_current_data() # Salvestame andmebaasi värsked andmed OpenStreetMapist ja Maa-ameti andmefailist
     # find_intersections()
