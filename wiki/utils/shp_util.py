@@ -1001,7 +1001,7 @@ def make_objekt_leaflet_combo(objekt=1):
                     location=location,
                     name=aasta,
                     tiles="Stamen Toner",
-                    zoom_start=zoom_start,
+                    # zoom_start=zoom_start,
                     min_zoom=DEFAULT_MIN_ZOOM,
                     **tile_kwargs
                 ).add_to(feature_group[aasta])
@@ -1013,7 +1013,7 @@ def make_objekt_leaflet_combo(objekt=1):
                     location=location,
                     name=aasta,
                     tiles=kaart.tiles,
-                    zoom_start=zoom_start,
+                    # zoom_start=zoom_start,
                     min_zoom=DEFAULT_MIN_ZOOM,
                     attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
                     **tile_kwargs
@@ -1047,11 +1047,8 @@ def make_objekt_leaflet_combo(objekt=1):
                             style_function=lambda x: style
                         ).add_to(feature_group[DEFAULT_MAP.aasta])
                     # Kui on antud zoomimise tase, siis kasutame seda
-                    if kaardiobjekt.zoom and (zoom_start > kaardiobjekt.zoom):
+                    if kaardiobjekt.zoom and (zoom_start != kaardiobjekt.zoom):
                         zoom_start = kaardiobjekt.zoom
-
-                # Parandame zoomi, kui mõnel kihil on määratud TODO: ei toimi
-                # tilelayer.zoom_start = zoom_start
 
         # Loome aluskaardi
         kwargs = {  # vajalikud mobiilis kerimise h6lbustamiseks
