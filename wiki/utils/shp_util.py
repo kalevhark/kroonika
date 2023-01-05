@@ -39,64 +39,17 @@ from wiki.models import Kaart, Kaardiobjekt, Objekt
 
 OVERPASS_URL = "http://overpass-api.de/api/interpreter"
 
-# DEFAULT_CENTER = (57.7769268, 26.0308911) # {'lon': 26.0308911, 'lat': 57.7769268} # Jaani kiriku koordinaadid
 DEFAULT_CENTER = settings.DEFAULT_CENTER
 DEFAULT_MAP = Kaart.objects.filter(aasta=settings.DEFAULT_MAP_AASTA).first() # Vaikimii OpenStreetMap
-# DEFAULT_MAP_ZOOM_START = 16
 DEFAULT_MAP_ZOOM_START = settings.DEFAULT_MAP_ZOOM_START
-# DEFAULT_MIN_ZOOM = 13
 DEFAULT_MIN_ZOOM = settings.DEFAULT_MIN_ZOOM
 
 # FUCHSIA = '#FF00FF'
 # OBJEKT_COLOR = '#2b5797'
 
-# GEOJSON_STYLE = {
-#     'H': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 3}, # hoonestus (default)
-#     'A': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # ala (default)
-#     'M': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # muu (default)
-#     'HH': {'fill': 'red', 'color': 'red', 'weight': 3}, # hoonestus (puudub kaasajal)
-#     'AH': {'fill': None, 'color': 'red', 'weight': 3}, # ala (puudub kaasajal)
-#     'MH': {'fill': None, 'color': 'red', 'weight': 3}, # muu (puudub kaasajal)
-#     'HE': {'fill': OBJEKT_COLOR, 'color': OBJEKT_COLOR, 'weight': 3}, # hoonestus (olemas kaasajal)
-#     'AE': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # ala (olemas kaasajal)
-#     'ME': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # muu (olemas kaasajal),
-#     'HV': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # hoonestus (virtual)
-#     'AV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # ala (virtual)
-#     'MV': {'fill': None, 'color': FUCHSIA, 'weight': 2, 'dashArray': '2, 5'},  # muu (virtual)
-# }
 GEOJSON_STYLE = settings.GEOJSON_STYLE
-# https://python-visualization.github.io/folium/modules.html#module-folium.map
-# LEAFLET_DEFAULT_CSS = [
-#     # ('leaflet_css', 'https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css'),
-#     ("leaflet_css", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"),
-#     ('bootstrap_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'),
-#     ('bootstrap_theme_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css'),
-#     ('awesome_markers_font_css', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'),
-#     ('awesome_markers_css', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css'),
-#     ('awesome_rotate_css', 'https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css')
-# ]
 LEAFLET_DEFAULT_CSS = settings.LEAFLET_DEFAULT_CSS
-# LEAFLET_DEFAULT_JS = [
-#     # ('leaflet', 'https://unpkg.com/leaflet@1.8.0/dist/leaflet.js'),
-#     ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"),
-#     ('jquery', 'https://code.jquery.com/jquery-1.12.4.min.js'),
-#     ('bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'),
-#     ('awesome_markers', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js')
-# ]
 LEAFLET_DEFAULT_JS = settings.LEAFLET_DEFAULT_JS
-# Kroonika default font kasutamiseks + custom elementide css
-# LEAFLET_DEFAULT_HEADER = Element(
-#     '<frame-options policy="SAMEORIGIN" />'
-#     '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">'
-#     '<style>'
-#     '.kaart-control-layers,'
-#     '.kaardiobjekt-tooltip,'
-#     '.kaart-tooltip {'
-#     '  font-size: 14px;'
-#     '  font-family: "Raleway", sans-serif;'
-#     '}'
-#     '</style>'
-# )
 LEAFLET_DEFAULT_HEADER = settings.LEAFLET_DEFAULT_HEADER
 
 # crs to degree converter init
@@ -704,57 +657,6 @@ def get_kaardiobjekt_data4tooltip(kaardiobjekt):
     """
     return content
 
-# def get_kaardiobjektid4kaart(kaart):
-#     # Loome kaardi olemasolevate m2rgtud kaardiobjektide kihi
-#     if kaart == DEFAULT_MAP:  # kaasaja kaardil kaardiobjekte liiga palju
-#         kaardiobjektid = Kaardiobjekt.objects. \
-#             filter(kaart=kaart). \
-#             filter(objekt__isnull=False). \
-#             filter(objekt__gone__exact=False)
-#     else:
-#         kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart)
-#
-#     if kaardiobjektid:
-#         feature_group_kaardiobjektid = folium.FeatureGroup(
-#             name=f'<span class="kaart-control-layers">Kaardiobjektid {kaart.aasta}</span>',
-#             show=False
-#         )
-#         for kaardiobjekt in kaardiobjektid:
-#             tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-#             tooltip = get_kaardiobjekt_data4tooltip(
-#                 kaardiobjekt)  # f'<div class="kaardiobjekt-tooltip">{kaardiobjekt}</div>'
-#             popup = None
-#             style = GEOJSON_STYLE[tyyp]
-#             if kaardiobjekt.objekt:  # kui seotud objektiga
-#                 tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
-#                 popup = folium.Popup(
-#                     get_object_data4popup(kaardiobjekt.objekt),
-#                     max_width="100%"
-#                 )
-#                 if kaardiobjekt.objekt.gone:  # hävinud
-#                     style = GEOJSON_STYLE[f'{tyyp}H']
-#                 else:  # alles
-#                     style = GEOJSON_STYLE[f'{tyyp}E']
-#             geometry = kaardiobjekt.geometry
-#             name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
-#             feature_collection = {
-#                 "type": "FeatureCollection",
-#                 "name": name,
-#                 "features": [geometry]
-#             }
-#             f = json.dumps(feature_collection)
-#             geojson = folium.GeoJson(
-#                 f,
-#                 name=name,
-#                 style_function=lambda x, style=style: style,
-#                 tooltip=tooltip,
-#                 popup=popup,
-#                 highlight_function=lambda x: {"fillOpacity": 0.5},
-#             )
-#             geojson.add_to(feature_group_kaardiobjektid)
-#         # end for kaardiobjekt in kaardiobjektid:
-#         return feature_group_kaardiobjektid
-
 # Lisab tuvastatud kaardiobjektid kaartidele aastate kaupa
 def add_kaardiobjektid2map(map, kaardid):
     for kaart in kaardid:
@@ -768,7 +670,6 @@ def add_kaardiobjektid2map(map, kaardid):
                 # style="background-color: yellow;",
                 max_width=300,
             )
-
             tooltip = GeoJsonTooltip(
                 fields=["tooltip"],
                 labels=False,
@@ -779,7 +680,6 @@ def add_kaardiobjektid2map(map, kaardid):
                 """,
                 max_width=300,
             )
-
             with open(path) as gf:
                 src = json.load(gf)
                 name = src['name']
@@ -1018,48 +918,11 @@ def get_big_maps_default(kaardid, obj, aasta):
     map_name = map.get_name()
     basemaps = [f'{key}: {item.get_name()}' for key, item in feature_groups_kaardid.items()]
 
+    # Lisame javascripti <script> tagi lõppu
     js = f'const map = {map_name};\n'
     js += 'const basemaps = {' + ', '.join(basemaps) + '};\n'
-
     with open(UTIL_DIR / 'wiki_kaart.js') as jsf:
         js += jsf.read()
-
-    # js += map_name + """
-    #     .on('baselayerchange', function (eventLayer) {
-    #         console.log(eventLayer);
-    #         sayHello();
-    #         const testElements = document.getElementsByClassName('leaflet-control-layers-list');
-    #         const testDivs = Array.prototype.filter.call(
-    #           testElements,
-    #           (testElement) => testElement.nodeName === 'DIV',
-    #         );
-    #         console.log(testElements[0]);
-    #     });\n
-    #     """
-
-    # basemaps = [f'{key}: {item.get_name()}' for key, item in feature_groups_kaardid.items()]
-    # # js = ''
-    # js += 'const basemaps = {' + ', '.join(basemaps) + '};\n'
-    # js += f'const href = {map_name}._container.baseURI;\n'
-    # js += 'const url = new URL(href);\n'
-    # js += 'var r = /\/kaart\/(\d+)\//;\n'
-    # js += 'var kaartAasta = url.pathname.match(r)[1];\n'
-    # # js += 'r = /\?objekt=(\d+)/;\n' :TODO see on vale regex!
-    # # js += 'var kaartObjekt = url.search.match(r)[1];\n'
-    # # js += 'console.log(kaartAasta, kaartObjekt);\n'
-    # js += """
-    #     if (kaartAasta) {
-    #         for (let key in basemaps) {
-    #           if (key == kaartAasta) {
-    #             xxx.addLayer(basemaps[key]);\n
-    #           } else {
-    #             xxx.removeLayer(basemaps[key]);\n
-    #           }
-    #         }
-    #     };\n
-    #     """.replace('xxx', map_name)
-
-    # Lisab javascripti <script> tagi lõppu
     el._template = jinja2.Template('''
         {{% macro script(this, kwargs) %}}
             {0}
@@ -1068,8 +931,6 @@ def get_big_maps_default(kaardid, obj, aasta):
     return map
 
 def make_big_maps_leaflet(aasta=None, objekt=None):
-    start = datetime.datetime.now()
-
     kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
     if aasta and Kaart.objects.filter(aasta=aasta).count()==0:
         tekst = f'<h4>{aasta}. aasta kaarti ei ole. Vali järgmistest:</h4>'
@@ -1084,12 +945,9 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
                 obj = Objekt.objects.get(id=objekt)
             except ObjectDoesNotExist:
                 pass
-
         # Loome map objecti
         map = get_big_maps_default(kaardid, obj, aasta)
-
         map_html = map._repr_html_()
-
         # v2ike h2kk, mis muudab vertikaalset suuruse sõltuvaks css-ist
         map_html = map_html.replace(
             'style="position:relative;width:100%;height:0;padding-bottom:60%;"',
@@ -1103,317 +961,7 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
             '',
             1
         )
-
     return map_html
-
-# def make_big_maps_leaflet_old(aasta=None, objekt=None):
-#     start = datetime.datetime.now()
-#     map_html = None
-#     map_pickle = f'map_{aasta}_{objekt}.pickle'
-#     # path = Path(map_pickle)
-#     # if path.is_file():
-#     #     with open(map_pickle, 'rb') as f:
-#     #         map_html = pickle.load(f)
-#     if not map_html:
-#         kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
-#         if aasta and Kaart.objects.filter(aasta=aasta).count()==0:
-#             tekst = f'<h4>{aasta}. aasta kaarti ei ole. Vali järgmistest:</h4>'
-#             for kaart in kaardid:
-#                 href = reverse('kaart')
-#                 tekst += f'<p class="hover-objekt"><a href="{href}{kaart.aasta}">{kaart}</a><p>'
-#             return tekst
-#         else:
-#             # Kas vaja näidata kaartidel objekti?
-#             obj = Objekt.objects.none()
-#             objektiga_kaardid = []
-#             objektiga_kaart_max = DEFAULT_MAP
-#             if objekt:
-#                 try:
-#                     obj = Objekt.objects.get(id=objekt)
-#                 except ObjectDoesNotExist:
-#                     pass
-#                 if obj:
-#                     objektiga_kaardiobjektid = obj.kaardiobjekt_set.filter()
-#                     if objektiga_kaardiobjektid:
-#                         objektiga_kaardid = [kaardiobjekt.kaart.aasta for kaardiobjekt in objektiga_kaardiobjektid]
-#                         objektiga_kaart_max = max(objektiga_kaardid)
-#                         # objektiga_kaart_min = min(objektiga_kaardid)
-#
-#             # Loome aluskaardi
-#             # zoom_start = DEFAULT_MAP_ZOOM_START
-#             map = folium.Map(
-#                 location=DEFAULT_CENTER,  # NB! tagurpidi: [lat, lon],
-#                 zoom_start=DEFAULT_MAP_ZOOM_START,
-#                 min_zoom=DEFAULT_MIN_ZOOM,
-#                 zoom_control=True,
-#                 control_scale=True,
-#                 tiles=None,
-#             )
-#
-#             # Teegid mida kasutatakse folium leaflet moodulis
-#             map.default_css = LEAFLET_DEFAULT_CSS
-#             map.default_js = LEAFLET_DEFAULT_JS
-#             LEAFLET_DEFAULT_HEADER.add_to(map.get_root().header)
-#
-#             map_name = map.get_name()
-#             feature_groups = {} # erinevate aastate kaardid
-#             feature_groups_kaardiobjektid = {} # erinevate aastate kaartidel m2rgitud kaardiobjektid
-#
-#             for kaart in kaardid:
-#                 kaart_aasta = kaart.aasta
-#                 if kaart_aasta in objektiga_kaardid:
-#                     color = GEOJSON_STYLE['HE']['color']
-#                     name = f'<span class="kaart-control-layers" style="color: {color};">{kaart_aasta}</span>' # fuchsia
-#                 elif kaart_aasta == DEFAULT_MAP.aasta and objektiga_kaardid and obj.gone:
-#                     color = GEOJSON_STYLE['HH']['color']
-#                     name = f'<span class="kaart-control-layers" style="color: {color};">{kaart_aasta}</span>' # red
-#                 else:
-#                     name = f'<span class="kaart-control-layers" style="color: #A9A9A9;">{kaart_aasta}</span>' # darkgrey
-#
-#                 # loome kaardikihi
-#                 feature_group = folium.FeatureGroup(
-#                     name=name,
-#                     overlay=False,
-#                 )
-#                 feature_groups[kaart_aasta] = feature_group.get_name()
-#
-#                 # lisame kaardikihile rasterkihi
-#                 tilelayer = folium.TileLayer(
-#                     location=DEFAULT_CENTER,
-#                     # name=kaart.aasta,
-#                     tiles=kaart.tiles,
-#                     zoom_start=DEFAULT_MAP_ZOOM_START,
-#                     min_zoom=DEFAULT_MIN_ZOOM,
-#                     attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
-#                     id=kaart.aasta
-#                 )
-#
-#                 if obj: # lisame kaardikihile vektorkihi kui on objekti kaardiobjektid
-#                     if kaart == DEFAULT_MAP:
-#                         # kaardiobjektid = obj.kaardiobjekt_set.filter(kaart__aasta__exact=objektiga_kaart_max)
-#                         if obj.gone:
-#                             tilelayer_stamen_toner = folium.TileLayer("Stamen Toner")
-#                             tilelayer.tiles = tilelayer_stamen_toner.tiles
-#                     # else:
-#                         # kaardiobjektid = obj.kaardiobjekt_set.filter(kaart=kaart)
-#
-#                 # Loome kaardi olemasolevate m2rgtud kaardiobjektide kihi
-#                 if kaart == DEFAULT_MAP: # kaasaja kaardil kaardiobjekte liiga palju
-#                     kaardiobjektid = Kaardiobjekt.objects.\
-#                         filter(kaart=kaart).\
-#                         filter(objekt__isnull=False).\
-#                         filter(objekt__gone__exact=False)
-#                 else:
-#                     kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart)
-#
-#                 if kaardiobjektid:
-#                     feature_group_kaardiobjektid = folium.FeatureGroup(
-#                         name=f'<span class="kaart-control-layers">Kaardiobjektid {kaart.aasta}</span>',
-#                         show=False
-#                     )
-#                     for kaardiobjekt in kaardiobjektid:
-#                         tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-#                         tooltip = get_kaardiobjekt_data4tooltip(kaardiobjekt) # f'<div class="kaardiobjekt-tooltip">{kaardiobjekt}</div>'
-#                         popup = None
-#                         fillColor = GEOJSON_STYLE[tyyp]["fill"]
-#                         color = GEOJSON_STYLE[tyyp]["color"]
-#                         weight = GEOJSON_STYLE[tyyp]["weight"]
-#                         if kaardiobjekt.objekt: # kui seotud objektiga
-#                             tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
-#                             popup = folium.Popup(
-#                                 get_object_data4popup(kaardiobjekt.objekt),
-#                                 max_width="100%"
-#                             )
-#                             if kaardiobjekt.objekt.gone: # hävinud
-#                                 fillColor = GEOJSON_STYLE[f'{tyyp}H']["fill"]
-#                                 color = GEOJSON_STYLE[f'{tyyp}H']["color"]
-#                                 weight = GEOJSON_STYLE[f'{tyyp}H']["weight"]
-#                             else: # alles
-#                                 fillColor = GEOJSON_STYLE[f'{tyyp}E']["fill"]
-#                                 color = GEOJSON_STYLE[f'{tyyp}E']["color"]
-#                                 weight = GEOJSON_STYLE[f'{tyyp}E']["weight"]
-#                         geometry = kaardiobjekt.geometry
-#                         name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
-#                         feature_collection = {
-#                             "type": "FeatureCollection",
-#                             "name": name,
-#                             "features": [geometry]
-#                         }
-#                         f = json.dumps(feature_collection)
-#                         geojson = folium.GeoJson(
-#                             f,
-#                             name=name,
-#                             style_function=lambda x, fillColor=fillColor, color=color: {
-#                                 "fillColor": fillColor,
-#                                 "color": color,
-#                                 "weight": weight
-#                             },
-#                             tooltip=tooltip,
-#                             popup=popup,
-#                             highlight_function=lambda x: {"fillOpacity": 0.5},
-#                         )
-#                         geojson.add_to(feature_group_kaardiobjektid)
-#                     # end for kaardiobjekt in kaardiobjektid:
-#
-#                     feature_group_kaardiobjektid.add_to(map)
-#                     feature_groups_kaardiobjektid[aasta] = feature_group_kaardiobjektid
-#                 # end if kaardiobjektid:
-#
-#                 # Lisame kaardile kirjelduse tootipi
-#                 kwargs = {
-#                     'direction': 'center',
-#                     'permanent': False,
-#                     # 'sticky': False,
-#                     'interactive': True,
-#                     'opacity': 0.9,
-#                 }
-#                 tooltip = folium.Tooltip(
-#                     kaart.kirjeldus_html,
-#                     **kwargs
-#                 )
-#                 tooltip.add_to(tilelayer)
-#                 tilelayer.add_to(feature_group)
-#                 feature_group.add_to(map)
-#
-#             # Piirid tänapäeval
-#             style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
-#             with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
-#                 src = json.load(gf)
-#                 geojson = folium.GeoJson(
-#                     src,
-#                     name=f'<span class="kaart-control-layers">linnapiirid (2021)</span>',
-#                     style_function=lambda x: style1,
-#                     # embed=False
-#                 )
-#                 geojson.add_to(map)
-#
-#             # Tänavatevõrk tänapäeval
-#             style2 = {'fill': None, 'color': 'orange', 'weight': 2}
-#             with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
-#                 src = json.load(gf)
-#                 geojson = folium.GeoJson(
-#                     src,
-#                     name=f'<span class="kaart-control-layers">tänavad (2021)</span>',
-#                     style_function=lambda x: style2,
-#                     # embed=False
-#                 )
-#                 geojson.add_to(map)
-#
-#             # Lisame kihtide kontrolli kaartide jaoks
-#             layer_control = folium.LayerControl()
-#             layer_control.add_to(map)
-#
-#             # Lisame infonupu
-#             leafletJsButton(
-#                 object="""
-#                 {
-#                     states:[
-#                         {
-#                             stateName: 'show-info',
-#                             icon: 'fa-info',
-#                             title: 'Info kaardi kohta',
-#                             onClick: function(btn, map) {
-#                                 map.eachLayer(function(layer) {
-#                                     layerId = layer.options.id;
-#                                     if (layerId) {
-#                                         layer.openTooltip(map.getCenter());
-#                                         map.once('tooltipclose', function(ev){
-#                                             btn.state('show-info');
-#                                         });
-#                                     }
-#                                 });
-#                                 btn.state('hide-info');
-#                             }
-#                         }, {
-#                             icon: 'fa-close',
-#                             stateName: 'hide-info',
-#                             onClick: function(btn, map) {
-#                                 map.eachLayer(function(layer) {
-#                                     layerId = layer.options.id;
-#                                     if (layerId) {
-#                                         layer.closeTooltip();
-#                                     }
-#                                 });
-#                                 btn.state('show-info');
-#                             },
-#                             title: 'Sulge infoaken'
-#                         }
-#                     ]
-#                 }
-#             """
-#             ).add_to(map)
-#
-#             # Lisab javascripti <script> tagi algusesse
-#             # my_js = '''
-#             # let height;
-#             #
-#             # const sendPostMessage = () => {
-#             #     if (height !== document.getElementById('mapcontainer').offsetHeight) {
-#             #         height = document.getElementById('mapcontainer').offsetHeight;
-#             #         window.parent.postMessage({
-#             #             frameHeight: height
-#             #         }, '*');
-#             #         console.log(height);
-#             #     }
-#             # }
-#             #
-#             # window.onload = () => sendPostMessage();
-#             # window.onresize = () => sendPostMessage();
-#             # '''
-#             # from branca.element import Element
-#             # map.get_root().script.add_child(Element(my_js))
-#             #
-#             # Kui on vaja lisada lisa html-i <div class="folium-map" id="map_795eaceab1bb4d5d8a0d91d1a99d36a4" ></div> järele
-#             # map.get_root().html.add_child(Element("<h1>Hello world</h1>"))
-#
-#             el = folium.MacroElement().add_to(map)
-#             # js = map_name + """
-#             # .on('baselayerchange', function (eventLayer) {
-#             #     // console.log(eventLayer.name);
-#             # });\n
-#             # """
-#             js = ''
-#
-#             if aasta:
-#                 for kaart in feature_groups.keys():
-#                     fg = feature_groups[kaart]
-#                     if kaart == aasta:
-#                         # js += f'console.log({layer_control.get_name()});\n'
-#                         js += f'{map_name}.addLayer({fg});\n'
-#                     else:
-#                         js += f'{map_name}.removeLayer({fg});\n'
-#
-#             # Lisab javascripti <script> tagi lõppu
-#             el._template = jinja2.Template('''
-#             {{% macro script(this, kwargs) %}}
-#                 {0}
-#             {{% endmacro %}}'''.format(js))
-#
-#             print(map.to_dict())
-#
-#             map_html = map._repr_html_()
-#             # v2ike h2kk, mis muudab vertikaalset suuruse sõltuvaks css-ist
-#             map_html = map_html.replace(
-#                 'style="position:relative;width:100%;height:0;padding-bottom:60%;"',
-#                 'id = "folium-map-big" class="folium-map-big"',
-#                 1
-#             )
-#             # v2ike h2kk, mis muudab vaikimis veateksti
-#             map_html = map_html.replace(
-#                 '<span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span>',
-#                 # '<span style="color:#565656">Kaarti laetakse. Kui see kiri jääb nähtavaks, tekkis laadimisel viga</span>',
-#                 '',
-#                 1
-#             )
-#
-#             # map.save('map.html')
-#             with open(map_pickle, 'wb') as f:
-#                 # Pickle the 'data' dictionary using the highest protocol available.
-#                 pickle.dump(map_html, f, pickle.HIGHEST_PROTOCOL)
-#
-#     stopp = datetime.datetime.now()
-#     print(start, stopp)
-#     return map_html
 
 # Konkreetse objekti erinevate aastate kaardid koos
 def make_objekt_leaflet_combo(objekt=1):
@@ -1515,7 +1063,6 @@ def make_objekt_leaflet_combo(objekt=1):
             zoom_start=zoom_start,
             min_zoom=DEFAULT_MIN_ZOOM,
             zoom_control=True,
-            # control_scale=True,
             tiles=None,
             **kwargs
         )
@@ -1582,7 +1129,6 @@ def make_objekt_leaflet_combo(objekt=1):
         # v2ike h2kk, mis muudab vaikimis veateksti
         map_html = map_html.replace(
             '<span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span>',
-            # '<span style="color:#565656">Kaarti laetakse. Kui see kiri jääb nähtavaks, tekkis laadimisel viga</span>',
             '',
             1
         )
@@ -1596,63 +1142,6 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id):
         return
     if kaardiobjekt:
         map_html = kaardiobjekt.get_leaflet()
-        # zoom_start = kaardiobjekt.zoom if kaardiobjekt.zoom else DEFAULT_MAP_ZOOM_START
-        # # Loome aluskaardi
-        # map = folium.Map(
-        #     location=kaardiobjekt.centroid, # kaardiobjekt.centroid,  # NB! tagurpidi: [lat, lon],
-        #     zoom_start=zoom_start,
-        #     min_zoom=DEFAULT_MIN_ZOOM,
-        #     zoom_control=True,
-        #     tiles=None,
-        # )
-        #
-        # map.default_css = LEAFLET_DEFAULT_CSS
-        # map.default_js = LEAFLET_DEFAULT_JS
-        #
-        # feature_group_kaardiobjekt = folium.FeatureGroup(
-        #     name=f'<span class="kaart-control-layers">{kaardiobjekt.kaart.aasta}</span>',
-        #     overlay=False
-        # )
-        # folium.TileLayer(
-        #     tiles=kaardiobjekt.kaart.tiles,
-        #     attr=f'{kaardiobjekt.kaart.__str__()}<br>{kaardiobjekt.kaart.viited.first()}',
-        # ).add_to(feature_group_kaardiobjekt)
-        # feature_group_kaardiobjekt.add_to(map)
-        #
-        # feature_group_default = folium.FeatureGroup(
-        #     name=f'<span class="kaart-control-layers">{DEFAULT_MAP.aasta}</span>',
-        #     overlay=False
-        # )
-        # folium.TileLayer(
-        #     # name=DEFAULT_MAP.aasta,
-        #     tiles=DEFAULT_MAP.tiles,
-        #     attr=f'{DEFAULT_MAP.__str__()}<br>{DEFAULT_MAP.viited.first()}',
-        # ).add_to(feature_group_default)
-        # feature_group_default.add_to(map)
-        #
-        # # lisame vektorkihid
-        # geometry = kaardiobjekt.geometry
-        # tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-        # name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
-        # feature_collection = {
-        #     "type": "FeatureCollection",
-        #     "name": name,
-        #     "features": [geometry]
-        # }
-        # style = GEOJSON_STYLE[tyyp]
-        # f = json.dumps(feature_collection)
-        # folium.GeoJson(
-        #     f,
-        #     name=name,
-        #     style_function=lambda x: style
-        # ).add_to(map)
-        #
-        # # Lisame kihtide kontrolli
-        # folium.LayerControl().add_to(map)
-        #
-        # map_html = map._repr_html_()
-        # # v2ike h2kk, mis muudab vertikaalset suurust
-        # map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
         return map_html
 
 
@@ -1662,7 +1151,6 @@ if __name__ == "__main__":
     # read_kaardiobjekt_csv_to_db('2021')
     # geometry = get_osm_data(street='Rigas', housenumber='9', admin_level='7', country='Latvija', city='Valka')
     # geometry = get_osm_data(street='Kesk', housenumber='12')
-    # print(geometry)
     # geometry = get_shp_data('Maleva 3')
     # print(geometry)
     # kaardiobjekt_match_db(20938)
