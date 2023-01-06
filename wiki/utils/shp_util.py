@@ -743,7 +743,7 @@ def add_objekt2map(feature_groups_kaardid, obj):
                     if kaardiobjekt.objekt:  # kui seotud objektiga
                         tooltip = get_object_data4tooltip(kaardiobjekt.objekt)
                         popup = folium.Popup(
-                            get_object_data4popup(kaardiobjekt.objekt),
+                            get_object_data4popup(kaardiobjekt),
                             max_width="100%"
                         )
                     geometry = kaardiobjekt.geometry
