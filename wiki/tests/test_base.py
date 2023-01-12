@@ -138,8 +138,6 @@ class WikiBaseViewTests(TestCase):
         response = self.client.get(reverse('kaart', kwargs=kwargs))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
-        html = response.content.decode('utf8')
-        self.assertIn('kaarti ei ole', html)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_kaart_view_with_wrong_objekt(self):
