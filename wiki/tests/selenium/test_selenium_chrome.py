@@ -320,7 +320,7 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
             except TimeoutException:
                 pass
             el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
-            self.assertTrue(len(el) > 0)
+            self.assertTrue(len(el) > 0, msg=str(obj))
 
     def test_view_HTTP404_for_non_authented_user(self):
         SELECT_COUNT = 10

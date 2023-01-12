@@ -78,10 +78,6 @@ class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_artikkel_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
-    # pilt_set = PiltListingField(
-    #     many=True,
-    #     read_only=True,
-    # )
     pildid = PiltListingField(
         many=True,
         read_only=True,

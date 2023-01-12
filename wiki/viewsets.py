@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Q, F, Value, CharField
+from django.db.models.functions import Concat
 from django.utils.safestring import mark_safe
 
 import django_filters
@@ -66,10 +67,7 @@ class ArtikkelFilter(filters.FilterSet):
         value = value.translate(str.maketrans(TRANSLATION))
         tags = value.split(' ')
         for tag in tags:
-            queryset = queryset.filter(body_text__iregex=tag)
-            # queryset = queryset.filter(
-            #     Q(body_text__iregex=tag) | Q(hist_year__exact=tag)
-            # )
+            queryset = queryset.filter(kirjeldus__iregex=rf'{tag}')
         return queryset
 
 class ArtikkelViewSet(viewsets.ModelViewSet):
@@ -81,7 +79,13 @@ class ArtikkelViewSet(viewsets.ModelViewSet):
     filterset_class = ArtikkelFilter
 
     def get_queryset(self):
-        return Artikkel.objects.daatumitega(self.request)
+        queryset = Artikkel.objects.daatumitega(self.request). \
+            annotate(
+                kirjeldus=Concat(
+                    F('hist_year'), Value(' '), F('body_text'), output_field=CharField()
+                )
+        )
+        return queryset
 
     def get_view_name(self) -> str:
         return "Lood"
@@ -114,13 +118,14 @@ class IsikFilter(filters.FilterSet):
 
     def filter_tags(self, queryset, field_name, value):
         value = value.translate(str.maketrans(TRANSLATION))
-        splits = value.split(' ')
-        for split in splits:
+        tags = value.split(' ')
+        for tag in tags:
             queryset = queryset.filter(
-                Q(eesnimi__iregex=split) |
-                Q(perenimi__iregex=split)
+                Q(eesnimi__iregex=rf'{tag}') |
+                Q(perenimi__iregex=rf'{tag}')
             )
         return queryset
+
 
 class IsikViewSet(viewsets.ModelViewSet):
     """
@@ -157,11 +162,11 @@ class ObjektFilter(filters.FilterSet):
 
     def filter_tags(self, queryset, field_name, value):
         value = value.translate(str.maketrans(TRANSLATION))
-        splits = value.split(' ')
-        for split in splits:
+        tags = value.split(' ')
+        for tag in tags:
             queryset = queryset.filter(
-                Q(nimi__iregex=split) |
-                Q(asukoht__iregex=split)
+                Q(nimi__iregex=rf'{tag}') |
+                Q(asukoht__iregex=rf'{tag}')
             )
         return queryset
 
@@ -193,10 +198,11 @@ class OrganisatsioonFilter(filters.FilterSet):
 
     def filter_tags(self, queryset, field_name, value):
         value = value.translate(str.maketrans(TRANSLATION))
-        splits = value.split(' ')
-        for split in splits:
-            queryset = queryset.filter(nimi__iregex=split)
+        tags = value.split(' ')
+        for tag in tags:
+            queryset = queryset.filter(nimi__iregex=rf'{tag}')
         return queryset
+
 
 class OrganisatsioonViewSet(viewsets.ModelViewSet):
     queryset = Organisatsioon.objects.all()
