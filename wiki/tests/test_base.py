@@ -15,6 +15,26 @@ from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 
 from wiki import views
 
+SPECIAL_OBJECTS = {
+    'isik': [
+        62, # Johann Müllerson
+    ],
+    'organisatsioon': [
+        13, # Säde selts
+    ],
+    'objekt': [  # TODO: Vajalik p2ring teha andmebaasist
+        13,  # Kesk 21, Jaani kirik
+        23,  # Kesk 11, raekoda
+        24,  # Riia 5
+        29,  # Tartu 2, vesiveski
+        81,  # J. Kuperjanovi 9, Moreli maja
+        102,  # Kesk 22, linnakooli hoone
+        187,  # Kesk 19, Klasmanni maja
+        # 256,  # Aia 12, Zenckeri villa
+        354,  # J. Kuperjanovi 12, lõvidega maja
+    ]
+}
+
 class WikiBaseUrlTests(TestCase):
     def setUp(self) -> None:
         # Every test needs access to the request factory.
@@ -95,7 +115,10 @@ class WikiBaseViewTests(TestCase):
 
     def test_kaart_view_with_existing_aasta(self):
         time_start = datetime.now()
-        response = self.client.get(reverse('kaart/1683'))
+        kwargs = {
+            'aasta': '1683',
+        }
+        response = self.client.get(reverse('kaart', kwargs=kwargs))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
@@ -105,15 +128,18 @@ class WikiBaseViewTests(TestCase):
         response = self.client.get(reverse('kaart'), {'objekt': '13'})
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
-        html = response.content.decode('utf8')
-        self.assertIn('kaarti ei ole', html)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_kaart_view_with_wrong_aasta(self):
         time_start = datetime.now()
-        response = self.client.get(reverse('kaart/1111'))
+        kwargs = {
+            'aasta': '1111',
+        }
+        response = self.client.get(reverse('kaart', kwargs=kwargs))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
+        html = response.content.decode('utf8')
+        self.assertIn('kaarti ei ole', html)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_kaart_view_with_wrong_objekt(self):
@@ -122,6 +148,8 @@ class WikiBaseViewTests(TestCase):
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
+
+
 class UserTypeUnitTest(TestCase):
     def setUp(self) -> None:
         # Every test needs access to the request factory.

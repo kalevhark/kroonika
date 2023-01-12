@@ -10,9 +10,10 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
-from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
-
 from wiki import views
+from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
+from wiki.tests import test_base
+
 
 class DetailViewUnitTest(TestCase):
     def setUp(self) -> None:
@@ -321,20 +322,22 @@ class ObjektViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_view_special_url_exists_at_desired_location(self):
-        pk = 13 # Jaani kirik
-        obj = Objekt.objects.get(pk=pk)
-        url = f'/wiki/objekt/{obj.id}-{obj.slug}/'
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        url = '/wiki/objekt/13-kesk-21/'
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        url = '/wiki/objekt/13-suva/'
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        url = '/wiki/objekt/13/'
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
+        pks = test_base.SPECIAL_OBJECTS['objekt']
+        # pk = 13 # Jaani kirik
+        for pk in pks:
+            obj = Objekt.objects.get(pk=pk)
+            url = f'/wiki/objekt/{obj.id}-{obj.slug}/'
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            # url = f'/wiki/objekt/{pk}-kesk-21/'
+            # response = self.client.get(url)
+            # self.assertEqual(response.status_code, 200)
+            url = f'/wiki/objekt/{pk}-suva/'
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            url = f'/wiki/objekt/{pk}/'
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 404)
 
     def test_view_url_response_time(self):
         time_start = datetime.now()

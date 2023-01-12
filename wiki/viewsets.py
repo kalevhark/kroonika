@@ -52,16 +52,25 @@ class ArtikkelFilter(filters.FilterSet):
     # body_text = django_filters.CharFilter(field_name='body_text', lookup_expr='icontains')
     sisaldab = django_filters.CharFilter(method='filter_tags')
 
+    # def filter_tags(self, queryset, field_name, value):
+    #     value = value.translate(str.maketrans(TRANSLATION))
+    #     tags = value.split(' ')
+    #     if len(tags) > 1:
+    #         for tag in tags:
+    #             queryset = queryset.filter(body_text__iregex=tag)
+    #         return queryset
+    #     else:
+    #         return queryset.filter(body_text__iregex=value)
+
     def filter_tags(self, queryset, field_name, value):
         value = value.translate(str.maketrans(TRANSLATION))
         tags = value.split(' ')
-        if len(tags) > 1:
-            for tag in tags:
-                queryset = queryset.filter(body_text__iregex=tag)
-            return queryset
-        else:
-            return queryset.filter(body_text__iregex=value)
-
+        for tag in tags:
+            queryset = queryset.filter(body_text__iregex=tag)
+            # queryset = queryset.filter(
+            #     Q(body_text__iregex=tag) | Q(hist_year__exact=tag)
+            # )
+        return queryset
 
 class ArtikkelViewSet(viewsets.ModelViewSet):
     queryset = Artikkel.objects.all()
