@@ -20,7 +20,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
 # Access configparser to load variable values
-config = configparser.SafeConfigParser(allow_no_value=True)
+config = configparser.ConfigParser(allow_no_value=True)
 config.read('%s/settings.ini' % (settings.PROJECT_DIR))
 
 SPECIAL_OBJECTS = {

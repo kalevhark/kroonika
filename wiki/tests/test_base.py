@@ -58,14 +58,14 @@ class WikiBaseViewTests(TestCase):
         response = self.client.get(reverse('algus'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}')
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_info_view(self):
         time_start = datetime.now()
         response = self.client.get(reverse('info'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(time_stopp.seconds < 3)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_otsi_view(self):
         time_start = datetime.now()
@@ -86,13 +86,42 @@ class WikiBaseViewTests(TestCase):
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
 
-    def test_kaart_view(self):
+    def test_kaart_view_default(self):
         time_start = datetime.now()
         response = self.client.get(reverse('kaart'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
+    def test_kaart_view_with_existing_aasta(self):
+        time_start = datetime.now()
+        response = self.client.get(reverse('kaart/1683'))
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
+    def test_kaart_view_with_existing_objekt(self):
+        time_start = datetime.now()
+        response = self.client.get(reverse('kaart'), {'objekt': '13'})
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode('utf8')
+        self.assertIn('kaarti ei ole', html)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
+
+    def test_kaart_view_with_wrong_aasta(self):
+        time_start = datetime.now()
+        response = self.client.get(reverse('kaart/1111'))
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
+
+    def test_kaart_view_with_wrong_objekt(self):
+        time_start = datetime.now()
+        response = self.client.get(reverse('kaart'), {'objekt': '-1'})
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 class UserTypeUnitTest(TestCase):
     def setUp(self) -> None:
         # Every test needs access to the request factory.

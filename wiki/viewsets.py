@@ -69,7 +69,7 @@ class ArtikkelViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = ArtikkelFilter
+    filterset_class = ArtikkelFilter
 
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
@@ -126,7 +126,7 @@ class IsikViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = IsikFilter
+    filterset_class = IsikFilter
 
     def get_queryset(self):
         return Isik.objects.daatumitega(self.request)
@@ -162,7 +162,7 @@ class ObjektViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = ObjektFilter
+    filterset_class = ObjektFilter
 
     def get_queryset(self):
         return Objekt.objects.daatumitega(self.request)
@@ -195,7 +195,7 @@ class OrganisatsioonViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = OrganisatsioonFilter
+    filterset_class = OrganisatsioonFilter
 
     def get_queryset(self):
         return Organisatsioon.objects.daatumitega(self.request)

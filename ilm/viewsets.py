@@ -27,7 +27,7 @@ class IlmViewSet(viewsets.ModelViewSet):
     serializer_class = IlmSerializer
     # Järgnev vajalik, et saaks teha filtreeritud API päringuid
     filter_backends = (filters.DjangoFilterBackend,)
-    filter_class = IlmFilter
+    filterset_class = IlmFilter
     text = ''
 
     @action(detail=False)
