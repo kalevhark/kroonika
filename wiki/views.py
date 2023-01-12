@@ -21,9 +21,8 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import \
     Count, Max, Min, \
     Case, F, Func, Q, When, \
-    Value, BooleanField, DateField, DecimalField, IntegerField, \
+    Value, IntegerField, \
     ExpressionWrapper
-from django.db.models import Count, Max, Min
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
@@ -37,10 +36,8 @@ from django.views.generic.edit import UpdateView
 
 import django_filters
 from django_filters.views import FilterView
-
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
-
 from PIL import Image, ImageOps
 import qrcode
 import qrcode.image.svg
@@ -393,18 +390,8 @@ def feedback(request):
             messages.add_message(request, messages.WARNING, 'Tühja vormi ei saadetud.')
     return HttpResponseRedirect(http_referer)
 
-#
-# Avakuva
-#
-def algus(request):
-    # Filtreerime artiklite hulga kasutaja järgi
-    artikkel_qs = Artikkel.objects.daatumitega(request)
-    andmed = {} # Selle muutuja saadame veebi
-    p2ev = date.today().day # str(p2ev).zfill(2) -> PP
-    kuu = date.today().month # str(kuu).zfill(2) -> KK
-    aasta = date.today().year
-
-    # Andmebaas Artikkel andmed veebi
+# Andmebaas Artikkel andmed veebi
+def get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
     a = dict()
     kirjeid = artikkel_qs.count()
     a['kirjeid'] = kirjeid
@@ -457,9 +444,10 @@ def algus(request):
             annotate(Count('hist_month')).\
             order_by('hist_year', 'hist_month')
         a['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
-    andmed['artikkel'] = a
+    return a
 
-    # Andmebaas Isik andmed veebi
+# Andmebaas Isik andmed veebi
+def get_algus_isikud(request, p2ev, kuu, aasta):
     a = dict()
     isik_qs = Isik.objects.daatumitega(request)
     kirjeid = isik_qs.count()
@@ -468,33 +456,34 @@ def algus(request):
         a['viimane_lisatud'] = isik_qs.latest('inp_date')
         a['viimane_muudetud'] = isik_qs.latest('mod_date')
         a['100_aastat_tagasi'] = isik_qs.filter(
-            dob__day = p2ev,
-            dob__month = kuu,
-            dob__year = (aasta-100)
+            dob__day=p2ev,
+            dob__month=kuu,
+            dob__year=(aasta - 100)
         )
         a['sel_p2eval'] = isik_qs.filter(
-            dob__day = p2ev,
-            dob__month = kuu
+            dob__day=p2ev,
+            dob__month=kuu
         )
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
-        a['sel_kuul'] = isik_qs.\
-            filter(dob__month = kuu).\
+        a['sel_kuul'] = isik_qs. \
+            filter(dob__month=kuu). \
             order_by(ExtractDay('dob'))
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         a['sel_p2eval_surnud'] = isik_qs.filter(
-            doe__day = p2ev,
-            doe__month = kuu
+            doe__day=p2ev,
+            doe__month=kuu
         )
         a['sel_p2eval_surnud_kirjeid'] = len(a['sel_p2eval_surnud'])
-        a['sel_kuul_surnud'] = isik_qs.\
-            filter(doe__month = kuu).\
+        a['sel_kuul_surnud'] = isik_qs. \
+            filter(doe__month=kuu). \
             order_by(ExtractDay('doe'))
         a['sel_kuul_surnud_kirjeid'] = len(a['sel_kuul_surnud'])
         juubilarid = get_juubilarid(isik_qs)
         a['juubilarid'] = juubilarid
-    andmed['isik'] = a
+    return a
 
-    # Andmebaas Organisatsioon andmed veebi
+# Andmebaas Organisatsioon andmed veebi
+def get_algus_organisatsioonid(request, p2ev, kuu, aasta):
     a = dict()
     organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
     kirjeid = organisatsioon_qs.count()
@@ -508,28 +497,20 @@ def algus(request):
             dob__year=(aasta - 100)
         )
         a['sel_p2eval'] = organisatsioon_qs.filter(
-            dob__day = p2ev,
-            dob__month = kuu
+            dob__day=p2ev,
+            dob__month=kuu
         )
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
-        a['sel_kuul'] = organisatsioon_qs.\
-            filter(dob__month = kuu).\
+        a['sel_kuul'] = organisatsioon_qs. \
+            filter(dob__month=kuu). \
             order_by(ExtractDay('dob'))
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
-        # juubilarid = [
-        #     organisatsioon.id
-        #     for organisatsioon
-        #     in organisatsioon_qs
-        #     if (organisatsioon.vanus() and (organisatsioon.vanus() % 5 == 0))
-        # ]
-        # a['juubilarid'] = organisatsioon_qs.\
-        #     filter(id__in=juubilarid).\
-        #     order_by('hist_year', 'dob')
         juubilarid = get_juubilarid(organisatsioon_qs)
         a['juubilarid'] = juubilarid
-    andmed['organisatsioon'] = a
+    return a
 
-    # Andmebaas Objekt andmed veebi
+# Andmebaas Objekt andmed veebi
+def get_algus_objektid(request, p2ev, kuu, aasta):
     a = dict()
     objekt_qs = Objekt.objects.daatumitega(request)
     kirjeid = objekt_qs.count()
@@ -551,25 +532,17 @@ def algus(request):
             filter(dob__month = kuu).\
             order_by(ExtractDay('dob'))
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
-        # juubilarid = [
-        #     objekt.id
-        #     for objekt
-        #     in objekt_qs
-        #     if (objekt.vanus() and (objekt.vanus() % 5 == 0))
-        # ]
-        # a['juubilarid'] = objekt_qs.\
-        #     filter(id__in=juubilarid).\
-        #     order_by('hist_year', 'dob')
         juubilarid = get_juubilarid(objekt_qs)
         a['juubilarid'] = juubilarid
-    andmed['objekt'] = a
+    return a
 
-    # Andmebaas Kaart andmed veebi
+# Andmebaas Kaart andmed veebi
+def get_algus_kaart(request):
     a = dict()
-    z, x, y = 15, 18753, 9907 # näitamiseks valitud kaarditükk
-    qs = Kaart.objects\
-        .filter(tiles__startswith='http')\
-        .annotate(sample_tile=F('tiles'))\
+    z, x, y = 15, 18753, 9907  # näitamiseks valitud kaarditükk
+    qs = Kaart.objects \
+        .filter(tiles__startswith='http') \
+        .annotate(sample_tile=F('tiles')) \
         .order_by('aasta')
     qs = qs.annotate(
         sample_tile=Func(
@@ -595,7 +568,64 @@ def algus(request):
     kirjeid = qs.count()
     a['kirjeid'] = kirjeid
     a['kaardid'] = qs
-    andmed['kaart'] = a
+    return a
+
+# Millistel kuude kohta valitud aastal on kirjeid
+def get_algus_kalender(request, artikkel_qs):
+    years_with_events_set = set(
+        artikkel_qs. \
+            exclude(hist_date__isnull=True). \
+            values_list('hist_year', flat=True)
+    )
+    years_with_events = [day for day in years_with_events_set]
+    kalender = {
+        'calendar_days_with_events_in_month_url': reverse('wiki:calendar_days_with_events_in_month'),
+        'years_with_events': years_with_events
+    }
+    return kalender
+
+#
+# Avakuva
+#
+def algus(request):
+    # Filtreerime artiklite hulga kasutaja järgi
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    andmed = {} # Selle muutuja saadame veebi
+    p2ev = date.today().day # str(p2ev).zfill(2) -> PP
+    kuu = date.today().month # str(kuu).zfill(2) -> KK
+    aasta = date.today().year
+
+    start = datetime.now()
+    andmed['artikkel'] = get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs)
+    andmed['isik'] = get_algus_isikud(request, p2ev, kuu, aasta)
+    andmed['organisatsioon'] = get_algus_organisatsioonid(request, p2ev, kuu, aasta)
+    andmed['objekt'] = get_algus_objektid(request, p2ev, kuu, aasta)
+    andmed['kaart'] = get_algus_kaart(request)
+
+    # # Andmed aasta ja kuu rippvalikumenüü jaoks
+    # perioodid = artikkel_qs. \
+    #     filter(hist_searchdate__isnull=False). \
+    #     values('hist_searchdate__year', 'hist_searchdate__month'). \
+    #     annotate(ct=Count('id')). \
+    #     order_by('hist_searchdate__year', 'hist_searchdate__month')
+    # artikleid_kuu_kaupa = [
+    #     [
+    #         periood['hist_searchdate__year'],
+    #         periood['hist_searchdate__month'],
+    #         periood['ct']
+    #     ] for periood in perioodid
+    # ]
+    # andmed['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
+    # artikleid_aasta_kaupa = artikkel_qs.\
+    #     filter(hist_searchdate__isnull=False).\
+    #     values('hist_year').\
+    #     annotate(Count('hist_year')).\
+    #     order_by('-hist_year')
+    # andmed['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
+
+    kalender = get_algus_kalender(request, artikkel_qs)
+    stopp = datetime.now()
+    print(start, stopp)
 
     # Kas on 100 aastat tagasi toimunud asju?
     andmed['100_aastat_tagasi'] = any(
@@ -607,62 +637,9 @@ def algus(request):
         ]
     )
 
-    # Andmed aasta ja kuu rippvalikumenüü jaoks
-    perioodid = artikkel_qs. \
-        filter(hist_searchdate__isnull=False). \
-        values('hist_searchdate__year', 'hist_searchdate__month'). \
-        annotate(ct=Count('id')). \
-        order_by('hist_searchdate__year', 'hist_searchdate__month')
-    artikleid_kuu_kaupa = [
-        [
-            periood['hist_searchdate__year'],
-            periood['hist_searchdate__month'],
-            periood['ct']
-        ] for periood in perioodid
-    ]
-    andmed['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
-    artikleid_aasta_kaupa = artikkel_qs.\
-        filter(hist_searchdate__isnull=False).\
-        values('hist_year').\
-        annotate(Count('hist_year')).\
-        order_by('-hist_year')
-    andmed['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
-
-    # # Kalendriandmed
-    # try:
-    #     user_calendar_view_last = request.session.get('user_calendar_view_last')
-    # except:
-    #     t2na = timezone.now()
-    #     user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
-    #     request.session['user_calendar_view_last'] = user_calendar_view_last
-    #     request.session['ukj'] = 'off'
-
-    # user_calendar_view_last = request.session.get('user_calendar_view_last')
-    # calendar_system = request.session.get('ukj')
-
-    # Millistel kuude kohta valitud aastal on kirjeid
-    years_with_events_set = set(
-        artikkel_qs.\
-            exclude(hist_date__isnull=True).\
-            values_list('hist_year', flat=True)
-    )
-    years_with_events = [day for day in years_with_events_set]
-
-    kalender = {
-        # 'user_calendar_view_last': user_calendar_view_last,
-        'calendar_days_with_events_in_month_url': reverse('wiki:calendar_days_with_events_in_month'),
-        # 'calendar_system': calendar_system,
-        'years_with_events': years_with_events
-    }
-
-    # return render(
-    #     request, 'wiki/wiki.html', {
-    #         'kalender': kalender,
-    #         'andmed': andmed,
-    #     }
-    # )
     response = render(
-        request, 'wiki/wiki.html', {
+        request, 'wiki/wiki.html',
+        {
             'kalender': kalender,
             'andmed': andmed,
         }
