@@ -136,23 +136,24 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-Irina Elias, Marie Kubjas, Senta Karlson, Aleftina Kaska, Amalie Hanson, Wera Tints, Selma Kongo, Linda Pärk, Miili Püwi, Salme Puustus
+Auguste Karolin,  Weera Kasak, Leida Kikas, Jelena Latserus, Salme Laur, Melania Mägi, Irene Meks, Alma Mölder, Hilda Riga, Anna-Natalie Siitan, Alide Siitan, Larissa Tamm, Armilda Teder, Hilda-Amalie Wähhi, Walentina Wawer
     """
+    # kangakudumise osakond: Linda Jäär, Maimo-Amanda Korp, Hilja Paabo, Herta Pulst, Salme Tiiwel, Alide Tomson 
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=1436)
+    art = Artikkel.objects.get(id=11720)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=9268)
+    pilt = Pilt.objects.get(id=10340)
     print(pilt)
     # Milline organisatsioon lisada isikule
     org = Organisatsioon.objects.get(id=2768) # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [12938]
+    viited_ids = [13703]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Valga naiskutsekooli õmblemise osakonna lõpetaja 1933'
+    isik_kirjeldus = 'Valga naiskutsekooli õmblemise osakonna lõpetaja 1934'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
@@ -183,19 +184,19 @@ Irina Elias, Marie Kubjas, Senta Karlson, Aleftina Kaska, Amalie Hanson, Wera Ti
 # tools.massikanne_from_json()
 def massikanne_from_json():
     # Millise aasta lend
-    aasta = '1933'
+    aasta = '1934'
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=1435)
+    art = Artikkel.objects.get(id=1535)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=9268)
+    pilt = Pilt.objects.get(id=10340)
     print(pilt)
     # Milline organisatsioon lisada isikule
     org = Organisatsioon.objects.get(
         id=2777)  # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [12938, 12939]
+    viited_ids = [13703, 13704]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Loeme lendude andmed
