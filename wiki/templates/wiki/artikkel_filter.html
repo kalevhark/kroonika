@@ -14,7 +14,7 @@
   <div class="w3-cell w3-cell w3-cell-middle w3-mobile w3-large">
 		<div class="w3-center">
 			<a style="text-decoration: none;" href="{% url 'wiki:wiki_artikkel_filter' %}">
-				<i class="fa fa-comment"></i>
+				<i class="{% icon_artikkel %}"></i>
 			</a>
 			<b> {% model_name_artikkel %} (valitud {{ object_list.paginator.count }})
 				{% if object_list.paginator.num_pages > 1 %}

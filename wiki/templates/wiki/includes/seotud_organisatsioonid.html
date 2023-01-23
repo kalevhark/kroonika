@@ -3,7 +3,7 @@
   {% if organisatsioonid %}
     <!-- Loend seotud organisatsioonidest -->
     <p>
-      <i class="fa fa-group w3-xlarge text-organisatsioon"></i>
+      <i class="{% icon_organisatsioon %} w3-xlarge text-organisatsioon"></i>
       {% for obj in organisatsioonid %}
         {% if forloop.counter > 1 %}
         &ensp;

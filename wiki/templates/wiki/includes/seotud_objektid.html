@@ -3,7 +3,7 @@
   {% if objektid %}
     <!-- Loend seotud objektidest -->
     <p>
-      <i class="fa fa-bank w3-xlarge text-objekt"></i>
+      <i class="{% icon_objekt %} w3-xlarge text-objekt"></i>
       {% for obj in objektid %}
         {% if forloop.counter > 1 %}
         &ensp;

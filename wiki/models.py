@@ -194,7 +194,7 @@ def add_markdownx_viited(obj):
     viited = obj.viited.all()
     viite_string = ''
     if viited:
-        viite_string += '<i class="fa fa-binoculars icon-viide" alt="Viited"></i>'
+        viite_string += '<i class="{% icon_viide %} icon-viide" alt="Viited"></i>'
         viitenr = 1
         for viide in viited:
             viite_string += f'\n[^{viitenr}]: '

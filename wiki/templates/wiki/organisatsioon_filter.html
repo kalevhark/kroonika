@@ -15,7 +15,7 @@
   <div class="w3-cell w3-cell-middle w3-large w3-mobile">
 		<div class="w3-center">
 			<a style="text-decoration: none;" href="{% url 'wiki:wiki_organisatsioon_filter' %}">
-				<i class="fa fa-group"></i>
+				<i class="{% icon_organisatsioon %}"></i>
 			</a>
 			<b> {% model_name_organisatsioon %} ({{ object_list.paginator.count }})
 				{% if object_list.paginator.num_pages > 1 %}

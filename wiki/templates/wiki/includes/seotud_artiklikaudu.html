@@ -1,10 +1,11 @@
+{% load wiki_extras %}
 <div class="w3-bar">
   {% if seotud_artiklid %}
     <button
         class="w3-bar-item w3-button tablink background-artikkel"
         onclick="openLinks(event, 'artiklid')"
     >
-      <i class="fa fa-comment"></i> Lugusid {{ seotud_artiklid.count }}
+      <i class="{% icon_artikkel %}"></i> Lugusid {{ seotud_artiklid.count }}
     </button>
   {% endif %}
   {% if seotud_isikud_artiklikaudu %}
@@ -12,21 +13,21 @@
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'isikud')"
     >
-      <i class="fa fa-address-card-o"></i> Isikuid {{ seotud_isikud_artiklikaudu|length }}
+      <i class="{% icon_isik %}"></i> Isikuid {{ seotud_isikud_artiklikaudu|length }}
     </button>
   {% endif %}
   {% if seotud_organisatsioonid_artiklikaudu %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'organisatsioonid')">
-      <i class="fa fa-group"></i> Asutisi {{ seotud_organisatsioonid_artiklikaudu|length }}
+      <i class="{% icon_organisatsioon %}"></i> Asutisi {{ seotud_organisatsioonid_artiklikaudu|length }}
     </button>
   {% endif %}
   {% if seotud_objektid_artiklikaudu %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'objektid')">
-      <i class="fa fa-bank"></i> Kohti {{ seotud_objektid_artiklikaudu|length }}
+      <i class="{% icon_objekt %}"></i> Kohti {{ seotud_objektid_artiklikaudu|length }}
     </button>
   {% endif %}
 </div>

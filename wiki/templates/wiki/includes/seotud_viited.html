@@ -1,7 +1,8 @@
 <!--Viidete plokk-->
+{% load wiki_extras %}
 <div class="w3-padding-16">
 {% if object.viited.all %}
-  <i class="fa fa-binoculars w3-small text-viide" alt="Viited"></i>
+  <i class="{% icon_viide %} w3-small text-viide" alt="Viited"></i>
 	{% for obj in object.viited.all %}
     <p id="viide_{{ obj.id }}" class="w3-small">
       {% if obj.url %}

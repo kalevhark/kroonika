@@ -26,28 +26,28 @@
             <button
                 class="w3-bar-item w3-button tablink isik {{ obj.id }} text-isik"
                 onclick="openTab(event,'isik', {{ obj.id }})">
-              <i class="fa fa-address-card-o"></i> {{ obj_isikud_count }}
+              <i class="{% icon_isik %}"></i> {{ obj_isikud_count }}
             </button>
           {% endif %}
           {% if obj_organisatsioonid_count > 0 %}
             <button
                 class="w3-bar-item w3-button tablink organisatsioon {{ obj.id }}{% if obj_isikud_count == 0 %} text-organisatsioon{% endif %}"
                 onclick="openTab(event,'organisatsioon', {{ obj.id }})">
-              <i class="fa fa-group"></i> {{ obj_organisatsioonid_count }}
+              <i class="{% icon_organisatsioon %}"></i> {{ obj_organisatsioonid_count }}
             </button>
           {% endif %}
           {% if obj_objektid_count > 0 %}
             <button
                 class="w3-bar-item w3-button tablink objekt {{ obj.id }}{% if obj_isikud_count == 0 and obj_organisatsioonid_count == 0 %} text-objekt{% endif %}"
                 onclick="openTab(event,'objekt', {{ obj.id }})">
-              <i class="fa fa-bank"></i> {{ obj_objektid_count }}
+              <i class="{% icon_objekt %}"></i> {{ obj_objektid_count }}
             </button>
           {% endif %}
           {% if obj_pildid_count > 0 %}
             <button
                 class="w3-bar-item w3-button tablink pilt {{ obj.id }}{% if obj_isikud_count == 0 and obj_organisatsioonid_count == 0 and obj_objektid_count == 0 %} text-objekt{% endif %}"
                 onclick="openTab(event,'pilt', {{ obj.id }})">
-              <i class="fa fa-camera-retro"></i> {{ obj_pildid_count }}
+              <i class="{% icon_pilt %}"></i> {{ obj_pildid_count }}
             </button>
           {% endif %}
         </div>

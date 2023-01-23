@@ -36,7 +36,7 @@
             class="text-artikkel hover-artikkel"
             href="{% url 'wiki:wiki_artikkel_detail' pk=artikkel.id slug=artikkel.slug %}"
         >
-          <i class="fa fa-comment"> </i>
+          <i class="{% icon_artikkel %}"> </i>
           Sissekande juurde
         </a>
       </footer>

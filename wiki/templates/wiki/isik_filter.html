@@ -15,7 +15,7 @@
   <div class="w3-cell w3-cell-middle w3-mobile w3-large">
 		<div class="w3-center">
 			<a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
-				<i class="fa fa-address-card-o"></i>
+				<i class="{% icon_isik %}"></i>
 			</a>
 			<b> Isikud (valitud {{ object_list.paginator.count }})
 				{% if object_list.paginator.num_pages > 1 %}

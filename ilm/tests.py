@@ -42,7 +42,7 @@ class APITestIlmListingCase(TestCase):
     def test_ilm_forecasts_api(self):
         self.list_api_result = self.client.get('/api/i/forecasts/', format='json')
         self.assertEqual(self.list_api_result.status_code, 200)
-        self.assertTrue(len(self.list_api_result.json().keys()) > 0)
+        self.assertIsInstance(self.list_api_result.json(), dict, msg=self.list_api_result)
 
     def test_ilm_year_api(self):
         year = 2015

@@ -11,7 +11,7 @@
   <div class="w3-cell w3-cell w3-cell-middle w3-mobile w3-large">
 		<div class="w3-center">
 			<a style="text-decoration: none;" href="{% url 'wiki:wiki_kaardiobjekt_filter' %}">
-				<i class="fa fa-map"></i>
+				<i class="{% icon_kaardiobjekt %}"></i>
 			</a>
 			<b> {% model_name_kaardiobjekt %} (valitud {{ object_list.paginator.count }})
 				{% if object_list.paginator.num_pages > 1 %}

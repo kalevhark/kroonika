@@ -12,7 +12,7 @@
 <div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
   <div class="w3-large">
     <a style="text-decoration: none;" href="{% url 'wiki:wiki_artikkel_filter' %}">
-      <i class="fa fa-comment"></i>
+      <i class="{% icon_artikkel %}"></i>
     </a>
     <strong> {% model_name_artikkel %} {{ day|date:"j." }}
       {% include "wiki/includes/kuu.html" with kuu=day|date:"m" %} {{ day|date:"Y" }} {{ month|date:"Y" }}
@@ -62,14 +62,14 @@
         class="w3-bar-item w3-button tablink background-artikkel"
         onclick="openLinks(event, 'artiklid')"
     >
-    <i class="fa fa-comment"></i> {{ day|date:"d.m.Y" }} ({{ object_list.count }})
+    <i class="{% icon_artikkel %}"></i> {{ day|date:"d.m.Y" }} ({{ object_list.count }})
   </button>
   {% if sel_p2eval %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'artiklid_teistel')"
     >
-      <i class="fa fa-comment"></i> Teistel aastatel ({{ sel_p2eval.count }})
+      <i class="{% icon_artikkel %}"></i> Teistel aastatel ({{ sel_p2eval.count }})
     </button>
   {% endif %}
   {% if syndinud_isikud %}
@@ -77,28 +77,28 @@
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'isikud_syndinud')"
     >
-      <i class="fa fa-address-card-o"></i> Sünnipäev ({{ syndinud_isikud.count }})
+      <i class="{% icon_isik %}"></i> Sünnipäev ({{ syndinud_isikud.count }})
     </button>
   {% endif %}
   {% if surnud_isikud %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'isikud_surnud')">
-      <i class="fa fa-address-card-o"></i> Surmapäev ({{ surnud_isikud.count }})
+      <i class="{% icon_isik %}"></i> Surmapäev ({{ surnud_isikud.count }})
     </button>
   {% endif %}
   {% if loodud_organisatsioonid %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'organisatsioonid')">
-      <i class="fa fa-group"></i> Asutati ({{ loodud_organisatsioonid.count }})
+      <i class="{% icon_organisatsioon %}"></i> Asutati ({{ loodud_organisatsioonid.count }})
     </button>
   {% endif %}
   {% if valminud_objektid %}
     <button
         class="w3-bar-item w3-button tablink"
         onclick="openLinks(event, 'objektid')">
-      <i class="fa fa-bank"></i> Valmis ({{ valminud_objektid.count }})
+      <i class="{% icon_objekt %}"></i> Valmis ({{ valminud_objektid.count }})
     </button>
   {% endif %}
 </div>
@@ -125,7 +125,7 @@
       class="seotud">
     <div class="w3-cell-row w3-container background-artikkel w3-text-white">
       <div class="w3-cell w3-cell-middle">
-        <h5><i class="fa fa-comment w3-large"></i>&nbsp;{{ day|date:"j." }} {% include "wiki/includes/kuu.html" with kuu=day|date:"m" %} teistel aastatel:</h5>
+        <h5><i class="{% icon_artikkel %} w3-large"></i>&nbsp;{{ day|date:"j." }} {% include "wiki/includes/kuu.html" with kuu=day|date:"m" %} teistel aastatel:</h5>
       </div>
     </div>
     {% include 'wiki/includes/object_list.html' with object_list=sel_p2eval %}

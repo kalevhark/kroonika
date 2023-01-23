@@ -519,7 +519,8 @@ def ilmateenistus_forecast():
     # matches = pattern.search(soup.text)
     # data = json.loads(matches.group(1))
     # url = "http://www.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php/?coordinates=57.7747649934758;26.0331527813654"
-    url = "http://vana.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php/?coordinates=57.7747649934758;26.0331527813654"
+    # url = "http://vana.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php/?coordinates=57.7747649934758;26.0331527813654"
+    url = "https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates=57.777614;26.036913"
     r = requests.get(url)
     data = json.loads(r.text)
     hours = [hour for hour in data['forecast']['tabular']['time']]

@@ -1,4 +1,5 @@
 {% load static %}
+{% load wiki_extras %}
 <!-- Pildigalerii -->
 {% with pildid=seotud_pildid %}
   {% if pildid %}
@@ -8,7 +9,7 @@
 
     {#    Pildirida #}
     <p>
-      <i class="fa fa-camera-retro w3-xlarge text-pilt"></i>
+      <i class="{% icon_pilt %} w3-xlarge text-pilt"></i>
       <div>
       {% for obj in pildid %}
         <a href="#">

@@ -80,10 +80,20 @@ def icon_organisatsioon():
 
 @register.simple_tag
 def icon_objekt():
-    return 'fa fa-bank'
-    # return 'fa fa-map-marker'
+    return 'fa fa-map-marker'
+    # return 'fa fa-bank'
 
+@register.simple_tag
+def icon_kaardiobjekt():
+    return 'fa fa-map'
 
+@register.simple_tag
+def icon_pilt():
+    return 'fa fa-camera-retro'
+
+@register.simple_tag
+def icon_viide():
+    return 'fa fa-binoculars'
 
 @register.simple_tag
 def kalev():
