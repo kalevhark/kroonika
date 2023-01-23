@@ -136,9 +136,8 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-Auguste Karolin,  Weera Kasak, Leida Kikas, Jelena Latserus, Salme Laur, Melania Mägi, Irene Meks, Alma Mölder, Hilda Riga, Anna-Natalie Siitan, Alide Siitan, Larissa Tamm, Armilda Teder, Hilda-Amalie Wähhi, Walentina Wawer
+Linda Jäär, Maimo-Amanda Korp, Hilja Paabo, Herta Pulst, Salme Tiiwel, Alide Tomson
     """
-    # kangakudumise osakond: Linda Jäär, Maimo-Amanda Korp, Hilja Paabo, Herta Pulst, Salme Tiiwel, Alide Tomson 
     # Millise artikliga siduda isik
     art = Artikkel.objects.get(id=11720)
     print(art)
@@ -153,7 +152,7 @@ Auguste Karolin,  Weera Kasak, Leida Kikas, Jelena Latserus, Salme Laur, Melania
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Valga naiskutsekooli õmblemise osakonna lõpetaja 1934'
+    isik_kirjeldus = 'Valga naiskutsekooli kangakudumise osakonna lõpetaja 1934'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
