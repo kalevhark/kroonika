@@ -16,6 +16,16 @@
       <i class="fa fa-adn"></i>
     </a>
   {% endwith %}
+  {% if model == 'isik' or model == 'objekt' %}
+    {% with v6rdle_url='wiki:v6rdle_model' %}
+    <a
+            class="icon-link round-corner edit fill"
+            href="{% url v6rdle_url model=model %}?vasak_object={{ object.id }}"
+    >
+      <i class="fa fa-exchange"></i>
+    </a>
+  {% endwith %}
+  {% endif %}
 {% endif %}
 <div
     class="w3-button w3-padding-bottom w3-hover-white w3-small"
