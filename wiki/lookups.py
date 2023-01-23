@@ -70,10 +70,7 @@ class IsikLookup(LookupChannel):
                 output_field=CharField()
             )
         )
-        # translation = {'w': '[vw]', 'v': '[vw]'}
         for split in splits:
-            # queryset = queryset.filter(nimi__icontains=split)
-            # pat = split.translate(str.maketrans(TRANSLATION))
             queryset = queryset.filter(nimi__iregex=split)
         return queryset[:50]
 

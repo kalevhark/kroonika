@@ -595,7 +595,6 @@ def algus(request):
     kuu = date.today().month # str(kuu).zfill(2) -> KK
     aasta = date.today().year
 
-    start = datetime.now()
     andmed['artikkel'] = get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs)
     andmed['isik'] = get_algus_isikud(request, p2ev, kuu, aasta)
     andmed['organisatsioon'] = get_algus_organisatsioonid(request, p2ev, kuu, aasta)
@@ -624,8 +623,6 @@ def algus(request):
     # andmed['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
 
     kalender = get_algus_kalender(request, artikkel_qs)
-    stopp = datetime.now()
-    print(start, stopp)
 
     # Kas on 100 aastat tagasi toimunud asju?
     andmed['100_aastat_tagasi'] = any(

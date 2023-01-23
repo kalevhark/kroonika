@@ -14,7 +14,7 @@
               id="icon-artikkel"
       >
         <div class="w3-left">
-            <i class="fa fa-comment w3-xxxlarge"></i>
+            <i class="{% icon_artikkel %} w3-xxxlarge"></i>
         </div>
         <div class="w3-hide-medium w3-right">
           <h4>{% model_name_artikkel %} ({{ andmed.artikkel.kirjeid }})</h4>
@@ -71,7 +71,7 @@
               id="icon-isik"
       >
         <div class="w3-left">
-            <i class="fa fa-address-card-o w3-xxxlarge"></i>
+            <i class="{% icon_isik %} w3-xxxlarge"></i>
         </div>
         <div class="w3-hide-medium w3-right">
           <h4>{% model_name_isik %} ({{ andmed.isik.kirjeid }})</h4>
@@ -128,7 +128,7 @@
               id="icon-organisatsioon"
       >
         <div class="w3-left">
-            <i class="fa fa-group w3-xxxlarge"></i>
+            <i class="{% icon_organisatsioon %} w3-xxxlarge"></i>
         </div>
         <div class="w3-hide-medium w3-right">
           <h4>{% model_name_organisatsioon %} ({{ andmed.organisatsioon.kirjeid }})</h4>
@@ -189,7 +189,7 @@
               id="icon-objekt"
       >
         <div class="w3-left">
-            <i class="fa fa-bank w3-xxxlarge"></i>
+            <i class="{% icon_objekt %} w3-xxxlarge"></i>
         </div>
         <div class="w3-hide-medium w3-right">
           <h4>{% model_name_objekt %} ({{ andmed.objekt.kirjeid }})</h4>

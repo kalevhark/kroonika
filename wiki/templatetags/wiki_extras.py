@@ -65,6 +65,26 @@ def vkj(date):
 def server_type():
     return settings.SERVER_TYPE
 
+# ikoonid andmebaasidele Artikkel, Isik, Organisatsioon, Objekt
+@register.simple_tag
+def icon_artikkel():
+    return 'fa fa-comment'
+
+@register.simple_tag
+def icon_isik():
+    return 'fa fa-address-card-o'
+
+@register.simple_tag
+def icon_organisatsioon():
+    return 'fa fa-group'
+
+@register.simple_tag
+def icon_objekt():
+    return 'fa fa-bank'
+    # return 'fa fa-map-marker'
+
+
+
 @register.simple_tag
 def kalev():
     return 'Kalev Härk'

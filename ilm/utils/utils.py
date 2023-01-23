@@ -817,5 +817,6 @@ class YrnoAPI():
             return ''
 
 if __name__ == "__main__":
-    ilmaandmed_veebist(datetime(2022, 7, 16, 22), verbose=True)
-    ilmaandmed_veebist(datetime(2022, 7, 16, 23), verbose=True)
+    # ilmaandmed_veebist(datetime(2022, 7, 16, 22), verbose=True)
+    # ilmaandmed_veebist(datetime(2022, 7, 16, 23), verbose=True)
+    pass
