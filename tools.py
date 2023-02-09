@@ -284,7 +284,7 @@ def lisa_artikkel_20230209():
     print(org, viide)
     for date_tuple in date_tuples:
         uus_art = Artikkel(
-            hist_date = datetime.date(*date_tuple),
+            hist_date = date(*date_tuple),
             body_text = body_text
         )
         # uus_art.save()
