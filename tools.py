@@ -246,6 +246,52 @@ def lisa_artikkel_20200321():
         uus_art.viited.add(viide)
         print(uus_art.id, uus_art)
 
+# Ühe sisuga artiklite lisamiseks
+def lisa_artikkel_20230209():
+    date_tuples = [
+        (1879, 8, 18),
+        (1879, 8, 27),
+        (1879, 11, 2),
+        (1879, 11, 9),
+        (1880, 2, 4),
+        (1880, 3, 14),
+        (1880, 4, 11),
+        (1880, 6, 27),
+        (1880, 9, 12),
+        (1880, 10, 10),
+        (1880, 10, 24),
+        (1881, 2, 6),
+        (1881, 5, 25),
+        (1881, 7, 1),
+        (1881, 9, 2),
+        (1881, 11, 27),
+        (1882, 3, 8),
+        (1882, 4, 29),
+        (1882, 8, 16),
+        (1882, 10, 1),
+        (1882, 11, 11),
+        (1883, 2, 9),
+        (1883, 4, 27),
+        (1883, 5, 5),
+        (1883, 6, 13),
+        (1883, 6, 17),
+        (1883, 8, 1),
+        (1883, 9, 1),
+    ]
+    body_text = 'Peeti Valga linnavolikogu koosolek'
+    viide = Viide.objects.get(id=13803)
+    org = Organisatsioon.objects.get(id=3240)
+    print(org, viide)
+    for date_tuple in date_tuples:
+        uus_art = Artikkel(
+            hist_date = datetime.date(*date_tuple),
+            body_text = body_text
+        )
+        # uus_art.save()
+        # uus_art.viited.add(viide)
+        # uus_art.organisatsioonid.add(org)
+        print(uus_art)
+
 # Topeltviidete korrastus TODO:Teha siis, kui kroonikaraamat on läbi
 def tvk():
     from django.db.models import Count
