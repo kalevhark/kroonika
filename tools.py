@@ -287,10 +287,10 @@ def lisa_artikkel_20230209():
             hist_date = date(*date_tuple),
             body_text = body_text
         )
-        # uus_art.save()
-        # uus_art.viited.add(viide)
-        # uus_art.organisatsioonid.add(org)
-        print(uus_art)
+        uus_art.save()
+        uus_art.viited.add(viide)
+        uus_art.organisatsioonid.add(org)
+        print(uus_art.id)
 
 # Topeltviidete korrastus TODO:Teha siis, kui kroonikaraamat on läbi
 def tvk():
