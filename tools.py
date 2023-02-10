@@ -963,9 +963,9 @@ def task_art11802():
         print(f'isik{isik.id}:{isik}')
         sep = '\n\n+++\n\n'
         isik.kirjeldus = sep.join([isik.kirjeldus, 'Valga linnavolikogu liige 1879-'])
-        # isik.save()
-        # isik.organisatsioonid.add(org)
-        # isik.viited.add(viide)
+        isik.save()
+        isik.organisatsioonid.add(org)
+        isik.viited.add(viide)
         # pilt.isikud.add(isik)
 
 if __name__ == "__main__":
