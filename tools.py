@@ -950,8 +950,8 @@ def task_art9754():
         # pil.objektid.add(obj)
 
 # Lisab artikliga seotud isikutele artikliga seotud org ja viide
-def task_art10802():
-    art =  Artikkel.objects.get(id=10802)
+def task_art11802():
+    art =  Artikkel.objects.get(id=11802)
     isikud = art.isikud.all()
     org = Organisatsioon.objects.get(id=3240)
     # pilt = Pilt.objects.get(id=6561)
