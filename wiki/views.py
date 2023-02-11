@@ -432,7 +432,7 @@ def get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
         a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
         # 100 aastat tagasi toimunud
         a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(dob__year = (aasta-100))
-        a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:20] # 20 loetumat artiklit
+        a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:40] # 40 loetumat artiklit
         # Koondnäitajad aastate ja kuude kaupa
         artikleid_aasta_kaupa = artikkel_qs.\
             values('hist_year').\
