@@ -226,11 +226,17 @@ OWM_APIKEY = config['OpenWeatherMap']['OWM_APIKEY']
 TRANSLATION = {
     'w': '[vw]',
     'v': '[vw]',
-    'y': '[yi]',
-    'i': '[yi]',
-    's': '[sšz]',
-    'š': '[sšz]',
-    'z': '[sšz]'
+    'y': '[yiī]',
+    'ī': '[yiī]',
+    'i': '[yiī]',
+    's': '[sšzž]',
+    'š': '[sšzž]',
+    'z': '[sšzž]',
+    'ž': '[sšzž]',
+    'ā': '[aā]',
+    'a': '[aā]',
+    'ņ': '[nņ]',
+    'n': '[nņ]',
 }
 
 # Kasutamiseks genereeritud piltidel
