@@ -192,9 +192,8 @@ def add_markdown_objectid(string):
 # Lisab objecti tekstile markdown formaadis viited
 def add_markdownx_viited(obj):
     viited = obj.viited.all()
-    viite_string = ''
     if viited:
-        viite_string += '<i class="{% icon_viide %} icon-viide" alt="Viited"></i>'
+        viite_string = '<i class="{% icon_viide %} icon-viide" alt="Viited"></i>'
         viitenr = 1
         for viide in viited:
             viite_string += f'\n[^{viitenr}]: '
@@ -203,7 +202,10 @@ def add_markdownx_viited(obj):
             else:
                 viite_string += f'<span>{viide}</span>'
             viitenr += 1
-    return f'<div class="w3-panel w3-small text-viide">{viite_string}</div>'
+        viite_string = f'<div class="w3-panel w3-small text-viide">{viite_string}</div>'
+    else:
+        viite_string = ''
+    return viite_string
 
 # Parandab markdownify renderdamise vea
 def fix_markdownified_text(text):
@@ -749,7 +751,10 @@ class Objekt(models.Model):
         viite_string = add_markdownx_viited(self)
         # return markdownify(escape_numberdot(tekst) + viite_string)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
-        return fix_markdownified_text(markdownified_text)
+        if viite_string: # viidete puhul ilmneb markdownx viga
+            return fix_markdownified_text(markdownified_text)
+        else:
+            return markdownified_text
 
     # Keywords
     @property
@@ -960,7 +965,10 @@ class Organisatsioon(models.Model):
         viite_string = add_markdownx_viited(self)
         # return markdownify(escape_numberdot(tekst) + viite_string)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
-        return fix_markdownified_text(markdownified_text)
+        if viite_string:  # viidete puhul ilmneb markdownx viga
+            return fix_markdownified_text(markdownified_text)
+        else:
+            return markdownified_text
 
     def get_absolute_url(self):
         kwargs = {
@@ -1229,7 +1237,10 @@ class Isik(models.Model):
         viite_string = add_markdownx_viited(self)
         # return markdownify(escape_numberdot(tekst) + viite_string)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
-        return fix_markdownified_text(markdownified_text)
+        if viite_string:  # viidete puhul ilmneb markdownx viga
+            return fix_markdownified_text(markdownified_text)
+        else:
+            return markdownified_text
 
     def get_absolute_url(self):
         kwargs = {
@@ -1565,7 +1576,10 @@ class Artikkel(models.Model):
         tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
-        return fix_markdownified_text(markdownified_text)
+        if viite_string:  # viidete puhul ilmneb markdownx viga
+            return fix_markdownified_text(markdownified_text)
+        else:
+            return markdownified_text
 
     # Create a property that returns the summary markdown instead
     @property
