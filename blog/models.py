@@ -1,6 +1,8 @@
 import re
 
 from django.db import models
+from django.urls import reverse
+
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
 
@@ -29,7 +31,6 @@ class Category(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=255)
-    # body = models.TextField()
     body = MarkdownxField()
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
@@ -37,6 +38,12 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        kwargs = {
+            'pk': self.id,
+        }
+        return reverse('blog:blog_detail', kwargs=kwargs)
 
     # Create a property that returns the markdown instead
     @property
@@ -53,6 +60,7 @@ class Post(models.Model):
 
     class Meta:
         verbose_name_plural = "Postitused"
+        ordering = ['-created_on']
 
 
 class Comment(models.Model):

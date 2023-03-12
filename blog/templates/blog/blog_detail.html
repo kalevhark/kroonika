@@ -1,6 +1,9 @@
 {% extends "blog/blog_base.html" %}
+{% load static %}
+{% load wiki_extras %}
+
 {% block content %}
-<div class="w3-container">
+<div class="w3-container infinite-item">
   <h5>
     <a
         href="{% url 'blog:blog_index' %}"
@@ -8,7 +11,7 @@
         title="Tagasi loetellu"
     >
       <i class="fa fa-list"></i>
-    </a> {{ post.title }}
+    </a> {{ post.title }} {{ post_url }} {{ post_next_url }}
   </h5>
   <small>
     {{ post.created_on | date:'d.m.Y' }} |&nbsp;
@@ -34,15 +37,18 @@
     <input type="submit" value="Saada">
   </form>
   {% if comments %}
-  <h6>Arvamused:</h6>
+    <h6>Arvamused:</h6>
+    {% for comment in comments %}
+      <div class="w3-hover-white">
+        <p>
+          <small><b>{{ comment.author }}</b> kirjutas {{comment.inp_date | date:'d.m.Y' }}:</small>
+        </p>
+        <p>{{ comment.body }}</p>
+      </div>
+    {% endfor %}
   {% endif %}
-  {% for comment in comments %}
-  <div class="w3-hover-white">
-    <p>
-      <small><b>{{ comment.author }}</b> kirjutas {{comment.inp_date | date:'d.m.Y' }}:</small>
-    </p>
-    <p>{{ comment.body }}</p>
-  </div>
-  {% endfor %}
 </div>
 {% endblock %}
+{% if post_next_url %}
+  <a class="infinite-more-link" href="{{ post_next_url }}">Veel jutte...</a>s
+{% endif %}

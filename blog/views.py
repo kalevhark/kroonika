@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render
 
 import requests
@@ -41,38 +42,74 @@ def check_recaptcha(request):
         print('recaptcha:', ip, result_json)
         return False
 
-def blog_index(request):
-    posts = Post.objects.all().order_by("-created_on")
-    context = {"posts": posts}
-    return render(request, "blog/blog_index.html", context)
+def blog_index(request, pk=''):
+    # params = dict(request.GET)
+    # pk = request.GET.get('pk', '')
+    category = request.GET.get('category', '')
+    posts = Post.objects.all()
 
+    try: # kas on valitud kategooria
+        category = int(category)
+        posts = posts.filter(categories__id=category)
+    except:
+        pass
 
-def blog_category(request, category):
-    posts = Post.objects.filter(categories__name__contains=category).order_by(
-        "-created_on"
+    try: # kas on valitud mingi jutt
+        pk = int(pk)
+        post = Post.objects.get(pk=pk)
+        posts = posts.filter(created_on__lte=post.created_on)
+    except:
+        pass
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(posts, 1)
+    try:
+        jutud = paginator.page(page)
+    except PageNotAnInteger:
+        jutud = paginator.page(1)
+    except EmptyPage:
+        jutud = paginator.page(paginator.num_pages)
+    jutt = jutud[0]
+
+    # print(jutud, len(jutud), jutud.has_next())
+    return render(
+        request,
+        'blog/blog_index_infinite.html',
+        {
+            'jutud': jutud,
+            'jutt': jutt,
+            'pk': pk,
+            'category': category,
+        }
     )
-    context = {"category": category, "posts": posts}
-    return render(request, "blog/blog_category.html", context)
 
-
-def blog_detail(request, pk):
-    post = Post.objects.get(pk=pk)
-    comments = Comment.objects.filter(post=post)
-
-    form = CommentForm()
-    if request.method == "POST" and check_recaptcha(request):
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            remote_addr = request.META['REMOTE_ADDR']  # kasutaja IP aadress
-            http_user_agent = request.META['HTTP_USER_AGENT']  # kasutaja veebilehitseja
-            comment = Comment(
-                author=form.cleaned_data["author"],
-                body=form.cleaned_data["body"],
-                post=post,
-                remote_addr=remote_addr,
-                http_user_agent=http_user_agent
-            )
-            comment.save()
-
-    context = {"post": post, "comments": comments, "form": form}
-    return render(request, "blog/blog_detail.html", context)
+# def blog_detail(request, pk):
+#     post = Post.objects.get(pk=pk)
+#     post_url = post.get_absolute_url()
+#     comments = Comment.objects.filter(post=post)
+#     posts_next = Post.objects.filter(created_on__lt=post.created_on)
+#     post_next_url = posts_next[0].get_absolute_url() if posts_next else None
+#
+#     form = CommentForm()
+#     if request.method == "POST" and check_recaptcha(request):
+#         form = CommentForm(request.POST)
+#         if form.is_valid():
+#             remote_addr = request.META['REMOTE_ADDR']  # kasutaja IP aadress
+#             http_user_agent = request.META['HTTP_USER_AGENT']  # kasutaja veebilehitseja
+#             comment = Comment(
+#                 author=form.cleaned_data["author"],
+#                 body=form.cleaned_data["body"],
+#                 post=post,
+#                 remote_addr=remote_addr,
+#                 http_user_agent=http_user_agent
+#             )
+#             comment.save()
+#
+#     context = {
+#         "post": post,
+#         'post_url': post_url,
+#         'post_next_url': post_next_url,
+#         "comments": comments,
+#         "form": form
+#     }
+#     return render(request, "blog/blog_detail.html", context)
