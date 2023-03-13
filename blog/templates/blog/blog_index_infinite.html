@@ -9,10 +9,15 @@
 {% endblock %}
 
 {% block content %}
+  <div class="w3-container">
+    {% if category %}
+      Valitud teema: {{ category }}
+    {% endif %}
+  </div>
   <div class="infinite-container">
       <div class="w3-container infinite-item">
         <div class="w3-row">
-          <h5>
+          <h3>
             <a
                 href="{% url 'blog:blog_index' %}"
                 class="w3-button w3-theme-d4 w3-hover-white"
@@ -20,23 +25,21 @@
             >
               <i class="fa fa-list"></i>
             </a> {{ jutt.title }}
-          </h5>
+          </h3>
+          <small>
+            {{ jutt.created_on | date:'d.m.Y' }} |&nbsp;
+            Teemad:&nbsp;
+            {% for category in jutt.categories.all %}
+              <a
+                      class="w3-hover-white"
+                      href="?category={{ category.id }}">
+                {{ category.name }}
+              </a>&nbsp;
+            {% endfor %}
+          </small>
         </div>
         <div class="w3-row">
           <div class="w3-quarter">
-            <div class="w3-row">
-              <small>
-                {{ jutt.created_on | date:'d.m.Y' }} |&nbsp;
-                Teemad:&nbsp;
-                {% for category in jutt.categories.all %}
-                  <a
-                          class="w3-hover-white"
-                          href="?category={{ category.id }}">
-                    {{ category.name }}
-                  </a>&nbsp;
-                {% endfor %}
-              </small>
-            </div>
             {% include 'includes/object_fbshare.html' with object=jutt %}
           </div>
           <div class="w3-threequarter">

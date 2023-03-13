@@ -1,26 +1,27 @@
 {% load static %}
+{% with url=request.scheme|add:'://'|add:request.get_host|add:object.get_absolute_url %}
 <a
         class="icon-link round-corner facebook fill"
         target="_blank"
-        href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri | urlencode }}%2F&amp;src=sdkpreparse"
+        href="https://www.facebook.com/sharer/sharer.php?u={{ url | urlencode }}%2F&amp;src=sdkpreparse"
 >
   <i class="fa fa-facebook"></i>
 </a>
 <a
         class="icon-link round-corner linkedin fill"
-        href="https://www.linkedin.com/shareArticle?mini=true&title=valgalinn.ee: {{ object }}&url={{ request.scheme }}://{{ request.get_host }}{{ object.get_absolute_url }}"
+        href="https://www.linkedin.com/shareArticle?mini=true&title=valgalinn.ee: {{ object }}&url={{ url }}"
 >
   <i class="fa fa-linkedin"></i>
 </a>
 <a
         class="icon-link round-corner twitter fill"
-        href="https://twitter.com/intent/tweet?text=valgalinn.ee ({{ object }}): {{ request.scheme }}://{{ request.get_host }}{{ object.get_absolute_url }}"
+        href="https://twitter.com/intent/tweet?text=valgalinn.ee ({{ object }}): {{ url }}"
 >
   <i class="fa fa-twitter"></i>
 </a>
 <a
         class="icon-link round-corner envelope fill"
-        href="mailto:?subject=valgalinn.ee: {{ object }}&body={{ object }}: {{ request.scheme }}://{{ request.get_host }}{{ object.get_absolute_url }}"
+        href="mailto:?subject=valgalinn.ee: {{ object }}&body={{ object }}: {{ url }}"
 >
   <i class="fa fa-envelope"></i>
 </a>
@@ -28,7 +29,7 @@
         class="icon-link round-corner qrcode fill"
         title="Näita QR koodi"
         onclick="showShareQRCodeOptions(this)"
-        data-uri="{{ request.scheme }}://{{ request.get_host }}{{ object.get_absolute_url }}"
+        data-uri="{{ url }}"
 >
   <i class="fa fa-qrcode"></i>
 </a>
@@ -47,13 +48,15 @@
         <img
                 id="qrcode_{{ object.id }}"
                 src=""
-                alt="{{ request.scheme }}://{{ request.get_host }}{{ object.get_absolute_url }}"
-                title="{{ request.scheme }}://{{ request.get_host }}{{ object.get_absolute_url }}"
+                alt="{{ url }}"
+{#                Järgmine rida ei tööta korrektselt #}
+{#                title="{{ url }}"#}
                 style="width: 90%;"
         />
       </div>
   </div>
 </div>
+{% endwith %}
 
 <script>
   function openQRCodeModal(uri) {
@@ -85,21 +88,6 @@
   function closeQRCodeModal() {
     $('#shareQRCodeModal_{{ object.id }}').fadeOut(200, "linear");
   }
-
-  {#function showQRCodeModal(uri) {#}
-  {#  $.ajax(#}
-  {#    {#}
-  {#      type: "GET",#}
-  {#      url: "{% url 'wiki:get_qrcode_from_uri' %}",#}
-  {#      data: {'uri': uri},#}
-  {#      success: function(response) {#}
-  {#        $("#qrcode").attr('src', response);#}
-  {#      }#}
-  {#     }#}
-  {#  )#}
-	{#	var x = document.getElementById("shareQRCodeModal_{{ object.id }}");#}
-  {#  x.style.display='block';#}
-	// {#}#}
 
   function showShareQRCodeOptions(evt) {
     uri = evt.dataset.uri;

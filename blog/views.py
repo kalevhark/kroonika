@@ -5,7 +5,7 @@ from django.shortcuts import render
 import requests
 
 from blog.forms import CommentForm
-from blog.models import Post, Comment
+from blog.models import Post, Category, Comment
 
 #
 # reCAPTCHA kontrollifunktsioon
