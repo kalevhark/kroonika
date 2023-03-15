@@ -2,6 +2,7 @@ import re
 
 from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
 
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
@@ -30,6 +31,11 @@ class Category(models.Model):
 
 
 class Post(models.Model):
+    # slug = models.SlugField(
+    #     default='',
+    #     editable=False,
+    #     max_length=200,
+    # )
     title = models.CharField(max_length=255)
     body = MarkdownxField()
     created_on = models.DateTimeField(auto_now_add=True)
@@ -38,6 +44,12 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
+        value = ' '.join(self.title.split(' ')[:10])[:200]
+        # self.slug = slugify(value, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         kwargs = {
@@ -57,6 +69,7 @@ class Post(models.Model):
         if summary.find('\n') > 0:
             summary = summary[:summary.find('\n')]
         return markdownify(escape_numberdot(summary[:300]) + "...")
+
 
     class Meta:
         verbose_name_plural = "Postitused"

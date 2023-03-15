@@ -15,7 +15,10 @@
     {% endif %}
   </div>
   <div class="infinite-container">
-      <div class="w3-container infinite-item">
+      <div
+              class="w3-container infinite-item"
+              data-url="{{ jutt.get_absolute_url }}"
+      >
         <div class="w3-row">
           <h3>
             <a
@@ -81,6 +84,21 @@
 
 {% block javascript %}
   <script>
+    // muudame brauseri uri kerimisel
+    function setUrl(item) {
+      window.history.pushState(null, '', item.element.getAttribute('data-url'));
+    }
+
+    // esimese elemendi waypoint
+    var continuousElements = document.getElementsByClassName('infinite-item')
+    new Waypoint({
+      element: continuousElements[0],
+      handler: function() {
+        setUrl(this);
+      },
+      offset: 25
+    })
+
     var infinite = new Waypoint.Infinite({
       element: $('.infinite-container')[0],
       onBeforePageLoad: function () {
@@ -88,6 +106,14 @@
       },
       onAfterPageLoad: function ($items) {
         $("#loaderDiv1").hide();
+        console.log($items[0].getAttribute('data-url'));
+        new Waypoint({
+          element: $items[0],
+          handler: function() {
+            setUrl(this);
+          },
+          offset: 50
+        })
       }
     })
   </script>
