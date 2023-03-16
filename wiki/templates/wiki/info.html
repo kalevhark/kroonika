@@ -257,7 +257,7 @@
     </ul>
     {% if user.is_authenticated %}
       Lisaks:
-      {% for key, item in env.items %}
+      {% for key, item in env.items|dictsort:0 %}
         <br><small>{{ key }}: {{ item }}</small>
       {% endfor %}
       <div>
@@ -283,19 +283,19 @@
       <div>
         session:<br>
         {% for item, value in session_data.items %}
-          <small>{{ item }}:{{ value }}</small><br>
+          <small>{{ item }}: {{ value }}</small><br>
         {% endfor %}
       </div>
       <div>
         cookies:<br>
         {% for item, value in cookies.items %}
-          <small>{{ item }}:{{ value }}</small><br>
+          <small>{{ item }}: {{ value }}</small><br>
         {% endfor %}
       </div>
       <div>
         loading:<br>
         {% for item, value in time_log.items %}
-          <small>{{ item }}:{{ value|duration }} </small>
+          <small>{{ item }}: {{ value|duration }} </small>
         {% endfor %}
       </div>
       <div>
