@@ -968,6 +968,28 @@ def task_art11802():
         isik.viited.add(viide)
         # pilt.isikud.add(isik)
 
+def task_20230316():
+    from blog.models import Post
+    from datetime import datetime
+    p = Post.objects.first()
+    tzinfo = p.created_on.tzinfo
+    posts = [
+        [24, (2022, 4, 1)],
+        [25, (2022, 5, 1)],
+        [26, (2022, 6, 1)],
+        [27, (2022, 8, 1)],
+        [28, (2022, 9, 1)],
+        [29, (2022, 10, 1)],
+        [30, (2022, 11, 1)],
+        [31, (2022, 12, 1)],
+        [32, (2023, 1, 1)],
+    ]
+    for post in posts:
+        obj = Post.objects.get(id=post[0])
+        obj.created_on = datetime(*post[1], tzinfo=tzinfo)
+        print(obj.created_on)
+        # obj.save()
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
