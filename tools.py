@@ -988,7 +988,7 @@ def task_20230316():
         obj = Post.objects.get(id=post[0])
         obj.created_on = datetime(*post[1], tzinfo=tzinfo)
         print(obj.created_on, obj)
-        # obj.save()
+        obj.save()
 
 if __name__ == "__main__":
     # get_vg_vilistlased()
