@@ -42,7 +42,7 @@ def check_recaptcha(request):
         print('recaptcha:', ip, result_json)
         return False
 
-def blog_index(request, pk=''):
+def blog_index(request, slug=''):
     # params = dict(request.GET)
     # pk = request.GET.get('pk', '')
     category = request.GET.get('category', '')
@@ -55,8 +55,8 @@ def blog_index(request, pk=''):
         pass
 
     try: # kas on valitud mingi jutt
-        pk = int(pk)
-        post = Post.objects.get(pk=pk)
+        # pk = int(pk)
+        post = Post.objects.get(slug=slug)
         posts = posts.filter(created_on__lte=post.created_on)
     except:
         pass
@@ -78,7 +78,7 @@ def blog_index(request, pk=''):
         {
             'jutud': jutud,
             'jutt': jutt,
-            'pk': pk,
+            # 'pk': pk,
             'category': category,
         }
     )

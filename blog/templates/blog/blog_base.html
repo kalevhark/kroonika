@@ -1,9 +1,10 @@
+{% load static %}
+{% load crispy_forms_tags %}
 <!DOCTYPE html>
 <html lang="et">
 	<meta charset="utf-8">
 	<head>
 		<title>{% block title %}Valga linna kroonika blogi{% endblock %}</title>
-		{% load static %}
 		<!-- Required meta tags -->
 		<meta charset="utf-8" />
 		<meta name="description"          content="Valga linna kroonika blogi" />
@@ -91,6 +92,10 @@
 		</header>
 
 		<main>
+      <!--		Tagasiside vorm -->
+      <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">
+        {% crispy feedbackform %}
+      </div>
       {% block content %}{% endblock %}
     </main>
 
@@ -105,7 +110,29 @@
       </div>
 		</footer>
 
-		<!-- Äpi skriptid, kui vaja -->
+		<script>
+      // Tagasisidevormi kuvamiseks TODO: See v6iks kroonika common js olla v6i app
+      function showFeedback() {
+        // Sulgeme navigatsioonimenüü, kui see on avatud
+        // let rightMenu = document.getElementById("rightMenu");
+        // if (rightMenu.className.indexOf("w3-show") !== -1) {
+        //   toggleRightMenu();
+        // }
+        // Avame tagasisidevormi
+        var x = document.getElementById("panelFeedBack");
+        if (x.className.indexOf("w3-show-block") === -1) {
+          x.className += " w3-show-block";
+      //    kirjeldusField = document.getElementById("id_kirjeldus");
+          kirjeldusField = $("#id_kirjeldus");
+          if (kirjeldusField.is(":visible")) {
+            kirjeldusField.focus();
+          }
+        } else {
+          x.className = x.className.replace(" w3-show-block", "");
+        }
+      }
+    </script>
+    <!-- Äpi skriptid, kui vaja -->
 	  {% block javascript %}{% endblock %}
 	</body>
 </html>

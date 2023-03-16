@@ -310,6 +310,12 @@ ul.no-bullets li {
   transition: 0.3s;
 }
 
+/* markdown pildid tekstis */
+.pilt-pildidtekstis {
+  max-height: 400px;
+  width: auto;
+}
+
 /* The Modal (background) */
 .modal {
   display: none;

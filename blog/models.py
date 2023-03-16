@@ -7,18 +7,20 @@ from django.utils.text import slugify
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
 
-# Lisab numbri ja punkti vahele backslashi
-def add_escape(matchobj):
-    leiti = matchobj.group(0)
-    return "\\".join([leiti[:-1], "."])
+from wiki.models import escape_numberdot, add_markdownx_pildid, add_markdown_objectid
 
-# Muudab teksti, et markdown ei märgistaks automaatselt nummerdatud liste
-def escape_numberdot(string):
-    # Otsime kas teksti alguses on arv ja punkt
-    string_modified = re.sub(r"(\A)(\d+)*\.", add_escape, string)
-    # Otsime kas lõigu alguses on arv ja punkt
-    string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
-    return string_modified
+# # Lisab numbri ja punkti vahele backslashi
+# def add_escape(matchobj):
+#     leiti = matchobj.group(0)
+#     return "\\".join([leiti[:-1], "."])
+
+# # Muudab teksti, et markdown ei märgistaks automaatselt nummerdatud liste
+# def escape_numberdot(string):
+#     # Otsime kas teksti alguses on arv ja punkt
+#     string_modified = re.sub(r"(\A)(\d+)*\.", add_escape, string)
+#     # Otsime kas lõigu alguses on arv ja punkt
+#     string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
+#     return string_modified
 
 class Category(models.Model):
     name = models.CharField(max_length=20)
@@ -39,7 +41,16 @@ class Post(models.Model):
     title = models.CharField(
         max_length=255
     )
-    body = MarkdownxField()
+    body = MarkdownxField(
+        'Lugu',
+        help_text='<br>'.join(
+            [
+                'Tekst (MarkDown on toetatud);',
+                'Pildi lisamiseks: [pilt_nnnn];',
+                'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
+            ]
+        )
+    )
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField('Category', related_name='posts')
@@ -54,19 +65,37 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
         value = ' '.join(self.title.split(' ')[:10])[:200]
-        # self.slug = slugify(value, allow_unicode=True)
+        self.slug = slugify(value, allow_unicode=True)
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         kwargs = {
-            'pk': self.id,
+            'slug': self.slug,
         }
         return reverse('blog:blog_detail', kwargs=kwargs)
 
+    # # Create a property that returns the markdown instead
+    # @property
+    # def formatted_markdown(self):
+    #     return markdownify(escape_numberdot(self.body))
+
     # Create a property that returns the markdown instead
+    # Lisame siia ka viited
     @property
     def formatted_markdown(self):
-        return markdownify(escape_numberdot(self.body))
+        tekst = self.body
+        if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+            tekst = '<br>'
+        tekst = add_markdown_objectid(tekst)
+        tekst = add_markdownx_pildid(tekst)
+        # viite_string = add_markdownx_viited(self)
+        # return markdownify(escape_numberdot(tekst) + viite_string)
+        # markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+        # if viite_string:  # viidete puhul ilmneb markdownx viga
+        #     return fix_markdownified_text(markdownified_text)
+        # else:
+        #     return markdownified_text
+        return markdownify(escape_numberdot(tekst))
 
     # Create a property that returns the summary markdown instead
     @property
@@ -85,7 +114,6 @@ class Post(models.Model):
 class Comment(models.Model):
     author = models.CharField(max_length=60)
     body = models.TextField()
-    # created_on = models.DateTimeField(auto_now_add=True)
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
     remote_addr = models.CharField(
         'IP aadress',
@@ -105,6 +133,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.body[:100]
+
 
     class Meta:
         verbose_name_plural = "Kommentaarid"
