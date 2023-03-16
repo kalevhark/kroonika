@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import F
 from django.shortcuts import render
 
 import requests
@@ -70,6 +71,8 @@ def blog_index(request, slug=''):
     except EmptyPage:
         jutud = paginator.page(paginator.num_pages)
     jutt = jutud[0]
+    jutt.total_accessed = F('total_accessed') + 1
+    jutt.save(update_fields=['total_accessed'])
 
     # print(jutud, len(jutud), jutud.has_next())
     return render(

@@ -27,7 +27,20 @@
                 title="Tagasi loetellu"
             >
               <i class="fa fa-list"></i>
-            </a> {{ jutt.title }}
+            </a>
+            <a
+                    class="copylink w3-tooltip w3-hover-white"
+                    onclick="getLinkCopy(this)"
+                    data-uri="{{ request.scheme|add:'://'|add:request.get_host|add:jutt.get_absolute_url }}"
+            >
+              &nbsp;{{ jutt.title }}
+              <span
+                      class="copylink-confirmation w3-text"
+                      id="linkCopyTooltip"
+              >
+                <i class="fa fa-clone"></i>
+              </span>
+            </a>
           </h3>
           <small>
             {{ jutt.created_on | date:'d.m.Y' }} |&nbsp;
@@ -84,6 +97,23 @@
 
 {% block javascript %}
   <script>
+    // Linkide kopeerimine lõikelauale
+    // button onclick="getLinkCopy(this)" onmouseout="outLinkCopy()"
+    function getLinkCopy(btn) {
+      var linkCopyUrl = btn.getAttribute("data-uri")
+      navigator.clipboard.writeText(linkCopyUrl);
+      var tooltip = document.getElementById("linkCopyTooltip");
+      if (tooltip !== null) {
+        var tooltipInnerHTMLOld = tooltip.innerHTML;
+        tooltip.classList.add("w3-pale-green");
+        tooltip.innerHTML = "kopeeritud lõikelauale";
+        setTimeout(function () {
+          tooltip.innerHTML = tooltipInnerHTMLOld;
+          tooltip.classList.remove("w3-pale-green");
+        }, 2500);
+      }
+    }
+
     // muudame brauseri uri kerimisel
     function setUrl(item) {
       window.history.pushState(null, '', item.element.getAttribute('data-url'));

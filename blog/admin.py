@@ -4,7 +4,11 @@ from markdownx.admin import MarkdownxModelAdmin
 from blog.models import Post, Category, Comment
 
 class PostAdmin(MarkdownxModelAdmin):
-    pass
+    list_display = [
+        'id',
+        'title',
+        'total_accessed',
+    ]
 
 class CategoryAdmin(admin.ModelAdmin):
     pass
