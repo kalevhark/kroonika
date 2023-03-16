@@ -31,20 +31,22 @@ class Category(models.Model):
 
 
 class Post(models.Model):
-    # slug = models.SlugField(
-    #     default='',
-    #     editable=False,
-    #     max_length=200,
-    # )
-    title = models.CharField(max_length=255)
+    slug = models.SlugField(
+        default='',
+        editable=False,
+        max_length=200,
+    )
+    title = models.CharField(
+        max_length=255
+    )
     body = MarkdownxField()
     created_on = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     categories = models.ManyToManyField('Category', related_name='posts')
-    # total_accessed = models.PositiveIntegerField(
-    #     verbose_name='Vaatamisi',
-    #     default=0
-    # )
+    total_accessed = models.PositiveIntegerField(
+        verbose_name='Vaatamisi',
+        default=0
+    )
 
     def __str__(self):
         return self.title
