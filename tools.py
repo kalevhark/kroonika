@@ -987,7 +987,7 @@ def task_20230316():
     for post in posts:
         obj = Post.objects.get(id=post[0])
         obj.created_on = datetime(*post[1], tzinfo=tzinfo)
-        print(obj.created_on)
+        print(obj.created_on, obj)
         # obj.save()
 
 if __name__ == "__main__":
