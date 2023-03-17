@@ -1543,7 +1543,10 @@ class Artikkel(models.Model):
         #     artiklid=self.id,
         #     profiilipilt_artikkel=True
         # ).first()
-        return Pilt.objects.filter(profiilipilt_artklid=self).first()
+        # return Pilt.objects.filter(profiilipilt_artklid=self).first()
+        return Pilt.objects. \
+            filter(profiilipilt_artiklid__in=[self]). \
+            first()
 
     # Kui tekstis on vigase koha märge
     @property

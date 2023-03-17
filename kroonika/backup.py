@@ -261,12 +261,13 @@ def backup2serverless(objects=10, aastani=1929):
 
 if __name__ == "__main__":
     print('Alustasime:', datetime.now())
-    backup2serverless(objects=10, aastani=1929) # objects=0 = täiskoopia
+    # backup2serverless(objects=10, aastani=1934) # objects=0 = täiskoopia
     print('Lõpetasime:', datetime.now())
 
 # Andmete varundamiseks offline kasutuseks
 # Loob valgalinn.ee ajalookroonika koopia pdf formaadis
 
+from reportlab.lib import utils
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle as PS
 from reportlab.lib.units import cm, inch, mm
@@ -438,9 +439,24 @@ class MyDocTemplate(BaseDocTemplate):
 def story_seotud_viited(story, obj):
     viited =  obj.viited.all()
     if viited:
+        story.append(Paragraph('Allikad:', V))
         for viide in viited:
             story.append(Paragraph(f'{viide}', V))
     # story.append(Spacer(18, 18))
+    return story
+
+def story_seotud_artiklid(story, obj, artiklid):
+    if isinstance(obj, Isik):
+        artiklid = artiklid.filter(isikud__id=obj.id)
+    elif isinstance(obj, Objekt):
+        artiklid = artiklid.filter(objektid__id=obj.id)
+    elif isinstance(obj, Organisatsioon):
+        artiklid = artiklid.filter(organisatsioonid__id=obj.id)
+    if artiklid:
+        mainitud_aastatel = set(artiklid.values_list('hist_year', flat=True))
+        seotud_artiklid_verbose = ', '.join([str(aasta) for aasta in sorted(mainitud_aastatel)])
+        # story.append(Spacer(inch, 0.5 * inch))
+        story.append(Paragraph(f'Mainitud aastatel: {seotud_artiklid_verbose}', V))
     return story
 
 def story_seotud_objectid(story, obj, seotud_model, seotud_objectid_index = ''):
@@ -449,7 +465,8 @@ def story_seotud_objectid(story, obj, seotud_model, seotud_objectid_index = ''):
     seotud_objectid = seotud_model.objects.daatumitega(request=None).filter(id__in=ids)
     if seotud_objectid:
         if not isinstance(obj, Artikkel):
-            story.append(Paragraph(f'Seotud {seotud_model_verbose}:', P))
+            # story.append(Spacer(inch, 0.5 * inch))
+            story.append(Paragraph(f'Seotud {seotud_model_verbose}:', V))
         for seotud_object in seotud_objectid:
             seotud_object_clean = repr(seotud_object).replace(',', ',,').replace('"', '&quot')  # topeltkoma = ','
             if not isinstance(obj, Artikkel):
@@ -461,7 +478,6 @@ def story_seotud_objectid(story, obj, seotud_model, seotud_objectid_index = ''):
             seotud_objectid_index += f'<index name="{seotud_model_verbose}" item="{seotud_object_clean}" />'
     return story, seotud_objectid_index
 
-from reportlab.lib import utils
 def get_image_withwidth(path, width=inch):
     img = utils.ImageReader(path)
     iw, ih = img.getSize()
@@ -576,12 +592,13 @@ def story_artiklid(story, objects=10, algus_aasta=0, l6pp_aasta=1899):
 
         viited = obj.viited.all()
         if viited:
+            story.append(Paragraph('Allikad:', V))
             for viide in viited:
                 story.append(Paragraph(f'{viide}', V))
     print('Lugusid:', objs.count())
     return story
 
-def story_isikud(story, objects=10):
+def story_isikud(story, artiklid, objects=10):
     objs = Isik.objects.daatumitega(request=None)
     if objects > 0:
         objs = objs[:objects]
@@ -602,7 +619,7 @@ def story_isikud(story, objects=10):
         isik_index = repr(obj).replace(',', ',,')  # topeltkoma = ','
         story.append(
             Paragraph(
-                f'<index name="isikud" item="{isik_index}" /><font color="{color}"><strong>{obj}</strong></font>', P
+                f'<index name="isikud" item="{isik_index}" /><font color="{color}"><strong>{obj}</strong></font>', H3
             )
         )
 
@@ -651,7 +668,9 @@ def story_isikud(story, objects=10):
             story.append(t)
         story.append(Paragraph(f'{obj.kirjeldus}', P))
 
+        story = story_seotud_artiklid(story, obj, artiklid)
         story = story_seotud_viited(story, obj)
+
         story, _ = story_seotud_objectid(
             story, obj,
             seotud_model=Organisatsioon,
@@ -665,7 +684,7 @@ def story_isikud(story, objects=10):
     print('Isikuid:', objs.count())
     return story
 
-def story_organisatsioonid(story, objects=10):
+def story_organisatsioonid(story, artiklid, objects=10):
     objs = Organisatsioon.objects.daatumitega(request=None)
     if objects > 0:
         objs = objs[:objects]
@@ -685,7 +704,8 @@ def story_organisatsioonid(story, objects=10):
         organisatsioon_index = repr(obj).replace(',', ',,').replace('"', '&quot')  # topeltkoma = ','
         story.append(
             Paragraph(
-                f'<index name="organisatsioonid" item="{organisatsioon_index}" /><font color="{color}"><strong>{obj}</strong></font>', P
+                f'<index name="organisatsioonid" item="{organisatsioon_index}" /><font color="{color}"><strong>{obj}</strong></font>',
+                H3
             )
         )
 
@@ -728,6 +748,7 @@ def story_organisatsioonid(story, objects=10):
             story.append(t)
         story.append(Paragraph(f'{obj.kirjeldus}', P))
 
+        story = story_seotud_artiklid(story, obj, artiklid)
         story = story_seotud_viited(story, obj)
         story, _ = story_seotud_objectid(
             story, obj,
@@ -737,7 +758,7 @@ def story_organisatsioonid(story, objects=10):
     print('Asutisi:', objs.count())
     return story
 
-def story_objektid(story, objects=10):
+def story_objektid(story, artiklid, objects=10):
     objs = Objekt.objects.daatumitega(request=None)
     if objects > 0:
         objs = objs[:objects]
@@ -757,7 +778,7 @@ def story_objektid(story, objects=10):
         objekt_index = repr(obj).replace(',', ',,').replace('"', '&quot')  # topeltkoma = ','
         story.append(
             Paragraph(
-                f'<index name="objektid" item="{objekt_index}" /><font color="{color}"><strong>{obj}</strong></font>', P
+                f'<index name="objektid" item="{objekt_index}" /><font color="{color}"><strong>{obj}</strong></font>', H3
             )
         )
 
@@ -799,7 +820,7 @@ def story_objektid(story, objects=10):
             )
             story.append(t)
         story.append(Paragraph(f'{obj.kirjeldus}', P))
-
+        story = story_seotud_artiklid(story, obj, artiklid)
         story = story_seotud_viited(story, obj)
         story, _ = story_seotud_objectid(
             story, obj,
@@ -811,13 +832,17 @@ def story_objektid(story, objects=10):
 
 def backup2pdf_job(objects=10, content='lood', algus_aasta=0, l6pp_aasta=1899):
     dump_date = datetime.now().strftime(settings.DATE_INPUT_FORMATS[0])
+    artiklid = Artikkel.objects.daatumitega()
 
     sisupealkiri = ''
     if content and content=='lood':
         if algus_aasta == 0:
             sisupealkiri = f'lood kuni {l6pp_aasta}'
         else:
-            sisupealkiri = f'lood {algus_aasta}-{l6pp_aasta}'
+            if algus_aasta == l6pp_aasta:
+                sisupealkiri = f'lood {l6pp_aasta}'
+            else:
+                sisupealkiri = f'lood {algus_aasta}-{l6pp_aasta}'
     else:
         sisupealkiri = 'lisad'
     doc = MyDocTemplate(f'valgalinn.ee_{sisupealkiri.replace(" ","_")}_{dump_date}.pdf')
@@ -891,21 +916,21 @@ def backup2pdf_job(objects=10, content='lood', algus_aasta=0, l6pp_aasta=1899):
         story.append(Paragraph(f'<font color="{TEXT_ISIK_COLOR}">Isikud</font>', C))
         story.append(NextPageTemplate('OneColPageNr'))
         story.append(PageBreak())
-        story = story_isikud(story, objects=objects)
+        story = story_isikud(story, artiklid, objects=objects)
         # asutised
         story.append(NextPageTemplate('OneCol'))
         story.append(PageBreak())
         story.append(Paragraph(f'<font color="{TEXT_ORGANISATSIOON_COLOR}">Asutised</font>', C))
         story.append(NextPageTemplate('OneColPageNr'))
         story.append(PageBreak())
-        story = story_organisatsioonid(story, objects=objects)
+        story = story_organisatsioonid(story, artiklid, objects=objects)
         # kohad
         story.append(NextPageTemplate('OneCol'))
         story.append(PageBreak())
         story.append(Paragraph(f'<font color="{TEXT_OBJEKT_COLOR}">Kohad</font>', C))
         story.append(NextPageTemplate('OneColPageNr'))
         story.append(PageBreak())
-        story = story_objektid(story, objects=objects)
+        story = story_objektid(story, artiklid, objects=objects)
 
     # nimeregistrid
     story.append(NextPageTemplate('OneCol'))
@@ -963,15 +988,31 @@ def backup2pdf_job(objects=10, content='lood', algus_aasta=0, l6pp_aasta=1899):
     print('valmis!')
 
 def backup2pdf(objects=10):
-    # backup2pdf_job(objects=objects, content='lood', algus_aasta=0, l6pp_aasta=1899)
-    # backup2pdf_job(objects=objects, content='lood', algus_aasta=1900, l6pp_aasta=1909)
-    # backup2pdf_job(objects=objects, content='lood', algus_aasta=1910, l6pp_aasta=1919)
-    # backup2pdf_job(objects=objects, content='lood', algus_aasta=1920, l6pp_aasta=1924)
-    # backup2pdf_job(objects=objects, content='lood', algus_aasta=1925, l6pp_aasta=1929)
-    # backup2pdf_job(objects=objects, content='lood', algus_aasta=1928, l6pp_aasta=1929)
+    raamatud = [
+        # (0, 1899),
+        # (1900, 1909),
+        # (1910, 1919),
+        # (1920, 1924),
+        # (1925, 1925),
+        # (1926, 1926),
+        # (1927, 1927),
+        (1928, 1928),
+        (1929, 1929),
+        # (1930, 1930),
+        # (1931, 1931),
+        # (1932, 1932),
+        # (1933, 1933),
+        # (1934, 1934),
+    ]
+
+    # Aastate kaupa lood
+    for raamat in raamatud:
+        backup2pdf_job(objects=objects, content='lood', algus_aasta=raamat[0], l6pp_aasta=raamat[1])
+
+    # Nimede register
     backup2pdf_job(objects=objects, content='lisad')
 
 if __name__ == "__main__":
     print('Alustasime:', datetime.now())
-    # backup2pdf(objects=0) # objects=0 = täiskoopia
+    backup2pdf(objects=100) # objects=0 = täiskoopia
     print('Lõpetasime:', datetime.now())

@@ -987,13 +987,13 @@ def mis_kuul(kuu, l6pp='s'):
 def get_mainitud_aastatel(qs, model, obj):
     # Artiklites mainimine läbi aastate
     if model == 'Isik':
-        filter = qs.filter(isikud__id=obj.id)
+        qs = qs.filter(isikud__id=obj.id)
     elif model == 'Objekt':
-        filter = qs.filter(objektid__id=obj.id)
+        qs = qs.filter(objektid__id=obj.id)
     elif model == 'Organisatsioon':
-        filter = qs.filter(organisatsioonid__id=obj.id)
+        qs = qs.filter(organisatsioonid__id=obj.id)
 
-    aastad = list(filter.all().values_list('hist_year', flat=True).distinct())
+    aastad = list(qs.values_list('hist_year', flat=True).distinct())
     synniaasta = obj.dob.year if obj.dob else obj.hist_year
     if synniaasta:
         aastad.append(synniaasta)
