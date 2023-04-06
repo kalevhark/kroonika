@@ -34,6 +34,11 @@ ALLOWED_HOSTS = [
     '127.0.0.1', 'localhost',
 ]
 
+ADMINS = [
+    ('Kalev', config['superuser']['ADMINEMAIL']),
+    # ('Mary', 'mary@example.com')
+]
+
 INSTALLED_APPS = [
     'wiki.apps.WikiConfig',
     'ilm.apps.IlmConfig',

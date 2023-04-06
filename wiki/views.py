@@ -1125,18 +1125,21 @@ class ArtikkelDetailView(generic.DetailView):
             filter(profiilipilt_artiklid__in=[self.object]).\
             first()
         # Seotud objectid
-        context['seotud_isikud'] = Isik.objects.daatumitega(self.request).filter(
+        seotud_isikud = Isik.objects.daatumitega(self.request).filter(
             artikkel=self.object
         )
-        context['seotud_organisatsioonid'] = Organisatsioon.objects.daatumitega(self.request).filter(
+        context['seotud_isikud'] = seotud_isikud
+        seotud_organisatsioonid = Organisatsioon.objects.daatumitega(self.request).filter(
             artikkel=self.object
         )
-        context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).filter(
+        context['seotud_organisatsioonid'] = seotud_organisatsioonid
+        seotud_objektid = Objekt.objects.daatumitega(self.request).filter(
             artikkel=self.object
         )
-        context['seotud_pildid'] = Pilt.objects.sorted(). \
-            filter(artiklid=self.object) #. \
-            # order_by('tyyp', '-profiilipilt_artikkel', 'hist_year', 'hist_date')
+        context['seotud_objektid'] = seotud_objektid
+        seotud_pildid = Pilt.objects.sorted(). \
+            filter(artiklid=self.object)
+        context['seotud_pildid'] = seotud_pildid
 
         # Järjestame artiklid kronoloogiliselt
         loend = list(artikkel_qs.values_list('id', flat=True))
@@ -1150,6 +1153,20 @@ class ArtikkelDetailView(generic.DetailView):
             # Leiame ajaliselt eelneva artikli
             if n > 0:
                 context['prev_obj'] = artikkel_qs.get(id=loend[n - 1])
+
+        # Sarnased lood
+        if any([seotud_isikud, seotud_organisatsioonid, seotud_objektid]):
+            sarnased_artiklid = artikkel_qs.exclude(id=self.object.id)
+            if seotud_isikud:
+                sarnased_artiklid = sarnased_artiklid.filter(isikud__in=seotud_isikud)
+            if seotud_organisatsioonid:
+                sarnased_artiklid = sarnased_artiklid.filter(organisatsioonid__in=seotud_organisatsioonid)
+            if seotud_objektid:
+                sarnased_artiklid = sarnased_artiklid.filter(objektid__in=seotud_objektid)
+        else:
+            sarnased_artiklid = artikkel_qs.none()
+        context['sarnased_artiklid'] = sarnased_artiklid.distinct()[:10]
+
         return context
 
     def get_object(self, **kwargs):

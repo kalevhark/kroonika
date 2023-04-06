@@ -1,0 +1,10 @@
+{% load wiki_extras %}
+{% if sarnased_artiklid %}
+  <div>
+    <h5>
+      <i class="{% icon_artikkel %} w3-xlarge text-artikkel" title="Sarnased lood"></i>
+      &nbsp;Sarnased lood:
+    </h5>
+    {% include 'wiki/includes/seotud_artklid_list.html' %}
+  </div>
+{% endif %}

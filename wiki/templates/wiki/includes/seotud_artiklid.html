@@ -2,28 +2,9 @@
 {% if seotud_artiklid %}
   <div>
     <h5>
-      <i class="{% icon_artikkel %} w3-xlarge text-artikkel" title="Seotud artiklid"></i>
+      <i class="{% icon_artikkel %} w3-xlarge text-artikkel" title="Seotud lood"></i>
       &nbsp;Mainitud kroonikas:
     </h5>
-    {% for obj in seotud_artiklid %}
-      {% if forloop.counter > 1 %}
-        <br>
-      {% endif %}
-      <strong>{% include 'wiki/includes/date_range.html' with obj=obj %}</strong>
-      &nbsp;
-      <a
-        class="hover-artikkel tooltip-content"
-        href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}"
-      >
-        <span
-              title='{{ obj }}'
-              data-model='{{ obj|get_model_name }}'
-              data-id='{{ obj.id }}'
-              id='{{ obj|get_model_name }}_{{ obj.id }}_seotud_artiklid'
-        >
-          {{ obj.body_text|truncatewords:10 }}
-        </span>
-      </a>
-    {% endfor %}
+    {% include 'wiki/includes/seotud_artklid_list.html' %}
   </div>
 {% endif %}

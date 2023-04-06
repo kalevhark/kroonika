@@ -52,21 +52,23 @@ def serverless_save_viited(path, method, obj):
 
 # Salvestame ainult kasutatud pildid
 def serverless_save_pildid(path, method, obj, verbose_name_plural, pildifailid):
-    filterset = {f'{verbose_name_plural}__in': [obj]}
-    pildid = Pilt.objects.filter(**filterset)
-    if pildid:
-        SAVE_PATH = path / method / 'pildid'
-        for pilt in pildid:
-            FILE_NAME = SAVE_PATH / f'pilt_{pilt.id}.{method}'
-            Serializer = serializers.get_serializer(method)
-            serializer = Serializer()
-            if not Path.exists(FILE_NAME):
-                with open(FILE_NAME, "w", encoding="utf-8") as out:
-                    serializer.serialize([pilt], stream=out)
-                serverless_save_viited(path, method, pilt)
-            pildifail = str(pilt.pilt)
-            if Path.exists(settings.MEDIA_ROOT / pildifail) and (pildifail not in pildifailid):
-                pildifailid.append(pildifail)
+    for tyyp in ['', 'profiilipilt_']:
+        filterset = {f'{tyyp}{verbose_name_plural}__in': [obj]}
+        # profiilipilt_organisatsioonid
+        pildid = Pilt.objects.filter(**filterset)
+        if pildid:
+            SAVE_PATH = path / method / 'pildid'
+            for pilt in pildid:
+                FILE_NAME = SAVE_PATH / f'pilt_{pilt.id}.{method}'
+                Serializer = serializers.get_serializer(method)
+                serializer = Serializer()
+                if not Path.exists(FILE_NAME):
+                    with open(FILE_NAME, "w", encoding="utf-8") as out:
+                        serializer.serialize([pilt], stream=out)
+                    serverless_save_viited(path, method, pilt)
+                pildifail = str(pilt.pilt)
+                if Path.exists(settings.MEDIA_ROOT / pildifail) and (pildifail not in pildifailid):
+                    pildifailid.append(pildifail)
     return pildifailid
 
 # Kopeerime pildid BACKUP_DIRi
@@ -81,6 +83,9 @@ def serverless_copy_pildid(pildifailid, BACKUP_DIR):
     print('Kopeeriti', len(pildifailid), 'pilti')
 
 def serverless_make_index(objs, andmebaas, BACKUP_DIR):
+    now = datetime.now()
+    now_string = now.strftime('%d.%m.%Y')
+
     for method in ['xml', 'json']:
         Serializer = serializers.get_serializer(method)
         serializer = Serializer()
@@ -92,19 +97,36 @@ def serverless_make_index(objs, andmebaas, BACKUP_DIR):
     db_table = objs.model._meta.db_table
 
     # init xml-data
-    xml_content = ET.Element('root', attrib={'lang': 'et', 'origin': 'https://valgalinn.ee', 'db_table': db_table})
+    xml_content = ET.Element(
+        'root',
+        attrib={
+            'lang': 'et',
+            'origin': 'https://valgalinn.ee',
+            'db_table': db_table,
+            'author': 'Kalev Härk',
+            'date': now_string
+        }
+    )
 
     # init json-data
     json_content = {
         'origin': 'https://valgalinn.ee',
         'db_table': db_table,
+        'author': 'Kalev Härk',
+        'date': now_string,
         'data': []
     }
 
     # init html-data
     html_content = ET.Element('html', attrib={'lang': 'et'})
-    html_content_h1 = ET.SubElement(html_content, 'h1')
-    html_content_table = ET.SubElement(html_content, 'table')
+    html_content_head = ET.SubElement(html_content, 'head')
+    html_content_title = ET.SubElement(html_content_head, 'title')
+    html_content_body = ET.SubElement(html_content, 'body')
+    html_content_h1 = ET.SubElement(html_content_body, 'h1')
+    html_content_p_author = ET.SubElement(html_content_body, 'p')
+    html_content_p_author.text = 'Koostas Kalev Härk'
+
+    html_content_table = ET.SubElement(html_content_body, 'table')
     html_content_table_thead = ET.SubElement(html_content_table, 'thead')
     html_content_table_tbody = ET.SubElement(html_content_table, 'tbody')
 
@@ -140,7 +162,9 @@ def serverless_make_index(objs, andmebaas, BACKUP_DIR):
         if not html_content_table_thead.findall("./tr"): # kui tabeli päist ei ole
             # link = '<a href="https://valgalinn.ee" target="_blank">valgalinn.ee</a>'
             link = 'https://valgalinn.ee'
-            html_content_h1.text = f'Väljavõte {link} veebilehe andmetabelist {db_table}'
+            title = f'Väljavõte {link} veebilehe andmetabelist {db_table} ({now_string})'
+            html_content_title.text = title
+            html_content_h1.text = title
             html_content_table_thead_tr = ET.SubElement(html_content_table_thead, 'tr')
             for field in object.keys():
                 html_content_table_thead_tr_th = ET.SubElement(html_content_table_thead_tr, 'th')
@@ -261,7 +285,7 @@ def backup2serverless(objects=10, aastani=1929):
 
 if __name__ == "__main__":
     print('Alustasime:', datetime.now())
-    # backup2serverless(objects=10, aastani=1934) # objects=0 = täiskoopia
+    # backup2serverless(objects=0, aastani=1934) # objects=0 = täiskoopia
     print('Lõpetasime:', datetime.now())
 
 # Andmete varundamiseks offline kasutuseks
@@ -495,15 +519,10 @@ def get_image_withheight2(path, height=inch):
     print(path, width, height)
     return Image(path, width=width, height=height)
 
-from reportlab.lib.styles import ParagraphStyle
 def get_image_withheight(path, height=inch):
     image = Image(path)
-    # print(image.imageHeight / 72, end=' ')
     width, height = image._restrictSize(height, FRAME_WIDTH / 2)
-    # print(image.imageHeight/72, end=' ')
     image = Image(path, width=width, height=height)
-    # print(image.imageHeight / 72, path)
-    # print(image.wrap(FRAME_WIDTH, FRAME_WIDTH), path)
     return image
 
 def story_seotud_pildid(obj):
@@ -533,7 +552,7 @@ def story_artiklid(story, objects=10, algus_aasta=0, l6pp_aasta=1899):
     jooksev_aasta = 0
     jooksev_kuu = 0
     for obj in objs:
-        if obj.hist_year != jooksev_aasta:
+        if obj.hist_year != jooksev_aasta: # Kui algab uus aasta
             jooksev_aasta = obj.hist_year
             story.append(Paragraph(f'<font color="{TEXT_ARTIKKEL_COLOR}">{obj.hist_year}</font>', H2))
         if obj.hist_date:
@@ -550,15 +569,16 @@ def story_artiklid(story, objects=10, algus_aasta=0, l6pp_aasta=1899):
                 hist_dates = str(obj.hist_year)
         if obj.viited.exists():
             color = TEXT_ARTIKKEL_COLOR
-        else:
+        else: # kui viiteid ei ole
             color = 'red'
         if hist_dates:
             hist_dates = f'<font color="{color}"><strong>{hist_dates}</strong></font>'
-        if kuu != jooksev_kuu:
+        if kuu != jooksev_kuu: # kui algab uus kuu
             jooksev_kuu = kuu
             if kuu > 0:
                 story.append(Paragraph(f'<font color="{TEXT_ARTIKKEL_COLOR}">{KUUD[jooksev_kuu-1][1]}</font>', H3))
 
+        # koondame artikliga seotud objectide info
         seotud_objectid_index = ''
         story, seotud_objectid_index = story_seotud_objectid(
             story, obj,
@@ -577,13 +597,10 @@ def story_artiklid(story, objects=10, algus_aasta=0, l6pp_aasta=1899):
 
         story.append(Spacer(18, 18))
 
-        body_text = ' '.join([hist_dates, obj.body_text]).strip()
-        profiilipilt = story_seotud_pildid(obj)
-        if profiilipilt:
-            story.append(KeepTogether(profiilipilt))
-
-        story.append(Paragraph(f'{body_text}{seotud_objectid_index}', P))
-        url = obj.get_absolute_url()
+        # Artikli daatum ja sisu
+        lugu = ' '.join([hist_dates, obj.body_text]).strip()
+        story.append(Paragraph(f'{lugu}{seotud_objectid_index}', P))
+        url = obj.get_absolute_url() # link valgalinn.ee veebi
         story.append(
             Paragraph(
                 f'<link color="{TEXT_ARTIKKEL_COLOR}" href="https://valgalinn.ee{url}">https://valgalinn.ee{url}</link>', V
@@ -595,6 +612,14 @@ def story_artiklid(story, objects=10, algus_aasta=0, l6pp_aasta=1899):
             story.append(Paragraph('Allikad:', V))
             for viide in viited:
                 story.append(Paragraph(f'{viide}', V))
+
+        # Kui objektil on määratletud profiilipilt
+        profiilipilt = story_seotud_pildid(obj)
+        if profiilipilt:
+            story.append(KeepTogether(profiilipilt))
+        else:
+            pass # TODO: lisada nimekiri seotud piltidest?
+
     print('Lugusid:', objs.count())
     return story
 
@@ -844,7 +869,7 @@ def backup2pdf_job(objects=10, content='lood', algus_aasta=0, l6pp_aasta=1899):
             else:
                 sisupealkiri = f'lood {algus_aasta}-{l6pp_aasta}'
     else:
-        sisupealkiri = 'lisad'
+        sisupealkiri = 'nimeregister'
     doc = MyDocTemplate(f'valgalinn.ee_{sisupealkiri.replace(" ","_")}_{dump_date}.pdf')
 
     print(sisupealkiri, datetime.now().strftime(settings.DATE_INPUT_FORMATS[0]))
@@ -893,13 +918,16 @@ def backup2pdf_job(objects=10, content='lood', algus_aasta=0, l6pp_aasta=1899):
     story.append(Spacer(inch, 1 * inch))
     story.append(Paragraph(f'valgalinn.ee väljatrükk - {sisupealkiri}', T))
     story.append(Spacer(inch, 3 * inch))
-    story.append(Paragraph(f'Valga {dump_date}', P))
+    story.append(Paragraph(f'Koostanud: Kalev Härk, Valga {dump_date}', P))
 
     #sisukord
     story.append(PageBreak())
     story.append(Paragraph('Sisukord', H2))
     toc = TableOfContents()
-    toc.levelStyles = [TOC1, TOC2, TOC3]
+    if content and content == 'lood':
+        toc.levelStyles = [TOC1, TOC2, TOC3]
+    else:
+        toc.levelStyles = [TOC1, TOC2] # nimeregstril ainult objectide liigid
     story.append(toc)
 
     if content and content == 'lood':
@@ -989,30 +1017,30 @@ def backup2pdf_job(objects=10, content='lood', algus_aasta=0, l6pp_aasta=1899):
 
 def backup2pdf(objects=10):
     raamatud = [
-        # (0, 1899),
-        # (1900, 1909),
-        # (1910, 1919),
-        # (1920, 1924),
-        # (1925, 1925),
-        # (1926, 1926),
-        # (1927, 1927),
+        (0, 1899),
+        (1900, 1909),
+        (1910, 1919),
+        (1920, 1924),
+        (1925, 1925),
+        (1926, 1926),
+        (1927, 1927),
         (1928, 1928),
         (1929, 1929),
-        # (1930, 1930),
-        # (1931, 1931),
-        # (1932, 1932),
-        # (1933, 1933),
-        # (1934, 1934),
+        (1930, 1930),
+        (1931, 1931),
+        (1932, 1932),
+        (1933, 1933),
+        (1934, 1934),
     ]
 
     # Aastate kaupa lood
-    for raamat in raamatud:
-        backup2pdf_job(objects=objects, content='lood', algus_aasta=raamat[0], l6pp_aasta=raamat[1])
+    # for raamat in raamatud:
+    #     backup2pdf_job(objects=objects, content='lood', algus_aasta=raamat[0], l6pp_aasta=raamat[1])
 
     # Nimede register
-    backup2pdf_job(objects=objects, content='lisad')
+    backup2pdf_job(objects=objects, content='nimeregister')
 
 if __name__ == "__main__":
     print('Alustasime:', datetime.now())
-    backup2pdf(objects=100) # objects=0 = täiskoopia
+    backup2pdf(objects=0) # objects=0 = täiskoopia
     print('Lõpetasime:', datetime.now())
