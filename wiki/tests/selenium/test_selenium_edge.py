@@ -9,7 +9,9 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from .base import SeleniumTestsEdgeBase
+from wiki.models import Artikkel
+
+from .base import getData, SeleniumTestsEdgeBase
 
 class SeleniumTestsEdgeLogin(SeleniumTestsEdgeBase):
 
@@ -107,3 +109,44 @@ class SeleniumTestsEdgeOtsi(SeleniumTestsEdgeBase):
             pass
         el = self.selenium.find_element(By.ID, "answer").text
         self.assertIn("Leidsime 0 vastet", el)
+
+
+class SeleniumTestsEdgeDetailViewObjectArtikkel(SeleniumTestsEdgeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.initial_queryset, cls.model_ids, cls.detail_view_name = getData(Artikkel)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_view_show_by_name_random(self):
+        SELECT_COUNT = 10
+        # Juhuslikud objectid kontrolliks
+        objs = self.initial_queryset.filter(id__in=self.model_ids).order_by('?')[:SELECT_COUNT]
+        for obj in objs:
+            kwargs = {
+                'pk': obj.id,
+                'slug': obj.slug
+            }
+            path = reverse(self.detail_view_name, kwargs=kwargs)
+            self.selenium.get('%s%s' % (self.live_server_url, path))
+            # Kontrollime kas sisu esimene sõna on avanenud lehel
+            el = self.selenium.find_element(By.TAG_NAME, "body").text
+            esimene_s6na = obj.body_text.split(' ')[0]
+            self.assertIn(esimene_s6na, el)
+
+    def test_view_show_sarnased_artiklid(self):
+        obj = self.initial_queryset.get(id=3133)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        path = reverse(self.detail_view_name, kwargs=kwargs)
+        self.selenium.get('%s%s' % (self.live_server_url, path))
+        # Kontrollime kas on avanenud lehel on Sarnased lood
+        el = self.selenium.find_element(By.ID, f"{obj.id}_sarnased_artiklid")
+        self.assertTrue(len(el.text) > 0)
+        self.assertIn('Sarnased lood', el.text)

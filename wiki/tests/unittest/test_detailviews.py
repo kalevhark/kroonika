@@ -28,21 +28,81 @@ class DetailViewUnitTest(TestCase):
 
     def test_artikkel_context(self):
         self.request.user = AnonymousUser()
-        art = Artikkel.objects.daatumitega(self.request).first()
+        art = Artikkel.objects.daatumitega(self.request).order_by("?")[0]
         # view = views.ArtikkelDetailView()
         # view.setup(self.request, pk=art.pk, slug=art.slug)
         # context = view.get_context_data()
         # self.assertIn('n', context)
         response = views.ArtikkelDetailView.as_view()(self.request, pk=art.pk, slug=art.slug)
         self.assertEqual(response.status_code, 200)
-        # TODO: Vaja kontrollida context!
+        self.assertIsInstance(response.context_data, dict)
+        self.assertIn('n', response.context_data)
+        self.assertIn('profiilipilt', response.context_data)
+        self.assertIn('seotud_isikud', response.context_data)
+        self.assertIn('seotud_organisatsioonid', response.context_data)
+        self.assertIn('seotud_objektid', response.context_data)
+        self.assertIn('seotud_pildid', response.context_data)
+        self.assertIn('sarnased_artiklid', response.context_data)
+
+    def test_artikkel_context_seotud_isikud(self):
+        self.request.user = AnonymousUser()
+        art = Artikkel.objects.daatumitega(self.request).order_by("?")[0]
+        isikuid = art.isikud.count()
+        response = views.ArtikkelDetailView.as_view()(self.request, pk=art.pk, slug=art.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context_data['seotud_isikud']), isikuid)
+
+    def test_artikkel_context_seotud_organisatsioonid(self):
+        self.request.user = AnonymousUser()
+        art = Artikkel.objects.daatumitega(self.request).order_by("?")[0]
+        organisatsioone = art.organisatsioonid.count()
+        response = views.ArtikkelDetailView.as_view()(self.request, pk=art.pk, slug=art.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context_data['seotud_organisatsioonid']), organisatsioone)
+
+    def test_artikkel_context_seotud_objektid(self):
+        self.request.user = AnonymousUser()
+        art = Artikkel.objects.daatumitega(self.request).order_by("?")[0]
+        objekte = art.objektid.count()
+        response = views.ArtikkelDetailView.as_view()(self.request, pk=art.pk, slug=art.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context_data['seotud_objektid']), objekte)
+
+    def test_artikkel_context_sarnased_artiklid(self):
+        self.request.user = AnonymousUser()
+        obj = Artikkel.objects.daatumitega(self.request).get(id=3133)
+        response = views.ArtikkelDetailView.as_view()(self.request, pk=obj.pk, slug=obj.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context_data['sarnased_artiklid']) > 0)
 
     def test_isik_context(self):
         self.request.user = AnonymousUser()
-        art = Isik.objects.daatumitega(self.request).first()
-        response = views.IsikDetailView.as_view()(self.request, pk=art.pk, slug=art.slug)
+        obj = Isik.objects.daatumitega(self.request).order_by("?")[0]
+        response = views.IsikDetailView.as_view()(self.request, pk=obj.pk, slug=obj.slug)
         self.assertEqual(response.status_code, 200)
-        # TODO: Vaja kontrollida context!
+        self.assertIn('profiilipilt', response.context_data)
+        self.assertIn('seotud_organisatsioonid', response.context_data)
+        self.assertIn('seotud_objektid', response.context_data)
+        self.assertIn('seotud_pildid', response.context_data)
+
+    def test_organisatsioon_context(self):
+        self.request.user = AnonymousUser()
+        obj = Organisatsioon.objects.daatumitega(self.request).order_by("?")[0]
+        response = views.OrganisatsioonDetailView.as_view()(self.request, pk=obj.pk, slug=obj.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('profiilipilt', response.context_data)
+        self.assertIn('seotud_objektid', response.context_data)
+        self.assertIn('seotud_pildid', response.context_data)
+
+    def test_objekt_context(self):
+        self.request.user = AnonymousUser()
+        obj = Objekt.objects.daatumitega(self.request).order_by("?")[0]
+        response = views.ObjektDetailView.as_view()(self.request, pk=obj.pk, slug=obj.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('profiilipilt', response.context_data)
+        self.assertIn('seotud_isikud', response.context_data)
+        self.assertIn('seotud_objektid', response.context_data)
+        self.assertIn('seotud_pildid', response.context_data)
 
 
 class ArtikkelViewTests(TestCase):

@@ -1,4 +1,6 @@
 import configparser
+from functools import reduce
+from operator import or_
 
 from django.apps import apps
 from django.conf import settings
@@ -23,6 +25,7 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 config = configparser.ConfigParser(allow_no_value=True)
 config.read('%s/settings.ini' % (settings.PROJECT_DIR))
 
+from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 from wiki.tests import test_base
 SPECIAL_OBJECTS = test_base.SPECIAL_OBJECTS
 
@@ -45,6 +48,25 @@ SPECIAL_OBJECTS = test_base.SPECIAL_OBJECTS
 #         354,  # J. Kuperjanovi 12, lõvidega maja
 #     ]
 # }
+
+def getData(model):
+    detail_view_name = f'wiki:wiki_{model.__name__.lower()}_detail'
+    artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
+    if model == Artikkel:
+        model_ids = artikkel_qs.values_list('id', flat=True)
+    else:
+        initial_queryset = model.objects.all()
+        viitega = initial_queryset. \
+            filter(viited__isnull=False). \
+            values_list('id', flat=True)
+        artikliga = initial_queryset. \
+            filter(artikkel__in=artikkel_qs). \
+            values_list('id', flat=True)
+        viiteta_artiklita = initial_queryset. \
+            filter(viited__isnull=True, artikkel__isnull=True). \
+            values_list('id', flat=True)
+        model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
+    return initial_queryset, model_ids, detail_view_name
 
 class SeleniumTestsChromeBase(StaticLiveServerTestCase):
 

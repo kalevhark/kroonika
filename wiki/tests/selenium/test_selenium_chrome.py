@@ -13,7 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 
-from .base import SeleniumTestsChromeBase, SPECIAL_OBJECTS
+from .base import getData, SeleniumTestsChromeBase, SPECIAL_OBJECTS
 
 class SeleniumTestsChromeLogin(SeleniumTestsChromeBase):
 
@@ -184,22 +184,65 @@ class SeleniumTestsChromeOtsiGetNextResults(SeleniumTestsChromeBase):
         self.assertIn("Leidsime 0 vastet", el)
 
 
-def getData(model):
-    detail_view_name = f'wiki:wiki_{model.__name__.lower()}_detail'
-    artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
-    initial_queryset = model.objects.all()
-    artikliga = initial_queryset. \
-        filter(artikkel__in=artikkel_qs). \
-        values_list('id', flat=True)
-    viitega = initial_queryset. \
-        filter(viited__isnull=False). \
-        values_list('id', flat=True)
-    viiteta_artiklita = initial_queryset. \
-        filter(viited__isnull=True, artikkel__isnull=True). \
-        values_list('id', flat=True)
-    model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
-    return initial_queryset, model_ids, detail_view_name
+# def getData(model):
+#     detail_view_name = f'wiki:wiki_{model.__name__.lower()}_detail'
+#     artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
+#     initial_queryset = model.objects.all()
+#     viitega = initial_queryset. \
+#         filter(viited__isnull=False). \
+#         values_list('id', flat=True)
+#     if model == Artikkel:
+#         model_ids = viitega
+#     else:
+#         artikliga = initial_queryset. \
+#             filter(artikkel__in=artikkel_qs). \
+#             values_list('id', flat=True)
+#         viiteta_artiklita = initial_queryset. \
+#             filter(viited__isnull=True, artikkel__isnull=True). \
+#             values_list('id', flat=True)
+#         model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
+#     return initial_queryset, model_ids, detail_view_name
 
+
+class SeleniumTestsChromeDetailViewObjectArtikkel(SeleniumTestsChromeBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.initial_queryset, cls.model_ids, cls.detail_view_name = getData(Artikkel)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+    def test_view_show_by_name_random(self):
+        SELECT_COUNT = 10
+        # Juhuslikud objectid kontrolliks
+        objs = self.initial_queryset.filter(id__in=self.model_ids).order_by('?')[:SELECT_COUNT]
+        for obj in objs:
+            kwargs = {
+                'pk': obj.id,
+                'slug': obj.slug
+            }
+            path = reverse(self.detail_view_name, kwargs=kwargs)
+            self.selenium.get('%s%s' % (self.live_server_url, path))
+            # Kontrollime kas sisu esimene sõna on avanenud lehel
+            el = self.selenium.find_element(By.TAG_NAME, "body").text
+            esimene_s6na = obj.body_text.split(' ')[0]
+            self.assertIn(esimene_s6na, el)
+
+    def test_view_show_sarnased_artiklid(self):
+        obj = self.initial_queryset.get(id=3133)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        path = reverse(self.detail_view_name, kwargs=kwargs)
+        self.selenium.get('%s%s' % (self.live_server_url, path))
+        # Kontrollime kas on avanenud lehel on Sarnased lood
+        el = self.selenium.find_element(By.ID, f"{obj.id}_sarnased_artiklid")
+        self.assertTrue(len(el.text) > 0)
+        self.assertIn('Sarnased lood', el.text)
 
 class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
 
