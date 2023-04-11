@@ -65,6 +65,7 @@ class ArtikkelForm(ModelForm):
             raise ValidationError("Alguskuupäev või -aasta peab olema")
         return self.cleaned_data
 
+
 class IsikForm(ModelForm):
     organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
@@ -81,7 +82,7 @@ class IsikForm(ModelForm):
                   'viited'
         )
         widgets = {
-            'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
+            'kirjeldus': Textarea(attrs={'cols': 100, 'rows': 5}),
         }
 
 class OrganisatsioonForm(ModelForm):
