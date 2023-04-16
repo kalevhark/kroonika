@@ -22,13 +22,16 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
+from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.db.models import \
     Count, Max, Min, \
     Case, F, Func, Q, When, \
-    Value, BooleanField, DateField, DateTimeField, DecimalField, IntegerField, \
-    ExpressionWrapper
+    Value, BooleanField, DateField, DateTimeField, DecimalField, IntegerField
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
@@ -2217,13 +2220,6 @@ class Kaardiobjekt(models.Model):
         ordering = ['kaart', 'tn', 'nr']
         verbose_name_plural = "Kaardiobjektid"
 
-from django.contrib.auth.models import User
-from django.dispatch import receiver
-from django.db.models.signals import pre_save, post_save
-from django.conf import settings
-from django.core.mail import send_mail
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
 
 #signal used for is_active=False to is_active=True
 # @receiver(pre_save, sender=User, dispatch_uid='active')
