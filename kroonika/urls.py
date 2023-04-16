@@ -43,7 +43,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.algus, name='algus'),
     path('info/', views.info, name='info'),
-    path('accounts/', include('django.contrib.auth.urls')),
+    # path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('allauth.urls')), # django-allauth
     path('ajax_select/', include(ajax_select_urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 	path('api/', include(router.urls)),

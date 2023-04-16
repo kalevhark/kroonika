@@ -1,0 +1,16 @@
+{% extends "wiki/wiki_base.html" %}
+{% load i18n %}
+{% block title %}{{ block.super }} - ühendumine {{ provider.name }} abil{% endblock %}
+
+{% block content %}
+  <div class="w3-panel w3-center">
+    <form method="post">
+      {% csrf_token %}
+        {% if process == "connect" %}
+          <button class="w3-button background-artikkel w3-hover-white" type="submit">Jätka ühinemist {{ provider.name }} kontot kasutades</button>
+        {% else %}
+          <button class="w3-button background-artikkel w3-hover-white" type="submit">Jätka sisse logimist {{ provider.name }} abil</button>
+        {% endif %}
+    </form>
+  </div>
+{% endblock %}

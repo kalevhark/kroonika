@@ -12,8 +12,8 @@ from ajax_select.fields import autoselect_fields_check_can_add
 from django.apps import apps
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.contrib.staticfiles import finders
@@ -669,10 +669,14 @@ def inrange_dates_artikkel(qs, p2ev, kuu):
     id_list = [art.id for art in q if kkpp_string in art.hist_dates_string]
     return qs.filter(id__in=id_list) # queryset
 
+def user_is_staff_check(user):
+    return user.is_staff
+
 #
-# Avalehekülje otsing
+# Objectide v6rdlemiseks
 #
 @login_required
+@user_passes_test(user_is_staff_check)
 def v6rdle(request, model='isik'):
     if model not in ['isik', 'objekt']:
         raise Http404('Sellist lehte ei ole')
@@ -1180,152 +1184,217 @@ class ArtikkelDetailView(generic.DetailView):
         return obj
 
 #
-# Artikli muutmiseks
+# superklass Artikkel, Isik, Organisatsioon, Objekt objectide muutmiseks
 #
-class ArtikkelUpdate(LoginRequiredMixin, UpdateView):
+class ObjectUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     redirect_field_name = 'next'
-    model = Artikkel
     pk_url_kwarg = 'pk'
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        autoselect_fields_check_can_add(context['form'], self.model, self.request.user)
+        return context
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        model = obj._meta.model.__name__.lower()
+        # Lisaja/muutja andmed
+        if not obj.id:
+            obj.created_by = self.request.user
+        else:
+            obj.updated_by = self.request.user
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+        if obj.hist_date:
+            obj.hist_year = obj.hist_date.year
+            obj.hist_month = obj.hist_date.month
+        if obj.hist_enddate:
+            obj.hist_endyear = obj.hist_enddate.year
+        if model == 'artikkel':
+            if obj.hist_date:
+                obj.hist_searchdate = obj.hist_date
+            else:
+                if obj.hist_month:
+                    obj.hist_searchdate = datetime(obj.hist_year, obj.hist_month, 1)
+                else:
+                    obj.hist_searchdate = datetime(obj.hist_year, 1, 1)
+        obj.save()
+        form.save_m2m()
+
+        return redirect(f'wiki:wiki_{model}_detail', pk=self.object.id, slug=self.object.slug)
+
+
+class ArtikkelUpdate(ObjectUpdate):
+    model = Artikkel
     form_class = ArtikkelForm
 
-    def form_valid(self, form):
-        objekt = form.save(commit=False)
-        # Lisaja/muutja andmed
-        if not objekt.id:
-            objekt.created_by = self.request.user
-        else:
-            objekt.updated_by = self.request.user
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if objekt.hist_date:
-            objekt.hist_year = objekt.hist_date.year
-            objekt.hist_month = objekt.hist_date.month
-            objekt.hist_searchdate = objekt.hist_date
-        else:
-            if objekt.hist_year:
-                y = objekt.hist_year
-                if objekt.hist_month:
-                    m = objekt.hist_month
-                else:
-                    m = 1
-                objekt.hist_searchdate = datetime(y, m, 1)
-            else:
-                objekt.hist_searchdate = None
-        objekt.save()
-        form.save_m2m()
-        return redirect('wiki:wiki_artikkel_detail', pk=self.object.id, slug=self.object.slug)
+#
+# Artikli muutmiseks
+#
+# class ArtikkelUpdate(LoginRequiredMixin, UpdateView):
+#     redirect_field_name = 'next'
+#     model = Artikkel
+#     pk_url_kwarg = 'pk'
+#     form_class = ArtikkelForm
+#
+#     def form_valid(self, form):
+#         objekt = form.save(commit=False)
+#         # Lisaja/muutja andmed
+#         if not objekt.id:
+#             objekt.created_by = self.request.user
+#         else:
+#             objekt.updated_by = self.request.user
+#         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+#         if objekt.hist_date:
+#             objekt.hist_year = objekt.hist_date.year
+#             objekt.hist_month = objekt.hist_date.month
+#             objekt.hist_searchdate = objekt.hist_date
+#         else:
+#             if objekt.hist_year:
+#                 y = objekt.hist_year
+#                 if objekt.hist_month:
+#                     m = objekt.hist_month
+#                 else:
+#                     m = 1
+#                 objekt.hist_searchdate = datetime(y, m, 1)
+#             else:
+#                 objekt.hist_searchdate = None
+#         objekt.save()
+#         form.save_m2m()
+#         return redirect('wiki:wiki_artikkel_detail', pk=self.object.id, slug=self.object.slug)
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         autoselect_fields_check_can_add(context['form'], self.model, self.request.user)
+#         return context
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        autoselect_fields_check_can_add(context['form'], self.model, self.request.user)
-        return context
 
-
-class IsikUpdate(LoginRequiredMixin, UpdateView):
-    redirect_field_name = 'next'
+class IsikUpdate(ObjectUpdate):
     model = Isik
     form_class = IsikForm
-    pk_url_kwarg = 'pk'
-
-    def form_valid(self, form):
-        objekt = form.save(commit=False)
-        # Lisaja/muutja andmed
-        if not objekt.id:
-            objekt.created_by = self.request.user
-        else:
-            objekt.updated_by = self.request.user
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if objekt.hist_date:
-            objekt.hist_year = objekt.hist_date.year
-        if objekt.hist_enddate:
-            objekt.hist_endyear = objekt.hist_enddate.year
-        objekt.save()
-        form.save_m2m()
-        return redirect('wiki:wiki_isik_detail', pk=self.object.id, slug=self.object.slug)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        autoselect_fields_check_can_add(context['form'], self.model, self.request.user)
-        return context
 
 
-class OrganisatsioonUpdate(LoginRequiredMixin, UpdateView):
-    redirect_field_name = 'next'
+# class IsikUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+#     redirect_field_name = 'next'
+#     model = Isik
+#     form_class = IsikForm
+#     pk_url_kwarg = 'pk'
+#
+#     def test_func(self):
+#         return self.request.user.is_staff
+#
+#     def form_valid(self, form):
+#         objekt = form.save(commit=False)
+#         # Lisaja/muutja andmed
+#         if not objekt.id:
+#             objekt.created_by = self.request.user
+#         else:
+#             objekt.updated_by = self.request.user
+#         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+#         if objekt.hist_date:
+#             objekt.hist_year = objekt.hist_date.year
+#         if objekt.hist_enddate:
+#             objekt.hist_endyear = objekt.hist_enddate.year
+#         objekt.save()
+#         form.save_m2m()
+#         return redirect('wiki:wiki_isik_detail', pk=self.object.id, slug=self.object.slug)
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         autoselect_fields_check_can_add(context['form'], self.model, self.request.user)
+#         return context
+
+
+class OrganisatsioonUpdate(ObjectUpdate):
     model = Organisatsioon
     form_class = OrganisatsioonForm
-    pk_url_kwarg = 'pk'
-
-    def form_valid(self, form):
-        objekt = form.save(commit=False)
-        # Lisaja/muutja andmed
-        if not objekt.id:
-            objekt.created_by = self.request.user
-        else:
-            objekt.updated_by = self.request.user
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if objekt.hist_date:
-            objekt.hist_year = objekt.hist_date.year
-            objekt.hist_month = objekt.hist_date.month
-            objekt.hist_searchdate = objekt.hist_date
-        else:
-            if objekt.hist_year:
-                y = objekt.hist_year
-                if objekt.hist_month:
-                    m = objekt.hist_month
-                else:
-                    m = 1
-                objekt.hist_searchdate = datetime(y, m, 1)
-            else:
-                objekt.hist_searchdate = None
-        if objekt.hist_enddate:
-            objekt.hist_endyear = objekt.hist_enddate.year
-        objekt.save()
-        form.save_m2m()
-        return redirect('wiki:wiki_organisatsioon_detail', pk=self.object.id, slug=self.object.slug)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        autoselect_fields_check_can_add(context['form'], self.model, self.request.user)
-        return context
 
 
-class ObjektUpdate(LoginRequiredMixin, UpdateView):
-    redirect_field_name = 'next'
+# class OrganisatsioonUpdate(LoginRequiredMixin, UpdateView):
+#     redirect_field_name = 'next'
+#     model = Organisatsioon
+#     form_class = OrganisatsioonForm
+#     pk_url_kwarg = 'pk'
+#
+#     def form_valid(self, form):
+#         objekt = form.save(commit=False)
+#         # Lisaja/muutja andmed
+#         if not objekt.id:
+#             objekt.created_by = self.request.user
+#         else:
+#             objekt.updated_by = self.request.user
+#         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+#         if objekt.hist_date:
+#             objekt.hist_year = objekt.hist_date.year
+#             objekt.hist_month = objekt.hist_date.month
+#             objekt.hist_searchdate = objekt.hist_date
+#         else:
+#             if objekt.hist_year:
+#                 y = objekt.hist_year
+#                 if objekt.hist_month:
+#                     m = objekt.hist_month
+#                 else:
+#                     m = 1
+#                 objekt.hist_searchdate = datetime(y, m, 1)
+#             else:
+#                 objekt.hist_searchdate = None
+#         if objekt.hist_enddate:
+#             objekt.hist_endyear = objekt.hist_enddate.year
+#         objekt.save()
+#         form.save_m2m()
+#         return redirect('wiki:wiki_organisatsioon_detail', pk=self.object.id, slug=self.object.slug)
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         autoselect_fields_check_can_add(context['form'], self.model, self.request.user)
+#         return context
+
+
+class ObjektUpdate(ObjectUpdate):
     model = Objekt
     form_class = ObjektForm
-    pk_url_kwarg = 'pk'
 
-    def form_valid(self, form):
-        objekt = form.save(commit=False)
-        # Lisaja/muutja andmed
-        if not objekt.id:
-            objekt.created_by = self.request.user
-        else:
-            objekt.updated_by = self.request.user
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if objekt.hist_date:
-            objekt.hist_year = objekt.hist_date.year
-            objekt.hist_month = objekt.hist_date.month
-            objekt.hist_searchdate = objekt.hist_date
-        else:
-            if objekt.hist_year:
-                y = objekt.hist_year
-                if objekt.hist_month:
-                    m = objekt.hist_month
-                else:
-                    m = 1
-                objekt.hist_searchdate = datetime(y, m, 1)
-            else:
-                objekt.hist_searchdate = None
-        if objekt.hist_enddate:
-            objekt.hist_endyear = objekt.hist_enddate.year
-        objekt.save()
-        form.save_m2m()
-        return redirect('wiki:wiki_objekt_detail', pk=self.object.id, slug=self.object.slug)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        autoselect_fields_check_can_add(context['form'], self.model, self.request.user)
-        return context
+# class ObjektUpdate(LoginRequiredMixin, UpdateView):
+#     redirect_field_name = 'next'
+#     model = Objekt
+#     form_class = ObjektForm
+#     pk_url_kwarg = 'pk'
+#
+#     def form_valid(self, form):
+#         objekt = form.save(commit=False)
+#         # Lisaja/muutja andmed
+#         if not objekt.id:
+#             objekt.created_by = self.request.user
+#         else:
+#             objekt.updated_by = self.request.user
+#         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+#         if objekt.hist_date:
+#             objekt.hist_year = objekt.hist_date.year
+#             objekt.hist_month = objekt.hist_date.month
+#             objekt.hist_searchdate = objekt.hist_date
+#         else:
+#             if objekt.hist_year:
+#                 y = objekt.hist_year
+#                 if objekt.hist_month:
+#                     m = objekt.hist_month
+#                 else:
+#                     m = 1
+#                 objekt.hist_searchdate = datetime(y, m, 1)
+#             else:
+#                 objekt.hist_searchdate = None
+#         if objekt.hist_enddate:
+#             objekt.hist_endyear = objekt.hist_enddate.year
+#         objekt.save()
+#         form.save_m2m()
+#         return redirect('wiki:wiki_objekt_detail', pk=self.object.id, slug=self.object.slug)
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         autoselect_fields_check_can_add(context['form'], self.model, self.request.user)
+#         return context
 
 
 # class OrganisatsioonUpdate(LoginRequiredMixin, UpdateView):
@@ -1363,10 +1432,13 @@ class ObjektUpdate(LoginRequiredMixin, UpdateView):
 #         return redirect('wiki:wiki_organisatsioon_detail', pk=self.object.id, slug=self.object.slug)
 
 
-class KaardiobjektUpdate(LoginRequiredMixin, UpdateView):
+class KaardiobjektUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     redirect_field_name = 'next'
     model = Kaardiobjekt
     form_class = KaardiobjektForm
+
+    def test_func(self):
+        return self.request.user.is_staff
 
     def form_valid(self, form):
         kaardiobjekt = form.save(commit=False)

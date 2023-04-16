@@ -29,11 +29,12 @@ class SeleniumTestsChromeLogin(SeleniumTestsChromeBase):
         self.selenium.get('%s%s' % (self.host_tobe_tested, '/'))
         self.selenium.get('%s%s' % (self.host_tobe_tested, '/accounts/logout/'))
         self.selenium.get('%s%s' % (self.host_tobe_tested, '/accounts/login/'))
-        username_input = self.selenium.find_element(By.NAME, "username")
+        username_input = self.selenium.find_element(By.ID, "id_login")
         username_input.send_keys(self.USERNAME)
-        password_input = self.selenium.find_element(By.NAME, "password")
+        password_input = self.selenium.find_element(By.ID, "id_password")
         password_input.send_keys(self.PASSWORD)
-        self.selenium.find_element(By.XPATH, '//input[@value="login"]').click()
+        # self.selenium.find_element(By.XPATH, '//input[@value="login"]').click()
+        self.selenium.find_element(By.ID, 'submit').click()
         time.sleep(3)
         self.assertEqual(
             self.selenium.current_url,
@@ -450,14 +451,14 @@ class SeleniumTestsChromeV6rdleIsik(SeleniumTestsChromeBase):
         # kontrollime kas n6utakse sisselogimist
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/accounts/login/?next=/wiki/v6rdle/isik/'))
         el = self.selenium.find_element(By.TAG_NAME, "body").text
-        self.assertIn("logi sisse", el)
+        self.assertIn("Sisene", el)
 
         # logime sisse
-        username_input = self.selenium.find_element(By.NAME, "username")
+        username_input = self.selenium.find_element(By.ID, "id_login")
         username_input.send_keys(self.USERNAME)
-        password_input = self.selenium.find_element(By.NAME, "password")
+        password_input = self.selenium.find_element(By.ID, "id_password")
         password_input.send_keys(self.PASSWORD)
-        self.selenium.find_element(By.XPATH, '//input[@value="login"]').click()
+        self.selenium.find_element(By.ID, 'submit').click()
 
         # kontrollime kas sisselogimine 6nnestus
         button_vasak = self.selenium.find_element(By.ID, "button-join-vasak")
@@ -523,14 +524,14 @@ class SeleniumTestsChromeV6rdleObjekt(SeleniumTestsChromeBase):
         # kontrollime kas n6utakse sisselogimist
         self.assertEqual(self.selenium.current_url, '%s%s' % (self.live_server_url, '/accounts/login/?next=/wiki/v6rdle/objekt/'))
         el = self.selenium.find_element(By.TAG_NAME, "body").text
-        self.assertIn("logi sisse", el)
+        self.assertIn("Sisene", el)
 
         # logime sisse
-        username_input = self.selenium.find_element(By.NAME, "username")
+        username_input = self.selenium.find_element(By.ID, "id_login")
         username_input.send_keys(self.USERNAME)
-        password_input = self.selenium.find_element(By.NAME, "password")
+        password_input = self.selenium.find_element(By.ID, "id_password")
         password_input.send_keys(self.PASSWORD)
-        self.selenium.find_element(By.XPATH, '//input[@value="login"]').click()
+        self.selenium.find_element(By.ID, 'submit').click()
 
         # kontrollime kas sisselogimine 6nnestus
         button_vasak = self.selenium.find_element(By.ID, "button-join-vasak")

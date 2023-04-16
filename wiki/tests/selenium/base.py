@@ -52,10 +52,11 @@ SPECIAL_OBJECTS = test_base.SPECIAL_OBJECTS
 def getData(model):
     detail_view_name = f'wiki:wiki_{model.__name__.lower()}_detail'
     artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
+    initial_queryset = model.objects.all()
     if model == Artikkel:
         model_ids = artikkel_qs.values_list('id', flat=True)
     else:
-        initial_queryset = model.objects.all()
+        # initial_queryset = model.objects.all()
         viitega = initial_queryset. \
             filter(viited__isnull=False). \
             values_list('id', flat=True)

@@ -30,7 +30,6 @@ SERVER_TYPE = config['django'].get('SERVER_TYPE', '')
 
 ALLOWED_HOSTS = [
     'valgalinn.ee', 'www.valgalinn.ee', '18.217.172.167', # a1.medium
-    # 'test.valgalinn.ee', '18.217.179.154', # t4g.nano
     '127.0.0.1', 'localhost',
 ]
 
@@ -40,18 +39,6 @@ ADMINS = [
 ]
 
 INSTALLED_APPS = [
-    'wiki.apps.WikiConfig',
-    'ilm.apps.IlmConfig',
-    'blog.apps.BlogConfig',
-    'kiri.apps.KiriConfig',
-    'django_filters', # Laiendatud filtrite jaoks
-    'widget_tweaks', # Lisavidinad sisestusvormidele
-    'rest_framework', # API liidese jaoks
-    'captcha', # Robot vs inimene sisestuse kontroll
-    'crispy_forms', # Vormide kujundamiseks
-    'markdownx', # MarkDown teksti kasutamiseks
-    'ajax_select', # ajax selectväljad
-    'corsheaders', # https://github.com/adamchainz/django-cors-headers
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -60,6 +47,24 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.sitemaps',
+    'django_filters', # Laiendatud filtrite jaoks
+    'widget_tweaks', # Lisavidinad sisestusvormidele
+    'rest_framework', # API liidese jaoks
+    'captcha', # Robot vs inimene sisestuse kontroll
+    'crispy_forms', # Vormide kujundamiseks
+    'markdownx', # MarkDown teksti kasutamiseks
+    'ajax_select', # ajax selectväljad
+    'corsheaders', # https://github.com/adamchainz/django-cors-headers
+    'allauth', # django-allauth
+    'allauth.account', # django-allauth
+    'allauth.socialaccount', # django-allauth
+    'allauth.socialaccount.providers.github', # django-allauth
+    'allauth.socialaccount.providers.google', # django-allauth
+    # 'allauth.socialaccount.providers.facebook', # django-allauth
+    'ilm.apps.IlmConfig',
+    'blog.apps.BlogConfig',
+    'kiri.apps.KiriConfig', # e-kirja saatmiseks valgalinn.ee aadressilt
+    'wiki.apps.WikiConfig',
 ]
 
 MIDDLEWARE = [
@@ -136,6 +141,32 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# django-allauth
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'SCOPE': [
+            'user',
+            'repo',
+            'read:org',
+        ],
+    },
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -149,7 +180,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
@@ -214,6 +244,7 @@ KROONIKA = {
 }
 
 # sites framework: django.contrib.sites
+# django-allauth
 SITE_ID = 1
 
 # OpenWeatherMap API

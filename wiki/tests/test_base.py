@@ -196,7 +196,7 @@ class UserTypeUnitTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
             response,
-            reverse('login') + f'?next=/',
+            reverse('account_login') + f'?next=/',
             status_code=302,
             # target_status_code=200,
             # msg_prefix='next',
@@ -269,7 +269,7 @@ class UserLoginTestCase(AdminUserTestCase):
         # )
 
         response = self.client.post(
-            reverse('login'),
+            reverse('account_login'),
             {'username': self.user.username, 'password': self.user.password}
         )
         self.assertEqual(response.status_code, 200)
@@ -283,7 +283,7 @@ class UserLoginTestCase(AdminUserTestCase):
         self.assertNotContains(response, "Viiteta")
 
         response = self.client.post(
-            reverse('login'),
+            reverse('account_login'),
             {'username': self.user.username, 'password': self.user.password}
         )
         self.assertEqual(response.status_code, 200)

@@ -1,0 +1,15 @@
+{% extends "wiki/wiki_base.html" %}
+{% load i18n %}
+{% block title %}{{ block.super }} - väljalogimise kinnitamine{% endblock %}
+
+{% block content %}
+  <div class="w3-panel w3-center">
+    <form method="post" action="{% url 'account_logout' %}">
+      {% csrf_token %}
+      {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+      {% endif %}
+      <button class="w3-button background-artikkel w3-hover-white" type="submit">{% trans 'Logi välja' %}</button>
+    </form>
+  </div>
+{% endblock %}

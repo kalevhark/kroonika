@@ -1,30 +1,32 @@
 {#    Kui kasutaja autenditud pakume muutmisvõimalust#}
 {% if user.is_authenticated %}
-  {% with update_url='wiki:'|add:model|add:'_update' %}
-    <a
-            class="icon-link round-corner edit fill"
-            href="{% url update_url pk=object.pk %}"
-    >
-      <i class="fa fa-edit"></i>
-    </a>
-  {% endwith %}
-  {% with change_url='admin:wiki_'|add:model|add:'_change' %}
-    <a
-            class="icon-link round-corner edit fill"
-            href="{% url change_url object.id %}"
-    >
-      <i class="fa fa-adn"></i>
-    </a>
-  {% endwith %}
-  {% if model == 'isik' or model == 'objekt' %}
-    {% with v6rdle_url='wiki:v6rdle_model' %}
-    <a
-            class="icon-link round-corner edit fill"
-            href="{% url v6rdle_url model=model %}?vasak_object={{ object.id }}"
-    >
-      <i class="fa fa-exchange"></i>
-    </a>
-  {% endwith %}
+  {% if user.is_staff %}
+    {% with update_url='wiki:'|add:model|add:'_update' %}
+      <a
+              class="icon-link round-corner edit fill"
+              href="{% url update_url pk=object.pk %}"
+      >
+        <i class="fa fa-edit"></i>
+      </a>
+    {% endwith %}
+    {% with change_url='admin:wiki_'|add:model|add:'_change' %}
+      <a
+              class="icon-link round-corner edit fill"
+              href="{% url change_url object.id %}"
+      >
+        <i class="fa fa-adn"></i>
+      </a>
+    {% endwith %}
+    {% if model == 'isik' or model == 'objekt' %}
+      {% with v6rdle_url='wiki:v6rdle_model' %}
+        <a
+                class="icon-link round-corner edit fill"
+                href="{% url v6rdle_url model=model %}?vasak_object={{ object.id }}"
+        >
+          <i class="fa fa-exchange"></i>
+        </a>
+      {% endwith %}
+    {% endif %}
   {% endif %}
 {% endif %}
 <div

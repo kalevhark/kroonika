@@ -37,11 +37,12 @@ class SeleniumTestsEdgeLogin(SeleniumTestsEdgeBase):
         # bodyText = self.selenium.find_element(By.TAG_NAME, 'body').text
         # self.assertTrue("Palun proovi uuesti" in bodyText)
 
-        username_input = self.selenium.find_element(By.NAME, "username")
+        username_input = self.selenium.find_element(By.ID, "id_login")
         username_input.send_keys(self.USERNAME)
-        password_input = self.selenium.find_element(By.NAME, "password")
+        password_input = self.selenium.find_element(By.ID, "id_password")
         password_input.send_keys(self.PASSWORD)
-        self.selenium.find_element(By.XPATH, '//input[@value="login"]').click()
+        # self.selenium.find_element(By.XPATH, '//input[@value="login"]').click()
+        self.selenium.find_element(By.ID, 'submit').click()
         time.sleep(3)
         # bodyText = self.selenium.find_element(By.TAG_NAME, 'body').text
         # self.assertFalse("Palun proovi uuesti" in bodyText)
