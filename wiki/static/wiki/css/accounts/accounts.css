@@ -109,14 +109,14 @@ body {
 
 .form-wrap form label[for] {
     position: relative;
-    padding-left: 20px;
+    /*padding-left: 20px;*/
     cursor: pointer;
 }
 
 .form-wrap form label[for]:before {
     content: '';
     position: absolute;
-    border: 1px solid #CFCFCF;
+    /*border: 1px solid #CFCFCF;*/
     width: 17px;
     height: 17px;
     top: 0px;
@@ -180,4 +180,12 @@ body {
 ul.errorlist {
     font-size: 0.8em;
     list-style-type: none;
+}
+
+span.verified {
+    color: greenyellow;
+}
+
+span.unverified {
+    color: red;
 }

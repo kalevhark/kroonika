@@ -1,0 +1,7 @@
+{% autoescape off %}Tervitused {{ current_site.name }} poolt!
+
+{% block content %}{% endblock %}
+
+Suur tänu, et kasutate veebilehte {{ current_site.name }}!
+{{ current_site.domain }}
+{% endautoescape %}

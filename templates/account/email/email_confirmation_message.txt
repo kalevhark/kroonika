@@ -1,0 +1,6 @@
+{% extends "account/email/base_message.txt" %}
+{% load account %}
+
+{% block content %}{% autoescape off %}{% user_display user as user_display %}Saite selle kirja, sest kasutaja {{ user_display }} on andnud selle e-maili aadressi kinnitamiseks veebilehel {{ current_site.domain }}.
+
+Kui see on korrektne, siis kinnitage see valides {{ activate_url }}{% endautoescape %}{% endblock %}
