@@ -1,0 +1,42 @@
+{% load wiki_extras %}
+<div class="w3-bar">
+  <a href="#">
+    <button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
+  </a>
+  {# FB #}
+  <div
+      class="fb-like"
+      data-href="http://valgalinn.ee"
+      data-width=""
+      data-layout="button_count"
+      data-action="like"
+      data-size="small"
+      data-show-faces="true"
+      data-share="true"
+      style="vertical-align: bottom;"
+  >
+  </div>
+  {# Autoriõigused #}
+  <a
+      rel="license"
+      href="http://creativecommons.org/licenses/by-sa/4.0/">
+    <img
+        alt="Creative Commonsi litsents"
+        style="border-width:0"
+        src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"
+    />
+  </a>
+  <br class="w3-hide-large">
+  <small class="w3-hide-small">
+    "<span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Valga linna kroonika</span>" on antud Creative Commonsi litsentsi "
+    <a
+        rel="license"
+        href="http://creativecommons.org/licenses/by-sa/4.0/">Autorile viitamine + Jagamine samadel tingimustel 4.0 Rahvusvaheline
+    </a>" alla.
+  </small>
+  <a href="{% url 'info' %}">
+    <button class="w3-button w3-hover-white w3-right w3-text-grey">
+      <small>&#9400;&nbsp;2018-{% now "Y" %} {% kalev %}</small>
+    </button>
+  </a>
+</div>

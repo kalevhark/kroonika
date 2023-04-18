@@ -204,4 +204,3 @@ class V6rdleFormObjekt(Form):
         required=False,
         help_text=''
     )
-

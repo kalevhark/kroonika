@@ -1,0 +1,31 @@
+{% extends "wiki/wiki_base.html" %}
+
+{% load i18n %}
+{% load account %}
+
+{% block head_title %}Kinnita e-maili aaddress{% endblock %}
+
+
+{% block content %}
+<h1>Kinnita e-maili aaddress</h1>
+
+{% if confirmation %}
+
+{% user_display confirmation.email_address.user as user_display %}
+
+<p>Palun kinnita, et <a href="mailto:{{ confirmation.email_address.email }}">{{ confirmation.email_address.email }}</a> on kasutaja {{ user_display }} e-mail.</p>
+
+<form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+{% csrf_token %}
+    <button type="submit">{% trans 'Kinnita' %}</button>
+</form>
+
+{% else %}
+
+{% url 'account_email' as email_url %}
+
+<p>See kinnituslink on vigane. Palun taotle <a href="{{ email_url }}">uut kinnitamist</a><./p>
+
+{% endif %}
+
+{% endblock %}

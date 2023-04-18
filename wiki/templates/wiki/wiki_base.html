@@ -8,9 +8,7 @@
     prefix="og: http://ogp.me/ns#"
 >
 
-<head
-    prefix="og: http://ogp.me/ns#"
-    >
+<head>
   <meta charset="utf-8">
   <link rel="canonical" href="{{ request.build_absolute_uri }}" />
   <link rel="shortlink" href="{{ request.build_absolute_uri }}" />
@@ -28,102 +26,12 @@
   <meta name="keywords" content="{% if object %}{{ object.keywords }}{% else %}{% keywords %}{% endif %}" />
   <meta name="author" content="{% kalev %}" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Microsoft bing -->
+  <meta name="msvalidate.01" content="0EE01D4CD04ABA5D4C9C17D1CB2A2928" />
   <!-- OGP kirjeldus -->
-  <meta property="og:locale" content="et_EE" />
-  <meta property="og:site_name" content="Valga linna kroonika" />
-  <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-  <meta property="og:title" content="Valga linna kroonika{% if object %} - {{ object }}{% endif%}" />
-  {% if object %}
-    <meta property="og:type" content="article" />
-    <meta property="og:description" content="{{ object }}" />
-    <meta property="article:section" content="{% get_verbose_name_plural object %}" />
-    <meta property="article:published_time" content="{{ object.mod_date|date:'c' }}" />
-    <meta property="article:modified_time" content="{{ object.mod_date|date:'c' }}" />
-    <meta property="og:updated_time" content="{{ object.mod_date|date:'c' }}" />
-  {% else %}
-    <meta property="og:type" content="website" />
-    <meta property="og:description" content="Valga linna kroonika. Lood, inimesed, asutised ja kohad Valga linna ajaloost." />
-  {% endif %}
-  <!-- FB piltide share piltide jaoks -->
-  {% if profiilipilt %}
-    <meta property="og:image" content="{{ request.scheme }}://{{ request.site }}{{ profiilipilt.pilt.url }}" />
-    <meta property="og:image:width" content="250"/>
-    <meta property="og:image:height" content="250"/>
-  {% else %}
-    {% block og_image %}
-      <meta property="og:image" content="{{ request.scheme }}://{{ request.site }}{% static 'wiki/img/android-chrome-512x512.png' %}" />
-    {% endblock %}
-  {% endif %}
-  <!-- /OGP kirjeldus -->
-
+  {% include 'wiki/wiki_base/wiki_base_ogp.html' %}
   <!-- JSON-LD markup -->
-  <script type="application/ld+json">
-    {
-      "@context":"https://schema.org",
-      "@graph":
-        [
-          {
-            "@type":"WebSite",
-            "@id":"{{ request.scheme }}://{{ request.site }}/#website",
-            "url":"{{ request.scheme }}://{{ request.site }}/",
-            "name":"Valga linna kroonika",
-            "inLanguage":"et",
-            "potentialAction":
-              {
-                "@type":"SearchAction",
-                "target":"{{ request.scheme }}://{{ request.site }}/wiki/?artikkel_sisaldab={search_term_string}",
-                "query-input":"required name=search_term_string"
-              }
-          },
-          {
-            "@type":"WebPage",
-            "@id":"{{ request.build_absolute_uri }}#webpage",
-            "url":"{{ request.build_absolute_uri }}",
-            "name":"Valga linna kroonika",
-            "isPartOf":
-              {
-                "@id":"{{ request.scheme }}://{{ request.site }}/#website"
-              },
-            "inLanguage":"et",
-            {% if object %}
-              "datePublished":"{{ object.inp_date|date:'c' }}",
-              "dateModified":"{{ object.mod_date|date:'c' }}"
-            {% else %}
-              "datePublished":"{% now 'c' %}",
-              "dateModified":"{% now 'c' %}"
-            {% endif %}
-          }
-        ]
-    }
-  </script>
-  <!--  Laetavad moodulid-->
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/jquery-ui.min.js"></script>
-  <!-- Google reCAPTCHA -->
-  <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=grecaptcha_onload"></script>
-  <!-- wiki teegid -->
-  <script src="{% static 'wiki/js/wiki.js'%}?ver=2022.11.20a"></script>
-  <!-- Jõulud 2022 -->
-  {#  <script src="{% static 'wiki/js/special/wiki_special_j6ul2022.js'%}?ver=2022.11.05"></script>#}
-  {% block src %}{% endblock %}
-
-  <!-- CSS -->
-  <!--  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">-->
-  <link rel="stylesheet" href="{% static 'wiki/css/w3.css' %}?ver=2021.05">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}?ver=2022.12">
-  <link rel="stylesheet" href="{% static 'wiki/jquery-ui-1.13.1.custom/jquery-ui.css' %}?ver=2022.01">
-  <!--  Alternatiivsed värvivalikud metro või colorful-->
-  <link rel="stylesheet" href="{% static 'wiki/css/kroonika_color_metro.css' %}?ver=2023.1">
-  <!-- <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}> -->
-  <!-- Jõulud 2022 -->
-  {#  <link rel="stylesheet" href="{% static 'wiki/css/special/wiki_special_j6ul2022.css' %}?ver=2022.12.20">#}
-
-  {% block css %}{% endblock %}
-
+  {% include 'wiki/wiki_base/wiki_base_json-ld.html' %}
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>
   <script>
@@ -132,325 +40,74 @@
     gtag('js', new Date());
     gtag('config', 'UA-151102639-1');
   </script>
-  <!-- Microsoft bing -->
-  <meta name="msvalidate.01" content="0EE01D4CD04ABA5D4C9C17D1CB2A2928" />
+
+  {# Laetavad moodulid#}
+  <!-- jQuery -->
+  {% block jquery_src %}
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/jquery-ui.min.js"></script>
+  {% endblock jquery_src %}
+  <!-- Google reCAPTCHA -->
+  <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=grecaptcha_onload"></script>
+  <!-- wiki teegid -->
+  <script src="{% static 'wiki/js/wiki.js'%}?ver=2022.11.20a"></script>
+  {% block src %}{% endblock %}
+
+  <!-- CSS -->
+  {# <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" #}
+  <link rel="stylesheet" href="{% static 'wiki/css/w3.css' %}?ver=2021.05">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  {# Custom CSS #}
+  <link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}?ver=2022.12">
+  {% block jquery_css %}
+    <link rel="stylesheet" href="{% static 'wiki/jquery-ui-1.13.1.custom/jquery-ui.css' %}?ver=2022.01">
+  {% endblock jquery_css %}
+  {# Alternatiivsed värvivalikud metro või colorful #}
+  <link rel="stylesheet" href="{% static 'wiki/css/kroonika_color_metro.css' %}?ver=2023.1">
+  {# <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}>#}
+  {% block css %}{% endblock %}
+
   <title>
     {% block title %}Valga linna kroonika{% endblock %}
   </title>
+  {% block extra_head %}{% endblock %}
 </head>
 
 
 <body class="Site w3-light-grey">
-  <!--Facebook plugin-->
-  <div id="fb-root"></div>
-  <script
-          async
-          defer
-          crossorigin="anonymous"
-          src="https://connect.facebook.net/et_EE/sdk.js#xfbml=1&version=v14.0&appId=275987973680424&autoLogAppEvents=1"
-          nonce="hLQIXwgB"
-  ></script>
+  {% block body %}
+  {# Facebook plugin #}
+  {% include 'wiki/wiki_base/wiki_base_facebook_plugin.html' %}
   <header>
-    <!-- Navbar large-->
     <nav id="wiki_nav">
-      <div
-          class="w3-bar w3-left-align w3-large"
-          id="wiki_base_info"
-          data-url="{% url 'wiki:wiki_base_info' %}">
-        <a
-            href="{% url 'algus' %}"
-            title="Valga linna kroonika avalehele"
-            class="w3-bar-item w3-button w3-hover-white">
-            <img
-                src="{% static 'wiki/favicon-32x32.png' %}"
-                style='max-height:22px;'
-                alt="valgalinn.ee logo">
-        </a>
-        <a
-            href="{% url 'algus' %}"
-            class="w3-bar-item w3-button w3-hover-white">
-          <i
-              id="wiki_start_icon"
-              style="display: inline-block; margin-right: 10px;"
-              class="text-artikkel fa fa-leanpub"
-          >
-          </i>
-          <span class="w3-hide-small">Valga linna kroonika </span>
-          <span class="w3-red">{% server_type %}</span>
-        </a>
-
-        <!-- Search on large screens -->
-        <a
-            href="{% url 'wiki:otsi' %}"
-            title="Otsi valitud fraasi järgi"
-            class="w3-bar-item w3-button w3-hide-small w3-hover-white">
-          <i
-              id="wiki_search_icon"
-              class="fa fa-search"
-          >
-          </i>
-        </a>
-        <!--		Tagasiside saatmiseks -->
-        <a
-            class="w3-bar-item w3-button w3-hide-small w3-hover-white"
-            id="wiki_base_feedback"
-            title="Märkasid viga või oskad täiendada?"
-            onclick="showFeedback()">
-          <i class="fa fa-bug"></i>
-        </a>
-        <!-- Lingid erilehtedele -->
-        <a
-            href="{% url 'kaart' %}"
-            class="w3-bar-item w3-button w3-hide-small w3-hover-white"
-            title="Ajaloolised kaardid">
-          <i class="fa fa-map-o"></i>
-        </a>
-        <a
-            href="{% url 'info' %}"
-            class="w3-bar-item w3-button w3-hide-small w3-hover-white"
-            title="Projektist">
-          <i class="fa fa-info"></i>
-        </a>
-        <a
-            href="{% url 'blog:blog_index' %}"
-            id="wiki_base_blog"
-            class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
-            title="Blogi">
-          <i class="{% icon_artikkel %}s-o"></i>
-        </a>
-        <a
-            href="{% url 'ilm:index' %}"
-            class="w3-bar-item w3-button w3-hover-white"
-            title="Valga linna ilm">
-          <i class="fa fa-thermometer"></i>
-        </a>
-        <a
-            href="https://et.wikipedia.org/wiki/Valga"
-            target="blank"
-            class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
-            title="Valga linn Wikipedia">
-          <i class="fa fa-wikipedia-w"></i>
-        </a>
-        <a
-            href="https://www.facebook.com/valgalinn/"
-            target="blank"
-            class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
-            title="Valga linn Facebook">
-          <i class="fa fa-facebook-official"></i>
-        </a>
-        <a
-            href="https://www.instagram.com/valgalinn/"
-            target="blank"
-            class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
-            title="Valga linn Instagram">
-          <i class="fa fa-instagram"></i>
-        </a>
-        <a
-            id="rightMenuLink"
-            href="javascript:void(0)"
-            class="w3-bar-item w3-button w3-hide-large w3-right"
-            onclick="toggleRightMenu()">
-          &#9776;
-        </a>
-
-        {% load socialaccount %}
-        <!-- Kasutaja ja adminlingid -->
-        {% if user.is_authenticated %}
-          <a
-              href="{% url 'admin:index' %}"
-              class="w3-bar-item w3-button w3-hide-small w3-text-grey w3-hover-white w3-right"
-              title="Admin">
-            <i class="fa fa-cog"></i>
-          </a>
-          <a
-              href="{% url 'account_logout' %}?next={{ request.path | urlencode }}"
-              class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
-              title="Logi välja">{{ user.first_name }}&nbsp;<i class="fa fa-sign-out"></i>
-          </a>
-        {% else %}
-          <a
-              href="{% url 'account_login' %}?next={{ request.path }}"
-              class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
-              title="Logi sisse">
-            <i class="fa fa-sign-in"></i>
-          </a>
-        {% endif %}
-
-        <!-- Kalendrivaliku nupp -->
-        <div id="checkbox_ukjvkj"  class="w3-hide-small w3-hide-medium w3-right" style="visibility:hidden;">
-          <label class="rocker rocker-small" title="vana või uus kalender?"><input type="checkbox" id="checkbox1">
-            <span class="switch-left">ukj</span>
-            <span class="switch-right">vkj</span>
-          </label>
-        </div>
-      </div>
-
+      <!-- Navbar large-->
+      {% include 'wiki/wiki_base/wiki_base_nav_bar_large.html' %}
       <!-- Navbar on small screens -->
-      <div
-          class="w3-bar-block w3-light-gray w3-hide w3-hide-large"
-          id="rightMenu">
-        <a
-            href="{% url 'wiki:wiki_artikkel_filter' %}"
-            class="w3-bar-item w3-button">
-          <i class="fa fa-search"></i>
-          <span class="bar-item-text-with-icon">Otsi...</span>
-        </a>
-        <a
-            onclick="showFeedback()"
-            class="w3-bar-item w3-button">
-          <i class="fa fa-bug"></i>
-          <span class="bar-item-text-with-icon">Vigadest teatamine</span>
-        </a>
-        <a
-            href="{% url 'kaart' %}"
-            class="w3-bar-item w3-button"
-        >
-          <i class="fa fa-map-o"></i>
-           <span class="bar-item-text-with-icon">Ajaloolised kaardid</span>
-        </a>
-        <a
-            href="{% url 'blog:blog_index' %}"
-            class="w3-bar-item w3-button">
-          <i class="{% icon_artikkel %}s-o"></i>
-          <span class="bar-item-text-with-icon">Blogi</span>
-        </a>
-        <a
-            href="{% url 'ilm:index' %}"
-            class="w3-bar-item w3-button">
-          <i class="fa fa-thermometer"></i>
-          <span class="bar-item-text-with-icon">Valga linna ilm</span>
-        </a>
-        <a
-            href="https://et.wikipedia.org/wiki/Valga"
-            target="blank"
-            class="w3-bar-item w3-button">
-          <i class="fa fa-wikipedia-w"></i>
-          <span class="bar-item-text-with-icon">Valga Vikipeedias</span>
-        </a>
-        <a
-            href="https://www.facebook.com/valgalinn/"
-            target="blank"
-            class="w3-bar-item w3-button">
-          <i class="fa fa-facebook-official"></i>
-          <span class="bar-item-text-with-icon">Valga Facebook</span>
-        </a>
-        <a
-            href="https://www.instagram.com/valgalinn/"
-            target="blank"
-            class="w3-bar-item w3-button">
-          <i class="fa fa-instagram"></i>
-          <span class="bar-item-text-with-icon">Valga Instagram</span>
-        </a>
-        <a
-            href="{% url 'info' %}"
-            class="w3-bar-item w3-button"
-            title="Projektist"><i class="fa fa-info"></i>
-          <span class="bar-item-text-with-icon">Projektist</span>
-        </a>
-      </div>
+      {% include 'wiki/wiki_base/wiki_base_nav_bar_small.html' %}
     </nav>
   </header>
 
   <main class="Site-content">
     <div class="w3-container">
-      <!-- Süsteemiteadete näitamiseks -->
-      <div>
-        {% if messages %}
-          <ul class="messagelist">
-          {% for message in messages %}
-            <div class="w3-panel">
-              <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            </div>
-          {% endfor %}
-          </ul>
-        {% endif %}
-      </div>
-
-      <!--		Tagasiside vorm -->
+      {# Süsteemiteadete näitamiseks #}
+      {% include 'wiki/wiki_base/wiki_base_body_messages.html' %}
+      {# Tagasiside vorm #}
       <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">
         {% crispy feedbackform %}
       </div>
-      <!-- Search on small screens -->
-      <div class="w3-padding w3-hide-medium w3-hide-large">
-        <form
-            autocomplete="on"
-            id="search"
-            method="GET"
-{#            action="{% url 'wiki:wiki_artikkel_filter' %}"#}
-            action="{% url 'wiki:otsi' %}"
-        >
-          {% csrf_token %}
-          <label for="search-input">Otsi:</label>
-          <input
-              aria-label="Otsi"
-              id="search-input"
-{#              name="artikkel_sisaldab"#}
-              name="q"
-              placeholder="Sõna või fraas..."
-              type="text"
-          >
-          <button
-              class="w3-button"
-              type="submit"
-              id="searchsubmit_small"
-              title="Otsi valitud fraasi järgi">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24">
-              <path d="M23.809 21.646l-6.205-6.205c1.167-1.605 1.857-3.579 1.857-5.711 0-5.365-4.365-9.73-9.731-9.73-5.365 0-9.73 4.365-9.73 9.73 0 5.366 4.365 9.73 9.73 9.73 2.034 0 3.923-.627 5.487-1.698l6.238 6.238 2.354-2.354zm-20.955-11.916c0-3.792 3.085-6.877 6.877-6.877s6.877 3.085 6.877 6.877-3.085 6.877-6.877 6.877c-3.793 0-6.877-3.085-6.877-6.877z"/>
-            </svg>
-          </button>
-        </form>
-      </div>
+      {# Search on small screens #}
+      {% include 'wiki/wiki_base/wiki_base_body_search_small.html' %}
     </div>
 
-    {% block content %}{% endblock %}
+    {% block content %}{% endblock content %}
   </main>
 
   <footer id="footer" class="footer">
-    <div class="w3-bar">
-      <a href="#">
-        <button class="w3-button w3-hover-white fa fa-angle-double-up"></button>
-      </a>
-      <!--    FB-->
-      <div
-          class="fb-like"
-          data-href="http://valgalinn.ee"
-          data-width=""
-          data-layout="button_count"
-          data-action="like"
-          data-size="small"
-          data-show-faces="true"
-          data-share="true"
-          style="vertical-align: bottom;"
-      >
-      </div>
-      <!--    Autoriõigused-->
-      <a
-          rel="license"
-          href="http://creativecommons.org/licenses/by-sa/4.0/">
-        <img
-            alt="Creative Commonsi litsents"
-            style="border-width:0"
-            src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png"
-        />
-      </a>
-      <br class="w3-hide-large">
-      <small class="w3-hide-small">
-        "<span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Valga linna kroonika</span>" on antud Creative Commonsi litsentsi "
-        <a
-            rel="license"
-            href="http://creativecommons.org/licenses/by-sa/4.0/">Autorile viitamine + Jagamine samadel tingimustel 4.0 Rahvusvaheline
-        </a>" alla.
-      </small>
-      <a href="{% url 'info' %}">
-          <button class="w3-button w3-hover-white w3-right w3-text-grey"><small>&#9400;&nbsp;2018-{% now "Y" %} {% kalev %}</small></button>
-      </a>
-    </div>
+    {% include 'wiki/wiki_base/wiki_base_body_footer.html' %}
   </footer>
-
+  {% endblock body %}
+  {% block extra_body %}{% endblock extra_body %}
 </body>
 
 <script>
@@ -564,7 +221,6 @@ $(document).ready( function() {
   window.addEventListener('scroll', throttle(onScroll, 25));
   // Kuupäevaväljade unikaalsete id-de lisamine
   let dates = document.body.getElementsByClassName('date');
-  // console.dir(dates);
   let counter = 0;
   for (let i = 0; i < dates.length; i++) {
     if (!dates[i].id) {
@@ -572,7 +228,6 @@ $(document).ready( function() {
     }
   }
   // initialize tooltips
-  {#var url = '{% url "wiki:get_object_data4tooltip" %}'#}
   var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
   getObjectData4tooltip(get_object_data4tooltip_url);
 });

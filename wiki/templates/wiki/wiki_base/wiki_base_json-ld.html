@@ -1,0 +1,39 @@
+{#object = detailview 'object'#}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type":"WebSite",
+        "@id":"{{ request.scheme }}://{{ request.site }}/#website",
+        "url":"{{ request.scheme }}://{{ request.site }}/",
+        "name":"Valga linna kroonika",
+        "inLanguage":"et",
+        "potentialAction":
+          {
+            "@type":"SearchAction",
+            "target":"{{ request.scheme }}://{{ request.site }}{% url 'wiki:otsi' %}?q={search_term_string}",
+            "query-input":"required name=search_term_string"
+          }
+      },
+      {
+        "@type":"WebPage",
+        "@id":"{{ request.build_absolute_uri }}#webpage",
+        "url":"{{ request.build_absolute_uri }}",
+        "name":"Valga linna kroonika",
+        "isPartOf":
+          {
+            "@id":"{{ request.scheme }}://{{ request.site }}/#website"
+          },
+        "inLanguage":"et",
+        {% if object %}
+          "datePublished":"{{ object.inp_date|date:'c' }}",
+          "dateModified":"{{ object.mod_date|date:'c' }}"
+        {% else %}
+          "datePublished":"{% now 'c' %}",
+          "dateModified":"{% now 'c' %}"
+        {% endif %}
+      }
+    ]
+  }
+</script>

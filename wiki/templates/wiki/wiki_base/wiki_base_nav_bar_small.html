@@ -1,0 +1,63 @@
+{% load wiki_extras %}
+<div
+        class="w3-bar-block w3-light-gray w3-hide w3-hide-large"
+        id="rightMenu">
+  <a
+          href="{% url 'wiki:otsi' %}"
+        class="w3-bar-item w3-button">
+    <i class="fa fa-search"></i>
+    <span class="bar-item-text-with-icon">Otsi...</span>
+  </a>
+  <a
+          onclick="showFeedback()"
+          class="w3-bar-item w3-button">
+    <i class="fa fa-bug"></i>
+    <span class="bar-item-text-with-icon">Vigadest teatamine</span>
+  </a>
+  <a
+          href="{% url 'kaart' %}"
+          class="w3-bar-item w3-button"
+  >
+    <i class="fa fa-map-o"></i>
+    <span class="bar-item-text-with-icon">Ajaloolised kaardid</span>
+  </a>
+  <a
+          href="{% url 'blog:blog_index' %}"
+          class="w3-bar-item w3-button">
+    <i class="{% icon_artikkel %}s-o"></i>
+    <span class="bar-item-text-with-icon">Blogi</span>
+  </a>
+  <a
+          href="{% url 'ilm:index' %}"
+          class="w3-bar-item w3-button">
+    <i class="fa fa-thermometer"></i>
+    <span class="bar-item-text-with-icon">Valga linna ilm</span>
+  </a>
+  <a
+          href="https://et.wikipedia.org/wiki/Valga"
+          target="blank"
+          class="w3-bar-item w3-button">
+    <i class="fa fa-wikipedia-w"></i>
+    <span class="bar-item-text-with-icon">Valga Vikipeedias</span>
+  </a>
+  <a
+          href="https://www.facebook.com/valgalinn/"
+          target="blank"
+          class="w3-bar-item w3-button">
+    <i class="fa fa-facebook-official"></i>
+    <span class="bar-item-text-with-icon">Valga Facebook</span>
+  </a>
+  <a
+          href="https://www.instagram.com/valgalinn/"
+          target="blank"
+          class="w3-bar-item w3-button">
+    <i class="fa fa-instagram"></i>
+    <span class="bar-item-text-with-icon">Valga Instagram</span>
+  </a>
+  <a
+          href="{% url 'info' %}"
+          class="w3-bar-item w3-button"
+          title="Projektist"><i class="fa fa-info"></i>
+    <span class="bar-item-text-with-icon">Projektist</span>
+  </a>
+</div>

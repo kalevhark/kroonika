@@ -1,0 +1,48 @@
+{% extends "wiki/wiki_base.html" %}
+{% block title %}{{ block.super }} - sisselogimine{% endblock %}
+{% load i18n %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static 'wiki/css/accounts/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="form-wrap">
+    <div class="tabs">
+      <h3 class="login-tab"><a href="{{ login_url }}">Sisene</a></h3>
+      <h3 class="signup-tab"><a class="active" href="#signup-tab-content">Registreeri</a></h3>
+    </div><!--.tabs-->
+    <div class="tabs-content">
+
+      <div id="login-tab-content">
+        {# tyhi #}
+      </div><!--.login-tab-content-->
+
+      <div id="signup-tab-content" class="active">
+        <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+          {{ form.non_field_errors }}
+          {% csrf_token %}
+          {{ form.username.errors }}
+          <input class="input" type="text" name="username" placeholder="Kasutajanimi" autocomplete="username" minlength="1" maxlength="150" required="" id="id_username">
+          {{ form.email.errors }}
+          <input class="input" type="email" name="email" placeholder="E-mail address" autocomplete="email" id="id_email">
+          {{ form.password1.errors }}
+          <input class="input" type="password" name="password1" placeholder="Salasõna" autocomplete="new-password" required="" id="id_password1">
+          {{ form.password2.errors }}
+          <input class="input" type="password" name="password2" placeholder="Salasõna (uuesti)" autocomplete="new-password" required="" id="id_password2">
+          <input type="checkbox" class="checkbox" name="remember" id="id_remember">
+          <label for="id_remember">Jäta mind meelde</label>
+          {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+          <input type="submit" class="button" value="Registreeri">
+        </form><!--.login-form-->
+        <div class="help-text">
+          <p>Registreerimisel nõustud valgalinn.ee</p>
+          <p><a href="{% url 'info' %}">kasutamise reeglitega.</a></p>
+        </div><!--.help-text-->
+      </div><!--.signup-tab-content-->
+    </div><!--.tabs-content-->
+  </div><!--.form-wrap-->
+{% endblock %}

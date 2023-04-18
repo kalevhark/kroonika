@@ -1,0 +1,43 @@
+{% load socialaccount %}
+{% if user.is_authenticated %}
+  {% if user.is_staff %}
+    <a
+        href="{% url 'admin:index' %}"
+        class="w3-bar-item w3-button w3-hide-small w3-text-grey w3-hover-white w3-right"
+        title="Admin">
+      <i class="fa fa-cog"></i>
+    </a>
+  {% else %}
+    <a
+        href="{% url 'account_email' %}"
+        class="w3-bar-item w3-button w3-hide-small w3-text-grey w3-hover-white w3-right"
+        title="Muuda kontaktandmeid">
+      <i class="fa fa-user"></i>
+    </a>
+  {% endif %}
+{#  <a#}
+{#      href="{% url 'account_logout' %}?next={{ request.path | urlencode }}"#}
+{#      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"#}
+{#      title="Logi välja">{{ user.first_name }}&nbsp;<i class="fa fa-sign-out"></i>#}
+{#  </a>#}
+  <form method="post" action="{% url 'account_logout' %}">
+    {% csrf_token %}
+    {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+    {% endif %}
+    <button class="w3-bar-item w3-button w3-text-grey w3-hover-white w3-right" type="submit"><i class="fa fa-sign-out"></i></button>
+  </form>
+{% else %}
+  <a
+      href="{% url 'account_signup' %}?next={{ request.path }}"
+      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
+      title="Registreeri">
+    <i class="fa fa-user-plus"></i>
+  </a>
+  <a
+      href="{% url 'account_login' %}?next={{ request.path }}"
+      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
+      title="Logi sisse">
+    <i class="fa fa-sign-in"></i>
+  </a>
+{% endif %}
