@@ -189,3 +189,7 @@ span.verified {
 span.unverified {
     color: red;
 }
+
+ul.socialaccount_providers {
+    list-style-type: none;
+}

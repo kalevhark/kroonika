@@ -11,7 +11,7 @@
     <a
         href="{% url 'account_email' %}"
         class="w3-bar-item w3-button w3-hide-small w3-text-grey w3-hover-white w3-right"
-        title="Muuda kontaktandmeid">
+        title="Muuda {{ user.username }} kontaktandmeid">
       <i class="fa fa-user"></i>
     </a>
   {% endif %}
@@ -25,7 +25,13 @@
     {% if redirect_field_value %}
       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
     {% endif %}
-    <button class="w3-bar-item w3-button w3-text-grey w3-hover-white w3-right" type="submit"><i class="fa fa-sign-out"></i></button>
+    <button
+            class="w3-bar-item w3-button w3-text-grey w3-hover-white w3-right"
+            type="submit"
+            title="Logi välja kasutaja {{ user.username }}"
+    >
+      {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %} <i class="fa fa-sign-out"></i>
+    </button>
   </form>
 {% else %}
   <a
