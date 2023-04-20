@@ -384,8 +384,11 @@
             // nullColor: '#EFEFEF',
             // colsize: 24 * 36e5, // one day
             tooltip: {
-               headerFormat: 'Lugusid:<br/>',
-               pointFormat: '{point.x} {point.y}: <b>{point.value}</b>'
+              headerFormat: 'Lugusid:<br/>',
+              // pointFormat: '{point.x} {kuunimi(point.y)}: <b>{point.value}</b>',
+              pointFormatter: function () {
+                return getEstonianMonthName(this.y) + ' ' + this.x + ': <b>' + this.value + '</b>';
+              }
             },
             // turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
         }]
