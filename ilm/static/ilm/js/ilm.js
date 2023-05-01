@@ -8,3 +8,13 @@ var getMonth = function(idx) {
   ];
   return kuud[idx-1];
 }
+
+$(document).ready(function() {
+  Highcharts.setOptions({
+    chart: {
+        style: {
+            fontFamily: 'Raleway'
+        }
+    }
+   });
+});

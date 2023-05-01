@@ -1,5 +1,5 @@
 // Järgnev käivitub kui leht laetud ja kutsub välja graafiku
-// version 2020.11
+// version 2023.05
 var chart,
 	obj,
 	chartTitle;
@@ -8,26 +8,13 @@ function changeIlmStartIconColor(data) {
   elementIlmStartIcon = document.getElementById("ilm_start_icon");
   if (elementIlmStartIcon !== undefined) {
     temperatureNow = data.airtemperatures[data.airtemperatures.length - 1][1];
-        if (temperatureNow > 0) {
-          elementIlmStartIcon.style.color = '#FF3333';
-        } else {
-          elementIlmStartIcon.style.color = '#48AFE8';
-        };
-  };
-};
-
-$(document).ready(function() {
-  mixed_ilmateade();
-});
-$(window).bind('resize', function(e)
-  {
-    if (window.RT) clearTimeout(window.RT);
-    window.RT = setTimeout(function()
-      {
-        mixed_ilmateade();
-      }, 100);
+      if (temperatureNow > 0) {
+        elementIlmStartIcon.style.color = '#FF3333';
+      } else {
+        elementIlmStartIcon.style.color = '#48AFE8';
+      }
   }
-);
+}
 
 // Kombineeritud ilmagraafiku joonistamine
 function mixed_ilmateade() {
@@ -41,7 +28,7 @@ function mixed_ilmateade() {
 	if (obj) {
 		chartTitle = obj.options.title.text;
 		obj.setTitle({ text: chartTitle.replace(msg, '').replace(errormsg, '') + msg });
-		};
+		}
 
 	// Küsime andmed ja moodustame graafiku
 	$.ajax({
@@ -59,8 +46,6 @@ function mixed_ilmateade() {
           if (i < 24 && i % 2 === 0 && data.yrno_symbols[i] != null) {
             chart.renderer
               .image(
-//                'http://yr.github.io/weather-symbols/png/100/' +
-//                data.yrno_symbols[i] + '.png',
                 'https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/' +
                 data.yrno_symbols[i] + '.svg',
                 point.plotX + chart.plotLeft - 8,
@@ -80,8 +65,6 @@ function mixed_ilmateade() {
           if (i > 23 && i % 2 === 0 && data.yrno_symbols[i] != null) {
             chart.renderer
               .image(
-//                'http://yr.github.io/weather-symbols/png/100/' +
-//                data.yrno_symbols[i] + '.png',
                 '/static/ilm/img/weathericon/svg/' +
                 data.yrno_symbols[i] + '.svg',
                 point.plotX + chart.plotLeft - 8,
@@ -148,3 +131,17 @@ function mixed_ilmateade() {
       }
 	});
 }
+
+$(document).ready(function() {
+  mixed_ilmateade();
+});
+
+$(window).bind('resize', function(e)
+  {
+    if (window.RT) clearTimeout(window.RT);
+    window.RT = setTimeout(function()
+      {
+        mixed_ilmateade();
+      }, 100);
+  }
+);
