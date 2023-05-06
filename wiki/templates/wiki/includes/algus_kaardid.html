@@ -130,15 +130,13 @@
   {% for kaart in andmed.kaart.kaardid %}
 
     <div class="mySlides tile-img-fade">
-{#      <div class="tile-img-numbertext">{{ forloop.counter }} / {{ andmed.kaart.kaardid.count }}</div>#}
       <a
-              class="w3-tooltip"
               style="text-decoration: none;"
               href="{% url 'kaart' aasta=kaart.aasta %}"
-              title="Liigu {{ kaart.aasta }}. aasta kaardile"
+              title="Ava {{ kaart.aasta }}. aasta kaart"
       >
         <img
-                class="tile-img"
+                class="tile-img w3-round"
                 src="{{ kaart.sample_tile }}"
                 style="width:100%"
                 alt="{{ kaart.aasta }}. aasta kaarditükk"

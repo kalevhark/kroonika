@@ -1,14 +1,14 @@
 {% load static %}
 {% load wiki_extras %}
-  <!-- Sel päeval 100 aastat tagasi toimunud -->
-  {% if andmed.100_aastat_tagasi %}
+  <!-- Sel päeval sada aastat tagasi toimunud -->
+  {% if andmed.sada_aastat_tagasi %}
     <h5>
       Täna 100 aastat tagasi...
     </h5>
 
-    {% if andmed.isik.100_aastat_tagasi %}
+    {% if andmed.isik.sada_aastat_tagasi %}
       <div style="padding-top: 0.5em;">
-        {% for obj in andmed.isik.100_aastat_tagasi %}
+        {% for obj in andmed.isik.sada_aastat_tagasi %}
           {% if forloop.counter > 1 %}
             <br>
           {% endif %}
@@ -19,9 +19,9 @@
         {% endfor %}
       </div>
     {% endif %}
-    {% if andmed.organisatsioon.100_aastat_tagasi %}
+    {% if andmed.organisatsioon.sada_aastat_tagasi %}
       <div style="padding-top: 0.5em;">
-        {% for obj in andmed.organisatsioon.100_aastat_tagasi %}
+        {% for obj in andmed.organisatsioon.sada_aastat_tagasi %}
           {% if forloop.counter > 1 %}
             <br>
           {% endif %}
@@ -32,9 +32,9 @@
         {% endfor %}
       </div>
     {% endif %}
-    {% if andmed.objekt.100_aastat_tagasi %}
+    {% if andmed.objekt.sada_aastat_tagasi %}
       <div style="padding-top: 0.5em;">
-        {% for obj in andmed.objekt.100_aastat_tagasi %}
+        {% for obj in andmed.objekt.sada_aastat_tagasi %}
           {% if forloop.counter > 1 %}
             <br>
           {% endif %}
@@ -45,9 +45,9 @@
         {% endfor %}
       </div>
     {% endif %}
-    {% if andmed.artikkel.100_aastat_tagasi %}
+    {% if andmed.artikkel.sada_aastat_tagasi %}
       <div>
-        {% for obj in andmed.artikkel.100_aastat_tagasi %}
+        {% for obj in andmed.artikkel.sada_aastat_tagasi %}
           {% if forloop.counter > 1 %}
             <br>
           {% endif %}
@@ -62,7 +62,11 @@
   <!-- Sel päeval toimunud -->
   {% if andmed.artikkel.sel_p2eval %}
     <h5>
-      <a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}">
+      <a
+              style="text-decoration:none;"
+              href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}"
+              title="Näita kõiki {% now "j.m." %} ajaloos"
+      >
         {% now "j.m." %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_p2eval_kirjeid }}</span>
       </a>
     </h5>
@@ -71,9 +75,6 @@
         <br>
       {% endif %}
       <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
-{#      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}" #}
-{#        <strong>{{ obj.hist_year }}</strong>: #}
-{#      </a> #}
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
         {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
@@ -81,10 +82,24 @@
       {# Kui kirjed rohkem kui artikleid_max_split, siis hakime artikleid_max_split_half+1+artikleid_max_split_half  #}
       {% if andmed.artikkel.sel_p2eval_kirjeid > andmed.artikkel.artikleid_max_split %}
         {% if forloop.counter == andmed.artikkel.artikleid_max_split_half %}
-          <br><span class="w3-tiny text-artikkel"> - - - </span>
+          <br>
+          <a
+                  style="text-decoration:none;"
+                  href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}"
+                  title="Näita kõiki {% now "j.m." %} ajaloos"
+          >
+            [ . . . ]
+          </a>
         {% endif %}
         {% if forloop.counter == andmed.artikkel.artikleid_max_split_half|add:"1" %}
-          <br><span class="w3-tiny text-artikkel"> - - - </span>
+          <br>
+          <a
+                  style="text-decoration:none;"
+                  href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}"
+                  title="Näita kõiki {% now "j.m." %} ajaloos"
+          >
+            [ . . . ]
+          </a>
         {% endif %}
       {% endif %}
     {% endfor %}
@@ -99,7 +114,11 @@
   <!-- Sel kuul toimunud -->
   {% if andmed.artikkel.sel_kuul %}
     <h5>
-      <a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}">
+      <a
+              style="text-decoration:none;"
+              href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}"
+              title="Näita kõiki {% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos"
+      >
         {% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_kuul_kirjeid }}</span>
       </a>
     </h5>
@@ -108,19 +127,30 @@
         <br>
       {% endif %}
       <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
-{#      <a class="hover-artikkel" href="{% url 'wiki:artikkel_year_archive' year=obj.hist_year %}"> #}
-{#        <strong>{{ obj.hist_year }}</strong>: #}
-{#      </a> #}
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
       </a>
       {# Kui kirjed rohkem kui artikleid_max_split, siis hakime artikleid_max_split_half+1+artikleid_max_split_half  #}
       {% if andmed.artikkel.sel_kuul_kirjeid > andmed.artikkel.artikleid_max_split %}
         {% if forloop.counter == andmed.artikkel.artikleid_max_split_half %}
-          <br><span class="w3-tiny w3-text-artikkel"> - - - </span>
+          <br>
+          <a
+                  style="text-decoration:none;"
+                  href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}"
+                  title="Näita kõiki {% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos"
+          >
+            [ . . . ]
+          </a>
         {% endif %}
         {% if forloop.counter == andmed.artikkel.artikleid_max_split_half|add:"1" %}
-          <br><span class="w3-tiny w3-text-artikkel"> - - - </span>
+          <br>
+          <a
+                  style="text-decoration:none;"
+                  href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}"
+                  title="Näita kõiki {% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos"
+          >
+            [ . . . ]
+          </a>
         {% endif %}
       {% endif %}
     {% endfor %}

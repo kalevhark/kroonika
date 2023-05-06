@@ -263,7 +263,7 @@ ul.no-bullets li {
 .pilt-detail {
   border: 1px solid #ddd;
   border-radius: 4px;
-  padding: 5px;
+  /*padding: 5px;*/
   max-width: 100%;
 }
 
@@ -459,6 +459,8 @@ img.pilt-pildimodal {
   display: inline-block;       /* causes element width to shrink to fit content */
   left: 50%;                   /* moves left side of image/element to center of parent element */
   transform: translate(-50%);  /* centers image/element on "left: 50%" position */
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .caption-container {

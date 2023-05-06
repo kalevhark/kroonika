@@ -3,14 +3,14 @@
   {% if user.is_staff %}
     <a
         href="{% url 'admin:index' %}"
-        class="w3-bar-item w3-button w3-hide-small w3-text-grey w3-hover-white w3-right"
+        class="w3-bar-item w3-button w3-hide-small w3-text-grey w3-hover-white w3-right w3-round"
         title="Admin">
       <i class="fa fa-cog"></i>
     </a>
   {% else %}
     <a
         href="{% url 'account_email' %}"
-        class="w3-bar-item w3-button w3-hide-small w3-text-grey w3-hover-white w3-right"
+        class="w3-bar-item w3-button w3-hide-small w3-text-grey w3-hover-white w3-right w3-round"
         title="Muuda {{ user.username }} kontaktandmeid">
       <i class="fa fa-user"></i>
     </a>
@@ -26,7 +26,7 @@
       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
     {% endif %}
     <button
-            class="w3-bar-item w3-button w3-text-grey w3-hover-white w3-right"
+            class="w3-bar-item w3-button w3-text-grey w3-hover-white w3-right w3-round"
             type="submit"
             title="Logi välja kasutaja {{ user.username }}"
     >
@@ -36,13 +36,13 @@
 {% else %}
   <a
       href="{% url 'account_signup' %}?next={{ request.path }}"
-      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
+      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right w3-round"
       title="Registreeri">
     <i class="fa fa-user-plus"></i>
   </a>
   <a
       href="{% url 'account_login' %}?next={{ request.path }}"
-      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right"
+      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-text-grey w3-hover-white w3-right w3-round"
       title="Logi sisse">
     <i class="fa fa-sign-in"></i>
   </a>

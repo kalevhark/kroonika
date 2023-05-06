@@ -393,7 +393,7 @@ def feedback(request):
     return HttpResponseRedirect(http_referer)
 
 # Andmebaas Artikkel andmed veebi
-def get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
+def _get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
     a = dict()
     kirjeid = artikkel_qs.count()
     a['kirjeid'] = kirjeid
@@ -432,8 +432,8 @@ def get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
         else:
             a['sel_kuul'] = sel_kuul
         a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
-        # 100 aastat tagasi toimunud
-        a['100_aastat_tagasi'] = sel_p2eval_exactly.filter(dob__year = (aasta-100))
+        # sada aastat tagasi toimunud
+        a['sada_aastat_tagasi'] = sel_p2eval_exactly.filter(dob__year = (aasta-100))
         a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:40] # 40 loetumat artiklit
         # Koondnäitajad aastate ja kuude kaupa
         artikleid_aasta_kaupa = artikkel_qs.\
@@ -449,7 +449,7 @@ def get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
     return a
 
 # Andmebaas Isik andmed veebi
-def get_algus_isikud(request, p2ev, kuu, aasta):
+def _get_algus_isikud(request, p2ev, kuu, aasta):
     a = dict()
     isik_qs = Isik.objects.daatumitega(request)
     kirjeid = isik_qs.count()
@@ -457,7 +457,7 @@ def get_algus_isikud(request, p2ev, kuu, aasta):
     if kirjeid > 0:
         a['viimane_lisatud'] = isik_qs.latest('inp_date')
         a['viimane_muudetud'] = isik_qs.latest('mod_date')
-        a['100_aastat_tagasi'] = isik_qs.filter(
+        a['sada_aastat_tagasi'] = isik_qs.filter(
             dob__day=p2ev,
             dob__month=kuu,
             dob__year=(aasta - 100)
@@ -485,7 +485,7 @@ def get_algus_isikud(request, p2ev, kuu, aasta):
     return a
 
 # Andmebaas Organisatsioon andmed veebi
-def get_algus_organisatsioonid(request, p2ev, kuu, aasta):
+def _get_algus_organisatsioonid(request, p2ev, kuu, aasta):
     a = dict()
     organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
     kirjeid = organisatsioon_qs.count()
@@ -493,7 +493,7 @@ def get_algus_organisatsioonid(request, p2ev, kuu, aasta):
     if kirjeid > 0:
         a['viimane_lisatud'] = organisatsioon_qs.latest('inp_date')
         a['viimane_muudetud'] = organisatsioon_qs.latest('mod_date')
-        a['100_aastat_tagasi'] = organisatsioon_qs.filter(
+        a['sada_aastat_tagasi'] = organisatsioon_qs.filter(
             dob__day=p2ev,
             dob__month=kuu,
             dob__year=(aasta - 100)
@@ -512,7 +512,7 @@ def get_algus_organisatsioonid(request, p2ev, kuu, aasta):
     return a
 
 # Andmebaas Objekt andmed veebi
-def get_algus_objektid(request, p2ev, kuu, aasta):
+def _get_algus_objektid(request, p2ev, kuu, aasta):
     a = dict()
     objekt_qs = Objekt.objects.daatumitega(request)
     kirjeid = objekt_qs.count()
@@ -520,7 +520,7 @@ def get_algus_objektid(request, p2ev, kuu, aasta):
     if kirjeid > 0:
         a['viimane_lisatud'] = objekt_qs.latest('inp_date')
         a['viimane_muudetud'] = objekt_qs.latest('mod_date')
-        a['100_aastat_tagasi'] = objekt_qs.filter(
+        a['sada_aastat_tagasi'] = objekt_qs.filter(
             dob__day=p2ev,
             dob__month=kuu,
             dob__year=(aasta - 100)
@@ -539,7 +539,7 @@ def get_algus_objektid(request, p2ev, kuu, aasta):
     return a
 
 # Andmebaas Kaart andmed veebi
-def get_algus_kaart(request):
+def _get_algus_kaart(request):
     a = dict()
     z, x, y = 15, 18753, 9907  # näitamiseks valitud kaarditükk
     qs = Kaart.objects \
@@ -597,11 +597,11 @@ def algus(request):
     kuu = date.today().month # str(kuu).zfill(2) -> KK
     aasta = date.today().year
 
-    andmed['artikkel'] = get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs)
-    andmed['isik'] = get_algus_isikud(request, p2ev, kuu, aasta)
-    andmed['organisatsioon'] = get_algus_organisatsioonid(request, p2ev, kuu, aasta)
-    andmed['objekt'] = get_algus_objektid(request, p2ev, kuu, aasta)
-    andmed['kaart'] = get_algus_kaart(request)
+    andmed['artikkel'] = _get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs)
+    andmed['isik'] = _get_algus_isikud(request, p2ev, kuu, aasta)
+    andmed['organisatsioon'] = _get_algus_organisatsioonid(request, p2ev, kuu, aasta)
+    andmed['objekt'] = _get_algus_objektid(request, p2ev, kuu, aasta)
+    andmed['kaart'] = _get_algus_kaart(request)
 
     # # Andmed aasta ja kuu rippvalikumenüü jaoks
     # perioodid = artikkel_qs. \
@@ -626,13 +626,13 @@ def algus(request):
 
     kalender = get_algus_kalender(request, artikkel_qs)
 
-    # Kas on 100 aastat tagasi toimunud asju?
-    andmed['100_aastat_tagasi'] = any(
+    # Kas on sada aastat tagasi toimunud asju?
+    andmed['sada_aastat_tagasi'] = any(
         [
-            andmed['artikkel']['100_aastat_tagasi'],
-            andmed['isik']['100_aastat_tagasi'],
-            andmed['organisatsioon']['100_aastat_tagasi'],
-            andmed['objekt']['100_aastat_tagasi'],
+            andmed['artikkel']['sada_aastat_tagasi'],
+            andmed['isik']['sada_aastat_tagasi'],
+            andmed['organisatsioon']['sada_aastat_tagasi'],
+            andmed['objekt']['sada_aastat_tagasi'],
         ]
     )
 

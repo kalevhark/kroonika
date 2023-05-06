@@ -2,7 +2,7 @@
   {% with obj.profiilipildid.first as profiilipilt %}
     <div class="pilt-wiki-algus w3-row" >
       <img
-          class="pilt-{{ tyyp }}-small"
+          class="pilt-{{ tyyp }}-small w3-round"
           {% if profiilipilt.pilt.width > 400 %}
             src="{{ profiilipilt.pilt_thumbnail.url }}"
           {% else %}

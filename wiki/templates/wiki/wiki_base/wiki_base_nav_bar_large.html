@@ -9,7 +9,7 @@
   <a
           href="{% url 'algus' %}"
           title="Valga linna kroonika avalehele"
-          class="w3-bar-item w3-button w3-hover-white">
+          class="w3-bar-item w3-button w3-hover-white w3-round">
     <img
             src="{% static 'wiki/favicon-32x32.png' %}"
             style='max-height:22px;'
@@ -18,7 +18,7 @@
   </a>
   <a
       href="{% url 'algus' %}"
-      class="w3-bar-item w3-button w3-hover-white">
+      class="w3-bar-item w3-button w3-hover-white w3-round">
     <i
         id="wiki_start_icon"
         style="display: inline-block; margin-right: 10px;"
@@ -33,7 +33,7 @@
   <a
       href="{% url 'wiki:otsi' %}"
       title="Otsi valitud fraasi järgi"
-      class="w3-bar-item w3-button w3-hide-small w3-hover-white">
+      class="w3-bar-item w3-button w3-hide-small w3-hover-white w3-round">
     <i
         id="wiki_search_icon"
         class="fa fa-search"
@@ -43,7 +43,7 @@
 
   {# Tagasiside saatmiseks #}
   <a
-      class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+      class="w3-bar-item w3-button w3-hide-small w3-hover-white w3-round"
       id="wiki_base_feedback"
       title="Märkasid viga või oskad täiendada?"
       onclick="showFeedback()">
@@ -53,54 +53,54 @@
   {# Lingid erilehtedele #}
   <a
       href="{% url 'kaart' %}"
-      class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+      class="w3-bar-item w3-button w3-hide-small w3-hover-white w3-round"
       title="Ajaloolised kaardid">
     <i class="fa fa-map-o"></i>
   </a>
   <a
       href="{% url 'info' %}"
-      class="w3-bar-item w3-button w3-hide-small w3-hover-white"
+      class="w3-bar-item w3-button w3-hide-small w3-hover-white w3-round"
       title="Projektist">
     <i class="fa fa-info"></i>
   </a>
   <a
       href="{% url 'blog:blog_index' %}"
       id="wiki_base_blog"
-      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
+      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-round"
       title="Blogi">
     <i class="{% icon_artikkel %}s-o"></i>
   </a>
   <a
       href="{% url 'ilm:index' %}"
-      class="w3-bar-item w3-button w3-hover-white"
+      class="w3-bar-item w3-button w3-hover-white w3-round"
       title="Valga linna ilm">
     <i class="fa fa-thermometer"></i>
   </a>
   <a
       href="https://et.wikipedia.org/wiki/Valga"
       target="blank"
-      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
+      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-round"
       title="Valga linn Wikipedia">
     <i class="fa fa-wikipedia-w"></i>
   </a>
   <a
       href="https://www.facebook.com/valgalinn/"
       target="blank"
-      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
+      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-round"
       title="Valga linn Facebook">
     <i class="fa fa-facebook-official"></i>
   </a>
   <a
       href="https://www.instagram.com/valgalinn/"
       target="blank"
-      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white"
+      class="w3-bar-item w3-button w3-hide-medium w3-hide-small w3-hover-white w3-round"
       title="Valga linn Instagram">
     <i class="fa fa-instagram"></i>
   </a>
   <a
       id="rightMenuLink"
       href="javascript:void(0)"
-      class="w3-bar-item w3-button w3-hide-large w3-right"
+      class="w3-bar-item w3-button w3-hide-large w3-right w3-round"
       onclick="toggleRightMenu()">
     &#9776;
   </a>
