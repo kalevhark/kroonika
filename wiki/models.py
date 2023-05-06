@@ -750,10 +750,11 @@ class Objekt(models.Model):
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
         tekst = add_markdown_objectid(tekst)
-        tekst = add_markdownx_pildid(tekst)
+        # tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
-        # return markdownify(escape_numberdot(tekst) + viite_string)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+        markdownified_text = add_markdownx_pildid(markdownified_text)
         if viite_string: # viidete puhul ilmneb markdownx viga
             return fix_markdownified_text(markdownified_text)
         else:
@@ -964,10 +965,12 @@ class Organisatsioon(models.Model):
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
         tekst = add_markdown_objectid(tekst)
-        tekst = add_markdownx_pildid(tekst)
+        # tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
         # return markdownify(escape_numberdot(tekst) + viite_string)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+        markdownified_text = add_markdownx_pildid(markdownified_text)
         if viite_string:  # viidete puhul ilmneb markdownx viga
             return fix_markdownified_text(markdownified_text)
         else:
@@ -1236,10 +1239,12 @@ class Isik(models.Model):
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
         tekst = add_markdown_objectid(tekst)
-        tekst = add_markdownx_pildid(tekst)
+        # tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
         # return markdownify(escape_numberdot(tekst) + viite_string)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+        markdownified_text = add_markdownx_pildid(markdownified_text)
         if viite_string:  # viidete puhul ilmneb markdownx viga
             return fix_markdownified_text(markdownified_text)
         else:
@@ -1579,9 +1584,10 @@ class Artikkel(models.Model):
     def formatted_markdown(self):
         tekst = self.body_text
         tekst = add_markdown_objectid(tekst)
-        tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+        markdownified_text = add_markdownx_pildid(markdownified_text)
         if viite_string:  # viidete puhul ilmneb markdownx viga
             return fix_markdownified_text(markdownified_text)
         else:
