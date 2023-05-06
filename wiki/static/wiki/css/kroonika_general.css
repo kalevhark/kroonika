@@ -1,4 +1,4 @@
-/* ver 2022.12 */
+/* ver 2023.05 */
 html, body, p, h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", sans-serif;
 }
@@ -468,6 +468,7 @@ img.pilt-pildimodal {
   background-color: rgba(0,0,0,0.4);
   padding: 2px 16px;
   color: white;
+  border-radius: 4px;
 }
 
 /* Avakuva ikoonide dropdown css */
