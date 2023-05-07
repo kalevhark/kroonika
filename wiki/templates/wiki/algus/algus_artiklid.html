@@ -14,7 +14,7 @@
           {% endif %}
           <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
             ...sündis <strong>{{ obj }}</strong>
-            {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
+            {% include 'wiki/algus/algus_pilt.html' with tyyp='portree' %}
           </a>
         {% endfor %}
       </div>
@@ -27,7 +27,7 @@
           {% endif %}
           <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
             ...asutati <strong>{{ obj }}</strong>
-            {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+            {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
           </a>
         {% endfor %}
       </div>
@@ -40,7 +40,7 @@
           {% endif %}
           <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
             ...valmis <strong>{{ obj }}</strong>
-            {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+            {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
           </a>
         {% endfor %}
       </div>
@@ -53,17 +53,19 @@
           {% endif %}
           <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
             <strong>... </strong>{{ obj.body_text|truncatewords:10 }}
-            {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+            {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
           </a>
         {% endfor %}
       </div>
     {% endif %}
   {% endif %}
+
   <!-- Sel päeval toimunud -->
   {% if andmed.artikkel.sel_p2eval %}
     <h5>
       <a
-              style="text-decoration:none;"
+{#              style="text-decoration:none;"#}
+              class="hover-artikkel"
               href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}"
               title="Näita kõiki {% now "j.m." %} ajaloos"
       >
@@ -77,14 +79,15 @@
       <strong>{% include 'wiki/includes/date_year.html' with obj=obj %}</strong>
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
         {{ obj.body_text|truncatewords:10 }}
-        {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+        {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
       </a>
       {# Kui kirjed rohkem kui artikleid_max_split, siis hakime artikleid_max_split_half+1+artikleid_max_split_half  #}
       {% if andmed.artikkel.sel_p2eval_kirjeid > andmed.artikkel.artikleid_max_split %}
         {% if forloop.counter == andmed.artikkel.artikleid_max_split_half %}
           <br>
           <a
-                  style="text-decoration:none;"
+{#                  style="text-decoration:none;"#}
+                  class="hover-artikkel"
                   href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}"
                   title="Näita kõiki {% now "j.m." %} ajaloos"
           >
@@ -94,7 +97,8 @@
         {% if forloop.counter == andmed.artikkel.artikleid_max_split_half|add:"1" %}
           <br>
           <a
-                  style="text-decoration:none;"
+{#                  style="text-decoration:none;"#}
+                  class="hover-artikkel"
                   href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}"
                   title="Näita kõiki {% now "j.m." %} ajaloos"
           >
@@ -111,11 +115,13 @@
       </p>
     {% endif %}
   {% endif %}
+
   <!-- Sel kuul toimunud -->
   {% if andmed.artikkel.sel_kuul %}
     <h5>
       <a
-              style="text-decoration:none;"
+{#              style="text-decoration:none;"#}
+              class="hover-artikkel"
               href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}"
               title="Näita kõiki {% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos"
       >
@@ -135,7 +141,8 @@
         {% if forloop.counter == andmed.artikkel.artikleid_max_split_half %}
           <br>
           <a
-                  style="text-decoration:none;"
+{#                  style="text-decoration:none;"#}
+                  class="hover-artikkel"
                   href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}"
                   title="Näita kõiki {% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos"
           >
@@ -145,7 +152,8 @@
         {% if forloop.counter == andmed.artikkel.artikleid_max_split_half|add:"1" %}
           <br>
           <a
-                  style="text-decoration:none;"
+{#                  style="text-decoration:none;"#}
+                  class="hover-artikkel"
                   href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}"
                   title="Näita kõiki {% include 'wiki/includes/kuul.html' with kuu=kuu %} ajaloos"
           >
@@ -162,10 +170,12 @@
       </p>
     {% endif %}
   {% endif %}
-  <!-- top10 -->
+
+  <!-- top -->
   {% if andmed.artikkel.loetumad %}
     <h5>
-      loetumad
+      {% model_name_artikkel as model_name_artikkel %}
+      loetumad {{ model_name_artikkel|lower }}
     </h5>
     {% for obj in andmed.artikkel.loetumad %}
       {% if forloop.counter > 1 %}

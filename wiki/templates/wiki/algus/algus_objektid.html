@@ -3,8 +3,8 @@
         class="card w3-round w3-hide-large w3-hide-medium"
 >
   <a
-    class="w3-tooltip"
-    style="text-decoration: none;"
+{#    class="w3-tooltip"#}
+{#    style="text-decoration: none;"#}
     href="{% url 'wiki:wiki_objekt_filter' %}"
   >
     <div
@@ -22,8 +22,10 @@
 {% if andmed.objekt.sel_p2eval %}
   <h5>
     <a
-        style="text-decoration:none;"
-        href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_objektid"
+{#        style="text-decoration:none;"#}
+            class="hover-objekt"
+            href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_objektid"
+            title="Kõik {% now "j.m." %} valminud/avatud"
     >
       {% now "j.m." %} valminud/avatud <span class="w3-badge background-objekt">{{ andmed.objekt.sel_p2eval_kirjeid }}</span>
     </a>
@@ -48,7 +50,7 @@
       {% if obj.vanus|divisibleby:"5" %}
         &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
       {% endif %}
-      {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+      {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
     </a>
   {% endfor %}
 {% endif %}
@@ -56,8 +58,10 @@
   {% now "m" as kuu %}
   <h5>
     <a
-        style="text-decoration:none;"
-        href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_objektid"
+{#            style="text-decoration:none;"#}
+            class="hover-objekt"
+            href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_objektid"
+            title="Kõik {% include 'wiki/includes/kuul.html' with kuu=kuu %} valminud/avatud"
     >
       {% include 'wiki/includes/kuul.html' with kuu=kuu %} valminud/avatud  <span class="w3-badge background-objekt">{{ andmed.objekt.sel_kuul.count }}</span>
     </a>
@@ -88,8 +92,10 @@
 {% if andmed.objekt.juubilarid %}
   <h5>
     <a
-        style="text-decoration:none;"
-        href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_objektid"
+{#            style="text-decoration:none;"#}
+            class="hover-objekt"
+            href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_objektid"
+            title="Kõik {% now "Y" %} juubilarid"
     >
       {% now "Y" %} juubilarid <span class="w3-badge background-objekt">{{ andmed.objekt.juubilarid.count }}</span>
     </a>
@@ -108,7 +114,7 @@
             id='{{ obj|get_model_name }}_{{ obj.id }}_juubilarid'>
         {{ obj }}&nbsp;<b>{{ obj.vanus }}</b>
       </span>
-      {% include 'wiki/includes/algus_pilt.html' with tyyp='postkaart' %}
+      {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
     </a>
   {% endfor %}
 {% endif %}

@@ -1,0 +1,194 @@
+{% load static %}
+{% load wiki_extras %}
+
+{#<style>#}
+  {#* {box-sizing: border-box}#}
+{#  .tile-slides {display: none}#}
+{##}
+{#  .tile-img {vertical-align: middle;}#}
+{##}
+{#  /* Slideshow container */#}
+{#  .tile-img-slideshow-container {#}
+{#    max-width: 1000px;#}
+{#    position: relative;#}
+{#    margin: auto;#}
+{#  }#}
+{#  #}
+{#  /* Next & previous buttons */#}
+{#  .tile-img-prev, .tile-img-next {#}
+{#    cursor: pointer;#}
+{#    position: absolute;#}
+{#    top: 50%;#}
+{#    width: auto;#}
+{#    padding: 16px;#}
+{#    margin-top: -22px;#}
+{#    color: black;#}
+{#    font-weight: bold;#}
+{#    font-size: 18px;#}
+{#    transition: 0.6s ease;#}
+{#    border-radius: 0 3px 3px 0;#}
+{#    user-select: none;#}
+{#  }#}
+{#  #}
+{#  /* Position the "next button" to the right */#}
+{#  .tile-img-next {#}
+{#    right: 0;#}
+{#    border-radius: 3px 0 0 3px;#}
+{#  }#}
+{#  #}
+{#  /* On hover, add a black background color with a little bit see-through */#}
+{#  .tile-img-prev:hover, .tile-img-next:hover {#}
+{#    background-color: rgba(255,255,255,0.8);#}
+{#  }#}
+{#  #}
+{#  /* Caption text */#}
+{#  .tile-img-captiontext {#}
+{#    color: black;#}
+{#    background-color: rgba(255,255,255,0.8);#}
+{#    font-size: 15px;#}
+{#    padding: 8px 12px;#}
+{#    position: absolute;#}
+{#    bottom: 8px;#}
+{#    width: 100%;#}
+{#    text-align: center;#}
+{#  }#}
+{#  #}
+{#  /* Number text (1/3 etc) */#}
+{#  .tile-img-numbertext {#}
+{#    color: black;#}
+{#    background-color: rgba(255,255,255,0.8);#}
+{#    font-size: 12px;#}
+{#    padding: 8px 12px;#}
+{#    position: absolute;#}
+{#    top: 0;#}
+{#  }#}
+{#  #}
+{#  /* The dots/bullets/indicators */#}
+{#  .tile-img-dot {#}
+{#    cursor: pointer;#}
+{#    height: 15px;#}
+{#    width: 15px;#}
+{#    margin: 0 2px;#}
+{#    background-color: #bbb;#}
+{#    border-radius: 50%;#}
+{#    display: inline-block;#}
+{#    transition: background-color 0.6s ease;#}
+{#  }#}
+{#  #}
+{#  .active, .tile-img-dot:hover {#}
+{#    background-color: #717171;#}
+{#  }#}
+{#  #}
+{#  /* Fading animation */#}
+{#  .tile-img-fade {#}
+{#    -webkit-animation-name: tile-img-fade;#}
+{#    -webkit-animation-duration: 1.5s;#}
+{#    animation-name: tile-img-fade;#}
+{#    animation-duration: 1.5s;#}
+{#  }#}
+{#  #}
+{#  @-webkit-keyframes tile-img-fade {#}
+{#    from {opacity: .4}#}
+{#    to {opacity: 1}#}
+{#  }#}
+{#  #}
+{#  @keyframes tile-img-fade {#}
+{#    from {opacity: .4}#}
+{#    to {opacity: 1}#}
+{#  }#}
+{#  #}
+{#  /* On smaller screens, decrease text size */#}
+{#  @media only screen and (max-width: 300px) {#}
+{#    .tile-img-prev, .tile-img-next, .tile-img-captiontext {font-size: 11px}#}
+{#  }#}
+{#</style>#}
+
+<div
+          class="card w3-round w3-hide-large w3-hide-medium"
+          id="card-kaart"
+  >
+    <a
+      class="w3-tooltip"
+{#      style="text-decoration: none;"#}
+      href="{% url 'wiki:wiki_kaardiobjekt_filter' %}"
+    >
+      <div
+              class="w3-container w3-round background-objekt w3-padding-16 icon"
+              id="icon-kaart"
+      >
+        <div class="w3-left">
+            <i class="fa fa-map w3-xxxlarge"></i>
+        </div>
+        <div class="w3-right">
+          <h4>{% model_name_kaart %} ({{ andmed.kaart.kirjeid }})</h4>
+        </div>
+      </div>
+    </a>
+  </div>
+
+<div class="tile-img-slideshow-container">
+  {% for kaart in andmed.kaart.kaardid %}
+
+    <div class="tile-slides tile-img-fade">
+      <a
+{#              style="text-decoration: none;"#}
+              href="{% url 'kaart' aasta=kaart.aasta %}"
+              title="Ava {{ kaart.aasta }}. aasta kaart"
+      >
+        <img
+                class="tile-img w3-round"
+                src="{{ kaart.sample_tile }}"
+                style="width:100%"
+                alt="{{ kaart.aasta }}. aasta kaarditükk"
+        >
+      </a>
+      <div class="tile-img-captiontext w3-hide-medium">
+        {{ kaart }}
+      </div>
+      <div class="tile-img-captiontext w3-hide-large w3-hide-small">
+        {{ kaart.aasta }}
+      </div>
+    </div>
+
+  {% endfor %}
+
+  <a class="tile-img-prev" onclick="plusSlides(-1)">&#10094;</a>
+  <a class="tile-img-next" onclick="plusSlides(1)">&#10095;</a>
+
+</div>
+<br>
+
+<div style="text-align:center">
+  {% for kaart in andmed.kaart.kaardid %}
+    <span class="tile-img-dot" title='{{ kaart.aasta }}. aasta' onclick="currentSlide({{ forloop.counter }})"></span>
+  {% endfor %}
+</div>
+
+<script>
+  var slideIndex = 1;
+  showSlides(slideIndex);
+
+  function plusSlides(n) {
+    showSlides(slideIndex += n);
+  }
+
+  function currentSlide(n) {
+    showSlides(slideIndex = n);
+  }
+
+  function showSlides(n) {
+    var i;
+    var slides = document.getElementsByClassName("tile-slides");
+    var dots = document.getElementsByClassName("tile-img-dot");
+    if (n > slides.length) {slideIndex = 1}
+    if (n < 1) {slideIndex = slides.length}
+    for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+    }
+    for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+    }
+    slides[slideIndex-1].style.display = "block";
+    dots[slideIndex-1].className += " active";
+  }
+</script>

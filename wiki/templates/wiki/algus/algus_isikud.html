@@ -2,7 +2,11 @@
 <div
         class="card w3-round w3-hide-large w3-hide-medium"
 >
-  <a style="text-decoration: none;" href="{% url 'wiki:wiki_isik_filter' %}">
+  <a
+{#          style="text-decoration: none;" #}
+          class="hover-isik"
+          href="{% url 'wiki:wiki_isik_filter' %}"
+  >
     <div
             class="w3-container w3-round background-isik w3-padding-16 icon"
     >
@@ -17,7 +21,12 @@
 </div>
 {% if andmed.isik.sel_p2eval %}
   <h5>
-    <a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_syndinud">
+    <a
+{#            style="text-decoration:none;" #}
+            class="hover-isik"
+            href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_syndinud"
+            title="Kõik {% now "j.m." %} sündinud"
+    >
       {% now "j.m." %} sündinud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_kirjeid }}</span>
     </a>
   </h5>
@@ -42,13 +51,18 @@
           &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
         {% endif %}
       </span>
-      {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
+      {% include 'wiki/algus/algus_pilt.html' with tyyp='portree' %}
     </a>
   {% endfor %}
 {% endif %}
 {% if andmed.isik.sel_kuul %}
   <h5>
-    <a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_isikud_syndinud">
+    <a
+{#            style="text-decoration:none;" #}
+            class="hover-isik"
+            href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_isikud_syndinud"
+            title="Kõik {% include 'wiki/includes/kuul.html' with kuu=kuu %} sündinud"
+    >
       {% include 'wiki/includes/kuul.html' with kuu=kuu %} sündinud <span class="w3-badge background-isik">{{ andmed.isik.sel_kuul_kirjeid }}</span>
     </a>
   </h5>
@@ -71,14 +85,19 @@
         {% endif %}
       </span>
       {% if obj.vanus|divisibleby:"5" %}
-        {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
+        {% include 'wiki/algus/algus_pilt.html' with tyyp='portree' %}
       {% endif %}
     </a>
   {% endfor %}
 {% endif %}
 {% if andmed.isik.juubilarid %}
   <h5>
-    <a style="text-decoration:none;" href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_isikud_syndinud">
+    <a
+{#            style="text-decoration:none;" #}
+            class="hover-isik"
+            href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_isikud_syndinud"
+            title="Kõik {% now "Y" %} juubilarid"
+    >
       {% now "Y" %} juubilarid <span class="w3-badge background-isik">{{ andmed.isik.juubilarid.count }}</span>
     </a>
   </h5>
@@ -97,14 +116,19 @@
       >
         {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}  <b>{{ obj.vanus }}</b>
       </span>
-      {% include 'wiki/includes/algus_pilt.html' with tyyp='portree' %}
+      {% include 'wiki/algus/algus_pilt.html' with tyyp='portree' %}
     </a>
   {% endfor %}
 {% endif %}
 {% if andmed.isik.sel_p2eval_surnud %}
   <hr>
   <h5>
-    <a style="text-decoration:none;" href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_surnud">
+    <a
+{#            style="text-decoration:none;" #}
+            class="hover-isik"
+            href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_surnud"
+            title="Kõik {% now "j.m." %} surnud"
+    >
       {% now "j.m." %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_surnud_kirjeid }}</span>
     </a>
   </h5>
@@ -128,7 +152,12 @@
 {% endif %}
 {% if andmed.isik.sel_kuul_surnud %}
   <h5>
-    <a style="text-decoration:none;" href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_isikud_surnud">
+    <a
+            style="text-decoration:none;"
+            class="hover-isik"
+            href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_isikud_surnud"
+            title="Kõik {% include 'wiki/includes/kuul.html' with kuu=kuu %} surnud"
+    >
       {% include 'wiki/includes/kuul.html' with kuu=kuu %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_kuul_surnud_kirjeid }}</span>
     </a>
   </h5>

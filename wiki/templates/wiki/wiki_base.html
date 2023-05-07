@@ -8,230 +8,230 @@
     prefix="og: http://ogp.me/ns#"
 >
 
-<head>
-  <meta charset="utf-8">
-  <link rel="canonical" href="{{ request.build_absolute_uri }}" />
-  <link rel="shortlink" href="{{ request.build_absolute_uri }}" />
-  <!-- Required meta tags -->
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <head>
+    <meta charset="utf-8">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}" />
+    <link rel="shortlink" href="{{ request.build_absolute_uri }}" />
+    <!-- Required meta tags -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-  <link rel="shortcut icon" href="{% static 'wiki/favicon.ico' %}">
-  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'wiki/apple-touch-icon.png' %}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'wiki/favicon-32x32.png' %}">
-  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'wiki/favicon-16x16.png' %}">
-  <link rel="manifest" href="{% static 'wiki/site.webmanifest' %}">
+    <link rel="shortcut icon" href="{% static 'wiki/favicon.ico' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'wiki/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'wiki/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'wiki/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'wiki/site.webmanifest' %}">
 
-  <meta name="description" content="Valga linna kroonika. Lood, inimesed, asutised ja kohad Valga linna ajaloost." />
-  <meta name="keywords" content="{% if object %}{{ object.keywords }}{% else %}{% keywords %}{% endif %}" />
-  <meta name="author" content="{% kalev %}" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <!-- Microsoft bing -->
-  <meta name="msvalidate.01" content="0EE01D4CD04ABA5D4C9C17D1CB2A2928" />
-  <!-- OGP kirjeldus -->
-  {% include 'wiki/wiki_base/wiki_base_ogp.html' %}
-  <!-- JSON-LD markup -->
-  {% include 'wiki/wiki_base/wiki_base_json-ld.html' %}
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>
+    <meta name="description" content="Valga linna kroonika. Lood, inimesed, asutised ja kohad Valga linna ajaloost." />
+    <meta name="keywords" content="{% if object %}{{ object.keywords }}{% else %}{% keywords %}{% endif %}" />
+    <meta name="author" content="{% kalev %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Microsoft bing -->
+    <meta name="msvalidate.01" content="0EE01D4CD04ABA5D4C9C17D1CB2A2928" />
+    <!-- OGP kirjeldus -->
+    {% include 'wiki/wiki_base/wiki_base_ogp.html' %}
+    <!-- JSON-LD markup -->
+    {% include 'wiki/wiki_base/wiki_base_json-ld.html' %}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-151102639-1');
+    </script>
+
+    {# Laetavad moodulid#}
+    <!-- jQuery -->
+    {% block jquery_src %}
+      <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/jquery-ui.min.js"></script>
+    {% endblock jquery_src %}
+    <!-- Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=grecaptcha_onload"></script>
+    <!-- wiki teegid -->
+    <script src="{% static 'wiki/js/wiki.js'%}?ver=2022.11.20a"></script>
+    {% block src %}{% endblock %}
+
+    <!-- CSS -->
+    {# <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" #}
+    <link rel="stylesheet" href="{% static 'wiki/css/w3.css' %}?ver=2021.05">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    {# Custom CSS #}
+    <link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}?ver=2023.05.07">
+    {% block jquery_css %}
+      <link rel="stylesheet" href="{% static 'wiki/jquery-ui-1.13.1.custom/jquery-ui.css' %}?ver=2022.01">
+    {% endblock jquery_css %}
+    {# Alternatiivsed värvivalikud metro või colorful #}
+    <link rel="stylesheet" href="{% static 'wiki/css/kroonika_color_metro.css' %}?ver=2023.1">
+    {# <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}>#}
+    {% block css %}{% endblock %}
+
+    <title>
+      {% block title %}Valga linna kroonika{% endblock %}
+    </title>
+    {% block extra_head %}{% endblock %}
+  </head>
+
+
+  <body class="Site w3-light-grey">
+    {% block body %}
+    {# Facebook plugin #}
+    {% include 'wiki/wiki_base/wiki_base_facebook_plugin.html' %}
+    <header>
+      <nav id="wiki_nav">
+        <!-- Navbar large-->
+        {% include 'wiki/wiki_base/wiki_base_nav_bar_large.html' %}
+        <!-- Navbar on small screens -->
+        {% include 'wiki/wiki_base/wiki_base_nav_bar_small.html' %}
+      </nav>
+    </header>
+
+    <main class="Site-content">
+      <div class="w3-container">
+        {# Süsteemiteadete näitamiseks #}
+        {% include 'wiki/wiki_base/wiki_base_body_messages.html' %}
+        {# Tagasiside vorm #}
+        <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">
+          {% crispy feedbackform %}
+        </div>
+        {# Search on small screens #}
+        {% include 'wiki/wiki_base/wiki_base_body_search_small.html' %}
+      </div>
+
+      {% block content %}{% endblock content %}
+    </main>
+
+    <footer id="footer" class="footer">
+      {% include 'wiki/wiki_base/wiki_base_body_footer.html' %}
+    </footer>
+    {% endblock body %}
+    {% block extra_body %}{% endblock extra_body %}
+  </body>
+
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'UA-151102639-1');
+  // Töötleb kõik reCAPTCHAga varustatud vormid
+  function grecaptcha_onload() {
+    $('.g-recaptcha-response').each(function( k, v ) {
+      var submit = $(v).closest("form").find('[type="submit"]');
+      grecaptcha.render( submit[0], {
+        'sitekey' : '{% recaptcha_public_key %}',
+        'callback' : function( token ) {
+          $(v).closest("form").find('.g-recaptcha-response').val( token );
+          $(v).closest("form").submit();
+        },
+        'size' : 'invisible',
+      });
+    });
+  }
+
+  function showCalendarTypeSwitch() {
+    let ukj_state = '{{ request.session.ukj }}'
+
+    // näitame kalendrivahetuse nuppu ja valime salvetatud seisu
+    var checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
+    checkboxUkjVkj.style.visibility = 'visible';
+    document.getElementById("checkbox1").checked = ukj_state === 'on';
+    // Loome triggeri, kui kalendrisüsteemi valik muutub
+    $("#checkbox1").on('change', function() {
+      let ukj_state = document.getElementById("checkbox1").checked;
+      if (ukj_state) {
+          ukj = 'on';
+        } else {
+          ukj = 'off';
+      }
+      switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
+      var oReq = new XMLHttpRequest();
+      oReq.onload = function(e) {
+        location.reload();
+      }
+      oReq.open("GET", switch_url);
+      oReq.send();
+    });
+  }
+
+  {% if COOKIE_CONSENT_INUSE %}
+  function showCookieConsent(){
+    //Change these values
+    const msg = (
+      'valgalinn.ee kasutab mugavama sirvimise huvides küpsiseid. ' +
+      '<a href="{% url 'privacy' %}">Lisateave.</a>'
+    );
+    const cname = 'CookieOK';
+    const closeBtnMsg = "Sain aru";
+    // var privacyLink = "https://www.google.com";
+
+    //check cookies
+    if(document.cookie){
+      var cookieString = document.cookie;
+      var cookieList = cookieString.split(";");
+      // if cookie named [cname] is found, return
+      for(x = 0; x < cookieList.length; x++){
+        if (cookieList[x].indexOf(cname) !== -1){return}
+      }
+    }
+
+    var docRoot = document.body;
+    var okC = document.createElement("div");
+    okC.setAttribute("id", "okCookie");
+    var okCp = document.createElement("p");
+    var okcText = document.createTextNode('');
+
+    //close button
+    var okCclose = document.createElement("a");
+    var okcCloseText = document.createTextNode(closeBtnMsg);
+    okCclose.setAttribute("href", "#");
+    okCclose.setAttribute("id", "okClose");
+    okCclose.appendChild(okcCloseText);
+    okCclose.addEventListener("click", closeCookie, false);
+
+    //add to DOM
+    okCp.appendChild(okcText);
+    okCp.innerHTML = msg;
+    okC.appendChild(okCp);
+    okC.appendChild(okCclose);
+    docRoot.appendChild(okC);
+
+    okC.classList.add("okcBeginAnimate");
+
+    function closeCookie(){
+      const now = new Date();
+      var cookieExpire = new Date();
+      cookieExpire.setFullYear(cookieExpire.getFullYear() +2);
+      const elements = [
+        cname + '=' + now.getTime(),
+        'expires=' + cookieExpire.toGMTString(),
+        'path=/'
+      ];
+      document.cookie=elements.join('; ')
+      docRoot.removeChild(okC);
+    }
+  }
+  {% endif %}
+
+  $(document).ready( function() {
+    // Navigatsiooniribal kalendrivalikute lyliti
+    showCalendarTypeSwitch();
+    // Navigatsiooniribal ikoonide värvimisega info andmine
+    showFeedBackInfo();
+    // Cookie consent
+    {% if COOKIE_CONSENT_INUSE %}showCookieConsent();{% endif %}
+    // Navigatsiooniriba asukoha kontrollimiseks
+    window.addEventListener('scroll', throttle(onScroll, 25));
+    // Kuupäevaväljade unikaalsete id-de lisamine
+    let dates = document.body.getElementsByClassName('date');
+    let counter = 0;
+    for (let i = 0; i < dates.length; i++) {
+      if (!dates[i].id) {
+        dates[i].id = "_date_" + counter++;
+      }
+    }
+    // initialize tooltips
+    var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
+    getObjectData4tooltip(get_object_data4tooltip_url);
+  });
   </script>
 
-  {# Laetavad moodulid#}
-  <!-- jQuery -->
-  {% block jquery_src %}
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/jquery-ui.min.js"></script>
-  {% endblock jquery_src %}
-  <!-- Google reCAPTCHA -->
-  <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=grecaptcha_onload"></script>
-  <!-- wiki teegid -->
-  <script src="{% static 'wiki/js/wiki.js'%}?ver=2022.11.20a"></script>
-  {% block src %}{% endblock %}
-
-  <!-- CSS -->
-  {# <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" #}
-  <link rel="stylesheet" href="{% static 'wiki/css/w3.css' %}?ver=2021.05">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  {# Custom CSS #}
-  <link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}?ver=2022.12">
-  {% block jquery_css %}
-    <link rel="stylesheet" href="{% static 'wiki/jquery-ui-1.13.1.custom/jquery-ui.css' %}?ver=2022.01">
-  {% endblock jquery_css %}
-  {# Alternatiivsed värvivalikud metro või colorful #}
-  <link rel="stylesheet" href="{% static 'wiki/css/kroonika_color_metro.css' %}?ver=2023.1">
-  {# <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}>#}
-  {% block css %}{% endblock %}
-
-  <title>
-    {% block title %}Valga linna kroonika{% endblock %}
-  </title>
-  {% block extra_head %}{% endblock %}
-</head>
-
-
-<body class="Site w3-light-grey">
-  {% block body %}
-  {# Facebook plugin #}
-  {% include 'wiki/wiki_base/wiki_base_facebook_plugin.html' %}
-  <header>
-    <nav id="wiki_nav">
-      <!-- Navbar large-->
-      {% include 'wiki/wiki_base/wiki_base_nav_bar_large.html' %}
-      <!-- Navbar on small screens -->
-      {% include 'wiki/wiki_base/wiki_base_nav_bar_small.html' %}
-    </nav>
-  </header>
-
-  <main class="Site-content">
-    <div class="w3-container">
-      {# Süsteemiteadete näitamiseks #}
-      {% include 'wiki/wiki_base/wiki_base_body_messages.html' %}
-      {# Tagasiside vorm #}
-      <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">
-        {% crispy feedbackform %}
-      </div>
-      {# Search on small screens #}
-      {% include 'wiki/wiki_base/wiki_base_body_search_small.html' %}
-    </div>
-
-    {% block content %}{% endblock content %}
-  </main>
-
-  <footer id="footer" class="footer">
-    {% include 'wiki/wiki_base/wiki_base_body_footer.html' %}
-  </footer>
-  {% endblock body %}
-  {% block extra_body %}{% endblock extra_body %}
-</body>
-
-<script>
-// Töötleb kõik reCAPTCHAga varustatud vormid
-function grecaptcha_onload() {
-  $('.g-recaptcha-response').each(function( k, v ) {
-    var submit = $(v).closest("form").find('[type="submit"]');
-    grecaptcha.render( submit[0], {
-      'sitekey' : '{% recaptcha_public_key %}',
-      'callback' : function( token ) {
-        $(v).closest("form").find('.g-recaptcha-response').val( token );
-        $(v).closest("form").submit();
-      },
-      'size' : 'invisible',
-    });
-  });
-}
-
-function showCalendarTypeSwitch() {
-  let ukj_state = '{{ request.session.ukj }}'
-
-  // näitame kalendrivahetuse nuppu ja valime salvetatud seisu
-  var checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
-  checkboxUkjVkj.style.visibility = 'visible';
-  document.getElementById("checkbox1").checked = ukj_state === 'on';
-  // Loome triggeri, kui kalendrisüsteemi valik muutub
-  $("#checkbox1").on('change', function() {
-    let ukj_state = document.getElementById("checkbox1").checked;
-    if (ukj_state) {
-        ukj = 'on';
-      } else {
-        ukj = 'off';
-    }
-    switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
-    var oReq = new XMLHttpRequest();
-    oReq.onload = function(e) {
-      location.reload();
-    }
-    oReq.open("GET", switch_url);
-    oReq.send();
-  });
-}
-
-{% if COOKIE_CONSENT_INUSE %}
-function showCookieConsent(){
-  //Change these values
-  const msg = (
-    'valgalinn.ee kasutab mugavama sirvimise huvides küpsiseid. ' +
-    '<a href="{% url 'privacy' %}">Lisateave.</a>'
-  );
-  const cname = 'CookieOK';
-  const closeBtnMsg = "Sain aru";
-  // var privacyLink = "https://www.google.com";
-
-  //check cookies
-  if(document.cookie){
-    var cookieString = document.cookie;
-    var cookieList = cookieString.split(";");
-    // if cookie named [cname] is found, return
-    for(x = 0; x < cookieList.length; x++){
-      if (cookieList[x].indexOf(cname) !== -1){return}
-    }
-  }
-
-  var docRoot = document.body;
-  var okC = document.createElement("div");
-  okC.setAttribute("id", "okCookie");
-  var okCp = document.createElement("p");
-  var okcText = document.createTextNode('');
-
-  //close button
-  var okCclose = document.createElement("a");
-  var okcCloseText = document.createTextNode(closeBtnMsg);
-  okCclose.setAttribute("href", "#");
-  okCclose.setAttribute("id", "okClose");
-  okCclose.appendChild(okcCloseText);
-  okCclose.addEventListener("click", closeCookie, false);
-
-  //add to DOM
-  okCp.appendChild(okcText);
-  okCp.innerHTML = msg;
-  okC.appendChild(okCp);
-  okC.appendChild(okCclose);
-  docRoot.appendChild(okC);
-
-  okC.classList.add("okcBeginAnimate");
-
-  function closeCookie(){
-    const now = new Date();
-    var cookieExpire = new Date();
-    cookieExpire.setFullYear(cookieExpire.getFullYear() +2);
-    const elements = [
-      cname + '=' + now.getTime(),
-      'expires=' + cookieExpire.toGMTString(),
-      'path=/'
-    ];
-    document.cookie=elements.join('; ')
-    docRoot.removeChild(okC);
-  }
-}
-{% endif %}
-
-$(document).ready( function() {
-  // Navigatsiooniribal kalendrivalikute lyliti
-  showCalendarTypeSwitch();
-  // Navigatsiooniribal ikoonide värvimisega info andmine
-  showFeedBackInfo();
-  // Cookie consent
-  {% if COOKIE_CONSENT_INUSE %}showCookieConsent();{% endif %}
-  // Navigatsiooniriba asukoha kontrollimiseks
-  window.addEventListener('scroll', throttle(onScroll, 25));
-  // Kuupäevaväljade unikaalsete id-de lisamine
-  let dates = document.body.getElementsByClassName('date');
-  let counter = 0;
-  for (let i = 0; i < dates.length; i++) {
-    if (!dates[i].id) {
-      dates[i].id = "_date_" + counter++;
-    }
-  }
-  // initialize tooltips
-  var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
-  getObjectData4tooltip(get_object_data4tooltip_url);
-});
-</script>
-
-{% block javascript %}{% endblock %}
+  {% block javascript %}{% endblock %}
 </html>

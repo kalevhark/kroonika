@@ -637,7 +637,7 @@ def algus(request):
     )
 
     response = render(
-        request, 'wiki/wiki.html',
+        request, 'wiki/algus.html',
         {
             'kalender': kalender,
             'andmed': andmed,
