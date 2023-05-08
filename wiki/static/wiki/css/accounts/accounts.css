@@ -26,6 +26,7 @@ body {
 
 .form-wrap {
     background-color: #fff;
+    border-radius: 4px;
     width: 320px;
     margin: 3em auto;
     box-shadow: 0px 1px 8px #BEBEBE;
@@ -74,6 +75,7 @@ body {
     font-family: inherit;
     padding: .8em 0 10px .8em;
     border: 1px solid #CFCFCF;
+    border-radius: 4px;
     outline: 0;
     display: inline-block;
     margin: 0 0 .8em 0;
@@ -86,6 +88,7 @@ body {
     padding: .8em 0 10px .8em;
     background-color: #28A55F;
     border: none;
+    border-radius: 4px;
     color: #fff;
     cursor: pointer;
     text-transform: uppercase;
@@ -96,9 +99,9 @@ body {
 }
 
 .form-wrap form .checkbox {
-    visibility: hidden;
+    visibility: visible;
     padding: 20px;
-    margin: .5em 0 1.5em;
+    margin: .5em 1em 1.5em;
 }
 
 .form-wrap form .checkbox:checked + label:after {
