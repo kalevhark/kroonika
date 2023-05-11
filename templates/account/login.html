@@ -20,7 +20,11 @@
           {{ form.non_field_errors }}
           {% csrf_token %}
           {{ form.login.errors }}
-          <input type="text" class="input" name="login" autocomplete="off" placeholder="Kasutajanimi" maxlength="150" required id="id_login">
+          <input
+                  type="text" class="input" name="login"
+                  autofocus autocomplete="off" placeholder="Kasutajanimi"
+                  maxlength="150" required id="id_login"
+          >
           {{ form.password.errors }}
           <input type="password" class="input" name="password" autocomplete="current-password" placeholder="Salasõna" required id="id_password">
           <input type="checkbox" class="checkbox" name="remember" id="id_remember">
