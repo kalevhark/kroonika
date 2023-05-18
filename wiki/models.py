@@ -1479,10 +1479,12 @@ class Artikkel(models.Model):
         tekst = ' '.join(splits[:10]) # 10 esimest sõna
         if len(tekst) < len(self.body_text):
             tekst += '...'
+        tekst = add_markdown_objectid(tekst)
         return tekst
 
     def __repr__(self):
         tekst = str(self.hist_year) + ':' + self.body_text
+        tekst = add_markdown_objectid(tekst)
         return tekst
 
     def colored_id(self):
