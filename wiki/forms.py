@@ -85,6 +85,7 @@ class IsikForm(ModelForm):
             'kirjeldus': Textarea(attrs={'cols': 100, 'rows': 5}),
         }
 
+
 class OrganisatsioonForm(ModelForm):
     viited = AutoCompleteSelectMultipleField('viited', required=False)
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
