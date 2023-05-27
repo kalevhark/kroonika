@@ -2162,11 +2162,13 @@ def get_forecasts():
         i_temp = None
         i_prec = None
         i_prec_color = ''
+        i_icon = ''
         i_data = i['forecast'].get(str(ref_dt), None)
         if i_data:
             i_temp = float_or_none(i_data['temperature'])
             i_prec = i_data['precipitation']
             i_prec_color = i_data['precipitation_color']
+            i_icon = i_data['symbol']
 
         forecast[str(ref_dt)] = {
             'y_temp': y_temp,
@@ -2178,6 +2180,7 @@ def get_forecasts():
             'o_prec': str(o_prec),
             'o_prec_color': o_prec_color,
             'i_temp': i_temp,
+            'i_icon': i_icon,
             'i_prec': str(i_prec),
             'i_prec_color': i_prec_color,
         }

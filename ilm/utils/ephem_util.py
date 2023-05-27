@@ -99,8 +99,9 @@ def get_dayornight(date_loc, observer=None):
     s = ephem.Sun()
     s.compute(observer)
     alt, next_rizing = s.alt, observer.next_rising(s)
-    daytime = 'D' if alt > 0 else 'N'
-    print(daytime, next_rizing)
+    daytime = 'day' if alt > 0 else 'night'
+    # print(daytime, next_rizing)
+    return daytime
 
 def main():
     date_loc = datetime.now(tz=tz_EE)

@@ -18,6 +18,8 @@ except:
 import pytz
 import requests
 
+import ilm.utils.ephem_util as ephem_data
+
 # OpenWeatherMaps ilmakoodid
 OWM_CODES = {
     "200": "nõrk äikesevihm", # thunderstorm with light rain;Thunderstorm
@@ -542,6 +544,10 @@ def ilmateenistus_forecast():
             prec_color = 'light'
         else:
             prec_color = 'none'
+        if hour['phenomen']['@attributes']['className'] in ['overcast']:
+            symbol = hour['phenomen']['@attributes']['className']
+        else:
+            symbol = '_'.join([hour['phenomen']['@attributes']['className'], ephem_data.get_dayornight(time)])
         forecast[str(timestamp)] = {
             'time': time,
             'phenomen': hour['phenomen']['@attributes'],
@@ -550,7 +556,8 @@ def ilmateenistus_forecast():
             'temperature': hour['temperature']['@attributes']['value'],
             'precipitation': hour['precipitation']['@attributes']['value'],
             'precipitation_color': prec_color,
-            'pressure': hour['pressure']['@attributes']['value']
+            'pressure': hour['pressure']['@attributes']['value'],
+            'symbol': symbol
         }
     return {'forecast': forecast}
 
@@ -581,8 +588,9 @@ class YrnoAPI():
             'heavysnowandthunder': '34',
             'heavysnowshowers': '45',
             'heavysnowshowersandthunder': '29',
-            'lightrain': '46', 'lightrainandthunder':
-                '30', 'lightrainshowers': '40',
+            'lightrain': '46',
+            'lightrainandthunder': '30',
+            'lightrainshowers': '40',
             'lightrainshowersandthunder': '24',
             'lightsleet': '47',
             'lightsleetandthunder': '31',
