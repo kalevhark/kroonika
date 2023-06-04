@@ -124,8 +124,14 @@ def float_or_none(value):
 
 def index(request):
     # Avalehekülg, kus näidatakse 24h ilmaajalugu + 48h prognoos
+    weather = utils.owm_onecall()
+    # ilm_ilmateenistus_now = get_ilmateenistus_now()
+    # ilm_ilmateenistus_forecast = utils.ilmateenistus_forecast()
+    # print(ilm_ilmateenistus_now)
     context = {
-        'weather': utils.owm_onecall()
+        'weather': weather,
+        # 'ilm_ilmateenistus_now': ilm_ilmateenistus_now,
+        # 'ilm_ilmateenistus_forecast': ilm_ilmateenistus_forecast
     }
     return render(request, 'ilm/index.html', context)
 

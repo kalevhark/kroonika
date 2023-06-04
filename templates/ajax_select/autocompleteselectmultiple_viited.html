@@ -8,7 +8,7 @@
   <script type="text/javascript">
     // numereerib viited
     function numereeri() {
-      var outerDiv = document.getElementById("id_viited_on_deck");
+      var outerDiv = document.getElementById("{{html_id}}_on_deck");
       for (var index = 0; index < outerDiv.childNodes.length; index++) {
         var childNode = outerDiv.childNodes[index];
         var viiteNumbrid = childNode.getElementsByClassName('viite_number');

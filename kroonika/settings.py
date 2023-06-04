@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'captcha', # Robot vs inimene sisestuse kontroll
     'crispy_forms', # Vormide kujundamiseks
     'markdownx', # MarkDown teksti kasutamiseks
-    'ajax_select', # ajax selectväljad
+    'ajax_select', # ajax selectväljad https://github.com/crucialfelix/django-ajax-selects
     'corsheaders', # https://github.com/adamchainz/django-cors-headers
     'allauth', # django-allauth
     'allauth.account', # django-allauth
