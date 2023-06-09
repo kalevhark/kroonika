@@ -1,0 +1,78 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block src %}
+{% endblock %}
+
+{% block title %}{{ block.super }} - Valga 439!{% endblock %}
+
+{% block css %}
+<style>
+@import url('https://fonts.googleapis.com/css?family=Just+Another+Hand&display=swap');
+
+div.image-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+}
+
+.image-wrapper img {
+  display: block;
+}
+
+#test {
+  position: relative;
+  left:0;
+  top:50%;
+  right:0;
+  height:100px;
+  margin: 0 auto;
+  text-align:center;
+  width: 100%;
+  font-family: 'Just Another Hand', cursive;
+}
+</style>
+{% endblock %}
+
+
+{% block og_image %}
+  <meta property="og:image" content="https://valgalinn.ee/media/pildid/2020/08/26/ERMFk2966_470_1_pisipilt.jpg" />
+{% endblock %}
+
+{% block content %}
+  <div class="w3-container image-wrapper">
+    <h4 class="text-artikkel" style="text-align: center;">
+      Valga linn 439 - Palju õnne!
+    </h4>
+    <img
+        src="https://valgalinn.ee/media/pildid/2020/08/26/ERMFk2966_470_1_pisipilt.jpg"
+        alt="Vaade Puiestee tänavale 20. sajandi alguses - tuletõrje depoo ja vahitorn (ERM Fk 2966:470)"
+        style="width:100%"
+    >
+
+    <div
+        style="font-family: 'Just Another Hand', cursive; text-align: center;"
+        id="txtHolder"
+        class="w3-hide-large"
+    >
+    </div>
+
+    <p style="text-align: center;">
+      <small>
+        Pildil: Vaade Puiestee tänavale 20. sajandi alguses - tuletõrje depoo ja vahitorn. Allikas: ERM Fk 2966:470
+      </small>
+    </p>
+    {% include 'wiki/includes/object_fbshare.html' %}
+  </div>
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
