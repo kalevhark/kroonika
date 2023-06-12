@@ -48,7 +48,7 @@
       >
         {{ obj }}
         {% if obj.vanus|divisibleby:"5" %}
-          &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+          &nbsp;&nbsp;<span class="text-isik"><b>{{ obj.vanus }}</b></span>
         {% endif %}
       </span>
       {% include 'wiki/algus/algus_pilt.html' with tyyp='portree' %}
@@ -81,7 +81,7 @@
       >
         {{ obj }}
         {% if obj.vanus|divisibleby:"5" %}
-          &nbsp;&nbsp;<b>{{ obj.vanus }}</b>
+          &nbsp;&nbsp;<span class="text-isik"><b>{{ obj.vanus }}</b></span>
         {% endif %}
       </span>
       {% if obj.vanus|divisibleby:"5" %}
@@ -114,7 +114,7 @@
             data-id='{{ obj.id }}'
             id='{{ obj|get_model_name }}_{{ obj.id }}_juubilarid'
       >
-        {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}  <b>{{ obj.vanus }}</b>
+        {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}  <span class="text-isik"><b>{{ obj.vanus }}</b></span>
       </span>
       {% include 'wiki/algus/algus_pilt.html' with tyyp='portree' %}
     </a>
