@@ -231,6 +231,11 @@ ul.no-bullets li {
 	max-width: 100%;
 }
 
+.graafik-responsive {
+  max-width: 100%;
+  height: auto;
+}
+
 /* Kasutamiseks uudisvoos */
 .pilt-wiki-algus {
   width: 100%;
