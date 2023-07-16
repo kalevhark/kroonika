@@ -483,6 +483,13 @@ img.pilt-pildimodal {
   margin-right: 8px;
 }
 
+@media only screen and (max-width: 768px){
+  .card {
+    padding-left: 16px;
+    padding-right: 8px;
+  }
+}
+
 #card-artikkel.card:hover #icon-artikkel-dropdown.icon-dropdown {
 	 height: auto;
 	 display: block;
