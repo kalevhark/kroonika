@@ -1,4 +1,4 @@
-/* ver 2023.06.28 */
+/* ver 2023.07.16 */
 html, body, p, h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", sans-serif;
 }
@@ -478,8 +478,9 @@ img.pilt-pildimodal {
 
 /* Avakuva ikoonide dropdown css */
 .card {
-	 position: relative;
-	 display: block;
+  position: relative;
+  display: block;
+  margin-right: 8px;
 }
 
 #card-artikkel.card:hover #icon-artikkel-dropdown.icon-dropdown {

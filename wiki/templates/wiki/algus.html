@@ -9,11 +9,11 @@
 
 {% block content %}
 	<!-- Lingid teemalehtedele -->
-  <div class="w3-row-padding w3-margin-bottom">
+  <div class="w3-margin-bottom">
     {% include 'wiki/algus/algus_head2.html' %}
   </div>
   <!-- Sisu algab siit -->
-  <div class="w3-row-padding w3-margin-bottom">
+  <div class="w3-margin-bottom">
     {% now "d" as p2ev %}
     {% now "m" as kuu %}
     {% now "Y" as aasta %}
@@ -30,33 +30,33 @@
 {#        {% include 'wiki/special/algus_message_j6ul2022.html' %}#}
 {#      </div>#}
       <!--      Kalender -->
-      <div class="w3-hide-medium">
+      <div class="card w3-hide-medium w3-padding-16 w3-hover-white">
         {% include 'wiki/includes/wiki_calendar3.html' %}
       </div>
       <!--      Lood -->
-      <div class="w3-container w3-round w3-padding-16 w3-hover-white">
+      <div class="card w3-container w3-round w3-padding-16 w3-hover-white">
         {% include 'wiki/algus/algus_artiklid.html' %}
       </div>
     </div>
     <!-- Isikute esitlus -->
     <div class="w3-quarter">
-      <div class="w3-container w3-round w3-padding-16 w3-hover-white">
+      <div class="card w3-container w3-round w3-padding-16 w3-hover-white">
         {% include 'wiki/algus/algus_isikud.html' %}
       </div>
     </div>
     <!-- Organisatsioonide esitlus -->
     <div class="w3-quarter">
-      <div class="w3-container w3-round w3-padding-16 w3-hover-white">
+      <div class="card w3-container w3-round w3-padding-16 w3-hover-white">
         {% include 'wiki/algus/algus_organisatsioonid.html' %}
       </div>
     </div>
     <div class="w3-quarter">
       <!-- Kaartide esitlus -->
-      <div class="w3-container w3-round w3-padding-16 w3-hover-white">
+      <div class="card w3-container w3-round w3-padding-16 w3-hover-white">
         {% include 'wiki/algus/algus_kaardid.html' %}
       </div>
       <!-- Objektide esitlus -->
-      <div class="w3-container w3-round w3-hover-white">
+      <div class="card w3-container w3-round w3-hover-white">
         {% include 'wiki/algus/algus_objektid.html' %}
       </div>
     </div>
