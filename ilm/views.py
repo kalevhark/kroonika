@@ -2228,6 +2228,24 @@ def maxmin(request):
         .order_by('timestamp__month', 'timestamp__day')
     days_airtemp_avgs = dict()
 
+    avg_min = (datetime.now(), 20)
+    avg_max = (datetime.now(), -20)
+    for day in days_maxmin_qs:
+        if day['airtemperature__avg'] > avg_max[1]:
+            avg_max = (
+                datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day']),
+                day['airtemperature__avg']
+            )
+        if day['airtemperature__avg'] < avg_min[1]:
+            avg_min = (
+                datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day']),
+                day['airtemperature__avg']
+            )
+    print(
+        'kuum p2ev', avg_max,
+        'kylm p2ev', avg_min
+    )
+
     for day in days_airtemp_avgs_qs:
         day_tuple = (day['timestamp__month'], day['timestamp__day'])
         days_airtemp_avgs[day_tuple] = day['airtemperature__avg']
