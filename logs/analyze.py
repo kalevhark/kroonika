@@ -82,7 +82,7 @@ def whoisinfo_asn_description(rows):
 def is_bot(rows):
     bots = ['bot', 'index']
     pat = rf'(?:{"|".join(bots)})'
-    return re.search(pat, rows.agent, re.IGNORECASE)!=None
+    return re.search(pat, str(rows.agent), re.IGNORECASE)!=None
 
 # Tagastab stringist sõna, millel on boti laadne nimi *bot, *index vms
 def find_bot_name(rows):
