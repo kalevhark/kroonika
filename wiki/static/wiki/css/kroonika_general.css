@@ -1,4 +1,4 @@
-/* ver 2023.07.16 */
+/* ver 2023.09.10 */
 html, body, p, h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", sans-serif;
 }
@@ -824,6 +824,36 @@ input:focus + .switch-left + .switch-right {
 
 input:checked:focus + .switch-left + .switch-right {
   color: #333;
+}
+
+/* objecti detail vaates otse seotud objectide loendid */
+.wrapper-seotud {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-seotud {
+  width: 100%;
+  overflow: hidden;
+}
+
+.ul-seotud {
+  display: flex;
+  align-items: center;
+  flex-flow: row wrap;
+  justify-content: left;
+  margin: 0 -1px 0 -10px;
+  padding: 0;
+  list-style: none;
+}
+
+.li-seotud {
+  flex-grow: 1;
+  padding: 0 10px;
+  text-align: left;
+  border-right: 1px solid black;
 }
 
 /* Pure CSS Book Loader by Aaron Iker https://codepen.io/aaroniker/pen/zYOewEP */

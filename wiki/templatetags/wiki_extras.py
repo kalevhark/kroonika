@@ -8,6 +8,16 @@ from wiki.views import get_all_logged_in_users #, artikkel_qs_userfilter
 
 register = template.Library()
 
+ICONS = {
+    'artikkel': 'fa fa-comment',
+    'isik': 'fa fa-address-card-o',
+    'organisatsioon': 'fa fa-group',
+    'objekt': 'fa fa-map-marker',
+    'kaardiobjekt': 'fa fa-map',
+    'pilt': 'fa fa-camera-retro',
+    'viide': 'fa fa-binoculars'
+}
+
 @register.inclusion_tag('wiki/includes/logged_in_user_list.html', takes_context=True)
 def render_logged_in_user_list(context):
     return {
@@ -94,6 +104,12 @@ def icon_pilt():
 @register.simple_tag
 def icon_viide():
     return 'fa fa-binoculars'
+
+# kasutamine {% icon_object object %}
+@register.simple_tag
+def icon_object(object=None):
+    if object:
+        return ICONS[object.__class__.__name__.lower()]
 
 @register.simple_tag
 def kalev():

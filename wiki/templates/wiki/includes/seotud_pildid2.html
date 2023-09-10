@@ -8,9 +8,10 @@
     {% endblock %}
 
     {#    Pildirida #}
-    <p>
-      <i class="{% icon_pilt %} w3-xlarge text-pilt"></i>
-      <div>
+    <h5>
+      <i class="{% icon_object pildid.first %} w3-xlarge text-pilt"></i> seotud pildid
+    </h5>
+    <div>
       {% for obj in pildid %}
         <a href="#">
           <img
@@ -25,8 +26,7 @@
           >
         </a>
       {% endfor %}
-      </div>
-    </p>
+    </div>
 
     {#    Modal #}
     <div id="myModal" class="modal">

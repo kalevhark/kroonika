@@ -74,9 +74,9 @@
     </div>
     <!--  Sisukaardi otseseosed-->
     <div class="w3-third" >
-      {% include 'wiki/includes/seotud_isikud.html' %}
-      {% include 'wiki/includes/seotud_organisatsioonid.html' %}
-      {% include 'wiki/includes/seotud_objektid.html' %}
+      {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_isikud %}
+      {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_organisatsioonid %}
+      {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_objektid %}
       {% include 'wiki/includes/seotud_pildid2.html' %}
     </div>
   </div>

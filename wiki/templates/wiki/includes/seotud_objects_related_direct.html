@@ -1,0 +1,31 @@
+{% load wiki_extras %}
+{% if objectid %}
+  <!-- seotud {% get_verbose_name_plural objectid.first %} -->
+  <div class="wrapper-seotud">
+    <div class="container-seotud">
+      <h5>
+        <i
+                class="{% icon_object objectid.first %} w3-xlarge text-{{ objectid.first|to_model_name_lower }}"
+        ></i> seotud {% get_verbose_name_plural objectid.first %}
+      </h5>
+      <ul class="ul-seotud">
+        {% for obj in objectid %}
+          <a
+                  class="hover-{{ obj|to_model_name_lower }} tooltip-content"
+                  href="{{ obj.get_absolute_url }}"
+          >
+            <li class="li-seotud">
+              <span
+                    title='{{ obj }}'
+                    data-model='{{ obj|get_model_name }}'
+                    data-id='{{ obj.id }}'
+                    id='{{ obj|get_model_name }}_{{ obj.id }}_seotud_{% get_verbose_name_plural obj %}'>
+                {{ obj }}
+              </span>
+            </li>
+          </a>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
