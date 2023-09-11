@@ -255,6 +255,18 @@ class PiltArtikkelInline(AjaxSelectAdminTabularInline):
 
 
 #
+# Isikute lisamiseks organisatsioonide halduris
+#
+class IsikOrganisatsioonInline(AjaxSelectAdminTabularInline):
+    model = Isik.organisatsioonid.through
+    extra = 1
+    # template = 'admin/edit_inline/tabular_pilt.html'
+    form = make_ajax_form(Isik.organisatsioonid.through, {
+        'organisatsioon': 'organisatsioonid',
+        'isik': 'isikud'
+    })
+
+#
 # Piltide lisamiseks isikute halduris
 #
 class PiltIsikInline(AjaxSelectAdminTabularInline):
@@ -780,6 +792,7 @@ class OrganisatsioonAdmin(AjaxSelectAdmin):
     ]
     inlines = [
         PiltOrganisatsioonInline,
+        IsikOrganisatsioonInline
     ]
     search_fields = ['id', 'nimi']
 
