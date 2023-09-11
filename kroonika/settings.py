@@ -301,6 +301,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CORS_ALLOW_ALL_ORIGINS = True # Lubatakse k6ik
 CORS_URLS_REGEX = r"^/api/.*$"
 
+# algus cache in use?
+TMP_ALGUSKUVA_CACHE = True
+
 # cookie consent in use?
 COOKIE_CONSENT_INUSE = False
 

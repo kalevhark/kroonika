@@ -119,6 +119,20 @@ class LoadObjectListTest(UserTypeUnitTest):
     def tearDown(self) -> None:
         super().tearDown()
 
+    def test_get_object_data4tooltip(self) -> None:
+        SELECT_COUNT = 10
+        # Juhuslikud objectid kontrolliks
+        for model in [Artikkel, Isik, Organisatsioon, Objekt]:
+            objs = model.objects.order_by('?')[:SELECT_COUNT]
+            for obj in objs:
+                kwargs = {
+                    'model': obj.__class__.__name__,
+                    'obj_id': obj.id
+                }
+                self.request.GET = kwargs
+                response = views.get_object_data4tooltip(self.request)
+                self.assertEqual(response.status_code, 200)
+
     def test_artikkel_month_archive_otheryears(self) -> None:
         # random response
         today = datetime.now()

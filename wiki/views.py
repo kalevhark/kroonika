@@ -1,10 +1,13 @@
 import base64
+import json
 from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
 from io import BytesIO
 import math
+import os
 from pathlib import Path
 import pkg_resources
+import tempfile
 from typing import Dict, Any
 
 from ajax_select.fields import autoselect_fields_check_can_add
@@ -14,7 +17,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.models import Session
 from django.contrib.staticfiles import finders
 from django.core.exceptions import PermissionDenied
@@ -62,6 +65,8 @@ from wiki.utils.shp_util import (
     kaardiobjekt_match_db,
     make_big_maps_leaflet
 )
+
+TMP_ALGUSKUVA = Path(tempfile.gettempdir()) / '_valgalinn.ee_algus.tmp'
 
 #
 # reCAPTCHA kontrollifunktsioon
@@ -587,9 +592,9 @@ def get_algus_kalender(request, artikkel_qs):
     return kalender
 
 #
-# Avakuva
+# Avakuva rendertamine
 #
-def algus(request):
+def _get_algus(request):
     # Filtreerime artiklite hulga kasutaja järgi
     artikkel_qs = Artikkel.objects.daatumitega(request)
     andmed = {} # Selle muutuja saadame veebi
@@ -603,27 +608,6 @@ def algus(request):
     andmed['objekt'] = _get_algus_objektid(request, p2ev, kuu, aasta)
     andmed['kaart'] = _get_algus_kaart(request)
 
-    # # Andmed aasta ja kuu rippvalikumenüü jaoks
-    # perioodid = artikkel_qs. \
-    #     filter(hist_searchdate__isnull=False). \
-    #     values('hist_searchdate__year', 'hist_searchdate__month'). \
-    #     annotate(ct=Count('id')). \
-    #     order_by('hist_searchdate__year', 'hist_searchdate__month')
-    # artikleid_kuu_kaupa = [
-    #     [
-    #         periood['hist_searchdate__year'],
-    #         periood['hist_searchdate__month'],
-    #         periood['ct']
-    #     ] for periood in perioodid
-    # ]
-    # andmed['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
-    # artikleid_aasta_kaupa = artikkel_qs.\
-    #     filter(hist_searchdate__isnull=False).\
-    #     values('hist_year').\
-    #     annotate(Count('hist_year')).\
-    #     order_by('-hist_year')
-    # andmed['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
-
     kalender = get_algus_kalender(request, artikkel_qs)
 
     # Kas on sada aastat tagasi toimunud asju?
@@ -636,14 +620,24 @@ def algus(request):
         ]
     )
 
-    response = render(
-        request, 'wiki/algus.html',
+    # response = render(
+    #     request, 'wiki/algus.html',
+    #     {
+    #         'kalender': kalender,
+    #         'andmed': andmed,
+    #     }
+    # )
+    response_content = render_to_string(
+        'wiki/algus.html',
         {
             'kalender': kalender,
             'andmed': andmed,
-        }
+        },
+        request,
     )
-
+    if settings.TMP_ALGUSKUVA_CACHE and isinstance(request.user, AnonymousUser):
+        with open(TMP_ALGUSKUVA, 'w', encoding='utf-8') as f:
+            f.write(response_content)
     # Lisame kylastuste loenduri
     # visits = int(request.COOKIES.get('visits', '0'))
     # if request.COOKIES.get('last_visit'):
@@ -657,8 +651,27 @@ def algus(request):
     #         response.set_cookie('last_visit', datetime.now())
     # else:
     #     response.set_cookie('last_visit', datetime.now())
+    return response_content
 
-    return response
+# Avakuva
+def algus(request):
+    if all(
+        [
+            settings.TMP_ALGUSKUVA_CACHE,
+            os.path.isfile(TMP_ALGUSKUVA),
+            isinstance(request.user, AnonymousUser)
+        ]
+    ):
+        filestat = os.stat(TMP_ALGUSKUVA)
+        now = datetime.now()
+        if now.timestamp() - filestat.st_mtime < 60: # vähem kui minut vana avakuva salvestus
+            with open(TMP_ALGUSKUVA, 'r', encoding='utf-8') as f:
+                response_content = f.read()
+        else:
+            response_content = _get_algus(request)
+    else:
+        response_content = _get_algus(request)
+    return HttpResponse(response_content)
 
 #
 # Tagastab kõik artiklid, kus hist_date < KKPP <= hist_enddate vahemikus
