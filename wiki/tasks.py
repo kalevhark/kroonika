@@ -5,6 +5,7 @@
 # Käivitamiseks:
 # /python-env-path-to/python3 /path-to-wiki-app/tasks.py
 
+from datetime import datetime
 from pathlib import Path
 
 if __name__ == "__main__":
@@ -23,14 +24,27 @@ else:
     from django.conf import settings
     UTIL_DIR = settings.BASE_DIR / 'wiki' / 'utils'
 
+from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import Client, RequestFactory
+
+factory = RequestFactory()
+# Create an instance of a GET request.
+request = factory.get('/')
+middleware = SessionMiddleware(lambda x: x)
+middleware.process_request(request)
+request.session.save()
+request.user = AnonymousUser()
+
 try:
     from wiki.utils import shp_util
+    from wiki.views import algus
 except: # kui käivitatakse lokaalselt
     from utils import shp_util
+    from views import algus
 
 if __name__ == '__main__':
-    # path = UTIL_DIR / 'geojson' / "big_maps_default.pickle"
-    # if path.is_file():
-    #     os.remove(path)
-    # shp_util.make_big_maps_leaflet(aasta=None, objekt=None)
-    shp_util.kaardiobjektid2geojson()
+    now = datetime.now()
+    algus(request)
+    if now.minute % 10 == 0: # uuendame iga 10 minuti j2rel
+        shp_util.kaardiobjektid2geojson()

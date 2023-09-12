@@ -8,24 +8,21 @@
 from datetime import datetime, timedelta, timezone
 import os
 from pathlib import Path
-# import re
 import sys
-# import xml.etree.ElementTree as ET
 
-# from urllib.request import Request, urlopen
-# from urllib.error import URLError
+from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import Client, RequestFactory
 
-# from bs4 import BeautifulSoup
 import psycopg2
 from psycopg2.extras import RealDictCursor
-# from pytz import timezone
-# import pytz
-# import requests
 
 try:
     from .utils import utils
+    from ilm import views
 except: # kui käivitatakse lokaalselt
     from utils import utils
+    import views
 
 # The following connect() function connects to the suppliers database and prints out the PostgreSQL database version.
 def connect(path=''):
@@ -751,28 +748,34 @@ def update_forecast_log_analyze():
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
     verbose = True
-    # path = Path(__file__).resolve().parent.parent.parent
-    # get_maxtimestamp()
+    now = datetime.now()
+    if now.minute % 5 == 0: # Iga 5 minuti p2rast
+        factory = RequestFactory()
+        # Create an instance of a GET request.
+        request = factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(request)
+        request.session.save()
+        request.user = AnonymousUser()
+        views.get_mixed_ilmateade(request)
 
-    # Kustutame duplikaatread
-    rows_deleted = delete_duplicate_observations(path, verbose)
+    if now.minute == 10: # iga tunni 10. minutil
+        # Kustutame duplikaatread
+        rows_deleted = delete_duplicate_observations(path, verbose)
 
-    # Täiendame puudulikke kirjeid
-    rows_updated = update_uncomplete_observations(path, verbose)
-    rows_missing = update_missing_observations(path, verbose)
-    update_lasthours(path, verbose, hours=72)
+        # Täiendame puudulikke kirjeid
+        rows_updated = update_uncomplete_observations(path, verbose)
+        rows_missing = update_missing_observations(path, verbose)
+        update_lasthours(path, verbose, hours=72)
 
-    # Tabelid mahukate arvutuste jaoks
-    # update_maxmin(path)
-    update_maxmin_rolling(path)
+        # Tabelid mahukate arvutuste jaoks
+        update_maxmin_rolling(path)
 
-    # Ilmaennustuste logi
-    update_forecast_logs(path, verbose)
+        # Ilmaennustuste logi
+        update_forecast_logs(path, verbose)
 
-    # Viimase täistunnimõõtmise logimine faili
-    update_lasthour_log(path, verbose)
+        # Viimase täistunnimõõtmise logimine faili
+        update_lasthour_log(path, verbose)
 
-    # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
-    update_forecast_log_analyze()
-
-
+        # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
+        update_forecast_log_analyze()

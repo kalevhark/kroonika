@@ -1,8 +1,12 @@
 import calendar
 from datetime import datetime, timedelta
 import json
+import os
+from pathlib import Path
+import tempfile
 
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.db import connection
 from django.db.models import F, RowRange, Window, Sum, Avg, Min, Max
 
@@ -35,6 +39,7 @@ KUUD = [
     'november',
     'detsember'
 ]
+TMP_ALGUSKUVA = Path(tempfile.gettempdir()) / '_valgalinn.ee_ilm.tmp'
 
 # Highcharts vaikevärvid
 COLORS = [
@@ -1721,7 +1726,7 @@ def nighttime2(algus, l6pp):
             plotBands.append(jada[i])
     return plotBands
 
-def mixed_ilmateade(request):
+def get_mixed_ilmateade(request):
     '''
     Koondab andmed ja koostab graafiku, mis näitab:
     - 24h mõõdetud ilmaandmeid ilmateenistus.ee veebist
@@ -1740,11 +1745,6 @@ def mixed_ilmateade(request):
         periods=72,
         freq='H'
     )
-    # x-telg 2 märgime ainult kuupäevavahetused
-    # c_00hours = []
-    # for el in c:
-    #     if el.hour == 0:
-    #         c_00hours.append(el)
     # Ilmaandmete hankimine
     andmed_eelnevad24h = bdi.viimase24h_andmed(
         'Valga',
@@ -1757,8 +1757,10 @@ def mixed_ilmateade(request):
 
     # Pimeda aja varjutused
     andmed_nighttime = nighttime2(c[0], c[-1])
+
     # Hetkeaja joon
     andmed_nyyd = mitutundi(c[0], d)
+
     # Kuupäeva teisendused highchart formaati (epoch time)
     graafik_categories = list((el + timedelta(seconds=el.utcoffset().seconds)).timestamp()*1000 for el in c)
     graafik_nullpunkt = graafik_categories[0]
@@ -1767,8 +1769,11 @@ def mixed_ilmateade(request):
         for el in c if el.hour == 0
     )
 
+    # Kuu ja p2ikese seisud
     sun_str = ephem_data.get_sun_str(d)
     moon_str = ephem_data.get_moon_str(d)
+
+    # Graafiku pealkirjad
     ilmastring_now = andmed_eelnevad24h['ilmastring']
     ilmastring_fore = andmed_j2rgnevad48h['meta']['lastupdate'].strftime("%d.%m.%Y %H:%M")
     graafik_title = f'Mõõtmised: {ilmastring_now}; Prognoos: {ilmastring_fore}<br>{sun_str} {moon_str}'
@@ -2117,6 +2122,28 @@ def mixed_ilmateade(request):
     chart['yrno_symbols'] = andmed_eelnevad24h['symbols'] + andmed_j2rgnevad48h['series']['symbols']
     # Hetketemperatuur
     chart['airtemperatures'] = andmed_eelnevad24h['airtemperatures']
+    if settings.TMP_ALGUSKUVA_CACHE and isinstance(request.user, AnonymousUser):
+        with open(TMP_ALGUSKUVA, 'w', encoding='utf-8') as f:
+            json.dump(chart, f)
+    return chart
+
+def mixed_ilmateade(request):
+    if all(
+        [
+            settings.TMP_ALGUSKUVA_CACHE,
+            os.path.isfile(TMP_ALGUSKUVA),
+            isinstance(request.user, AnonymousUser)
+        ]
+    ):
+        filestat = os.stat(TMP_ALGUSKUVA)
+        now = datetime.now()
+        if now.timestamp() - filestat.st_mtime < 300: # vähem kui 5 minutit vana avakuva salvestus
+            with open(TMP_ALGUSKUVA, 'r', encoding='utf-8') as f:
+                chart = json.load(f)
+        else:
+            chart = get_mixed_ilmateade(request)
+    else:
+        chart = get_mixed_ilmateade(request)
     return JsonResponse(chart)
 
 # küsib Ilmateenistuse hetkeandmed
