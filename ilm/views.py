@@ -5,20 +5,28 @@ import os
 from pathlib import Path
 import tempfile
 
+import django
 from django.conf import settings
+import pandas as pd
+import pytz
+import requests
+
+if __name__ == "__main__":
+    # from django.test.utils import setup_test_environment
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
+    django.setup()
+    # setup_test_environment()
+
 from django.contrib.auth.models import AnonymousUser
 from django.db import connection
 from django.db.models import F, RowRange, Window, Sum, Avg, Min, Max
 
 from django.http import JsonResponse
 from django.shortcuts import render
-import pandas as pd
-import pytz
-import requests
 
-from .forms import NameForm
-from .models import Ilm
-from .utils import utils, IlmateenistusValga
+from ilm.forms import NameForm
+from ilm.models import Ilm
+from ilm.utils import utils, IlmateenistusValga
 import ilm.utils.ephem_util as ephem_data
 # import ilm.utils.utils
 

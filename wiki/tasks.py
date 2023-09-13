@@ -8,20 +8,16 @@
 from datetime import datetime
 from pathlib import Path
 
+import django
+from django.conf import settings
 if __name__ == "__main__":
     import os
-    import django
-    from django.test.utils import setup_test_environment
-
+    # from django.test.utils import setup_test_environment
     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
     django.setup()
-    setup_test_environment()
-    from django.conf import settings
+    # setup_test_environment()
     UTIL_DIR = Path(__file__).resolve().parent  / 'utils'
-    # Build paths inside the project like this: UTIL_DIR / 'subdir'.
-    # print('Töökataloog:', UTIL_DIR)
 else:
-    from django.conf import settings
     UTIL_DIR = settings.BASE_DIR / 'wiki' / 'utils'
 
 from django.contrib.auth.models import AnonymousUser, User

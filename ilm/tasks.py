@@ -10,9 +10,17 @@ import os
 from pathlib import Path
 import sys
 
-from django.contrib.auth.models import AnonymousUser, User
+import django
+from django.conf import settings
+if __name__ == "__main__":
+    # from django.test.utils import setup_test_environment
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
+    django.setup()
+    # setup_test_environment()
+
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.test import Client, RequestFactory
+from django.test import RequestFactory
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -749,7 +757,7 @@ if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
     verbose = True
     now = datetime.now()
-    if now.minute % 5 == 0: # Iga 5 minuti p2rast
+    if now.minute % 5 == 0: # Iga 5 minuti j2rel
         factory = RequestFactory()
         # Create an instance of a GET request.
         request = factory.get('/')
