@@ -15,6 +15,9 @@ from django.conf import settings
 if __name__ == "__main__":
     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
     django.setup()
+    UTIL_DIR = Path(__file__).resolve().parent / 'utils'
+else:
+    UTIL_DIR = settings.BASE_DIR / 'ilm' / 'utils'
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.middleware import SessionMiddleware
@@ -738,6 +741,7 @@ def update_lasthour_log(path='', verbose=False):
     now = datetime.now()
     observation_time = datetime(now.year, now.month, now.day, now.hour)
     observation = check_observation_exists(observation_time, path)
+    print('observation', observation)
     if observation:
         with open('logs/observations.log', 'a') as f:
             time = str(int(datetime.timestamp(observation['timestamp'])))
@@ -752,7 +756,8 @@ def update_forecast_log_analyze():
     forecast_log_analyze.logs2bigdata(path)
 
 if __name__ == '__main__':
-    path = os.path.dirname(sys.argv[0])
+    # path = os.path.dirname(sys.argv[0])
+    path = UTIL_DIR
     verbose = True
     now = datetime.now()
     if now.minute % 5 == 0: # Iga 5 minuti j2rel
