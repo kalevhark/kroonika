@@ -14,6 +14,12 @@ import pytz
 from pytz import timezone
 import requests
 
+if __name__ == '__main__':
+    import os
+    import django
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
+    django.setup()
+
 from ilm.models import Ilm, Jaam
 from ilm.utils import utils
 

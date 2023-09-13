@@ -237,27 +237,30 @@ def ilmaandmed_veebist(dt, verbose=False):
     # Loeme veebist andmed
 
     # proovime filter p2ringut ja kui see ei 6nnestu, siis viimaste andmete p2ringut
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'}
     for link in [p2ring, href]:
         # Kasutame vaheldumisi kahte erinevat strateegiat
         if datetime.now().hour%2 == 0:
             # Alternatiiv 1
             try:
-                with urllib.request.urlopen(link) as req:
+                request = urllib.request.Request(link, headers=headers)
+                with urllib.request.urlopen(request) as req:
                     response = req.read()
+                    # print(response)
             except urllib.error.HTTPError as e:
                 if e.code != 200:
-                    print(f'{link} base webservices are not available')
+                    print(f'{link} {e}')
                     ## can add authentication here
                 else:
                     print('http error', e)
                 return {}
         else:
             # Alternatiiv 2
-            req = requests.get(link)
+            req = requests.get(link, headers=headers)
             if req.status_code == requests.codes.ok:
                 response = req.text
             else:
-                print(f'{dt}: {link} base webservices are not available')
+                print(f'{dt}: {link} {req.text}')
                 return {}
 
         # Struktueerime ja kontrollime vastavust
