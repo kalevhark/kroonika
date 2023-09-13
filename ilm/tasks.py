@@ -119,6 +119,7 @@ def get_observations_24hours(path=''):
 
 # Mõõtmistulemuse olemasolu kontroll aja järgi
 def check_observation_exists(dt, path=''):
+    path = Path(__file__).resolve().parent / 'utils'
     """ query if exists timestamp from the ilm_ilm table """
     conn = None
     row = dict()
