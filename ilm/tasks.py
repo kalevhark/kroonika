@@ -119,7 +119,6 @@ def get_observations_24hours(path=''):
 
 # Mõõtmistulemuse olemasolu kontroll aja järgi
 def check_observation_exists(dt, path=''):
-    path = Path(__file__).resolve().parent / 'utils'
     """ query if exists timestamp from the ilm_ilm table """
     conn = None
     row = dict()
@@ -757,8 +756,8 @@ def update_forecast_log_analyze():
     forecast_log_analyze.logs2bigdata(path)
 
 if __name__ == '__main__':
-    # path = os.path.dirname(sys.argv[0])
-    path = UTIL_DIR
+    path = os.path.dirname(sys.argv[0])
+    # path = UTIL_DIR
     verbose = True
     now = datetime.now()
     if now.minute % 5 == 0: # Iga 5 minuti j2rel
