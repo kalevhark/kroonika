@@ -125,6 +125,7 @@ def check_observation_exists(dt, path=''):
 
     try:
         params = utils.config(path)
+        print(params)
         conn = psycopg2.connect(**params)
         cur = conn.cursor(cursor_factory=RealDictCursor)
         # cur = conn.cursor()
@@ -139,7 +140,7 @@ def check_observation_exists(dt, path=''):
         # print("Kandeid: ", cur.rowcount)
 
         row = cur.fetchone()
-
+        print(row)
         # while row is not None:
         #     # d = row[0]
         #     # print(f'PostgreSQL datetime          : {d}')
@@ -741,7 +742,7 @@ def update_lasthour_log(path='', verbose=False):
     now = datetime.now()
     observation_time = datetime(now.year, now.month, now.day, now.hour)
     observation = check_observation_exists(observation_time, path)
-    print('observation', observation)
+    # print('observation', observation)
     if observation:
         with open('logs/observations.log', 'a') as f:
             time = str(int(datetime.timestamp(observation['timestamp'])))
