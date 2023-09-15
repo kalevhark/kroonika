@@ -157,6 +157,38 @@ def check_observation_exists(dt, path=''):
             conn.close()
     return row
 
+def get_observations(dt, path):
+
+    conn = None
+    observations = []
+    try:
+        params = utils.config(path)
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+        fields = "date_part('epoch', timestamp) as timestamp, airtemperature, precipitations"
+        condition = f"timestamp >= '{dt.year}-{dt.month}-{dt.day} {dt.hour}:00:00'"
+        query = f'SELECT {fields} FROM ilm_ilm WHERE {condition} ORDER BY timestamp;'
+
+        cur.execute(query)
+        print("Kandeid: ", cur.rowcount)
+
+        row = cur.fetchone()
+        while row is not None:
+            observations.append([
+                int(row[0]), # timestamp
+                utils.float_or_none(row[1]), # airtemperature
+                utils.float_or_none(row[2]), # precipitations
+            ])
+            row = cur.fetchone()
+
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+    return observations
+
 # Lisab uue vaatlusandmete kirje
 def insert_new_observations(observation_dict, path=''):
     if not observation_dict:
@@ -748,6 +780,17 @@ def update_lasthour_log(path='', verbose=False):
             line = ';'.join([time, temp, prec])
             f.write(line + '\n')
 
+def make_observations_log(path=''):
+    observations = get_observations(datetime.fromtimestamp(1593687600), path) # alates datetime.datetime(2020, 7, 2, 14, 0)
+    if observations:
+        with open('logs/observations.log', 'w') as f:
+            for observation in observations:
+                time = str(observation[0])
+                temp = str(observation[1])
+                prec = str(observation[2])
+                line = ';'.join([time, temp, prec])
+                f.write(line + '\n')
+
 def update_forecast_log_analyze():
     from .utils import forecast_log_analyze
     path = Path(__file__).resolve().parent.parent
@@ -785,6 +828,7 @@ if __name__ == '__main__':
 
         # Viimase täistunnimõõtmise logimine faili
         update_lasthour_log(path, verbose)
+        make_observations_log(path) # uus variant
 
         # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
         update_forecast_log_analyze()
