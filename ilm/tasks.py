@@ -118,6 +118,7 @@ def get_observations_24hours(path=''):
 
 
 # Mõõtmistulemuse olemasolu kontroll aja järgi
+# EI OLE KASUTUSEL
 def check_observation_exists(dt, path=''):
     """ query if exists timestamp from the ilm_ilm table """
     conn = None
@@ -139,15 +140,6 @@ def check_observation_exists(dt, path=''):
         # print("Kandeid: ", cur.rowcount)
 
         row = cur.fetchone()
-        # while row is not None:
-        #     # d = row[0]
-        #     # print(f'PostgreSQL datetime          : {d}')
-        #     # print(f'PostgreSQL timezone          : {d.tzname()}')
-        #     # print(f'PostgreSQL offset UTC ajaga  : {d.utcoffset()}')
-        #     # print(f'PostgreSQL Eesti aeg         : {utc2eesti_aeg(d)}')
-        #     # print((d - row[0]).seconds)
-        #     # print(row)
-        #     row = cur.fetchone()
 
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
@@ -768,17 +760,17 @@ def update_forecast_logs(path='', verbose=False):
         with open(f'logs/forecast_{forecast_hour}h.log', 'a') as f:
             f.write(line + '\n')
 
-def update_lasthour_log(path='', verbose=False):
-    now = datetime.now()
-    observation_time = datetime(now.year, now.month, now.day, now.hour)
-    observation = check_observation_exists(observation_time, path)
-    if observation:
-        with open('logs/observations.log', 'a') as f:
-            time = str(int(datetime.timestamp(observation['timestamp'])))
-            temp = str(observation['airtemperature'])
-            prec = str(observation['precipitations'])
-            line = ';'.join([time, temp, prec])
-            f.write(line + '\n')
+# def update_lasthour_log(path='', verbose=False):
+#     now = datetime.now()
+#     observation_time = datetime(now.year, now.month, now.day, now.hour)
+#     observation = check_observation_exists(observation_time, path)
+#     if observation:
+#         with open('logs/observations.log', 'a') as f:
+#             time = str(int(datetime.timestamp(observation['timestamp'])))
+#             temp = str(observation['airtemperature'])
+#             prec = str(observation['precipitations'])
+#             line = ';'.join([time, temp, prec])
+#             f.write(line + '\n')
 
 def make_observations_log(path=''):
     observations = get_observations(datetime.fromtimestamp(1593687600), path) # alates datetime.datetime(2020, 7, 2, 14, 0)
@@ -827,7 +819,7 @@ if __name__ == '__main__':
         update_forecast_logs(path, verbose)
 
         # Viimase täistunnimõõtmise logimine faili
-        update_lasthour_log(path, verbose)
+        # update_lasthour_log(path, verbose)
         make_observations_log(path) # uus variant
 
         # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
