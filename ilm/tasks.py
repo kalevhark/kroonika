@@ -162,7 +162,7 @@ def get_observations(dt, path):
         query = f'SELECT {fields} FROM ilm_ilm WHERE {condition} ORDER BY timestamp;'
 
         cur.execute(query)
-        print("Kandeid: ", cur.rowcount)
+        # print("Kandeid: ", cur.rowcount)
 
         row = cur.fetchone()
         while row is not None:
