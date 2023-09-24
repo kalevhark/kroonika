@@ -357,7 +357,7 @@ class IlmateenistusData():
                     if veebiandmed and veebiandmed['airtemperature'] != None:
                         i = Ilm(**veebiandmed)
                         i.save()
-                        print('Salvestan andmebaasi:', algus)
+                        print('Salvestan andmebaasi:', algus, veebiandmed['airtemperature'])
                     # allikas = 'W:'
                 if veebiandmed:
                     if veebiandmed['airtemperature'] != None:
