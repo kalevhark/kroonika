@@ -547,7 +547,10 @@ def ilmateenistus_forecast():
             prec_color = 'light'
         else:
             prec_color = 'none'
-        if hour['phenomen']['@attributes']['className'] in ['overcast', 'moderate_rain']:
+        PHENOMEN_ICONS_24H = [ # ilmaikoon samasugune p2eval ja öösel
+            'overcast', 'moderate_rain', 'light_snowfall', 'light_sleet'
+        ]
+        if hour['phenomen']['@attributes']['className'] in PHENOMEN_ICONS_24H:
             symbol = hour['phenomen']['@attributes']['className']
         else:
             symbol = '_'.join([hour['phenomen']['@attributes']['className'], ephem_data.get_dayornight(time)])
