@@ -52,6 +52,17 @@ LEAFLET_DEFAULT_CSS = settings.LEAFLET_DEFAULT_CSS
 LEAFLET_DEFAULT_JS = settings.LEAFLET_DEFAULT_JS
 LEAFLET_DEFAULT_HEADER = settings.LEAFLET_DEFAULT_HEADER
 
+STAMEN_TONER_NEW = {
+    'readme': 'https://stadiamaps.com/stamen/onboarding/migrate/',
+    'tiles': 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}@2x.png',
+    'attr': """
+        &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a>
+        &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a>
+        &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a>
+        &copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>
+    """
+}
+
 # crs to degree converter init
 # Kasutatav CRS: EPSG:3301 - Estonian Coordinate System of 1997 - Projected
 proj = pyproj.Transformer.from_crs(3301, 4326, always_xy=True)
@@ -730,7 +741,13 @@ def add_objekt2map(feature_groups_kaardid, obj):
                     tilelayers = [key for key in fg._children.keys() if key.find('tile_layer_') == 0]
                     if tilelayers:
                         for tilelayer in tilelayers:
-                            fg._children[tilelayer].tiles = folium.TileLayer('Stamen Toner').tiles
+                            # fg._children[tilelayer].tiles = folium.TileLayer('Stamen Toner').tiles
+                            # fg._children[tilelayer].tiles = folium.TileLayer(
+                            #     tiles=STAMEN_TONER_NEW['tiles'],
+                            #     attr=STAMEN_TONER_NEW['attr'],
+                            # ).tiles
+                            fg._children[tilelayer].tiles = STAMEN_TONER_NEW['tiles']
+                            fg._children[tilelayer].attr = STAMEN_TONER_NEW['attr']
                 name = f'<span class="kaart-control-layers" style="color: {color};">{kaart_aasta}</span>'
                 fg.layer_name = name
                 kaardiobjektid = maatriks[kaart_aasta]['qs']
@@ -1000,7 +1017,9 @@ def make_objekt_leaflet_combo(objekt=1):
                 folium.TileLayer(
                     location=location,
                     name=aasta,
-                    tiles="Stamen Toner",
+                    # tiles="Stamen Toner",
+                    tiles=STAMEN_TONER_NEW['tiles'],
+                    attr=STAMEN_TONER_NEW['attr'],
                     # zoom_start=zoom_start,
                     min_zoom=DEFAULT_MIN_ZOOM,
                     **tile_kwargs
