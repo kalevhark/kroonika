@@ -52,15 +52,20 @@ LEAFLET_DEFAULT_CSS = settings.LEAFLET_DEFAULT_CSS
 LEAFLET_DEFAULT_JS = settings.LEAFLET_DEFAULT_JS
 LEAFLET_DEFAULT_HEADER = settings.LEAFLET_DEFAULT_HEADER
 
+# STAMEN_TONER_NEW = {
+#     'tiles': 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
+#     'attr': """
+#         &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a>
+#         &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a>
+#         &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a>
+#         &copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>
+#     """
+# }
+
+# Asendus stamen_toner kaartidele
 STAMEN_TONER_NEW = {
-    'readme': 'https://stadiamaps.com/stamen/onboarding/migrate/',
-    'tiles': 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}@2x.png',
-    'attr': """
-        &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a>
-        &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a>
-        &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a>
-        &copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>
-    """
+    'tiles': 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    'attr': 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 }
 
 # crs to degree converter init
