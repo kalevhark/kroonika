@@ -32,12 +32,15 @@
 <div
     class="w3-button w3-padding-bottom w3-hover-white w3-small"
     title="Viimane läbivaatamise aeg ja läbivaataja"
+    data-markdown-tag="{{ object.markdown_tag }}"
+    {#    onclick="markdownTagCopy(this)"#}
 >
   {% if object.updated_by.username %}
     {{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
   {% else %}
     {{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
   {% endif %}
+  &nbsp;{{ object.markdown_tag }}
 </div>
 {% if object.total_accessed %}
   <div

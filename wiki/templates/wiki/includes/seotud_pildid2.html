@@ -20,6 +20,7 @@
             alt="{{ obj.caption }}"
             data-pilt-id="{{ obj.id }}"
             data-pilt-itemnr="{{ forloop.counter }}"
+            data-pilt-markdown-tag="{{ obj.markdown_tag }}"
             title="{{ obj }}"
             data-img-big="{{ obj.pilt.url }}"
             onclick="openModal();currentSlide({{ forloop.counter }})"
@@ -48,6 +49,13 @@
           </div>
         {% endfor %}
 
+        <a
+                class="infoimage"
+                onclick="markdownTagCopy(this)"
+        >
+          <i class="fa fa-info"></i>
+          <span id="markdown-tag">id</span>
+        </a>
         {% if pildid.count > 1 %}
           <a class="previmage" onclick="plusSlides(-1)">&#10094;</a>
           <a class="nextimage" onclick="plusSlides(1)">&#10095;</a>
@@ -96,6 +104,7 @@
         var slides = document.getElementsByClassName("mySlides");
         var pildirida = document.getElementsByClassName("pilt-pildirida");
         var captionText = document.getElementById("captionmodal");
+        var markdownTag = document.getElementById("markdown-tag");
         if (n > slides.length) {slideIndex = 1}
         if (n < 1) {slideIndex = slides.length}
         for (var i = 0; i < slides.length; i++) {
@@ -103,6 +112,7 @@
         }
         slides[slideIndex-1].style.display = "block";
         captionText.innerHTML = pildirida[slideIndex-1].alt;
+        markdownTag.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-markdown-tag");
         if (slides.length > 1) {
           var numberText = document.getElementById("numbertext");
           numberText.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-itemnr") + " / {{ pildid.count }}";
@@ -137,6 +147,16 @@
       for (i = 0; i < pildidtekstis.length; i++) {
         pildidtekstis[i].classList.add("pilt-detail");
         pildidtekstis[i].onclick = showPilt;
+      }
+
+      // button onclick="markdownTagCopy(this)"
+      function markdownTagCopy(btn) {
+        var markdownTag = document.getElementById("markdown-tag");
+        navigator.clipboard.writeText(markdownTag.innerText);
+        markdownTag.parentElement.classList.add("w3-pale-green");
+        setTimeout(function () {
+          markdownTag.parentElement.classList.remove("w3-pale-green");
+        }, 2500);
       }
 
       {#Vasakule või paremale libistamisel vahetame pilte#}

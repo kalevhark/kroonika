@@ -1,4 +1,4 @@
-/* ver 2023.09.10 */
+/* ver 2023.10.29 */
 html, body, p, h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", sans-serif;
 }
@@ -423,6 +423,29 @@ ul.no-bullets li {
   cursor: pointer;
 }
 
+/* image info button */
+.infoimage {
+  cursor: pointer;
+  position: absolute;
+  /* top: 16px; */
+  width: auto;
+  padding: 16px;
+  /* margin-top: -50px; */
+  color: #f2f2f2;
+  opacity: 0;
+}
+
+.infoimage span {
+  display: none;
+  margin-left: 16px;
+  transition: 0.6s ease;
+
+}
+a.infoimage:hover span { /*the span will display just on :hover state*/
+  display: inline-block;
+  transition: 0.6s ease;
+}
+
 /* Next & previous buttons */
 .previmage,
 .nextimage {
@@ -451,6 +474,7 @@ ul.no-bullets li {
 }
 
 /* On hover, add a black background color with a little bit see-through */
+.infoimage:hover,
 .previmage:hover,
 .nextimage:hover {
   /*background-color: rgba(0, 0, 0, 0.8);*/

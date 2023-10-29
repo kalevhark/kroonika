@@ -760,6 +760,10 @@ class Objekt(models.Model):
         else:
             return markdownified_text
 
+    # Tekstis MarkDown kodeerimiseks
+    def markdown_tag(self):
+        return f'[{self.nimi}] ([obj_{self.id}])'
+
     # Keywords
     @property
     def keywords(self):
@@ -975,6 +979,10 @@ class Organisatsioon(models.Model):
             return fix_markdownified_text(markdownified_text)
         else:
             return markdownified_text
+
+    # Tekstis MarkDown kodeerimiseks
+    def markdown_tag(self):
+        return f'[{self.nimi}] ([org_{self.id}])'
 
     def get_absolute_url(self):
         kwargs = {
@@ -1249,6 +1257,11 @@ class Isik(models.Model):
             return fix_markdownified_text(markdownified_text)
         else:
             return markdownified_text
+
+    # Tekstis MarkDown kodeerimiseks
+    @property
+    def markdown_tag(self):
+        return f'[{self.nimi()}] ([isik_{self.id}])'
 
     def get_absolute_url(self):
         kwargs = {
@@ -1615,6 +1628,10 @@ class Artikkel(models.Model):
             dates.append(self.doe.strftime('%d.%m.%Y'))
         return '-'.join(date for date in dates)
 
+    # Tekstis MarkDown kodeerimiseks
+    def markdown_tag(self):
+        return f'[{self.nimi()}] ([art_{self.id}])'
+
 class PiltSortedManager(models.Manager):
 
     # J2rjestame pildid kronoloogiliselt pildi hist_date, hist_year, kui need puuduvad, siis viite hist_date, hist_year
@@ -1874,6 +1891,10 @@ class Pilt(models.Model):
         )
 
     colored_id.short_description = 'ID'
+
+    # Tekstis MarkDown kodeerimiseks
+    def markdown_tag(self):
+        return f'[pilt_{self.id}]'
 
     def image_preview(self):
         if self.pilt_thumbnail:

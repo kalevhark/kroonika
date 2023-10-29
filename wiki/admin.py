@@ -957,6 +957,7 @@ class PiltAdmin(AjaxSelectAdmin):
 
     readonly_fields = [
         'image_preview',
+        'markdown_tag',
         'pilt_height_field',
         'pilt_width_field',
         'inp_date', 'created_by', 'mod_date', 'updated_by',
@@ -1026,7 +1027,7 @@ class PiltAdmin(AjaxSelectAdmin):
         (None, {
             'fields': [
                 ('created_by', 'inp_date', 'updated_by', 'mod_date'),
-                ('image_preview',)
+                ('image_preview', 'markdown_tag')
             ]
         }
         ),
