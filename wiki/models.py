@@ -2086,7 +2086,7 @@ class Kaardiobjekt(models.Model):
         on_delete=models.SET_NULL,
         verbose_name='Objekt',
         help_text='Seotud objekt',
-        related_name='kaardiobjektid',
+        # related_name='kaardiobjektid',
         null=True,
         blank=True
     )

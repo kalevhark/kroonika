@@ -1,7 +1,7 @@
 import json
 
-from ajax_select import make_ajax_form
-from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline
+from ajax_select import make_ajax_field, make_ajax_form
+from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline, AjaxSelectAdminStackedInline
 from ajax_select.fields import AutoCompleteSelectWidget
 from ajax_select.registry import registry
 
@@ -266,6 +266,22 @@ class IsikOrganisatsioonInline(AjaxSelectAdminTabularInline):
         'isik': 'isikud'
     })
 
+
+#
+# Kaardiobjektide lisamiseks objektide halduris
+#
+class KaardiobjektObjektInline(AjaxSelectAdminStackedInline):
+    model = Kaardiobjekt
+    form = make_ajax_form(Kaardiobjekt, {
+        'id': 'kaardiobjektid',
+    })
+    extra = 1
+
+class BookInline(AjaxSelectAdminTabularInline):
+    model = Kaardiobjekt
+    readonly_fields = ['id', '__str__']
+    fields = ['kaart', 'tn', 'nr']
+    extra = 1
 
 #
 # Piltide lisamiseks isikute halduris
@@ -641,27 +657,19 @@ class IsikAdmin(AjaxSelectAdmin):
             'fields': ['eesnimi', 'perenimi']
             }
          ),
-        ('Elas', {
-            'fields': [
-                ('hist_date',
-                 'synd_koht',
-                 'hist_year',
-                 'hist_enddate',
-                 'surm_koht',
-                 'hist_endyear',
-                 'gone',
-                 'maetud'
-                 )]
-            }
+        ('Elas',
+             {
+                'fields': [
+                    ('hist_date', 'synd_koht', 'hist_year'),
+                    ('hist_enddate', 'surm_koht', 'hist_endyear'),
+                    ('gone', 'maetud')
+                ]
+             }
          ),
         ('Lisainfo', {
             'fields': [('kirjeldus')]
             }
          ),
-        # ('Viited', {
-        #     'fields': [('viited')]
-        # }
-        #  ),
         ('Seotud', {
             'fields': [
                 ('viited'),
@@ -764,17 +772,12 @@ class OrganisatsioonAdmin(AjaxSelectAdmin):
         }
          ),
         (None, {
-            'fields': ['hist_date', 'hist_year', 'hist_month']
+            'fields': [
+                ('hist_date', 'hist_year', 'hist_month'),
+                ('hist_enddate', 'hist_endyear', 'gone')
+            ]
         }
          ),
-        (None, {
-            'fields': ['hist_enddate', 'hist_endyear', 'gone']
-        }
-         ),
-        # ('Viited', {
-        #     'fields': [('viited')]
-        # }
-        #  ),
         ('Seotud', {
             'fields': [
                 ('viited'),
@@ -856,11 +859,10 @@ class ObjektAdmin(AjaxSelectAdmin):
             }
          ),
         (None, {
-            'fields': ['hist_date', 'hist_year', 'hist_month']
-            }
-         ),
-        (None, {
-            'fields': ['hist_enddate', 'hist_endyear', 'gone']
+            'fields': [
+                ('hist_date', 'hist_year', 'hist_month'),
+                ('hist_enddate', 'hist_endyear', 'gone')
+            ]
             }
          ),
         ('Viited', {
@@ -868,7 +870,7 @@ class ObjektAdmin(AjaxSelectAdmin):
         }
          ),
         ('Seotud', {
-            'fields': ['objektid', 'eellased', 'kaardiobjektid']
+            'fields': ['objektid', 'eellased']
             }
          ),
         (None, {
@@ -882,6 +884,8 @@ class ObjektAdmin(AjaxSelectAdmin):
     ]
     inlines = [
         PiltObjektInline,
+        # KaardiobjektObjektInline,
+        # BookInline
     ]
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited

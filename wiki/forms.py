@@ -109,7 +109,6 @@ class ObjektForm(ModelForm):
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
     viited = AutoCompleteSelectMultipleField('viited', required=False)
     eellased = AutoCompleteSelectMultipleField('objektid', required=False)
-    kaardiobjektid = AutoCompleteSelectField('kaardiobjektid', required=False)
 
     class Meta:
         model = Objekt
@@ -146,6 +145,7 @@ class KaardiobjektForm(ModelForm):
             'objekt',
             'tyyp', 'objekt', 'geometry', 'zoom', 'tn', 'nr', 'lisainfo'
         )
+
 
 
 class VihjeForm(ModelForm):

@@ -125,7 +125,6 @@ class KaardiobjektLookup(LookupChannel):
     def get_query(self, q, request):
         q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
-        # queryset = self.model.objects.daatumitega(request)
         queryset = self.model.objects.annotate(
             nimi_asukoht=Concat(
                 F('tn'),
