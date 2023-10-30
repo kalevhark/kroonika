@@ -266,6 +266,7 @@ class IsikOrganisatsioonInline(AjaxSelectAdminTabularInline):
         'isik': 'isikud'
     })
 
+
 #
 # Piltide lisamiseks isikute halduris
 #
@@ -867,7 +868,7 @@ class ObjektAdmin(AjaxSelectAdmin):
         }
          ),
         ('Seotud', {
-            'fields': ['objektid', 'eellased']
+            'fields': ['objektid', 'eellased', 'kaardiobjektid']
             }
          ),
         (None, {

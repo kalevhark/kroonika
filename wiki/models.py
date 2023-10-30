@@ -1215,7 +1215,7 @@ class Isik(models.Model):
         )
     colored_id.short_description = 'ID'
 
-    # @property
+    @property
     def nimi(self):
         isikunimi = ' '.join(nimi for nimi in [self.eesnimi, self.perenimi] if nimi)
         return isikunimi
@@ -1261,7 +1261,7 @@ class Isik(models.Model):
     # Tekstis MarkDown kodeerimiseks
     @property
     def markdown_tag(self):
-        return f'[{self.nimi()}] ([isik_{self.id}])'
+        return f'[{self.nimi}] ([isik_{self.id}])'
 
     def get_absolute_url(self):
         kwargs = {
@@ -1616,6 +1616,7 @@ class Artikkel(models.Model):
             summary = summary[:summary.find('\n')]
         return markdownify(escape_numberdot(summary[:100]) + "...")
 
+    @property
     def nimi(self):
         dates = []
         if self.hist_date:
@@ -1629,8 +1630,10 @@ class Artikkel(models.Model):
         return '-'.join(date for date in dates)
 
     # Tekstis MarkDown kodeerimiseks
+    @property
     def markdown_tag(self):
-        return f'[{self.nimi()}] ([art_{self.id}])'
+        return f'[{self.nimi}] ([art_{self.id}])'
+
 
 class PiltSortedManager(models.Manager):
 
@@ -2083,6 +2086,7 @@ class Kaardiobjekt(models.Model):
         on_delete=models.SET_NULL,
         verbose_name='Objekt',
         help_text='Seotud objekt',
+        related_name='kaardiobjektid',
         null=True,
         blank=True
     )

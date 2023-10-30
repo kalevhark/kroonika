@@ -117,6 +117,28 @@ class ObjektLookup(LookupChannel):
         return queryset[:50]
 
 
+@ajax_select.register('kaardiobjektid')
+class KaardiobjektLookup(LookupChannel):
+
+    model = Kaardiobjekt
+
+    def get_query(self, q, request):
+        q = q.translate(str.maketrans(TRANSLATION))
+        splits = q.split(' ')
+        # queryset = self.model.objects.daatumitega(request)
+        queryset = self.model.objects.annotate(
+            nimi_asukoht=Concat(
+                F('tn'),
+                Value(' '),
+                F('nr'),
+                output_field=CharField()
+            )
+        )
+        for split in splits:
+            queryset = queryset.filter(nimi_asukoht__iregex=split)
+        return queryset[:50]
+
+
 @ajax_select.register('viited')
 class ViideLookup(LookupChannel):
 

@@ -38,6 +38,12 @@
   {% else %}
     {{ object.inp_date|date:"d.m.Y" }}/{{ object.created_by.username}}
   {% endif %}
+
+  {% if user.is_authenticated %}
+    {% if user.is_staff %}
+      &nbsp;{{ object.markdown_tag }}
+    {% endif %}
+  {% endif %}
 </div>
 {% if object.total_accessed %}
   <div
