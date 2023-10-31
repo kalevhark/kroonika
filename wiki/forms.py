@@ -207,6 +207,7 @@ class V6rdleFormObjekt(Form):
         help_text=''
     )
 
+
 # https://django-allauth.readthedocs.io/en/latest/forms.html
 from allauth.account.forms import LoginForm
 class MyCustomLoginForm(LoginForm):

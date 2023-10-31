@@ -270,20 +270,23 @@ class IsikOrganisatsioonInline(AjaxSelectAdminTabularInline):
 #
 # Kaardiobjektide lisamiseks objektide halduris
 #
-class KaardiobjektObjektInline(AjaxSelectAdminStackedInline):
+# class KaardiobjektObjektInline(AjaxSelectAdminTabularInline):
+class KaardiobjektObjektInline(admin.StackedInline):
     model = Kaardiobjekt
-    form = make_ajax_form(Kaardiobjekt, {
-        'id': 'kaardiobjektid',
-    })
-    extra = 1
+    fields = ('id',)
+    # form = make_ajax_form(Kaardiobjekt, {
+    #     'objekt': 'objektid',
+    #     'id': 'kaardiobjektid'
+    # })
+    extra = 0
 
-class BookInline(AjaxSelectAdminTabularInline):
-    model = Kaardiobjekt
-    readonly_fields = ['id', '__str__']
-    fields = ['kaart', 'tn', 'nr']
-    extra = 1
+    def get_max_num(self, request, obj=None, **kwargs):
+        max_num = 0
+        if obj:
+            return Kaardiobjekt.objects.filter(id=obj.id).count()
+        return max_num
 
-#
+
 # Piltide lisamiseks isikute halduris
 #
 class PiltIsikInline(AjaxSelectAdminTabularInline):
@@ -884,8 +887,7 @@ class ObjektAdmin(AjaxSelectAdmin):
     ]
     inlines = [
         PiltObjektInline,
-        # KaardiobjektObjektInline,
-        # BookInline
+        KaardiobjektObjektInline,
     ]
 
     # Admin moodulis lisamise/muutmise automaatsed väljatäited

@@ -2086,7 +2086,7 @@ class Kaardiobjekt(models.Model):
         on_delete=models.SET_NULL,
         verbose_name='Objekt',
         help_text='Seotud objekt',
-        # related_name='kaardiobjektid',
+        related_name='kaardiobjektid',
         null=True,
         blank=True
     )
@@ -2151,7 +2151,7 @@ class Kaardiobjekt(models.Model):
     )
 
     def __str__(self):
-        return ' '.join([self.kaart.aasta, self.tn, self.nr, self.lisainfo])
+        return ' '.join([self.kaart.aasta, self.tn, self.nr, self.tyyp, self.lisainfo])
 
     def get_absolute_url(self):
         kwargs = {
@@ -2248,6 +2248,12 @@ class Kaardiobjekt(models.Model):
             return '(No image)'
 
     get_leaflet.short_description = 'Leaflet kaart'
+
+    def get_absolute_url(self):
+        kwargs = {
+            'pk': self.id,
+        }
+        return reverse('wiki:wiki_kaardiobjekt_detail', kwargs=kwargs)
 
     class Meta:
         ordering = ['kaart', 'tn', 'nr']

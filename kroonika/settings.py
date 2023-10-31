@@ -10,6 +10,9 @@ from pathlib import Path
 # To avoid unwanted migrations in the future, either explicitly set DEFAULT_AUTO_FIELD to AutoField
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
+# Selleks et ei tekiks admin salvestamisel suurte objectide Bad Request 400 viga:
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
+
 PROJECT_DIR = Path(__file__).resolve().parent
 # print('settings.PROJECT_DIR:', PROJECT_DIR)
 
