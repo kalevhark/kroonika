@@ -13,6 +13,7 @@ ICONS = {
     'isik': 'fa fa-address-card-o',
     'organisatsioon': 'fa fa-group',
     'objekt': 'fa fa-map-marker',
+    'kaart': 'fa fa-map',
     'kaardiobjekt': 'fa fa-map',
     'pilt': 'fa fa-camera-retro',
     'viide': 'fa fa-binoculars'
@@ -92,6 +93,10 @@ def icon_organisatsioon():
 def icon_objekt():
     return 'fa fa-map-marker'
     # return 'fa fa-bank'
+
+@register.simple_tag
+def icon_kaart():
+    return 'fa fa-map'
 
 @register.simple_tag
 def icon_kaardiobjekt():

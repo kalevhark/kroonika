@@ -5,12 +5,10 @@
           id="card-artikkel"
   >
     <a
-{#      class="w3-tooltip"#}
-{#      style="text-decoration: none;"#}
       href="{% url 'wiki:wiki_artikkel_filter' %}"
     >
       <div
-              class="w3-container w3-round background-artikkel w3-padding-16 icon"
+              class="w3-container w3-round background-artikkel w3-padding icon"
               id="icon-artikkel"
       >
         <div class="w3-left">
@@ -66,11 +64,10 @@
           id="card-isik"
   >
     <a
-{#            style="text-decoration: none;" #}
             href="{% url 'wiki:wiki_isik_filter' %}"
     >
       <div
-              class="w3-container w3-round background-isik w3-padding-16 icon"
+              class="w3-container w3-round background-isik w3-padding icon"
               id="icon-isik"
       >
         <div class="w3-left">
@@ -126,12 +123,10 @@
           id="card-organisatsioon"
   >
     <a
-{#            class="w3-tooltip" #}
-{#            style="text-decoration: none;" #}
             href="{% url 'wiki:wiki_organisatsioon_filter' %}"
     >
       <div
-              class="w3-container w3-round background-organisatsioon w3-padding-16 icon"
+              class="w3-container w3-round background-organisatsioon w3-padding icon"
               id="icon-organisatsioon"
       >
         <div class="w3-left">
@@ -187,12 +182,10 @@
           id="card-objekt"
   >
     <a
-{#      class="w3-tooltip"#}
-{#      style="text-decoration: none;"#}
       href="{% url 'wiki:wiki_objekt_filter' %}"
     >
       <div
-              class="w3-container w3-round background-objekt w3-padding-16 icon"
+              class="w3-container w3-round background-objekt w3-padding icon"
               id="icon-objekt"
       >
         <div class="w3-left">
@@ -240,5 +233,27 @@
         >
       </form>
     </div>
+  </div>
+  <div
+          class="card w3-round w3-hide-large w3-hide-medium"
+          id="card-kaart"
+          style="margin-top: 8px;"
+  >
+    <a
+      href="{% url 'kaart' %}"
+    >
+      <div
+              class="w3-container w3-round background-objekt w3-padding icon"
+              id="icon-kaart"
+      >
+        <div class="w3-left">
+            <i class="{% icon_kaart %} w3-xxxlarge"></i>
+        </div>
+        <div class="w3-right">
+          <h4>{% model_name_kaart %} ({{ andmed.kaart.kirjeid }})</h4>
+        </div>
+        </div>
+      </div>
+    </a>
   </div>
 </div>
