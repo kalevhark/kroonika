@@ -1,30 +1,9 @@
 {% load static %}
 {% load wiki_extras %}
-{#<div#}
-{#          class="card w3-round w3-hide-large w3-hide-medium"#}
-{#          id="card-kaart"#}
-{#>#}
-{#  <a#}
-{#          class="w3-tooltip"#}
-{#          href="{% url 'wiki:wiki_kaardiobjekt_filter' %}"#}
-{#  >#}
-{#    <div#}
-{#            class="w3-container w3-round background-objekt w3-padding-16 icon"#}
-{#            id="icon-kaart"#}
-{#    >#}
-{#      <div class="w3-left">#}
-{#          <i class="fa fa-map w3-xxxlarge"></i>#}
-{#      </div>#}
-{#      <div class="w3-right">#}
-{#        <h4>{% model_name_kaart %} ({{ andmed.kaart.kirjeid }})</h4>#}
-{#      </div>#}
-{#    </div>#}
-{#  </a>#}
-{#</div>#}
 <h5>
   <a
           class="hover-objekt"
-          href="{% url 'wiki:wiki_kaardiobjekt_filter' %}"
+          href="{% url 'kaardid' %}"
           title="{% model_name_kaart %} ({{ andmed.kaart.kirjeid }})"
   >
     {% model_name_kaart %} <span class="w3-badge background-objekt">{{ andmed.kaart.kirjeid }}</span>
