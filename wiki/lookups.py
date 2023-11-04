@@ -64,7 +64,7 @@ class IsikLookup(LookupChannel):
         # queryset = self.model.objects.daatumitega(request)
         queryset = self.model.objects.daatumitega(request).annotate(
         # queryset = self.model.objects.annotate(
-            isikunimi=Concat(
+            nimi=Concat(
                 F('eesnimi'),
                 Value(' '),
                 F('perenimi'),
@@ -72,7 +72,7 @@ class IsikLookup(LookupChannel):
             )
         )
         for split in splits:
-            queryset = queryset.filter(isikunimi__iregex=split)
+            queryset = queryset.filter(nimi__iregex=split)
         return queryset[:50]
 
     def format_match(self, item):

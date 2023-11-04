@@ -108,7 +108,7 @@ class WikiBaseViewTests(TestCase):
 
     def test_kaart_view_default(self):
         time_start = datetime.now()
-        response = self.client.get(reverse('kaardid'))
+        response = self.client.get(reverse('kaart'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')

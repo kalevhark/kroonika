@@ -1215,7 +1215,7 @@ class Isik(models.Model):
         )
     colored_id.short_description = 'ID'
 
-    @property
+    # @property
     def nimi(self):
         isikunimi = ' '.join(nimi for nimi in [self.eesnimi, self.perenimi] if nimi)
         return isikunimi
@@ -1261,7 +1261,7 @@ class Isik(models.Model):
     # Tekstis MarkDown kodeerimiseks
     @property
     def markdown_tag(self):
-        return f'[{self.nimi}] ([isik_{self.id}])'
+        return f'[{self.nimi()}] ([isik_{self.id}])'
 
     def get_absolute_url(self):
         kwargs = {

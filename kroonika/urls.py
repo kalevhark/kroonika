@@ -56,7 +56,7 @@ urlpatterns = [
     path('privacy/', views.privacy, name='privacy'),
     path('schema/', schema_view),
     path('wiki/', include('wiki.urls')),
-    path('kaart/', views.kaart, name='kaardid'),
+    path('kaart/', views.kaart, name='kaart'),
     path('kaart/get_big_leaflet_map/', views.get_big_leaflet_map, name='get_big_leaflet_map'),
     path('kaart/<str:aasta>/', views.kaart, name='kaart'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),

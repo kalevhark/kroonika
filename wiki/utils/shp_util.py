@@ -957,7 +957,7 @@ def make_big_maps_leaflet(aasta=None, objekt=None):
     if aasta and Kaart.objects.filter(aasta=aasta).count()==0:
         tekst = f'<h4>{aasta}. aasta kaarti ei ole. Vali järgmistest:</h4>'
         for kaart in kaardid:
-            href = reverse('kaardid')
+            href = reverse('kaart')
             tekst += f'<p class="hover-objekt"><a href="{href}{kaart.aasta}">{kaart}</a><p>'
         return tekst
     else:
@@ -1006,7 +1006,7 @@ def make_objekt_leaflet_combo(objekt=1):
 
         for kaart in kaardid:
             aasta = kaart.aasta
-            url = reverse('kaardid')
+            url = reverse('kaart')
 
             feature_group[aasta] = folium.FeatureGroup(
                 name=f'<span class="kaart-control-layers">{aasta}</span>',

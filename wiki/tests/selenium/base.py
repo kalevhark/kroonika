@@ -17,6 +17,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.chrome.service import Service
 
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
@@ -79,8 +80,11 @@ class SeleniumTestsChromeBase(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        service = ChromeService(executable_path=ChromeDriverManager().install())
-        cls.selenium = webdriver.Chrome(service=service)
+        # service = ChromeService(executable_path=ChromeDriverManager().install())
+        # cls.selenium = webdriver.Chrome(service=service)
+        service = Service()
+        options = webdriver.ChromeOptions()
+        cls.selenium = webdriver.Chrome(service=service, options=options)
         cls.selenium.implicitly_wait(10)
         cls.USERNAME = config['superuser']['USERNAME']
         cls.PASSWORD = config['superuser']['PASSWORD']
@@ -92,8 +96,11 @@ class SeleniumTestsChromeBase(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def test_driver_manager_chrome(self):
-        service = ChromeService(executable_path=ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service)
+        # service = ChromeService(executable_path=ChromeDriverManager().install())
+        # driver = webdriver.Chrome(service=service)
+        service = Service()
+        options = webdriver.ChromeOptions()
+        driver = webdriver.Chrome(service=service, options=options)
         driver.quit()
 
 
@@ -109,8 +116,11 @@ class SeleniumTestsEdgeBase(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        service = EdgeService(executable_path=EdgeChromiumDriverManager().install())
-        cls.selenium = webdriver.Edge(service=service)
+        # service = EdgeService(executable_path=EdgeChromiumDriverManager().install())
+        # cls.selenium = webdriver.Edge(service=service)
+        service = Service()
+        options = webdriver.EdgeOptions()
+        cls.selenium = webdriver.Edge(service=service, options=options)
         cls.selenium.implicitly_wait(10)
         cls.USERNAME = config['superuser']['USERNAME']
         cls.PASSWORD = config['superuser']['PASSWORD']
