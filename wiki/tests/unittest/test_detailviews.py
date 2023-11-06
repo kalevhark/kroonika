@@ -405,7 +405,7 @@ class ObjektViewTests(TestCase):
         url = f'/wiki/objekt/{obj.id}-{obj.slug}/'
         _ = self.client.get(url)
         time_stopp = datetime.now() - time_start
-        self.assertTrue(time_stopp.seconds < 5, msg=obj)
+        self.assertTrue(time_stopp.seconds < 5, f'Laadimisaeg: {obj} {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_view_uses_correct_template(self):
         obj = Objekt.objects.get(id=self.test_object_id)
