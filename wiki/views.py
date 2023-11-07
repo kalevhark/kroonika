@@ -332,7 +332,10 @@ def otsi(request):
     return render(
         request,
         'wiki/wiki_otsi.html',
-        {'question': question}
+        {
+            'question': question,
+            'searchsmallwidgethidden': True,  # ei näita mobiiliotsinguvidinat
+        }
     )
 
 #
@@ -385,7 +388,8 @@ def feedback(request):
             msg.send(fail_silently=False)
 
             context = {
-                'vihje': vihje
+                'vihje': vihje,
+                'searchsmallwidgethidden': True,  # ei näita mobiiliotsinguvidinat
             }
             return render(
                 request,
@@ -1574,6 +1578,7 @@ class ArtikkelFilterView(FilterView):
             artiklid = paginator.page(paginator.num_pages)
         context['object_list'] = artiklid
         context['filter'] = filter
+        context['searchsmallwidgethidden'] = True # ei näita mobiiliotsinguvidinat
         return context
 
 
@@ -2036,6 +2041,7 @@ class IsikFilterView(FilterView):
             isikud = paginator.page(paginator.num_pages)
         context['object_list'] = isikud
         context['filter'] = filter
+        context['searchsmallwidgethidden'] = True  # ei näita mobiiliotsinguvidinat
         return context
 
 
@@ -2187,6 +2193,7 @@ class OrganisatsioonFilterView(FilterView):
             organisatsioonid = paginator.page(paginator.num_pages)
         context['object_list'] = organisatsioonid
         context['filter'] = filter
+        context['searchsmallwidgethidden'] = True  # ei näita mobiiliotsinguvidinat
         return context
 
 
@@ -2322,6 +2329,7 @@ class ObjektFilterView(FilterView):
             objektid = paginator.page(paginator.num_pages)
         context['object_list'] = objektid
         context['filter'] = filter
+        context['searchsmallwidgethidden'] = True  # ei näita mobiiliotsinguvidinat
         return context
 
 class ObjektDetailView(generic.DetailView):
@@ -2588,6 +2596,7 @@ class KaardiobjektFilterView(FilterView):
             objects = paginator.page(paginator.num_pages)
         context['object_list'] = objects
         context['filter'] = filter
+        context['searchsmallwidgethidden'] = True  # ei näita mobiiliotsinguvidinat
         return context
 
 
@@ -2659,14 +2668,13 @@ def get_big_leaflet_map(request):
 
 def kaart(request, aasta=None):
     objekt = request.GET.get('objekt')
-    # map_html = make_big_maps_leaflet(aasta, objekt=objekt)
     return render(
         request,
         'wiki/kaart.html',
         {
             'aasta': aasta,
             'objekt': objekt,
-            # 'kaart': map_html
+            'searchsmallwidgethidden': True,  # ei näita mobiiliotsinguvidinat
         },
     )
 
