@@ -29,7 +29,7 @@ from django.db.models import \
     Value, IntegerField, \
     ExpressionWrapper
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
-from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse, QueryDict
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
@@ -1136,9 +1136,18 @@ class ArtikkelDetailView(generic.DetailView):
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
 
+    def get_object(self, **kwargs):
+        obj = super().get_object()
+        # Record the last accessed date
+        obj.last_accessed = timezone.now()
+        obj.total_accessed += 1
+        obj.save(update_fields=['last_accessed', 'total_accessed'])
+        return obj
+
     def get_context_data(self, **kwargs):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
+
         # Kas artiklile on määratud profiilipilt
         context['profiilipilt'] = Pilt.objects.\
             filter(profiilipilt_artiklid__in=[self.object]).\
@@ -1159,6 +1168,37 @@ class ArtikkelDetailView(generic.DetailView):
         seotud_pildid = Pilt.objects.sorted(). \
             filter(artiklid=self.object)
         context['seotud_pildid'] = seotud_pildid
+
+        # Kas artiklit klikitakse mingi objecti vaatest
+        # queryprms = self.request.GET.dict()
+        # filter_isik_id = queryprms.get('isik')
+        # filter_organisatsioon_id = queryprms.get('organisatsioon')
+        # filter_objekt_id = queryprms.get('objekt')
+        # print(filter_isik_id, filter_organisatsioon_id, filter_objekt_id)
+
+        queryparams = QueryDict(mutable=True)
+        for query_object in ['isik', 'organisatsioon', 'objekt']:
+            filter_object_id = self.request.GET.get(query_object)
+            if filter_object_id:
+                model = apps.get_model('wiki', query_object)
+                try:
+                    filter_object = model.objects.daatumitega(self.request).get(id=filter_object_id)
+                    if model == Isik and filter_object in seotud_isikud:
+                        artikkel_qs = artikkel_qs.filter(isikud__in=[filter_object])
+                        context[f'filter_{query_object}'] = filter_object
+                        queryparams[query_object] = filter_object_id
+                    if model == Organisatsioon and filter_object in seotud_organisatsioonid:
+                        artikkel_qs = artikkel_qs.filter(organisatsioonid__in=[filter_object])
+                        context[f'filter_{query_object}'] = filter_object
+                        queryparams[query_object] = filter_object_id
+                    if model == Objekt and filter_object in seotud_objektid:
+                        artikkel_qs = artikkel_qs.filter(objektid__in=[filter_object])
+                        context[f'filter_{query_object}'] = filter_object
+                        queryparams[query_object] = filter_object_id
+                except:
+                    pass
+        if queryparams:
+            context['queryparams'] = '?'+queryparams.urlencode()
 
         # Järjestame artiklid kronoloogiliselt
         loend = list(artikkel_qs.values_list('id', flat=True))
@@ -1188,13 +1228,7 @@ class ArtikkelDetailView(generic.DetailView):
 
         return context
 
-    def get_object(self, **kwargs):
-        obj = super().get_object()
-        # Record the last accessed date
-        obj.last_accessed = timezone.now()
-        obj.total_accessed += 1
-        obj.save(update_fields=['last_accessed', 'total_accessed'])
-        return obj
+
 
 #
 # superklass Artikkel, Isik, Organisatsioon, Objekt objectide muutmiseks
@@ -2055,9 +2089,16 @@ class IsikDetailView(generic.DetailView):
 # object detailvaates ajax seotud objectide kuvamiseks
 #
 def object_detail_seotud(request, model, id):
+    queryparams = QueryDict(mutable=True)
+    queryparams.update(
+        {model: id}
+    )
     context = {
-        'model': model
+        'model': model,
+        'id': id,
+        'queryparams': '?' + queryparams.urlencode()
     }
+
     artikkel_qs = Artikkel.objects.daatumitega(request)
     model_filters = {
         'isik':           'isikud__id',

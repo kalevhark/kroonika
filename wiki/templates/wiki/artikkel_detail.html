@@ -8,14 +8,56 @@
 {% block css %}{% endblock %}
 
 {% block content %}
+  {% if queryparams %}
+    <div class="w3-margin-top w3-card w3-padding w3-round">
+      Näidatakse lugusid, mis on seotud:
+      <br>
+      <ul style="list-style-type: none; padding: 0;">
+        {% if filter_isik %}
+          <li>
+            <a
+                    href="{% url 'wiki:wiki_artikkel_detail' pk=object.id slug=object.slug %}"
+                    title="Näita kõiki lugusid"
+            >
+              <i class="fa fa-trash-o"></i>
+            </a>
+            isikuga: {% include 'wiki/includes/object_list_object.html' with obj=filter_isik model='isik' %}
+          </li>
+        {% endif %}
+        {% if filter_organisatsioon %}
+          <li>
+            <a
+                    href="{% url 'wiki:wiki_artikkel_detail' pk=object.id slug=object.slug %}"
+                    title="Näita kõiki lugusid"
+            >
+              <i class="fa fa-trash-o"></i>
+            </a>
+            asutisega: {% include 'wiki/includes/object_list_object.html' with obj=filter_organisatsioon model='organisatsioon' %}
+          </li>
+        {% endif %}
+        {% if filter_objekt %}
+          <li>
+            <a
+                    href="{% url 'wiki:wiki_artikkel_detail' pk=object.id slug=object.slug %}"
+                    title="Näita kõiki lugusid"
+            >
+              <i class="fa fa-trash-o"></i>
+            </a>
+            kohaga: {% include 'wiki/includes/object_list_object.html' with obj=filter_objekt model='objekt' %}
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  {% endif %}
+
   <div class="w3-cell-row w3-padding-16">
     {# Kronoloogiliselt eelnev artikkel #}
-    <div class="w3-third w3-cell w3-hover-white">
+    <div class="w3-half w3-cell w3-hover-white w3-round">
       <div>
         {% if prev_obj %}
           <div class="w3-container w3-cell w3-cell-middle">
             <a
-                    href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}"
+                    href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}{{ queryparams }}"
                     title="Liigu eelmisele loole"
             >
               <div class="w3-padding w3-xxlarge hover-artikkel">
@@ -30,7 +72,7 @@
             <br>
             <a
                 class="hover-artikkel"
-                href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}"
+                href="{% url 'wiki:wiki_artikkel_detail' pk=prev_obj.id slug=prev_obj.slug %}{{ queryparams }}"
                 title="Liigu eelmisele loole"
             >
               {{ prev_obj }}
@@ -40,55 +82,55 @@
       </div>
     </div>
     {# Valitud artikkel viewport: large, medium #}
-    <div class="w3-third w3-cell w3-hide-small">
-      <div
-          class="w3-xlarge layout-row layout-align-center-center w3-hover-white"
-      >
-        <strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
-      </div>
-      <div class="layout-row layout-align-center-center">
-        {% if object.hist_date %}
-          <small>
-          {% if object.hist_date|vkj == True %}
-            {% if request.session.ukj == 'on' %}
-              vkj: {{ object.hist_date|date:'j.m.Y' }}
-            {% else %}
-              ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}
-            {% endif %}
-            {% if object.hist_enddate %}
-              -
-              {% if object.hist_enddate|vkj == True %}
-                {% if request.session.ukj == 'on' %}
-                  {{ object.hist_enddate|date:'j.m.Y' }}
-                {% else %}
-                  {{ object.hist_enddate|ukj|date:'j.m.Y' }}
-                {% endif %}
-              {% else %}
-                {{ object.hist_enddate|date:'j.m.Y' }}
-              {% endif %}
-            {% endif %}
-          {% endif %}
-          </small>
-        {% endif %}
-      </div>
-    </div>
+{#    <div class="w3-third w3-cell w3-hide-small">#}
+{#      <div#}
+{#          class="w3-xlarge layout-row layout-align-center-center w3-hover-white"#}
+{#      >#}
+{#        <strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>#}
+{#      </div>#}
+{#      <div class="layout-row layout-align-center-center">#}
+{#        {% if object.hist_date %}#}
+{#          <small>#}
+{#          {% if object.hist_date|vkj == True %}#}
+{#            {% if request.session.ukj == 'on' %}#}
+{#              vkj: {{ object.hist_date|date:'j.m.Y' }}#}
+{#            {% else %}#}
+{#              ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}#}
+{#            {% endif %}#}
+{#            {% if object.hist_enddate %}#}
+{#              -#}
+{#              {% if object.hist_enddate|vkj == True %}#}
+{#                {% if request.session.ukj == 'on' %}#}
+{#                  {{ object.hist_enddate|date:'j.m.Y' }}#}
+{#                {% else %}#}
+{#                  {{ object.hist_enddate|ukj|date:'j.m.Y' }}#}
+{#                {% endif %}#}
+{#              {% else %}#}
+{#                {{ object.hist_enddate|date:'j.m.Y' }}#}
+{#              {% endif %}#}
+{#            {% endif %}#}
+{#          {% endif %}#}
+{#          </small>#}
+{#        {% endif %}#}
+{#      </div>#}
+{#    </div>#}
     {#  Valitud artikkel viewport: small #}
-    <div class="w3-cell-row w3-hide-large w3-hide-medium">
-      <div class="w3-third w3-cell">
-        <div
-            class="w3-xlarge layout-row layout-align-center-center"
-        >
-          <strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>
-        </div>
-      </div>
-    </div>
+{#    <div class="w3-cell-row w3-hide-large w3-hide-medium">#}
+{#      <div class="w3-third w3-cell">#}
+{#        <div#}
+{#            class="w3-xlarge layout-row layout-align-center-center"#}
+{#        >#}
+{#          <strong>{% include 'wiki/includes/date_range.html' with obj=object %}</strong>#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
     {# Kronoloogiliselt järgnev artikkel #}
-    <div class="w3-third w3-cell w3-hover-white">
+    <div class="w3-half w3-cell w3-hover-white w3-round">
       <div class="w3-right-align w3-right">
         {% if next_obj %}
           <div class="w3-container w3-rest w3-cell w3-cell-middle w3-right">
             <a
-                    href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}"
+                    href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}{{ queryparams }}"
                     title="Liigu järgmisele loole"
             >
               <div class="w3-padding w3-xxlarge hover-artikkel">
@@ -103,7 +145,7 @@
             <br>
             <a
                 class="hover-artikkel"
-                href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}"
+                href="{% url 'wiki:wiki_artikkel_detail' pk=next_obj.id slug=next_obj.slug %}{{ queryparams }}"
                 title="Liigu järgmisele loole"
             >
               {{ next_obj }}
@@ -114,15 +156,39 @@
     </div>
   </div>
 
-  <div class="w3-panel w3-card-4 w3-light-grey" >
+  <div class="w3-panel w3-card-4 w3-light-grey w3-round" >
     <!-- Sisukaardi päis-->
     <div class="w3-row text-artikkel">
       <h4>
         <a style="text-decoration: none;" href="{% url 'wiki:otsi' %}">
           <i class="{% icon_artikkel %}"></i>
         </a>
-        {% include 'wiki/includes/object_detail_nimi.html' %}
+        {% include 'wiki/includes/object_detail_nimi.html' %} {{ object }}
       </h4>
+    </div>
+    <div class="w3-row">
+      {% include 'wiki/includes/date_range.html' with obj=object %}
+      {% if object.hist_date %}
+        {% if object.hist_date|vkj == True %}
+          {% if request.session.ukj == 'on' %}
+            vkj: {{ object.hist_date|date:'j.m.Y' }}
+          {% else %}
+            ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}
+          {% endif %}
+          {% if object.hist_enddate %}
+            -
+            {% if object.hist_enddate|vkj == True %}
+              {% if request.session.ukj == 'on' %}
+                {{ object.hist_enddate|date:'j.m.Y' }}
+              {% else %}
+                {{ object.hist_enddate|ukj|date:'j.m.Y' }}
+              {% endif %}
+            {% else %}
+              {{ object.hist_enddate|date:'j.m.Y' }}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
     </div>
     <div class="w3-twothird w3-padding-16" >
       <!-- Artikkel -->

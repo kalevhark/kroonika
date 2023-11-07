@@ -1,5 +1,5 @@
 {% load wiki_extras %}
-<a class="hover-{{model}} tooltip-content" href="{% url 'wiki:wiki_'|add:model|add:'_detail' pk=obj.id slug=obj.slug %}">
+<a class="hover-{{model}} tooltip-content w3-round" href="{% url 'wiki:wiki_'|add:model|add:'_detail' pk=obj.id slug=obj.slug %}">
   <span
           title={{ obj }}
           data-model='{{ obj|get_model_name }}'

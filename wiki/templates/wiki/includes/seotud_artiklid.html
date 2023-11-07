@@ -5,6 +5,6 @@
       <i class="{% icon_artikkel %} w3-xlarge text-artikkel" title="Seotud lood"></i>
       &nbsp;Mainitud kroonikas:
     </h5>
-    {% include 'wiki/includes/seotud_artklid_list.html' %}
+    {% include 'wiki/includes/seotud_artklid_list.html' with queryparams=queryparams %}
   </div>
 {% endif %}

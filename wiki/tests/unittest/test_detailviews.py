@@ -7,6 +7,7 @@ import urllib
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.middleware import SessionMiddleware
+from django.http import QueryDict
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
@@ -129,6 +130,255 @@ class ArtikkelViewTests(TestCase):
             }
             response = self.client.get(reverse('wiki:wiki_artikkel_detail', kwargs=kwargs))
             self.assertEqual(response.status_code, 200)
+
+    def test_artikkel_with_filter_objects_exists_isik_and_related(self):
+        isik_id = 7 # H. Einer
+        # organisatsioon_id = 2 # karskusselts
+        # objekt_id = 311 # Kesk 33
+        artikkel_id = 4503 # k6ik objectid olemas
+        obj = Artikkel.objects.get(id=artikkel_id)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        queryparams = QueryDict(mutable=True)
+        queryparams.update(
+            {
+                'isik': isik_id,
+                # 'organisatsioon': organisatsioon_id,
+                # 'objekt': objekt_id
+            }
+        )
+        base_url = reverse(
+            'wiki:wiki_artikkel_detail',
+            kwargs=kwargs
+        )
+        url = '{}?{}'.format(base_url, queryparams.urlencode())
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('queryparams', response.context_data)
+        self.assertEqual(response.context_data['queryparams'][1:], queryparams.urlencode())
+
+    def test_artikkel_with_filter_objects_exists_organisatsioon_and_related(self):
+        # isik_id = 7 # H. Einer
+        organisatsioon_id = 2 # karskusselts
+        # objekt_id = 311 # Kesk 33
+        artikkel_id = 4503 # k6ik objectid olemas
+        obj = Artikkel.objects.get(id=artikkel_id)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        queryparams = QueryDict(mutable=True)
+        queryparams.update(
+            {
+                # 'isik': isik_id,
+                'organisatsioon': organisatsioon_id,
+                # 'objekt': objekt_id
+            }
+        )
+        base_url = reverse(
+            'wiki:wiki_artikkel_detail',
+            kwargs=kwargs
+        )
+        url = '{}?{}'.format(base_url, queryparams.urlencode())
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('queryparams', response.context_data)
+        self.assertEqual(response.context_data['queryparams'][1:], queryparams.urlencode())
+
+    def test_artikkel_with_filter_objects_exists_objekt_and_related(self):
+        # isik_id = 7 # H. Einer
+        # organisatsioon_id = 2 # karskusselts
+        objekt_id = 311 # Kesk 33
+        artikkel_id = 4503 # k6ik objectid olemas
+        obj = Artikkel.objects.get(id=artikkel_id)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        queryparams = QueryDict(mutable=True)
+        queryparams.update(
+            {
+                # 'isik': isik_id,
+                # 'organisatsioon': organisatsioon_id,
+                'objekt': objekt_id
+            }
+        )
+        base_url = reverse(
+            'wiki:wiki_artikkel_detail',
+            kwargs=kwargs
+        )
+        url = '{}?{}'.format(base_url, queryparams.urlencode())
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('queryparams', response.context_data)
+        self.assertEqual(response.context_data['queryparams'][1:], queryparams.urlencode())
+
+    def test_artikkel_with_filter_objects_all_exist_and_related(self):
+        isik_id = 7 # H. Einer
+        organisatsioon_id = 2 # karskusselts
+        objekt_id = 311 # Kesk 33
+        artikkel_id = 4503 # k6ik objectid olemas
+        obj = Artikkel.objects.get(id=artikkel_id)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        queryparams = QueryDict(mutable=True)
+        queryparams.update(
+            {
+                'isik': isik_id,
+                'organisatsioon': organisatsioon_id,
+                'objekt': objekt_id
+            }
+        )
+        base_url = reverse(
+            'wiki:wiki_artikkel_detail',
+            kwargs=kwargs
+        )
+        url = '{}?{}'.format(base_url, queryparams.urlencode())
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('queryparams', response.context_data)
+        self.assertEqual(response.context_data['queryparams'][1:], queryparams.urlencode())
+
+    def test_artikkel_with_filter_objects_some_wrong_and_related(self):
+        isik_id = 7 # H. Einer
+        organisatsioon_id = 2 # karskusselts
+        objekt_id = 311 # Kesk 33
+        artikkel_id = 4503 # k6ik objectid olemas
+        obj = Artikkel.objects.get(id=artikkel_id)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        queryparams = QueryDict(mutable=True)
+        queryparams.update(
+            {
+                'isik': isik_id,
+                'organisatsioon': organisatsioon_id,
+                'xxx': objekt_id
+            }
+        )
+        base_url = reverse(
+            'wiki:wiki_artikkel_detail',
+            kwargs=kwargs
+        )
+        url = '{}?{}'.format(base_url, queryparams.urlencode())
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('queryparams', response.context_data)
+        self.assertNotEquals(response.context_data['queryparams'][1:], queryparams.urlencode())
+        self.assertIn(response.context_data['queryparams'][1:], queryparams.urlencode())
+
+    def test_artikkel_with_filter_objects_all_exist_not_related(self):
+        isik_id = 77 # J. Tamm
+        organisatsioon_id = 22 # Valga linna tytarlastekool
+        objekt_id = 309 # Grynbergi maja
+        artikkel_id = 4503 # ykski object pole seotud
+        obj = Artikkel.objects.get(id=artikkel_id)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        queryparams = QueryDict(mutable=True)
+        queryparams.update(
+            {
+                'isik': isik_id,
+                'organisatsioon': organisatsioon_id,
+                'objekt': objekt_id
+            }
+        )
+        base_url = reverse(
+            'wiki:wiki_artikkel_detail',
+            kwargs=kwargs
+        )
+        url = '{}?{}'.format(base_url, queryparams.urlencode())
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('queryparams', response.context_data)
+
+    def test_artikkel_with_filter_objects_not_exist_nor_related(self):
+        isik_id = 17 # none
+        organisatsioon_id = 8 # none
+        objekt_id = 310 # none
+        artikkel_id = 4503 # ykski object pole seotud
+        obj = Artikkel.objects.get(id=artikkel_id)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        queryparams = QueryDict(mutable=True)
+        queryparams.update(
+            {
+                'isik': isik_id,
+                'organisatsioon': organisatsioon_id,
+                'objekt': objekt_id
+            }
+        )
+        base_url = reverse(
+            'wiki:wiki_artikkel_detail',
+            kwargs=kwargs
+        )
+        url = '{}?{}'.format(base_url, queryparams.urlencode())
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('queryparams', response.context_data)
+
+    def test_artikkel_with_filter_objects_none_nor_related(self):
+        isik_id = None # none
+        organisatsioon_id = None # none
+        objekt_id = None # none
+        artikkel_id = 4503 # ykski object pole seotud
+        obj = Artikkel.objects.get(id=artikkel_id)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        queryparams = QueryDict(mutable=True)
+        queryparams.update(
+            {
+                'isik': isik_id,
+                'organisatsioon': organisatsioon_id,
+                'objekt': objekt_id
+            }
+        )
+        base_url = reverse(
+            'wiki:wiki_artikkel_detail',
+            kwargs=kwargs
+        )
+        url = '{}?{}'.format(base_url, queryparams.urlencode())
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('queryparams', response.context_data)
+
+    def test_artikkel_with_filter_objects_empty_nor_related(self):
+        isik_id = '' # none
+        organisatsioon_id = '' # none
+        objekt_id = '' # none
+        artikkel_id = 4503 # ykski object pole seotud
+        obj = Artikkel.objects.get(id=artikkel_id)
+        kwargs = {
+            'pk': obj.id,
+            'slug': obj.slug
+        }
+        queryparams = QueryDict(mutable=True)
+        queryparams.update(
+            {
+                'isik': isik_id,
+                'organisatsioon': organisatsioon_id,
+                'objekt': objekt_id
+            }
+        )
+        base_url = reverse(
+            'wiki:wiki_artikkel_detail',
+            kwargs=kwargs
+        )
+        url = '{}?{}'.format(base_url, queryparams.urlencode())
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('queryparams', response.context_data)
 
     def test_artikkel_HTTP404_for_non_authented_user(self):
         SELECT_COUNT = 10

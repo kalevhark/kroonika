@@ -7,7 +7,7 @@
   &nbsp;
   <a
     class="hover-artikkel tooltip-content"
-    href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}"
+    href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}{{ queryparams }}"
   >
     <span
           title='{{ obj }}'
