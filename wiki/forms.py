@@ -1,6 +1,6 @@
 from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField, AutoCompleteField
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset, HTML, ButtonHolder
+from crispy_forms.layout import Submit, Layout, Field, Fieldset, HTML, ButtonHolder
 from django.forms import (
     Form, ModelForm,
     Textarea,
@@ -157,11 +157,13 @@ class VihjeForm(ModelForm):
         self.helper.form_class = 'blueForms'
         self.helper.form_method = 'post'
         self.helper.form_action = 'wiki:feedback'
+        self.helper.form_show_labels = False
+        self.helper.error_text_inline = True
         self.helper.layout = Layout(
             Fieldset(
                 'Olen tänulik, kui märkasid viga või oskad täiendada:',
-                'kirjeldus',
-                'kontakt',
+                Field('kirjeldus', autocomplete='off', css_class="vihje-kirjeldus"),
+                Field('kontakt', css_class="vihje-kontakt"),
                 HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >')
             ),
             ButtonHolder(
@@ -177,8 +179,12 @@ class VihjeForm(ModelForm):
             'kontakt'
         )
         widgets = {
-            'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-            'kontakt': Textarea(attrs={'cols': 40, 'rows': 1})
+            'kirjeldus': Textarea(attrs={'rows': 5, 'placeholder': 'Siia kirjuta vihje parandamiseks/täiendamiseks'}),
+            'kontakt': Textarea(attrs={'rows': 1, 'placeholder': 'Palun märgi siia oma nimi ja kontaktandmed'})
+        }
+        help_texts = {
+            'kirjeldus': None,
+            'kontakt': None,
         }
 
 

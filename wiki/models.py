@@ -1929,11 +1929,11 @@ class Pilt(models.Model):
 class Vihje(models.Model):
     kirjeldus = models.TextField(
         'Vihje',
-        help_text='Vihje parandamiseks/täiendamiseks',
+        help_text='Siia kirjuta vihje parandamiseks/täiendamiseks',
     )
     kontakt = models.CharField(
         'Kontakt',
-        help_text='Sinu nimi/kontaktandmed',
+        help_text='Palun märgi siia oma nimi ja kontaktandmed',
         max_length=100,
         blank=True
     )

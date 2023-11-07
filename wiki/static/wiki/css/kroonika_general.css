@@ -1,4 +1,4 @@
-/* ver 2023.10.29 */
+/* ver 2023.11.07 */
 html, body, p, h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", sans-serif;
 }
@@ -319,6 +319,16 @@ ul.no-bullets li {
 .pilt-pildidtekstis {
   max-height: 400px;
   width: auto;
+}
+
+/* vihje vorm */
+.vihje-kirjeldus.textarea,
+.vihje-kontakt.textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
 }
 
 /* The Modal (background) */
