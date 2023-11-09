@@ -1179,7 +1179,6 @@ class ArtikkelDetailView(generic.DetailView):
         # filter_organisatsioon_id = queryprms.get('organisatsioon')
         # filter_objekt_id = queryprms.get('objekt')
         # print(filter_isik_id, filter_organisatsioon_id, filter_objekt_id)
-
         queryparams = QueryDict(mutable=True)
         for query_object in ['isik', 'organisatsioon', 'objekt']:
             filter_object_id = self.request.GET.get(query_object)
@@ -2404,9 +2403,16 @@ class ObjektDetailView(generic.DetailView):
 def get_object_data4tooltip(request):
     model_name = request.GET.get('model')
     id = request.GET.get('obj_id')
-    model = apps.get_model('wiki', model_name)
-    obj = model.objects.get(id=id)
-    content = str(obj)
+
+    try:
+        model = apps.get_model('wiki', model_name)
+        obj = model.objects.get(id=id)
+        content = str(obj)
+    except:
+        print(f'vigane tooltip päring model={model_name}; id={id}')
+        model = None
+        obj = None
+        content = ''
     if model in [Isik, Objekt, Organisatsioon]:
         if obj.kirjeldus:
             heading = f'{obj}'
