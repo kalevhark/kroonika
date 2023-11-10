@@ -26,4 +26,11 @@
 {% endblock %}
 
 {% block javascript %}
+  <script>
+    {# eemaldame tagasiside nupud, et ei tekiks loopi #}
+    const feedback_button = document.getElementById("wiki_base_feedback");
+    const feedback_button_menu = document.getElementById("wiki_base_feedback_nav_bar_small");
+    feedback_button.remove();
+    feedback_button_menu.remove();
+  </script>
 {% endblock %}
