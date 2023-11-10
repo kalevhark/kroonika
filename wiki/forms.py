@@ -179,8 +179,8 @@ class VihjeForm(ModelForm):
             'kontakt'
         )
         widgets = {
-            'kirjeldus': Textarea(attrs={'rows': 5, 'placeholder': 'Siia kirjuta vihje parandamiseks/täiendamiseks'}),
-            'kontakt': Textarea(attrs={'rows': 1, 'placeholder': 'Palun märgi siia oma nimi ja kontaktandmed'})
+            'kirjeldus': Textarea(attrs={'rows': 5, 'placeholder': 'Siia palun kirjuta vihje parandamiseks/täiendamiseks'}),
+            'kontakt': Textarea(attrs={'rows': 1, 'placeholder': 'Nimi ja kontaktandmed'})
         }
         help_texts = {
             'kirjeldus': None,
