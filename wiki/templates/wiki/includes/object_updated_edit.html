@@ -29,9 +29,10 @@
     {% endif %}
   {% endif %}
 {% endif %}
-<div
+<a
     class="w3-button w3-padding-bottom w3-hover-white w3-small"
     title="Viimane läbivaatamise aeg ja läbivaataja"
+    onclick="markdownTagCopyObject(this)"
 >
   {% if object.updated_by.username %}
     {{ object.mod_date|date:"d.m.Y" }}/{{ object.updated_by.username}}
@@ -41,10 +42,11 @@
 
   {% if user.is_authenticated %}
     {% if user.is_staff %}
-      &nbsp;{{ object.markdown_tag }}
+{#      &nbsp;{{ object.markdown_tag }}#}
+      <span id="markdown-tag-object"> {{ object.markdown_tag }}</span>
     {% endif %}
   {% endif %}
-</div>
+</a>
 {% if object.total_accessed %}
   <div
       class="w3-button w3-padding-bottom w3-hover-white w3-small fa fa-eye"
@@ -54,14 +56,18 @@
   </div>
 {% endif %}
 
-{#<script>#}
-{#	function showFeedback() {#}
-{#		var x = document.getElementById("panelFeedBack");#}
-{#		if (x.className.indexOf("w3-show-block") === -1) {#}
-{#			x.className += " w3-show-block";#}
-{#			document.getElementById("id_kirjeldus").focus();#}
-{#		} else {#}
-{#			x.className = x.className.replace(" w3-show-block", "");#}
-{#		}#}
-{#	}#}
-{#</script>#}
+{% if user.is_authenticated %}
+  {% if user.is_staff %}
+    <script>
+      // button onclick="markdownTagCopy(this)"
+      function markdownTagCopyObject(btn) {
+        var markdownTag = document.getElementById("markdown-tag-object");
+        navigator.clipboard.writeText(markdownTag.innerText);
+        markdownTag.parentElement.classList.add("w3-pale-green");
+        setTimeout(function () {
+          markdownTag.parentElement.classList.remove("w3-pale-green");
+        }, 2500);
+      }
+    </script>
+  {% endif %}
+{% endif %}
