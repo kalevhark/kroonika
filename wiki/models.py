@@ -178,7 +178,7 @@ def add_markdown_objectid(string):
     @param string:
     @return:
     """
-    pattern = re.compile(rf'\[([\wÀ-ÿ\s\"\-]+)\]\(\[(isik|organisatsioon|objekt)_([0-9]*)\]\)')
+    pattern = re.compile(rf'\[([\wÀ-ÿ\s\"\-]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)')
     tagid = re.finditer(pattern, string)
     for tag in tagid:
         tekst, model_name, id = tag.groups()
@@ -762,7 +762,7 @@ class Objekt(models.Model):
 
     # Tekstis MarkDown kodeerimiseks
     def markdown_tag(self):
-        return f'[{self.nimi}] ([obj_{self.id}])'
+        return f'[{self.nimi}] ([{self.__class__.__name__.lower()}_{self.id}])'
 
     # Keywords
     @property
@@ -982,7 +982,8 @@ class Organisatsioon(models.Model):
 
     # Tekstis MarkDown kodeerimiseks
     def markdown_tag(self):
-        return f'[{self.nimi}] ([org_{self.id}])'
+        # return f'[{self.nimi}] ([org_{self.id}])'
+        return f'[{self.nimi}] ([{self.__class__.__name__.lower()}_{self.id}])'
 
     def get_absolute_url(self):
         kwargs = {
@@ -1261,7 +1262,8 @@ class Isik(models.Model):
     # Tekstis MarkDown kodeerimiseks
     @property
     def markdown_tag(self):
-        return f'[{self.nimi()}] ([isik_{self.id}])'
+        # return f'[{self.nimi()}] ([isik_{self.id}])'
+        return f'[{self.nimi()}] ([{self.__class__.__name__.lower()}_{self.id}])'
 
     def get_absolute_url(self):
         kwargs = {
@@ -1632,7 +1634,8 @@ class Artikkel(models.Model):
     # Tekstis MarkDown kodeerimiseks
     @property
     def markdown_tag(self):
-        return f'[{self.nimi}] ([art_{self.id}])'
+        # return f'[{self.nimi}] ([art_{self.id}])'
+        return f'[{self.nimi}] ([{self.__class__.__name__.lower()}_{self.id}])'
 
 
 class PiltSortedManager(models.Manager):
