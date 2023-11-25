@@ -136,23 +136,51 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-Linda Jäär, Maimo-Amanda Korp, Hilja Paabo, Herta Pulst, Salme Tiiwel, Alide Tomson
+Ella Aaran,
+Elwine Hist,
+Maria Kaska,
+Linda Kitsnik,
+Louise Kuusik,
+Alwine Kroon,
+Natalia Liiwamets,
+Maria Simmul,
+Meeta Rõigas,
+Roche Leja Shlick,
+Wilma Sulin,
+Weronika-Benita Teder,
+Amanda Uibo,
+Eweline-Marie Wislapuu,
+Johanna Waher,
+Ludmilla Wink,
+Salme Org,
+Sinaida Kraaw,
+Klaudia Tonts,
+Wilma Potsepp,
+Auguste Karulin,
+Salme Laur,
+Irene Strohm.
+Larissa Tamm,
+Walentine Wawer,
+Emilie Püwi,
+Hildegard Koonik,
+Herta Pulst,
+Alide Kolwets
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=11720)
+    art = Artikkel.objects.get(id=12374)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=10340)
+    pilt = Pilt.objects.get(id=11658)
     print(pilt)
     # Milline organisatsioon lisada isikule
     org = Organisatsioon.objects.get(id=2768) # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [13703]
+    viited_ids = [14493]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Valga naiskutsekooli kangakudumise osakonna lõpetaja 1934'
+    isik_kirjeldus = 'Valga naiskutsekooli lõpetaja 1935 [^1]'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
@@ -166,17 +194,18 @@ Linda Jäär, Maimo-Amanda Korp, Hilja Paabo, Herta Pulst, Salme Tiiwel, Alide T
                 eesnimi = isik_eesnimi,
                 kirjeldus = isik_kirjeldus
             )
-            uus_isik.save()
+            # uus_isik.save()
             print(uus_isik)
             # Lisame isikule seotud organisatsiooni
-            uus_isik.organisatsioonid.add(org)
+            # uus_isik.organisatsioonid.add(org)
             # Lisame isikule seotud viite(d)
             for viide in viited:
-                uus_isik.viited.add(viide)
+                # uus_isik.viited.add(viide)
+                pass
             # Lisame isiku artiklile
-            art.isikud.add(uus_isik)
+            # art.isikud.add(uus_isik)
             # Lisame isiku pildile
-            pilt.isikud.add(uus_isik)
+            # pilt.isikud.add(uus_isik)
 
 # Isikukirjete tekitamiseks artikli juurde
 # import tools
