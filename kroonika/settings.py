@@ -244,7 +244,6 @@ KROONIKA = {
     'DESCRIPTION':
         """
         Valga linna kroonika. Lood Valga linna ajaloost seotuna isikute, asutiste ja kohtadega. 
-        Kasutamiseks informatsioonilistel ja hariduslikel eesmärkidel.
         """.strip(),
     'KEYWORDS': ['Valga', 'linn', 'Valga linn', 'kroonika', 'ajalugu']
 }

@@ -22,22 +22,24 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'wiki/favicon-16x16.png' %}">
     <link rel="manifest" href="{% static 'wiki/site.webmanifest' %}">
 
-    <meta name="description" content="Valga linna kroonika. Lood, inimesed, asutised ja kohad Valga linna ajaloost." />
+    <meta name="description" content="{% description %}" />
     <meta name="keywords" content="{% if object %}{{ object.keywords }}{% else %}{% keywords %}{% endif %}" />
     <meta name="author" content="{% kalev %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <!-- Microsoft bing -->
+    <!-- Microsoft Bing -->
     <meta name="msvalidate.01" content="0EE01D4CD04ABA5D4C9C17D1CB2A2928" />
     <!-- OGP kirjeldus -->
     {% include 'wiki/wiki_base/wiki_base_ogp.html' %}
     <!-- FB piltide share piltide jaoks -->
     {% if profiilipilt %}
       <meta property="og:image" content="{{ request.scheme }}://{{ request.site }}{{ profiilipilt.pilt.url }}" />
+      <meta property="og:image:alt" content="{{ profiilipilt.caption }}" />
       <meta property="og:image:width" content="250"/>
       <meta property="og:image:height" content="250"/>
     {% else %}
       {% block og_image %}
         <meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/android-chrome-512x512_FB.png' %}" />
+        <meta property="og:image:alt" content="{% description %}" />
       {% endblock %}
     {% endif %}
     <!-- JSON-LD markup -->

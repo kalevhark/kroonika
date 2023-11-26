@@ -130,6 +130,10 @@ def viga_tekstis():
 def keywords():
     return ','.join(settings.KROONIKA['KEYWORDS'])
 
+@register.simple_tag
+def description():
+    return settings.KROONIKA['DESCRIPTION']
+
 # Sektsioonide nimetused
 @register.simple_tag
 def model_name_artikkel():
