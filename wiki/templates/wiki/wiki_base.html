@@ -37,7 +37,7 @@
       <meta property="og:image:height" content="250"/>
     {% else %}
       {% block og_image %}
-        <meta property="og:image" content="{{ request.scheme }}://{{ request.site }}{% static 'wiki/img/android-chrome-512x512_FB.png' %}" />
+        <meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/android-chrome-512x512_FB.png' %}" />
       {% endblock %}
     {% endif %}
     <!-- JSON-LD markup -->
