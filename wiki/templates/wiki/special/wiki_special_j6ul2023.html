@@ -1,0 +1,66 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block src %}{% endblock %}
+
+{% block title %}{{ block.super }} - {{ pyhadesoov }}!{% endblock %}
+
+{% block css %}
+  <style>
+    .Site {
+        background-color: #FAEBD7;
+    }
+  </style>
+  <link rel="stylesheet" href="{% static 'wiki/css/special/wiki_special_j6ul2023.css' %}?ver=2023.11.26">
+{% endblock %}
+
+{% block og_image %}
+  <meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/special/VaMFp4053F2891-334_1_j6ul2023_FB.png' %}" />
+  <meta property="og:description" content="{{ pyhadesoov }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="w3-container image-wrapper">
+    <div
+        style="color: red; text-align: center; padding-top: 1em"
+        class="holidays-title-small w3-hide-large"
+    >
+      {{ pyhadesoov }} soovib {{ tervitaja }}!
+    </div>
+    <section class='addLights' style='border-radius: 1rem;'>
+      <img
+          src="{% static 'wiki/img/special/VaMFp4053F2891-334_1_j6ul2023.jpg' %}"
+          alt="{{ pyhadesoov }} - Valga raekoda (VaM Fp 4053 F 2891/334, Valga Muuseum)"
+          style="width:100%"
+      >
+      {% include 'wiki/special/wiki_special_j6ul2023_tree.html' %}
+      <div style="text-align: center;">
+        <small>
+          Valga raekoda (VaM Fp 4053 F 2891/334, Valga Muuseum)
+        </small>
+      </div>
+      <div id="divGreeting" class="holidays-title w3-hide-small w3-hide-medium">
+        {{ pyhadesoov }} soovib {{ tervitaja }}!
+      </div>
+    </section>
+    <div
+            class="w3-tiny"
+            style="padding-top: 16px;"
+    >
+      Oma nimega jõulukaardi saatmiseks kasutage aadressi: https://valgalinn.ee/j6ul2023/?<i>minginimi</i> NB! Küsimärk peab olema!
+    </div>
+    <div
+        class="fb-share-button"
+        data-href="{% url 'special_j6ul2023' %}"
+        data-layout="button"
+        data-size="small">
+      <a
+          target="_blank"
+          href="https://www.facebook.com/sharer/sharer.php?u={% url 'special_j6ul2023' %}%2F&amp;src=sdkpreparse"
+          class="fb-xfbml-parse-ignore">Jaga
+      </a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}{% endblock %}

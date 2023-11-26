@@ -1,0 +1,207 @@
+/*ver=2023.11.26*/
+
+@font-face{
+  font-family: "1942";
+  src: url("../fonts/1942.ttf") format("truetype");
+}
+
+@media screen and (min-width: 1024px) {
+  div.image-wrapper {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+  }
+}
+
+/* Alla 800px laiuse sätted */
+@media screen and (max-width: 1023px) {
+  div.image-wrapper {
+    width: 90%;
+    display: table;
+    margin: 0 auto;
+  }
+}
+
+div.image-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+}
+
+.image-wrapper img {
+  display: block;
+}
+
+.holidays-title {
+  position: relative;
+  border-right: solid 3px rgba(0,255,0,.75);
+  white-space: nowrap;
+  overflow: hidden;
+  /*font-family: 'Mountains of Christmas', cursive;*/
+  font-family: '1942', monospace;
+  font-size: 1.5em;
+  color: red;
+}
+
+.holidays-title-small {
+  font-size: 1.2em;
+  color: red;
+  /*font-family: 'Mountains of Christmas', cursive;*/
+  font-family: '1942', monospace;
+  margin: .5em;
+  text-align: center;
+  justify-content: center;
+}
+
+/*
+Typewriter Text Animation
+Aakhya Singh
+https://codepen.io/aakhya/pen/EOxqOV
+*/
+
+/* Animation */
+
+.holidays-title {
+  animation: animated-text 4s steps(29,end) 1s 1 normal both,
+             animated-cursor 600ms steps(29,end) infinite;
+}
+
+/* text animation */
+
+@keyframes animated-text{
+  from{width: 0;}
+  to{width: 600px;}
+}
+
+/* cursor animations */
+
+@keyframes animated-cursor{
+  from{border-right-color: rgba(0,255,0,.75);}
+  to{border-right-color: transparent;}
+}
+
+.addLights {
+  position: relative;
+  text-align: center;
+}
+
+.tree-wrapper {
+  position: absolute;
+  top: 65%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+  height: 25vmin;
+  width: 12vmin;
+}
+
+/* Christmas Tree Spiral by @jh3y https://codepen.io/jh3y/pen/XWjzyVL */
+.tree {
+  position: relative;
+  height: 25vmin;
+  width: 12vmin;
+  transform-style: preserve-3d;
+  -webkit-animation: spin 4s infinite linear;
+          animation: spin 4s infinite linear;
+}
+.tree__light {
+  transform-style: preserve-3d;
+  position: absolute;
+  height: 1vmin;
+  width: 1vmin;
+  border-radius: 50%;
+  -webkit-animation: flash calc(var(--speed) * 2s) calc(var(--delay) * 2s) infinite steps(4), appear 1s calc(var(--appear) * 0.1s) both;
+          animation: flash calc(var(--speed) * 2s) calc(var(--delay) * 2s) infinite steps(4), appear 1s calc(var(--appear) * 0.1s) both;
+  left: 50%;
+  transform: translate(-50%, 50%) rotateY(calc(var(--rotate, 0) * 1deg)) translate3d(0, 0, calc(var(--radius, 0) * 1vmin));
+  bottom: calc(var(--y, 0) * 1%);
+}
+.tree__star {
+  stroke-width: 5vmin;
+  stroke: #f5e0a3;
+  filter: drop-shadow(0 0 2vmin #fcf1cf);
+  height: 5vmin;
+  width: 5vmin;
+  overflow: visible !important;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  position: absolute;
+  stroke-dasharray: 1000 1000;
+  fill: none;
+  -webkit-animation: stroke 2s calc((var(--delay) * 0.9) * 0.1s) both;
+          animation: stroke 2s calc((var(--delay) * 0.9) * 0.1s) both;
+}
+@-webkit-keyframes stroke {
+  from {
+    stroke-dashoffset: -1000;
+  }
+}
+@keyframes stroke {
+  from {
+    stroke-dashoffset: -1000;
+  }
+}
+@-webkit-keyframes spin {
+  to {
+    transform: rotateY(360deg);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotateY(360deg);
+  }
+}
+@-webkit-keyframes appear {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes flash {
+  0%, 100% {
+    background: #f00;
+  }
+  20% {
+    background: #fff;
+  }
+  40% {
+    background: #f00;
+  }
+  60% {
+    background: #fff;
+  }
+  80% {
+    background: #f00;
+  }
+}
+@keyframes flash {
+  0%, 100% {
+    background: #f00;
+  }
+  20% {
+    background: #fff;
+  }
+  40% {
+    background: #f00;
+  }
+  60% {
+    background: #fff;
+  }
+  80% {
+    background: #f00;
+  }
+}

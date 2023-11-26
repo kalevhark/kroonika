@@ -1,0 +1,23 @@
+{% load static %}
+<a
+    href="{% url 'special_j6ul2023' %}"
+    title="Vaata pühadetervitust"
+>
+  <section class='addLights' style='border-radius: 1rem;'>
+    <img
+          style="width: 100%; margin-top: 1em"
+          src="{% static 'wiki/img/special/VaMFp4053F2891-334_1_j6ul2023_thumb.jpg' %}"
+          alt='Valga raekoda (VaM Fp 4053 F 2891/334, Valga Muuseum)'
+    />
+    <div class="w3-tiny">
+      Valga raekoda (VaM Fp 4053 F 2891/334, Valga Muuseum)
+    </div>
+    {% include 'wiki/special/wiki_special_j6ul2023_tree.html' %}
+    <div
+        class="holidays-title-small"
+    >
+      {% now "Y" as current_year %}
+      <strong>{% if current_year == '2023' %}Ilusat jõuluaega!{% else %}Head uut aastat!{% endif %}</strong>
+    </div>
+  </section>
+</a>

@@ -4,7 +4,31 @@
 
 {% block css %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'wiki/css/wiki_calendar3.css' %}?ver=2022.7.18">
+  <link rel="stylesheet" href="{% static 'wiki/css/wiki_calendar3.css' %}">
+  {# j6ul 2023 start #}
+  <link rel="stylesheet" href="{% static 'wiki/css/special/wiki_special_j6ul2023.css' %}?ver=2023.11.26">
+  <style>
+    .tree-wrapper {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+    }
+    /* Alla 800px laiuse sätted */
+    @media screen and (max-width: 800px) {
+      .tree-wrapper {
+        position: absolute;
+        top: 70%;
+        left: 50%;
+      }
+    }
+
+    .tree-wrapper,
+    .tree {
+      height: 16vmin;
+      width: 8vmin;
+    }
+  </style>
+  {# j6ul 2023 end #}
 {% endblock %}
 
 {% block content %}
@@ -19,15 +43,14 @@
     {% now "Y" as aasta %}
     <!-- Artiklite esitlus -->
 	  <div class="w3-quarter">
-      <!--      Teadete esitamiseks -->
+    {# Teadete esitamiseks #}
 {#      <div class="w3-container w3-hover-white w3-padding-16 w3-center">#}
 {#        {% include 'wiki/special/algus_message_439.html' %}#}
 {#      </div>#}
 {#      <div#}
 {#              class="w3-container w3-hover-white w3-center"#}
-{#              style="border-radius: 1rem;"#}
 {#      >#}
-{#        {% include 'wiki/special/algus_message_j6ul2022.html' %}#}
+{#        {% include 'wiki/special/algus_message_j6ul2023.html' %}#}
 {#      </div>#}
       <!--      Kalender -->
       <div class="card w3-hide-medium w3-padding-16 w3-hover-white">
