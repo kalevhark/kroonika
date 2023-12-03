@@ -1020,11 +1020,32 @@ def task_20230316():
         print(obj.created_on, obj)
         obj.save()
 
+def getFilename_fromCd(cd):
+    """
+    Get filename from content-disposition
+    """
+    if not cd:
+        return None
+    fname = re.findall('filename=(.+)', cd)
+    if len(fname) == 0:
+        return None
+    return fname[0]
+
+def getFile_fromUrl(url):
+    # url = 'http://google.com/favicon.ico'
+    r = requests.get(url, allow_redirects=True)
+    filename = getFilename_fromCd(r.headers.get('content-disposition'))
+    contentLength = r.headers.get('content-length', None)
+    print(filename, contentLength)
+    open(filename, 'wb').write(r.content)
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
     # muis_viited_inuse()
     # ilmajama()
     # massikanne_from_json()
+    url = 'http://opendata.muis.ee/dhmedia/2d69b089-d435-45a2-92f0-2f4f28784e58'
+    getFile_fromUrl(url)
     pass
 
