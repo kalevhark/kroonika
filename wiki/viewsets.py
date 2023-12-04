@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models import Q, F, Value, CharField
+from django.db.models import Q, F, Value, CharField, Func
 from django.db.models.functions import Concat
 from django.utils.safestring import mark_safe
 

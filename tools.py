@@ -1020,6 +1020,44 @@ def task_20230316():
         print(obj.created_on, obj)
         obj.save()
 
+import itertools
+def viited_uusformaat():
+    def replace_viite_tag(obj, string, logfile):
+        viited = obj.viited.all()
+        if viited:
+            logfile.write(f'{str(obj.__class__.__name__)} {obj.id}\n')
+            # Ajutine: asendame viited kujul [^n] viite koodiga kujul [viide_nnnn]
+            c = itertools.count(1)
+            translate_viited = {
+                f'[^{next(c)}]': f'[viide_{viide.id}]'
+                for viide
+                in viited
+            }
+            pattern = re.compile(r'(\[\^[0-9]*])')
+            tagid = re.finditer(pattern, string)
+            for tag in tagid:
+                logfile.write(f'{tag.groups()[0]}: {translate_viited.get(tag.groups()[0])}\n')
+
+            for translate_viide in translate_viited:
+                string = string.replace(translate_viide, translate_viited[translate_viide])
+
+    with open('viited_renew.log', 'w') as f:
+        for model in [
+            Artikkel,
+            Isik,
+            Organisatsioon,
+            Objekt
+        ]:
+            pattern = '(\[\^[0-9]*])'
+            if model == Artikkel:
+                for obj in model.objects.filter(body_text__iregex=rf'{pattern}'):
+                    obj.body_text = replace_viite_tag(obj, obj.body_text, f)
+                    # obj.save(update_fields=['body_text'])
+            else:
+                for obj in model.objects.filter(kirjeldus__iregex=rf'{pattern}'):
+                    obj.kirjeldus = replace_viite_tag(obj, obj.kirjeldus, f)
+                    # obj.save(update_fields=['kirjeldus'])
+
 def getFilename_fromCd(cd):
     """
     Get filename from content-disposition

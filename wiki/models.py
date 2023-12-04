@@ -172,12 +172,66 @@ def add_markdownx_pildid(string):
             string = string.replace(tag[0], html)
     return string
 
+def remove_markdown_tags(obj, string):
+    if string: # not blank or None
+        # otsime ja eemaldame k6ik lingid pbjectidele
+        pattern = re.compile(rf'\[([\wÀ-ÿ\s\"\-]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)')
+        tagid = re.finditer(pattern, string)
+        for tag in tagid:
+            tekst, model_name, id = tag.groups()
+            # pos = tag.span()[0]
+            # model = apps.get_model('wiki', model_name)
+            # obj = model.objects.get(id=id)
+            # url = obj.get_absolute_url()
+            # data_attrs = f'data-model="{model_name}" data-id="{obj.id}"'
+            # span = f'<span id="{model_name}_{obj.id}_pos{pos}" title="{obj}" {data_attrs}>{tekst}</span>'
+            # html = f'<a class="text-{model_name} hover-{model_name} tooltip-content" href="{url}">{span}</a>'
+            string = string.replace(tag[0], tekst, 1)
+            # Otsime kõik pilditagid
+            pattern = re.compile(r'\[pilt_([0-9]*)]')
+            tagid = re.finditer(pattern, string)
+            for tag in tagid:
+                id = tag.groups()[0]
+                pilt = Pilt.objects.get(id=id)
+                if pilt:
+                    pildi_caption = pilt.caption()
+                    string = string.replace(tag[0], f'Pilt: {pildi_caption}')
+            # Otsime kõik viitetagid
+            pattern = re.compile(r'\s?\[viide_([0-9]*)]')
+            tagid = re.finditer(pattern, string)
+            for tag in tagid:
+                id = tag.groups()[0]
+                string = string.replace(tag[0], '')
+    return string
+
+import itertools
 # Töötleb lingitagid [Duck Duck Go]([isik_nnnn]) linkideks
-def add_markdown_objectid(string):
+def add_markdown_objectid(obj, string):
     """
     @param string:
     @return:
     """
+    viited = obj.viited.all()
+    if viited:
+        # Ajutine: asendame viited kujul [^n] viite koodiga kujul [viide_nnnn]
+        c = itertools.count(1)
+        translate_viited = {
+            f'[^{next(c)}]': f'[viide_{viide.id}]'
+            for viide
+            in viited
+        }
+        for translate_viide in translate_viited:
+            string = string.replace(translate_viide, translate_viited[translate_viide])
+        # Asendame viited koodi [viide_nnnn] viite markdown kujule [^n]
+        c = itertools.count(1)
+        translate_viited = {
+            f'[viide_{viide.id}]': f'[^{next(c)}]'
+            for viide
+            in viited
+        }
+        for translate_viide in translate_viited:
+            string = string.replace(translate_viide, translate_viited[translate_viide])
+    # Asendame markdown koodid linkidega objectidele
     pattern = re.compile(rf'\[([\wÀ-ÿ\s\"\-]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)')
     tagid = re.finditer(pattern, string)
     for tag in tagid:
@@ -749,7 +803,7 @@ class Objekt(models.Model):
         tekst = self.kirjeldus
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
-        tekst = add_markdown_objectid(tekst)
+        tekst = add_markdown_objectid(self, tekst)
         # tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
@@ -762,7 +816,7 @@ class Objekt(models.Model):
 
     # Tekstis MarkDown kodeerimiseks
     def markdown_tag(self):
-        return f'[{self.nimi}] ([{self.__class__.__name__.lower()}_{self.id}])'
+        return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
 
     # Keywords
     @property
@@ -968,7 +1022,7 @@ class Organisatsioon(models.Model):
         tekst = self.kirjeldus
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
-        tekst = add_markdown_objectid(tekst)
+        tekst = add_markdown_objectid(self, tekst)
         # tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
         # return markdownify(escape_numberdot(tekst) + viite_string)
@@ -983,7 +1037,7 @@ class Organisatsioon(models.Model):
     # Tekstis MarkDown kodeerimiseks
     def markdown_tag(self):
         # return f'[{self.nimi}] ([org_{self.id}])'
-        return f'[{self.nimi}] ([{self.__class__.__name__.lower()}_{self.id}])'
+        return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
 
     def get_absolute_url(self):
         kwargs = {
@@ -1247,7 +1301,7 @@ class Isik(models.Model):
         tekst = self.kirjeldus
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
-        tekst = add_markdown_objectid(tekst)
+        tekst = add_markdown_objectid(self, tekst)
         # tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
         # return markdownify(escape_numberdot(tekst) + viite_string)
@@ -1263,7 +1317,7 @@ class Isik(models.Model):
     @property
     def markdown_tag(self):
         # return f'[{self.nimi()}] ([isik_{self.id}])'
-        return f'[{self.nimi()}] ([{self.__class__.__name__.lower()}_{self.id}])'
+        return f'[{self.nimi()}]([{self.__class__.__name__.lower()}_{self.id}])'
 
     def get_absolute_url(self):
         kwargs = {
@@ -1488,18 +1542,23 @@ class Artikkel(models.Model):
 
     def __str__(self):
         summary = self.body_text
-        if summary.find('\n') > 0:
-            summary = summary[:summary.find('\n')]
-        splits = summary.split(' ')
-        tekst = ' '.join(splits[:10]) # 10 esimest sõna
-        if len(tekst) < len(self.body_text):
-            tekst += '...'
-        tekst = add_markdown_objectid(tekst)
+        if summary:
+            summary = remove_markdown_tags(self, summary)
+            if summary and summary.find('\n') > 0:
+                summary = summary[:summary.find('\n')]
+            splits = summary.split(' ')
+            tekst = ' '.join(splits[:10]) # 10 esimest sõna
+            if len(tekst) < len(self.body_text):
+                tekst += '...'
+            # tekst = add_markdown_objectid(self, tekst)
+        else:
+            tekst = ''
         return tekst
 
     def __repr__(self):
         tekst = str(self.hist_year) + ':' + self.body_text
-        tekst = add_markdown_objectid(tekst)
+        tekst = remove_markdown_tags(self, tekst)
+        # tekst = add_markdown_objectid(self, tekst)
         return tekst
 
     def colored_id(self):
@@ -1600,7 +1659,7 @@ class Artikkel(models.Model):
     @property
     def formatted_markdown(self):
         tekst = self.body_text
-        tekst = add_markdown_objectid(tekst)
+        tekst = add_markdown_objectid(self, tekst)
         viite_string = add_markdownx_viited(self)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
         # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
@@ -1635,7 +1694,7 @@ class Artikkel(models.Model):
     @property
     def markdown_tag(self):
         # return f'[{self.nimi}] ([art_{self.id}])'
-        return f'[{self.nimi}] ([{self.__class__.__name__.lower()}_{self.id}])'
+        return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
 
 
 class PiltSortedManager(models.Manager):

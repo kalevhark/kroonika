@@ -164,6 +164,11 @@ class ViideLookup(LookupChannel):
             queryset = queryset.filter(full_viide__icontains=split)
         return queryset[:20]
 
+    def format_match(self, item):
+        return f"{item} ({item.id})"
+
+    def format_item_display(self, item):
+        return f"{item} ({item.id})"
 
 @ajax_select.register('allikad')
 class AllikasLookup(LookupChannel):
