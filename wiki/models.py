@@ -11,6 +11,7 @@
 from datetime import date, datetime, timedelta
 from functools import reduce
 from io import BytesIO
+import itertools
 import json
 from operator import or_
 import os
@@ -153,19 +154,6 @@ def add_markdownx_pildid(string):
         if pilt:
             pildi_url = pilt.pilt.url
             pildi_caption = pilt.caption()
-            # pildi_markdown = ''.join(
-            #     [
-            #         '<div class="w3-row">',
-            #         f'<img src="{pildi_url}"',
-            #         f' class="pilt-pildidtekstis"',
-            #         f' alt="{pildi_caption}"',
-            #         f' data-pilt-id="{ pilt.id }"',
-            #         f'>',
-            #         f'<p><small>{pildi_caption}',
-            #         f'</small></p>',
-            #         '</div>'
-            #      ]
-            # )
             img = f'<img src="{pildi_url}" class="pilt-pildidtekstis" alt="{pildi_caption}" data-pilt-id="{pilt.id}" >'
             caption = f'<p><small>{pildi_caption}</small></p>'
             html = f'<div class="w3-row">{img}{caption}</div>'
@@ -179,13 +167,6 @@ def remove_markdown_tags(obj, string):
         tagid = re.finditer(pattern, string)
         for tag in tagid:
             tekst, model_name, id = tag.groups()
-            # pos = tag.span()[0]
-            # model = apps.get_model('wiki', model_name)
-            # obj = model.objects.get(id=id)
-            # url = obj.get_absolute_url()
-            # data_attrs = f'data-model="{model_name}" data-id="{obj.id}"'
-            # span = f'<span id="{model_name}_{obj.id}_pos{pos}" title="{obj}" {data_attrs}>{tekst}</span>'
-            # html = f'<a class="text-{model_name} hover-{model_name} tooltip-content" href="{url}">{span}</a>'
             string = string.replace(tag[0], tekst, 1)
             # Otsime kõik pilditagid
             pattern = re.compile(r'\[pilt_([0-9]*)]')
@@ -204,7 +185,6 @@ def remove_markdown_tags(obj, string):
                 string = string.replace(tag[0], '')
     return string
 
-import itertools
 # Töötleb lingitagid [Duck Duck Go]([isik_nnnn]) linkideks
 def add_markdown_objectid(obj, string):
     """
@@ -214,14 +194,14 @@ def add_markdown_objectid(obj, string):
     viited = obj.viited.all()
     if viited:
         # Ajutine: asendame viited kujul [^n] viite koodiga kujul [viide_nnnn]
-        c = itertools.count(1)
-        translate_viited = {
-            f'[^{next(c)}]': f'[viide_{viide.id}]'
-            for viide
-            in viited
-        }
-        for translate_viide in translate_viited:
-            string = string.replace(translate_viide, translate_viited[translate_viide])
+        # c = itertools.count(1)
+        # translate_viited = {
+        #     f'[^{next(c)}]': f'[viide_{viide.id}]'
+        #     for viide
+        #     in viited
+        # }
+        # for translate_viide in translate_viited:
+        #     string = string.replace(translate_viide, translate_viited[translate_viide])
         # Asendame viited koodi [viide_nnnn] viite markdown kujule [^n]
         c = itertools.count(1)
         translate_viited = {

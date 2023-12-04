@@ -1040,6 +1040,7 @@ def viited_uusformaat():
 
             for translate_viide in translate_viited:
                 string = string.replace(translate_viide, translate_viited[translate_viide])
+        return string
 
     with open('viited_renew.log', 'w') as f:
         for model in [
@@ -1052,11 +1053,11 @@ def viited_uusformaat():
             if model == Artikkel:
                 for obj in model.objects.filter(body_text__iregex=rf'{pattern}'):
                     obj.body_text = replace_viite_tag(obj, obj.body_text, f)
-                    # obj.save(update_fields=['body_text'])
+                    obj.save(update_fields=['body_text'])
             else:
                 for obj in model.objects.filter(kirjeldus__iregex=rf'{pattern}'):
                     obj.kirjeldus = replace_viite_tag(obj, obj.kirjeldus, f)
-                    # obj.save(update_fields=['kirjeldus'])
+                    obj.save(update_fields=['kirjeldus'])
 
 def getFilename_fromCd(cd):
     """
