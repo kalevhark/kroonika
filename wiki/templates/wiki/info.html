@@ -13,7 +13,7 @@
 (% block css %}(% endblock %}
 
 {% block content %}
-  <div class="w3-container">
+  <br class="w3-container">
 {#    <!--		Tagasiside vorm -->#}
 {#    {% load crispy_forms_tags %}#}
 {#    <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">#}
@@ -256,6 +256,7 @@
       </li>
     </ul>
     {% if user.is_authenticated %}
+      Python {{ python }}<br>
       Lisaks:
       {% for key, item in env.items|dictsort:0 %}
         <br><small>{{ key }}: {{ item }}</small>

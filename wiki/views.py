@@ -1,5 +1,6 @@
 import base64
 import json
+import sys
 from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
 from io import BytesIO
@@ -310,6 +311,7 @@ def info(request):
         'artikleid_kuus_max': artikleid_kuus_max,
         'session_data': request.session,
         'cookies': request.COOKIES,
+        'python': sys.version,
         'env': env,
         'model_verbose_examples': model_verbose_examples,
         'a': a,
