@@ -29,8 +29,9 @@ class KiriForm(forms.Form):
         label='Kirja sisu'
     )
     file_field = forms.FileField(
-        widget=forms.ClearableFileInput(attrs={'class': 'custom-file-input my-3', 'multiple': True}),
-        required=False,
+        # widget=forms.ClearableFileInput(attrs={'class': 'custom-file-input my-3', 'multiple': True}),
+        # required=False,
+        widget=forms.ClearableFileInput(attrs={'class': 'custom-file-input my-3', "allow_multiple_selected": True}), required=False,
         label=''
     )
 
