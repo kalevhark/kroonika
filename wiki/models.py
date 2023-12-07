@@ -2107,7 +2107,6 @@ class Kaart(models.Model):
         ordering = ['-aasta']
         verbose_name_plural = "Kaardid"
 
-DEFAULT_MAP = Kaart.objects.filter(aasta=settings.DEFAULT_MAP_AASTA).first()
 
 class Kaardiobjekt(models.Model):
     TYYP = (
@@ -2229,6 +2228,7 @@ class Kaardiobjekt(models.Model):
 
     def get_leaflet(self):
         if self.geometry:
+            DEFAULT_MAP = Kaart.objects.filter(aasta=settings.DEFAULT_MAP_AASTA).first()
             zoom_start = self.zoom if self.zoom else settings.DEFAULT_MAP_ZOOM_START
             # Loome aluskaardi
             map = folium.Map(

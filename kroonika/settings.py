@@ -17,7 +17,7 @@ PROJECT_DIR = Path(__file__).resolve().parent
 # print('settings.PROJECT_DIR:', PROJECT_DIR)
 
 # Access configparser to load variable values
-config = configparser.SafeConfigParser(allow_no_value=True)
+config = configparser.ConfigParser(allow_no_value=True)
 config.read('%s/settings.ini' % (PROJECT_DIR))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
