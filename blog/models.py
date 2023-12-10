@@ -9,19 +9,6 @@ from markdownx.utils import markdownify
 
 from wiki.models import escape_numberdot, add_markdownx_pildid, add_markdown_objectid
 
-# # Lisab numbri ja punkti vahele backslashi
-# def add_escape(matchobj):
-#     leiti = matchobj.group(0)
-#     return "\\".join([leiti[:-1], "."])
-
-# # Muudab teksti, et markdown ei märgistaks automaatselt nummerdatud liste
-# def escape_numberdot(string):
-#     # Otsime kas teksti alguses on arv ja punkt
-#     string_modified = re.sub(r"(\A)(\d+)*\.", add_escape, string)
-#     # Otsime kas lõigu alguses on arv ja punkt
-#     string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
-#     return string_modified
-
 class Category(models.Model):
     name = models.CharField(max_length=20)
 
@@ -75,18 +62,12 @@ class Post(models.Model):
         return reverse('blog:blog_detail', kwargs=kwargs)
 
     # # Create a property that returns the markdown instead
-    # @property
-    # def formatted_markdown(self):
-    #     return markdownify(escape_numberdot(self.body))
-
-    # Create a property that returns the markdown instead
-    # Lisame siia ka viited
     @property
     def formatted_markdown(self):
         tekst = self.body
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
-        tekst = add_markdown_objectid(tekst)
+        tekst = add_markdown_objectid(self, tekst)
         tekst = add_markdownx_pildid(tekst)
         # viite_string = add_markdownx_viited(self)
         # return markdownify(escape_numberdot(tekst) + viite_string)

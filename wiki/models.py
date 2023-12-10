@@ -185,13 +185,20 @@ def remove_markdown_tags(obj, string):
                 string = string.replace(tag[0], '')
     return string
 
+from django.core.exceptions import FieldDoesNotExist
 # Töötleb lingitagid [Duck Duck Go]([isik_nnnn]) linkideks
 def add_markdown_objectid(obj, string):
     """
     @param string:
     @return:
     """
-    viited = obj.viited.all()
+    viited = None
+    try:
+        _ = obj._meta.get_field('viited')
+        viited = obj.viited.all()
+    except FieldDoesNotExist: # Kui viited väli puudub
+        pass
+
     if viited:
         # Ajutine: asendame viited kujul [^n] viite koodiga kujul [viide_nnnn]
         # c = itertools.count(1)
