@@ -14,15 +14,15 @@
       for (var index = 0; index < outerDiv.childNodes.length; index++) {
         var childNode = outerDiv.childNodes[index];
         var viiteNumbrid = childNode.getElementsByClassName('viite_number');
-        // console.log(viiteNumbrid);
-        var uusViiteNumber = '[' + (index+1) + ']';
+        var elemRepr = childNode.getElementsByClassName('repr')[0];
+        var uusViiteNumber = '[' + (index+1) + '] ';
         var esp;
         if (viiteNumbrid !== undefined && viiteNumbrid.length > 0) {
           esp = viiteNumbrid[0];
         } else {
           esp = document.createElement("span");
           esp.classList.add("viite_number");
-          childNode.appendChild(esp);
+          elemRepr.insertAdjacentElement("afterbegin", esp);
         }
         esp.innerHTML = uusViiteNumber;
       }
