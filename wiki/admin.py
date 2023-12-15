@@ -523,11 +523,11 @@ class ArtikkelAdmin(AjaxSelectAdmin):
             }
          ),
         ('Toimus', {
-            'fields': [('hist_date', 'hist_year', 'hist_month', 'hist_enddate')]
+            'fields': [('hist_date', 'hist_year', 'hist_month'), ('hist_enddate')]
             }
          ),
         ('Seotud', {
-            'fields': [('viited'), ('isikud', 'organisatsioonid', 'objektid')]
+            'fields': [('viited'), ('isikud'), ('organisatsioonid', 'objektid')]
             }
          ),
         ('Kroonika', {
@@ -676,7 +676,7 @@ class IsikAdmin(AjaxSelectAdmin):
         ('Seotud', {
             'fields': [
                 ('viited'),
-                ('organisatsioonid', 'objektid', 'eellased')
+                ('organisatsioonid', 'objektid'), ('eellased')
             ]
             }
          ),
@@ -999,24 +999,20 @@ class PiltAdmin(AjaxSelectAdmin):
         ('Seotud', {
             'fields': [
                 ('viited'),
-                (
-                'isikud',
-                'organisatsioonid',
-                'objektid',
-                'allikad',
-                'artiklid',
-                 )
+                ('isikud'),
+                ('organisatsioonid', 'objektid'),
+                ('allikad', 'artiklid'),
             ]
         }),
         ('Profiilipildid', {
             'fields': [
+                ('profiilipilt_artiklid'),
+                ('profiilipilt_isikud'),
                 (
-                    'profiilipilt_artiklid',
-                    'profiilipilt_isikud',
                     'profiilipilt_organisatsioonid',
                     'profiilipilt_objektid',
                     'profiilipilt_allikad',
-                )
+                ),
             ]
         }
          ),
