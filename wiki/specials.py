@@ -142,7 +142,8 @@ def special_j6ul2023(request):
         'wiki/special/wiki_special_j6ul2023.html',
         {
             'tervitaja': tervitaja,
-            'pyhadesoov': pyhadesoov
+            'pyhadesoov': pyhadesoov,
+            'searchsmallwidgethidden': True,  # ei näita mobiiliotsinguvidinat
         }
     )
 
