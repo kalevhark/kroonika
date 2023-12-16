@@ -1,3 +1,5 @@
+import re
+
 from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField, AutoCompleteField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, Fieldset, HTML, ButtonHolder
@@ -37,7 +39,7 @@ class PiltForm(ModelForm):
         model = Pilt
         exclude = ()
 
-import re
+
 class ArtikkelForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
