@@ -20,7 +20,7 @@ from django.utils.safestring import mark_safe
 
 # from django.db.models import Case, F, When, IntegerField
 # from django.db.models.functions import ExtractDay
-# from markdownx.admin import MarkdownxModelAdmin
+from markdownx.admin import MarkdownxModelAdmin
 
 from .models import (
     Allikas, Viide, Kroonika,
@@ -632,7 +632,8 @@ class ArtikkelAdmin(AjaxSelectAdmin):
         form.save_m2m()
         return objekt
 
-    
+
+
 class IsikAdmin(AjaxSelectAdmin):
     form = IsikForm
     list_display = (

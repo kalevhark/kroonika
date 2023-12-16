@@ -40,6 +40,10 @@ class PiltForm(ModelForm):
 
 class ArtikkelForm(ModelForm):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["body_text"].widget.attrs.update(cols="100")
+
     isikud = AutoCompleteSelectMultipleField('isikud', required=False)
     organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
@@ -56,9 +60,6 @@ class ArtikkelForm(ModelForm):
                   'viited',
                   'kroonika', 'lehekylg',
         )
-        widgets = {
-            'body_text': Textarea(attrs={'rows': 10}),
-        }
 
     def clean(self):
         if not any([self.cleaned_data.get('hist_date'), self.cleaned_data.get('hist_year')]):
@@ -67,6 +68,11 @@ class ArtikkelForm(ModelForm):
 
 
 class IsikForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["kirjeldus"].widget.attrs.update(cols="100")
+
     organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
     viited = AutoCompleteSelectMultipleField('viited', required=False)
@@ -82,11 +88,16 @@ class IsikForm(ModelForm):
                   'viited'
         )
         widgets = {
-            'kirjeldus': Textarea(attrs={'cols': 100, 'rows': 5}),
+            'kirjeldus': Textarea(attrs={'cols': '100', 'rows': '10'}),
         }
 
 
 class OrganisatsioonForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["kirjeldus"].widget.attrs.update(cols="100")
+
     viited = AutoCompleteSelectMultipleField('viited', required=False)
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
     eellased = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
@@ -99,12 +110,13 @@ class OrganisatsioonForm(ModelForm):
                   'objektid', 'eellased',
                   'viited'
         )
-        widgets = {
-            'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-        }
 
 
 class ObjektForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["kirjeldus"].widget.attrs.update(cols="100")
 
     objektid = AutoCompleteSelectMultipleField('objektid', required=False)
     viited = AutoCompleteSelectMultipleField('viited', required=False)
@@ -118,20 +130,19 @@ class ObjektForm(ModelForm):
                   'objektid', 'eellased',
                   'viited',
         )
-        widgets = {
-            'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-        }
+
 
 class KaartForm(ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["kirjeldus"].widget.attrs.update(cols="100")
 
     viited = AutoCompleteSelectMultipleField('viited', required=False)
 
     class Meta:
         model = Kaart
         fields = ('nimi', 'aasta', 'kirjeldus', 'tiles', 'viited')
-        widgets = {
-            'kirjeldus': Textarea(attrs={'cols': 40, 'rows': 5}),
-        }
 
 
 class KaardiobjektForm(ModelForm):
@@ -178,10 +189,13 @@ class VihjeForm(ModelForm):
             'kirjeldus',
             'kontakt'
         )
-        widgets = {
-            'kirjeldus': Textarea(attrs={'rows': 5, 'placeholder': 'Siia palun kirjuta vihje parandamiseks/täiendamiseks'}),
-            'kontakt': Textarea(attrs={'rows': 1, 'placeholder': 'Nimi ja kontaktandmed'})
-        }
+        # widgets = {
+        #     'kirjeldus': Textarea(attrs={
+        #         'rows': 5,
+        #         'placeholder': 'Siia palun kirjuta vihje parandamiseks/täiendamiseks'
+        #     }),
+        #     'kontakt': Textarea(attrs={'rows': 1, 'placeholder': 'Nimi ja kontaktandmed'})
+        # }
         help_texts = {
             'kirjeldus': None,
             'kontakt': None,
