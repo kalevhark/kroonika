@@ -168,7 +168,7 @@ class ViideLookup(LookupChannel):
         return f"{item} ({item.id})"
 
     def format_item_display(self, item):
-        return f"{item} ({item.id})"
+        return f"{item} (viide_{item.id})"
 
 @ajax_select.register('allikad')
 class AllikasLookup(LookupChannel):
