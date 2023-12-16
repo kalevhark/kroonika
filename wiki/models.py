@@ -181,7 +181,7 @@ def remove_markdown_tags(obj, string):
             pattern = re.compile(r'\s?\[viide_([0-9]*)]')
             tagid = re.finditer(pattern, string)
             for tag in tagid:
-                id = tag.groups()[0]
+                # id = tag.groups()[0]
                 string = string.replace(tag[0], '')
     return string
 
