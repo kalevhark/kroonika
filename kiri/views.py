@@ -51,12 +51,25 @@ class KiriSuccessView(TemplateView):
 # e-postiga j6ukukaarti saatmiseks
 def send_j6ulukaart():
 
-    saajad = ['valga@valga.ee', 'muuseum@valgamuuseum.ee', 'valgamaa@redcross.ee', 'valga@isamaalinemuuseum.ee']
+    saajad = [
+        'valga@valga.ee',
+        'muuseum@valgamuuseum.ee',
+        'valgamaa@redcross.ee',
+        'valga@isamaalinemuuseum.ee',
+        'ivar.mottus@gmail.com',
+        'priit@valgamuuseum.ee',
+        'margussuvi@gmail.com',
+        'jaanrapp@hot.ee',
+        'ellenmuru41@gmail.com',
+        'aasa.poder@gmail.com',
+        'rainerkuutma@hotmail.com',
+        'kool@valgagym.ee'
+    ]
 
     name = 'valgalinn.ee',
     email_from = 'valgalinn.ee <info@valgalinn.ee>'
     email_to = ['info@valgalinn.ee']
-    bcc = ['kalev.hark@mail.ee', 'kalevhark@gmail.com', 'kalev.hark@sotsiaalkindlustusamet.ee']
+    bcc = saajad # ['kalev.hark@mail.ee', 'kalevhark@gmail.com', 'kalev.hark@sotsiaalkindlustusamet.ee']
     subject = 'valgalinn.ee jõulutervitus'
     message  = ''
 

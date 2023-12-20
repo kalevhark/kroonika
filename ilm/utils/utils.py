@@ -550,7 +550,7 @@ def ilmateenistus_forecast():
         PHENOMEN_ICONS_24H = [ # ilmaikoon samasugune p2eval ja öösel
             'overcast', 'moderate_rain',
             'light_snowfall', 'moderate_snowfall',
-            'light_sleet'
+            'light_sleet', 'moderate_sleet',
         ]
         if hour['phenomen']['@attributes']['className'] in PHENOMEN_ICONS_24H:
             symbol = hour['phenomen']['@attributes']['className']
