@@ -65,6 +65,8 @@ KUUD = (
 
 VIGA_TEKSTIS = '[?]'
 
+PATTERN_OBJECTS = r'\[([\wÀ-ÿ\s\"\-\,]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)'
+
 PREDECESSOR_DESCENDANT_NAMES = {
     'Isik': {
         'predecessor_name': 'Vanem',
@@ -163,7 +165,7 @@ def add_markdownx_pildid(string):
 def remove_markdown_tags(obj, string):
     if string: # not blank or None
         # otsime ja eemaldame k6ik lingid pbjectidele
-        pattern = re.compile(rf'\[([\wÀ-ÿ\s\"\-]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)')
+        pattern = re.compile(PATTERN_OBJECTS)
         tagid = re.finditer(pattern, string)
         for tag in tagid:
             tekst, model_name, id = tag.groups()
@@ -219,7 +221,7 @@ def add_markdown_objectid(obj, string):
         for translate_viide in translate_viited:
             string = string.replace(translate_viide, translate_viited[translate_viide])
     # Asendame markdown koodid linkidega objectidele
-    pattern = re.compile(rf'\[([\wÀ-ÿ\s\"\-]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)')
+    pattern = re.compile(PATTERN_OBJECTS)
     tagid = re.finditer(pattern, string)
     for tag in tagid:
         tekst, model_name, id = tag.groups()
