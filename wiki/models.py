@@ -65,7 +65,7 @@ KUUD = (
 
 VIGA_TEKSTIS = '[?]'
 
-PATTERN_OBJECTS = r'\[([\wÀ-ÿ\s\"\-\,]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)'
+PATTERN_OBJECTS = r'\[([\wÀ-ÿ\s\"\-\,\.]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)'
 
 PREDECESSOR_DESCENDANT_NAMES = {
     'Isik': {
