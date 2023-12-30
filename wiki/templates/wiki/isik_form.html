@@ -20,7 +20,7 @@
 {% block content %}
   <div class="w3-container">
     {{ form.media }}
-    <form method="post" class="uniForm">
+    <form method="post" class="uniForm" novalidate>
       {% csrf_token %}
       {{ form|crispy }}
       <button href="{% url 'wiki:wiki_isik_detail' pk=object.pk  slug=object.slug %}" role="button">Loobu</button>

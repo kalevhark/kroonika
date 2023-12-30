@@ -1274,6 +1274,7 @@ class ObjectUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                     obj.hist_searchdate = datetime(obj.hist_year, 1, 1)
         obj.save()
         form.save_m2m()
+        messages.success(self.request, f"{obj} andmed muudetud.")
 
         return redirect(f'wiki:wiki_{model}_detail', pk=self.object.id, slug=self.object.slug)
 
@@ -2550,6 +2551,10 @@ def switch_vkj_ukj(request, ukj):
     # print('before switch', request.session.get('ukj'))
     request.session['ukj'] = ukj
     # print('after switch', request.session.get('ukj'))
+    kalender = 'vana (Juliuse)'
+    if ukj == 'on':
+        kalender = 'uue (Gregoriuse)'
+    messages.success(request, f"Näidatakse {kalender} kalendri järgi.")
     return HttpResponse(ukj)
 
 class KaardiobjektFilter(django_filters.FilterSet):

@@ -81,6 +81,7 @@ class ArtikkelForm(ModelForm):
 
 
 class IsikForm(ModelForm):
+    # error_css_class = 'error'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
