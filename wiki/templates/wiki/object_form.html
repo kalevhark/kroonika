@@ -1,0 +1,32 @@
+{% extends "wiki/wiki_base.html" %}
+{% load i18n static %}
+{% load crispy_forms_tags %}
+
+{% block src %}
+  <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+  {# j2rgnevad vajalikud django-ajax-selects add toimimiseks #}
+  <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+  <script type="text/javascript" src="{% static 'admin/js/admin/RelatedObjectLookups.js' %}"></script>
+{% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/base.css' %}" >
+  <link rel="stylesheet" type="text/css" href="{% static 'wiki/css/admin/widgets.css' %}" >
+{% endblock %}
+
+{% block title %}{{ block.super }} - {{ object }} - muutmine{% endblock %}
+
+{% block content %}
+  <div class="w3-container">
+    {{ form.media }}
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button class="w3-button w3-round w3-green" type="submit" value="Update">Muuda</button>
+      <a href="{{ view.get_success_url }}" role="button" class="w3-button w3-round w3-light-grey">Loobu</a>
+      {% include 'wiki/includes/object_form_footer.html' %}
+    </form>
+  </div>
+{% endblock %}

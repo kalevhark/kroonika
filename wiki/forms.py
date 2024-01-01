@@ -85,6 +85,7 @@ class IsikForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # self.helper = FormHelper(self)
         self.fields["kirjeldus"].widget.attrs.update(cols="100")
 
     def clean(self):
@@ -97,10 +98,10 @@ class IsikForm(ModelForm):
             if id not in self.cleaned_data.get('viited'):
                 raise ValidationError(f"Viide {tag[0]} pole defineeritud")
 
-    organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
-    objektid = AutoCompleteSelectMultipleField('objektid', required=False)
-    viited = AutoCompleteSelectMultipleField('viited', required=False)
-    eellased = AutoCompleteSelectMultipleField('isikud', required=False)
+    organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False, help_text='')
+    objektid = AutoCompleteSelectMultipleField('objektid', required=False, help_text='')
+    viited = AutoCompleteSelectMultipleField('viited', required=False, help_text='')
+    eellased = AutoCompleteSelectMultipleField('isikud', required=False, help_text='')
 
     class Meta:
         model = Isik
@@ -111,9 +112,9 @@ class IsikForm(ModelForm):
                   'objektid', 'organisatsioonid', 'eellased',
                   'viited'
         )
-        widgets = {
-            'kirjeldus': Textarea(attrs={'cols': '100', 'rows': '10'}),
-        }
+        # widgets = {
+        #     'kirjeldus': Textarea(attrs={'cols': '100', 'rows': '10'}),
+        # }
 
 
 class OrganisatsioonForm(ModelForm):
@@ -217,13 +218,15 @@ class VihjeForm(ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 'Olen tänulik, kui märkasid viga või oskad täiendada:',
-                Field('kirjeldus', autocomplete='off', css_class="vihje-kirjeldus"),
-                Field('kontakt', css_class="vihje-kontakt"),
-                HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >')
-            ),
-            ButtonHolder(
-                Submit('save', 'Saada'),
-                Submit('cancel', 'Loobu', onclick='showFeedback()', css_class='btn-default')
+                Field('kirjeldus', autocomplete='off', css_class="vihje-kirjeldus w3-input w3-border w3-round"),
+                Field('kontakt', css_class="vihje-kontakt w3-input w3-border w3-round"),
+                HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >'),
+                ButtonHolder(
+                    Submit('save', 'Saada', css_class='w3-button w3-round w3-left w3-green'),
+                    Submit('cancel', 'Loobu', onclick='showFeedback()', css_class='w3-button w3-round w3-right w3-light-grey'),
+                    css_class="w3-padding-16"
+                ),
+                css_class="w3-round"
             )
         )
 

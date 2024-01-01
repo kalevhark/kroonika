@@ -2,6 +2,10 @@
 import urllib.parse
 
 from django.shortcuts import render
+from zoneinfo import ZoneInfo
+from datetime import datetime
+TZ_ESTONIA = ZoneInfo("Europe/Tallinn")
+NOW = datetime.now(TZ_ESTONIA)
 
 #
 # Jõulutervituse lehekülg 2019
@@ -132,8 +136,7 @@ def special_j6ul2023(request):
             tervitaja = 'Sulevi 9a rahvas'
     else:
         tervitaja = 'valgalinn.ee'
-    from django.utils import timezone
-    if timezone.now().year == 2023:
+    if NOW.year == 2023:
         pyhadesoov = 'Ilusat jõuluaega'
     else:
         pyhadesoov = 'Head uut aastat'

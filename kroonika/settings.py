@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'rest_framework', # API liidese jaoks
     'captcha', # Robot vs inimene sisestuse kontroll
     'crispy_forms', # Vormide kujundamiseks
+    'crispy_bootstrap4', # crispy template pack https://github.com/django-crispy-forms/crispy-bootstrap4
     'markdownx', # MarkDown teksti kasutamiseks
     'ajax_select', # ajax selectväljad https://github.com/crucialfelix/django-ajax-selects
     'corsheaders', # https://github.com/adamchainz/django-cors-headers
@@ -294,9 +295,6 @@ EMAIL_PORT = config['aws_mail']['PORT']
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = config['aws_mail']['DEFAULT_FROM_EMAIL']
 
-# Indicates the frontend framework django crispy forms use
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
 # ajax-select no js & css download
 # AJAX_SELECT_BOOTSTRAP  = False
 
@@ -380,3 +378,8 @@ ACCOUNT_FORMS = {
     'signup': 'allauth.account.forms.SignupForm',
     'user_token': 'allauth.account.forms.UserTokenForm',
 }
+
+# Indicates the frontend framework django crispy forms use
+# https://github.com/django-crispy-forms/crispy-bootstrap4
+CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap4",)
+CRISPY_TEMPLATE_PACK = "bootstrap4"

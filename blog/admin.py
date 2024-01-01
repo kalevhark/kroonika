@@ -9,6 +9,7 @@ class PostAdmin(MarkdownxModelAdmin):
         'title',
         'total_accessed',
     ]
+    readonly_fields = ['created_on', 'last_modified', 'total_accessed']
 
 class CategoryAdmin(admin.ModelAdmin):
     pass
