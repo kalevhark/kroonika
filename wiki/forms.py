@@ -218,9 +218,21 @@ class VihjeForm(ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 'Olen tänulik, kui märkasid viga või oskad täiendada:',
-                Field('kirjeldus', autocomplete='off', css_class="vihje-kirjeldus w3-input w3-border w3-round"),
-                Field('kontakt', css_class="vihje-kontakt w3-input w3-border w3-round"),
-                HTML('<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >'),
+                Field(
+                    'kirjeldus',
+                    autocomplete='off',
+                    css_class="vihje-kirjeldus w3-input w3-border w3-round"
+                ),
+                HTML(
+                    '<p></p>' # kahe v2lja eraldamiseks vahe
+                ),
+                Field(
+                    'kontakt',
+                    css_class="vihje-kontakt w3-input w3-border w3-round"
+                ),
+                HTML(
+                    '<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >'
+                ),
                 ButtonHolder(
                     Submit('save', 'Saada', css_class='w3-button w3-round w3-left w3-green'),
                     Submit('cancel', 'Loobu', onclick='showFeedback()', css_class='w3-button w3-round w3-right w3-light-grey'),
