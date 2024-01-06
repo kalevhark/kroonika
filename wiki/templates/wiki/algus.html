@@ -6,28 +6,28 @@
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'wiki/css/wiki_calendar3.css' %}">
   {# j6ul 2023 start #}
-  <link rel="stylesheet" href="{% static 'wiki/css/special/wiki_special_j6ul2023.css' %}?ver=2023.11.26">
-  <style>
-    .tree-wrapper {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-    }
-    /* Alla 800px laiuse sätted */
-    @media screen and (max-width: 800px) {
-      .tree-wrapper {
-        position: absolute;
-        top: 70%;
-        left: 50%;
-      }
-    }
-
-    .tree-wrapper,
-    .tree {
-      height: 16vmin;
-      width: 8vmin;
-    }
-  </style>
+    {#  <link rel="stylesheet" href="{% static 'wiki/css/special/wiki_special_j6ul2023.css' %}?ver=2023.11.26">#}
+    {#  <style>#}
+    {#    .tree-wrapper {#}
+    {#      position: absolute;#}
+    {#      top: 50%;#}
+    {#      left: 50%;#}
+    {#    }#}
+    {#    /* Alla 800px laiuse sätted */#}
+    {#    @media screen and (max-width: 800px) {#}
+    {#      .tree-wrapper {#}
+    {#        position: absolute;#}
+    {#        top: 70%;#}
+    {#        left: 50%;#}
+    {#      }#}
+    {#    }#}
+    {##}
+    {#    .tree-wrapper,#}
+    {#    .tree {#}
+    {#      height: 16vmin;#}
+    {#      width: 8vmin;#}
+    {#    }#}
+    {#  </style>#}
   {# j6ul 2023 end #}
 {% endblock %}
 
@@ -47,9 +47,9 @@
 {#      <div class="w3-container w3-hover-white w3-padding-16 w3-center">#}
 {#        {% include 'wiki/special/algus_message_439.html' %}#}
 {#      </div>#}
-      <div class="w3-container w3-hover-white w3-center">
-        {% include 'wiki/special/algus_message_j6ul2023.html' %}
-      </div>
+{#      <div class="w3-container w3-hover-white w3-center">#}
+{#        {% include 'wiki/special/algus_message_j6ul2023.html' %}#}
+{#      </div>#}
       <!--      Kalender -->
       <div class="card w3-hide-medium w3-padding-16 w3-hover-white">
         {% include 'wiki/includes/wiki_calendar3.html' %}
@@ -88,28 +88,23 @@
 {% endblock %}
 
 {% block javascript %}
-<script src="{% static 'ilm/js/swiped-events.js' %}"></script>
-<script src="{% static 'wiki/js/wiki_calendar3.js'%}"></script>
-<script>
-  {#J6ul2022#}
-  {#showLights();#}
+  <script src="{% static 'ilm/js/swiped-events.js' %}"></script>
+  <script src="{% static 'wiki/js/wiki_calendar3.js'%}"></script>
+  <script>
+    var calendar_days_with_events_in_month_url = "{% url 'wiki:calendar_days_with_events_in_month' %}"
+    var yearsWithEvents = {{ kalender.years_with_events }}
+    var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"
+    var userCalendarViewLast = '{{ request.session.user_calendar_view_last }}'
+    var calendarSystem = '{{ request.session.ukj }}'
 
-  var calendar_days_with_events_in_month_url = "{% url 'wiki:calendar_days_with_events_in_month' %}"
-  var yearsWithEvents = {{ kalender.years_with_events }}
-  var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"
-  // var userCalendarViewLast = '{{ kalender.user_calendar_view_last }}'
-  var userCalendarViewLast = '{{ request.session.user_calendar_view_last }}'
-  // var calendarSystem = '{{ kalender.calendar_system }}'
-  var calendarSystem = '{{ request.session.ukj }}'
-
-  $( document ).ready(function() {
-    {# Kalendrividina käivitamine #}
-    GWDateTimePicker.init({
-      targetId: "date-container"
-    })
-    // toome kalendri nähtavale
-    var x = document.getElementById("wiki_calendar");
-    x.style.opacity = "1";
-  });
-</script>
+    $( document ).ready(function() {
+      {# Kalendrividina käivitamine #}
+      GWDateTimePicker.init({
+        targetId: "date-container"
+      })
+      // toome kalendri nähtavale
+      var x = document.getElementById("wiki_calendar");
+      x.style.opacity = "1";
+    });
+  </script>
 {% endblock %}
