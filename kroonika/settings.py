@@ -234,9 +234,15 @@ GOOGLE_RECAPTCHA_PUBLIC_KEY = config['recaptcha']['GOOGLE_RECAPTCHA_PUBLIC_KEY']
 # Markdown settings https://python-markdown.github.io/extensions/index.html
 MARKDOWNX_MARKDOWN_EXTENSIONS = [
     'markdown.extensions.extra',
+    'markdown.extensions.footnotes',
     'markdown.extensions.nl2br',
     'markdown.extensions.sane_lists'
 ]
+MARKDOWNX_MARKDOWN_EXTENSION_CONFIGS = {
+    'markdown.extensions.footnotes': {
+        'BACKLINK_TITLE': 'Hüppa tekstis tagasi viitele %d'
+    }
+}
 MARKDOWNX_SERVER_CALL_LATENCY = 1000 # kujundatud teksti värskendamise viivitus (ms)
 
 # Kroonika üldised seaded
