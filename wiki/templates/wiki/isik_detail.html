@@ -15,6 +15,7 @@
         {% include 'wiki/includes/object_detail_nimi.html' %}
       </h4>
       <h5>
+
         {% if object.hist_date or object.hist_year or object.synd_koht %}
           <i class="fa fa-asterisk"></i>
           {% if object.hist_date %}
@@ -35,13 +36,9 @@
           {% elif object.hist_endyear %}
             <br><strong>&#9840;{% include 'wiki/includes/kp.html' with y=object.hist_endyear cs="isik" %}</strong>
           {% endif %}
-          {% if object.surm_koht %}
-            {{ object.surm_koht }}
-          {% endif %}
+          {% if object.surm_koht %}{{ object.surm_koht }}{% endif %}
         {% endif %}
-        {% if object.maetud %}
-          <br>maetud: <strong>{{ object.maetud }}</strong>
-        {% endif %}
+        {% if object.maetud %}&nbsp;maetud: <strong>{{ object.maetud }}</strong>{% endif %}
       </h5>
       {% include 'wiki/includes/object_detail_eellased_j2rglane.html' with qs=eellased.qs label=eellased.label %}
       {% include 'wiki/includes/object_detail_eellased_j2rglane.html' with qs=j2rglane.qs label=j2rglane.label %}
@@ -77,7 +74,7 @@
       </div>
     </div>
     <!--  Sisukaardi otseseosed-->
-    <div class="w3-third" >
+    <div class="w3-third"  style="padding-bottom: 16px">
       {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_isikud %}
       {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_organisatsioonid %}
       {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_objektid %}

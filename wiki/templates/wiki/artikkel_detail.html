@@ -123,51 +123,55 @@
         {% include 'wiki/includes/object_detail_nimi.html' %}: {{ object }}
       </h4>
     </div>
+
     <div class="w3-row">
-      {% include 'wiki/includes/date_range.html' with obj=object %}
-      {% if object.hist_date %}
-        {% if object.hist_date|vkj == True %}
-          {% if request.session.ukj == 'on' %}
-            vkj: {{ object.hist_date|date:'j.m.Y' }}
-          {% else %}
-            ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}
-          {% endif %}
-          {% if object.hist_enddate %}
-            -
-            {% if object.hist_enddate|vkj == True %}
+      <div class="w3-twothird w3-padding-16" >
+        <!-- Toimumisaeg -->
+        <div class="w3-row text-artikkel">
+          {% include 'wiki/includes/date_range.html' with obj=object %}
+          {% if object.hist_date %}
+            {% if object.hist_date|vkj == True %}
               {% if request.session.ukj == 'on' %}
-                {{ object.hist_enddate|date:'j.m.Y' }}
+                vkj: {{ object.hist_date|date:'j.m.Y' }}
               {% else %}
-                {{ object.hist_enddate|ukj|date:'j.m.Y' }}
+                ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}
               {% endif %}
-            {% else %}
-              {{ object.hist_enddate|date:'j.m.Y' }}
+              {% if object.hist_enddate %}
+                -
+                {% if object.hist_enddate|vkj == True %}
+                  {% if request.session.ukj == 'on' %}
+                    {{ object.hist_enddate|date:'j.m.Y' }}
+                  {% else %}
+                    {{ object.hist_enddate|ukj|date:'j.m.Y' }}
+                  {% endif %}
+                {% else %}
+                  {{ object.hist_enddate|date:'j.m.Y' }}
+                {% endif %}
+              {% endif %}
             {% endif %}
           {% endif %}
-        {% endif %}
-      {% endif %}
-    </div>
-    <div class="w3-twothird w3-padding-16" >
-      <!-- Artikkel -->
-      <div class="w3-third">
-        {% include 'wiki/includes/object_detail_pilt2.html' with cls='pilt-postkaart-medium' %}
-      </div>
-      <div class="w3-twothird">
-        {% include 'wiki/includes/vigane.html' %}
-        <div class="w3-margin-right">
-          {{ object.formatted_markdown | safe }}
         </div>
-        <div class="w3-row">
-          {% include 'wiki/includes/object_fbshare.html' %}
-          {% include 'wiki/includes/object_updated_edit.html' with model='artikkel' %}
+        <!-- Artikkel -->
+        <div class="w3-third">
+          {% include 'wiki/includes/object_detail_pilt2.html' with cls='pilt-postkaart-medium' %}
+        </div>
+        <div class="w3-twothird">
+          {% include 'wiki/includes/vigane.html' %}
+          <div class="w3-margin-right">
+            {{ object.formatted_markdown | safe }}
+          </div>
+          <div class="w3-row">
+            {% include 'wiki/includes/object_fbshare.html' %}
+            {% include 'wiki/includes/object_updated_edit.html' with model='artikkel' %}
+          </div>
         </div>
       </div>
-    </div>
-    <div class="w3-third">
-      {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_isikud %}
-      {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_organisatsioonid %}
-      {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_objektid %}
-      {% include 'wiki/includes/seotud_pildid2.html' %}
+      <div class="w3-third" style="padding-bottom: 16px">
+        {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_isikud %}
+        {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_organisatsioonid %}
+        {% include 'wiki/includes/seotud_objects_related_direct.html' with objectid=seotud_objektid %}
+        {% include 'wiki/includes/seotud_pildid2.html' %}
+      </div>
     </div>
   </div>
   <div class="w3-container">
