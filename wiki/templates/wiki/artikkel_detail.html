@@ -127,13 +127,15 @@
     <div class="w3-row">
       <div class="w3-twothird w3-padding-16" >
         <!-- Artikkel -->
-        <div class="w3-third">
+        <div class="w3-third w3-margin-bottom">
           {% include 'wiki/includes/object_detail_pilt2.html' with cls='pilt-postkaart-medium' %}
         </div>
         <div class="w3-twothird">
           <!-- Toimumisaeg -->
-          <div class="w3-row text-artikkel">
-            {% include 'wiki/includes/date_range.html' with obj=object %}
+          <div class="w3-row w3-margin-bottom">
+            <span class="text-artikkel">
+              {% include 'wiki/includes/date_range.html' with obj=object %}
+            </span>
             {% if object.hist_date %}
               {% if object.hist_date|vkj == True %}
                 {% if request.session.ukj == 'on' %}
