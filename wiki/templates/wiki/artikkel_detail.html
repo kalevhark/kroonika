@@ -126,36 +126,36 @@
 
     <div class="w3-row">
       <div class="w3-twothird w3-padding-16" >
-        <!-- Toimumisaeg -->
-        <div class="w3-row text-artikkel">
-          {% include 'wiki/includes/date_range.html' with obj=object %}
-          {% if object.hist_date %}
-            {% if object.hist_date|vkj == True %}
-              {% if request.session.ukj == 'on' %}
-                vkj: {{ object.hist_date|date:'j.m.Y' }}
-              {% else %}
-                ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}
-              {% endif %}
-              {% if object.hist_enddate %}
-                -
-                {% if object.hist_enddate|vkj == True %}
-                  {% if request.session.ukj == 'on' %}
-                    {{ object.hist_enddate|date:'j.m.Y' }}
-                  {% else %}
-                    {{ object.hist_enddate|ukj|date:'j.m.Y' }}
-                  {% endif %}
-                {% else %}
-                  {{ object.hist_enddate|date:'j.m.Y' }}
-                {% endif %}
-              {% endif %}
-            {% endif %}
-          {% endif %}
-        </div>
         <!-- Artikkel -->
         <div class="w3-third">
           {% include 'wiki/includes/object_detail_pilt2.html' with cls='pilt-postkaart-medium' %}
         </div>
         <div class="w3-twothird">
+          <!-- Toimumisaeg -->
+          <div class="w3-row text-artikkel">
+            {% include 'wiki/includes/date_range.html' with obj=object %}
+            {% if object.hist_date %}
+              {% if object.hist_date|vkj == True %}
+                {% if request.session.ukj == 'on' %}
+                  vkj: {{ object.hist_date|date:'j.m.Y' }}
+                {% else %}
+                  ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}
+                {% endif %}
+                {% if object.hist_enddate %}
+                  -
+                  {% if object.hist_enddate|vkj == True %}
+                    {% if request.session.ukj == 'on' %}
+                      {{ object.hist_enddate|date:'j.m.Y' }}
+                    {% else %}
+                      {{ object.hist_enddate|ukj|date:'j.m.Y' }}
+                    {% endif %}
+                  {% else %}
+                    {{ object.hist_enddate|date:'j.m.Y' }}
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          </div>
           {% include 'wiki/includes/vigane.html' %}
           <div class="w3-margin-right">
             {{ object.formatted_markdown | safe }}
