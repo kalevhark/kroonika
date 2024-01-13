@@ -285,18 +285,3 @@ class V6rdleFormObjekt(Form):
         required=False,
         help_text=''
     )
-
-
-# https://django-allauth.readthedocs.io/en/latest/forms.html
-from allauth.account.forms import LoginForm
-class MyCustomLoginForm(LoginForm):
-    error_messages = {
-        "account_inactive": "See konto on hetkel mitteaktiivne.",
-        "email_password_mismatch": "Vale e-maili aadress ja/või salasõna.",
-        "username_password_mismatch": "Vale kasutajanimi ja/või salasõna.",
-    }
-
-    # def login(self, *args, **kwargs):
-        # Add your own processing here.
-        # You must return the original result.
-        # return super(MyCustomLoginForm, self).login(*args, **kwargs)

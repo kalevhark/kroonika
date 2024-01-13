@@ -151,9 +151,22 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 )
+
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+# https://django-allauth.readthedocs.io/en/latest/forms.html
+ACCOUNT_FORMS = {
+    'add_email': 'allauth.account.forms.AddEmailForm',
+    'change_password': 'allauth.account.forms.ChangePasswordForm',
+    'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
+    'login': 'kroonika.forms.MyCustomLoginForm', # 'allauth.account.forms.LoginForm',
+    'reset_password': 'allauth.account.forms.ResetPasswordForm',
+    'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
+    'set_password': 'allauth.account.forms.SetPasswordForm',
+    'signup': 'kroonika.forms.MyCustomSignupForm', # 'allauth.account.forms.SignupForm',
+    'user_token': 'allauth.account.forms.UserTokenForm',
+}
 
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
@@ -371,19 +384,6 @@ LEAFLET_DEFAULT_HEADER = Element(
     '}'
     '</style>'
 )
-
-# https://django-allauth.readthedocs.io/en/latest/forms.html
-ACCOUNT_FORMS = {
-    'add_email': 'allauth.account.forms.AddEmailForm',
-    'change_password': 'allauth.account.forms.ChangePasswordForm',
-    'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
-    'login': 'wiki.forms.MyCustomLoginForm', # 'allauth.account.forms.LoginForm',
-    'reset_password': 'allauth.account.forms.ResetPasswordForm',
-    'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
-    'set_password': 'allauth.account.forms.SetPasswordForm',
-    'signup': 'allauth.account.forms.SignupForm',
-    'user_token': 'allauth.account.forms.UserTokenForm',
-}
 
 # Indicates the frontend framework django crispy forms use
 # https://github.com/django-crispy-forms/crispy-bootstrap4
