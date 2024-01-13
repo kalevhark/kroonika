@@ -25,6 +25,6 @@ class MyCustomSignupForm(SignupForm):
         email = self.cleaned_data.get("email")
         pattern = re.compile(r"\.")
         if email and len(pattern.findall(email.split('@')[0])) > 1:
-            print('Imelik e-posti aadress:', email)
+            print(f'Imelik e-posti aadress: {email}')
             raise forms.ValidationError('imelik e-posti aadress')
         return self.cleaned_data
