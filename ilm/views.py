@@ -2276,10 +2276,10 @@ def maxmin(request):
                 datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day']),
                 day['airtemperature__avg']
             )
-    print(
-        'kuum p2ev', avg_max,
-        'kylm p2ev', avg_min
-    )
+    # print(
+    #     'kuum p2ev', avg_max,
+    #     'kylm p2ev', avg_min
+    # )
 
     for day in days_airtemp_avgs_qs:
         day_tuple = (day['timestamp__month'], day['timestamp__day'])
@@ -2589,13 +2589,13 @@ def maxmin_new(request=None):
             obs_max_idx = df[df['timestamp_ee'].dt.year == year]['airtemperature_max'].idxmax()
             obs_max = df.loc[obs_max_idx].at['timestamp_ee']
             years_maxmin_df.loc[year, 'obs_max'] = obs_max
-            print(obs_max)
+            # print(obs_max)
         # Lisama aasta minimaalse temperatuuri mõõtmise aja
         if not row['year_min'] != row['year_min']:
             obs_min_idx = df[df['timestamp_ee'].dt.year == year]['airtemperature_min'].idxmin()
             obs_min = df.loc[obs_min_idx].at['timestamp_ee']
             years_maxmin_df.loc[year, 'obs_min'] = obs_min
-            print(obs_min)
+            # print(obs_min)
         # Lisame aasta päevade arvu, millal temperatuur tõusis üle 30
         days_above30 = days_maxmin_df[
             (days_maxmin_df.index[0] == year) &

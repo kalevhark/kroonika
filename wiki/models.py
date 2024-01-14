@@ -299,10 +299,11 @@ def get_kirjeldus_lyhike(self):
 
 # def add_calendarstatus(request):
 def get_calendarstatus(request):
+    CALENDAR_STATE_DEFAULT = 'off'
     if request:
         # kalendrivalik ukj='on' v6i ukj='off'
         # request.session['ukj'] = request.session.get('ukj', 'off')
-        ukj_state = request.session.get('ukj', 'off')
+        ukj_state = request.session.get('ukj', CALENDAR_STATE_DEFAULT)
         request.session['ukj'] = ukj_state
 
         # viimane kalendrivalik 'yyyy-m'
@@ -310,7 +311,7 @@ def get_calendarstatus(request):
         user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
         request.session['user_calendar_view_last'] = request.session.get('user_calendar_view_last', user_calendar_view_last)
     else:
-        ukj_state = 'off'
+        ukj_state = CALENDAR_STATE_DEFAULT
     return ukj_state
 
 # Filtreerime kanded, mille kohta on teada daatumid, vastavalt valikule vkj/ukj
