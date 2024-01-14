@@ -50,7 +50,19 @@ DEFAULT_MIN_ZOOM = settings.DEFAULT_MIN_ZOOM
 GEOJSON_STYLE = settings.GEOJSON_STYLE
 LEAFLET_DEFAULT_CSS = settings.LEAFLET_DEFAULT_CSS
 LEAFLET_DEFAULT_JS = settings.LEAFLET_DEFAULT_JS
-LEAFLET_DEFAULT_HEADER = settings.LEAFLET_DEFAULT_HEADER
+# LEAFLET_DEFAULT_HEADER = settings.LEAFLET_DEFAULT_HEADER
+LEAFLET_DEFAULT_HEADER = Element(
+    '<frame-options policy="SAMEORIGIN" />'
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">'
+    '<style>'
+    '.kaart-control-layers,'
+    '.kaardiobjekt-tooltip,'
+    '.kaart-tooltip {'
+    '  font-size: 14px;'
+    '  font-family: "Raleway", sans-serif;'
+    '}'
+    '</style>'
+)
 
 # STAMEN_TONER_NEW = {
 #     'tiles': 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',

@@ -370,20 +370,20 @@ LEAFLET_DEFAULT_JS = [
     ('awesome_markers', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js')
 ]
 
-from branca.element import Element
+# from branca.element import Element
 # Kroonika default font kasutamiseks + custom elementide css
-LEAFLET_DEFAULT_HEADER = Element(
-    '<frame-options policy="SAMEORIGIN" />'
-    '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">'
-    '<style>'
-    '.kaart-control-layers,'
-    '.kaardiobjekt-tooltip,'
-    '.kaart-tooltip {'
-    '  font-size: 14px;'
-    '  font-family: "Raleway", sans-serif;'
-    '}'
-    '</style>'
-)
+# LEAFLET_DEFAULT_HEADER = Element(
+#     '<frame-options policy="SAMEORIGIN" />'
+#     '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">'
+#     '<style>'
+#     '.kaart-control-layers,'
+#     '.kaardiobjekt-tooltip,'
+#     '.kaart-tooltip {'
+#     '  font-size: 14px;'
+#     '  font-family: "Raleway", sans-serif;'
+#     '}'
+#     '</style>'
+# )
 
 # Indicates the frontend framework django crispy forms use
 # https://github.com/django-crispy-forms/crispy-bootstrap4
