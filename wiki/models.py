@@ -18,7 +18,6 @@ import os
 import os.path
 import re
 import string
-import sys
 
 from django.apps import apps
 from django.conf import settings
@@ -415,7 +414,6 @@ class DaatumitegaManager(models.Manager):
                 doe=F('hist_enddate')
             )
         # cache.set(f'filtered_queryset_{model_name}_{ukj_state}', filtered_queryset, 60)
-        print(sys.getsizeof(filtered_queryset))
         return filtered_queryset
 
 
