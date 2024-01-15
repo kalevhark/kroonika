@@ -128,6 +128,19 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": config['django'].get(
+            'CACHE_BACKEND',
+            fallback="django.core.cache.backends.locmem.LocMemCache" # "django.core.cache.backends.memcached.PyMemcacheCache"
+        ),
+        "LOCATION": config['django'].get(
+            'CACHE_LOCATION',
+            fallback="unique-snowflake" # "127.0.0.1:11211"
+        ),
+    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
