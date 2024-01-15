@@ -140,6 +140,7 @@ CACHES = {
         ),
     }
 }
+CACHE_MIDDLEWARE_SECONDS = 600 # The number of seconds each page should be cached
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
