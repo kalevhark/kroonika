@@ -314,6 +314,8 @@ def get_calendarstatus(request):
         ukj_state = CALENDAR_STATE_DEFAULT
     return ukj_state
 
+from django.core.cache import cache
+
 # Filtreerime kanded, mille kohta on teada daatumid, vastavalt valikule vkj/ukj
 # vastavalt kasutajaõigustele
 class DaatumitegaManager(models.Manager):
@@ -322,26 +324,25 @@ class DaatumitegaManager(models.Manager):
     #     return super().get_queryset()
 
     def daatumitega(self, request=None):
+        model_name = self.model.__name__
+
         # Kontrollime kas kasutaja on autenditud ja admin
         user_is_staff = request and request.user.is_authenticated and request.user.is_staff
 
-        # add_calendarstatus(request)
-        # ukj_state = 'off'
-        # # # Kas kalendrivalik on sessioonis olemas
-        # try:
-        #     ukj_state = request.session.get('ukj')
-        # except:
-        #     pass
-
         # kalendrisüsteemi valik
         ukj_state = get_calendarstatus(request)
+
+        # kontrollime kas AnonymousUser p2ring on cache'is olemas
+        filtered_queryset = cache.get(f'filtered_queryset_{model_name}_{ukj_state}')
+        if not user_is_staff and filtered_queryset:
+            return filtered_queryset
+
         # default queryset from model
         initial_queryset = super().get_queryset()
 
         # Filtreerime kasutaja järgi
         if initial_queryset.model.__name__ == 'Artikkel':
             # Kui andmebaas on Artikkel
-            # if not (request.user.is_authenticated and request.user.is_staff):
             if user_is_staff:
                 filtered_queryset = initial_queryset
             else:
@@ -370,13 +371,6 @@ class DaatumitegaManager(models.Manager):
             # if not (request.user.is_authenticated and request.user.is_staff):
             if not user_is_staff:
                 artikkel_qs = Artikkel.objects.daatumitega(request)
-                # Algne aeglane päring, mis tekitas Organisatsioon tabeliga 5000+ ms päringuid
-                # filtered_queryset = initial_queryset.filter(
-                #     Q(viited__isnull=False) |
-                #     Q(viited__isnull=True, artikkel__isnull=True) |
-                #     Q(artikkel__in=artikkel_qs)
-                # ).distinct()
-                # Asendus eelmisele päringule, mis on kiirem
                 artikliga = initial_queryset. \
                     filter(artikkel__in=artikkel_qs). \
                     values_list('id', flat=True)
@@ -419,6 +413,7 @@ class DaatumitegaManager(models.Manager):
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )
+        cache.set(f'filtered_queryset_{model_name}_{ukj_state}', filtered_queryset, 60)
         return filtered_queryset
 
 

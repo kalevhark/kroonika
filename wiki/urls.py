@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import path
 from django.views.decorators.cache import cache_page
 
@@ -28,9 +29,9 @@ urlpatterns = [
     path('feedback/', views.feedback, name='feedback'),
     path('kroonika/', ArtikkelArchiveIndexView.as_view(), name='artikkel_index_archive'),
     path('kroonika/infinite/', views.artikkel_index_archive_infinite, name='artikkel_index_archive_infinite'),
-    path('kroonika/<int:year>/', ArtikkelYearArchiveView.as_view(), name='artikkel_year_archive'),
-    path('kroonika/<int:year>/<int:month>/', (cache_page(ArtikkelMonthArchiveView.as_view(month_format='%m'))), name='artikkel_month_archive'),
-    path('kroonika/<int:year>/<int:month>/otheryears/', (cache_page(views.artikkel_month_archive_otheryears)), name='artikkel_month_archive_otheryears'),
+    path('kroonika/<int:year>/', (cache_page(settings.CACHE_MIDDLEWARE_SECONDS)(ArtikkelYearArchiveView.as_view())), name='artikkel_year_archive'),
+    path('kroonika/<int:year>/<int:month>/', (cache_page(settings.CACHE_MIDDLEWARE_SECONDS)(ArtikkelMonthArchiveView.as_view(month_format='%m'))), name='artikkel_month_archive'),
+    path('kroonika/<int:year>/<int:month>/otheryears/', (cache_page(settings.CACHE_MIDDLEWARE_SECONDS)(views.artikkel_month_archive_otheryears)), name='artikkel_month_archive_otheryears'),
     path('kroonika/<int:year>/<int:month>/<int:day>/', ArtikkelDayArchiveView.as_view(month_format='%m'), name='artikkel_day_archive'),
     path('kroonika/mine_krono_kp', views.mine_krono_kp, name='mine_krono_kp'),
     path('kroonika/mine_krono_kuu', views.mine_krono_kuu, name='mine_krono_kuu'),
