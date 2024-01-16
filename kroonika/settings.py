@@ -139,7 +139,7 @@ CACHES = {
             fallback="unique-snowflake" # "127.0.0.1:11211"
         ),
         'OPTIONS': {
-            'server_max_value_length': 1024 * 1024 * 10 # 10Mb
+            'server_max_value_length': 1024 * 1024 * 1 # 1Mb
         }
     }
 }
