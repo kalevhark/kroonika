@@ -333,9 +333,9 @@ class DaatumitegaManager(models.Manager):
         ukj_state = get_calendarstatus(request)
 
         # kontrollime kas AnonymousUser p2ring on cache'is olemas
-        filtered_queryset = cache.get(f'filtered_queryset_{model_name}_{ukj_state}')
-        if not user_is_staff and filtered_queryset:
-            return filtered_queryset
+        # filtered_queryset = cache.get(f'filtered_queryset_{model_name}_{ukj_state}')
+        # if not user_is_staff and filtered_queryset:
+        #     return filtered_queryset
 
         # default queryset from model
         initial_queryset = super().get_queryset()
@@ -413,7 +413,7 @@ class DaatumitegaManager(models.Manager):
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )
-        cache.set(f'filtered_queryset_{model_name}_{ukj_state}', filtered_queryset, 60)
+        # cache.set(f'filtered_queryset_{model_name}_{ukj_state}', filtered_queryset, 60)
         return filtered_queryset
 
 
