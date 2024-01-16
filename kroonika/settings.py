@@ -138,6 +138,9 @@ CACHES = {
             'CACHE_LOCATION',
             fallback="unique-snowflake" # "127.0.0.1:11211"
         ),
+        'OPTIONS': {
+            'server_max_value_length': 1024 * 1024 * 10 # 10Mb
+        }
     }
 }
 CACHE_MIDDLEWARE_SECONDS = 600 # The number of seconds each page should be cached
