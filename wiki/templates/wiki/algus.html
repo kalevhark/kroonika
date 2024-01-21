@@ -89,13 +89,13 @@
 
 {% block javascript %}
   <script src="{% static 'ilm/js/swiped-events.js' %}"></script>
-  <script src="{% static 'wiki/js/wiki_calendar3.js'%}"></script>
+  <script src="{% static 'wiki/js/wiki_calendar3.js'%}?ver=2024"></script>
   <script>
     var calendar_days_with_events_in_month_url = "{% url 'wiki:calendar_days_with_events_in_month' %}"
     var yearsWithEvents = {{ kalender.years_with_events }}
     var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"
     var userCalendarViewLast = '{{ request.session.user_calendar_view_last }}'
-    var calendarSystem = '{{ request.session.ukj }}'
+    var calendarSystem = '{{ request.session.calendar_system }}'
 
     $( document ).ready(function() {
       {# Kalendrividina käivitamine #}

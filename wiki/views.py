@@ -2546,16 +2546,19 @@ def get_all_logged_in_users():
 #         urls = data
 #     return JsonResponse(urls, safe=False)
 
-def switch_vkj_ukj(request, ukj):
-    # print('switch2:', ukj)
-    # print('before switch', request.session.get('ukj'))
-    request.session['ukj'] = ukj
-    # print('after switch', request.session.get('ukj'))
-    kalender = 'vana (Juliuse)'
-    if ukj == 'on':
-        kalender = 'uue (Gregoriuse)'
-    messages.success(request, f"Näidatakse {kalender} kalendri järgi.")
-    return HttpResponse(ukj)
+def switch_vkj_ukj(request, calendar_system):
+    # print('switch2:', calendar_system)
+    # print('before switch', request.session.get('calendar_system'))
+    request.session['calendar_system'] = calendar_system
+    # print('after switch', request.session.get('calendar_system'))
+
+    kalender_nimetus = 'vana (Juliuse)'
+    if calendar_system == 'ukj':
+        kalender_nimetus = 'uue (Gregoriuse)'
+    messages.success(request, f"Kuupäevi näidatakse {kalender_nimetus} kalendri järgi.")
+
+    return HttpResponse(calendar_system)
+
 
 class KaardiobjektFilter(django_filters.FilterSet):
     kaardiobjekt_sisaldab = django_filters.CharFilter(method='kaardiobjekt_sisaldab_filter')

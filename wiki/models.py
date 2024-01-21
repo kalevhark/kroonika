@@ -299,22 +299,19 @@ def get_kirjeldus_lyhike(self):
 
 # def add_calendarstatus(request):
 def get_calendarstatus(request):
-    CALENDAR_STATE_DEFAULT = 'off'
+    CALENDAR_SYSTEM_DEFAULT = settings.KROONIKA['CALENDAR_SYSTEM_DEFAULT']
     if request:
-        # kalendrivalik ukj='on' v6i ukj='off'
-        # request.session['ukj'] = request.session.get('ukj', 'off')
-        ukj_state = request.session.get('ukj', CALENDAR_STATE_DEFAULT)
-        request.session['ukj'] = ukj_state
+        # kalendrivalik calendar_system='ukj' v6i calendar_system='vkj'
+        request.session['calendar_system'] = request.session.get('calendar_system', CALENDAR_SYSTEM_DEFAULT)
 
         # viimane kalendrivalik 'yyyy-m'
         t2na = timezone.now()
         user_calendar_view_last = date(t2na.year - 100, t2na.month, t2na.day).strftime("%Y-%m")
         request.session['user_calendar_view_last'] = request.session.get('user_calendar_view_last', user_calendar_view_last)
+        return request.session.get('calendar_system', CALENDAR_SYSTEM_DEFAULT)
     else:
-        ukj_state = CALENDAR_STATE_DEFAULT
-    return ukj_state
+        return CALENDAR_SYSTEM_DEFAULT
 
-from django.core.cache import cache
 
 # Filtreerime kanded, mille kohta on teada daatumid, vastavalt valikule vkj/ukj
 # vastavalt kasutajaõigustele
@@ -330,45 +327,39 @@ class DaatumitegaManager(models.Manager):
         user_is_staff = request and request.user.is_authenticated and request.user.is_staff
 
         # kalendrisüsteemi valik
-        ukj_state = get_calendarstatus(request)
-
-        # kontrollime kas AnonymousUser p2ring on cache'is olemas
-        # filtered_queryset = cache.get(f'filtered_queryset_{model_name}_{ukj_state}')
-        # if not user_is_staff and filtered_queryset:
-        #     return filtered_queryset
+        calendar_system = get_calendarstatus(request)
 
         # default queryset from model
         initial_queryset = super().get_queryset()
 
         # Filtreerime kasutaja järgi
-        if initial_queryset.model.__name__ == 'Artikkel':
+        if model_name == 'Artikkel':
             # Kui andmebaas on Artikkel
             if user_is_staff:
                 filtered_queryset = initial_queryset
             else:
                 filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
 
-            filtered_queryset = filtered_queryset.annotate(
-                search_year=Case(
-                    When(hist_date__isnull=False, then=ExtractYear('hist_date')),
-                    When(hist_year__isnull=False, then=F('hist_year')),
-                    When(hist_year__isnull=True, then=0),
-                ),
-                search_month=Case(
-                    When(hist_date__isnull=False, then=ExtractMonth('hist_date')),
-                    When(hist_month__isnull=False, then=F('hist_month')),
-                    When(hist_month__isnull=True, then=0),
-                    output_field=IntegerField()
-                ),
-                search_day=Case(
-                    When(hist_date__isnull=False, then=ExtractDay('hist_date')),
-                    When(hist_date__isnull=True, then=0),
-                    output_field=IntegerField()
-                )
-            ).order_by('search_year', 'search_month', 'search_day', 'id')
+            # filtered_queryset = filtered_queryset.annotate(
+            #     search_year=Case(
+            #         When(hist_date__isnull=False, then=ExtractYear('hist_date')),
+            #         When(hist_year__isnull=False, then=F('hist_year')),
+            #         When(hist_year__isnull=True, then=0),
+            #     ),
+            #     search_month=Case(
+            #         When(hist_date__isnull=False, then=ExtractMonth('hist_date')),
+            #         When(hist_month__isnull=False, then=F('hist_month')),
+            #         When(hist_month__isnull=True, then=0),
+            #         output_field=IntegerField()
+            #     ),
+            #     search_day=Case(
+            #         When(hist_date__isnull=False, then=ExtractDay('hist_date')),
+            #         When(hist_date__isnull=True, then=0),
+            #         output_field=IntegerField()
+            #     )
+            # ).order_by('search_year', 'search_month', 'search_day', 'id')
         else:
             # Kui andmebaas on Isik, Organisatsioon, Objekt
-            # if not (request.user.is_authenticated and request.user.is_staff):
             if not user_is_staff:
                 artikkel_qs = Artikkel.objects.daatumitega(request)
                 artikliga = initial_queryset. \
@@ -387,7 +378,7 @@ class DaatumitegaManager(models.Manager):
         # Arvutame abiväljad vastavalt kasutaja kalendrieelistusele
         # dob: day of begin|birth
         # doe: day of end
-        if ukj_state == 'on':  # ukj
+        if calendar_system == 'ukj':  # ukj
             filtered_queryset = filtered_queryset.annotate(
                 dob=Case(
                     When(hist_date__gt=date(1918, 1, 31), then=F('hist_date')),
@@ -413,7 +404,26 @@ class DaatumitegaManager(models.Manager):
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )
-        # cache.set(f'filtered_queryset_{model_name}_{ukj_state}', filtered_queryset, 60)
+        if model_name == 'Artikkel':
+            # j2rjestame lood looglises j2rjekorras
+            filtered_queryset = filtered_queryset.annotate(
+                search_year=Case(
+                    When(dob__isnull=False, then=ExtractYear('dob')),
+                    When(hist_year__isnull=False, then=F('hist_year')),
+                    When(hist_year__isnull=True, then=0),
+                ),
+                search_month=Case(
+                    When(dob__isnull=False, then=ExtractMonth('dob')),
+                    When(hist_month__isnull=False, then=F('hist_month')),
+                    When(hist_month__isnull=True, then=0),
+                    output_field=IntegerField()
+                ),
+                search_day=Case(
+                    When(dob__isnull=False, then=ExtractDay('dob')),
+                    When(hist_date__isnull=True, then=0),
+                    output_field=IntegerField()
+                ),
+            ).order_by('search_year', 'search_month', 'search_day', 'id')
         return filtered_queryset
 
 

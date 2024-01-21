@@ -1,5 +1,6 @@
+// ver2024
 // Aluseks https://codepen.io/geekwen/pen/JYYrob
-// Oluliselt täiendanud Kalev Härk 2020
+// Oluliselt täiendanud Kalev Härk 2020, 2024
 const monthNames = [
   '',
   'jaanuar', 'veebruar', 'märts', 'aprill', 'mai', 'juuni',
@@ -269,7 +270,7 @@ var GWDateTimePicker = {
     }
 
     // Kalendrisysteemide erinevused
-    if (calendarSystem !== 'on') {
+    if (calendarSystem !== 'ukj') {
       // Kalendrimuudatuse parandused
       if (year < 1918 || (year === 1918 && month === 0)) {
         --firstDateWeek;
@@ -317,7 +318,7 @@ var GWDateTimePicker = {
         }
 
         daysNotThisMonth = 1;
-        if (calendarSystem !== 'on') { // Juhul kui vana kalendri järgi, siis üleminek 31.01 -> 14.02
+        if (calendarSystem !== 'ukj') { // Juhul kui vana kalendri järgi, siis üleminek 31.01 -> 14.02
           if (month === 0 && year === 1918) {
             daysNotThisMonth = 14;
           }
@@ -331,7 +332,7 @@ var GWDateTimePicker = {
           let startNewCalendar = new Date(1582, 9, 4);
           let stopNewCalendar = new Date(1918, 1, 14);
           let theDate = new Date(year, month, day);
-          if (calendarSystem === 'on' && theDate < stopNewCalendar && theDate > startNewCalendar) {
+          if (calendarSystem === 'ukj' && theDate < stopNewCalendar && theDate > startNewCalendar) {
             calendarSystemClass = ' text-ukj';
           } else {
             calendarSystemClass = '';

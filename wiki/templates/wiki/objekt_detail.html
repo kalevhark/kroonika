@@ -23,19 +23,26 @@
         kaasajal pole olemas või on nime muudetud
       {% endif %}
       <h5>
-        {% if object.hist_date %}
-          <strong>{{ object.hist_date }}</strong>
-          {% if object.hist_date|vkj %}ukj: {{ object.hist_date|ukj }}{% endif %}
-        {% elif object.hist_year %}
-          <strong>
-            <i class="fa fa-asterisk"></i>{% include 'wiki/includes/kp.html' with y=object.hist_year m=object.hist_month cs="objekt" %}
-          </strong>
+        {% if object.hist_date or object.hist_year %}
+          <i class="fa fa-asterisk"></i>
+          {% if object.hist_date %}
+            <strong>{% include 'wiki/includes/kp.html' with sd=object.dob cs='objekt' %}</strong>
+            {% include 'wiki/includes/date_vkjukj.html' with d=object.hist_date cs='objekt' %}
+          {% elif object.hist_month %}
+            <strong>{% include 'wiki/includes/kp.html' with m=object.hist_month y=object.hist_year cs="objekt" %}</strong>
+          {% elif object.hist_year %}
+            <strong>{% include 'wiki/includes/kp.html' with y=object.hist_year cs="objekt" %}</strong>
+          {% endif %}
         {% endif %}
-        {% if object.hist_enddate %}
-          <strong> - {{ object.hist_enddate }}</strong>
-          {% if object.hist_enddate|vkj %}ukj: {{ object.hist_enddate|ukj }}{% endif %}
-        {% elif object.hist_endyear %}
-          <strong> - {{ object.hist_endyear }}</strong>
+
+        {% if object.hist_enddate or object.hist_endyear %}
+          <br>&#9840;
+          {% if object.hist_enddate %}
+            <strong>{% include 'wiki/includes/kp.html' with sd=object.doe cs="objekt" %}</strong>
+            {% include 'wiki/includes/date_vkjukj.html' with d=object.hist_enddate cs='objekt' %}
+          {% elif object.hist_endyear %}
+            <strong>{% include 'wiki/includes/kp.html' with y=object.hist_endyear cs="objekt" %}</strong>
+          {% endif %}
         {% endif %}
       </h5>
       {% include 'wiki/includes/object_detail_eellased_j2rglane.html' with qs=eellased.qs label=eellased.label %}

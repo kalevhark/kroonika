@@ -136,27 +136,9 @@
             <span class="text-artikkel">
               {% include 'wiki/includes/date_range.html' with obj=object %}
             </span>
-            {% if object.hist_date %}
-              {% if object.hist_date|vkj == True %}
-                {% if request.session.ukj == 'on' %}
-                  vkj: {{ object.hist_date|date:'j.m.Y' }}
-                {% else %}
-                  ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}
-                {% endif %}
-                {% if object.hist_enddate %}
-                  -
-                  {% if object.hist_enddate|vkj == True %}
-                    {% if request.session.ukj == 'on' %}
-                      {{ object.hist_enddate|date:'j.m.Y' }}
-                    {% else %}
-                      {{ object.hist_enddate|ukj|date:'j.m.Y' }}
-                    {% endif %}
-                  {% else %}
-                    {{ object.hist_enddate|date:'j.m.Y' }}
-                  {% endif %}
-                {% endif %}
-              {% endif %}
-            {% endif %}
+            <span>
+              {% include 'wiki/includes/date_range_vkjukj.html' with obj=object %}
+            </span>
           </div>
           {% include 'wiki/includes/vigane.html' %}
           <div class="w3-margin-right">

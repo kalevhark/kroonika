@@ -19,8 +19,8 @@
         {% if object.hist_date or object.hist_year or object.synd_koht %}
           <i class="fa fa-asterisk"></i>
           {% if object.hist_date %}
-            <strong>{% include 'wiki/includes/kp.html' with sd=object.hist_date cs='isik' %}</strong>
-            {% if object.hist_date|vkj %}ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}{% endif %}
+            <strong>{% include 'wiki/includes/kp.html' with sd=object.dob cs='isik' %}</strong>
+            {% include 'wiki/includes/date_vkjukj.html' with d=object.hist_date cs='isik' %}
           {% elif object.hist_year %}
             <strong>{% include 'wiki/includes/kp.html' with y=object.hist_year cs="isik" %}</strong>
           {% endif %}
@@ -32,8 +32,8 @@
         {% if object.hist_enddate or object.hist_endyear or object.surm_koht %}
           <br>&#9840;
           {% if object.hist_enddate %}
-            <strong>{% include 'wiki/includes/kp.html' with sd=object.hist_enddate cs="isik" %}</strong>
-            {% if object.hist_enddate|vkj %}ukj: {{ object.hist_enddate|ukj|date:'j.m.Y' }}{% endif %}
+            <strong>{% include 'wiki/includes/kp.html' with sd=object.doe cs="isik" %}</strong>
+            {% include 'wiki/includes/date_vkjukj.html' with d=object.hist_enddate cs='isik' %}
           {% elif object.hist_endyear %}
             <strong>{% include 'wiki/includes/kp.html' with y=object.hist_endyear cs="isik" %}</strong>
           {% endif %}

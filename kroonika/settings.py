@@ -132,15 +132,12 @@ CACHES = {
     "default": {
         "BACKEND": config['django'].get(
             'CACHE_BACKEND',
-            fallback="django.core.cache.backends.locmem.LocMemCache" # "django.core.cache.backends.memcached.PyMemcacheCache"
+            fallback="django.core.cache.backends.locmem.LocMemCache" # "django.core.cache.backends.redis.RedisCache"
         ),
         "LOCATION": config['django'].get(
             'CACHE_LOCATION',
-            fallback="unique-snowflake" # "127.0.0.1:11211"
+            fallback="unique-snowflake" # "redis://127.0.0.1:6379"
         ),
-        # 'OPTIONS': {
-        #     'server_max_value_length': 1024 * 1024 * 10 # 10Mb
-        # }
     }
 }
 CACHE_MIDDLEWARE_SECONDS = 600 # The number of seconds each page should be cached
@@ -282,7 +279,8 @@ KROONIKA = {
         """
         Valga linna kroonika. Lood Valga linna ajaloost seotuna isikute, asutiste ja kohtadega. 
         """.strip(),
-    'KEYWORDS': ['Valga', 'linn', 'Valga linn', 'kroonika', 'ajalugu']
+    'KEYWORDS': ['Valga', 'linn', 'Valga linn', 'kroonika', 'ajalugu'],
+    'CALENDAR_SYSTEM_DEFAULT': 'ukj'
 }
 
 # sites framework: django.contrib.sites

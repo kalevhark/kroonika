@@ -44,15 +44,7 @@
     {% endif %}
     <!-- JSON-LD markup -->
     {% include 'wiki/wiki_base/wiki_base_json-ld.html' %}
-    {#    <!-- Global site tag (gtag.js) - Google Analytics -->#}
-    {#    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>#}
-    {#    <script>#}
-    {#      window.dataLayer = window.dataLayer || [];#}
-    {#      function gtag(){dataLayer.push(arguments);}#}
-    {#      gtag('js', new Date());#}
-    {#      gtag('config', 'UA-151102639-1');#}
-    {#    </script>#}
-    <!-- Google tag (gtag.js) -->
+    {# Global site tag (gtag.js) - Google Analytics #}
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZDC8C4519H"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -145,21 +137,22 @@
   }
 
   function showCalendarTypeSwitch() {
-    let ukj_state = '{{ request.session.ukj }}'
+    let calendar_system = '{{ request.session.calendar_system }}'
 
-    // näitame kalendrivahetuse nuppu ja valime salvetatud seisu
-    var checkboxUkjVkj = document.getElementById('checkbox_ukjvkj');
-    checkboxUkjVkj.style.visibility = 'visible';
-    document.getElementById("checkbox1").checked = ukj_state === 'on';
+    // näitame kalendrivahetuse v2lja ja valime salvetatud seisu
+    var divUkjVkj = document.getElementById('div_ukjvkj');
+    divUkjVkj.style.visibility = 'visible';
+    document.getElementById("checkbox_ukjvkj").checked = (calendar_system === 'ukj');
+
     // Loome triggeri, kui kalendrisüsteemi valik muutub
-    $("#checkbox1").on('change', function() {
-      let ukj_state = document.getElementById("checkbox1").checked;
-      if (ukj_state) {
-          ukj = 'on';
+    $("#checkbox_ukjvkj").on('change', function() {
+      let calendar_status = document.getElementById("checkbox_ukjvkj").checked;
+      if (calendar_status) {
+          calendar_status_new = 'ukj';
         } else {
-          ukj = 'off';
+          calendar_status_new = 'vkj';
       }
-      switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', ukj);
+      switch_url = "{% url 'wiki:switch_vkj_ukj' 123 %}".replace('123', calendar_status_new);
       var oReq = new XMLHttpRequest();
       oReq.onload = function(e) {
         location.reload();

@@ -1,0 +1,12 @@
+{% load wiki_extras %}
+{% if d|vkj == True %}
+  {% if request.session.calendar_system == 'ukj' %}
+    <span class="text-{{ cs }}" title="vana (Juliuse) kalendri järgi">
+      vkj: {{ d|date:'j.m.Y' }}
+    </span>
+  {% else %}
+    <span class="text-ukj"  title="uue (Gregoriuse) kalendri järgi">
+      ukj: {{ d|ukj|date:'j.m.Y' }}
+    </span>
+  {% endif %}
+{% endif %}
