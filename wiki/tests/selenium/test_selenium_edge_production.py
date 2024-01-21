@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 
 from django.apps import apps
 from django.contrib.auth.models import AnonymousUser, User
@@ -51,6 +52,7 @@ class SeleniumTestsEdgeProductionDetailViewObject(SeleniumTestsEdgeBase):
                 'slug': obj.slug
             }
             path = reverse(detail_view_name, kwargs=kwargs)
+            time_start = datetime.now()
             self.selenium.get('%s%s' % ('https://valgalinn.ee', path))
             # Kontrollime kas objecti nimi on avanenud lehel
             el = self.selenium.find_element(By.TAG_NAME, "body").text
@@ -65,13 +67,16 @@ class SeleniumTestsEdgeProductionDetailViewObject(SeleniumTestsEdgeBase):
                 WebDriverWait(self.selenium, timeout=3).until(
                     EC.visibility_of(el)
                 )
-                WebDriverWait(self.selenium, timeout=10).until_not(
+                WebDriverWait(self.selenium, timeout=20).until_not(
                     EC.visibility_of(el)
                 )
             except TimeoutException:
                 pass
+            finally:
+                time_stopp = datetime.now() - time_start
             el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
             self.assertIn("Lugusid", el, obj)
+            self.assertTrue(time_stopp.seconds < 5, f'{obj} laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_view_HTTP404_for_non_authented_user(self):
         pass

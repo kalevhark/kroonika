@@ -37,6 +37,10 @@ ALLOWED_HOSTS = [
     'testserver'
 ]
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 ADMINS = [
     ('Kalev', config['superuser']['ADMINEMAIL']),
     # ('Mary', 'mary@example.com')
@@ -66,6 +70,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.github', # django-allauth
     'allauth.socialaccount.providers.google', # django-allauth
     # 'allauth.socialaccount.providers.facebook', # django-allauth
+    "debug_toolbar", # https://django-debug-toolbar.readthedocs.io
     'ilm.apps.IlmConfig',
     'blog.apps.BlogConfig',
     'kiri.apps.KiriConfig', # e-kirja saatmiseks valgalinn.ee aadressilt
@@ -83,6 +88,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware', # site info lisamiseks
+    "debug_toolbar.middleware.DebugToolbarMiddleware", # https://django-debug-toolbar.readthedocs.io
 ]
 
 ROOT_URLCONF = 'kroonika.urls'

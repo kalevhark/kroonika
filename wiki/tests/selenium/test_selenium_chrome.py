@@ -262,7 +262,7 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
         objs = self.initial_queryset.filter(id__in=special_objects)
         # Kontrollime kas ankurdatud objektid on leitavad pk+slug urli kaudu
         for obj in objs:
-            cnt = obj.artikkel_set.count()
+            cnt = obj.artikkel_set.daatumitega(request=None).count()
             if cnt == 0:
                 continue
             print(f'{obj.id}:{obj} {cnt} lugu')
@@ -278,7 +278,7 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
                 nimi = obj.perenimi
             except:
                 nimi = obj.nimi
-            self.assertIn(nimi, el)
+            self.assertIn(nimi, el, msg=str(obj))
             # Kontrollime kas isikuga seotud objectid laeti
             try:
                 el = self.selenium.find_element(By.ID, "loaderDiv1")
@@ -291,7 +291,7 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
             except TimeoutException:
                 pass
             el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
-            self.assertTrue(len(el) > 0)
+            self.assertTrue(len(el) > 0, msg=str(obj))
 
     def test_view_show_by_name_special_objects_pk_suvaslug(self, object='isik'):
         special_objects = SPECIAL_OBJECTS[object]
@@ -308,6 +308,7 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
                 'slug': 'suva'
             }
             path = reverse(self.detail_view_name, kwargs=kwargs)
+            time_start = datetime.now()
             self.selenium.get('%s%s' % (self.live_server_url, path))
             # Kontrollime kas isiku nimi on avanenud lehel
             el = self.selenium.find_element(By.TAG_NAME, "body").text
@@ -315,20 +316,23 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
                 nimi = obj.perenimi
             except:
                 nimi = obj.nimi
-            self.assertIn(nimi, el)
+            self.assertIn(nimi, el, msg=str(obj))
             # Kontrollime kas isikuga seotud objectid laeti
             try:
                 el = self.selenium.find_element(By.ID, "loaderDiv1")
                 WebDriverWait(self.selenium, timeout=3).until(
                     EC.visibility_of(el)
                 )
-                WebDriverWait(self.selenium, timeout=10).until_not(
+                WebDriverWait(self.selenium, timeout=20).until_not(
                     EC.visibility_of(el)
                 )
             except TimeoutException:
                 pass
+            finally:
+                time_stopp = datetime.now() - time_start
             el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
-            self.assertTrue(len(el) > 0)
+            self.assertTrue(len(el) > 0, msg=str(obj))
+            self.assertTrue(time_stopp.seconds < 5, f'{obj} laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_view_show_by_name_random(self):
         SELECT_COUNT = 10

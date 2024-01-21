@@ -2487,7 +2487,7 @@ def get_all_logged_in_users():
 #         for obj
 #         in artikkel_qs
 #     ]
-#     queryset = (
+#     queryset = (kr
 #         artikkel_qs.dates('hist_searchdate', 'year')
 #     )
 #     aastad = list(el.year for el in queryset)

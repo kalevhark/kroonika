@@ -153,7 +153,7 @@ class SeleniumTestsChromeProductionDetailViewObject(SeleniumTestsChromeBase):
                 nimi = obj.perenimi
             except:
                 nimi = obj.nimi
-            self.assertIn(nimi, el)
+            self.assertIn(nimi, el, msg=str(obj))
             # Kontrollime kas isikuga seotud objectid laeti
             try:
                 el = self.selenium.find_element(By.ID, "loaderDiv1")
@@ -167,6 +167,7 @@ class SeleniumTestsChromeProductionDetailViewObject(SeleniumTestsChromeBase):
                 pass
             el = self.selenium.find_element(By.ID, "wiki_object_detail_seotud").text
             self.assertIn("Lugusid", el, obj)
+
 
     def test_view_artikkel(self):
         # Juhuslikud objectid kontrolliks
