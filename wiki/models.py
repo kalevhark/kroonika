@@ -1590,9 +1590,27 @@ class Artikkel(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        # ordering = [
-        #     'hist_searchdate',
-        #     'id'
+        # indexes = [
+        #     models.Index(
+        #         Case(
+        #             When(hist_date__isnull=False, then=ExtractYear('hist_date')),
+        #             When(hist_year__isnull=False, then=F('hist_year')),
+        #             When(hist_year__isnull=True, then=0),
+        #         ),
+        #         Case(
+        #             When(hist_date__isnull=False, then=ExtractMonth('hist_date')),
+        #             When(hist_month__isnull=False, then=F('hist_month')),
+        #             When(hist_month__isnull=True, then=0),
+        #             output_field=IntegerField()
+        #         ),
+        #         Case(
+        #             When(hist_date__isnull=False, then=ExtractDay('hist_date')),
+        #             When(hist_date__isnull=True, then=0),
+        #             output_field=IntegerField()
+        #         ),
+        #         "id",
+        #         name="daatumitega_idx",
+        #     ),
         # ]
         verbose_name = "Lugu"
         verbose_name_plural = "Lood" # kasutame eesti keeles suupärasemaks tegemiseks

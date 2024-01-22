@@ -1,7 +1,7 @@
 {# cs - lingi värv ("artikkel", "isik", "organisatsioon", "objekt") #}
 {% with sd=obj.dob y=obj.hist_year m=obj.hist_month %}
 	{% if sd %}
-		<div class="date {% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% else %}hover-artikkel{% endif %}">
+		<div class="date {% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% endif %}">
 			<a
 					class="text-{{ cs }} day"
 					href="{% url 'wiki:artikkel_day_archive' year=sd|date:'Y' month=sd|date:'m' day=sd|date:'j' %}"
