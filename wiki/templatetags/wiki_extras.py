@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+import uuid
 
 from django import template
 from django.conf import settings
@@ -45,6 +46,23 @@ def object_mainitud_artiklites(context, object, model):
     return {
         # 'user': context['user'],
         'artikkel_qs': artikkel_qs
+    }
+
+# Tagastab konkreetsele kasutajale filtreeritud loetelu objectiga (Isik, Organisatsioon, Objekt) seotud artiklitega
+@register.inclusion_tag('wiki/includes/object_mainitud_artiklites2.html', takes_context=True)
+def object_mainitud_artiklites2(context, object, model):
+    # Filtreerime kasutajatüübi järgi
+    artikkel_qs = Artikkel.objects.daatumitega(context['request'])
+    if model == 'isik':
+        artikkel_qs = artikkel_qs.filter(isikud=object)
+    elif model == 'organisatsioon':
+        artikkel_qs = artikkel_qs.filter(organisatsioonid=object)
+    elif model == 'objekt':
+        artikkel_qs = artikkel_qs.filter(objektid=object)
+
+    return {
+        # 'user': context['user'],
+        'artiklid': artikkel_qs.values_list('id', 'slug', 'hist_year', flat=False, named=True)
     }
 
 
@@ -194,3 +212,7 @@ def duration(td):
     seconds_str = f'{seconds}' if seconds and not hours_str else '0'
 
     return f'{days_str}{hours_str}{minutes_str}{seconds_str},{td.microseconds}'
+
+@register.simple_tag
+def get_uuid():
+    return uuid.uuid4()

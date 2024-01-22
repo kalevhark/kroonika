@@ -21,7 +21,8 @@
       {% endif %}
     {% endif %}
 		{% include 'wiki/includes/object_list_object.html' with model='isik' %}
-		<!-- Lingid seotud artiklitele -->
-		{% object_mainitud_artiklites obj 'isik' %}
+    {# Lingid seotud artiklitele #}
+{#		{% object_mainitud_artiklites obj 'isik' %}#}
+    {% object_mainitud_artiklites2 obj 'isik' %}
 	</div>
 {% endfor %}

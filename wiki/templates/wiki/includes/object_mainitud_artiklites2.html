@@ -1,0 +1,17 @@
+{% load wiki_extras %}
+{# Loetelu seotud artiklinumbritest #}
+{% if artiklid %}
+  &nbsp;mainitud:
+  {% for obj in artiklid %}
+    &nbsp;
+    <a class="hover-artikkel tooltip-content w3-round" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
+      <span
+              title={{ obj.hist_year }}
+              data-model='Artikkel'
+              data-id='{{ obj.id }}'
+              id='Artikkel_{{ obj.id }}_{% get_uuid %}'>
+        {{ obj.hist_year }}
+      </span>
+    </a>
+  {% endfor %}
+{% endif %}

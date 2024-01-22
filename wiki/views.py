@@ -1624,6 +1624,8 @@ class ArtikkelYearArchiveView(YearArchiveView):
     def get_context_data(self, **kwargs):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
+        # context['artikkel_qs'] = artikkel_qs
+
         aasta = context['year'].year
         # Eelnev ja järgnev artikleid sisaldav aasta
         context['aasta_eelmine'] = artikkel_qs.filter(hist_year__lt=aasta).aggregate(Max('hist_year'))['hist_year__max']
@@ -1777,6 +1779,8 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
     def get_context_data(self, **kwargs):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
+        # context['artikkel_qs'] = artikkel_qs
+
         aasta = context['month'].year
         kuu = context['month'].month
         p2ev = context['month']
@@ -1869,20 +1873,19 @@ def artikkel_month_archive_otheryears(request, year, month):
     )
 
 class ArtikkelDayArchiveView(DayArchiveView):
-    # queryset = Artikkel.objects.all()
     date_field = 'hist_searchdate'
     make_object_list = True
     allow_future = True
     allow_empty = True
 
     def get_queryset(self):
-        # return artikkel_qs_userfilter(self.request.user)
         return Artikkel.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
-        # artikkel_qs = artikkel_qs_userfilter(self.request.user)
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
+        # context['artikkel_qs'] = artikkel_qs
+
         # Milline kuupäevavalik tehti
         context_day = context['day']
         aasta = context_day.year

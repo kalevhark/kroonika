@@ -4,9 +4,8 @@
           title={{ obj }}
           data-model='{{ obj|get_model_name }}'
           data-id='{{ obj.id }}'
-          id='{{ obj|get_model_name }}_{{ obj.id }}'>
+          id='{{ obj|get_model_name }}_{{ obj.id }}_{% get_uuid %}'>
     <strong> {{ obj }}</strong>
-{#    <br><i class='fa fa-spinner fa-pulse fa-2x fa-fw'></i>#}
   </span>
 </a>
 {% if obj.vanus_gen and obj.vanus_gen > 0 %}

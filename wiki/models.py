@@ -331,6 +331,7 @@ class DaatumitegaManager(models.Manager):
 
         # default queryset from model
         initial_queryset = super().get_queryset()
+        # start = datetime.now()
 
         # Filtreerime kasutaja järgi
         if model_name == 'Artikkel':
@@ -339,6 +340,7 @@ class DaatumitegaManager(models.Manager):
                 filtered_queryset = initial_queryset
             else:
                 filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
+            # stopp1 = datetime.now()
 
             # filtered_queryset = filtered_queryset.annotate(
             #     search_year=Case(
@@ -375,6 +377,7 @@ class DaatumitegaManager(models.Manager):
                 filtered_queryset = initial_queryset.filter(id__in=model_ids)
             else:
                 filtered_queryset = initial_queryset
+            # stopp1 = datetime.now()
         # Arvutame abiväljad vastavalt kasutaja kalendrieelistusele
         # dob: day of begin|birth
         # doe: day of end
@@ -399,11 +402,13 @@ class DaatumitegaManager(models.Manager):
                     output_field=DateField()
                 )
             )
+            # stopp2 = datetime.now()
         else:  # vkj
             filtered_queryset = filtered_queryset.annotate(
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )
+            # stopp2 = datetime.now()
         if model_name == 'Artikkel':
             # j2rjestame lood looglises j2rjekorras
             filtered_queryset = filtered_queryset.annotate(
@@ -424,6 +429,14 @@ class DaatumitegaManager(models.Manager):
                     output_field=IntegerField()
                 ),
             ).order_by('search_year', 'search_month', 'search_day', 'id')
+        # stopp3 = datetime.now()
+        # print(
+        #     model_name,
+        #     calendar_system,
+        #     f'1: {(stopp1 - start).seconds}.{(stopp1 - start).microseconds}',
+        #     f'2: {(stopp2 - start).seconds}.{(stopp2 - start).microseconds}',
+        #     f'3: {(stopp3 - start).seconds}.{(stopp3 - start).microseconds}',
+        # )
         return filtered_queryset
 
 
