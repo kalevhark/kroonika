@@ -8,6 +8,7 @@ from pathlib import Path, PurePath
 import shutil
 from zoneinfo import ZoneInfo
 
+import psycopg2
 import requests
 from bs4 import BeautifulSoup
 
@@ -18,8 +19,9 @@ if __name__ == "__main__":
 
 from django.conf import settings
 
-MEDIA_DIR = settings.MEDIA_ROOT
+from ilm.utils import utils
 
+MEDIA_DIR = settings.MEDIA_ROOT
 
 from django.db.models import (
     Case, F, Q, Value, When,
@@ -1078,13 +1080,65 @@ def getFile_fromUrl(url):
     print(filename, contentLength)
     open(filename, 'wb').write(r.content)
 
+# Indeksite kasutus andmebaasis
+def get_indexusestat(path=settings.BASE_DIR / 'ilm'):
+    """ query maxdate from the ilm_ilm table """
+    conn = None
+    try:
+        params = utils.config(path)
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+        cur.execute(
+            """SELECT
+                idstat.relname AS TABLE_NAME,
+                indexrelname AS index_name,
+                idstat.idx_scan AS index_scans_count,
+                pg_size_pretty(pg_relation_size(indexrelid)) AS index_size,
+                tabstat.idx_scan AS table_reads_index_count,
+                tabstat.seq_scan AS table_reads_seq_count,
+                tabstat.seq_scan + tabstat.idx_scan AS table_reads_count,
+                n_tup_upd + n_tup_ins + n_tup_del AS table_writes_count,
+                pg_size_pretty(pg_relation_size(idstat.relid)) AS table_size
+            FROM
+                pg_stat_user_indexes AS idstat
+            JOIN
+                pg_indexes
+                ON
+                indexrelname = indexname
+                AND
+                idstat.schemaname = pg_indexes.schemaname
+            JOIN
+                pg_stat_user_tables AS tabstat
+                ON
+                idstat.relid = tabstat.relid
+            WHERE
+                indexdef !~* 'unique'
+            ORDER BY
+                idstat.idx_scan DESC,
+                pg_relation_size(indexrelid) DESC
+            """.strip()
+        )
+
+        row = cur.fetchone()
+        print([column.name for column in cur.description])
+
+        while row is not None:
+            print(row)
+            row = cur.fetchone()
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
     # muis_viited_inuse()
     # ilmajama()
     # massikanne_from_json()
-    url = 'http://opendata.muis.ee/dhmedia/2d69b089-d435-45a2-92f0-2f4f28784e58'
-    getFile_fromUrl(url)
+    # url = 'http://opendata.muis.ee/dhmedia/2d69b089-d435-45a2-92f0-2f4f28784e58'
+    # getFile_fromUrl(url)
     pass
 
