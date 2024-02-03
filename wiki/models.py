@@ -410,7 +410,7 @@ class DaatumitegaManager(models.Manager):
             )
             # stopp2 = datetime.now()
         if model_name == 'Artikkel':
-            # j2rjestame lood looglises j2rjekorras
+            # j2rjestame lood kronoloogilises j2rjekorras
             filtered_queryset = filtered_queryset.annotate(
                 search_year=Case(
                     When(dob__isnull=False, then=ExtractYear('dob')),
