@@ -28,7 +28,7 @@ from django.db import models
 from django.db.models import \
     Max, Case, F, When, \
     Value, CharField, DateField, IntegerField
-from django.db.models.functions import Cast, Concat, ExtractYear, ExtractMonth, ExtractDay, LPad
+from django.db.models.functions import Cast, Concat, Coalesce, ExtractYear, ExtractMonth, ExtractDay, LPad
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.template.loader import render_to_string
@@ -410,21 +410,41 @@ class DaatumitegaManager(models.Manager):
             #     ),
             # ).order_by('search_year', 'search_month', 'search_day', 'id')
             filtered_queryset = filtered_queryset.annotate(
+            #     search_index=Concat(
+            #         Case(
+            #             When(dob__isnull=False, then=Cast('dob__year', output_field=CharField())),
+            #             When(hist_year__isnull=False, then=Cast('hist_year', output_field=CharField())),
+            #             When(hist_year__isnull=True, then=Value("0000")),
+            #         ),
+            #         LPad(Case(
+            #             When(dob__isnull=False, then=Cast('dob__month', output_field=CharField())),
+            #             When(hist_month__isnull=False, then=Cast('hist_month', output_field=CharField())),
+            #             When(hist_month__isnull=True, then=Value("00")),
+            #         ), 2, fill_text=Value("0")),
+            #         LPad(Case(
+            #             When(dob__isnull=False, then=Cast('dob__day', output_field=CharField())),
+            #             When(hist_date__isnull=True, then=Value("00")),
+            #         ), 2, fill_text=Value("0")),
+            #         LPad(
+            #             Cast('id', output_field=CharField()),
+            #             7, fill_text=Value("0")
+            #         )
+            #     )
+            # ).order_by('search_index')
+            # qs = Artikkel.objects.annotate(
                 search_index=Concat(
-                    Case(
-                        When(dob__isnull=False, then=Cast(ExtractYear('dob'), output_field=CharField())),
-                        When(hist_year__isnull=False, then=Cast('hist_year', output_field=CharField())),
-                        When(hist_year__isnull=True, then=Value("0000")),
+                    LPad(
+                        Cast(Coalesce('dob__year', 'hist_year', 0), output_field=CharField()),
+                        4, fill_text=Value("0")
                     ),
-                    LPad(Case(
-                        When(dob__isnull=False, then=Cast(ExtractMonth('dob'), output_field=CharField())),
-                        When(hist_month__isnull=False, then=Cast('hist_month', output_field=CharField())),
-                        When(hist_month__isnull=True, then=Value("00")),
-                    ), 2, fill_text=Value("0")),
-                    LPad(Case(
-                        When(dob__isnull=False, then=Cast(ExtractDay('dob'), output_field=CharField())),
-                        When(hist_date__isnull=True, then=Value("00")),
-                    ), 2, fill_text=Value("0")),
+                    LPad(
+                        Cast(Coalesce('dob__month', 'hist_month', 0), output_field=CharField()),
+                        2, fill_text=Value("0")
+                    ),
+                    LPad(
+                        Cast(Coalesce('dob__day', 0), output_field=CharField()),
+                        2, fill_text=Value("0")
+                    ),
                     LPad(
                         Cast('id', output_field=CharField()),
                         7, fill_text=Value("0")

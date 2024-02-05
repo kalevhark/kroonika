@@ -1133,7 +1133,7 @@ def get_indexusestat(path=settings.BASE_DIR / 'ilm'):
             conn.close()
 
 import timeit
-from django.db.models.functions import Cast, Concat, Extract, ExtractYear, ExtractMonth, ExtractDay, LPad
+from django.db.models.functions import Cast, Coalesce, Concat, Extract, ExtractYear, ExtractMonth, ExtractDay, LPad
 from django.db.models import \
     Count, Max, Min, \
     Case, F, Func, Q, When, \
@@ -1168,19 +1168,42 @@ def test_daatumitega_new():
     qs = Artikkel.objects.annotate(
         search_index=Concat(
             Case(
-                When(hist_date__isnull=False, then=Cast(ExtractYear('hist_date'), output_field=CharField())),
+                When(hist_date__isnull=False, then=Cast('hist_date__year', output_field=CharField())),
                 When(hist_year__isnull=False, then=Cast('hist_year', output_field=CharField())),
                 When(hist_year__isnull=True, then=Value("0000")),
             ),
             LPad(Case(
-                When(hist_date__isnull=False, then=Cast(ExtractMonth('hist_date'), output_field=CharField())),
+                When(hist_date__isnull=False, then=Cast('hist_date__month', output_field=CharField())),
                 When(hist_month__isnull=False, then=Cast('hist_month', output_field=CharField())),
                 When(hist_month__isnull=True, then=Value("00")),
             ), 2, fill_text=Value("0")),
             LPad(Case(
-                When(hist_date__isnull=False, then=Cast(ExtractDay('hist_date'), output_field=CharField())),
+                When(hist_date__isnull=False, then=Cast('hist_date__day', output_field=CharField())),
                 When(hist_date__isnull=True, then=Value("00")),
             ), 2, fill_text=Value("0")),
+            LPad(
+                Cast('id', output_field=CharField()),
+                7, fill_text=Value("0")
+            )
+        )
+    ).order_by('search_index')
+    q = [obj.pk for obj in qs]
+
+def test_daatumitega_new2():
+    qs = Artikkel.objects.annotate(
+        search_index=Concat(
+            LPad(
+                Cast(Coalesce('hist_date__year', 'hist_year', 0), output_field=CharField()),
+                4, fill_text=Value("0")
+            ),
+            LPad(
+                Cast(Coalesce('hist_date__month', 'hist_month', 0), output_field=CharField()),
+                2, fill_text=Value("0")
+            ),
+            LPad(
+                Cast(Coalesce('hist_date__day', 0), output_field=CharField()),
+                2, fill_text=Value("0")
+            ),
             LPad(
                 Cast('id', output_field=CharField()),
                 7, fill_text=Value("0")
@@ -1193,6 +1216,7 @@ def test_queryset_timeit():
     print(timeit.timeit("test_default()", setup="from __main__ import test_default", number=100))
     print(timeit.timeit("test_daatumitega_old()", setup="from __main__ import test_daatumitega_old", number=100))
     print(timeit.timeit("test_daatumitega_new()", setup="from __main__ import test_daatumitega_new", number=100))
+    print(timeit.timeit("test_daatumitega_new2()", setup="from __main__ import test_daatumitega_new2", number=100))
 
 if __name__ == "__main__":
     # get_vg_vilistlased()
