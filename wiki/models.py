@@ -26,10 +26,9 @@ from django.core.files.base import ContentFile
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.db.models import \
-    Count, Max, Min, \
-    Case, F, Func, Q, When, \
-    Value, BooleanField, DateField, DateTimeField, DecimalField, IntegerField
-from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
+    Max, Case, F, When, \
+    Value, CharField, DateField, IntegerField
+from django.db.models.functions import Cast, Concat, ExtractYear, ExtractMonth, ExtractDay, LPad
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from django.template.loader import render_to_string
@@ -341,25 +340,6 @@ class DaatumitegaManager(models.Manager):
             else:
                 filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
             # stopp1 = datetime.now()
-
-            # filtered_queryset = filtered_queryset.annotate(
-            #     search_year=Case(
-            #         When(hist_date__isnull=False, then=ExtractYear('hist_date')),
-            #         When(hist_year__isnull=False, then=F('hist_year')),
-            #         When(hist_year__isnull=True, then=0),
-            #     ),
-            #     search_month=Case(
-            #         When(hist_date__isnull=False, then=ExtractMonth('hist_date')),
-            #         When(hist_month__isnull=False, then=F('hist_month')),
-            #         When(hist_month__isnull=True, then=0),
-            #         output_field=IntegerField()
-            #     ),
-            #     search_day=Case(
-            #         When(hist_date__isnull=False, then=ExtractDay('hist_date')),
-            #         When(hist_date__isnull=True, then=0),
-            #         output_field=IntegerField()
-            #     )
-            # ).order_by('search_year', 'search_month', 'search_day', 'id')
         else:
             # Kui andmebaas on Isik, Organisatsioon, Objekt
             if not user_is_staff:
@@ -411,24 +391,46 @@ class DaatumitegaManager(models.Manager):
             # stopp2 = datetime.now()
         if model_name == 'Artikkel':
             # j2rjestame lood kronoloogilises j2rjekorras
+            # filtered_queryset = filtered_queryset.annotate(
+            #     search_year=Case(
+            #         When(dob__isnull=False, then=ExtractYear('dob')),
+            #         When(hist_year__isnull=False, then=F('hist_year')),
+            #         When(hist_year__isnull=True, then=0),
+            #     ),
+            #     search_month=Case(
+            #         When(dob__isnull=False, then=ExtractMonth('dob')),
+            #         When(hist_month__isnull=False, then=F('hist_month')),
+            #         When(hist_month__isnull=True, then=0),
+            #         output_field=IntegerField()
+            #     ),
+            #     search_day=Case(
+            #         When(dob__isnull=False, then=ExtractDay('dob')),
+            #         When(hist_date__isnull=True, then=0),
+            #         output_field=IntegerField()
+            #     ),
+            # ).order_by('search_year', 'search_month', 'search_day', 'id')
             filtered_queryset = filtered_queryset.annotate(
-                search_year=Case(
-                    When(dob__isnull=False, then=ExtractYear('dob')),
-                    When(hist_year__isnull=False, then=F('hist_year')),
-                    When(hist_year__isnull=True, then=0),
-                ),
-                search_month=Case(
-                    When(dob__isnull=False, then=ExtractMonth('dob')),
-                    When(hist_month__isnull=False, then=F('hist_month')),
-                    When(hist_month__isnull=True, then=0),
-                    output_field=IntegerField()
-                ),
-                search_day=Case(
-                    When(dob__isnull=False, then=ExtractDay('dob')),
-                    When(hist_date__isnull=True, then=0),
-                    output_field=IntegerField()
-                ),
-            ).order_by('search_year', 'search_month', 'search_day', 'id')
+                search_index=Concat(
+                    Case(
+                        When(dob__isnull=False, then=Cast(ExtractYear('dob'), output_field=CharField())),
+                        When(hist_year__isnull=False, then=Cast('hist_year', output_field=CharField())),
+                        When(hist_year__isnull=True, then=Value("0000")),
+                    ),
+                    LPad(Case(
+                        When(dob__isnull=False, then=Cast(ExtractMonth('dob'), output_field=CharField())),
+                        When(hist_month__isnull=False, then=Cast('hist_month', output_field=CharField())),
+                        When(hist_month__isnull=True, then=Value("00")),
+                    ), 2, fill_text=Value("0")),
+                    LPad(Case(
+                        When(dob__isnull=False, then=Cast(ExtractDay('dob'), output_field=CharField())),
+                        When(hist_date__isnull=True, then=Value("00")),
+                    ), 2, fill_text=Value("0")),
+                    LPad(
+                        Cast('id', output_field=CharField()),
+                        7, fill_text=Value("0")
+                    )
+                )
+            ).order_by('search_index')
         # stopp3 = datetime.now()
         # print(
         #     model_name,

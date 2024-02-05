@@ -788,6 +788,8 @@ def update_forecast_log_analyze():
     path = Path(__file__).resolve().parent.parent
     forecast_log_analyze.logs2bigdata(path)
 
+# import importlib
+# importlib.reload(tools) # uuesti laadimiseks
 
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])

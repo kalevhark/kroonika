@@ -1132,6 +1132,68 @@ def get_indexusestat(path=settings.BASE_DIR / 'ilm'):
         if conn is not None:
             conn.close()
 
+import timeit
+from django.db.models.functions import Cast, Concat, Extract, ExtractYear, ExtractMonth, ExtractDay, LPad
+from django.db.models import \
+    Count, Max, Min, \
+    Case, F, Func, Q, When, \
+    Value, CharField, IntegerField
+
+def test_default():
+    qs = Artikkel.objects.all()
+    q = [obj.pk for obj in qs]
+
+def test_daatumitega_old():
+    qs = Artikkel.objects.annotate(
+        search_year=Case(
+            When(hist_date__isnull=False, then=ExtractYear('hist_date')),
+            When(hist_year__isnull=False, then=F('hist_year')),
+            When(hist_year__isnull=True, then=0),
+        ),
+        search_month=Case(
+            When(hist_date__isnull=False, then=ExtractMonth('hist_date')),
+            When(hist_month__isnull=False, then=F('hist_month')),
+            When(hist_month__isnull=True, then=0),
+            output_field=IntegerField()
+        ),
+        search_day=Case(
+            When(hist_date__isnull=False, then=ExtractDay('hist_date')),
+            When(hist_date__isnull=True, then=0),
+            output_field=IntegerField()
+        ),
+    ).order_by('search_year', 'search_month', 'search_day', 'id')
+    q = [obj.pk for obj in qs]
+
+def test_daatumitega_new():
+    qs = Artikkel.objects.annotate(
+        search_index=Concat(
+            Case(
+                When(hist_date__isnull=False, then=Cast(ExtractYear('hist_date'), output_field=CharField())),
+                When(hist_year__isnull=False, then=Cast('hist_year', output_field=CharField())),
+                When(hist_year__isnull=True, then=Value("0000")),
+            ),
+            LPad(Case(
+                When(hist_date__isnull=False, then=Cast(ExtractMonth('hist_date'), output_field=CharField())),
+                When(hist_month__isnull=False, then=Cast('hist_month', output_field=CharField())),
+                When(hist_month__isnull=True, then=Value("00")),
+            ), 2, fill_text=Value("0")),
+            LPad(Case(
+                When(hist_date__isnull=False, then=Cast(ExtractDay('hist_date'), output_field=CharField())),
+                When(hist_date__isnull=True, then=Value("00")),
+            ), 2, fill_text=Value("0")),
+            LPad(
+                Cast('id', output_field=CharField()),
+                7, fill_text=Value("0")
+            )
+        )
+    ).order_by('search_index')
+    q = [obj.pk for obj in qs]
+
+def test_queryset_timeit():
+    print(timeit.timeit("test_default()", setup="from __main__ import test_default", number=100))
+    print(timeit.timeit("test_daatumitega_old()", setup="from __main__ import test_daatumitega_old", number=100))
+    print(timeit.timeit("test_daatumitega_new()", setup="from __main__ import test_daatumitega_new", number=100))
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
@@ -1140,5 +1202,6 @@ if __name__ == "__main__":
     # massikanne_from_json()
     # url = 'http://opendata.muis.ee/dhmedia/2d69b089-d435-45a2-92f0-2f4f28784e58'
     # getFile_fromUrl(url)
+    test_queryset_timeit()
     pass
 

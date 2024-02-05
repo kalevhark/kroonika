@@ -487,6 +487,11 @@ class ViideAdmin(admin.ModelAdmin):
 
     short_url.short_description = 'Link'
 
+from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay, LPad
+from django.db.models import \
+    Count, Max, Min, \
+    Case, F, Func, Q, When, \
+    Value, CharField, IntegerField
 
 class ArtikkelAdmin(AjaxSelectAdmin):
 
