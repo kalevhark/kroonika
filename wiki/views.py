@@ -416,10 +416,10 @@ def _get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
         a['viimane_lisatud'] = artikkel_qs.latest('inp_date')
         a['viimane_muudetud'] = artikkel_qs.latest('mod_date')
         # Samal kuupäeval erinevatel aastatel toimunud
-        sel_p2eval_exactly = artikkel_qs.filter( # hist_date == KKPP
-            dob__day = p2ev,
-            dob__month = kuu
-        )
+        # sel_p2eval_exactly = artikkel_qs.filter( # hist_date == KKPP
+        #     dob__day = p2ev,
+        #     dob__month = kuu
+        # )
         sel_p2eval = inrange_dates_artikkel(artikkel_qs, p2ev, kuu) # hist_date < KKPP <= hist_enddate
         sel_p2eval_kirjeid = len(sel_p2eval)
         if sel_p2eval_kirjeid > artikleid_max_split: # Kui leiti palju artikleid, teeme splitid
@@ -444,7 +444,8 @@ def _get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
             a['sel_kuul'] = sel_kuul
         a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
         # sada aastat tagasi toimunud
-        a['sada_aastat_tagasi'] = sel_p2eval_exactly.filter(dob__year = (aasta-100))
+        # a['sada_aastat_tagasi'] = sel_p2eval_exactly.filter(dob__year = (aasta-100))
+        a['sada_aastat_tagasi'] = sel_p2eval.filter(dob__year=(aasta - 100))
         a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:40] # 40 loetumat artiklit
         # Koondnäitajad aastate ja kuude kaupa
         artikleid_aasta_kaupa = artikkel_qs.\

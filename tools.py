@@ -1212,6 +1212,7 @@ def test_daatumitega_new2():
     ).order_by('search_index')
     q = [obj.pk for obj in qs]
 
+
 def test_queryset_timeit():
     print(timeit.timeit("test_default()", setup="from __main__ import test_default", number=100))
     print(timeit.timeit("test_daatumitega_old()", setup="from __main__ import test_daatumitega_old", number=100))
