@@ -164,24 +164,24 @@ Linda Altosaar, Enestin-Rosalie Kiima, Natalie Lill, Linda Põldmaa, Linda Emili
         isik_eesnimi = ' '.join(isik_nimi[:-1]).strip()
         isik_perenimi = isik_nimi[-1].strip()
         if isik_eesnimi or isik_perenimi:
-            print(isik_eesnimi, isik_perenimi)
+            # print(isik_eesnimi, isik_perenimi)
             uus_isik = Isik(
                 perenimi = isik_perenimi,
                 eesnimi = isik_eesnimi,
                 kirjeldus = isik_kirjeldus
             )
-            # uus_isik.save()
+            uus_isik.save()
             print(uus_isik)
             # Lisame isikule seotud organisatsiooni
-            # uus_isik.organisatsioonid.add(org)
+            uus_isik.organisatsioonid.add(org)
             # Lisame isikule seotud viite(d)
             for viide in viited:
-                # uus_isik.viited.add(viide)
-                pass
+                uus_isik.viited.add(viide)
+                # pass
             # Lisame isiku artiklile
-            # art.isikud.add(uus_isik)
+            art.isikud.add(uus_isik)
             # Lisame isiku pildile
-            # pilt.isikud.add(uus_isik)
+            pilt.isikud.add(uus_isik)
 
 # Isikukirjete tekitamiseks artikli juurde
 # import tools
