@@ -153,7 +153,7 @@ Linda Altosaar, Enestin-Rosalie Kiima, Natalie Lill, Linda Põldmaa, Linda Emili
     # Milline viide lisada isikule
     viited_ids = [15093]
     viited = Viide.objects.filter(id__in=viited_ids)
-    viitestring = ' '.join(['[viide_{viite_id}]' for viite_id in viited_ids])
+    viitestring = ' '.join([f'[viide_{viite_id}]' for viite_id in viited_ids])
     print(viited, viitestring)
     # Isiku kirjeldus
     isik_kirjeldus = f'Valga naiskutsekooli lõpetaja 1936 {viitestring}'
