@@ -138,51 +138,25 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-Ella Aaran,
-Elwine Hist,
-Maria Kaska,
-Linda Kitsnik,
-Louise Kuusik,
-Alwine Kroon,
-Natalia Liiwamets,
-Maria Simmul,
-Meeta Rõigas,
-Roche Leja Shlick,
-Wilma Sulin,
-Weronika-Benita Teder,
-Amanda Uibo,
-Eweline-Marie Wislapuu,
-Johanna Waher,
-Ludmilla Wink,
-Salme Org,
-Sinaida Kraaw,
-Klaudia Tonts,
-Wilma Potsepp,
-Auguste Karulin,
-Salme Laur,
-Irene Strohm,
-Larissa Tamm,
-Walentine Wawer,
-Emilie Püwi,
-Hildegard Koonik,
-Herta Pulst,
-Alide Kolwets
+Salme Kiwirähk, Anastasia Tallmeister, Meeri Sommer, Leida Sisask, 
+Linda Altosaar, Enestin-Rosalie Kiima, Natalie Lill, Linda Põldmaa, Linda Emilie Piip, Elisabeth Pihlak, Linda Wiste, Meeta Piir
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=12374)
+    art = Artikkel.objects.get(id=12988)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=11658)
+    pilt = Pilt.objects.get(id=12817)
     print(pilt)
     # Milline organisatsioon lisada isikule
     org = Organisatsioon.objects.get(id=2768) # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [14493]
+    viited_ids = [15093]
     viited = Viide.objects.filter(id__in=viited_ids)
-    print(viited)
+    viitestring = ' '.join(['[viide_{viite_id}]' for viite_id in viited_ids])
+    print(viited, viitestring)
     # Isiku kirjeldus
-    isik_kirjeldus = 'Valga naiskutsekooli lõpetaja 1935 [^1]'
+    isik_kirjeldus = f'Valga naiskutsekooli lõpetaja 1936 {viitestring}'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
@@ -196,18 +170,18 @@ Alide Kolwets
                 eesnimi = isik_eesnimi,
                 kirjeldus = isik_kirjeldus
             )
-            uus_isik.save()
+            # uus_isik.save()
             print(uus_isik)
             # Lisame isikule seotud organisatsiooni
-            uus_isik.organisatsioonid.add(org)
+            # uus_isik.organisatsioonid.add(org)
             # Lisame isikule seotud viite(d)
             for viide in viited:
-                uus_isik.viited.add(viide)
-                # pass
+                # uus_isik.viited.add(viide)
+                pass
             # Lisame isiku artiklile
-            art.isikud.add(uus_isik)
+            # art.isikud.add(uus_isik)
             # Lisame isiku pildile
-            pilt.isikud.add(uus_isik)
+            # pilt.isikud.add(uus_isik)
 
 # Isikukirjete tekitamiseks artikli juurde
 # import tools
@@ -229,6 +203,7 @@ def massikanne_from_json():
     viited_ids = [15093, 15094]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
+    viitestring = ' '.join(['[viide_{viite_id}]' for viite_id in viited_ids])
     # Loeme lendude andmed
     with open('vilistlased1933-2021.json', mode='r', encoding='utf8') as f:
         data = json.load(f)
@@ -237,7 +212,7 @@ def massikanne_from_json():
     for haru in harud:
         print(f'**{haru}**')
         # Isiku kirjeldus
-        isik_kirjeldus = f'Valga ühisgümnaasiumi {haru.lower()} lõpetaja {aasta} [^1] [^2]'
+        isik_kirjeldus = f'Valga ühisgümnaasiumi {haru.lower()} lõpetaja {aasta} {viitestring}'
         isikud = harud[haru]
         for isik in isikud:
             # Loome uue isiku
