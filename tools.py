@@ -258,7 +258,7 @@ def massikanne_from_json():
                 # Lisame isikule seotud viite(d)
                 for viide in viited:
                     # uus_isik.viited.add(viide)
-                    # pass
+                    pass
                 # Lisame isiku artiklile
                 # art.isikud.add(uus_isik)
                 # Lisame isiku pildile
