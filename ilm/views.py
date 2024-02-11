@@ -1840,7 +1840,7 @@ def get_mixed_ilmateade(request):
                 'pointPadding': 0,
                 'groupPadding': 0,
                 'borderWidth': 0,
-                'shadow': False
+                'shadow': False,
             },
             'windbarb': {
                 'lineWidth': 1,
