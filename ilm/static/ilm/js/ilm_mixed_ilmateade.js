@@ -60,25 +60,48 @@ function mixed_ilmateade() {
             }
           });
 
-        // Täiendame järgneva 48h andmed ilmasümbolitega
-        $.each(chart.series[2].data, function (i, point) {
-          if (i > 23 && i % 2 === 0 && data.yrno_symbols[i] != null) {
-            chart.renderer
-              .image(
-                '/static/ilm/img/weathericon/svg/' +
-                data.yrno_symbols[i] + '.svg',
-                point.plotX + chart.plotLeft - 8,
-                point.plotY + chart.plotTop - 30,
-                30,
-                30
-              )
-              .attr({
-                zIndex: 5
-              })
-              .add();
+        const series2 = chart.series[2];
+        if (series2.visible) {
+          // Täiendame järgneva 48h andmed yr.no ilmasümbolitega
+          $.each(series2.data, function (i, point) {
+            if (i > 23 && i % 2 === 0 && data.yrno_symbols[i] != null) {
+              chart.renderer
+                .image(
+                  '/static/ilm/img/weathericon/svg/' +
+                  data.yrno_symbols[i] + '.svg',
+                  point.plotX + chart.plotLeft - 8,
+                  point.plotY + chart.plotTop - 30,
+                  30,
+                  30
+                )
+                .attr({
+                  zIndex: 5
+                })
+                .add();
             }
-        });
+          });
+        }
 
+        const series3 = chart.series[3];
+        if (series3.visible) {
+          // Täiendame järgneva ilmteenistus.ee 48h andmed ilmasümbolitega
+          $.each(series3.data, function (i, point) {
+            if (i > 23 && i % 2 === 0 && data.ilmateenistus_symbols[i] != null) {
+              chart.renderer
+                .image(
+                  'https://www.ilmateenistus.ee/wp-content/themes/ilm2020/images/' + data.ilmateenistus_symbols[i] + '.svg',
+                  point.plotX + chart.plotLeft - 8,
+                  point.plotY + chart.plotTop - 30,
+                  30,
+                  30
+                )
+                .attr({
+                  zIndex: 5
+                })
+                .add();
+            }
+          });
+        }
         // Näitame mõõdetud sademete hulka ainult kui suurem nullist
         chart.get('andmed_eelnevad24h_precipitations').update({
           dataLabels: {
