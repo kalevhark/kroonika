@@ -89,7 +89,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware', # site info lisamiseks
-    "debug_toolbar.middleware.DebugToolbarMiddleware", # https://django-debug-toolbar.readthedocs.io
+    'allauth.account.middleware.AccountMiddleware',
+    # "debug_toolbar.middleware.DebugToolbarMiddleware", # https://django-debug-toolbar.readthedocs.io
 ]
 
 ROOT_URLCONF = 'kroonika.urls'
