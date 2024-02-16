@@ -33,6 +33,7 @@ SERVER_TYPE = config['django'].get('SERVER_TYPE', '')
 
 ALLOWED_HOSTS = [
     'valgalinn.ee', 'www.valgalinn.ee', '18.217.172.167', # a1.medium
+    '63.33.55.93', # t4g.small
     '127.0.0.1', 'localhost',
     'testserver'
 ]
@@ -58,7 +59,7 @@ INSTALLED_APPS = [
     'django_filters', # Laiendatud filtrite jaoks
     'widget_tweaks', # Lisavidinad sisestusvormidele
     'rest_framework', # API liidese jaoks
-    'captcha', # Robot vs inimene sisestuse kontroll
+    'django_recaptcha', # Robot vs inimene sisestuse kontroll
     'crispy_forms', # Vormide kujundamiseks
     'crispy_bootstrap4', # crispy template pack https://github.com/django-crispy-forms/crispy-bootstrap4
     'markdownx', # MarkDown teksti kasutamiseks
@@ -70,7 +71,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.github', # django-allauth
     'allauth.socialaccount.providers.google', # django-allauth
     # 'allauth.socialaccount.providers.facebook', # django-allauth
-    "debug_toolbar", # https://django-debug-toolbar.readthedocs.io
+    # "debug_toolbar", # https://django-debug-toolbar.readthedocs.io
     'ilm.apps.IlmConfig',
     'blog.apps.BlogConfig',
     'kiri.apps.KiriConfig', # e-kirja saatmiseks valgalinn.ee aadressilt
@@ -260,7 +261,8 @@ REST_FRAMEWORK = {
 }
 
 # https://www.google.com/recaptcha/intro/v3.html
-SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+# SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
 GOOGLE_RECAPTCHA_SECRET_KEY = config['recaptcha']['GOOGLE_RECAPTCHA_SECRET_KEY']
 GOOGLE_RECAPTCHA_PUBLIC_KEY = config['recaptcha']['GOOGLE_RECAPTCHA_PUBLIC_KEY']
 
