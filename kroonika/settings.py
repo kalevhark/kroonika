@@ -35,7 +35,7 @@ SERVER_TYPE = config['django'].get('SERVER_TYPE', '')
 ALLOWED_HOSTS = [
     'valgalinn.ee', 'www.valgalinn.ee',
     '18.217.172.167', # a1.medium
-    '63.33.55.93', # t4g.small
+    'test.valgalinn.ee', '63.33.55.93', # t4g.small
     '127.0.0.1', 'localhost',
     'testserver'
 ]
