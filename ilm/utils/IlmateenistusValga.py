@@ -193,7 +193,7 @@ class IlmateenistusData():
         self.cache24h = dict()
         algus = dt - timedelta(hours=24)
         qs = Ilm.objects.filter(timestamp__gt=algus).values()
-        if qs:
+        if qs.exists():
             for el in qs:
                 # Teisendame Decimal väljad Float väljadeks
                 el['airtemperature'] = float_or_none(el['airtemperature'])
