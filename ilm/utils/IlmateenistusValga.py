@@ -193,16 +193,15 @@ class IlmateenistusData():
         self.cache24h = dict()
         algus = dt - timedelta(hours=24)
         qs = Ilm.objects.filter(timestamp__gt=algus).values()
-        if list(qs):
-            for el in qs:
-                # Teisendame Decimal väljad Float väljadeks
-                el['airtemperature'] = float_or_none(el['airtemperature'])
-                el['windspeed'] = float_or_none(el['windspeed'])
-                el['winddirection'] = float_or_none(el['winddirection'])
-                el['airpressure'] = float_or_none(el['airpressure'])
-                el['precipitations'] = float_or_none(el['precipitations'])
-                # Salvestame cache
-                self.cache24h[el['timestamp']] = el
+        for el in qs:
+            # Teisendame Decimal väljad Float väljadeks
+            el['airtemperature'] = float_or_none(el['airtemperature'])
+            el['windspeed'] = float_or_none(el['windspeed'])
+            el['winddirection'] = float_or_none(el['winddirection'])
+            el['airpressure'] = float_or_none(el['airpressure'])
+            el['precipitations'] = float_or_none(el['precipitations'])
+            # Salvestame cache
+            self.cache24h[el['timestamp']] = el
         # print('Cache:', len(self.cache24h))
         # Leiame andmebaasi esimese ja viimase kirje ajad
         self.bdi_startstopp()
