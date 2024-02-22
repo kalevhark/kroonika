@@ -107,7 +107,8 @@ if __name__ == '__main__':
     logfile = os.path.join(path, 'access_log')
     if not os.path.isfile(logfile):
         path = os.path.dirname(sys.argv[0])
-        logfile = os.path.join(path, 'access_log')
+        logfile = os.path.join(path, 'valgalinn.access_log')
+    print('Analüüsime logifaili:', logfile)
     log_df = logfile2df(logfile)
     utc = pytz.utc
     now = utc.localize(datetime.now())
