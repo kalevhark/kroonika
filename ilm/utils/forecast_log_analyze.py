@@ -144,7 +144,7 @@ def logs2bigdata(path):
     # Konverteerime timestamp -> datetime -> kohalik ajavöönd
     bd['aeg'] = pd.\
         to_datetime(bd.index, unit='s').\
-        tz_localize('EET', ambiguous='NaT', nonexistent=pd.Timedelta('1H'))
+        tz_localize('EET', ambiguous='NaT', nonexistent=pd.Timedelta('1h'))
     # print(bd.shape, bd.dtypes, bd.memory_usage(deep=True))
 
     bd.to_pickle(path / dir_logs / 'obs_quality_data.pickle')
