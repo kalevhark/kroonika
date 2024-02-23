@@ -40,9 +40,9 @@ def logfile2df(logfile):
     # Loeme logifaili datafreimiks
     df = pd.read_csv(
         logfile,
-        sep='\s+',
+        sep=r'\s+',
         quotechar='"',
-        doublequote=True,
+        # doublequote=True,
         names=names,
         # error_bad_lines=False,
         on_bad_lines='warn' # 'skip'
@@ -52,7 +52,6 @@ def logfile2df(logfile):
     df['resp_size'] = df.apply(intorzero, axis=1)
     # Tagastame ainult vajalikud veerud
     return df.drop(['time_str'], axis=1)
-
 
 # Geoinfo hankimine ip-aadressi järgi
 def ipggeoinfo(ip_addr=''):
@@ -107,7 +106,7 @@ if __name__ == '__main__':
     logfile = os.path.join(path, 'access_log')
     if not os.path.isfile(logfile):
         path = os.path.dirname(sys.argv[0])
-        logfile = os.path.join(path, 'valgalinn.access_log')
+        logfile = os.path.join(path, 'valgalinn.access.log')
     print('Analüüsime logifaili:', logfile)
     log_df = logfile2df(logfile)
     utc = pytz.utc

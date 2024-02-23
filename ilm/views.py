@@ -1751,7 +1751,7 @@ def get_mixed_ilmateade(request):
     c = pd.date_range(
         (d - timedelta(hours=23)).replace(minute=0, second=0, microsecond=0),
         periods=72,
-        freq='H'
+        freq='h'
     )
     # Ilmaandmete hankimine
     andmed_eelnevad24h = bdi.viimase24h_andmed(
