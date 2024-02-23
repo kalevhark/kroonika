@@ -1805,10 +1805,11 @@ def get_mixed_ilmateade(request):
     graafik_subtitle = (
         'Allikad: ' +
         'mõõtmised: ' +
-        '<a href="https://www.ilmateenistus.ee/asukoha-prognoos/?id=8918" target="_blank">ilmateenistus.ee</a>' + '; ' 
+        '<a href="https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/" target="_blank">ilmateenistus.ee</a>' + '; ' 
         'prognoos:' + 
         # '<a href="https://www.yr.no/place/Estonia/Valgamaa/Valga/hour_by_hour.html" target="_blank">yr.no</a>:'
-        '<a href="https://www.yr.no/en/forecast/daily-table/2-587876/Estonia/Valgamaa/Valga%20vald/Valga" target="_blank">yr.no</a>:'
+        '<a href="https://www.yr.no/en/forecast/daily-table/2-587876/Estonia/Valgamaa/Valga%20vald/Valga" target="_blank">yr.no</a>:' +
+        ', <a href="https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates=57.774765;26.033153" target="_blank">ilmateenistus.ee</a>' + '; '
     )
 
     # Graafiku kujundamine

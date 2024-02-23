@@ -193,23 +193,20 @@ class IlmateenistusData():
         self.cache24h = dict()
         algus = dt - timedelta(hours=24)
         qs = Ilm.objects.filter(timestamp__gt=algus).values()
-        try:
-            for el in qs:
-                # Teisendame Decimal väljad Float väljadeks
-                el['airtemperature'] = float_or_none(el['airtemperature'])
-                el['windspeed'] = float_or_none(el['windspeed'])
-                el['winddirection'] = float_or_none(el['winddirection'])
-                el['airpressure'] = float_or_none(el['airpressure'])
-                el['precipitations'] = float_or_none(el['precipitations'])
-                # Salvestame cache
-                self.cache24h[el['timestamp']] = el
-        except:
-            pass
+        for el in qs:
+            # Teisendame Decimal väljad Float väljadeks
+            el['airtemperature'] = float_or_none(el['airtemperature'])
+            el['windspeed'] = float_or_none(el['windspeed'])
+            el['winddirection'] = float_or_none(el['winddirection'])
+            el['airpressure'] = float_or_none(el['airpressure'])
+            el['precipitations'] = float_or_none(el['precipitations'])
+            # Salvestame cache
+            self.cache24h[el['timestamp']] = el
         # print('Cache:', len(self.cache24h))
+
         # Leiame andmebaasi esimese ja viimase kirje ajad
         self.bdi_startstopp()
-        # Kustutame korduvad mõõtmised
-        # self.check_duplicates()
+
         # Ajalooliste andmete päringukirjeldused
         # Täisaastad
         if (self.start.month == 1) and (self.start.day == 1):
@@ -256,67 +253,9 @@ class IlmateenistusData():
         text = f'Andmed: {self.start.strftime(format)}-{self.stopp.strftime(format)}'
         return text
 
-    # def check_duplicates(self):
-    #     while True:
-    #         query = "SELECT id FROM ilm_ilm GROUP BY timestamp HAVING COUNT(timestamp)>1"
-    #         cursor = connection.cursor()
-    #         cursor.execute(query)
-    #         ids_list = [item[0] for item in cursor.fetchall()]
-    #         if len(ids_list) == 0:
-    #             break
-    #         else:
-    #             Ilm.objects.filter(id__in=ids_list).delete()
-
     def mitutundi(self, algus, l6pp):
         # Tagastab kahe kuupäeva vahe tundides
         return (l6pp-algus).days * 24 + (l6pp-algus).seconds/3600
-
-    # def ilm_praegu(self):
-    #     # Loeme Ilmateenistuse viimase mõõtmise andmed veebist
-    #     jaam = 'Valga'
-    #     href = 'http://www.ilmateenistus.ee/ilma_andmed/xml/observations.php'
-    #     r = requests.get(href)
-    #     try:
-    #         root = ET.fromstring(r.text)
-    #     except:
-    #         # Kontrollime kas vaatlusandmed ikkagi olemas
-    #         observation_exists = r.text.find('<observations')
-    #         if observation_exists > 0:
-    #             root = ET.fromstring(r.text[observation_exists:])
-    #         else:
-    #             return None # Andmeid ei õnnestunud online saada
-    #     # Loeme soovitud jaama andmed
-    #     station = root.findall("./station/[name='"+jaam+"']")
-    #     i = dict()
-    #     # Mõõtmise aeg
-    #     dt = datetime.fromtimestamp(int(root.attrib['timestamp']))
-    #     i['timestamp'] = pytz.timezone('Europe/Tallinn').localize(dt)
-    #     for el in station:
-    #         for it in el:
-    #             data = it.text
-    #             # Kui ei ole tekstiväli, siis teisendame float tüübiks
-    #             if it.tag not in ['name',
-    #                               'station',
-    #                               'phenomenon',
-    #                               'phenomenon_observer']:
-    #                 data = float_or_none(data)
-    #             i[it.tag] = data
-    #     return i
-
-    # def ilmaandmed_veebist(self, d):
-    #     """
-    #     Tagastab etteantud ajahetke (d) viimase möödunud täistunni ilmaandmed
-    #     ilmateenistus.ee veebilehelt
-    #     """
-    #     # dt_utc = d.astimezone(pytz.utc)
-    #     # andmed = utils.ilmaandmed_veebist(dt_utc)
-    #     andmed = utils.ilmaandmed_veebist(d)
-    #     # Ilmaandmed andmebaasi juhul kui põhiandmed olemas
-    #     if andmed and andmed['airtemperature'] != None:
-    #         i = Ilm(**andmed)
-    #         i.save()
-    #         print('Salvestan andmebaasi:', d)
-    #     return andmed
 
     def viimase24h_andmed(self, jaam, hetke_aeg):
         d = pytz.timezone('Europe/Tallinn').localize(datetime.now())

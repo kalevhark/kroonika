@@ -7,6 +7,7 @@ import os
 import re
 import urllib.request, urllib.error
 import xml.etree.ElementTree as ET
+from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
 
@@ -200,7 +201,6 @@ def get_maxmin_airtemperature(dt_utc):
         print(error)
     return maxmin_data
 
-from zoneinfo import ZoneInfo
 # Ilmateenistuse etteantud täistunni mõõtmise andmed veebist
 def ilmaandmed_veebist(dt, verbose=False):
     """
