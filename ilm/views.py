@@ -135,6 +135,12 @@ def float_or_none(value):
     except:
         return None
 
+def float_or_zero(value):
+    try:
+        return float(value)
+    except:
+        return 0
+
 def index(request):
     # Avalehekülg, kus näidatakse 24h ilmaajalugu + 48h prognoos
     weather = utils.owm_onecall()
@@ -2248,7 +2254,7 @@ def get_forecasts():
         if y_data:
             y_temp = y_data['temperature']
             y_icon = y_data['symbol']
-            y_prec = float_or_none(y_data['precipitation'])
+            y_prec = float_or_zero(y_data['precipitation'])
             y_prec_color = y_data['precipitation_color']
             y_pres = float_or_none(y_data['pressure'])
         # openweathermaps.org
@@ -2262,7 +2268,7 @@ def get_forecasts():
             o_temp = o_data['temp']
             o_icon = o_data['weather'][0]['icon']
             try:
-                o_prec = float_or_none(o_data['rain']['1h'])
+                o_prec = float_or_zero(o_data['rain']['1h'])
             except:
                 o_prec = None
             o_prec_color = o_data['precipitation_color']
@@ -2277,7 +2283,7 @@ def get_forecasts():
         i_data = i['forecast'].get(str(ref_dt), None)
         if i_data:
             i_temp = float_or_none(i_data['temperature'])
-            i_prec = float_or_none(i_data['precipitation'])
+            i_prec = float_or_zero(i_data['precipitation'])
             i_prec_color = i_data['precipitation_color']
             i_pres = float_or_none(i_data['pressure'])
             i_icon = i_data['symbol']
