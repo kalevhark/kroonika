@@ -777,7 +777,7 @@ class YrnoAPI():
 
             yr['forecast'][str(time_stamp)] = {
                 'time': loc_time,
-                'precipitation': f'{prec_value}' if prec_value == prec_maxvalue else f'{prec_minvalue}-{prec_maxvalue}',
+                'precipitation': f'{prec_value}' if prec_minvalue == prec_maxvalue else f'{prec_minvalue}-{prec_maxvalue}',
                 # 'precipitation': {
                 #     'value': prec_value,
                 #     'minvalue': prec_minvalue,
