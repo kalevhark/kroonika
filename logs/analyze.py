@@ -62,7 +62,7 @@ def parse_str(x):
         `'my string'`
     """
     if x is None:
-        print("X : ", x)
+        # print("X : ", x)
         return "AAAAAAAAAAAAAAA"
     return x[1:-1]
 
@@ -89,10 +89,11 @@ def parse_datetime(x):
 
 
 def parse_int(x):
-    if x.isnumeric():
+    try:
         return int(x)
+    except:
+        return 0
 
-    return x
 def logfile2df2(logfile):
     data = pd.read_csv(
         logfile,
@@ -105,7 +106,7 @@ def logfile2df2(logfile):
         converters={
             'time': parse_datetime,
             'request': parse_str,
-            'status': parse_int,
+            'status': parse_str,
             'size': parse_int,
             'referer': parse_str,
             'user_agent': parse_str
@@ -167,14 +168,15 @@ if __name__ == '__main__':
     logfile = os.path.join(path, 'access_log')
     if not os.path.isfile(logfile):
         path = os.path.dirname(sys.argv[0])
-        logfile = os.path.join(path, 'valgalinn.access.log')
+        # logfile = os.path.join(path, 'valgalinn.access.log')
+        logfile = os.path.join(path, 'access_log')
     print('Analüüsime logifaili:', logfile)
     log_df = logfile2df2(logfile)
 
     # log_df = logfile2df(logfile)
     utc = pytz.utc
     now = utc.localize(datetime.now())
-    time24hoursago = now - timedelta(days=3)
+    time24hoursago = now - timedelta(days=1)
     log_df_filtered = log_df[log_df.time > time24hoursago]
 
     # Agendid aadressid allalaadimise mahu järgi
@@ -212,7 +214,7 @@ if __name__ == '__main__':
 
     # IP aadressid, kes said 403
     print('403 status:')
-    result = log_df_filtered[log_df_filtered['status'] == 403].groupby('ip')['size'] \
+    result = log_df_filtered[log_df_filtered['status'] == "403"].groupby('ip')['size'] \
         .agg(['count']) \
         .sort_values(by=['count'], ascending=[False]) \
         .head(30)
@@ -221,7 +223,7 @@ if __name__ == '__main__':
     print()
 
     print('404 status:')
-    result = log_df_filtered[log_df_filtered['status'] == 404].groupby('request')['size'] \
+    result = log_df_filtered[log_df_filtered['status'] == "404"].groupby('request')['size'] \
         .agg(['count']) \
         .sort_values(by=['count'], ascending=[False]) \
         .head(10)
@@ -245,6 +247,11 @@ if __name__ == '__main__':
     print()
 
     # Viimase 24h kogumaht
-    log_df_filtered_size_sum = log_df_filtered.size.sum()
+    # print(log_df_filtered['size'].describe())
+    log_df_filtered_size_sum = log_df_filtered['size'].sum()
     print(f'Päringuid {log_df_filtered.ip.count()}, kogumahuga {round(log_df_filtered_size_sum/1024/1024)} Mb')
     # print()
+
+    print(log_df_filtered[['time', 'ip', 'size']].resample("h", on='time').agg({'size': 'sum', 'ip': 'count'}))
+
+    # print(log_df_filtered[['time', 'ip', 'size']].resample("5min", on='time').agg({'size': 'sum', 'ip': 'count'}).to_json(orient="records"))

@@ -121,93 +121,97 @@ if (screen.width < 500) {
   <div class="w3-row">
 		<table>
 			<thead>
-			<tr>
-    		<th>Aeg</th>
-    		<th colspan="3">yr.no</th>
-				<th colspan="3">openweathermaps.org</th>
-				<th colspan="3">ilmateenistus.ee</th>
-  		</tr>
-			<tr>
-				<th class="col"></th>
-				<th class="col temperature">
-					<span class="fs1 climacon thermometer" aria-hidden="true"></span>
-				</th>
-				<th class="col w3-center">
-					<span class="fa fa-eye"></span>
-				</th>
-				<th class="col rain">
-					<span class="fs1 climacon umbrella" aria-hidden="true"></span>
-				</th>
-				<th class="temperature">
-					<span class="fs1 climacon thermometer" aria-hidden="true"></span>
-				</th>
-				<th class="col w3-center">
-					<span class="fa fa-eye"></span>
-				</th>
-				<th class="col rain">
-					<span class="fs1 climacon umbrella" aria-hidden="true"></span>
-				</th>
-				<th class="col temperature">
-					<span class="fs1 climacon thermometer" aria-hidden="true"></span>
-				</th>
-        <th class="col w3-center">
-					<span class="fa fa-eye"></span>
-				</th>
-				<th class="col rain">
-					<span class="fs1 climacon umbrella" aria-hidden="true"></span>
-				</th>
-			</tr>
-			</thead>
+        <tr>
+          <th>Aeg</th>
+          <th colspan="3">ilmateenistus.ee</th>
+          <th colspan="3">yr.no</th>
+          <th colspan="3">openweathermaps.org</th>
+        </tr>
+        <tr>
+          <th class="col"></th>
+          <th class="col temperature">
+            <span class="fs1 climacon thermometer" aria-hidden="true"></span>
+          </th>
+          <th class="col w3-center">
+            <span class="fa fa-eye"></span>
+          </th>
+          <th class="col rain">
+            <span class="fs1 climacon umbrella" aria-hidden="true"></span>
+          </th>
+          <th class="temperature">
+            <span class="fs1 climacon thermometer" aria-hidden="true"></span>
+          </th>
+          <th class="col w3-center">
+            <span class="fa fa-eye"></span>
+          </th>
+          <th class="col rain">
+            <span class="fs1 climacon umbrella" aria-hidden="true"></span>
+          </th>
+          <th class="col temperature">
+            <span class="fs1 climacon thermometer" aria-hidden="true"></span>
+          </th>
+          <th class="col w3-center">
+            <span class="fa fa-eye"></span>
+          </th>
+          <th class="col rain">
+            <span class="fs1 climacon umbrella" aria-hidden="true"></span>
+          </th>
+        </tr>
+      </thead>
 			<tbody>
-		{% for timestamp, data in forecast.items %}
-			<tr class="row">
-				<td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
-				<td
-						class="temperature">
-					<span class="temperature colored-{% if data.y_temp > 0 %}positive{% else %}negative{% endif %}">
-						{{ data.y_temp|floatformat:1 }}
-					</span>
-				</td>
-				<td class="w3-center">
-					<img
-						      src="{% static "" %}ilm/img/weathericon/svg/{{ data.y_icon }}.svg"
-						      alt="{{ data.y_icon }}"
-						      width="32" height="32"
-          />
-				</td>
-				<td class="rain {{ data.y_prec_color }}">{{ data.y_prec }}</td>
-				<td
-						class="temperature">
-					<span class="temperature colored-{% if data.o_temp > 0 %}positive{% else %}negative{% endif %}">
-						{{ data.o_temp|floatformat:1 }}
-					</span>
-				</td>
-				<td class="w3-center">
-					<img
-						      src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ data.o_icon }}.png"
-						      alt="{{ data.o_icon }}"
-						      width="32" height="32"
-          />
-				</td>
-				<td class="rain {{ data.o_prec_color }}">{{ data.o_prec|floatformat:1 }}</td>
-				<td
-						class="temperature">
-					<span class="temperature colored-{% if data.i_temp > 0 %}positive{% else %}negative{% endif %}">
-						{{ data.i_temp|floatformat:1 }}
-					</span>
-				</td>
-        <td class="w3-center">
-					<img
-{#						      src="{% static "" %}ilm/img/weathericon/svg/{{ data.y_icon }}.svg"#}
-                  src="https://www.ilmateenistus.ee/wp-content/themes/ilm2020/images/{{ data.i_icon }}.svg"
-						      alt="{{ data.i_icon }}"
-						      width="32" height="32"
-          />
-				</td>
-				<td class="rain {{ data.i_prec_color }}">{{ data.i_prec|floatformat:1 }}</td>
-			</tr>
-		{% endfor %}
-			</tbody>
-			</table>
+        {% for timestamp, data in forecast.items %}
+          <tr class="row">
+            {# Ilmateenistus #}
+            <td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
+            <td
+                class="temperature">
+              <span class="temperature colored-{% if data.i_temp > 0 %}positive{% else %}negative{% endif %}">
+                {{ data.i_temp|floatformat:1 }}
+              </span>
+            </td>
+            <td class="w3-center">
+              <img
+                      src="https://www.ilmateenistus.ee/wp-content/themes/ilm2020/images/{{ data.i_icon }}.svg"
+                      alt="{{ data.i_icon }}"
+                      width="32" height="32"
+              />
+            </td>
+            <td class="rain {{ data.i_prec_color }}">{{ data.i_prec|floatformat:1 }}</td>
+
+            {# yr.no #}
+            <td
+                class="temperature">
+              <span class="temperature colored-{% if data.y_temp > 0 %}positive{% else %}negative{% endif %}">
+                {{ data.y_temp|floatformat:1 }}
+              </span>
+            </td>
+            <td class="w3-center">
+              <img
+                      src="{% static "" %}ilm/img/weathericon/svg/{{ data.y_icon }}.svg"
+                      alt="{{ data.y_icon }}"
+                      width="32" height="32"
+              />
+            </td>
+            <td class="rain {{ data.y_prec_color }}">{{ data.y_prec }}</td>
+
+            {# openweathermaps.org #}
+            <td
+                class="temperature">
+              <span class="temperature colored-{% if data.o_temp > 0 %}positive{% else %}negative{% endif %}">
+                {{ data.o_temp|floatformat:1 }}
+              </span>
+            </td>
+            <td class="w3-center">
+              <img
+                      src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ data.o_icon }}.png"
+                      alt="{{ data.o_icon }}"
+                      width="32" height="32"
+              />
+            </td>
+            <td class="rain {{ data.o_prec_color }}">{{ data.o_prec|floatformat:1 }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 {% endblock %}
