@@ -347,6 +347,11 @@ DEFAULT_FROM_EMAIL = config['aws_mail']['DEFAULT_FROM_EMAIL']
 CORS_ALLOW_ALL_ORIGINS = True # Lubatakse k6ik
 CORS_URLS_REGEX = r"^/api/.*$"
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://valgalinn.ee',
+    'https://test.valgalinn.ee'
+]
+
 # algus cache in use?
 TMP_ALGUSKUVA_CACHE = True
 
