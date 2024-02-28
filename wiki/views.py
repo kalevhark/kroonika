@@ -555,7 +555,7 @@ def _get_algus_kaart(request):
     a = dict()
     z, x, y = 15, 18753, 9907  # näitamiseks valitud kaarditükk
     qs = Kaart.objects \
-        .filter(tiles__startswith='http') \
+        .filter(tiles__contains='tiles') \
         .annotate(sample_tile=F('tiles')) \
         .order_by('aasta')
     qs = qs.annotate(
