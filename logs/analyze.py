@@ -11,6 +11,8 @@ from ipwhois import IPWhois, HTTPLookupError
 import pandas as pd
 import pytz
 
+pd.set_option('styler.format.thousands', ' ')
+
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
     def datestrings2date(rows):
