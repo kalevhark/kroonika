@@ -289,8 +289,8 @@ def calc_results(log_df_filtered):
     # Päringud tundide lõikes
     result = log_df_filtered[['time', 'ip', 'size']] \
         .resample("h", on='time') \
-        .agg({'size': 'sum', 'ip': 'count'}) \
-        .style.format({"sum": "{:,.0f}"})
+        .agg({'size': 'sum', 'ip': 'count'})
+    result.style.format(thousands=" ")
     print(result)
     # print(log_df_filtered[['time', 'ip', 'size']].resample("5min", on='time').agg({'size': 'sum', 'ip': 'count'}).to_json(orient="records"))
 
