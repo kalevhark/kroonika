@@ -305,7 +305,10 @@ $( document ).ready(function() {
                 },
                 success: function (response) {
                   vm.objekt_results_count_1st_page += response.results.length;
-                  vm.objekt_results_next_page = response.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
+                  if (response.next) {
+                    response.next = response.next.replace("http://valgalinn.ee", "https://valgalinn.ee")
+                  }
+                  vm.objekt_results_next_page = response.next;
                   if (vm.objekt_results_count_all > 0) {
                     // Kui leiti
                     vm.objekt_results = vm.objekt_results.concat(response.results);
