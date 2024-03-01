@@ -349,8 +349,10 @@ CORS_URLS_REGEX = r"^/api/.*$"
 
 CSRF_TRUSTED_ORIGINS = [
     'https://valgalinn.ee',
-    'http://test.valgalinn.ee',
+    # 'http://test.valgalinn.ee',
 ]
+
+SECURE_SSL_REDIRECT = True
 
 # algus cache in use?
 TMP_ALGUSKUVA_CACHE = True

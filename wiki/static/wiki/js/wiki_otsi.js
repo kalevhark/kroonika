@@ -221,7 +221,6 @@ $( document ).ready(function() {
           case 'get_next_results_isikud':
             // Päring isik
             url = vm.isik_results_next_page;
-
             $.ajax(
               {
                 url: url,

@@ -1194,6 +1194,16 @@ def test_queryset_timeit():
     print(timeit.timeit("test_daatumitega_new()", setup="from __main__ import test_daatumitega_new", number=100))
     print(timeit.timeit("test_daatumitega_new2()", setup="from __main__ import test_daatumitega_new2", number=100))
 
+from django.contrib.postgres.search import TrigramSimilarity
+def isik_trigram_word_similarity(nimi):
+    isikud = Isik.objects.daatumitega(request=None).annotate(isikunimi = Concat('eesnimi', 'perenimi')).annotate(
+        similarity = TrigramSimilarity("isikunimi", nimi),
+    ).filter(
+        similarity__gt = 0.3
+    ).order_by("-similarity")
+    for isik in isikud[:10]:
+        print(isik.nimi(), isik.similarity)
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
@@ -1205,3 +1215,5 @@ if __name__ == "__main__":
     test_queryset_timeit()
     pass
 
+# import importlib
+# importlib.reload(module)
