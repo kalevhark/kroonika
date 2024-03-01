@@ -227,7 +227,7 @@ def calc_results(log_df_filtered):
         .agg(['sum', 'count']) \
         .sort_values(by=['sum'], ascending=[False]) \
         .head(10)
-    print(result)
+    # print(result)
 
     result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
     result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",",
@@ -242,8 +242,10 @@ def calc_results(log_df_filtered):
         .sort_values(by=['count'], ascending=[False]) \
         .head(10)
     result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",",
-                                                                                                    regex=False)
+    result['sum'] = result['sum'] \
+        .map('{:,}'.format).str \
+        .replace(",", " ", regex=False).str \
+        .replace(".", ",", regex=False)
     print(result)
     print()
 
@@ -290,8 +292,7 @@ def calc_results(log_df_filtered):
     result = log_df_filtered[['time', 'ip', 'size']] \
         .resample("h", on='time') \
         .agg({'size': 'sum', 'ip': 'count'})
-    result.style.format(thousands=" ")
-    print(result)
+    print(result.style.format(thousands=" "))
     # print(log_df_filtered[['time', 'ip', 'size']].resample("5min", on='time').agg({'size': 'sum', 'ip': 'count'}).to_json(orient="records"))
 
     # Viimase 24h kogumaht
