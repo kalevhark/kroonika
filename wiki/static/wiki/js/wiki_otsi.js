@@ -130,7 +130,7 @@ $( document ).ready(function() {
         .then(function (response) {
           vm.isik_results_count_all = response.data.count;
           vm.isik_results_count_1st_page = response.data.results.length;
-          vm.isik_results_next_page = response.data.next;
+          vm.isik_results_next_page = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
           vm.total_count = vm.total_count + vm.isik_results_count_all;
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
           if (vm.isik_results_count_all > 0) {
