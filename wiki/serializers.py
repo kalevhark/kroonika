@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.relations import HyperlinkedIdentityField, PrimaryKeyRelatedField
-from rest_framework.reverse import reverse, reverse_lazy
+from rest_framework.reverse import reverse
 from django.contrib.auth.models import User
 from django.db.models import Field
 
@@ -42,8 +42,7 @@ class ParameterisedHyperlinkedIdentityField(HyperlinkedIdentityField):
             for field in model_field.split('.'):
                 attr = getattr(attr,field)
             kwargs[url_param] = attr
-        # print(reverse_lazy(view_name, kwargs=kwargs, request=request))
-        return reverse_lazy(view_name, kwargs=kwargs, request=request, format=format)
+        return reverse(view_name, kwargs=kwargs, request=request, format=format)
 
 
 # TODO: Korrektselt ei tööta, "permissions-detail" ei leita
