@@ -252,9 +252,14 @@ def calc_results(log_df_filtered):
     result = log_df_filtered[log_df_filtered.apply(is_bot, axis=1)] \
         .groupby('status')['size'] \
         .agg(['sum', 'count']) \
-        .sort_values(by=['sum'], ascending=[False])
+        .sort_values(by=['sum'], ascending=[False]) \
+        .head(10)
     # print(log_df_filtered['status'].unique())
-    print(result.style.format(thousands=' ').head(10))
+    result['sum'] = result['sum'] \
+        .map('{:,}'.format).str \
+        .replace(",", " ", regex=False).str \
+        .replace(".", ",", regex=False)
+    print(result)
     print()
 
     # IP aadressid, kes said 403
