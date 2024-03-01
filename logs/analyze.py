@@ -297,8 +297,9 @@ def calc_results(log_df_filtered):
     print()
 
     print('tiles')
-    result = log_df_filtered[log_df_filtered.apply(is_tiles, axis=1)]['size'] \
-        .agg(['sum', 'count'])
+    log_df_filtered_tiles = log_df_filtered[log_df_filtered.apply(is_tiles, axis=1)]['size']
+    print(log_df_filtered_tiles['request'].head(10))
+    result = log_df_filtered_tiles.agg(['sum', 'count'])
     print(result)
     print()
 
