@@ -11,8 +11,6 @@ from ipwhois import IPWhois, HTTPLookupError
 import pandas as pd
 import pytz
 
-pd.set_option("styler.format.thousands", ",")
-
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
     def datestrings2date(rows):
@@ -257,7 +255,8 @@ def calc_results(log_df_filtered):
         .sort_values(by=['sum'], ascending=[False]) \
         .head(10)
     # print(log_df_filtered['status'].unique())
-    print(result)
+    print(result.style.format(thousands=' '))
+    print()
 
     # IP aadressid, kes said 403
     print('403 status:')
