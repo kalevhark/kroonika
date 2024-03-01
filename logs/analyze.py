@@ -11,6 +11,7 @@ from ipwhois import IPWhois, HTTPLookupError
 import pandas as pd
 import pytz
 
+pd.set_option("styler.format.thousands", ",")
 
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
@@ -249,14 +250,21 @@ def calc_results(log_df_filtered):
     print(result)
     print()
 
-    print(log_df_filtered['status'].unique())
+    print('status')
+    result = log_df_filtered[log_df_filtered.apply(is_bot, axis=1)] \
+        .groupby('status')['size'] \
+        .agg(['sum', 'count']) \
+        .sort_values(by=['sum'], ascending=[False]) \
+        .head(10)
+    # print(log_df_filtered['status'].unique())
+    print(result)
 
     # IP aadressid, kes said 403
     print('403 status:')
     result = log_df_filtered[log_df_filtered['status'] == 403].groupby('ip')['size'] \
         .agg(['count']) \
         .sort_values(by=['count'], ascending=[False]) \
-        .head(30)
+        .head(10)
     # result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
     print(result)
     print()
@@ -270,7 +278,8 @@ def calc_results(log_df_filtered):
     print()
 
     print('bots')
-    result = log_df_filtered[log_df_filtered.apply(is_bot, axis=1)].groupby('user_agent')['size'] \
+    result = log_df_filtered[log_df_filtered.apply(is_bot, axis=1)] \
+        .groupby('user_agent')['size'] \
         .agg(['sum', 'count']) \
         .sort_values(by=['sum'], ascending=[False]) \
         .head(10)
@@ -292,7 +301,7 @@ def calc_results(log_df_filtered):
     result = log_df_filtered[['time', 'ip', 'size']] \
         .resample("h", on='time') \
         .agg({'size': 'sum', 'ip': 'count'})
-    print(result.style.format(thousands=" "))
+    print(result)
     # print(log_df_filtered[['time', 'ip', 'size']].resample("5min", on='time').agg({'size': 'sum', 'ip': 'count'}).to_json(orient="records"))
 
     # Viimase 24h kogumaht
