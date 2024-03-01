@@ -352,7 +352,8 @@ CSRF_TRUSTED_ORIGINS = [
     # 'http://test.valgalinn.ee',
 ]
 
-SECURE_SSL_REDIRECT = True
+# SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # algus cache in use?
 TMP_ALGUSKUVA_CACHE = True
