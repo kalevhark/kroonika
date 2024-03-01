@@ -11,6 +11,7 @@ from ipwhois import IPWhois, HTTPLookupError
 import pandas as pd
 import pytz
 
+
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
     def datestrings2date(rows):
@@ -25,7 +26,7 @@ def logfile2df(logfile):
             return int(rows.resp_size)
         except:
             return 0
-    
+
     # Logifaili veerunimed
     names = [
         'IP_address',
@@ -38,7 +39,7 @@ def logfile2df(logfile):
         'resp_size',
         'referer',
         'agent'
-        ]
+    ]
     # Loeme logifaili datafreimiks
     df = pd.read_csv(
         logfile,
@@ -47,7 +48,7 @@ def logfile2df(logfile):
         # doublequote=True,
         names=names,
         # error_bad_lines=False,
-        on_bad_lines='warn' # 'skip'
+        on_bad_lines='warn'  # 'skip'
     )
     # Teisendame kuup2evaveeruks
     df['time'] = df.apply(datestrings2date, axis=1)
@@ -96,6 +97,7 @@ def parse_int(x):
     except:
         return 0
 
+
 def logfile2df2(logfile):
     data = pd.read_csv(
         logfile,
@@ -117,7 +119,8 @@ def logfile2df2(logfile):
     print(data.shape, data.columns)
     return data
 
-# Geoinfo hankimine ip-aadressi järgi
+
+# Geoinfo hankimine ip-aadressi jÃ¤rgi
 def ipggeoinfo(ip_addr=''):
     ip_locate_url = 'https://geolocation-db.com/jsonp/' + ip_addr
     with urllib.request.urlopen(ip_locate_url) as url:
@@ -126,12 +129,14 @@ def ipggeoinfo(ip_addr=''):
         print(data)
     return data
 
+
 # IP aadressi kohta WHOIS info
 # eeldus pip install --upgrade ipwhois
 def whoisinfo(ip_addr=''):
     obj = IPWhois(ip_addr)
     whois_data = obj.lookup_rdap(asn_methods=["whois"])
     return whois_data
+
 
 # Tagastab IP aadressi alusel hosti kirjelduse
 def whoisinfo_asn_description(rows):
@@ -141,13 +146,15 @@ def whoisinfo_asn_description(rows):
         asn_description = f'Err: {rows.name}'
     return asn_description
 
+
 # Tagastab, kas on bot
 def is_bot(rows):
     bots = ['bot', 'index']
     pat = rf'(?:{"|".join(bots)})'
-    return re.search(pat, str(rows.user_agent), re.IGNORECASE)!=None
+    return re.search(pat, str(rows.user_agent), re.IGNORECASE) != None
 
-# Tagastab stringist sõna, millel on boti laadne nimi *bot, *index vms
+
+# Tagastab stringist sÃµna, millel on boti laadne nimi *bot, *index vms
 def find_bot_name(rows):
     bots = ['bot', 'index']
     pat = rf'(\w*{"|".join(bots)})\w*'
@@ -157,6 +164,7 @@ def find_bot_name(rows):
     else:
         return ''
 
+
 def is_tiles(rows):
     pat = re.compile('/tiles/')
     try:
@@ -164,8 +172,9 @@ def is_tiles(rows):
     except:
         return False
 
+
 async def calc_results_downloader_agents(log_df_filtered):
-    # Agendid aadressid allalaadimise mahu järgi
+    # Agendid aadressid allalaadimise mahu jÃ¤rgi
     result = log_df_filtered.groupby('user_agent')['size'] \
         .agg(['sum', 'count']) \
         .sort_values(by=['sum'], ascending=[False]) \
@@ -174,8 +183,9 @@ async def calc_results_downloader_agents(log_df_filtered):
         .replace(",", " ", regex=False).str.replace(".", ",", regex=False)
     return ['Downloader Agents:', result]
 
+
 async def calc_results_ipaddresses_traffic(log_df_filtered):
-    # IP aadressid allalaadimise mahu järgi
+    # IP aadressid allalaadimise mahu jÃ¤rgi
     result = log_df_filtered.groupby('ip')['size'] \
         .agg(['sum', 'count']) \
         .sort_values(by=['sum'], ascending=[False]) \
@@ -185,8 +195,9 @@ async def calc_results_ipaddresses_traffic(log_df_filtered):
         .replace(",", " ", regex=False).str.replace(".", ",", regex=False)
     return ['Downloader IPaddresses traffic:', result]
 
+
 async def calc_results_ipaddresses_hits(log_df_filtered):
-    # IP aadressid allalaadimise kordade järgi
+    # IP aadressid allalaadimise kordade jÃ¤rgi
     print('Downloader IPaddresses hits:')
     result = log_df_filtered.groupby('ip')['size'] \
         .agg(['sum', 'count']) \
@@ -197,38 +208,42 @@ async def calc_results_ipaddresses_hits(log_df_filtered):
         .replace(",", " ", regex=False).str.replace(".", ",", regex=False)
     return ['Downloader IPaddresses hits:', result]
 
+
 def calc_results(log_df_filtered):
-    # Agendid aadressid allalaadimise mahu järgi
+    # Agendid aadressid allalaadimise mahu jÃ¤rgi
     print('Downloader Agents:')
-    result = log_df_filtered.groupby('user_agent')['size']\
-        .agg(['sum','count'])\
-        .sort_values(by = ['sum'], ascending=[False])\
+    result = log_df_filtered.groupby('user_agent')['size'] \
+        .agg(['sum', 'count']) \
+        .sort_values(by=['sum'], ascending=[False]) \
         .head(10)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",", regex=False)
+    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",",
+                                                                                                    regex=False)
     print(result)
     print()
 
-    # IP aadressid allalaadimise mahu järgi
+    # IP aadressid allalaadimise mahu jÃ¤rgi
     print('Downloader IPaddresses traffic:')
-    result = log_df_filtered.groupby('ip')['size']\
-        .agg(['sum','count'])\
-        .sort_values(by = ['sum'], ascending=[False])\
+    result = log_df_filtered.groupby('ip')['size'] \
+        .agg(['sum', 'count']) \
+        .sort_values(by=['sum'], ascending=[False]) \
         .head(10)
     print(result)
 
     result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",", regex=False)
+    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",",
+                                                                                                    regex=False)
     print(result)
     print()
 
-    # IP aadressid allalaadimise kordade järgi
+    # IP aadressid allalaadimise kordade jÃ¤rgi
     print('Downloader IPaddresses hits:')
     result = log_df_filtered.groupby('ip')['size'] \
         .agg(['sum', 'count']) \
         .sort_values(by=['count'], ascending=[False]) \
         .head(10)
     result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",", regex=False)
+    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",",
+                                                                                                    regex=False)
     print(result)
     print()
 
@@ -254,11 +269,14 @@ def calc_results(log_df_filtered):
 
     print('bots')
     result = log_df_filtered[log_df_filtered.apply(is_bot, axis=1)].groupby('user_agent')['size'] \
-        .agg(['sum','count'])\
-        .sort_values(by = ['sum'], ascending=[False])\
+        .agg(['sum', 'count']) \
+        .sort_values(by=['sum'], ascending=[False]) \
         .head(10)
     result.index = result.apply(find_bot_name, axis=1)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",", regex=False)
+    result['sum'] = result['sum'] \
+        .map('{:,}'.format).str \
+        .replace(",", " ", regex=False).str \
+        .replace(".", ",", regex=False)
     print(result)
     print()
 
@@ -268,15 +286,19 @@ def calc_results(log_df_filtered):
     print(result)
     print()
 
+    # Päringud tundide lõikes
+    result = log_df_filtered[['time', 'ip', 'size']] \
+        .resample("h", on='time') \
+        .agg({'size': 'sum', 'ip': 'count'}) \
+        .style.format({"sum": "{:,.0f}"})
+    print(result)
+    # print(log_df_filtered[['time', 'ip', 'size']].resample("5min", on='time').agg({'size': 'sum', 'ip': 'count'}).to_json(orient="records"))
+
     # Viimase 24h kogumaht
     # print(log_df_filtered['size'].describe())
     log_df_filtered_size_sum = log_df_filtered['size'].sum()
-    print(f'Päringuid {log_df_filtered.ip.count()}, kogumahuga {round(log_df_filtered_size_sum/1024/1024)} Mb')
-    # print()
+    print(f'Päringuid {log_df_filtered.ip.count()}, kogumahuga {round(log_df_filtered_size_sum / 1024 / 1024)} Mb')
 
-    print(log_df_filtered[['time', 'ip', 'size']].resample("h", on='time').agg({'size': 'sum', 'ip': 'count'}))
-
-    # print(log_df_filtered[['time', 'ip', 'size']].resample("5min", on='time').agg({'size': 'sum', 'ip': 'count'}).to_json(orient="records"))
 
 async def main():
     path = '/usr/local/apache2/logs/'
@@ -304,6 +326,7 @@ async def main():
     # for result in res:
     #     print(result[0])
     #     print(result[1])
+
 
 if __name__ == '__main__':
     s = time.perf_counter()
