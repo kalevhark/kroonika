@@ -140,12 +140,19 @@ def whoisinfo(ip_addr=''):
 
 
 # Tagastab IP aadressi alusel hosti kirjelduse
-def whoisinfo_asn_description(rows):
+def whoisinfo_asn_description(row):
     try:
-        asn_description = whoisinfo(rows.name)['asn_description']
+        asn_description = whoisinfo(row.name)['asn_description']
     except HTTPLookupError:
-        asn_description = f'Err: {rows.name}'
+        asn_description = f'Err: {row.name}'
     return asn_description
+
+def find_tiles_map(row):
+    pattern = r'/tiles/\d{4}/'
+    try:
+        return re.search(r'/tiles/(\d{4})/', row.request).groups()[0]
+    except:
+        return None
 
 
 # Tagastab, kas on bot
@@ -298,7 +305,14 @@ def calc_results(log_df_filtered):
 
     print('tiles')
     log_df_filtered_tiles = log_df_filtered[log_df_filtered.apply(is_tiles, axis=1)]
-    print(log_df_filtered_tiles['request'].head(10))
+    log_df_filtered_tiles['map'] = log_df_filtered_tiles.apply(find_tiles_map, axis=1)
+    result = log_df_filtered_tiles \
+        .groupby('map')['size'] \
+        .agg(['sum', 'count']) \
+        .sort_values(by=['sum'], ascending=[False]) \
+        .head(10)
+    print(result)
+
     result = log_df_filtered_tiles['size'].agg(['sum', 'count'])
     print(result)
     print()
@@ -307,6 +321,10 @@ def calc_results(log_df_filtered):
     result = log_df_filtered[['time', 'ip', 'size']] \
         .resample("h", on='time') \
         .agg({'size': 'sum', 'ip': 'count'})
+    result['sum'] = result['sum'] \
+        .map('{:,}'.format).str \
+        .replace(",", " ", regex=False).str \
+        .replace(".", ",", regex=False)
     print(result)
     # print(log_df_filtered[['time', 'ip', 'size']].resample("5min", on='time').agg({'size': 'sum', 'ip': 'count'}).to_json(orient="records"))
 
@@ -315,14 +333,12 @@ def calc_results(log_df_filtered):
     log_df_filtered_size_sum = log_df_filtered['size'].sum()
     print(f'Päringuid {log_df_filtered.ip.count()}, kogumahuga {round(log_df_filtered_size_sum / 1024 / 1024)} Mb')
 
-
 async def main():
-    path = '/usr/local/apache2/logs/'
-    logfile = os.path.join(path, 'access_log')
+    path = os.path.dirname(sys.argv[0])
+    logfile = os.path.join(path, 'valgalinn.access.log')
     if not os.path.isfile(logfile):
-        path = os.path.dirname(sys.argv[0])
-        logfile = os.path.join(path, 'valgalinn.access.log')
-        # logfile = os.path.join(path, 'access_log')
+        path = '/usr/local/apache2/logs/'
+        logfile = os.path.join(path, 'access_log')
     print('Analüüsime logifaili:', logfile)
     log_df = logfile2df2(logfile)
 

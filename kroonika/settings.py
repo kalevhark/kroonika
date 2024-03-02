@@ -268,7 +268,6 @@ REST_FRAMEWORK = {
 SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
 GOOGLE_RECAPTCHA_SECRET_KEY = config['recaptcha']['GOOGLE_RECAPTCHA_SECRET_KEY']
 GOOGLE_RECAPTCHA_PUBLIC_KEY = config['recaptcha']['GOOGLE_RECAPTCHA_PUBLIC_KEY']
-RECAPTCHA_PROXY = {'http': 'http://127.0.0.1:9000', 'https': 'https://127.0.0.1:9000'}
 
 # Markdown settings https://python-markdown.github.io/extensions/index.html
 MARKDOWNX_MARKDOWN_EXTENSIONS = [

@@ -25,8 +25,16 @@ sitemaps = {
     'kohad': ObjektSitemap
 }
 
+# schema_url_patterns = [
+#     path('api/', include(router.urls)),
+# ]
+
 # API
-schema_view = get_schema_view(title='Valga linna kroonika API')
+schema_view = get_schema_view(
+    title='Valga linna kroonika API',
+    # url='https://valgalinn/api/',
+    # patterns=schema_url_patterns
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
