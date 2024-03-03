@@ -316,9 +316,6 @@ def get_calendarstatus(request):
 # vastavalt kasutajaõigustele
 class DaatumitegaManager(models.Manager):
 
-    # def get_queryset(self):
-    #     return super().get_queryset()
-
     def daatumitega(self, request=None):
         model_name = self.model.__name__
 
@@ -330,7 +327,6 @@ class DaatumitegaManager(models.Manager):
 
         # default queryset from model
         initial_queryset = super().get_queryset()
-        # start = datetime.now()
 
         # Filtreerime kasutaja järgi
         if model_name == 'Artikkel':
@@ -339,7 +335,6 @@ class DaatumitegaManager(models.Manager):
                 filtered_queryset = initial_queryset
             else:
                 filtered_queryset = initial_queryset.filter(kroonika__isnull=True)
-            # stopp1 = datetime.now()
         else:
             # Kui andmebaas on Isik, Organisatsioon, Objekt
             if not user_is_staff:
@@ -357,7 +352,6 @@ class DaatumitegaManager(models.Manager):
                 filtered_queryset = initial_queryset.filter(id__in=model_ids)
             else:
                 filtered_queryset = initial_queryset
-            # stopp1 = datetime.now()
         # Arvutame abiväljad vastavalt kasutaja kalendrieelistusele
         # dob: day of begin|birth
         # doe: day of end
@@ -382,56 +376,13 @@ class DaatumitegaManager(models.Manager):
                     output_field=DateField()
                 )
             )
-            # stopp2 = datetime.now()
         else:  # vkj
             filtered_queryset = filtered_queryset.annotate(
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )
-            # stopp2 = datetime.now()
         if model_name == 'Artikkel':
-            # j2rjestame lood kronoloogilises j2rjekorras
-            # filtered_queryset = filtered_queryset.annotate(
-            #     search_year=Case(
-            #         When(dob__isnull=False, then=ExtractYear('dob')),
-            #         When(hist_year__isnull=False, then=F('hist_year')),
-            #         When(hist_year__isnull=True, then=0),
-            #     ),
-            #     search_month=Case(
-            #         When(dob__isnull=False, then=ExtractMonth('dob')),
-            #         When(hist_month__isnull=False, then=F('hist_month')),
-            #         When(hist_month__isnull=True, then=0),
-            #         output_field=IntegerField()
-            #     ),
-            #     search_day=Case(
-            #         When(dob__isnull=False, then=ExtractDay('dob')),
-            #         When(hist_date__isnull=True, then=0),
-            #         output_field=IntegerField()
-            #     ),
-            # ).order_by('search_year', 'search_month', 'search_day', 'id')
             filtered_queryset = filtered_queryset.annotate(
-            #     search_index=Concat(
-            #         Case(
-            #             When(dob__isnull=False, then=Cast('dob__year', output_field=CharField())),
-            #             When(hist_year__isnull=False, then=Cast('hist_year', output_field=CharField())),
-            #             When(hist_year__isnull=True, then=Value("0000")),
-            #         ),
-            #         LPad(Case(
-            #             When(dob__isnull=False, then=Cast('dob__month', output_field=CharField())),
-            #             When(hist_month__isnull=False, then=Cast('hist_month', output_field=CharField())),
-            #             When(hist_month__isnull=True, then=Value("00")),
-            #         ), 2, fill_text=Value("0")),
-            #         LPad(Case(
-            #             When(dob__isnull=False, then=Cast('dob__day', output_field=CharField())),
-            #             When(hist_date__isnull=True, then=Value("00")),
-            #         ), 2, fill_text=Value("0")),
-            #         LPad(
-            #             Cast('id', output_field=CharField()),
-            #             7, fill_text=Value("0")
-            #         )
-            #     )
-            # ).order_by('search_index')
-            # qs = Artikkel.objects.annotate(
                 search_index=Concat(
                     LPad(
                         Cast(Coalesce('dob__year', 'hist_year', 0), output_field=CharField()),
@@ -451,14 +402,6 @@ class DaatumitegaManager(models.Manager):
                     )
                 )
             ).order_by('search_index')
-        # stopp3 = datetime.now()
-        # print(
-        #     model_name,
-        #     calendar_system,
-        #     f'1: {(stopp1 - start).seconds}.{(stopp1 - start).microseconds}',
-        #     f'2: {(stopp2 - start).seconds}.{(stopp2 - start).microseconds}',
-        #     f'3: {(stopp3 - start).seconds}.{(stopp3 - start).microseconds}',
-        # )
         return filtered_queryset
 
 
