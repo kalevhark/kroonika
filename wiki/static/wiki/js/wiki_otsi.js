@@ -130,9 +130,9 @@ $( document ).ready(function() {
         .then(function (response) {
           vm.isik_results_count_all = response.data.count;
           vm.isik_results_count_1st_page = response.data.results.length;
-          if (response.data.next) {
-            response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-          }
+          // if (response.data.next) {
+          //   response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
+          // }
           vm.isik_results_next_page = response.data.next;
           vm.total_count = vm.total_count + vm.isik_results_count_all;
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
@@ -246,9 +246,9 @@ $( document ).ready(function() {
                 },
                 success: function (response) {
                   vm.isik_results_count_1st_page += response.results.length;
-                  if (response.next) {
-                    response.next = response.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-                  }
+                  // if (response.next) {
+                  //   response.next = response.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
+                  // }
                   vm.isik_results_next_page = response.next;
                   if (vm.isik_results_count_all > 0) {
                     // Kui leiti
