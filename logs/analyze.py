@@ -333,7 +333,7 @@ def calc_results(log_df_filtered):
         log_df_filtered[['time', 'ip', 'size']] \
             .resample("5min", on='time') \
             .agg({'size': 'sum', 'ip': 'count'}) \
-            .to_json(path_or_buf=f, orient="records")
+            .to_json(path_or_buf=f, orient="index")
 
     # Viimase 24h kogumaht
     # print(log_df_filtered['size'].describe())
