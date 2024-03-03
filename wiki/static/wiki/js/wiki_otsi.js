@@ -156,9 +156,9 @@ $( document ).ready(function() {
         .then(function (response) {
           vm.organisatsioon_results_count_all = response.data.count;
           vm.organisatsioon_results_count_1st_page = response.data.results.length;
-          if (response.data.next) {
-            response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-          }
+          // if (response.data.next) {
+          //   response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
+          // }
           vm.organisatsioon_results_next_page = response.data.next;
           vm.total_count = vm.total_count + vm.organisatsioon_results_count_all
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
@@ -183,9 +183,9 @@ $( document ).ready(function() {
         .then(function (response) {
           vm.objekt_results_count_all = response.data.count;
           vm.objekt_results_count_1st_page = response.data.results.length;
-          if (response.data.next) {
-            response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-          }
+          // if (response.data.next) {
+          //   response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
+          // }
           vm.objekt_results_next_page = response.data.next;
           vm.total_count = vm.total_count + vm.objekt_results_count_all;
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
@@ -210,9 +210,9 @@ $( document ).ready(function() {
         .then(function (response) {
           vm.artikkel_results_count_all = response.data.count; // kokku leitud artikleid
           vm.artikkel_results_count_1st_page = response.data.results.length; // esimesel leheküljel artikleid
-          if (response.data.next) {
-            response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-          }
+          // if (response.data.next) {
+          //   response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
+          // }
           vm.artikkel_results_next_page = response.data.next;
           vm.total_count = vm.total_count + vm.artikkel_results_count_all;
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
@@ -284,9 +284,9 @@ $( document ).ready(function() {
                 },
                 success: function (response) {
                   vm.organisatsioon_results_count_1st_page += response.results.length;
-                  if (response.next) {
-                    response.next = response.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-                  }
+                  // if (response.next) {
+                  //   response.next = response.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
+                  // }
                   vm.organisatsioon_results_next_page = response.next;
                   if (vm.organisatsioon_results_count_all > 0) {
                     // Kui leiti
@@ -323,9 +323,9 @@ $( document ).ready(function() {
                 },
                 success: function (response) {
                   vm.objekt_results_count_1st_page += response.results.length;
-                  if (response.next) {
-                    response.next = response.next.replace("http://valgalinn.ee", "https://valgalinn.ee")
-                  }
+                  // if (response.next) {
+                  //   response.next = response.next.replace("http://valgalinn.ee", "https://valgalinn.ee")
+                  // }
                   vm.objekt_results_next_page = response.next;
                   if (vm.objekt_results_count_all > 0) {
                     // Kui leiti
@@ -362,9 +362,9 @@ $( document ).ready(function() {
                 },
                 success: function (response) {
                   vm.artikkel_results_count_1st_page += response.results.length;
-                  if (response.next) {
-                    response.next = response.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-                  }
+                  // if (response.next) {
+                  //   response.next = response.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
+                  // }
                   vm.artikkel_results_next_page = response.next;
                   if (vm.artikkel_results_count_all > 0) {
                     // Kui leiti
