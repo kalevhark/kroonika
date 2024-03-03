@@ -12,6 +12,7 @@ import pandas as pd
 import pytz
 
 pd.set_option('styler.format.thousands', ' ')
+pd.set_option('display.max_columns', 4)
 
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
@@ -312,6 +313,7 @@ def calc_results(log_df_filtered):
         .sort_values(by=['sum'], ascending=[False]) \
         .head(10)
     print(result)
+    print()
 
     result = log_df_filtered_tiles['size'].agg(['sum', 'count'])
     print(result)
@@ -321,7 +323,7 @@ def calc_results(log_df_filtered):
     result = log_df_filtered[['time', 'ip', 'size']] \
         .resample("h", on='time') \
         .agg({'size': 'sum', 'ip': 'count'})
-    result['sum'] = result['sum'] \
+    result['size'] = result['size'] \
         .map('{:,}'.format).str \
         .replace(",", " ", regex=False).str \
         .replace(".", ",", regex=False)
