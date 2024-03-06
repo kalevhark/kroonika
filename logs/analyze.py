@@ -354,7 +354,7 @@ async def main():
     utc = pytz.utc
     now = utc.localize(datetime.now())
     time24hoursago = now - timedelta(days=1)
-    timelastdaybegan = datetime.combine(datetime.now(), time.min) - timedelta(hours=24)
+    timelastdaybegan = datetime.combine(now, time.min) - timedelta(hours=24)
 
     log_df_filtered = log_df[log_df.time >= time24hoursago]
     show_calc_results(log_df_filtered)
