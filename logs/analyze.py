@@ -339,7 +339,7 @@ def make_json_reports(log_df_filtered):
         log_df_filtered[['time', 'ip', 'size']] \
             .resample("5min", on='time') \
             .agg({'size': 'sum', 'ip': 'count'}) \
-            .to_json(path_or_buf=f, orient="index", date_format='iso', indent=2)
+            .to_json(path_or_buf=f, orient="index", date_format='epoch', indent=2) # epoch milliseconds
 
 async def main():
     path = os.path.dirname(sys.argv[0])
@@ -357,7 +357,7 @@ async def main():
     timelastdaybegan = utc.localize(datetime.combine(datetime.now(), time.min) - timedelta(days=1))
 
     log_df_filtered = log_df[log_df.time >= time24hoursago]
-    # show_calc_results(log_df_filtered)
+    show_calc_results(log_df_filtered)
 
     log_df_filtered = log_df[log_df.time >= timelastdaybegan]
     make_json_reports(log_df_filtered)
