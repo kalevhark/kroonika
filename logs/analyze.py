@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 import json
 import os
 import re
@@ -218,7 +218,7 @@ async def calc_results_ipaddresses_hits(log_df_filtered):
     return ['Downloader IPaddresses hits:', result]
 
 
-def calc_results(log_df_filtered):
+def show_calc_results(log_df_filtered):
     # Agendid aadressid allalaadimise mahu jÃ¤rgi
     print('Downloader Agents:')
     result = log_df_filtered.groupby('user_agent')['size'] \
@@ -329,16 +329,17 @@ def calc_results(log_df_filtered):
         .replace(".", ",", regex=False)
     print(result)
 
-    with open('logs/requests_5min_periods_sumcount.json', 'w') as f:
-        log_df_filtered[['time', 'ip', 'size']] \
-            .resample("5min", on='time') \
-            .agg({'size': 'sum', 'ip': 'count'}) \
-            .to_json(path_or_buf=f, orient="index", date_format='iso')
-
     # Viimase 24h kogumaht
     # print(log_df_filtered['size'].describe())
     log_df_filtered_size_sum = log_df_filtered['size'].sum()
     print(f'Päringuid {log_df_filtered.ip.count()}, kogumahuga {round(log_df_filtered_size_sum / 1024 / 1024)} Mb')
+
+def make_json_reports(log_df_filtered):
+    with open('logs/requests_5min_periods_sumcount.json', 'w') as f:
+        log_df_filtered[['time', 'ip', 'size']] \
+            .resample("5min", on='time') \
+            .agg({'size': 'sum', 'ip': 'count'}) \
+            .to_json(path_or_buf=f, orient="index", date_format='iso', indent=2)
 
 async def main():
     path = os.path.dirname(sys.argv[0])
@@ -353,9 +354,13 @@ async def main():
     utc = pytz.utc
     now = utc.localize(datetime.now())
     time24hoursago = now - timedelta(days=1)
-    log_df_filtered = log_df[log_df.time > time24hoursago]
+    timelastdaybegan = datetime.combine(datetime.now(), time.min) - timedelta(hours=24)
 
-    calc_results(log_df_filtered)
+    log_df_filtered = log_df[log_df.time >= time24hoursago]
+    show_calc_results(log_df_filtered)
+
+    log_df_filtered = log_df[log_df.time >= timelastdaybegan]
+    make_json_reports(log_df_filtered)
 
     # res = await asyncio.gather(
     #     calc_results_downloader_agents(log_df_filtered),
