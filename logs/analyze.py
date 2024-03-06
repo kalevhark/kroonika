@@ -4,7 +4,7 @@ import json
 import os
 import re
 import sys
-import time
+import time as timer
 import urllib.request
 
 from ipwhois import IPWhois, HTTPLookupError
@@ -373,7 +373,7 @@ async def main():
 
 
 if __name__ == '__main__':
-    s = time.perf_counter()
+    s = timer.perf_counter()
     asyncio.run(main())
-    elapsed = time.perf_counter() - s
+    elapsed = timer.perf_counter() - s
     print(f"{__file__} executed in {elapsed:0.2f} seconds.")
