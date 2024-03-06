@@ -354,10 +354,10 @@ async def main():
     utc = pytz.utc
     now = utc.localize(datetime.now())
     time24hoursago = now - timedelta(days=1)
-    timelastdaybegan = datetime.combine(now, time.min) - timedelta(hours=24)
+    timelastdaybegan = utc.localize(datetime.combine(datetime.now(), time.min) - timedelta(days=1))
 
     log_df_filtered = log_df[log_df.time >= time24hoursago]
-    show_calc_results(log_df_filtered)
+    # show_calc_results(log_df_filtered)
 
     log_df_filtered = log_df[log_df.time >= timelastdaybegan]
     make_json_reports(log_df_filtered)
