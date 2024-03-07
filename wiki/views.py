@@ -345,7 +345,8 @@ def otsi(request):
 #
 def feedback(request):
     http_referer = request.META.get('HTTP_REFERER', reverse('algus')) # mis objektilt tuli vihje
-    remote_addr = request.META['REMOTE_ADDR'] # kasutaja IP aadress
+    # remote_addr = request.META['REMOTE_ADDR'] # kasutaja IP aadress
+    remote_addr = request.META.get('HTTP_X_FORWARDED_FOR', request.META['REMOTE_ADDR']) # kasutaja IP aadress proxy taga
     http_user_agent = request.META.get('HTTP_USER_AGENT', 'unknown') # kasutaja veebilehitseja
     if request.method == 'POST' and check_recaptcha(request):
         # create a form instance and populate it with data from the request:
