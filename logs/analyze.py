@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, time, timedelta
+from datetime import date, datetime, time, timedelta
 import json
 import os
 import re
@@ -10,9 +10,17 @@ import urllib.request
 from ipwhois import IPWhois, HTTPLookupError
 import pandas as pd
 import pytz
+import redis
 
-pd.set_option('styler.format.thousands', ' ')
 pd.set_option('display.max_columns', 4)
+
+# subclass JSONEncoder
+class DateTimeEncoder(json.JSONEncoder):
+        #Override the default method
+        def default(self, obj):
+            if isinstance(obj, (date, datetime)):
+                # return obj.isoformat()
+                return obj.timestamp() * 1000 # epoch millieconds
 
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
@@ -341,6 +349,13 @@ def make_json_reports(log_df_filtered):
             .agg({'size': 'sum', 'ip': 'count'}) \
             .to_json(path_or_buf=f, orient="index", date_format='epoch', indent=2) # epoch milliseconds
 
+def set_data2redis(r, name, datapoints):
+    r.set(
+        name,
+        json.dumps(datapoints, cls=DateTimeEncoder),
+        ex=600 # 10 minutiks
+    )
+
 async def main():
     path = os.path.dirname(sys.argv[0])
     logfile = os.path.join(path, 'valgalinn.access.log')
@@ -361,6 +376,21 @@ async def main():
 
     log_df_filtered = log_df[log_df.time >= timelastdaybegan]
     make_json_reports(log_df_filtered)
+
+    r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+    name = "valgalinn_access_log_requests_total"
+    datapoints = log_df_filtered[['time', 'ip', 'size']] \
+            .resample("5min", on='time') \
+            .agg({'size': 'sum', 'ip': 'count'}) \
+            .to_json(orient="index", date_format='epoch', indent=2) # epoch milliseconds
+    set_data2redis(r, name, datapoints)
+
+    name = "valgalinn_access_log_requests_403"
+    datapoints = log_df_filtered[log_df_filtered['status'] == 403][['time', 'ip', 'size']] \
+        .resample("5min", on='time') \
+        .agg({'size': 'sum', 'ip': 'count'}) \
+        .to_json(orient="index", date_format='epoch', indent=2)  # epoch milliseconds
+    set_data2redis(r, name, datapoints)
 
     # res = await asyncio.gather(
     #     calc_results_downloader_agents(log_df_filtered),
