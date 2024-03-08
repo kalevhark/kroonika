@@ -342,8 +342,8 @@ def show_calc_results(log_df_filtered):
     log_df_filtered_size_sum = log_df_filtered['size'].sum()
     print(f'Päringuid {log_df_filtered.ip.count()}, kogumahuga {round(log_df_filtered_size_sum / 1024 / 1024)} Mb')
 
-def make_json_reports(log_df_filtered):
-    with open('logs/requests_5min_periods_sumcount.json', 'w') as f:
+def make_json_reports(log_df_filtered, name):
+    with open(f'logs/{name}.json', 'w') as f:
         log_df_filtered[['time', 'ip', 'size']] \
             .resample("5min", on='time') \
             .agg({'size': 'sum', 'ip': 'count'}) \
@@ -374,19 +374,21 @@ async def main():
     log_df_filtered = log_df[log_df.time >= time24hoursago]
     show_calc_results(log_df_filtered)
 
-    log_df_filtered = log_df[log_df.time >= timelastdaybegan]
-    make_json_reports(log_df_filtered)
+    log_df_filtered_from_last_day_began = log_df[log_df.time >= timelastdaybegan]
 
     r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     name = "valgalinn_access_log_requests_total"
-    datapoints = log_df_filtered[['time', 'ip', 'size']] \
+    make_json_reports(log_df_filtered_from_last_day_began, name)
+    datapoints = log_df_filtered_from_last_day_began[['time', 'ip', 'size']] \
             .resample("5min", on='time') \
             .agg({'size': 'sum', 'ip': 'count'}) \
             .to_json(orient="index", date_format='epoch', indent=2) # epoch milliseconds
     set_data2redis(r, name, datapoints)
 
     name = "valgalinn_access_log_requests_403"
-    datapoints = log_df_filtered[log_df_filtered['status'] == 403][['time', 'ip', 'size']] \
+    log_df_filtered_from_last_day_began_403 = log_df_filtered_from_last_day_began[log_df_filtered['status'] == 403]
+    make_json_reports(log_df_filtered_from_last_day_began_403, name)
+    datapoints = log_df_filtered_from_last_day_began_403[['time', 'ip', 'size']] \
         .resample("5min", on='time') \
         .agg({'size': 'sum', 'ip': 'count'}) \
         .to_json(orient="index", date_format='epoch', indent=2)  # epoch milliseconds
