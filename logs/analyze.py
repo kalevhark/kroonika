@@ -394,6 +394,15 @@ async def main():
         .to_json(orient="index", date_format='epoch', indent=2)  # epoch milliseconds
     set_data2redis(r, name, datapoints)
 
+    name = "valgalinn_access_log_requests_bots"
+    log_df_filtered_from_last_day_began_bots = log_df_filtered_from_last_day_began[log_df_filtered_from_last_day_began.apply(is_bot, axis=1)]
+    make_json_reports(log_df_filtered_from_last_day_began_bots, name)
+    datapoints = log_df_filtered_from_last_day_began_bots[['time', 'ip', 'size']] \
+        .resample("5min", on='time') \
+        .agg({'size': 'sum', 'ip': 'count'}) \
+        .to_json(orient="index", date_format='epoch', indent=2)  # epoch milliseconds
+    set_data2redis(r, name, datapoints)
+
     # res = await asyncio.gather(
     #     calc_results_downloader_agents(log_df_filtered),
     #     calc_results_ipaddresses_traffic(log_df_filtered),
