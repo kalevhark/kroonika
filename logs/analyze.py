@@ -386,7 +386,7 @@ async def main():
     set_data2redis(r, name, datapoints)
 
     name = "valgalinn_access_log_requests_403"
-    log_df_filtered_from_last_day_began_403 = log_df_filtered_from_last_day_began[log_df_filtered['status'] == 403]
+    log_df_filtered_from_last_day_began_403 = log_df_filtered_from_last_day_began[log_df_filtered_from_last_day_began['status'] == 403]
     make_json_reports(log_df_filtered_from_last_day_began_403, name)
     datapoints = log_df_filtered_from_last_day_began_403[['time', 'ip', 'size']] \
         .resample("5min", on='time') \
