@@ -2766,7 +2766,7 @@ def get_qrcode_from_uri(request):
     return HttpResponse(qrcode_image)
 
 import redis
-def get_aws_data():
+def get_aws_data(request):
     r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     reports = [
         "aws_compute_resource_usage",
