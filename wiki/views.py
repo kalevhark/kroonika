@@ -2799,4 +2799,4 @@ def get_aws_data(request):
                 aws_data["valgalinn_access_log_requests_bots"][timestamp]['ip'],
             ]
         )
-    return JsonResponse(response)
+    return JsonResponse(response, safe=False)
