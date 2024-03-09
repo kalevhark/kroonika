@@ -8,6 +8,8 @@ import django_filters
 from django_filters import rest_framework as filters
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from .models import (
     # Kroonika,
@@ -31,6 +33,8 @@ from .serializers import (
     ViideSerializer
 )
 
+from .views import get_aws_data
+
 TRANSLATION = settings.TRANSLATION
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -39,6 +43,11 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
 
+    @action(detail=False)
+    def monitor(self, request):
+        self.text = 'Monitor'
+        history = get_aws_data(None)
+        return Response(history)
 
 # class KroonikaViewSet(viewsets.ModelViewSet):
 #     queryset = Kroonika.objects.all()

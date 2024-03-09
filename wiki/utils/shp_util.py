@@ -965,7 +965,7 @@ def get_big_maps_default(kaardid, obj, aasta):
     return map
 
 def make_big_maps_leaflet(aasta=None, objekt=None):
-    print(aasta)
+    # print(aasta)
     kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
     if aasta and Kaart.objects.filter(aasta=aasta).count()==0:
         tekst = f'<h4>{aasta}. aasta kaarti ei ole. Vali järgmistest:</h4>'

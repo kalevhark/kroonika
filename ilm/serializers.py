@@ -11,3 +11,5 @@ class JaamSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Jaam
         fields = '__all__'
+
+

@@ -78,21 +78,3 @@ class JaamViewSet(viewsets.ModelViewSet):
         else:
             return text
 
-# class ForecastsViewSet(viewsets.ReadOnlyModelViewSet):
-#     """
-#     A viewset that provides the standard actions
-#     """
-#     queryset = Ilm.objects.all()
-#     serializer_class = IlmSerializer
-#     lookup_field = 'pk'
-#
-#     @action(detail=True)
-#     def group_names(self, request, pk=None):
-#         """
-#         Returns a list of all the group names that the given
-#         user belongs to.
-#         """
-#         # user = self.get_object()
-#         # groups = user.groups.all()
-#         groups = [1,2,3]
-#         return Response(groups)

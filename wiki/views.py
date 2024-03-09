@@ -2787,16 +2787,14 @@ def get_aws_data(request):
         else:
             aws_data[report] = json.loads(r.get(report))
 
-    response = []
+    response = {}
     for timestamp in aws_data["aws_compute_resource_usage"].keys():
-        response.append(
-            [
-                timestamp,
-                aws_data["aws_compute_resource_usage"][timestamp]['Average'],
-                aws_data["aws_cpucredit_balance"][timestamp]['Average'],
-                aws_data["valgalinn_access_log_requests_total"][timestamp]['ip'],
-                aws_data["valgalinn_access_log_requests_403"][timestamp]['ip'],
-                aws_data["valgalinn_access_log_requests_bots"][timestamp]['ip'],
-            ]
-        )
-    return JsonResponse(response, safe=False)
+        response[timestamp] = [
+            timestamp,
+            aws_data["aws_compute_resource_usage"][timestamp]['Average'],
+            aws_data["aws_cpucredit_balance"][timestamp]['Average'] / 576,
+            aws_data["valgalinn_access_log_requests_total"][timestamp]['ip'],
+            aws_data["valgalinn_access_log_requests_403"][timestamp]['ip'],
+            aws_data["valgalinn_access_log_requests_bots"][timestamp]['ip'],
+        ]
+    return response
