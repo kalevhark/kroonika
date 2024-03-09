@@ -2764,3 +2764,39 @@ def get_qrcode_from_uri(request):
     # qrcode_image = f'<img id="qrcode" src="data:image/png;base64, {image_data}"></img>'
     qrcode_image = f'data:image/png;base64, {image_data}'
     return HttpResponse(qrcode_image)
+
+import redis
+def get_aws_data():
+    r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+    reports = [
+        "aws_compute_resource_usage",
+        "aws_cpucredit_balance",
+        "valgalinn_access_log_requests_total",
+        "valgalinn_access_log_requests_403",
+        "valgalinn_access_log_requests_bots"
+    ]
+    aws_data = {}
+    for report in reports:
+        if report in ["aws_compute_resource_usage", "aws_cpucredit_balance"]:
+            data = json.loads(r.get(report))
+            aws_data[report] = {
+                str(int(el['Timestamp'])): el
+                for el
+                in data
+            }
+        else:
+            aws_data[report] = json.loads(r.get(report))
+
+    response = []
+    for timestamp in aws_data["aws_compute_resource_usage"].keys():
+        response.append(
+            [
+                timestamp,
+                aws_data["aws_compute_resource_usage"][timestamp]['Average'],
+                aws_data["aws_cpucredit_balance"][timestamp]['Average'],
+                aws_data["valgalinn_access_log_requests_total"][timestamp]['ip'],
+                aws_data["valgalinn_access_log_requests_403"][timestamp]['ip'],
+                aws_data["valgalinn_access_log_requests_bots"][timestamp]['ip'],
+            ]
+        )
+    return JsonResponse(response)

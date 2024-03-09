@@ -57,6 +57,7 @@ urlpatterns = [
     path('kaart/get_big_leaflet_map/', views.get_big_leaflet_map, name='get_big_leaflet_map'),
     path('kaart/<int:aasta>/', views.kaart, name='kaart'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('get_aws_data.json', views.get_aws_data, name='get_aws_data'),
     # path('valga438/', specials.special_valga438, name='special_valga438'),
     # path('valga439/', specials.special_valga439, name='special_valga439'),
     # path('j6ul2020/', specials.special_j6ul2020, name='special_j6ul2020'),
