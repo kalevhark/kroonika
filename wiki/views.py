@@ -2765,7 +2765,9 @@ def get_qrcode_from_uri(request):
     qrcode_image = f'data:image/png;base64, {image_data}'
     return HttpResponse(qrcode_image)
 
+from zoneinfo import ZoneInfo
 import redis
+
 def get_aws_data(request):
     r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     reports = [
@@ -2790,7 +2792,7 @@ def get_aws_data(request):
     response = {}
     for timestamp in aws_data["aws_compute_resource_usage"].keys():
         response[timestamp] = [
-            timestamp,
+            datetime.fromtimestamp(int(timestamp)/1000).astimezone(ZoneInfo('Europe/Tallinn')).isoformat(),
             aws_data["aws_compute_resource_usage"][timestamp]['Average'],
             aws_data["aws_cpucredit_balance"][timestamp]['Average'] / 576,
             aws_data["valgalinn_access_log_requests_total"][timestamp]['ip'],
