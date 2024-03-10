@@ -184,7 +184,6 @@ def info(request):
                 'Artikkel: ',
                 f'kirjeid {artikkel_qs.count()} ',
                 f'viidatud {artikkel_qs.filter(viited__isnull=False).distinct().count()} ',
-                # f'pildiga {artikkel_qs.filter(pilt__isnull=False).distinct().count()} ',
                 f'pildiga {artikkel_qs.filter(pildid__isnull=False).distinct().count()} ',
                 f'profiilipildiga {artikkel_qs.filter(profiilipildid__isnull=False).distinct().count()} ',
             ]
@@ -197,7 +196,6 @@ def info(request):
                 'Isik: ',
                 f'kirjeid {isik_qs.count()} ',
                 f'viidatud {isik_qs.filter(viited__isnull=False).distinct().count()} ',
-                # f'pildiga {isik_qs.filter(pilt__isnull=False).distinct().count()} ',
                 f'pildiga {isik_qs.filter(pildid__isnull=False).distinct().count()} ',
                 f'profiilipildiga {isik_qs.filter(profiilipildid__isnull=False).distinct().count()} ',
             ]
@@ -210,7 +208,6 @@ def info(request):
                 'Objekt: ',
                 f'kirjeid {objekt_qs.count()} ',
                 f'viidatud {objekt_qs.filter(viited__isnull=False).distinct().count()} ',
-                # f'pildiga {objekt_qs.filter(pilt__isnull=False).distinct().count()} ',
                 f'pildiga {objekt_qs.filter(pildid__isnull=False).distinct().count()} ',
                 f'profiilipildiga {objekt_qs.filter(profiilipildid__isnull=False).distinct().count()} ',
                 f'seotud kaardiga {objekt_qs.filter(id__in=kaardiobjektiga_objektid_ids).count()} '
@@ -224,7 +221,6 @@ def info(request):
                 'Organisatsioon: ',
                 f'kirjeid {organisatsioon_qs.count()} ',
                 f'viidatud {organisatsioon_qs.filter(viited__isnull=False).distinct().count()} ',
-                # f'pildiga {organisatsioon_qs.filter(pilt__isnull=False).distinct().count()} ',
                 f'pildiga {organisatsioon_qs.filter(pildid__isnull=False).distinct().count()} ',
                 f'profiilipildiga {organisatsioon_qs.filter(profiilipildid__isnull=False).distinct().count()} ',
             ]
@@ -270,8 +266,8 @@ def info(request):
         annotate(num_viited=Count('viited')).\
         filter(num_viited__gt=1)
     time_log['4'] = datetime.now() - time
-
     revision_data['viiteta'] = artikkel_qs.filter(viited__isnull=True)
+
     # Koondnäitajad aastate ja kuude kaupa
     a = dict()
     artikleid_aasta_kaupa = artikkel_qs.\
@@ -280,6 +276,7 @@ def info(request):
         annotate(Count('hist_year')).\
         order_by('-hist_year')
     a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
+
     time_log['5'] = datetime.now() - time
 
     # Moodulid, mis kasutusel
@@ -304,6 +301,7 @@ def info(request):
         'simple_tag_get_verbose_name': wiki_extras.get_verbose_name(model_example_obj), # object._meta.verbose_name.lower()
         'simple_tag_get_verbose_name_plural': wiki_extras.get_verbose_name_plural(model_example_obj), # object._meta.verbose_name_plural.lower()
     }
+
     context = {
         'andmebaasid': andmebaasid,
         'andmed': andmed,
@@ -2789,7 +2787,7 @@ def get_aws_data(request=None):
         else:
             aws_data[report] = json.loads(r.get(report))
 
-    response = {}
+    response = []
     AWS_CPUCREDIT_BALANCE_MAX = 576
 
     for timestamp in sorted(aws_data["aws_compute_resource_usage"].keys(), reverse=True):
@@ -2816,12 +2814,14 @@ def get_aws_data(request=None):
         except:
             valgalinn_access_log_requests_bots = None
 
-        response[timestamp] = [
-            dt_local,
-            aws_compute_resource_usage,
-            aws_cpucredit_balance,
-            valgalinn_access_log_requests_total,
-            valgalinn_access_log_requests_403,
-            valgalinn_access_log_requests_bots,
-        ]
+        response.append(
+            [
+                dt_local,
+                aws_compute_resource_usage,
+                aws_cpucredit_balance,
+                valgalinn_access_log_requests_total,
+                valgalinn_access_log_requests_403,
+                valgalinn_access_log_requests_bots,
+            ]
+        )
     return response

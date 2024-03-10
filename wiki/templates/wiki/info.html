@@ -6,6 +6,7 @@
 
 {% block src %}
   <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/modules/data.js"></script>
   <script src="https://code.highcharts.com/modules/heatmap.js"></script>
   <script src="https://code.highcharts.com/modules/exporting.js"></script>
 {% endblock %}
@@ -14,11 +15,6 @@
 
 {% block content %}
   <br class="w3-container">
-{#    <!--		Tagasiside vorm -->#}
-{#    {% load crispy_forms_tags %}#}
-{#    <div id="panelFeedBack" class="w3-panel w3-padding w3-card-4 w3-light-grey w3-hide">#}
-{#      {% crispy feedbackform %}#}
-{#    </div>#}
     <div class="w3-row">
       <div class="w3-quarter">
         <div class="w3-panel w3-center">
@@ -80,10 +76,17 @@
       </p>
       <!--    Artiklite heatmap kuude kaupa-->
       <div
-              id="container"
+              id="container_artikkel_heatmap"
               class="w3-row-padding"
               style="height: 300px; min-width: 310px; max-width: 1000px; margin: 0 auto"
       ></div>
+      {% if user.is_authenticated %}
+        <div
+                id="container_aws_monitor"
+                class="w3-row-padding"
+                style="height: 300px; min-width: 310px; max-width: 1000px; margin: 0 auto"
+        ></div>
+      {% endif %}
     {% endif %}
     <hr>
     <p>
@@ -236,10 +239,19 @@
         </a>
       </li>
       <li>
-        <a href="https://apache.org/">
+        <a href="https://www.nginx.com/">
           <img
-                  src="https://www.apache.org/logos/res/httpd/httpd.png"
-                  alt="Apache Logo."
+                  src="https://www.nginx.com/wp-content/uploads/2018/08/NGINX-logo-rgb-large.png"
+                  alt="Nginx Logo."
+                  height="80px" width="auto"
+          >
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/django/daphne">
+          <img
+                  src="https://opengraph.githubassets.com/8560f619b7870113497d3f7aeb048aa19f2f842e2d7e0f00da0ddb9a49b8e32b/django/daphne"
+                  alt="Daphne Logo."
                   height="80px" width="auto"
           >
         </a>
@@ -323,8 +335,9 @@
           }
       }
      });
+
     // Artiklite heatmap aastate ja kuude kaupa
-    Highcharts.chart('container', {
+    Highcharts.chart('container_artikkel_heatmap', {
        chart: {
             type: 'heatmap',
             margin: [60, 10, 80, 50]
@@ -403,5 +416,36 @@
         }]
 
     });
+
+    // AWS ja logide töötlused
+    Highcharts.chart('container_aws_monitor', {
+      chart: {
+          type: 'spline'
+      },
+
+      title: {
+          text: 'Live Data (Rows JSON)'
+      },
+
+      subtitle: {
+          text: 'Data input from a remote JSON file'
+      },
+
+      legend: {
+          enabled: false
+      },
+
+      yAxis: {
+          title: null
+      },
+
+      data: {
+          rowsURL: 'https://valgalinn.ee/api/user/monitor/?format=json',
+          firstRowAsNames: false,
+          enablePolling: true,
+          name: 'Random Sample Data'
+      }
+  });
+
   </script>
 {% endblock %}

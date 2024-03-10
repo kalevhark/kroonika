@@ -43,11 +43,6 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
 
-    @action(detail=False)
-    def monitor(self, request):
-        self.text = 'Monitor'
-        history = get_aws_data(None)
-        return Response(history)
 
 # class KroonikaViewSet(viewsets.ModelViewSet):
 #     queryset = Kroonika.objects.all()
@@ -254,6 +249,12 @@ class AllikasViewSet(viewsets.ModelViewSet):
     queryset = Allikas.objects.all()
     serializer_class = AllikasSerializer
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
+
+    @action(detail=False)
+    def monitor(self, request):
+        self.text = 'Monitor'
+        history = get_aws_data(None)
+        return Response(history)
 
     def get_view_name(self) -> str:
         return "Allikad"
