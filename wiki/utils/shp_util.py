@@ -226,15 +226,13 @@ def write_db_to_shp(aasta='1912'):
 # Hoonestuse andmed OpenStreetMap kaardilt OverPass API abil
 def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9', city='Valga linn'):
     if street and housenumber:
-        # print(asukoht, end=' ')
-        # street, housenumber = split_address(aadress)
+        # query = """
+        #         (
+        #   way(id: 214327417, 228359022, 228899964);
+        # );
+        # """ # Kesk 12 hooned
 
-        query = """
-                (
-          way(id: 214327417, 228359022, 228899964);
-        );
-        """ # Kesk 12 hooned
-
+        # Päring aadressi kohta street='Sulevi', housenumber='9a'
         query = f"""
         area['admin_level'='2']['name'='{country}']->.searchArea;
         area['admin_level'='{admin_level}']['name'='{city}'](area.searchArea)->.searchArea;
@@ -243,13 +241,20 @@ def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9'
         );
         """
 
+        # K6ik asumid Valga linnas
+        query = f"""
+        area['admin_level'='2']['name'='Eesti']->.searchArea;
+        area['admin_level'='9']['name'='Valga linn'](area.searchArea)->.searchArea;
+        nwr["place"="quarter"](area.searchArea);
+        """
+
         # Pärime andmed operpass APIst
         overpass_query = f"""
         [out:json][timeout:25];
         {query}
         out body center;
         >;
-        out center;
+        out skel qt;
         """
         attempts = 3
         elements = None
@@ -267,8 +272,9 @@ def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9'
                 # return # ei saadud korrektset vastust
 
         if elements:
+            print(json.dumps(elements, indent=2))
             # Kaardipildi keskkoha koordinaadid
-            center = elements[0]['center']
+            # center = elements[0]['center']
             # print(center)
             # center = (center['lat'], center['lon'])
             # print(json.dumps((center['lon'], center['lat'])))
@@ -304,15 +310,101 @@ def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9'
             }
             print('H', json.dumps(geometry))
             return geometry #, center
-        else:
-            pass # print('ei leidnud')
 
-# katastriüksuse andmed aadressi järgi Maa-ameti andmetest
-def get_shp_data(asukoht):
-    if asukoht:
-        street, housenumber = split_address(asukoht)
-        with shapefile.Reader("SHP_KATASTRIYKSUS_VALGA", encoding="latin1") as sf:
-            for rec in sf.iterShapeRecords():
+# Hoonestuse andmed OpenStreetMap kaardilt OverPass API abil
+def get_osm_data_quarter(quarter=None, country='Eesti', admin_level='9', city='Valga linn'):
+    quarter_name = f"['name'='{quarter}']" if quarter is not None else ''
+    # K6ik asumid Valga linnas
+    query = f"""
+    area['admin_level'='2']['name'={country}]->.searchArea;
+    area['admin_level'='{admin_level}']['name'='{city}'](area.searchArea)->.searchArea;
+    nwr["place"="quarter"]{quarter_name}(area.searchArea);
+    """
+
+    # Pärime andmed operpass APIst
+    overpass_query = f"""
+    [out:json][timeout:25];
+    {query}
+    out body center;
+    >;
+    out skel qt;
+    """
+    attempts = 3
+    elements = None
+
+    while attempts > 0:
+        response = requests.get(OVERPASS_URL, params={'data': overpass_query})
+        try:
+            data = response.json()
+            elements = data['elements']
+            break
+        except:
+            # print('viga!')
+            attempts -= 1
+            time.sleep(3)
+            # return # ei saadud korrektset vastust
+
+    if elements:
+        # print(json.dumps(elements, indent=2))
+        if quarter:
+            # Kaardipildi keskkoha koordinaadid
+            # center = elements[0]['center']
+            # print(center)
+            # center = (center['lat'], center['lon'])
+            # print(json.dumps((center['lon'], center['lat'])))
+
+            # Eristame kõik sama aadressiga hooned maaüksusel loendisse
+            ways = [
+                el['nodes']
+                for el
+                in elements
+                if el['type'] == 'way'
+            ]
+
+            # Loome sõnastiku kõigist käänupunktidest maaüksusel
+            nodes = {
+                # el['id']: (el['lat'], el['lon'])
+                el['id']: (el['lon'], el['lat'])
+                for el
+                in elements
+                if el['type'] == 'node'
+            }
+
+            # Sorteerime käänupunktid hoonete kaupa loendiks
+            nodes_sets = [] # list hoonete kaupa
+            for way in ways:
+                # nodes_in_way = [] # ühe hoone käänupunktid
+                for node in way:
+                    # nodes_in_way.append(nodes[node])
+                    nodes_sets.append(nodes[node])
+
+            geometry = {
+                'type': 'Polygon',
+                'coordinates': nodes_sets
+            }
+            print('A', quarter, json.dumps(geometry))
+        else:
+            quarters = [
+                el['tags']['name']
+                for el
+                in elements
+                if (el['type'] == 'node') and ('tags' in el.keys())
+            ]
+            print(quarters)
+            for quarter in quarters:
+                get_osm_data_quarter(quarter=quarter)
+
+# katastriüksuse andmed aadressi v6i katastrinumbri järgi Maa-ameti andmetest
+def get_shp_data(asukoht=None, kataster=None):
+    # asukoht aadress 'Sulevi 9a'
+    # kataster katastritunnus '85401:016:0510'
+
+    shp = "wiki\\utils\\SHP_KATASTRIYKSUS_VALGA" # ainult Valga linn
+    # shp = "wiki\\utils\\SHP_KATASTRIYKSUS" # kogu Eesti
+    with shapefile.Reader(shp, encoding="latin1") as sf:
+        for rec in sf.iterShapeRecords():
+            if asukoht:
+                street, housenumber = split_address(asukoht)
                 if street in rec.record.L_AADRESS.split(' ') and housenumber in rec.record.L_AADRESS.split(' '):
                     points = rec.shape.points
                     parts = rec.shape.parts
@@ -326,8 +418,22 @@ def get_shp_data(asukoht):
                         'type': 'Polygon',
                         'coordinates': [nodes]
                     }
-                    print('A', json.dumps(geometry))
-                    return geometry
+                    print('A', rec.record.L_AADRESS, json.dumps(geometry))
+            if kataster:
+                if kataster == rec.record.TUNNUS:
+                    points = rec.shape.points
+                    parts = rec.shape.parts
+                    nodes = [
+                        shp_crs_to_degree(el)
+                        for el
+                        in rec.shape.points
+                    ]
+                    geometry = {
+                        'type': 'Polygon',
+                        'coordinates': [nodes]
+                    }
+                    print('A', rec.record.TUNNUS, json.dumps(geometry))
+
 
 # Loeb katastriyksuse failist ja leiab kas on kattuvusi andmebaasi kaardiobjektidega
 def shp_match_db():
