@@ -349,12 +349,6 @@ def make_json_reports(log_df_filtered, name):
             .agg({'size': 'sum', 'ip': 'count'}) \
             .to_json(path_or_buf=f, orient="index", date_format='epoch', indent=2) # epoch milliseconds
 
-def set_data2redis(r, name, datapoints):
-    r.set(
-        name,
-        json.dumps(datapoints, cls=DateTimeEncoder),
-        ex=600 # 10 minutiks
-    )
 
 async def main():
     path = os.path.dirname(sys.argv[0])
@@ -379,29 +373,14 @@ async def main():
     r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     name = "valgalinn_access_log_requests_total"
     make_json_reports(log_df_filtered_from_last_day_began, name)
-    datapoints = log_df_filtered_from_last_day_began[['time', 'ip', 'size']] \
-            .resample("5min", on='time') \
-            .agg({'size': 'sum', 'ip': 'count'}) \
-            .to_json(orient="index", date_format='epoch', indent=2) # epoch milliseconds
-    set_data2redis(r, name, datapoints)
 
     name = "valgalinn_access_log_requests_403"
     log_df_filtered_from_last_day_began_403 = log_df_filtered_from_last_day_began[log_df_filtered_from_last_day_began['status'] == 403]
     make_json_reports(log_df_filtered_from_last_day_began_403, name)
-    datapoints = log_df_filtered_from_last_day_began_403[['time', 'ip', 'size']] \
-        .resample("5min", on='time') \
-        .agg({'size': 'sum', 'ip': 'count'}) \
-        .to_json(orient="index", date_format='epoch', indent=2)  # epoch milliseconds
-    set_data2redis(r, name, datapoints)
 
     name = "valgalinn_access_log_requests_bots"
     log_df_filtered_from_last_day_began_bots = log_df_filtered_from_last_day_began[log_df_filtered_from_last_day_began.apply(is_bot, axis=1)]
     make_json_reports(log_df_filtered_from_last_day_began_bots, name)
-    datapoints = log_df_filtered_from_last_day_began_bots[['time', 'ip', 'size']] \
-        .resample("5min", on='time') \
-        .agg({'size': 'sum', 'ip': 'count'}) \
-        .to_json(orient="index", date_format='epoch', indent=2)  # epoch milliseconds
-    set_data2redis(r, name, datapoints)
 
     # res = await asyncio.gather(
     #     calc_results_downloader_agents(log_df_filtered),
