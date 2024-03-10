@@ -189,27 +189,21 @@
     Andmebaasi- ja veebilahenduse tegi {% kalev %}.<br>
 
     Abiks:
-    <ul class="w3-ul">
-      <li>
+    <p>
         <a href="https://www.jetbrains.com/pycharm/">
           <img
                   src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png"
                   alt="JetBrains Logo (Main) logo."
                   height="80px" width="auto"
           >
-          JetBrains PyCharm
         </a>
-      </li>
-      <li>
         <a href="https://www.python.org/">
           <img
                   src="https://www.python.org/static/community_logos/python-powered-w-200x80.png"
                   alt="Python Logo."
-{#                  height="80px" width="auto"#}
+                  height="80px" width="auto"
           >
         </a>
-      </li>
-      <li>
         <a href="https://www.djangoproject.com/">
           <img
                   src="https://static.djangoproject.com/img/logos/django-logo-negative.png"
@@ -217,28 +211,20 @@
                   height="80px" width="auto"
           >
         </a>
-      </li>
-      <li>
         <a href="https://www.postgresql.org/">
           <img
                   src="https://www.postgresql.org/media/img/about/press/elephant.png"
                   alt="PostgreSQL Logo."
                   height="80px" width="auto"
           >
-          PostgreSQL
         </a>
-      </li>
-      <li>
         <a href="https://vuejs.org/">
           <img
                   src="https://avatars.githubusercontent.com/u/6128107?s=200&v=4"
                   alt="VueJS Logo."
                   height="80px" width="auto"
           >
-          Vue.js
         </a>
-      </li>
-      <li>
         <a href="https://www.nginx.com/">
           <img
                   src="https://www.nginx.com/wp-content/uploads/2018/08/NGINX-logo-rgb-large.png"
@@ -246,8 +232,6 @@
                   height="80px" width="auto"
           >
         </a>
-      </li>
-      <li>
         <a href="https://github.com/django/daphne">
           <img
                   src="https://opengraph.githubassets.com/8560f619b7870113497d3f7aeb048aa19f2f842e2d7e0f00da0ddb9a49b8e32b/django/daphne"
@@ -255,18 +239,14 @@
                   height="80px" width="auto"
           >
         </a>
-      </li>
-      <li>
         <a href="https://www.w3schools.com/">
           <img
                   src="https://cdn.shopify.com/s/files/1/0274/1783/7625/files/W3Schools_Logo_RGB_480x450.png"
                   alt="W3Schools Logo."
                   height="80px" width="auto"
           >
-          W3Schools
         </a>
-      </li>
-    </ul>
+    </p>
     {% if user.is_authenticated %}
       Python {{ python }}<br>
       Lisaks:
@@ -417,35 +397,7 @@
 
     });
 
-    // AWS ja logide töötlused
-    Highcharts.chart('container_aws_monitor', {
-      chart: {
-          type: 'spline'
-      },
 
-      title: {
-          text: 'Live Data (Rows JSON)'
-      },
-
-      subtitle: {
-          text: 'Data input from a remote JSON file'
-      },
-
-      legend: {
-          enabled: false
-      },
-
-      yAxis: {
-          title: null
-      },
-
-      data: {
-          rowsURL: 'https://valgalinn.ee/api/user/monitor/?format=json',
-          firstRowAsNames: false,
-          enablePolling: true,
-          name: 'Random Sample Data'
-      }
-  });
 
   </script>
 {% endblock %}
