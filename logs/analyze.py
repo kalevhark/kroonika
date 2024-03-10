@@ -10,7 +10,6 @@ import urllib.request
 from ipwhois import IPWhois, HTTPLookupError
 import pandas as pd
 import pytz
-import redis
 
 pd.set_option('display.max_columns', 4)
 

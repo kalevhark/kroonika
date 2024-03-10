@@ -2768,7 +2768,7 @@ def get_qrcode_from_uri(request):
 from zoneinfo import ZoneInfo
 import redis
 
-def get_aws_data(request):
+def get_aws_data(request=None):
     r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     reports = [
         "aws_compute_resource_usage",
@@ -2790,13 +2790,38 @@ def get_aws_data(request):
             aws_data[report] = json.loads(r.get(report))
 
     response = {}
+    AWS_CPUCREDIT_BALANCE_MAX = 576
+
     for timestamp in aws_data["aws_compute_resource_usage"].keys():
+        dt_local = datetime.fromtimestamp(int(timestamp)/1000).astimezone(ZoneInfo('Europe/Tallinn')).isoformat()
+        aws_compute_resource_usage = aws_data["aws_compute_resource_usage"][timestamp]['Average']
+
+        try:
+            aws_cpucredit_balance = aws_data["aws_cpucredit_balance"][timestamp]['Average'] / AWS_CPUCREDIT_BALANCE_MAX
+        except:
+            aws_cpucredit_balance = None
+
+        try:
+            valgalinn_access_log_requests_total = aws_data["valgalinn_access_log_requests_total"][timestamp]['ip']
+        except:
+            valgalinn_access_log_requests_total = None
+
+        try:
+            valgalinn_access_log_requests_403 = aws_data["valgalinn_access_log_requests_403"][timestamp]['ip']
+        except:
+            valgalinn_access_log_requests_403 = None
+
+        try:
+            valgalinn_access_log_requests_bots = aws_data["valgalinn_access_log_requests_bots"][timestamp]['ip']
+        except:
+            valgalinn_access_log_requests_bots = None
+
         response[timestamp] = [
-            datetime.fromtimestamp(int(timestamp)/1000).astimezone(ZoneInfo('Europe/Tallinn')).isoformat(),
-            aws_data["aws_compute_resource_usage"][timestamp]['Average'],
-            aws_data["aws_cpucredit_balance"][timestamp]['Average'] / 576,
-            aws_data["valgalinn_access_log_requests_total"][timestamp]['ip'],
-            aws_data["valgalinn_access_log_requests_403"][timestamp]['ip'],
-            aws_data["valgalinn_access_log_requests_bots"][timestamp]['ip'],
+            dt_local,
+            aws_compute_resource_usage,
+            aws_cpucredit_balance,
+            valgalinn_access_log_requests_total,
+            valgalinn_access_log_requests_403,
+            valgalinn_access_log_requests_bots,
         ]
     return response
