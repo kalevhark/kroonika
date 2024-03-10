@@ -2792,7 +2792,7 @@ def get_aws_data(request=None):
     response = {}
     AWS_CPUCREDIT_BALANCE_MAX = 576
 
-    for timestamp in aws_data["aws_compute_resource_usage"].keys():
+    for timestamp in sorted(aws_data["aws_compute_resource_usage"].keys(), reverse=True):
         dt_local = datetime.fromtimestamp(int(timestamp)/1000).astimezone(ZoneInfo('Europe/Tallinn')).isoformat()
         aws_compute_resource_usage = aws_data["aws_compute_resource_usage"][timestamp]['Average']
 
