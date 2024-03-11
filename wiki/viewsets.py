@@ -281,3 +281,4 @@ class ViideViewSet(viewsets.ModelViewSet):
             return mark_safe(f"<p>{text}</p>")
         else:
             return text
+

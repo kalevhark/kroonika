@@ -2795,7 +2795,7 @@ def get_aws_data(request=None):
         aws_compute_resource_usage = aws_data["aws_compute_resource_usage"][timestamp]['Average']
 
         try:
-            aws_cpucredit_balance = aws_data["aws_cpucredit_balance"][timestamp]['Average'] / AWS_CPUCREDIT_BALANCE_MAX
+            aws_cpucredit_balance = aws_data["aws_cpucredit_balance"][timestamp]['Average'] / AWS_CPUCREDIT_BALANCE_MAX * 100
         except:
             aws_cpucredit_balance = None
 

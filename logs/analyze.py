@@ -369,7 +369,6 @@ async def main():
 
     log_df_filtered_from_last_day_began = log_df[log_df.time >= timelastdaybegan]
 
-    r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     name = "valgalinn_access_log_requests_total"
     make_json_reports(log_df_filtered_from_last_day_began, name)
 
