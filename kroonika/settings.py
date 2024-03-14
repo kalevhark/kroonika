@@ -363,7 +363,9 @@ COOKIE_CONSENT_INUSE = False
 # leafleti jaoks
 DEFAULT_CENTER = (57.7769268, 26.0308911) # {'lon': 26.0308911, 'lat': 57.7769268} # Jaani kiriku koordinaadid
 # DEFAULT_MAP = Kaart.objects.filter(aasta='2021').first() # Vaikimisi OpenStreetMap internetikaart
-DEFAULT_MAP_AASTA = '2021'
+
+DEFAULT_MAP_AASTA = '2021' # objektide vaates kaardi vaikimise kiht
+DEFAULT_BIGMAP_AASTA = '1683' # suures kaardivaates vaikimisi kiht
 DEFAULT_MAP_ZOOM_START = 17
 DEFAULT_MIN_ZOOM = 13
 
@@ -374,9 +376,9 @@ GEOJSON_STYLE = {
     'H': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 3}, # hoonestus (default)
     'A': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # ala (default)
     'M': {'fill': None, 'color': FUCHSIA, 'weight': 3}, # muu (default)
-    'HH': {'fill': 'red', 'color': 'red', 'weight': 3}, # hoonestus (puudub kaasajal)
-    'AH': {'fill': None, 'color': 'red', 'weight': 3}, # ala (puudub kaasajal)
-    'MH': {'fill': None, 'color': 'red', 'weight': 3}, # muu (puudub kaasajal)
+    'HH': {'fill': 'red', 'color': 'red', 'weight': 3, 'dashArray': '2, 5'}, # hoonestus (puudub kaasajal)
+    'AH': {'fill': None, 'color': 'red', 'weight': 3, 'dashArray': '2, 5'}, # ala (puudub kaasajal)
+    'MH': {'fill': None, 'color': 'red', 'weight': 3, 'dashArray': '2, 5'}, # muu (puudub kaasajal)
     'HE': {'fill': OBJEKT_COLOR, 'color': OBJEKT_COLOR, 'weight': 3}, # hoonestus (olemas kaasajal)
     'AE': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # ala (olemas kaasajal)
     'ME': {'fill': None, 'color': OBJEKT_COLOR, 'weight': 3}, # muu (olemas kaasajal),

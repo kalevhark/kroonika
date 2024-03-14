@@ -33,7 +33,7 @@ from .serializers import (
     ViideSerializer
 )
 
-from .views import get_aws_data
+from wiki.utils.monitoring import get_aws_data
 
 TRANSLATION = settings.TRANSLATION
 

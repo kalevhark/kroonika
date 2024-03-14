@@ -1,22 +1,20 @@
 // wiki.kaart rakenduse jaoks
 // kasutatakse utils.shp_util.py poolt open(jsf) kaudu
 
-function showKaartAasta(map) {
-  const href = map._container.baseURI;
-  const url = new URL(href);
-  var r = /\/kaart\/(\d+)\//;
-  var result = url.pathname.match(r);
-  if (result) {
-    var kaartAasta = result[1];
-    for (let key in basemaps) {
-      if (key === kaartAasta) {
-        map.addLayer(basemaps[key]);
-      } else {
-        map.removeLayer(basemaps[key]);
-      }
-    }
-  }
-}
+// function showKaartAasta(map) {
+//   const href = map._container.baseURI;
+//   const url = new URL(href);
+//   var r = /\/kaart\/(\d+)\//;
+//   var result = url.pathname.match(r);
+//   var kaartAasta = result ? result[1] : defaultMap;
+//   for (let key in basemaps) {
+//     if (key === kaartAasta) {
+//       // map.addLayer(basemaps[key]);
+//     } else {
+//       map.removeLayer(basemaps[key]);
+//     }
+//   }
+// }
 
 function relocateElementBySelector(elementSelector, destSelector) {
   let element = elementSelector.childNodes[0];
@@ -46,7 +44,7 @@ function redesignControl() {
   }
 }
 
-showKaartAasta(map);
+// showKaartAasta(map);
 redesignControl()
 
 // map.on('baselayerchange', function (eventLayer) {
