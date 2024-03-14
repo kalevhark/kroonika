@@ -1137,12 +1137,15 @@ def make_objekt_leaflet_combo_add_vectorlayer(obj, kaardiobjekt, status):
 # Konkreetse objekti erinevate aastate kaardid koos
 def make_objekt_leaflet_combo(objekt=1):
     obj = Objekt.objects.get(id=objekt)
-    kaardid_objektiga_aastad = obj.kaardiobjekt_set.values_list('kaart__aasta', flat=True)
+    kaardiobjektid_objektiga = obj.kaardiobjekt_set.all()
+    kaardid_objektiga_aastad = kaardiobjektid_objektiga.values_list('kaart__aasta', flat=True)
 
     if kaardid_objektiga_aastad: # kui v2hemalt yhel kaardil objekt m2rgitud
 
         # Loome aluskaardi
-        zoom_start = DEFAULT_MAP_ZOOM_START
+        # zoom_start = DEFAULT_MAP_ZOOM_START
+        kaardiobjektide_zoomid = [kaardiobjekt.zoom for kaardiobjekt in kaardiobjektid_objektiga if kaardiobjekt.zoom]
+        zoom_start = min(kaardiobjektide_zoomid) if kaardiobjektide_zoomid else DEFAULT_MAP_ZOOM_START
         location = DEFAULT_CENTER
         kwargs = {  # vajalikud mobiilis kerimise h6lbustamiseks
             'dragging': '!L.Browser.mobile',
@@ -1206,7 +1209,7 @@ def make_objekt_leaflet_combo(objekt=1):
                 vectorlayer.add_to(feature_groups[kaart.aasta])
 
             # Parandame kaardi keskpunkti
-            if kaardiobjektid and kaardiobjektid[0].geometry:
+            if kaart == DEFAULT_MAP and kaardiobjektid and kaardiobjektid[0].geometry:
                 map.location = kaardiobjektid[0].centroid
 
             # Lisame kaardi leaflet combosse

@@ -113,6 +113,8 @@ class WikiBaseViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
+class WikiKaartViewTests(TestCase):
+
     def test_kaart_view_with_existing_aasta(self):
         time_start = datetime.now()
         kwargs = {

@@ -10,9 +10,13 @@ from django.http import HttpRequest
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse, resolve
 
+import folium
+
+import wiki.utils.shp_util
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 
-from wiki import views
+from wiki import views, utils
+from wiki.models import Objekt, Kaart, Kaardiobjekt
 
 from wiki.tests.test_base import UserTypeUnitTest
 
@@ -154,3 +158,57 @@ class LoadObjectListTest(UserTypeUnitTest):
         self.assertTrue(len(result_overload) > 0)
         self.assertIn('Ei leitud midagi'.encode('utf8'), result_overload)
         # self.assertEqual(result_overload, result_random)
+
+class GetLeafletMapTest(UserTypeUnitTest):
+
+    def setUp(self) -> None:
+        super().setUp()
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        # self.user = User.objects.get(id=1)
+        self.request.user = AnonymousUser()
+        self.kaardid = Kaart.objects.exclude(tiles__exact='').order_by('aasta')
+
+    def tearDown(self) -> None:
+        super().tearDown()
+
+    def test_get_get_big_maps_default(self) -> None:
+        kwargs = {
+            'kaardid': self.kaardid,
+            'obj': None,
+            'aasta': None
+        }
+        response = wiki.utils.shp_util.get_big_maps_default(**kwargs)
+        assert isinstance(response, folium.Map)
+
+    def test_get_get_big_maps_default_year(self) -> None:
+        kwargs = {
+            'kaardid': self.kaardid,
+            'obj': None,
+            'aasta': '1683'
+        }
+        response = wiki.utils.shp_util.get_big_maps_default(**kwargs)
+        assert isinstance(response, folium.Map)
+
+    def test_make_objekt_leaflet_combo_objekt_exists(self) -> None:
+        objekt = Objekt.objects.get(id=13) # linnakirik
+        response = wiki.utils.shp_util.make_objekt_leaflet_combo(objekt=objekt.id)
+        assert isinstance(response, str)
+        self.assertTrue(len(response) > 0)
+        self.assertIn('iframe', response)
+
+    def test_make_objekt_leaflet_combo_objekt_has_kaardiobjekt(self) -> None:
+        objekt = Objekt.objects.get(id=8) # raudteejaama-hoone-kuni-1944
+        response = wiki.utils.shp_util.make_objekt_leaflet_combo(objekt=objekt.id)
+        assert isinstance(response, str)
+        self.assertTrue(len(response) > 0)
+
+    def test_make_objekt_leaflet_combo_without_kaardiobjekt(self) -> None:
+        objekt = Objekt.objects.get(id=1042) # linnakooli-hoone-1742-1795
+        response = wiki.utils.shp_util.make_objekt_leaflet_combo(objekt=objekt.id)
+        self.assertEqual(response, None)
