@@ -69,7 +69,7 @@
               href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}"
               title="Näita kõiki {% now "j.m." %} ajaloos"
       >
-        {% now "j.m." %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_p2eval_kirjeid }}</span>
+        {% now "j." %} {% include 'wiki/includes/kuu.html' with kuu=kuu %} ajaloos <span class="w3-badge background-artikkel">{{ andmed.artikkel.sel_p2eval_kirjeid }}</span>
       </a>
     </h5>
     {% for obj in andmed.artikkel.sel_p2eval %}
