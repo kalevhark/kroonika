@@ -6,7 +6,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse, resolve
 
@@ -212,3 +212,26 @@ class GetLeafletMapTest(UserTypeUnitTest):
         objekt = Objekt.objects.get(id=1042) # linnakooli-hoone-1742-1795
         response = wiki.utils.shp_util.make_objekt_leaflet_combo(objekt=objekt.id)
         self.assertEqual(response, None)
+
+class GetQRCodeTest(UserTypeUnitTest):
+
+    def setUp(self) -> None:
+        super().setUp()
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        # self.user = User.objects.get(id=1)
+        self.request.user = AnonymousUser()
+
+    def tearDown(self) -> None:
+        super().tearDown()
+
+    def test_get_qrcode(self) -> None:
+        response = wiki.views.get_qrcode_from_uri(self.request)
+        assert isinstance(response, HttpResponse)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('data:image/png;base64', response.content.decode('utf8'))

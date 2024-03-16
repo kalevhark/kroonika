@@ -2724,7 +2724,7 @@ def get_qrcode_from_uri(request):
     # adjust image size
     wpercent = (basewidth / float(logo.size[0]))
     hsize = int((float(logo.size[1]) * float(wpercent)))
-    logo = logo.resize((basewidth - 30, hsize - 30), Image.ANTIALIAS)
+    logo = logo.resize((basewidth - 30, hsize - 30), Image.LANCZOS)
     logo = ImageOps.expand(logo, border=10, fill='white')
     QRcode = qrcode.QRCode(
         box_size=10,
