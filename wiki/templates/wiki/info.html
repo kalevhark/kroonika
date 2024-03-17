@@ -418,6 +418,12 @@
           enabled: true
       },
 
+      tooltip: {
+          crosshairs: true,
+          shared: true,
+          headerFormat: '{point.key:%d.%m %H:%M}<br>',
+      },
+
       yAxis: [{
         title: {
           text: '%'
@@ -440,10 +446,18 @@
       series: [
         {
           yAxis: 0,
-          name: 'CPU usage'
+          name: 'CPU usage',
+          tooltip: {
+            pointFormat: '<span style="color:{color}">\u25CF</span> {series.name}: <b>{point.y:.0f} %</b><br>',
+            valueSuffix: '%'
+          },
         }, {
           yAxis: 0,
-          name: 'CPU credit balance'
+          name: 'CPU credit balance',
+          tooltip: {
+            pointFormat: '<span style="color:{color}">\u25CF</span> {series.name}: <b>{point.y:.0f} %</b><br>',
+            valueSuffix: '%'
+          },
         }, {
           yAxis: 1,
           name: 'requests total'
