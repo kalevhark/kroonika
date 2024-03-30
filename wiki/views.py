@@ -1529,11 +1529,11 @@ class ArtikkelFilter(django_filters.FilterSet):
     def nimi_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
         if self.data.get('nimi_sisaldab'):
-            queryset = queryset.annotate(nimi=Concat('isikud__eesnimi', Value(' '), 'isikud__perenimi'))
+            queryset = queryset.annotate(t2isnimi=Concat('isikud__eesnimi', Value(' '), 'isikud__perenimi'))
             fraasid = self.data.get('nimi_sisaldab', '').split(' ')
             for fraas in fraasid:
                 queryset = queryset.filter(
-                    nimi__icontains=fraas
+                    t2isnimi__icontains=fraas
                 )
         return queryset
 
