@@ -27,6 +27,87 @@ class FilterViewTests(TestCase):
     #         values_list('id', flat=True)
     #     self.model_ids = reduce(or_, [artikliga, viitega, viiteta_artiklita])
 
+    def test_filter_artikkel_artikkel_sisaldab_for_non_authented_user(self):
+        response = self.client.get('/wiki/', {'artikkel_sisaldab': 'Märtson'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context['object_list']) > 0)
+        # Kas Johannes Märtson on leitav
+        response = self.client.get(
+            '/wiki/',
+            {
+                'hist_year': '',
+                'artikkel_sisaldab': 'Märtson',
+                'nimi_sisaldab': ''
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context['object_list']) > 0)
+        # Mitu Kalev Härki sisaldavat artiklit leitakse
+        response = self.client.get(
+            '/wiki/',
+            {
+                'hist_year': '',
+                'artikkel_sisaldab': 'Kalev Härk',
+                'nimi_sisaldab': ''
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context['object_list']) > 1)
+
+    def test_filter_artikkel_nimi_sisaldab_for_non_authented_user(self):
+        response = self.client.get('/wiki/', {'nimi_sisaldab': 'Märtson'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context['object_list']) > 0)
+        # Kas Johannes Märtson on leitav
+        response = self.client.get(
+            '/wiki/',
+            {
+                'hist_year': '',
+                'artikkel_sisaldab': '',
+                'nimi_sisaldab': 'Märtson'
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context['object_list']) > 0)
+        # Mitu Kalev Härki sisaldavat artiklit leitakse
+        response = self.client.get(
+            '/wiki/',
+            {
+                'hist_year': '',
+                'artikkel_sisaldab': '',
+                'nimi_sisaldab': 'Kalev Härk'
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context['object_list']) > 0)
+
+    def test_filter_artikkel_hist_year_for_non_authented_user(self):
+        response = self.client.get('/wiki/', {'hist_year': '1971'})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context['object_list']) > 0)
+        # Kas 1971 on leitav
+        response = self.client.get(
+            '/wiki/',
+            {
+                'hist_year': '1971',
+                'artikkel_sisaldab': '',
+                'nimi_sisaldab': ''
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context['object_list']) > 0)
+        # Kas 1000 on leitav
+        response = self.client.get(
+            '/wiki/',
+            {
+                'hist_year': '1000',
+                'artikkel_sisaldab': '',
+                'nimi_sisaldab': ''
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['object_list']), 0)
+
     def test_filter_isik_for_non_authented_user(self):
         response = self.client.get('/wiki/isik/', {'nimi_sisaldab': 'märtson'})
         self.assertEqual(response.status_code, 200)
