@@ -30,7 +30,7 @@ def read_forecast_log2pd(path, dir_logs, fn_forecast):
     names = [
         'timestamp',
         f'{field_prefix}y_temp', f'{field_prefix}y_prec',
-        f'{field_prefix}o_temp', f'{field_prefix}o_prec', # owm out 2024 juuni
+        # f'{field_prefix}o_temp', f'{field_prefix}o_prec', # owm out 2024 juuni
         f'{field_prefix}i_temp', f'{field_prefix}i_prec',
     ]
     df = pd.read_csv(
@@ -42,7 +42,7 @@ def read_forecast_log2pd(path, dir_logs, fn_forecast):
         converters={2: yrno_prec},
         decimal = '.',
         na_values = ['None'],
-        # usecols=[1,2,3,6,11,13],
+        usecols=[0, 1, 2, 5, 6],
         names = names,
         # parse_dates=[5]
     )
