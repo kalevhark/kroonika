@@ -11,8 +11,8 @@ import pytz
 import requests
 
 dir_logs = 'logs'
-fn_forecast = 'forecast_6h.log'
-a = None
+# fn_forecast = 'forecast_6h.log'
+# a = None
 
 def read_forecast_log2pd(path, dir_logs, fn_forecast):
     yrno_prec = lambda x : (
@@ -30,7 +30,7 @@ def read_forecast_log2pd(path, dir_logs, fn_forecast):
     names = [
         'timestamp',
         f'{field_prefix}y_temp', f'{field_prefix}y_prec',
-        f'{field_prefix}o_temp', f'{field_prefix}o_prec',
+        f'{field_prefix}o_temp', f'{field_prefix}o_prec', # owm out 2024 juuni
         f'{field_prefix}i_temp', f'{field_prefix}i_prec',
     ]
     df = pd.read_csv(
@@ -100,12 +100,12 @@ def obs_quality(row, fore_hour):
     y_qual = max - (y_temp_qual + y_prec_qual)
     if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_y_prec'] == 0):
         y_qual -= koefitsent
-    #owm
-    o_temp_qual = koefitsent * abs(row['observed_temp'] - row[f'forecast_{fore_hour}_o_temp'])
-    o_prec_qual = koefitsent * abs(row['observed_prec'] - row[f'forecast_{fore_hour}_o_prec'])
-    o_qual = max - (o_temp_qual + o_prec_qual)
-    if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_o_prec'] == 0):
-        o_qual -= koefitsent
+    #owm out 2024 juuni
+    # o_temp_qual = koefitsent * abs(row['observed_temp'] - row[f'forecast_{fore_hour}_o_temp'])
+    # o_prec_qual = koefitsent * abs(row['observed_prec'] - row[f'forecast_{fore_hour}_o_prec'])
+    # o_qual = max - (o_temp_qual + o_prec_qual)
+    # if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_o_prec'] == 0):
+    #     o_qual -= koefitsent
     #ilmateenistus.ee
     # print(type(row[f'forecast_{fore_hour}_i_temp']))
     i_temp_qual = koefitsent * abs(row['observed_temp'] - float(row[f'forecast_{fore_hour}_i_temp']))
@@ -114,9 +114,11 @@ def obs_quality(row, fore_hour):
     if (row['observed_prec'] > 0.0) and (row[f'forecast_{fore_hour}_i_prec'] == 0):
         i_qual -= koefitsent
     return pd.Series(
-        [*values, y_qual, o_qual, i_qual],
+        # [*values, y_qual, o_qual, i_qual],
+        [*values, y_qual, i_qual], # owm out 2024 juuni
         dtype="float32",
-        index=[*columns, f'{fore_hour}_y_qual', f'{fore_hour}_o_qual', f'{fore_hour}_i_qual']
+        # index=[*columns, f'{fore_hour}_y_qual', f'{fore_hour}_o_qual', f'{fore_hour}_i_qual']
+        index = [*columns, f'{fore_hour}_y_qual', f'{fore_hour}_i_qual'] # owm out 2024 juuni
     )
 
 def logs2bigdata(path):

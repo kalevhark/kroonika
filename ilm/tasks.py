@@ -714,7 +714,7 @@ def update_lasthours(path, verbose=False, hours=72):
 def update_forecast_logs(path='', verbose=False):
     yAPI = utils.YrnoAPI()
     y = yAPI.yrno_forecasts
-    o = utils.owm_onecall()
+    # o = utils.owm_onecall()
     i = utils.ilmateenistus_forecast()
 
     for forecast_hour in [6, 12, 24]: # Salvestame 6, 12, 24 h prognoosid
@@ -731,15 +731,15 @@ def update_forecast_logs(path='', verbose=False):
             y_prec = y_data['precipitation']
 
         # openweathermaps.org
-        o_temp = None
-        o_prec = None
-        o_data = o['forecast'].get(str(ref_dt), None)
-        if o_data:
-            o_temp = o_data['temp']
-            try:
-                o_prec = o_data['rain']['1h']
-            except:
-                o_prec = '0.0'
+        # o_temp = None
+        # o_prec = None
+        # o_data = o['forecast'].get(str(ref_dt), None)
+        # if o_data:
+        #     o_temp = o_data['temp']
+        #     try:
+        #         o_prec = o_data['rain']['1h']
+        #     except:
+        #         o_prec = '0.0'
 
         # ilmateenistus.ee
         i_temp = None
@@ -753,7 +753,8 @@ def update_forecast_logs(path='', verbose=False):
             [
                 str(ref_dt),
                 str(y_temp), str(y_prec),
-                str(o_temp), str(o_prec),
+                # str(o_temp), str(o_prec),
+                '-', '-', # owm onecall out 2024 juuni
                 str(i_temp), str(i_prec),
             ]
         )
@@ -788,8 +789,6 @@ def update_forecast_log_analyze():
     path = Path(__file__).resolve().parent.parent
     forecast_log_analyze.logs2bigdata(path)
 
-# import importlib
-# importlib.reload(tools) # uuesti laadimiseks
 
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
@@ -807,7 +806,7 @@ if __name__ == '__main__':
         request.user = AnonymousUser()
         views.get_mixed_ilmateade(request)
 
-    if now.minute == 10: # iga tunni 10. minutil
+    if True: # now.minute == 10: # iga tunni 10. minutil
         # Kustutame duplikaatread
         rows_deleted = delete_duplicate_observations(path, verbose)
 
