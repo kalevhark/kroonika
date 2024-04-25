@@ -806,7 +806,7 @@ if __name__ == '__main__':
         request.user = AnonymousUser()
         views.get_mixed_ilmateade(request)
 
-    if True: # now.minute == 10: # iga tunni 10. minutil
+    if now.minute == 10: # iga tunni 10. minutil
         # Kustutame duplikaatread
         rows_deleted = delete_duplicate_observations(path, verbose)
 
