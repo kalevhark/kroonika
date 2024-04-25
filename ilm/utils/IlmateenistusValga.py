@@ -22,6 +22,7 @@ if __name__ == '__main__':
 
 from ilm.models import Ilm, Jaam
 from ilm.utils import utils
+from ilm.utils.utils import sun_moon, ilman2htus_yrnosymboliks
 
 """
 Ilmateenistuse terminid:
@@ -43,118 +44,118 @@ def float_or_none(value):
     except:
         return None
 
-def sun_moon(dt):
-    # Tagastab konkreetese kuupäeva (ajavööndi väärtusega) päikese- ja kuuandmed
-    # Vana Astral
-    # city_name = 'Tallinn'
-    # a = Astral()
-    # a.solar_depression = 'civil'
-    # city = a[city_name]
-    # s = {}
-    # s['sun'] = city.sun(date=dt, local=True)
-    # s['moon'] = a.moon_phase(date=dt)
-    # Uus Astral
-    tallinn_tz = timezone('Europe/Tallinn')
-    city = LocationInfo("Valga", "Estonia", "Europe/Tallinn", 57.776944, 26.031111)
-    s = {}
-    sun_states = sun(city.observer, dt)
-    for state in sun_states.keys():
-        sun_states[state] = sun_states[state].astimezone(tallinn_tz)
-    s['sun'] = sun_states
-    s['moon'] = moon.phase(date=dt)
-    return s
+# def sun_moon(dt):
+#     # Tagastab konkreetese kuupäeva (ajavööndi väärtusega) päikese- ja kuuandmed
+#     # Vana Astral
+#     # city_name = 'Tallinn'
+#     # a = Astral()
+#     # a.solar_depression = 'civil'
+#     # city = a[city_name]
+#     # s = {}
+#     # s['sun'] = city.sun(date=dt, local=True)
+#     # s['moon'] = a.moon_phase(date=dt)
+#     # Uus Astral
+#     tallinn_tz = timezone('Europe/Tallinn')
+#     city = LocationInfo("Valga", "Estonia", "Europe/Tallinn", 57.776944, 26.031111)
+#     s = {}
+#     sun_states = sun(city.observer, dt)
+#     for state in sun_states.keys():
+#         sun_states[state] = sun_states[state].astimezone(tallinn_tz)
+#     s['sun'] = sun_states
+#     s['moon'] = moon.phase(date=dt)
+#     return s
 
 
-def ilman2htus_yrnosymboliks(phenomenon, dt):
-    """
-    Tagastab symboli väärtuse vastavalt tabelile:
-    https://cdn.jsdelivr.net/gh/YR/weather-symbols@7.0.0/dist/svg/
-    prognoosi sümbolile lisatakse vastavalt päeva- või ööajale 'd' või 'n'
-    """
-    if phenomenon == None:
-        return None
-    phenomenon = phenomenon.lower()
-    phenomenons = {
-        'clear': '01',
-        'selge': '01',
-        'nähtusteta': '01',
-        'few clouds': '02',
-        'vähene pilvisus': '02',
-        'variable clouds': '03',
-        'poolpilves': '03',
-        'cloudy with clear spells': '03',
-        'peamiselt pilves': '03',
-        'cloudy': '04',
-        'pilves': '04',
-        'light snow shower': '44',
-        'nõrk hooglumi': '44',
-        'moderate snow shower': '08',
-        'mõõdukas hooglumi': '08',
-        'heavy snow shower': '45',
-        'tugev hooglumi': '08',
-        'light shower': '46',
-        'nõrk hoogvihm': '46',
-        'moderate shower': '09',
-        'mõõdukas hoogvihm': '09',
-        'heavy shower': '10',
-        'tugev hoogvihm': '10',
-        'light rain': '46',
-        'nõrk vihm': '46',
-        'moderate rain': '09',
-        'mõõdukas vihm': '09',
-        'vihm': '09',
-        'heavy rain': '10',
-        'tugev vihm': '10',
-        'glaze': '15',
-        'jäide': '15',
-        'jäätuv uduvihm': '15',
-        'jääkruubid': '15',
-        'light sleet': '47',
-        'nõrk lörtsisadu': '47',
-        'nõrk vihm koos lumega': '47',
-        'sademed': '47',
-        'moderate sleet': '12',
-        'mõõdukas lörtsisadu': '12',
-        'light snowfall': '44',
-        'nõrk lumesadu': '44',
-        'nõrk lumi': '44',
-        'moderate snowfall': '08',
-        'mõõdukas lumesadu': '08',
-        'lumi': '08',
-        'heavy snowfall': '45',
-        'tugev lumesadu': '45',
-        'blowing snow': '45',
-        'üldtuisk': '45',
-        'drifting snow': '44',
-        'pinnatuisk': '44',
-        'hail': '48',
-        'rahe': '48',
-        'mist': '15',
-        'uduvine': '15',
-        'fog': '15',
-        'udu': '15',
-        'thunder': '06',
-        'äike': '06',
-        'thunderstorm': '25',
-        'äikesevihm': '25'
-    }
-    if phenomenon in phenomenons:
-        symbol = phenomenons[phenomenon]
-    else:
-        symbol = None
-    # Kas lisada d või n vastavalt valgele või pimedale ajale
-    if symbol == None or symbol in [
-            '04', '09', '10', '11', '12', '13', '14', '15',
-            '22', '23', '30', '31', '32', '33', '34',
-            '46', '47', '48', '49', '50'
-            ]:
-        return symbol
-    sun = sun_moon(dt)['sun']
-    if dt > sun['sunrise'] and dt < sun['sunset']:
-        symbol = symbol + 'd'
-    else:
-        symbol = symbol + 'n'
-    return symbol
+# def ilman2htus_yrnosymboliks(phenomenon, dt):
+#     """
+#     Tagastab symboli väärtuse vastavalt tabelile:
+#     https://cdn.jsdelivr.net/gh/YR/weather-symbols@7.0.0/dist/svg/
+#     prognoosi sümbolile lisatakse vastavalt päeva- või ööajale 'd' või 'n'
+#     """
+#     if phenomenon == None:
+#         return None
+#     phenomenon = phenomenon.lower()
+#     phenomenons = {
+#         'clear': '01',
+#         'selge': '01',
+#         'nähtusteta': '01',
+#         'few clouds': '02',
+#         'vähene pilvisus': '02',
+#         'variable clouds': '03',
+#         'poolpilves': '03',
+#         'cloudy with clear spells': '03',
+#         'peamiselt pilves': '03',
+#         'cloudy': '04',
+#         'pilves': '04',
+#         'light snow shower': '44',
+#         'nõrk hooglumi': '44',
+#         'moderate snow shower': '08',
+#         'mõõdukas hooglumi': '08',
+#         'heavy snow shower': '45',
+#         'tugev hooglumi': '08',
+#         'light shower': '46',
+#         'nõrk hoogvihm': '46',
+#         'moderate shower': '09',
+#         'mõõdukas hoogvihm': '09',
+#         'heavy shower': '10',
+#         'tugev hoogvihm': '10',
+#         'light rain': '46',
+#         'nõrk vihm': '46',
+#         'moderate rain': '09',
+#         'mõõdukas vihm': '09',
+#         'vihm': '09',
+#         'heavy rain': '10',
+#         'tugev vihm': '10',
+#         'glaze': '15',
+#         'jäide': '15',
+#         'jäätuv uduvihm': '15',
+#         'jääkruubid': '15',
+#         'light sleet': '47',
+#         'nõrk lörtsisadu': '47',
+#         'nõrk vihm koos lumega': '47',
+#         'sademed': '47',
+#         'moderate sleet': '12',
+#         'mõõdukas lörtsisadu': '12',
+#         'light snowfall': '44',
+#         'nõrk lumesadu': '44',
+#         'nõrk lumi': '44',
+#         'moderate snowfall': '08',
+#         'mõõdukas lumesadu': '08',
+#         'lumi': '08',
+#         'heavy snowfall': '45',
+#         'tugev lumesadu': '45',
+#         'blowing snow': '45',
+#         'üldtuisk': '45',
+#         'drifting snow': '44',
+#         'pinnatuisk': '44',
+#         'hail': '48',
+#         'rahe': '48',
+#         'mist': '15',
+#         'uduvine': '15',
+#         'fog': '15',
+#         'udu': '15',
+#         'thunder': '06',
+#         'äike': '06',
+#         'thunderstorm': '25',
+#         'äikesevihm': '25'
+#     }
+#     if phenomenon in phenomenons:
+#         symbol = phenomenons[phenomenon]
+#     else:
+#         symbol = None
+#     # Kas lisada d või n vastavalt valgele või pimedale ajale
+#     if symbol == None or symbol in [
+#             '04', '09', '10', '11', '12', '13', '14', '15',
+#             '22', '23', '30', '31', '32', '33', '34',
+#             '46', '47', '48', '49', '50'
+#             ]:
+#         return symbol
+#     sun = sun_moon(dt)['sun']
+#     if dt > sun['sunrise'] and dt < sun['sunset']:
+#         symbol = symbol + 'd'
+#     else:
+#         symbol = symbol + 'n'
+#     return symbol
 
 def logi(dt, andmed, allikas):
     # Andmete kasutus konsooli

@@ -8,8 +8,8 @@ $(function(){
   function swipeHandler( event ){
     if(event.handled !== true) // This will prevent event triggering more then once
     {
-        $( "#forecast-hours" ).toggleClass( "w3-hide" );
-        $( "#forecast-days" ).toggleClass( "w3-hide" );
+        $( "#forecast-ilmateenistus" ).toggleClass( "w3-hide" );
+        $( "#forecast-yrno" ).toggleClass( "w3-hide" );
         event.handled = true;
     }
     return false;

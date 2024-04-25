@@ -7,7 +7,7 @@ from rest_framework import viewsets
 
 from .models import Ilm, Jaam
 from .serializers import IlmSerializer, JaamSerializer
-from .views import get_forecasts, get_ilmateenistus_now
+from ilm.utils.utils import get_forecasts, get_ilmateenistus_now
 
 class IlmFilter(filters.FilterSet):
     # Võimaldab API päringuid: http://18.196.203.237:8000/api/i/?m=2&y=2013&d=24&h=12

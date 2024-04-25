@@ -3,16 +3,17 @@
 <article class="max-w-sm mx-auto mt-5 bg-white rounded shadow">
   <section class="flex items-center justify-center">
     <table>
-    {% for hour in weather.history.hourly3h %}
+    {% for hour, data in history.items %}
       <tr>
-        <td>{{ hour.dt|timestamp_to_time|time:"H:i" }}</td>
-        <td class="temperature colored-{% if hour.temp > 0 %}positive{% else %}negative{% endif %}">{{ hour.temp|floatformat:1 }}°C</td>
-        <td class="rain {{ hour.precipitation_color }}">{{ hour.rain.1h|floatformat:1 }}</td>
-        <td>{{ hour.kirjeldus }}</td>
+        <td>{{ hour|time:"H:i" }}</td>
+        <td class="temperature colored-{% if data.airtemperature > 0 %}positive{% else %}negative{% endif %}">{{ data.airtemperature|floatformat:1 }}°C</td>
+        <td class="rain {{ data.precipitation_color }}"> {{ data.precipitations|floatformat:1 }}</td>
+{#        <td>{{ data.phenomenon }}</td>#}
         <td>
           <img
-            src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ hour.weather.0.icon }}.png"
-            alt="{{ hour.kirjeldus }}"
+{#            src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ hour.weather.0.icon }}.png"#}
+            src="https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/{{ data.symbol }}.svg"
+            alt="{{ data.phenomenon }}"
             width="32" height="32"
           />
         </td>
@@ -21,77 +22,101 @@
     </table>
   </section>
   <section class="mt-5 py-3 px-2 flex justify-around">
-    <p class="sunrise flex items-center">{{ weather.current.sunrise|timestamp_to_time|date:"H:i" }}</p>
+    <p class="{{ sun.previousevent.event }} flex items-center">{{ sun.previousevent.time|date:"H:i" }}</p>
     <p class="text-lg text-center text-gray-600">
-      <strong>{{ weather.current.dt|timestamp_to_time|date:"H:i" }}</strong>
+      <strong>{{ sun.current.time|date:"H:i" }}</strong>
     </p>
-    <p class="sunset flex items-center">{{ weather.current.sunset|timestamp_to_time|date:"H:i" }}
+    <p class="{{ sun.nextevent.event }} flex items-center">{{ sun.nextevent.time|date:"H:i" }}
   </section>
-  <p class="mt-1 text-lg text-gray-700 font-medium text-center">{{ weather.current.kirjeldus }}</p>
-
-  <section class="mt-5 py-3 px-2 flex justify-around text-gray-700">
-    <p class="wind flex items-center">{{ weather.current.wind_speed|floatformat:0 }} m/s</p>
-    <p class="humidity flex items-center">{{ weather.current.humidity }} %</p>
-    <p class="pressure flex items-center">{{ weather.current.pressure }} hPa</p>
-  </section>
-
+{#  <p class="mt-1 text-lg text-gray-700 font-medium text-center">{{ weather.current.kirjeldus }}</p>#}
   <section class="flex items-center justify-center">
     <img
-        src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{weather.current.weather.0.icon}}.png"
-        alt="{{ weather.current.kirjeldus }}"
+            src="https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/{{ current_weather.symbol }}.svg"
+{#            src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{weather.current.weather.0.icon}}.png"#}
+            alt="{{ current_weather.phenomenon }}"
+            width="128" height="128"
     />
-    <p class="font-bold text-5xl temperature colored-{% if weather.current.temp > 0 %}positive{% else %}negative{% endif %} ml-1 mr-4">{{ weather.current.temp|floatformat:1 }}°C</p>
+    <p class="font-bold text-5xl temperature colored-{% if current_weather.airtemperature > 0 %}positive{% else %}negative{% endif %} ml-1 mr-4">{{ current_weather.airtemperature|floatformat:1 }}°C</p>
+  </section>
+
+  <section class="mt-5 py-3 px-2 flex justify-around text-gray-700">
+    <p class="wind flex items-center">{{ current_weather.windspeed|floatformat:0 }} m/s</p>
+    <p class="humidity flex items-center">{{ current_weather.relativehumidity }} %</p>
+    <p class="pressure flex items-center">{{ current_weather.airpressure }} hPa</p>
   </section>
 
   <section class="flex items-center justify-center">
-    <div id="forecast-hours">
-    <table>
-    {% for hour in weather.hourly %}
-      {% if forloop.counter > 1 and forloop.counter < 14 %}
-      <tr>
-        <td>{{ hour.dt|timestamp_to_time|time:"H:i" }}</td>
-        <td class="temperature colored-{% if hour.temp > 0 %}positive{% else %}negative{% endif %}">{{ hour.temp|floatformat:1 }}°C</td>
-        <td class="rain {{ hour.precipitation_color }}">{{ hour.rain.1h|floatformat:1 }}</td>
-        <td>{{ hour.kirjeldus }}</td>
-        <td>
-          <img
-            src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ hour.weather.0.icon }}.png"
-            alt="{{ hour.kirjeldus }}"
-            width="32" height="32"
-          />
-        </td>
-      </tr>
-      {% endif %}
-    {% endfor %}
-    </table>
+    <div id="forecast-ilmateenistus">
+      <table>
+        {# Ilmateenistus #}
+        {% for timestamp, data in forecasts48h.items %}
+          <tr class="row">
+            <td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
+            <td
+                class="temperature">
+              <span class="temperature colored-{% if data.i_temp > 0 %}positive{% else %}negative{% endif %}">
+                {{ data.i_temp|floatformat:1 }}
+              </span>
+            </td>
+            <td class="w3-center">
+              <img
+                      src="https://www.ilmateenistus.ee/wp-content/themes/ilm2020/images/{{ data.i_icon }}.svg"
+                      alt="{{ data.i_icon }}"
+                      width="32" height="32"
+              />
+            </td>
+            <td class="rain {{ data.i_prec_color }}">{{ data.i_prec|floatformat:1 }}</td>
+          </tr>
+        {% endfor %}
+      </table>
     </div>
-    <div id="forecast-days" class="w3-hide">
-    <table>
-    {% for day in weather.daily %}
-      <tr>
-        <td>{{ day.dt|timestamp_to_time|date:"d.m" }}</td>
-        <td class="temperature">
-          <span class="temperature colored-{% if day.temp.min > 0 %}positive{% else %}negative{% endif %}">{{ day.temp.min|floatformat:1 }}</span>
-          -
-          <span class="temperature colored-{% if day.temp.max > 0 %}positive{% else %}negative{% endif %}">{{ day.temp.max|floatformat:1 }}</span>
-          °C
-        </td>
-        <td class="rain {{ day.precipitation_color }}">{{ day.rain|floatformat:1 }}</td>
-        <td>{{ day.kirjeldus }}</td>
-        <td>
-          <img
-            src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ day.weather.0.icon }}.png"
-            alt="{{ day.weather.0.description }}"
-            width="32" height="32"
-          />
-        </td>
-      </tr>
-    {% endfor %}
-    </table>
-</div>
+    <div id="forecast-yrno" class="w3-hide">
+      {# yr.no #}
+      <table>
+        {% for timestamp, data in forecasts48h.items %}
+          <tr class="row">
+            <td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
+            <td
+                    class="temperature">
+            <span class="temperature colored-{% if data.y_temp > 0 %}positive{% else %}negative{% endif %}">
+              {{ data.y_temp|floatformat:1 }}
+            </span>
+            </td>
+            <td class="w3-center">
+              <img
+                      src="{% static "" %}ilm/img/weathericon/svg/{{ data.y_icon }}.svg"
+                      alt="{{ data.y_icon }}"
+                      width="32" height="32"
+              />
+            </td>
+            <td class="rain {{ data.y_prec_color }}">{{ data.y_prec }}</td>
+          </tr>
+        {% endfor %}
+{#        {% for day in weather.daily %}#}
+{#          <tr>#}
+{#            <td>{{ day.dt|timestamp_to_time|date:"d.m" }}</td>#}
+{#            <td class="temperature">#}
+{#              <span class="temperature colored-{% if day.temp.min > 0 %}positive{% else %}negative{% endif %}">{{ day.temp.min|floatformat:1 }}</span>#}
+{#              -#}
+{#              <span class="temperature colored-{% if day.temp.max > 0 %}positive{% else %}negative{% endif %}">{{ day.temp.max|floatformat:1 }}</span>#}
+{#              °C#}
+{#            </td>#}
+{#            <td class="rain {{ day.precipitation_color }}">{{ day.rain|floatformat:1 }}</td>#}
+{#            <td>{{ day.kirjeldus }}</td>#}
+{#            <td>#}
+{#              <img#}
+{#                src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ day.weather.0.icon }}.png"#}
+{#                alt="{{ day.weather.0.description }}"#}
+{#                width="32" height="32"#}
+{#              />#}
+{#            </td>#}
+{#          </tr>#}
+{#        {% endfor %}#}
+      </table>
+    </div>
   </section>
 </article>
 
 <footer class="my-8 text-center">
-  Andmed: <a href="https://openweathermap.org/" class="text-yellow-900 hover:underline">Open Weather Map</a>.
+  Andmed: <a href="https://ilmateenistus.ee/" class="text-yellow-900 hover:underline">Ilmateenistus</a>.
 </footer>

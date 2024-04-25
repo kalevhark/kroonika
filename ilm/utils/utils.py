@@ -9,6 +9,9 @@ import urllib.request, urllib.error
 import xml.etree.ElementTree as ET
 from zoneinfo import ZoneInfo
 
+from astral import LocationInfo, moon
+from astral.sun import sun
+
 from bs4 import BeautifulSoup
 
 try:
@@ -19,6 +22,7 @@ except:
 import pytz
 import requests
 
+from ilm.models import Ilm
 import ilm.utils.ephem_util as ephem_data
 
 # OpenWeatherMaps ilmakoodid
@@ -97,6 +101,109 @@ def last_sunday(year, month):
     last_sunday = max(week[-1] for week in calendar.monthcalendar(year, month))
     return pytz.utc.localize(datetime(year, month, last_sunday))
 
+def sun_moon(dt):
+    # Tagastab konkreetese kuupäeva (ajavööndi väärtusega) päikese- ja kuuandmed
+    tallinn_tz = ZoneInfo('Europe/Tallinn')
+    city = LocationInfo("Valga", "Estonia", "Europe/Tallinn", 57.776944, 26.031111)
+    s = {}
+    sun_states = sun(city.observer, dt)
+    for state in sun_states.keys():
+        sun_states[state] = sun_states[state].astimezone(tallinn_tz)
+    s['sun'] = sun_states
+    s['moon'] = moon.phase(date=dt)
+    return s
+
+def ilman2htus_yrnosymboliks(phenomenon, dt):
+    """
+    Tagastab symboli väärtuse vastavalt tabelile:
+    https://cdn.jsdelivr.net/gh/YR/weather-symbols@7.0.0/dist/svg/
+    prognoosi sümbolile lisatakse vastavalt päeva- või ööajale 'd' või 'n'
+    """
+    if phenomenon == None:
+        return None
+    phenomenon = phenomenon.lower()
+    phenomenons = {
+        'clear': '01',
+        'selge': '01',
+        'nähtusteta': '01',
+        'few clouds': '02',
+        'vähene pilvisus': '02',
+        'variable clouds': '03',
+        'poolpilves': '03',
+        'cloudy with clear spells': '03',
+        'peamiselt pilves': '03',
+        'cloudy': '04',
+        'pilves': '04',
+        'light snow shower': '44',
+        'nõrk hooglumi': '44',
+        'moderate snow shower': '08',
+        'mõõdukas hooglumi': '08',
+        'heavy snow shower': '45',
+        'tugev hooglumi': '08',
+        'light shower': '46',
+        'nõrk hoogvihm': '46',
+        'moderate shower': '09',
+        'mõõdukas hoogvihm': '09',
+        'heavy shower': '10',
+        'tugev hoogvihm': '10',
+        'uduvihm': '46',
+        'light rain': '46',
+        'nõrk vihm': '46',
+        'moderate rain': '09',
+        'mõõdukas vihm': '09',
+        'vihm': '09',
+        'heavy rain': '10',
+        'tugev vihm': '10',
+        'glaze': '15',
+        'jäide': '15',
+        'jäätuv uduvihm': '15',
+        'jääkruubid': '15',
+        'light sleet': '47',
+        'nõrk lörtsisadu': '47',
+        'nõrk vihm koos lumega': '47',
+        'sademed': '47',
+        'moderate sleet': '12',
+        'mõõdukas lörtsisadu': '12',
+        'light snowfall': '44',
+        'nõrk lumesadu': '44',
+        'nõrk lumi': '44',
+        'moderate snowfall': '08',
+        'mõõdukas lumesadu': '08',
+        'lumi': '08',
+        'heavy snowfall': '45',
+        'tugev lumesadu': '45',
+        'blowing snow': '45',
+        'üldtuisk': '45',
+        'drifting snow': '44',
+        'pinnatuisk': '44',
+        'hail': '48',
+        'rahe': '48',
+        'mist': '15',
+        'uduvine': '15',
+        'fog': '15',
+        'udu': '15',
+        'thunder': '06',
+        'äike': '06',
+        'thunderstorm': '25',
+        'äikesevihm': '25'
+    }
+    if phenomenon in phenomenons:
+        symbol = phenomenons[phenomenon]
+    else:
+        symbol = None
+    # Kas lisada d või n vastavalt valgele või pimedale ajale
+    if symbol == None or symbol in [
+            '04', '09', '10', '11', '12', '13', '14', '15',
+            '22', '23', '30', '31', '32', '33', '34',
+            '46', '47', '48', '49', '50'
+            ]:
+        return symbol
+    sun = sun_moon(dt)['sun']
+    if dt > sun['sunrise'] and dt < sun['sunset']:
+        symbol = symbol + 'd'
+    else:
+        symbol = symbol + 'n'
+    return symbol
 
 # postgresql andmebaasi lugemiseks seadete lugemine .ini failist
 # The following config() function read the database.ini file and returns the connection parameters.
@@ -137,6 +244,7 @@ def ilm_praegu():
     # Mõõtmise aeg
     dt = datetime.fromtimestamp(int(root.attrib['timestamp']))
     i['timestamp'] = pytz.timezone('Europe/Tallinn').localize(dt)
+
     for el in station:
         for it in el:
             data = it.text
@@ -147,6 +255,7 @@ def ilm_praegu():
                               'phenomenon_observer']:
                 data = float_or_none(data)
             i[it.tag] = data
+    i['symbol'] = ilman2htus_yrnosymboliks(i['phenomenon'], i['timestamp'])
     return i
 
 # Ilmateenistuse veebist tunni max+min andmed
@@ -311,6 +420,22 @@ def ilmaandmed_veebist(dt, verbose=False):
         print(dt, andmed)
     return andmed
 
+def yrno_forecast():
+    # Weather forecast from Yr, delivered by the Norwegian Meteorological Institute and the NRK
+    href = "https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=57.78&lon=26.05"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
+        "Accept": "application/json"
+    }
+    r = requests.get(
+        href,
+        headers=headers,
+    )
+    print(r.status_code, r.text[:100])
+    yr = json.loads(r.text)
+    print(yr['properties']['timeseries'][0])
+    return yr
+
 def yrno_48h():
     # Weather forecast from Yr, delivered by the Norwegian Meteorological Institute and the NRK
     href = 'http://www.yr.no/place/Estonia/Valgamaa/Valga/forecast_hour_by_hour.xml'
@@ -405,6 +530,27 @@ def yrno_48h():
         'dt': dt,
     }
     return yr
+
+def get_ilmateenistus_history():
+    history = {}
+    n = datetime.now().astimezone(ZoneInfo('Europe/Tallinn'))
+    ilm_last3h = Ilm.objects.filter(timestamp__range=(n - timedelta(hours=3), n)).order_by('timestamp')
+    for hour in ilm_last3h:
+        history[hour.timestamp] = {}
+        history[hour.timestamp]['airtemperature'] = hour.airtemperature
+        history[hour.timestamp]['precipitations'] = hour.precipitations
+        history[hour.timestamp]['phenomenon'] = hour.phenomenon
+        history[hour.timestamp]['symbol'] = ilman2htus_yrnosymboliks(hour.phenomenon, hour.timestamp)
+        precipitation_color = 'none'
+        if hour.precipitations:
+            if hour.precipitations > 2:
+                precipitation_color = 'heavy'
+            elif hour.precipitations > 1:
+                precipitation_color = 'moderate'
+            elif hour.precipitations > 0:
+                precipitation_color = 'light'
+        history[hour.timestamp]['precipitation_color'] = precipitation_color
+    return history
 
 def owm_onecall(path=os.getcwd()):
     try:
@@ -516,6 +662,12 @@ def owm_onecall(path=os.getcwd()):
                 hour['precipitation_color'] = prec_color
     return weather
 
+# küsib Ilmateenistuse hetkeandmed
+def get_ilmateenistus_now():
+    # hetkeilm = bdi.ilm_praegu()
+    hetkeilm = ilm_praegu()
+    return hetkeilm
+
 def ilmateenistus_forecast():
     # url = "http://www.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php?locationId=8918&lang=et"
     # soup = BeautifulSoup(requests.get(url).content, "html.parser")
@@ -569,8 +721,6 @@ def ilmateenistus_forecast():
             'symbol': symbol
         }
     return {'forecast': forecast}
-
-
 
 # yrno API ver 2 andmete päring
 class YrnoAPI():
@@ -833,6 +983,82 @@ class YrnoAPI():
             return ''.join([new_symbol_code, dayornight])
         else:
             return ''
+
+# küsib ilmaandmed ja moodustab nendest sõnastiku
+def get_forecasts():
+    yAPI = YrnoAPI()
+    y = yAPI.yrno_forecasts
+    o = owm_onecall()
+    i = ilmateenistus_forecast()
+    now = datetime.now()
+    forecast = dict()
+
+    for forecast_hour in range(1, 48):
+        fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(hours=forecast_hour)
+        ref_dt = int(datetime.timestamp(fore_dt))
+
+        # yr.no
+        y_temp = None
+        y_prec = None
+        y_prec_color = ''
+        y_pres = None
+        y_icon = ''
+        y_data = y['forecast'].get(str(ref_dt), None)
+        if y_data:
+            y_temp = y_data['temperature']
+            y_icon = y_data['symbol']
+            y_prec = y_data['precipitation']
+            y_prec_color = y_data['precipitation_color']
+            y_pres = float_or_none(y_data['pressure'])
+        # openweathermaps.org
+        o_temp = None
+        o_prec = None
+        o_prec_color = ''
+        o_pres = None
+        o_icon = ''
+        o_data = o['forecast'].get(str(ref_dt), None)
+        if o_data:
+            o_temp = o_data['temp']
+            o_icon = o_data['weather'][0]['icon']
+            try:
+                o_prec = o_data['rain']['1h']
+            except:
+                o_prec = None
+            o_prec_color = o_data['precipitation_color']
+            o_pres = float_or_none(o_data['pressure'])
+
+        # ilmateenistus.ee
+        i_temp = None
+        i_prec = None
+        i_prec_color = ''
+        i_pres = None
+        i_icon = ''
+        i_data = i['forecast'].get(str(ref_dt), None)
+        if i_data:
+            i_temp = float_or_none(i_data['temperature'])
+            i_prec = i_data['precipitation']
+            i_prec_color = i_data['precipitation_color']
+            i_pres = float_or_none(i_data['pressure'])
+            i_icon = i_data['symbol']
+
+        forecast[str(ref_dt)] = {
+            'y_temp': y_temp,
+            'y_icon': y_icon,
+            'y_prec': str(y_prec),
+            'y_prec_color': y_prec_color,
+            'y_pres': y_pres,
+            'o_temp': o_temp,
+            'o_icon': o_icon,
+            'o_prec': str(o_prec),
+            'o_prec_color': o_prec_color,
+            'o_pres': o_pres,
+            'i_temp': i_temp,
+            'i_icon': i_icon,
+            'i_prec': str(i_prec),
+            'i_prec_color': i_prec_color,
+            'i_pres': i_pres,
+        }
+    return forecast
 
 if __name__ == "__main__":
     # ilmaandmed_veebist(datetime(2022, 7, 16, 22), verbose=True)

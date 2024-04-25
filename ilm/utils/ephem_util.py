@@ -36,6 +36,28 @@ def get_observer(date_loc=datetime.now(tz=tz_EE)):
     observer.date = date_utc
     return observer
 
+def get_sun_data(date_loc=datetime.now(tz=tz_EE), observer=None):
+    def sortbydate(e):
+        return e['time']
+
+    if observer is None:
+        observer = get_observer(date_loc)
+    s = ephem.Sun()
+    s.compute(observer)
+    events = [
+            {'time': date_loc, 'event': 'current'},
+            {'time': to_local(observer.next_rising(s)), 'event': 'sunrise'},
+            {'time': to_local(observer.previous_rising(s)), 'event': 'sunrise'},
+            {'time': to_local(observer.next_setting(s)), 'event': 'sunset'},
+            {'time': to_local(observer.previous_setting(s)), 'event': 'sunset'}
+        ]
+    events.sort(key=sortbydate)
+    return {
+        'previousevent': events[1],
+        'current': events[2],
+        'nextevent': events[3]
+    }
+
 def get_sun_str(date_loc, observer=None):
     if not observer:
         observer = get_observer(date_loc)

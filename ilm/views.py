@@ -143,12 +143,21 @@ def float_or_zero(value):
 
 def index(request):
     # Avalehekülg, kus näidatakse 24h ilmaajalugu + 48h prognoos
-    weather = utils.owm_onecall()
+    # weather = utils.owm_onecall()
     # ilm_ilmateenistus_now = get_ilmateenistus_now()
     # ilm_ilmateenistus_forecast = utils.ilmateenistus_forecast()
     # print(ilm_ilmateenistus_now)
+    history = utils.get_ilmateenistus_history()
+    sun = ephem_data.get_sun_data()
+    current_weather = utils.get_ilmateenistus_now()
+    forecasts48h = utils.get_forecasts()
+
     context = {
-        'weather': weather,
+        # 'weather': weather,
+        'history': history,
+        'sun': sun,
+        'current_weather': current_weather,
+        'forecasts48h': forecasts48h,
         # 'ilm_ilmateenistus_now': ilm_ilmateenistus_now,
         # 'ilm_ilmateenistus_forecast': ilm_ilmateenistus_forecast
     }
@@ -1625,64 +1634,65 @@ def container_history_kuud_aastatekaupa(request):
 #     }
 #     return yr
 
-def owm_onecall():
-    api_key = settings.OWM_APIKEY
-    city_id = 587876  # Valga
-    lon = '26.05'
-    lat = '57.78'
-    owm_url = 'https://api.openweathermap.org/data/2.5/'
-
-    # Hetkeandmed ja prognoos
-    params = {
-        'lat': lat,
-        'lon': lon,
-        'appid': api_key,
-        'units': 'metric',
-    }
-    resp = requests.get(
-        owm_url + 'onecall',
-        # headers=headers,
-        params=params
-    )
-    weather = json.loads(resp.text)
-
-    # Ajalugu
-    now = datetime.now()
-    dt = int(datetime.timestamp(datetime(now.year, now.month, now.day, now.hour)))
-    params['dt'] = dt
-    resp = requests.get(
-        owm_url + 'onecall/timemachine',
-        # headers=headers,
-        params=params
-    )
-    weather['history'] = json.loads(resp.text)
-
-    if weather:
-        # weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
-        weather['current']['kirjeldus'] = OWM_CODES.get(
-            str(weather['current']['weather'][0]['id']),
-            weather['current']['weather'][0]['description']
-        )
-        for hour in weather['hourly']:
-            # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
-            hour['kirjeldus'] = OWM_CODES.get(
-                str(hour['weather'][0]['id']),
-                hour['weather'][0]['description']
-            )
-        for day in weather['daily']:
-            # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
-            day['kirjeldus'] = OWM_CODES.get(
-                str(day['weather'][0]['id']),
-                day['weather'][0]['description']
-            )
-        weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
-        for hour in weather['history']['hourly']:
-            # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
-            hour['kirjeldus'] = OWM_CODES.get(
-                str(hour['weather'][0]['id']),
-                hour['weather'][0]['description']
-            )
-    return weather
+# kasutusest v2ljas alates juuni 2024 TODO: cleanup
+# def owm_onecall():
+#     api_key = settings.OWM_APIKEY
+#     city_id = 587876  # Valga
+#     lon = '26.05'
+#     lat = '57.78'
+#     owm_url = 'https://api.openweathermap.org/data/2.5/'
+#
+#     # Hetkeandmed ja prognoos
+#     params = {
+#         'lat': lat,
+#         'lon': lon,
+#         'appid': api_key,
+#         'units': 'metric',
+#     }
+#     resp = requests.get(
+#         owm_url + 'onecall',
+#         # headers=headers,
+#         params=params
+#     )
+#     weather = json.loads(resp.text)
+#
+#     # Ajalugu
+#     now = datetime.now()
+#     dt = int(datetime.timestamp(datetime(now.year, now.month, now.day, now.hour)))
+#     params['dt'] = dt
+#     resp = requests.get(
+#         owm_url + 'onecall/timemachine',
+#         # headers=headers,
+#         params=params
+#     )
+#     weather['history'] = json.loads(resp.text)
+#
+#     if weather:
+#         # weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
+#         weather['current']['kirjeldus'] = OWM_CODES.get(
+#             str(weather['current']['weather'][0]['id']),
+#             weather['current']['weather'][0]['description']
+#         )
+#         for hour in weather['hourly']:
+#             # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+#             hour['kirjeldus'] = OWM_CODES.get(
+#                 str(hour['weather'][0]['id']),
+#                 hour['weather'][0]['description']
+#             )
+#         for day in weather['daily']:
+#             # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
+#             day['kirjeldus'] = OWM_CODES.get(
+#                 str(day['weather'][0]['id']),
+#                 day['weather'][0]['description']
+#             )
+#         weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
+#         for hour in weather['history']['hourly']:
+#             # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+#             hour['kirjeldus'] = OWM_CODES.get(
+#                 str(hour['weather'][0]['id']),
+#                 hour['weather'][0]['description']
+#             )
+#     return weather
 
 def mitutundi(algus, l6pp):
     # Tagastab kahe kuupäeva vahe tundides
@@ -2225,91 +2235,9 @@ def mixed_ilmateade(request):
         chart = get_mixed_ilmateade(request)
     return JsonResponse(chart)
 
-# küsib Ilmateenistuse hetkeandmed
-def get_ilmateenistus_now():
-    # hetkeilm = bdi.ilm_praegu()
-    hetkeilm = utils.ilm_praegu()
-    return hetkeilm
-
-# küsib ilmaandmed ja moodustab nendest sõnastiku
-def get_forecasts():
-    yAPI = utils.YrnoAPI()
-    y = yAPI.yrno_forecasts
-    o = utils.owm_onecall()
-    i = utils.ilmateenistus_forecast()
-    now = datetime.now()
-    forecast = dict()
-
-    for forecast_hour in range(1, 48):
-        fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(hours=forecast_hour)
-        ref_dt = int(datetime.timestamp(fore_dt))
-
-        # yr.no
-        y_temp = None
-        y_prec = None
-        y_prec_color = ''
-        y_pres = None
-        y_icon = ''
-        y_data = y['forecast'].get(str(ref_dt), None)
-        if y_data:
-            y_temp = y_data['temperature']
-            y_icon = y_data['symbol']
-            y_prec = y_data['precipitation']
-            y_prec_color = y_data['precipitation_color']
-            y_pres = float_or_none(y_data['pressure'])
-        # openweathermaps.org
-        o_temp = None
-        o_prec = None
-        o_prec_color = ''
-        o_pres = None
-        o_icon = ''
-        o_data = o['forecast'].get(str(ref_dt), None)
-        if o_data:
-            o_temp = o_data['temp']
-            o_icon = o_data['weather'][0]['icon']
-            try:
-                o_prec = o_data['rain']['1h']
-            except:
-                o_prec = None
-            o_prec_color = o_data['precipitation_color']
-            o_pres = float_or_none(o_data['pressure'])
-
-        # ilmateenistus.ee
-        i_temp = None
-        i_prec = None
-        i_prec_color = ''
-        i_pres = None
-        i_icon = ''
-        i_data = i['forecast'].get(str(ref_dt), None)
-        if i_data:
-            i_temp = float_or_none(i_data['temperature'])
-            i_prec = i_data['precipitation']
-            i_prec_color = i_data['precipitation_color']
-            i_pres = float_or_none(i_data['pressure'])
-            i_icon = i_data['symbol']
-
-        forecast[str(ref_dt)] = {
-            'y_temp': y_temp,
-            'y_icon': y_icon,
-            'y_prec': str(y_prec),
-            'y_prec_color': y_prec_color,
-            'y_pres': y_pres,
-            'o_temp': o_temp,
-            'o_icon': o_icon,
-            'o_prec': str(o_prec),
-            'o_prec_color': o_prec_color,
-            'o_pres': o_pres,
-            'i_temp': i_temp,
-            'i_icon': i_icon,
-            'i_prec': str(i_prec),
-            'i_prec_color': i_prec_color,
-            'i_pres': i_pres,
-        }
-    return forecast
-
 # veebiversioon
 def forecasts(request):
-    forecast = get_forecasts()
+    forecast = utils.get_forecasts()
     context = {
         'forecast': forecast
     }
@@ -2317,7 +2245,7 @@ def forecasts(request):
 
 # API versioon
 def forecasts_api(request):
-    forecast = get_forecasts()
+    forecast = utils.get_forecasts()
     return JsonResponse(forecast)
 
 from ilm.utils import forecast_log_analyze
