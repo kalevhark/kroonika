@@ -51,7 +51,7 @@
     <div id="forecast-ilmateenistus">
       <table>
         {# Ilmateenistus #}
-        {% for timestamp, data in forecasts48h.items %}
+        {% for timestamp, data in forecasts.items %}
           <tr class="row">
             <td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
             <td
@@ -71,6 +71,9 @@
           </tr>
         {% endfor %}
       </table>
+      <div class="w3-row w3-padding">
+        Prognoos: <a href="https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates=57.774765;26.033153" target="_blank">ilmateenistus.ee</a>
+      </div>
     </div>
     <div id="forecast-yrno" class="w3-hide">
       {# yr.no #}
@@ -115,10 +118,13 @@
 {#          </tr>#}
 {#        {% endfor %}#}
       </table>
+      <div class="w3-row w3=padding">
+        Prognoos: <a href="https://www.yr.no/en/forecast/daily-table/2-587876/Estonia/Valgamaa/Valga%20vald/Valga" target="_blank">yr.no</a>
+      </div>
     </div>
   </section>
 </article>
 
 <footer class="my-8 text-center">
-  Andmed: <a href="https://ilmateenistus.ee/" class="text-yellow-900 hover:underline">Ilmateenistus</a>.
+  Mõõtmised: <a href="https://ilmateenistus.ee/" class="text-yellow-900 hover:underline">ilmateenistus.ee</a>
 </footer>

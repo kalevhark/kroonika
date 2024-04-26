@@ -985,7 +985,7 @@ class YrnoAPI():
             return ''
 
 # küsib ilmaandmed ja moodustab nendest sõnastiku
-def get_forecasts():
+def get_forecasts(hours=48):
     yAPI = YrnoAPI()
     y = yAPI.yrno_forecasts
     o = owm_onecall()
@@ -993,7 +993,7 @@ def get_forecasts():
     now = datetime.now()
     forecast = dict()
 
-    for forecast_hour in range(1, 48):
+    for forecast_hour in range(1, hours):
         fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(hours=forecast_hour)
         ref_dt = int(datetime.timestamp(fore_dt))
 
