@@ -78,7 +78,7 @@
     <div id="forecast-yrno" class="w3-hide">
       {# yr.no #}
       <table>
-        {% for timestamp, data in forecasts48h.items %}
+        {% for timestamp, data in forecasts.items %}
           <tr class="row">
             <td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
             <td
