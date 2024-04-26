@@ -24,18 +24,20 @@
   <section class="mt-5 py-3 px-2 flex justify-around">
     <p class="{{ sun.previousevent.event }} flex items-center">{{ sun.previousevent.time|date:"H:i" }}</p>
     <p class="text-lg text-center text-gray-600">
-      <strong>{{ sun.current.time|date:"H:i" }}</strong>
+      <strong>{{ current_weather.timestamp|date:"H:i" }}</strong>
     </p>
     <p class="{{ sun.nextevent.event }} flex items-center">{{ sun.nextevent.time|date:"H:i" }}
   </section>
 {#  <p class="mt-1 text-lg text-gray-700 font-medium text-center">{{ weather.current.kirjeldus }}</p>#}
   <section class="flex items-center justify-center">
-    <img
-            src="https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/{{ current_weather.symbol }}.svg"
-{#            src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{weather.current.weather.0.icon}}.png"#}
-            alt="{{ current_weather.phenomenon }}"
-            width="128" height="128"
-    />
+    {% if current_weather.phenomenon %}
+      <img
+              src="https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/{{ current_weather.symbol }}.svg"
+  {#            src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{weather.current.weather.0.icon}}.png"#}
+              alt="{{ current_weather.phenomenon }}"
+              width="128" height="128"
+      />
+    {% endif %}
     <p class="font-bold text-5xl temperature colored-{% if current_weather.airtemperature > 0 %}positive{% else %}negative{% endif %} ml-1 mr-4">{{ current_weather.airtemperature|floatformat:1 }}°C</p>
   </section>
 
