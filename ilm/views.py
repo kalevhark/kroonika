@@ -1825,7 +1825,7 @@ def get_mixed_ilmateade(request):
         'prognoos:' + 
         # '<a href="https://www.yr.no/place/Estonia/Valgamaa/Valga/hour_by_hour.html" target="_blank">yr.no</a>:'
         '<a href="https://www.yr.no/en/forecast/daily-table/2-587876/Estonia/Valgamaa/Valga%20vald/Valga" target="_blank">yr.no</a>' +
-        ', <a href="https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates=57.774765;26.033153" target="_blank">ilmateenistus.ee</a>' + '; '
+        ', <a href="https://www.ilmateenistus.ee/ilm/prognoosid/asukoha-prognoos/?coordinates=57.776678;26.030958" target="_blank">ilmateenistus.ee</a>' + '; '
     )
 
     # Graafiku kujundamine

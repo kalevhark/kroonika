@@ -120,7 +120,8 @@ def ilman2htus_yrnosymboliks(phenomenon, dt):
     prognoosi sümbolile lisatakse vastavalt päeva- või ööajale 'd' või 'n'
     """
     if phenomenon == None:
-        return None
+        # return None
+        phenomenon = 'nähtusteta'
     phenomenon = phenomenon.lower()
     phenomenons = {
         'clear': '01',
