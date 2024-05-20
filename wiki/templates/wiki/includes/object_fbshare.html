@@ -86,21 +86,6 @@
     $('#shareQRCodeModal_{{ object.id }}').fadeOut(200, "linear");
   }
 
-  {#function showQRCodeModal(uri) {#}
-  {#  $.ajax(#}
-  {#    {#}
-  {#      type: "GET",#}
-  {#      url: "{% url 'wiki:get_qrcode_from_uri' %}",#}
-  {#      data: {'uri': uri},#}
-  {#      success: function(response) {#}
-  {#        $("#qrcode").attr('src', response);#}
-  {#      }#}
-  {#     }#}
-  {#  )#}
-	{#	var x = document.getElementById("shareQRCodeModal_{{ object.id }}");#}
-  {#  x.style.display='block';#}
-	// {#}#}
-
   function showShareQRCodeOptions(evt) {
     uri = evt.dataset.uri;
     openQRCodeModal(uri);

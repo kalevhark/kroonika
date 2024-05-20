@@ -1204,6 +1204,86 @@ def isik_trigram_word_similarity(nimi):
     for isik in isikud[:10]:
         print(isik.nimi(), isik.similarity)
 
+from PIL import Image, ImageOps, ImageDraw
+import qrcode
+import qrcode.image.svg
+from qrcode.image.styledpil import StyledPilImage
+from qrcode.image.styles.moduledrawers.pil import RoundedModuleDrawer
+
+def add_corners(im, rad):
+    circle = Image.new('L', (rad * 2, rad * 2), 0)
+    draw = ImageDraw.Draw(circle)
+    draw.ellipse((0, 0, rad * 2 - 1, rad * 2 - 1), fill=255)
+    alpha = Image.new('L', im.size, 255)
+    w, h = im.size
+    alpha.paste(circle.crop((0, 0, rad, rad)), (0, 0))
+    alpha.paste(circle.crop((0, rad, rad, rad * 2)), (0, h - rad))
+    alpha.paste(circle.crop((rad, 0, rad * 2, rad)), (w - rad, 0))
+    alpha.paste(circle.crop((rad, rad, rad * 2, rad * 2)), (w - rad, h - rad))
+    im.putalpha(alpha)
+    return im
+
+def get_qrcode_from_uri():
+    # uri = request.GET.get('uri')
+    uri = 'https://www.valgagym.ee/vilistlased/annetus/'
+    # taking image which user wants
+    # in the QR code center
+    Logo_link = settings.BASE_DIR / 'wiki/static/wiki/img/special/vg.png'
+
+    logo = Image.open(Logo_link)
+    new_image = Image.new("RGBA", logo.size, "WHITE")  # Create a white rgba background
+    new_image.paste(logo, (0, 0), logo)  # Paste the image on the background. Go to the links given below for details.
+    # new_image.convert('RGB').save('test.jpg', "JPEG")  # Save as JPEG
+    logo = new_image
+
+    # taking base width
+    basewidth = 1000
+
+    # adjust image size
+    wpercent = (basewidth / float(logo.size[0]))
+    hsize = int((float(logo.size[1]) * float(wpercent)))
+    logo = logo.resize((basewidth - 300, hsize - 300), Image.LANCZOS)
+    logo = ImageOps.expand(logo, border=50, fill='white')
+    QRcode = qrcode.QRCode(
+        box_size=100,
+        error_correction=qrcode.constants.ERROR_CORRECT_H
+    )
+
+    # adding URL or text to QRcode
+    QRcode.add_data(uri)
+
+    # generating QR code
+    QRcode.make()
+
+    # taking color name from user
+    QRcolor = '#4ea9dc'
+
+    # adding color to QR code
+    QRimg = QRcode.make_image(
+        fill_color=QRcolor,
+        back_color="white",
+        # image_factory=StyledPilImage, module_drawer=RoundedModuleDrawer()
+    ).convert('RGB')
+
+    # set size of QR code
+    pos = ((QRimg.size[0] - logo.size[0]) // 2,
+           (QRimg.size[1] - logo.size[1]) // 2)
+    QRimg.paste(logo, pos)
+
+    QRimg = add_corners(QRimg, 500)
+
+    # save the QR code generated
+    QRimg.save('gfg_QR.png')
+
+    # print('QR code generated!')
+    # stream = BytesIO()
+    # QRimg.save(stream, "PNG")
+
+    # image_data = base64.b64encode(stream.getvalue()).decode('utf-8')
+    # im = Image.open('gfg_QR.png')
+    # im = add_corners(im, 500)
+    # im.save('gfg_QR_rounded.png')
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()

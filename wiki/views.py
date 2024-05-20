@@ -44,7 +44,7 @@ import django_filters
 from django_filters.views import FilterView
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageDraw
 import qrcode
 import qrcode.image.svg
 import requests
@@ -2706,6 +2706,19 @@ def get_kaardiobjekt_leaflet(request, kaardiobjekt_id):
     map_html = make_kaardiobjekt_leaflet(kaardiobjekt_id)
     return HttpResponse(map_html)
 
+def add_corners(im, rad):
+    circle = Image.new('L', (rad * 2, rad * 2), 0)
+    draw = ImageDraw.Draw(circle)
+    draw.ellipse((0, 0, rad * 2 - 1, rad * 2 - 1), fill=255)
+    alpha = Image.new('L', im.size, 255)
+    w, h = im.size
+    alpha.paste(circle.crop((0, 0, rad, rad)), (0, 0))
+    alpha.paste(circle.crop((0, rad, rad, rad * 2)), (0, h - rad))
+    alpha.paste(circle.crop((rad, 0, rad * 2, rad)), (w - rad, 0))
+    alpha.paste(circle.crop((rad, rad, rad * 2, rad * 2)), (w - rad, h - rad))
+    im.putalpha(alpha)
+    return im
+
 def get_qrcode_from_uri(request):
     uri = request.GET.get('uri')
     # taking image which user wants
@@ -2742,12 +2755,17 @@ def get_qrcode_from_uri(request):
 
     # adding color to QR code
     QRimg = QRcode.make_image(
-        fill_color=QRcolor, back_color="white").convert('RGB')
+        fill_color=QRcolor,
+        back_color="white"
+    ).convert('RGB')
 
     # set size of QR code
     pos = ((QRimg.size[0] - logo.size[0]) // 2,
            (QRimg.size[1] - logo.size[1]) // 2)
     QRimg.paste(logo, pos)
+
+    # round corners
+    QRimg = add_corners(QRimg, 50)
 
     # save the QR code generated
     # QRimg.save('gfg_QR.png')
