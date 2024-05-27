@@ -30,7 +30,7 @@ from django.db.models import \
     Value, IntegerField, \
     ExpressionWrapper
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
-from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse, QueryDict
+from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, QueryDict
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
@@ -945,36 +945,38 @@ def get_update_object_with_object(request):
 # Kuupäeva väljalt võetud andmete põhjal suunatakse kuupäevavaatesse
 #
 def mine_krono_kp(request):
-    if not (request.method == 'POST' and check_recaptcha(request)):
-        return redirect('wiki:info')
-
-    kuup2ev = request.POST.get('kuup2ev').split('-')
-
-    return HttpResponseRedirect(
-        reverse(
-            'wiki:artikkel_day_archive',
-            kwargs={'year': kuup2ev[0], 'month': kuup2ev[1], 'day': kuup2ev[2]})
-        )
-
+    if request.method == 'POST' and check_recaptcha(request):
+        try:
+            kuup2ev = request.POST.get('kuup2ev').split('-')
+            return HttpResponseRedirect(
+                reverse(
+                    'wiki:artikkel_day_archive',
+                    kwargs={'year': kuup2ev[0], 'month': kuup2ev[1], 'day': kuup2ev[2]})
+                )
+        except:
+            pass
+    return HttpResponseBadRequest("Kuupäev valimata.")
 #
 # Kuupäeva väljalt võetud andmete põhjal suunatakse kuuvaatesse
 #
 def mine_krono_kuu(request):
-    http_referer = request.META['HTTP_REFERER']  # mis objektilt tuli päring
+    # http_referer = request.META['HTTP_REFERER']  # mis objektilt tuli päring
     if request.method == 'POST' and check_recaptcha(request):
-        year = request.POST.get('year')
-        month = request.POST.get('month')
-        return HttpResponseRedirect(
-            reverse(
-                'wiki:artikkel_month_archive',
-                kwargs={
-                    'year': year,
-                    'month': month
-                }
+        try:
+            year = request.POST.get('year')
+            month = request.POST.get('month')
+            return HttpResponseRedirect(
+                reverse(
+                    'wiki:artikkel_month_archive',
+                    kwargs={
+                        'year': year,
+                        'month': month
+                    }
+                )
             )
-        )
-    else:
-        return HttpResponseRedirect(http_referer)
+        except:
+            pass
+    return HttpResponseBadRequest("Aasta ja kuu valimata.")
 
 #
 # Kuupäeva väljalt võetud andmete põhjal suunatakse aastavaatesse
