@@ -11,7 +11,7 @@ from ipwhois import IPWhois, HTTPLookupError
 import pandas as pd
 import pytz
 
-pd.set_option('display.max_columns', 4)
+# pd.set_option('display.max_columns', 4)
 
 # subclass JSONEncoder
 class DateTimeEncoder(json.JSONEncoder):
@@ -265,7 +265,7 @@ def show_calc_results(log_df_filtered):
     print(result)
     print()
 
-    print('status')
+    print('status for bots')
     result = log_df_filtered[log_df_filtered.apply(is_bot, axis=1)] \
         .groupby('status')['size'] \
         .agg(['sum', 'count']) \
