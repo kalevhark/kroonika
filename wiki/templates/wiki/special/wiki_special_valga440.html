@@ -257,7 +257,7 @@
 {% endblock %}
 
 {% block og_image %}
-  <meta property="og:image" content="https://valgalinn.ee/media/pildid/2024/05/27/DIGAR_68021_1.jpg" />
+  <meta property="og:image" content="{% static 'wiki/img/special/DIGAR_68021_1_colorized_1200x600_text.png' %}" />
 {% endblock %}
 
 {% block content %}
@@ -267,9 +267,10 @@
       Valga linn 440 - Palju õnne!
     </h3>
     <img
-        src="https://valgalinn.ee/media/pildid/2024/05/27/DIGAR_68021_1.jpg"
-        alt="Walk: üldwaade: Meesreaalgümnaasium (ESTER b2513498x)"
-        title="Walk: üldwaade: Meesreaalgümnaasium (ESTER b2513498x)"
+{#        src="https://valgalinn.ee/media/pildid/2024/05/27/DIGAR_68021_1.jpg"#}
+        src="{% static 'wiki/img/special/DIGAR_68021_1_colorized.png' %}"
+        alt="Walk: üldwaade: Meesreaalgümnaasium (ESTER b2513498x)  (koloreeritud palette.fm AI abil)"
+        title="Walk: üldwaade: Meesreaalgümnaasium (ESTER b2513498x)  (koloreeritud palette.fm AI abil)"
         class="pilt-detail-440"
         style="width:100%"
     >
@@ -282,7 +283,7 @@
     </div>
 
     <p style="text-align: center;">
-      Walk: üldwaade: Meesreaalgümnaasium (ESTER b2513498x)
+      Walk: üldwaade: Meesreaalgümnaasium (ESTER b2513498x) (koloreeritud palette.fm AI abil)
     </p>
     {% include 'wiki/includes/object_fbshare.html' %}
     <div class="after"></div>
