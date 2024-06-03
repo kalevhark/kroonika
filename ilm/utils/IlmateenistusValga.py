@@ -178,12 +178,11 @@ def logi(dt, andmed, allikas):
     else:
         print()
 
-
 class IlmateenistusData():
     """
     Andmed Ilmateenistuse andmebaasist ja nende töötlused
     """
-    
+
     def __init__(self):
         # Lähteandmed vormides
         dt = pytz.timezone('Europe/Tallinn').localize(datetime.now())

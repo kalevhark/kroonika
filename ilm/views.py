@@ -30,7 +30,9 @@ from ilm.utils import utils, IlmateenistusValga
 import ilm.utils.ephem_util as ephem_data
 # import ilm.utils.utils
 
-bdi = IlmateenistusValga.IlmateenistusData()
+from asgiref.sync import async_to_sync
+
+bdi = async_to_sync(IlmateenistusValga.IlmateenistusData())
 
 KUUD = [
     '', # Tühi selleks et kuunumber=indeks
