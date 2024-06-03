@@ -76,6 +76,7 @@
     </a>
     {% if obj.vanus|divisibleby:"5" %}
       &nbsp;&nbsp;<span class="text-organisatsioon"><b>{{ obj.vanus }}</b></span>
+      {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
     {% endif %}
   {% endfor %}
 {% endif %}
