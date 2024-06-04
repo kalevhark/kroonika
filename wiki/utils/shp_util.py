@@ -38,7 +38,7 @@ OVERPASS_URL = "http://overpass-api.de/api/interpreter"
 
 DEFAULT_CENTER = settings.DEFAULT_CENTER
 DEFAULT_MAP_AASTA = settings.DEFAULT_MAP_AASTA
-DEFAULT_MAP = Kaart.objects.aget(aasta=settings.DEFAULT_MAP_AASTA) # Vaikimisi OpenStreetMap
+DEFAULT_MAP = Kaart.objects.get(aasta=settings.DEFAULT_MAP_AASTA) # Vaikimisi OpenStreetMap
 DEFAULT_MAP_ZOOM_START = settings.DEFAULT_MAP_ZOOM_START
 DEFAULT_MIN_ZOOM = settings.DEFAULT_MIN_ZOOM
 
