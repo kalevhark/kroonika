@@ -476,7 +476,7 @@ def _get_algus_isikud(request, p2ev, kuu, aasta):
         a['sel_p2eval'] = isik_qs.filter(
             dob__day=p2ev,
             dob__month=kuu
-        )
+        ).order_by('hist_year')
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = isik_qs. \
             filter(dob__month=kuu). \
@@ -512,7 +512,7 @@ def _get_algus_organisatsioonid(request, p2ev, kuu, aasta):
         a['sel_p2eval'] = organisatsioon_qs.filter(
             dob__day=p2ev,
             dob__month=kuu
-        )
+        ).order_by('hist_year')
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = organisatsioon_qs. \
             filter(dob__month=kuu). \
@@ -539,7 +539,7 @@ def _get_algus_objektid(request, p2ev, kuu, aasta):
         a['sel_p2eval'] = objekt_qs.filter(
             dob__day = p2ev,
             dob__month = kuu
-        )
+        ).order_by('hist_year')
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
         a['sel_kuul'] = objekt_qs.\
             filter(dob__month = kuu).\
