@@ -680,7 +680,14 @@ def ilmateenistus_forecast():
     # url = "http://vana.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php/?coordinates=57.7747649934758;26.0331527813654"
     # url = "https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates=57.777614;26.036913"
     url = "https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates=57.774765;26.033153"
-    r = requests.get(url)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
+        "Accept": "application/json"
+    }
+    r = requests.get(
+        url,
+        headers=headers
+    )
     data = json.loads(r.text)
     hours = [hour for hour in data['forecast']['tabular']['time']]
 
