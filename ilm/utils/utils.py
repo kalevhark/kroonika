@@ -669,22 +669,32 @@ def get_ilmateenistus_now():
     hetkeilm = ilm_praegu()
     return hetkeilm
 
-def ilmateenistus_forecast():
-    # url = "http://www.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php?locationId=8918&lang=et"
-    # soup = BeautifulSoup(requests.get(url).content, "html.parser")
+def get_ilmateenistus_location_data(headers):
+    url = 'https://www.ilmateenistus.ee/wp-json/emhi/locationAutocomplete?location=Valga%20linn'
+    params = {
+        "location": "Valga linn"
+    }
+    response = requests.get(
+        url,
+        headers=headers,
+        params=params
+    )
+    data = json.loads(response.text)
+    return data
 
-    # pattern = re.compile(r"callback\((.*)\);", re.DOTALL)
-    # matches = pattern.search(soup.text)
-    # data = json.loads(matches.group(1))
-    # url = "http://www.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php/?coordinates=57.7747649934758;26.0331527813654"
-    # url = "http://vana.ilmateenistus.ee/wp-content/themes/emhi2013/meteogram.php/?coordinates=57.7747649934758;26.0331527813654"
-    # url = "https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates=57.777614;26.036913"
-    # url = "https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates=57.774765;26.033153"
-    url = "https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates=57.776678;26.030958"
+def ilmateenistus_forecast():
     headers = {
         "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
         "Accept": "application/json"
     }
+    # t2psustame asukoha
+    try:
+        location_data = get_ilmateenistus_location_data(headers=headers)
+        coordinates = location_data['data'][0]['coordinates']
+    except KeyError:
+        coordinates = '57.776678;26.030958' # fallback if location not found
+    url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates={coordinates}"
+
     r = requests.get(
         url,
         headers=headers
