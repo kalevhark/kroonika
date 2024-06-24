@@ -35,6 +35,26 @@ SPECIAL_OBJECTS = {
     ]
 }
 
+class ServevErrorViewTestClass(TestCase):
+    def test_error_page_500(self):
+        self.client.raise_request_exception = False
+        response = self.client.get(reverse('error-page'))
+        self.assertEqual(response.status_code, 500)
+        self.assertTrue(
+            'Serveriviga'
+            in response.content.decode('utf8')
+        )
+
+    def test_error_page_404(self):
+        factory = RequestFactory()
+        request = factory.get('/')
+        response = self.client.get('/polesellist')
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(
+            'Lehekülge ei leitud'
+            in response.content.decode('utf8')
+        )
+
 class WikiBaseUrlTests(TestCase):
     def setUp(self) -> None:
         # Every test needs access to the request factory.
