@@ -67,6 +67,9 @@ urlpatterns = [
     # path("__debug__/", include("debug_toolbar.urls")), # https://django-debug-toolbar.readthedocs.io
 ]
 
+#error handling
+from django.conf.urls import handler500
+handler500 = 'wiki.views.custom_500'
 
 # Haldusliidese pealkirjad
 admin.site.site_header = 'valgalinn.ee sisuhaldus'

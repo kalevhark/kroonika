@@ -69,6 +69,10 @@ from wiki.utils.shp_util import (
 
 TMP_ALGUSKUVA = Path(tempfile.gettempdir()) / '_valgalinn.ee_algus.tmp'
 
+# Error Handling Templates
+def custom_500(request):
+    return render(request,'500.html', status=500)
+
 #
 # reCAPTCHA kontrollifunktsioon
 #
