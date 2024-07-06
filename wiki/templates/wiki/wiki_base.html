@@ -44,14 +44,16 @@
     {% endif %}
     <!-- JSON-LD markup -->
     {% include 'wiki/wiki_base/wiki_base_json-ld.html' %}
-    {# Global site tag (gtag.js) - Google Analytics #}
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZDC8C4519H"></script>
+      
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-ZDC8C4519H');
+      gtag('config', 'UA-151102639-1');
     </script>
+
     {# Laetavad moodulid#}
     <!-- jQuery -->
     {% block jquery_src %}
