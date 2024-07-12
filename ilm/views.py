@@ -2502,8 +2502,10 @@ def maxmin(request):
         m = dt.month
         d = dt.day
         h = dt.hour
-        avg_1y_delta = round(row[1] - histAvg, 1)
-        # avg_5y_delta = round(row[2] - histAvg, 1)
+        if (row_count - 365) > index:
+            avg_1y_delta = round(row[1] - histAvg, 1)
+        else:  # ääreperioodi ujuv ei ole korrektne
+            avg_1y_delta = ''
         if (row_count - 365 * 5) > index:
             avg_5y_delta = round(row[2] - histAvg, 1)
         else: # ääreperioodi ujuv ei ole korrektne
