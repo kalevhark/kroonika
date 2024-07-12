@@ -616,7 +616,7 @@ def update_maxmin_rolling(path=''):
                                     ORDER BY
                                         "ilm_ilm"."timestamp" ASC
                                     -- ROWS BETWEEN 365*24/2-1 PRECEDING AND 365*24/2 FOLLOWING
-                                    ROWS BETWEEN 365*24 PRECEDING
+                                    ROWS BETWEEN 365*24 PRECEDING AND CURRENT ROW
                                 ) AS "rolling_avg_1y" FROM "ilm_ilm"
                     ORDER BY
                         "ilm_ilm"."timestamp" DESC) AS rolling
@@ -629,14 +629,6 @@ def update_maxmin_rolling(path=''):
             COMMIT;
         """
         cur.execute(query)
-
-        # query = """
-        #     REFRESH MATERIALIZED VIEW public.ilm_ilm_rolling_1y
-        #         WITH DATA;
-        # """
-        # cur.execute(query)
-        # stages['3'] = datetime.now() - start
-        # print(stages['3'].seconds)
 
         query = """
             DROP MATERIALIZED VIEW IF EXISTS public.ilm_ilm_rolling_5y;
@@ -654,7 +646,7 @@ def update_maxmin_rolling(path=''):
                                     ORDER BY
                                         "ilm_ilm"."timestamp" ASC
                                     -- ROWS BETWEEN 5*365*24/2-1 PRECEDING AND 5*365*24/2 FOLLOWING
-                                    ROWS BETWEEN 5*365*24 PRECEDING
+                                    ROWS BETWEEN 5*365*24 PRECEDING AND CURRENT ROW
                                 ) AS "rolling_avg_5y" FROM "ilm_ilm"
                     ORDER BY
                         "ilm_ilm"."timestamp" DESC) AS rolling

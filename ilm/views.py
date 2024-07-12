@@ -2495,10 +2495,6 @@ def maxmin(request):
         [el[1] for el in years_rolling_5y]
     ))
 
-    for index, item in enumerate(years_rolling):
-        if index < 10:
-            print(item)
-
     # row_count = len(years_rolling)
     for index, row in enumerate(years_rolling):
         dt = row[0]
@@ -2517,7 +2513,6 @@ def maxmin(request):
         # else: # ääreperioodi ujuv ei ole korrektne
         #     avg_5y_delta = ''
         chartdata_rolling_year_avg += f'\n{y}-{m}-{d} {h}:00,{avg_1y_delta},{avg_5y_delta}'
-
 
     context = {
         'years_top': years_top,
