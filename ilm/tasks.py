@@ -615,7 +615,8 @@ def update_maxmin_rolling(path=''):
                                 (
                                     ORDER BY
                                         "ilm_ilm"."timestamp" ASC
-                                    ROWS BETWEEN 365*24/2-1 PRECEDING AND 365*24/2 FOLLOWING
+                                    -- ROWS BETWEEN 365*24/2-1 PRECEDING AND 365*24/2 FOLLOWING
+                                    ROWS BETWEEN 365*24 PRECEDING
                                 ) AS "rolling_avg_1y" FROM "ilm_ilm"
                     ORDER BY
                         "ilm_ilm"."timestamp" DESC) AS rolling
@@ -652,7 +653,8 @@ def update_maxmin_rolling(path=''):
                                 (
                                     ORDER BY
                                         "ilm_ilm"."timestamp" ASC
-                                    ROWS BETWEEN 5*365*24/2-1 PRECEDING AND 5*365*24/2 FOLLOWING
+                                    -- ROWS BETWEEN 5*365*24/2-1 PRECEDING AND 5*365*24/2 FOLLOWING
+                                    ROWS BETWEEN 5*365*24 PRECEDING
                                 ) AS "rolling_avg_5y" FROM "ilm_ilm"
                     ORDER BY
                         "ilm_ilm"."timestamp" DESC) AS rolling

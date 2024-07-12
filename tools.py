@@ -1196,11 +1196,12 @@ def test_queryset_timeit():
 
 from django.contrib.postgres.search import TrigramSimilarity
 def isik_trigram_word_similarity(nimi):
-    isikud = Isik.objects.daatumitega(request=None).annotate(isikunimi = Concat('eesnimi', 'perenimi')).annotate(
-        similarity = TrigramSimilarity("isikunimi", nimi),
-    ).filter(
-        similarity__gt = 0.3
-    ).order_by("-similarity")
+    nimi = nimi.replace(' ', '')
+    isikud = Isik.objects.daatumitega(request=None). \
+        annotate(isikunimi = Concat('eesnimi', 'perenimi')). \
+        annotate(similarity = TrigramSimilarity("isikunimi", nimi)). \
+        filter(similarity__gt = 0.3). \
+        order_by("-similarity")
     for isik in isikud[:10]:
         print(isik.nimi(), isik.similarity)
 
