@@ -1657,7 +1657,8 @@ Social Icons by https://codepen.io/thalseth
 }
 
 .icon-link.fill.twitter {
-  background-color: #00aced;
+  /*background-color: #00aced;*/
+  background-color: #fff;
 }
 .icon-link.fill.twitter:hover {
   background-color: #fff;
@@ -1718,7 +1719,8 @@ Social Icons by https://codepen.io/thalseth
   border: 2px solid #007bb6;
 }
 .icon-link:hover.twitter {
-  border: 2px solid #00aced;
+  /*border: 2px solid #00aced;*/
+  border: 2px solid #333;
 }
 .icon-link:hover.envelope {
   border: 2px solid #333;
