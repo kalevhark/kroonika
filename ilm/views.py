@@ -2495,7 +2495,7 @@ def maxmin(request):
         [el[1] for el in years_rolling_5y]
     ))
 
-    # row_count = len(years_rolling)
+    row_count = len(years_rolling)
     for index, row in enumerate(years_rolling):
         dt = row[0]
         y = dt.year
@@ -2503,15 +2503,11 @@ def maxmin(request):
         d = dt.day
         h = dt.hour
         avg_1y_delta = round(row[1] - histAvg, 1)
-        avg_5y_delta = round(row[2] - histAvg, 1)
-        # if (row_count - 365 / 2) > index and index > (365 / 2):
-        #     avg_1y_delta = round(row[1] - histAvg, 1)
-        # else: # ääreperioodi ujuv ei ole korrektne
-        #     avg_1y_delta = ''
-        # if (row_count - 365 * 5 / 2) > index and index > (365 * 5 / 2):
-        #     avg_5y_delta = round(row[2] - histAvg, 1)
-        # else: # ääreperioodi ujuv ei ole korrektne
-        #     avg_5y_delta = ''
+        # avg_5y_delta = round(row[2] - histAvg, 1)
+        if (row_count - 365 * 5) > index:
+            avg_5y_delta = round(row[2] - histAvg, 1)
+        else: # ääreperioodi ujuv ei ole korrektne
+            avg_5y_delta = ''
         chartdata_rolling_year_avg += f'\n{y}-{m}-{d} {h}:00,{avg_1y_delta},{avg_5y_delta}'
 
     context = {
