@@ -17,7 +17,7 @@
       <h5>
 
         {% if object.hist_date or object.hist_year or object.synd_koht %}
-          <i class="fa fa-asterisk"></i>
+          <i class="fa fa-child"></i>
           {% if object.hist_date %}
             <strong>{% include 'wiki/includes/kp.html' with sd=object.dob cs='isik' %}</strong>
             {% include 'wiki/includes/date_vkjukj.html' with d=object.hist_date cs='isik' %}
