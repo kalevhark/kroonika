@@ -905,10 +905,9 @@ def get_big_maps_default(kaardid, obj, aasta):
     feature_groups_kaardid = {} # erinevate aastate kaardid
 
     for kaart in kaardid:
-        # kaart_aasta = kaart.aasta
-
         # loome kaardikihi
-        name = f'<span class="kaart-control-layers" style="color: #A9A9A9;">{kaart.aasta}</span>' # darkgrey
+        # name = f'<span class="kaart-control-layers" style="color: #A9A9A9;">{kaart.aasta}</span>' # darkgrey
+        name = f'<span class="kaart-control-layers">{kaart.aasta}</span>'
         feature_group = folium.FeatureGroup(
             name=name,
             overlay=False,
@@ -968,28 +967,6 @@ def get_big_maps_default(kaardid, obj, aasta):
 
     # Lisame tuvastatud kaardiobjektid kaartidele
     map = add_kaardiobjektid2map(map, kaardid)
-
-    # # Piirid tänapäeval
-    # style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
-    # with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
-    #     src = json.load(gf)
-    #     geojson = folium.GeoJson(
-    #         src,
-    #         name=f'<span class="kaart-control-layers">linnapiirid (2021)</span>',
-    #         style_function=lambda x: style1,
-    #     )
-    #     geojson.add_to(map)
-    #
-    # # Tänavatevõrk tänapäeval
-    # style2 = {'fill': None, 'color': 'orange', 'weight': 2}
-    # with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
-    #     src = json.load(gf)
-    #     geojson = folium.GeoJson(
-    #         src,
-    #         name=f'<span class="kaart-control-layers">tänavad (2021)</span>',
-    #         style_function=lambda x: style2,
-    #     )
-    #     geojson.add_to(map)
 
     # Piirid tänapäeval
     vectorlayer_borders = get_vectorlayer_borders()
