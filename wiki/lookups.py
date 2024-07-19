@@ -12,15 +12,6 @@ from .models import (
     Kaardiobjekt
 )
 
-# TRANSLATION = {
-#     'w': '[vw]',
-#     'v': '[vw]',
-#     'y': '[yi]',
-#     'i': '[yi',
-#     's': '[sšz]',
-#     'š': '[sšz]',
-#     'z': '[sšz]'
-# }
 TRANSLATION = settings.TRANSLATION
 
 @ajax_select.register('artiklid')
@@ -145,6 +136,7 @@ class ViideLookup(LookupChannel):
     model = Viide
 
     def get_query(self, q, request):
+        q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
         queryset = self.model.objects.annotate(
             full_viide=Concat(
@@ -161,7 +153,7 @@ class ViideLookup(LookupChannel):
             )
         ).order_by('-id')
         for split in splits:
-            queryset = queryset.filter(full_viide__icontains=split)
+            queryset = queryset.filter(full_viide__iregex=split)
         return queryset[:20]
 
     def format_match(self, item):
