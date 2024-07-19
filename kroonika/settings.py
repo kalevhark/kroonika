@@ -327,6 +327,8 @@ TRANSLATION = {
     'a': '[aā]',
     'ņ': '[nņ]',
     'n': '[nņ]',
+    'k': '[ck]',
+    'c': '[ck]'
 }
 
 # Kasutamiseks genereeritud piltidel
