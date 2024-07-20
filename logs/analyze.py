@@ -6,12 +6,16 @@ import re
 import sys
 import time as timer
 import urllib.request
+import warnings
 
 from ipwhois import IPWhois, HTTPLookupError
 import pandas as pd
 import pytz
 
 # pd.set_option('display.max_columns', 4)
+warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=DeprecationWarning)
+
 
 # subclass JSONEncoder
 class DateTimeEncoder(json.JSONEncoder):
