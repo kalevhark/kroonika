@@ -25,6 +25,7 @@ class Ilm(models.Model):
     airtemperature_max = models.DecimalField('Õhutemperatuur tunni max (°C)', max_digits=4, decimal_places=1, blank=True, null=True)
     airtemperature_min = models.DecimalField('Õhutemperatuur tunni min (°C)', max_digits=4, decimal_places=1, blank=True, null=True)
 
+
     def __repr__(self):
         return str(self.timestamp)
 

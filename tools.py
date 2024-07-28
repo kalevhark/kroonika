@@ -1285,6 +1285,80 @@ def get_qrcode_from_uri():
     # im = add_corners(im, 500)
     # im.save('gfg_QR_rounded.png')
 
+# ilmaandmete täiendamiseks ilmateenistus.ee veebilehelt
+from datetime import datetime, timezone
+import numpy as np
+from ilm.models import Jaam, Ilm
+def update_ilmaandmed(aasta=2024):
+    print('Loeme faili...')
+    # Alusfail "C:\Users\kalev\Documents\itiasjad\django\kroonika\Valga-2004-juuni-2024.xlsx"
+    df_bigdata = pd.read_excel("Valga-2004-juuni-2024.xlsx", header=2)
+    df = df_bigdata[df_bigdata['Aasta']==aasta]
+    print('Kontrollime kandeid...')
+    jaam = 'Valga'
+    j = Jaam.objects.filter(name=jaam).first()
+    for i in range(df.shape[0]):
+        if i%10_000 == 0:
+            print(i)
+        y = df.iloc[i]['Aasta']
+        m = df.iloc[i]['Kuu']
+        d = df.iloc[i]['Päev']
+        t = df.iloc[i]['Kell (UTC)']
+        timestamp = datetime(y, m, d, t.hour, t.minute, tzinfo=timezone.utc)
+        row = dict()
+        row['station'] = j  # lisame seose andmebaasiga Jaam
+        row['timestamp'] = timestamp
+        airpressure = df.iloc[i]['Õhurõhk jaama kõrgusel hPa']
+        if not np.isnan(airpressure):
+            row['airpressure'] = airpressure
+        precipitations = df.iloc[i]['Tunni sademete summa mm']
+        if not np.isnan(precipitations):
+            row['precipitations'] = precipitations
+        relativehumidity = df.iloc[i]['Suhteline õhuniiskus %']
+        if not np.isnan(relativehumidity):
+            row['relativehumidity'] = df.iloc[i]['Suhteline õhuniiskus %']
+        airtemperature = df.iloc[i]['Õhutemperatuur °C']
+        if not np.isnan(airtemperature):
+            row['airtemperature'] = airtemperature
+        airtemperature_min = df.iloc[i]['Tunni miinimum õhutemperatuur °C']
+        if not np.isnan(airtemperature_min):
+            row['airtemperature_min'] = airtemperature_min
+        airtemperature_max = df.iloc[i]['Tunni maksimum õhutemperatuur °C']
+        if not np.isnan(airtemperature_max):
+            row['airtemperature_max'] = airtemperature_max
+        winddirection = df.iloc[i]['10 minuti keskmine tuule suund °']
+        if not np.isnan(winddirection):
+            row['winddirection'] = winddirection
+        windspeed = df.iloc[i]['10 minuti keskmine tuule kiirus m/s']
+        if not np.isnan(windspeed):
+            row['windspeed'] = windspeed
+        windspeedmax = df.iloc[i]['Tunni maksimum tuule kiirus m/s']
+        if not np.isnan(windspeedmax):
+            row['windspeedmax'] = windspeedmax
+        ilm_vana = Ilm.objects.filter(timestamp=timestamp).first()
+        if isinstance(ilm_vana, Ilm):
+            if not np.isnan(airtemperature) and ilm_vana.airtemperature == None:
+                ilm_vana.airtemperature = row['airtemperature']
+                ilm_vana.save(update_fields=["airtemperature"])
+                print('Uuendatud airtemperature', timestamp)
+            if not np.isnan(airtemperature_min) and ilm_vana.airtemperature_min == None:
+                ilm_vana.airtemperature_min = row['airtemperature_min']
+                ilm_vana.save(update_fields=["airtemperature_min"])
+                print('Uuendatud airtemperature_min', timestamp)
+            if not np.isnan(airtemperature_max) and ilm_vana.airtemperature_max == None:
+                ilm_vana.airtemperature_max = row['airtemperature_max']
+                ilm_vana.save(update_fields=["airtemperature_max"])
+                print('Uuendatud airtemperature_max', timestamp)
+            if not np.isnan(precipitations) and ilm_vana.precipitations == None:
+                ilm_vana.precipitations = row['precipitations']
+                ilm_vana.save(update_fields=["precipitations"])
+                print('Uuendatud precipitations', timestamp)
+        else:
+            print("Lisame: ", timestamp)
+            ilm_uus = Ilm(**row)
+            ilm_uus.save()
+
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
