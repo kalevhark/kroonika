@@ -22,7 +22,8 @@ def to_local(ephem_date):
 
 def get_direction(angle):
     angle = int(angle)
-    directions = ['N', 'NW', 'W', 'SW', 'S', 'SE', 'E', 'NE']
+    # directions = ['N', 'NW', 'W', 'SW', 'S', 'SE', 'E', 'NE']
+    directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
     angle = (angle + 360) if (angle // 360) < 0 else angle
     return directions[angle // 45 % 8]
 
