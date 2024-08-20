@@ -259,6 +259,7 @@ class PiltArtikkelInline(AjaxSelectAdminTabularInline):
 #
 class IsikOrganisatsioonInline(AjaxSelectAdminTabularInline):
     model = Isik.organisatsioonid.through
+    ordering = ("isik",)
     extra = 1
     # template = 'admin/edit_inline/tabular_pilt.html'
     form = make_ajax_form(Isik.organisatsioonid.through, {
