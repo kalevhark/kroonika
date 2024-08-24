@@ -699,47 +699,52 @@ def ilmateenistus_forecast():
         url,
         headers=headers
     )
-    data = json.loads(r.text)
-    hours = [hour for hour in data['forecast']['tabular']['time']]
+    if r.status_code == requests.codes.ok:
+        data = json.loads(r.text)
 
-    forecast = dict()
-    for hour in hours:
-        time = pytz.timezone('Europe/Tallinn').localize(
-            datetime.strptime(hour['@attributes']['from'], '%Y-%m-%dT%H:%M:%S'))
-        timestamp = int(datetime.timestamp(time))
-        try:
-            prec_maxvalue = float(hour['precipitation']['@attributes']['value'])
-        except:
-            prec_maxvalue = 0
-        if prec_maxvalue > 2:
-            prec_color = 'heavy'
-        elif prec_maxvalue > 1:
-            prec_color = 'moderate'
-        elif prec_maxvalue > 0:
-            prec_color = 'light'
-        else:
-            prec_color = 'none'
-        PHENOMEN_ICONS_24H = [ # ilmaikoon samasugune p2eval ja öösel
-            'overcast', 'moderate_rain',
-            'light_snowfall', 'moderate_snowfall',
-            'light_sleet', 'moderate_sleet',
-        ]
-        if hour['phenomen']['@attributes']['className'] in PHENOMEN_ICONS_24H:
-            symbol = hour['phenomen']['@attributes']['className']
-        else:
-            symbol = '_'.join([hour['phenomen']['@attributes']['className'], ephem_data.get_dayornight(time)])
-        forecast[str(timestamp)] = {
-            'time': time,
-            'phenomen': hour['phenomen']['@attributes'],
-            'windDirection': hour['windDirection']['@attributes'],
-            'windSpeed': hour['windSpeed']['@attributes']['mps'],
-            'temperature': hour['temperature']['@attributes']['value'],
-            'precipitation': hour['precipitation']['@attributes']['value'],
-            'precipitation_color': prec_color,
-            'pressure': hour['pressure']['@attributes']['value'],
-            'symbol': symbol
-        }
-    return {'forecast': forecast}
+        hours = [hour for hour in data['forecast']['tabular']['time']]
+
+        forecast = dict()
+        for hour in hours:
+            time = pytz.timezone('Europe/Tallinn').localize(
+                datetime.strptime(hour['@attributes']['from'], '%Y-%m-%dT%H:%M:%S'))
+            timestamp = int(datetime.timestamp(time))
+            try:
+                prec_maxvalue = float(hour['precipitation']['@attributes']['value'])
+            except:
+                prec_maxvalue = 0
+            if prec_maxvalue > 2:
+                prec_color = 'heavy'
+            elif prec_maxvalue > 1:
+                prec_color = 'moderate'
+            elif prec_maxvalue > 0:
+                prec_color = 'light'
+            else:
+                prec_color = 'none'
+            PHENOMEN_ICONS_24H = [ # ilmaikoon samasugune p2eval ja öösel
+                'overcast', 'moderate_rain',
+                'light_snowfall', 'moderate_snowfall',
+                'light_sleet', 'moderate_sleet',
+            ]
+            if hour['phenomen']['@attributes']['className'] in PHENOMEN_ICONS_24H:
+                symbol = hour['phenomen']['@attributes']['className']
+            else:
+                symbol = '_'.join([hour['phenomen']['@attributes']['className'], ephem_data.get_dayornight(time)])
+            forecast[str(timestamp)] = {
+                'time': time,
+                'phenomen': hour['phenomen']['@attributes'],
+                'windDirection': hour['windDirection']['@attributes'],
+                'windSpeed': hour['windSpeed']['@attributes']['mps'],
+                'temperature': hour['temperature']['@attributes']['value'],
+                'precipitation': hour['precipitation']['@attributes']['value'],
+                'precipitation_color': prec_color,
+                'pressure': hour['pressure']['@attributes']['value'],
+                'symbol': symbol
+            }
+        return {'forecast': forecast}
+    else: # korrektset ilmaennustust ei saadud
+        print(r.status_code, r.text)
+        return None
 
 # yrno API ver 2 andmete päring
 class YrnoAPI():

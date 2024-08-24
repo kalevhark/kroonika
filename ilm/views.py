@@ -1778,22 +1778,28 @@ def get_mixed_ilmateade(request):
     yAPI = utils.YrnoAPI()
     andmed_j2rgnevad48h_yrno = yAPI.yrno_forecasts
 
-    andmed_j2rgnevad48h_ilmateenistus = utils.ilmateenistus_forecast()['forecast']
-    andmed_j2rgnevad48h_ilmateenistus_temperatures = [
-        float_or_none(andmed_j2rgnevad48h_ilmateenistus[hour]['temperature'])
-        for hour
-        in andmed_j2rgnevad48h_ilmateenistus
-    ][:48]
-    andmed_j2rgnevad48h_ilmateenistus_pressures = [
-        float_or_none(andmed_j2rgnevad48h_ilmateenistus[hour]['pressure'])
-        for hour
-        in andmed_j2rgnevad48h_ilmateenistus
-    ][:48]
-    andmed_j2rgnevad48h_ilmateenistus_phenomen = [
-        andmed_j2rgnevad48h_ilmateenistus[hour]['phenomen']['className']
-        for hour
-        in andmed_j2rgnevad48h_ilmateenistus
-    ][:48]
+    andmed_j2rgnevad48h_ilmateenistus_data = utils.ilmateenistus_forecast()
+    if andmed_j2rgnevad48h_ilmateenistus_data:
+        andmed_j2rgnevad48h_ilmateenistus = andmed_j2rgnevad48h_ilmateenistus_data['forecast']
+        andmed_j2rgnevad48h_ilmateenistus_temperatures = [
+            float_or_none(andmed_j2rgnevad48h_ilmateenistus[hour]['temperature'])
+            for hour
+            in andmed_j2rgnevad48h_ilmateenistus
+        ][:48]
+        andmed_j2rgnevad48h_ilmateenistus_pressures = [
+            float_or_none(andmed_j2rgnevad48h_ilmateenistus[hour]['pressure'])
+            for hour
+            in andmed_j2rgnevad48h_ilmateenistus
+        ][:48]
+        andmed_j2rgnevad48h_ilmateenistus_phenomen = [
+            andmed_j2rgnevad48h_ilmateenistus[hour]['phenomen']['className']
+            for hour
+            in andmed_j2rgnevad48h_ilmateenistus
+        ][:48]
+    else:
+        andmed_j2rgnevad48h_ilmateenistus_temperatures = [None] * 48
+        andmed_j2rgnevad48h_ilmateenistus_pressures = [None] * 48
+        andmed_j2rgnevad48h_ilmateenistus_phenomen = [None] * 48
 
     # Pimeda aja varjutused
     andmed_nighttime = nighttime2(c[0], c[-1])

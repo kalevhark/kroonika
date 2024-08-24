@@ -426,3 +426,6 @@ LEAFLET_DEFAULT_JS = [
 # https://github.com/django-crispy-forms/crispy-bootstrap4
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap4",)
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# Redis server in use?
+REDIS_INUSE = True
