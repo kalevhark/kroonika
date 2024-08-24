@@ -429,3 +429,4 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 # Redis server in use?
 REDIS_INUSE = True
+REDIS_HOST = config['redis'].get('HOST', fallback='localhost')

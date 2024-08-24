@@ -791,6 +791,9 @@ if __name__ == '__main__':
     now = datetime.now()
 
     if now.minute % 5 == 0: # Iga 5 minuti j2rel teeme ilm avalehe salvestuse
+        # uuendame ilmateenistuse prognoosi
+        utils.ilmateenistus_forecast()
+        # teeme automaatse lehe laadimise
         factory = RequestFactory()
         # Create an instance of a GET request.
         request = factory.get('/')

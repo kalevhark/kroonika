@@ -14,13 +14,27 @@ from astral.sun import sun
 
 from bs4 import BeautifulSoup
 
-try:
-    from django.core.cache import cache
-except:
-    pass
+import django
+from django.conf import settings
+from django.core.cache import cache
+from django.core.serializers.json import DjangoJSONEncoder
+
+if __name__ == "__main__":
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
+    django.setup()
+
+# try:
+#     from django.core.cache import cache
+#     from django.core.serializers.json import DjangoJSONEncoder
+# except:
+#     pass
 
 import pytz
+import redis
 import requests
+
+if settings.REDIS_INUSE:
+    redis_client = redis.Redis(host=settings.REDIS_HOST, port=6379, db=0)
 
 from ilm.models import Ilm
 import ilm.utils.ephem_util as ephem_data
@@ -682,7 +696,8 @@ def get_ilmateenistus_location_data(headers):
     data = json.loads(response.text)
     return data
 
-def ilmateenistus_forecast():
+
+def get_ilmateenistus_forecast() -> dict or None:
     headers = {
         "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
         "Accept": "application/json"
@@ -695,12 +710,12 @@ def ilmateenistus_forecast():
         coordinates = '57.776678;26.030958' # fallback if location not found
     url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates={coordinates}"
 
-    r = requests.get(
+    response = requests.get(
         url,
         headers=headers
     )
-    if r.status_code == requests.codes.ok:
-        data = json.loads(r.text)
+    if response.status_code == requests.codes.ok:
+        data = json.loads(response.text)
 
         hours = [hour for hour in data['forecast']['tabular']['time']]
 
@@ -741,10 +756,24 @@ def ilmateenistus_forecast():
                 'pressure': hour['pressure']['@attributes']['value'],
                 'symbol': symbol
             }
+            if settings.REDIS_INUSE:
+                redis_client.set(
+                    'ilmateenistus_forecast',
+                    json.dumps({'forecast': forecast}, cls=DjangoJSONEncoder),
+                    ex=10*60
+                )
         return {'forecast': forecast}
     else: # korrektset ilmaennustust ei saadud
-        print(r.status_code, r.text)
+        print(response.status_code, response.text)
         return None
+
+def ilmateenistus_forecast() -> dict or None:
+    if settings.REDIS_INUSE and redis_client.exists('ilmateenistus_forecast'):
+        forecast_jsondumps = redis_client.get('ilmateenistus_forecast')
+        forecast = json.loads(forecast_jsondumps)
+    else:
+        forecast = get_ilmateenistus_forecast()
+    return forecast
 
 # yrno API ver 2 andmete päring
 class YrnoAPI():
