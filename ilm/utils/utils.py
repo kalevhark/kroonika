@@ -707,7 +707,7 @@ def get_ilmateenistus_forecast() -> dict or None:
     try:
         location_data = get_ilmateenistus_location_data(headers=headers)
         coordinates = location_data['data'][0]['coordinates']
-    except KeyError:
+    except:
         coordinates = '57.776678;26.030958' # fallback if location not found
     url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates={coordinates}"
 
