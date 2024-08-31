@@ -765,7 +765,7 @@ def get_ilmateenistus_forecast() -> dict or None:
                 )
         return {'forecast': forecast}
     else: # korrektset ilmaennustust ei saadud
-        print(response.status_code, response.text)
+        print(url, response.status_code)
         return None
 
 def ilmateenistus_forecast() -> dict or None:
