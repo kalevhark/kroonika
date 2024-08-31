@@ -84,6 +84,7 @@ class SeleniumTestsChromeBase(StaticLiveServerTestCase):
         # cls.selenium = webdriver.Chrome(service=service)
         service = Service()
         options = webdriver.ChromeOptions()
+        options.add_argument("--disable-search-engine-choice-screen")
         cls.selenium = webdriver.Chrome(service=service, options=options)
         cls.selenium.implicitly_wait(10)
         cls.USERNAME = config['superuser']['USERNAME']

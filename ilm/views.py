@@ -9,7 +9,8 @@ import django
 from django.conf import settings
 import pandas as pd
 import pytz
-import requests
+import redis
+# import requests
 
 if __name__ == "__main__":
     # from django.test.utils import setup_test_environment
@@ -29,6 +30,9 @@ from ilm.models import Ilm
 from ilm.utils import utils, IlmateenistusValga
 import ilm.utils.ephem_util as ephem_data
 # import ilm.utils.utils
+
+if settings.REDIS_INUSE:
+    redis_client = redis.Redis(host=settings.REDIS_HOST, port=6379, db=0)
 
 bdi = IlmateenistusValga.IlmateenistusData()
 
@@ -2217,28 +2221,27 @@ def get_mixed_ilmateade(request):
 
     # Hetketemperatuur
     chart['airtemperatures'] = andmed_eelnevad24h['airtemperatures']
+
     if settings.TMP_ALGUSKUVA_CACHE and isinstance(request.user, AnonymousUser):
-        with open(TMP_ALGUSKUVA, 'w', encoding='utf-8') as f:
-            json.dump(chart, f)
+        if settings.REDIS_INUSE: # salvestame redisesse
+            redis_client.set(
+                'ilmateenistus_mixed_ilmateade_chart',
+                json.dumps(chart),
+                ex=5 * 60
+            )
+        else: # salvestame faili
+            with open(TMP_ALGUSKUVA, 'w', encoding='utf-8') as f:
+                json.dump(chart, f)
     return chart
 
 def mixed_ilmateade(request):
-    if all(
-        [
-            settings.TMP_ALGUSKUVA_CACHE,
-            os.path.isfile(TMP_ALGUSKUVA),
-            isinstance(request.user, AnonymousUser)
-        ]
-    ):
-        filestat = os.stat(TMP_ALGUSKUVA)
-        now = datetime.now()
-        if now.timestamp() - filestat.st_mtime < 300: # vähem kui 5 minutit vana avakuva salvestus
-            with open(TMP_ALGUSKUVA, 'r', encoding='utf-8') as f:
-                chart = json.load(f)
-        else:
-            chart = get_mixed_ilmateade(request)
-    else:
-        chart = get_mixed_ilmateade(request)
+    if settings.TMP_ALGUSKUVA_CACHE and isinstance(request.user, AnonymousUser):
+        if settings.REDIS_INUSE and redis_client.exists('ilmateenistus_mixed_ilmateade_chart'):
+            chart_jsondumps = redis_client.get('ilmateenistus_mixed_ilmateade_chart')
+            chart = json.loads(chart_jsondumps)
+            return JsonResponse(chart)
+
+    chart = get_mixed_ilmateade(request)
     return JsonResponse(chart)
 
 # veebiversioon

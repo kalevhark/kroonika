@@ -677,10 +677,9 @@ def algus(request):
         if now.timestamp() - filestat.st_mtime < 60: # vähem kui minut vana avakuva salvestus
             with open(TMP_ALGUSKUVA, 'r', encoding='utf-8') as f:
                 response_content = f.read()
-        else:
-            response_content = _get_algus(request)
-    else:
-        response_content = _get_algus(request)
+            return HttpResponse(response_content)
+
+    response_content = _get_algus(request)
     return HttpResponse(response_content)
 
 #

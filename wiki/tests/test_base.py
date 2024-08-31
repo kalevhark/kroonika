@@ -85,10 +85,10 @@ class WikiBaseUrlTests(TestCase):
     def test_home_page_returns_correct_html(self):
         # request = HttpRequest()
         response = views.algus(self.request)
-        html = response.content.decode('utf8')
+        html = response.content.decode('utf8').rstrip()
         self.assertTrue(html.startswith('<!DOCTYPE html>'))
         # self.assertIn('<title>Valga linna kroonika</title>', html)
-        self.assertTrue(html.endswith('</html>'))
+        self.assertTrue(html.endswith('</html>'), msg=html[-10:])
 
 
 class WikiBaseViewTests(TestCase):

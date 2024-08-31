@@ -693,8 +693,9 @@ def get_ilmateenistus_location_data(headers):
         headers=headers,
         params=params
     )
-    data = json.loads(response.text)
-    return data
+    if response.status_code == 200:
+        data = json.loads(response.text)
+        return data
 
 
 def get_ilmateenistus_forecast() -> dict or None:
