@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 {% load crispy_forms_tags %}
+{% load inlineedit %}
 {% load wiki_extras %}
 
 <html
@@ -72,7 +73,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" as="font" crossOrigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" as="font" crossOrigin="anonymous">
     {# Custom CSS #}
-    <link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}?ver=2023.11.07">
+    <link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}?ver=2024.09">
     {% block jquery_css %}
       <link rel="stylesheet" href="{% static 'wiki/jquery-ui-1.13.1.custom/jquery-ui.css' %}?ver=2022.01">
     {% endblock jquery_css %}
@@ -89,36 +90,38 @@
 
   <body class="Site w3-light-grey">
     {% block body %}
-    {# Facebook plugin #}
-    {% include 'wiki/wiki_base/wiki_base_facebook_plugin.html' %}
-    <header>
-      <nav id="wiki_nav">
-        <!-- Navbar large-->
-        {% include 'wiki/wiki_base/wiki_base_nav_bar_large.html' %}
-        <!-- Navbar on small screens -->
-        {% include 'wiki/wiki_base/wiki_base_nav_bar_small.html' %}
-      </nav>
-    </header>
+      {# Facebook plugin #}
+      {% include 'wiki/wiki_base/wiki_base_facebook_plugin.html' %}
+      <header>
+        <nav id="wiki_nav">
+          <!-- Navbar large-->
+          {% include 'wiki/wiki_base/wiki_base_nav_bar_large.html' %}
+          <!-- Navbar on small screens -->
+          {% include 'wiki/wiki_base/wiki_base_nav_bar_small.html' %}
+        </nav>
+      </header>
 
-    <main class="Site-content">
-      {# Süsteemiteadete näitamiseks #}
-      {% include 'wiki/wiki_base/wiki_base_body_messages.html' %}
-      <div class="w3-container">
-        {# Tagasiside vorm #}
-        <div id="panelFeedBack" class="w3-panel w3-round w3-padding w3-card-4 w3-light-grey w3-hide">
-          {% crispy feedbackform %}
+      <main class="Site-content">
+        {# Süsteemiteadete näitamiseks #}
+        {% include 'wiki/wiki_base/wiki_base_body_messages.html' %}
+        <div class="w3-container">
+          {# Tagasiside vorm #}
+          <div id="panelFeedBack" class="w3-panel w3-round w3-padding w3-card-4 w3-light-grey w3-hide">
+            {% crispy feedbackform %}
+          </div>
+          {# Search on small screens #}
+          {% include 'wiki/wiki_base/wiki_base_body_search_small.html' %}
         </div>
-        {# Search on small screens #}
-        {% include 'wiki/wiki_base/wiki_base_body_search_small.html' %}
-      </div>
 
-      {% block content %}{% endblock content %}
-    </main>
+        {% block content %}{% endblock content %}
+      </main>
 
-    <footer id="footer" class="footer">
-      {% include 'wiki/wiki_base/wiki_base_body_footer.html' %}
-    </footer>
+      <footer id="footer" class="footer">
+        {% include 'wiki/wiki_base/wiki_base_body_footer.html' %}
+      </footer>
+
     {% endblock body %}
+    {% if user.is_authenticated %}{% if user.is_staff %}{% inlineedit_script %}{% endif %}{% endif %}
     {% block extra_body %}{% endblock extra_body %}
   </body>
 

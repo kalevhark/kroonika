@@ -49,6 +49,7 @@ urlpatterns = [
     path('blog/', include('blog.urls'), name='blog'),
     path('kiri/', include('kiri.urls'), name='kiri'),
     path('ilm/', include('ilm.urls'), name='ilm'),
+    path('inlineedit/', include('inlineedit.urls'), name='save'), # https://github.com/ptav/django-inlineedit
     path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('markdownx/', include('markdownx.urls')),
     path('privacy/', views.privacy, name='privacy'),

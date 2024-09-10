@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google', # django-allauth
     # 'allauth.socialaccount.providers.facebook', # django-allauth
     # "debug_toolbar", # https://django-debug-toolbar.readthedocs.io
+    'inlineedit', # https://github.com/ptav/django-inlineedit
     'ilm.apps.IlmConfig',
     'blog.apps.BlogConfig',
     'kiri.apps.KiriConfig', # e-kirja saatmiseks valgalinn.ee aadressilt
@@ -430,3 +431,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 # Redis server in use?
 REDIS_INUSE = True
 REDIS_HOST = config['redis'].get('HOST', fallback='localhost')
+
+INLINEEDIT_ADAPTORS = {
+    "formatted_markdown": "wiki.adaptors.FormattedMarkdownAdaptor",
+}

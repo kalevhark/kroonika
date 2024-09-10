@@ -107,6 +107,17 @@ class DetailViewUnitTest(TestCase):
 
 
 class ArtikkelViewTests(TestCase):
+
+    def setUp(self):
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        self.user = User.objects.get(id=1)
+
     def test_object_exists(self):
         self.assertTrue(Artikkel.objects.filter(kroonika__isnull=True).count() > 0)
         obj = Artikkel.objects.filter(kroonika__isnull=True).first()
@@ -403,10 +414,36 @@ class ArtikkelViewTests(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 404)
 
+    def test_inline_edit_not_allowed_anonymous(self):
+        self.request.user = AnonymousUser()
+        pk = 2504
+        artikkel = Artikkel.objects.get(pk=pk)
+        response = views.ArtikkelDetailView.as_view()(self.request, pk=artikkel.pk, slug=artikkel.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'dockmann')
+        self.assertNotContains(response, 'inlineedit-toggle-area')
+
+    def test_inline_edit_allowed_superuser(self):
+        self.request.user = self.user
+        pk = 2504
+        artikkel = Artikkel.objects.get(pk=pk)
+        response = views.ArtikkelDetailView.as_view()(self.request, pk=pk, slug=artikkel.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'dockmann')
+        self.assertContains(response, 'inlineedit-toggle-area')
 
 class IsikViewTests(TestCase):
+
     def setUp(self):
         # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        self.user = User.objects.get(id=1)
+
         self.test_object_id = 19 # Johannes Märtson
         # Anonymous user filter
         artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
@@ -511,10 +548,36 @@ class IsikViewTests(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 404)
 
+    def test_inline_edit_not_allowed_anonymous(self):
+        self.request.user = AnonymousUser()
+        pk = 62  # Johann Müllerson
+        isik = Isik.objects.get(pk=pk)
+        response = views.IsikDetailView.as_view()(self.request, pk=pk, slug=isik.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Müllerson')
+        self.assertNotContains(response, 'inlineedit-toggle-area')
+
+    def test_inline_edit_allowed_superuser(self):
+        self.request.user = self.user
+        pk = 62  # Johann Müllerson
+        isik = Isik.objects.get(pk=pk)
+        response = views.IsikDetailView.as_view()(self.request, pk=pk, slug=isik.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Müllerson')
+        self.assertContains(response, 'inlineedit-toggle-area')
+
 
 class OrganisatsioonViewTests(TestCase):
     def setUp(self):
         # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        self.user = User.objects.get(id=1)
+
         self.test_object_id = 13 # Säde selts
         # Anonymous user filter
         artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
@@ -600,10 +663,36 @@ class OrganisatsioonViewTests(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 404)
 
+    def test_inline_edit_not_allowed_anonymous(self):
+        self.request.user = AnonymousUser()
+        pk = 3058
+        organisatsioon = Organisatsioon.objects.get(pk=pk)
+        response = views.OrganisatsioonDetailView.as_view()(self.request, pk=pk, slug=organisatsioon.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Rex')
+        self.assertNotContains(response, 'inlineedit-toggle-area')
+
+    def test_inline_edit_allowed_superuser(self):
+        self.request.user = self.user
+        pk = 3058
+        organisatsioon = Organisatsioon.objects.get(pk=pk)
+        response = views.OrganisatsioonDetailView.as_view()(self.request, pk=pk, slug=organisatsioon.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Rex')
+        self.assertContains(response, 'inlineedit-toggle-area')
+
 
 class ObjektViewTests(TestCase):
     def setUp(self):
         # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        self.user = User.objects.get(id=1)
+
         self.test_object_id = 68 # Säde seltsimaja
         # Anonymous user filter
         artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
@@ -706,3 +795,21 @@ class ObjektViewTests(TestCase):
         for url in urls:
             response = self.client.get(url)
             self.assertEqual(response.status_code, 404)
+
+    def test_inline_edit_not_allowed_anonymous(self):
+        self.request.user = AnonymousUser()
+        pk = 31
+        objekt = Objekt.objects.get(pk=pk)
+        response = views.ObjektDetailView.as_view()(self.request, pk=pk, slug=objekt.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'linnapark')
+        self.assertNotContains(response, 'inlineedit-toggle-area')
+
+    def test_inline_edit_allowed_superuser(self):
+        self.request.user = self.user
+        pk = 31
+        objekt = Objekt.objects.get(pk=pk)
+        response = views.ObjektDetailView.as_view()(self.request, pk=pk, slug=objekt.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'linnapark')
+        self.assertContains(response, 'inlineedit-toggle-area')
