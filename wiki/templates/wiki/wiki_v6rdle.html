@@ -255,20 +255,52 @@
         const modelName = '{{ model }}'
 
         paanid.forEach( function( paan ) {
-          var el = document.getElementById("id_" + paan + "_object_on_deck");
-          var div = document.getElementById("v6rdle_" + paan + "_object");
+          // var el = document.getElementById("id_" + paan + "_object_on_deck");
+          // var div = document.getElementById("v6rdle_" + paan + "_object");
 
-          el.addEventListener("DOMNodeInserted", function (event) {
-            var id = $("#id_" + paan + "_object").val();
-            get_content(id, div, modelName, url);
-            check_buttons();
-          }, false);
+          // el.addEventListener("DOMNodeInserted", function (event) {
+            // var id = $("#id_" + paan + "_object").val();
+            // get_content(id, div, modelName, url);
+            // check_buttons();
+          // }, false);
 
-          el.addEventListener("DOMNodeRemoved", function (event) {
-            div.innerHTML = '&nbsp;'; // vajalik, et jääks tühi paan vasakule, kui objecti pole
-            div.setAttribute('data-id', 'None');
-            check_buttons();
-          }, false);
+          // el.addEventListener("DOMNodeRemoved", function (event) {
+            // div.innerHTML = '&nbsp;'; // vajalik, et jääks tühi paan vasakule, kui objecti pole
+            // div.setAttribute('data-id', 'None');
+            // check_buttons();
+          // }, false);
+
+          // Replacement mutation observer code:  Alternative 2
+          var targetNode = document.getElementById("id_" + paan + "_object_on_deck");
+          var targetDiv = document.getElementById("v6rdle_" + paan + "_object");
+          
+          const config = {
+            attributes: true, 
+            childList: true, 
+            characterData: true
+          };
+            
+          const callback = mutations => {  
+            mutations.forEach(mutation => {
+              if (mutation.type === 'childList') {
+                if (mutation.addedNodes.length !==0) {
+                  // console.log('lisati');
+          		var id = $("#id_" + paan + "_object").val();
+          		get_content(id, targetDiv, modelName, url);
+          		check_buttons();
+                }
+                if (mutation.removedNodes.length !==0) {
+                  // console.log('eemaldati');
+          		targetDiv.innerHTML = '&nbsp;'; // vajalik, et jääks tühi paan vasakule, kui objecti pole
+          		targetDiv.setAttribute('data-id', 'None');
+          		check_buttons();
+                }
+              }
+            });
+          }
+          
+          const observer = new MutationObserver(callback);
+          observer.observe(targetNode, config);
 
           var preset_id = div.getAttribute('data-id');
           // console.log(preset_id);
