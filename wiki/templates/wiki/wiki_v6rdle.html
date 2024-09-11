@@ -7,6 +7,10 @@
 
 {% block src %}
   <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+  {# j2rgnevad vajalikud django-ajax-selects add toimimiseks #}
+  <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'admin/js/jquery.init.js' %}"></script>
+  <script type="text/javascript" src="{% static 'admin/js/admin/RelatedObjectLookups.js' %}"></script>
 {% endblock %}
 
 {% block css %}
@@ -302,10 +306,10 @@
           const observer = new MutationObserver(callback);
           observer.observe(targetNode, config);
 
-          var preset_id = div.getAttribute('data-id');
+          var preset_id = targetDiv.getAttribute('data-id');
           // console.log(preset_id);
           if (preset_id !== 'None') {
-            get_content(preset_id, div, modelName, url);
+            get_content(preset_id, targetDiv, modelName, url);
           }
         });
       });
