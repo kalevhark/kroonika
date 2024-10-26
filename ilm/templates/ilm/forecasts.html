@@ -125,7 +125,7 @@ if (screen.width < 500) {
           <th>Aeg</th>
           <th colspan="3">ilmateenistus.ee</th>
           <th colspan="3">yr.no</th>
-          <th colspan="3">openweathermaps.org</th>
+{#          <th colspan="3">openweathermaps.org</th>#}
         </tr>
         <tr>
           <th class="col"></th>
@@ -147,15 +147,15 @@ if (screen.width < 500) {
           <th class="col rain">
             <span class="fs1 climacon umbrella" aria-hidden="true"></span>
           </th>
-          <th class="col temperature">
-            <span class="fs1 climacon thermometer" aria-hidden="true"></span>
-          </th>
-          <th class="col w3-center">
-            <span class="fa fa-eye"></span>
-          </th>
-          <th class="col rain">
-            <span class="fs1 climacon umbrella" aria-hidden="true"></span>
-          </th>
+{#          <th class="col temperature">#}
+{#            <span class="fs1 climacon thermometer" aria-hidden="true"></span>#}
+{#          </th>#}
+{#          <th class="col w3-center">#}
+{#            <span class="fa fa-eye"></span>#}
+{#          </th>#}
+{#          <th class="col rain">#}
+{#            <span class="fs1 climacon umbrella" aria-hidden="true"></span>#}
+{#          </th>#}
         </tr>
       </thead>
 			<tbody>
@@ -195,20 +195,20 @@ if (screen.width < 500) {
             <td class="rain {{ data.y_prec_color }}">{{ data.y_prec }}</td>
 
             {# openweathermaps.org #}
-            <td
-                class="temperature">
-              <span class="temperature colored-{% if data.o_temp > 0 %}positive{% else %}negative{% endif %}">
-                {{ data.o_temp|floatformat:1 }}
-              </span>
-            </td>
-            <td class="w3-center">
-              <img
-                      src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ data.o_icon }}.png"
-                      alt="{{ data.o_icon }}"
-                      width="32" height="32"
-              />
-            </td>
-            <td class="rain {{ data.o_prec_color }}">{{ data.o_prec|floatformat:1 }}</td>
+{#            <td#}
+{#                class="temperature">#}
+{#              <span class="temperature colored-{% if data.o_temp > 0 %}positive{% else %}negative{% endif %}">#}
+{#                {{ data.o_temp|floatformat:1 }}#}
+{#              </span>#}
+{#            </td>#}
+{#            <td class="w3-center">#}
+{#              <img#}
+{#                      src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ data.o_icon }}.png"#}
+{#                      alt="{{ data.o_icon }}"#}
+{#                      width="32" height="32"#}
+{#              />#}
+{#            </td>#}
+{#            <td class="rain {{ data.o_prec_color }}">{{ data.o_prec|floatformat:1 }}</td>#}
           </tr>
         {% endfor %}
       </tbody>

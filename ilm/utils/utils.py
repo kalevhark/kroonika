@@ -1042,7 +1042,7 @@ class YrnoAPI():
 def get_forecasts(hours=48):
     yAPI = YrnoAPI()
     y = yAPI.yrno_forecasts
-    o = owm_onecall()
+    # o = owm_onecall()
     i = ilmateenistus_forecast()
     now = datetime.now()
     forecast = dict()
@@ -1065,21 +1065,21 @@ def get_forecasts(hours=48):
             y_prec_color = y_data['precipitation_color']
             y_pres = float_or_none(y_data['pressure'])
         # openweathermaps.org
-        o_temp = None
-        o_prec = None
-        o_prec_color = ''
-        o_pres = None
-        o_icon = ''
-        o_data = o['forecast'].get(str(ref_dt), None)
-        if o_data:
-            o_temp = o_data['temp']
-            o_icon = o_data['weather'][0]['icon']
-            try:
-                o_prec = o_data['rain']['1h']
-            except:
-                o_prec = None
-            o_prec_color = o_data['precipitation_color']
-            o_pres = float_or_none(o_data['pressure'])
+        # o_temp = None
+        # o_prec = None
+        # o_prec_color = ''
+        # o_pres = None
+        # o_icon = ''
+        # o_data = o['forecast'].get(str(ref_dt), None)
+        # if o_data:
+        #     o_temp = o_data['temp']
+        #     o_icon = o_data['weather'][0]['icon']
+        #     try:
+        #         o_prec = o_data['rain']['1h']
+        #     except:
+        #         o_prec = None
+        #     o_prec_color = o_data['precipitation_color']
+        #     o_pres = float_or_none(o_data['pressure'])
 
         # ilmateenistus.ee
         i_temp = None
@@ -1101,11 +1101,11 @@ def get_forecasts(hours=48):
             'y_prec': str(y_prec),
             'y_prec_color': y_prec_color,
             'y_pres': y_pres,
-            'o_temp': o_temp,
-            'o_icon': o_icon,
-            'o_prec': str(o_prec),
-            'o_prec_color': o_prec_color,
-            'o_pres': o_pres,
+            # 'o_temp': o_temp,
+            # 'o_icon': o_icon,
+            # 'o_prec': str(o_prec),
+            # 'o_prec_color': o_prec_color,
+            # 'o_pres': o_pres,
             'i_temp': i_temp,
             'i_icon': i_icon,
             'i_prec': str(i_prec),
