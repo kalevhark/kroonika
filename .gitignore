@@ -1,3 +1,6 @@
+__pycache__/
+*.py[cod]
+*.log
 /media/
 /static/
 !/kroonika/settings.ini
