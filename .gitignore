@@ -3,6 +3,3 @@ __pycache__/
 *.log
 /media/
 /static/
-!/kroonika/settings.ini
-!/ilm/utils/database.ini
-!/ilm/utils/owm.ini
