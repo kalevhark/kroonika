@@ -1,0 +1,1 @@
+Selles kataloogis on skritid, mida kasutatakse AWS Lambda keskkonnas
