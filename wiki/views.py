@@ -105,7 +105,7 @@ def check_recaptcha(request):
             ip = x_forwarded_for.split(',')[0]
         else:
             ip = request.META.get('REMOTE_ADDR')
-        print('recaptcha:', ip, result_json)
+        # print('recaptcha:', ip, result_json)
         return False
 
 #
