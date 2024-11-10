@@ -49,7 +49,6 @@ class LookupsUnitTest(TestCase):
         for channel in CHANNELS:
             widget = fields.AutoCompleteSelectMultipleWidget(channel)
             out = widget.render('channel', None)
-            print(out)
             self.assertTrue('autocompleteselectmultiple' in out)
             self.assertTrue(channel in out)
 
