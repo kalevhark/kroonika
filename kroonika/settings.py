@@ -435,3 +435,44 @@ REDIS_HOST = config['redis'].get('HOST', fallback='localhost')
 INLINEEDIT_ADAPTORS = {
     "formatted_markdown": "wiki.adaptors.FormattedMarkdownAdaptor",
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{asctime} {levelname:8s} {name:15s} {message}',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/kroonika_django.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'ERROR',
+        },
+        'wiki': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+        },
+        'ilm': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+        },
+    },
+}
+
+J6UL2024 = False

@@ -1,0 +1,75 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block src %}{% endblock %}
+
+{% block title %}{{ block.super }} - {{ pyhadesoov }}!{% endblock %}
+
+{% block css %}
+  <style>
+    .Site {
+        background-color: #FAEBD7;
+    }
+  </style>
+{% endblock %}
+
+{% block og_image %}
+  <meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/special/VaMF2744_5_j6ul2024_fb.jpg' %}" />
+  <meta property="og:description" content="{{ pyhadesoov }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="w3-container image-wrapper">
+    <div
+        style="color: red; text-align: center; padding-top: 1em"
+        class="holidays-title-small w3-hide-large"
+    >
+      {{ pyhadesoov }} soovib {{ tervitaja }}!
+    </div>
+    <section>
+      <img
+          src="{% static 'wiki/img/special/VaMF2744_5_j6ul2024.jpg' %}"
+          alt="{{ pyhadesoov }} - 110 aasta tagune fotopostkaart Valga linna vaatega (VaM F 2744:5); Valga Muuseum"
+          style="width:100%; border-radius: 1rem;"
+      >
+      <div id="divGreeting" class="holidays-title w3-hide-small w3-hide-medium">
+        {{ pyhadesoov }} soovib {{ tervitaja }}!
+      </div>
+    </section>
+    <p style="text-align: center;">
+      <small>
+        110 aasta tagune fotopostkaart Valga linna vaatega (VaM F 2744:5); Valga Muuseum
+      </small>
+    </p>
+    <div class="w3-tiny">
+      Oma nimega jõulukaardi saatmiseks kasutage aadressi: https://valgalinn.ee/j6ul2024/?<i>minginimi</i> NB! Küsimärk peab olema!
+    </div>
+    <div
+        class="fb-share-button"
+        data-href="{% url 'special_j6ul2024' %}"
+        data-layout="button"
+        data-size="small">
+      <a
+          target="_blank"
+          href="https://www.facebook.com/sharer/sharer.php?u={% url 'special_j6ul2024' %}%2F&amp;src=sdkpreparse"
+          class="fb-xfbml-parse-ignore">Jaga
+      </a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  <script>
+    $(document).ready(function() {
+      showLights();
+      // $("body").removeClass("w3-light-grey");
+      var divGreeting = document.getElementById("divGreeting");
+      var textLength = divGreeting.innerText.length;
+      if (textLength > 41) {
+        divGreeting.style.fontSize = "1.3em";
+      } else if (textLength > 37) {
+        divGreeting.style.fontSize = "1.4em";
+      }
+    });
+  </script>
+{% endblock %}

@@ -1,6 +1,10 @@
 import calendar
 from datetime import datetime, timedelta
 import json
+
+import logging
+logger = logging.getLogger(__name__)
+
 import os
 from pathlib import Path
 import tempfile
@@ -146,6 +150,7 @@ def float_or_zero(value):
         return 0
 
 def index(request):
+    logger.info('Algus')
     # Avalehekülg, kus näidatakse 24h ilmaajalugu + 48h prognoos
     # weather = utils.owm_onecall()
     # ilm_ilmateenistus_now = get_ilmateenistus_now()
@@ -155,6 +160,7 @@ def index(request):
     sun = ephem_data.get_sun_data()
     current_weather = utils.get_ilmateenistus_now()
     forecasts = utils.get_forecasts(hours=12)
+    logger.error('Lõpp')
 
     context = {
         # 'weather': weather,

@@ -73,13 +73,14 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" as="font" crossOrigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" as="font" crossOrigin="anonymous">
     {# Custom CSS #}
-    <link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}?ver=2024.09">
+    <link rel="stylesheet" href="{% static 'wiki/css/kroonika_general.css' %}?ver=2024.11">
     {% block jquery_css %}
       <link rel="stylesheet" href="{% static 'wiki/jquery-ui-1.13.1.custom/jquery-ui.css' %}?ver=2022.01">
     {% endblock jquery_css %}
     {# Alternatiivsed värvivalikud metro või colorful #}
     <link rel="stylesheet" href="{% static 'wiki/css/kroonika_color_metro.css' %}?ver=2023.1">
-    {# <link rel="stylesheet" href={% static "wiki/css/kroonika_color_colorful.css" %}>#}
+    {% comment %} j6ul2024 css {% endcomment %}
+    <link rel="stylesheet" href="{% static 'wiki/css/special/wiki_special_j6ul2024.css' %}?ver=2024.1">
     {% block css %}{% endblock %}
 
     <title>
@@ -88,7 +89,7 @@
     {% block extra_head %}{% endblock %}
   </head>
 
-  <body class="Site w3-light-grey">
+  <body class="Site">
     {% block body %}
       {# Facebook plugin #}
       {% include 'wiki/wiki_base/wiki_base_facebook_plugin.html' %}

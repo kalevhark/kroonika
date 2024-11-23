@@ -66,6 +66,7 @@ urlpatterns = [
     # path('j6ul2021/', specials.special_j6ul2021, name='special_j6ul2021'),
     # path('j6ul2022/', specials.special_j6ul2022, name='special_j6ul2022'),
     # path('j6ul2023/', specials.special_j6ul2023, name='special_j6ul2023'),
+    path('j6ul2024/', specials.special_j6ul2024, name='special_j6ul2024'),
     # path("__debug__/", include("debug_toolbar.urls")), # https://django-debug-toolbar.readthedocs.io
 ]
 

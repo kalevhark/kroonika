@@ -4,6 +4,10 @@ import sys
 from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
 from io import BytesIO
+
+import logging
+logger = logging.getLogger(__name__)
+
 import math
 import os
 from pathlib import Path
@@ -642,6 +646,7 @@ def _get_algus(request):
         {
             'kalender': kalender,
             'andmed': andmed,
+            'j6ul2024': settings.J6UL2024
         },
         request,
     )
