@@ -16,13 +16,5 @@
   <meta property="og:type" content="website" />
   <meta property="og:description" content="{% description %}" />
 {% endif %}
-{#<!-- FB piltide share piltide jaoks -->#}
-{#{% if profiilipilt %}#}
-{#  <meta property="og:image" content="{{ request.scheme }}://{{ request.site }}{{ profiilipilt.pilt.url }}" />#}
-{#  <meta property="og:image:width" content="250"/>#}
-{#  <meta property="og:image:height" content="250"/>#}
-{#{% else %}#}
-{#  {% block og_image %}#}
-{#    <meta property="og:image" content="{{ request.scheme }}://{{ request.site }}{% static 'wiki/img/android-chrome-512x512.png' %}" />#}
-{#  {% endblock %}#}
-{#{% endif %}#}
+{% comment %} FB share jaoks {% endcomment %}
+<meta property="fb:app_id" content="275987973680424" />
