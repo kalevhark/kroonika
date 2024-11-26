@@ -1,9 +1,10 @@
+Crawl-delay: 30
+Sitemap: https://valgalinn.ee/sitemap.xml
 User-agent: *
+Allow: /                    # Allow everything
 Disallow: /admin/
 Disallow: /accounts/
-Disallow: /static/
 Disallow: /media/
 Disallow: /tiles/
 Disallow: /kaart/
-Crawl-delay: 30
-Sitemap: https://valgalinn.ee/sitemap.xml
+Disallow: /api/
