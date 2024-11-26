@@ -6,7 +6,7 @@
 	<head>
 		<title>{% block title %}Valga linna ilm{% endblock %}</title>
 
-		<!-- Required meta tags -->
+		{% comment %} Required meta tags {% endcomment %}
 		<meta charset="utf-8" />
 		<meta name="description" content="Valga linna kroonika ilmaandmed" />
 		<meta name="keywords" content="Valga, linn, kroonika, ajalugu, ilm" />
@@ -15,10 +15,13 @@
 
 		<!-- Kirjeldus -->
 		<meta property="og:type"          content="website" />
+		<meta property="og:url" content="{{ request.build_absolute_uri }}" />
 		<meta property="og:title"         content="Valga linna ilm" />
 		<meta property="og:description"   content="Valga linna kroonika ilmaandmed" />
 		<meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/android-chrome-1200x600-FB.jpg' %}" />
-<!--		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">-->
+		{% comment %} FB share jaoks {% endcomment %}
+		<meta property="fb:app_id" content="275987973680424" />
+
 		<link rel="stylesheet" href="{% static 'wiki/css/w3.css' %}?ver=2021.05">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -37,20 +40,20 @@
 		<!-- HighCharts skriptid -->
 		<script src="https://code.highcharts.com/highcharts.js"></script>
 		<script src="https://code.highcharts.com/highcharts-more.js"></script>
-<!--		<script src="https://code.highcharts.com/modules/exporting.js"></script>-->
-<!--		<script src="https://code.highcharts.com/modules/export-data.js"></script>-->
+		<!-- <script src="https://code.highcharts.com/modules/exporting.js"></script>-->
+		<!-- <script src="https://code.highcharts.com/modules/export-data.js"></script>-->
 		<script src="https://code.highcharts.com/modules/windbarb.js"></script>
 		<script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
 		<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script src="{% static 'ilm/js/highcharts-regression.js' %}"></script>
+		<script src="{% static 'ilm/js/highcharts-regression.js' %}"></script>
 
-    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/data.js"></script>
-    <script src="https://code.highcharts.com/modules/boost-canvas.js"></script>
-    <script src="https://code.highcharts.com/modules/boost.js"></script>
+		<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+		<script src="https://code.highcharts.com/modules/data.js"></script>
+		<script src="https://code.highcharts.com/modules/boost-canvas.js"></script>
+		<script src="https://code.highcharts.com/modules/boost.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
 
 		<!-- Äpi skriptid, kui vaja -->
 		<script src="{% static 'ilm/js/ilm.js' %}?ver=2023.05"></script>
