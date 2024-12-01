@@ -64,7 +64,7 @@ def get_algus():
 
 if __name__ == '__main__':
     now = datetime.now()
-    test_status_200()
     get_algus()
-    if now.minute % 10 == 0: # uuendame iga 10 minuti j2rel
+    if now.minute % 10 == 0: # iga 10 minuti j2rel
         shp_util.kaardiobjektid2geojson()
+        test_status_200()
