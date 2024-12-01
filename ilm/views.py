@@ -150,17 +150,11 @@ def float_or_zero(value):
         return 0
 
 def index(request):
-    logger.info('Algus')
     # Avalehekülg, kus näidatakse 24h ilmaajalugu + 48h prognoos
-    # weather = utils.owm_onecall()
-    # ilm_ilmateenistus_now = get_ilmateenistus_now()
-    # ilm_ilmateenistus_forecast = utils.ilmateenistus_forecast()
-    # print(ilm_ilmateenistus_now)
     history = utils.get_ilmateenistus_history()
     sun = ephem_data.get_sun_data()
     current_weather = utils.get_ilmateenistus_now()
     forecasts = utils.get_forecasts(hours=12)
-    logger.error('Lõpp')
 
     context = {
         # 'weather': weather,
