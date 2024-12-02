@@ -99,8 +99,9 @@ function mixed_ilmateade() {
       {
         document.getElementById("loader").style.display = "none";
         document.getElementById("container_mixed_ilmateade").style.display = "block";
+        
         var chart = Highcharts.chart("container_mixed_ilmateade", data);
-
+        
         chart.update(
           {
             plotOptions: {
@@ -151,30 +152,26 @@ function mixed_ilmateade() {
         });
 
         // Näitame prognoositavate sademete hulka ainult kui suurem nullist
-        // Liidetakse min ja max näitajad
         chart.get('andmed_j2rgnevad48h_precipitations_max').update({
           dataLabels: {
             formatter: function () {
               if (this.y > 0) {
-                if (chart.get('andmed_j2rgnevad48h_precipitations').data[this.x]) {
-                  return this.y + chart.get('andmed_j2rgnevad48h_precipitations').data[this.x];
-                } else {
-                  return this.y;
-                }
-              }
-            }
-          }
-        });
-        // Näitame prognoositavate sademete hulka ainult kui suurem nullist
-        chart.get('andmed_j2rgnevad48h_precipitations').update({
-          dataLabels: {
-            formatter: function () {
-              if (this.y > 0) {
+                // console.log(chart.get('andmed_j2rgnevad48h_precipitations').data[this.x]);
                 return this.y;
               }
             }
           }
         });
+        // Näitame prognoositavate sademete hulka ainult kui suurem nullist
+        // chart.get('andmed_j2rgnevad48h_precipitations').update({
+        //   dataLabels: {
+        //     formatter: function () {
+        //       if (this.y > 0) {
+        //         // return this.y;
+        //       }
+        //     }
+        //   }
+        // });
 
         changeIlmStartIconColor(data);
         // Automaatne uuendamine 5 minuti pärast
