@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="et">
+	<meta charset="utf-8">
+  <head>
+		<title>{% block title %}Valga Gümnaasiumi vilistlaskogu{% endblock %}</title>
+		{% load static %}
+		<!-- Required meta tags -->
+		<meta charset="utf-8" />
+		<meta name="description"          content="Valga linna kroonika blogi" />
+		<meta name="keywords"             content="Valga, linn, kroonika, ajalugu, blog" />
+		<meta name="author"               content="Kalev Härk" />
+		<meta name="viewport"             content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" />
+		<!-- Kirjeldus -->
+		<meta property="og:type"          content="website" />
+		<meta property="og:title"         content="Valga Gümnaasiumi vilistlakogu jõulutervitus" />
+		<meta property="og:description"   content="Valga Gümnaasiumi vilistlakogu jõulutervitus" />
+		<meta property="og:image"         content="https://valgalinn.ee{% static 'vgvk/vgvkxcard.PNG' %}" />
+
+    {% block og_image %}{% endblock %}
+
+		<!-- Custom CSS -->
+		{% block stylesheet %}{% endblock %}
+
+		<link rel="shortcut icon" href="{% static 'ilm/img/favicon.ico' %}">
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-151102639-1');
+		</script>
+  </head>
+  <body>
+    <header>
+			<!-- Navbar -->
+			<div id="top" class="w3-top">
+				<div class="w3-bar w3-left-align w3-large">
+					<a
+						href="{% url 'algus' %}"
+						title="Valga linna kroonika avalehele"
+						class="w3-bar-item w3-button w3-hover-white">
+						<img
+								src="{% static 'wiki/img/220px-Valga_coat_of_arms.svg.png' %}"
+								style='max-height:22px;'
+								alt="vapp">
+					</a>
+				</div>
+			</div>
+		</header>
+
+		<main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- jQuery teek -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+		<!-- Äpi skriptid, kui vaja -->
+	  {% block javascript %}{% endblock %}
+	</body>
+</html>

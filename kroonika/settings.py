@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'kiri.apps.KiriConfig', # e-kirja saatmiseks valgalinn.ee aadressilt
     'wiki.apps.WikiConfig',
+    'vgvk', # Valga Gümnaasiumi vilistlaskogu j6ulukaart
 ]
 
 MIDDLEWARE = [
