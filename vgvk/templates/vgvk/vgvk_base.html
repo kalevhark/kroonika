@@ -1,11 +1,16 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="et">
 	<meta charset="utf-8">
   <head>
 		<title>{% block title %}Valga Gümnaasiumi vilistlaskogu{% endblock %}</title>
-		{% load static %}
 		<!-- Required meta tags -->
-		<meta charset="utf-8" />
+		<link rel="shortcut icon" href="{% static 'wiki/favicon.ico' %}">
+		<link rel="apple-touch-icon" sizes="180x180" href="{% static 'wiki/apple-touch-icon.png' %}">
+		<link rel="icon" type="image/png" sizes="32x32" href="{% static 'wiki/favicon-32x32.png' %}">
+		<link rel="icon" type="image/png" sizes="16x16" href="{% static 'wiki/favicon-16x16.png' %}">
+		<link rel="manifest" href="{% static 'wiki/site.webmanifest' %}">
+
 		<meta name="description"          content="Valga linna kroonika blogi" />
 		<meta name="keywords"             content="Valga, linn, kroonika, ajalugu, blog" />
 		<meta name="author"               content="Kalev Härk" />
@@ -16,14 +21,11 @@
 		<meta property="og:description"   content="Valga Gümnaasiumi vilistlakogu jõulutervitus" />
 		<meta property="og:image"         content="https://valgalinn.ee{% static 'vgvk/vgvkxcard.PNG' %}" />
 
-    {% block og_image %}{% endblock %}
-
 		<!-- Custom CSS -->
 		{% block stylesheet %}{% endblock %}
 
-		<link rel="shortcut icon" href="{% static 'ilm/img/favicon.ico' %}">
 		<!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-151102639-1"></script>
+		<script async src="https://www.googletagmanager.com/gtakroog/js?id=UA-151102639-1"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
