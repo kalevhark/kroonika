@@ -1533,6 +1533,10 @@ class Artikkel(models.Model):
         tekst = remove_markdown_tags(self, tekst)
         # tekst = add_markdown_objectid(self, tekst)
         return tekst
+    
+    @property
+    def kirjeldus(self):
+        return self.body_text
 
     def colored_id(self):
         if self.kroonika:
@@ -1911,6 +1915,10 @@ class Pilt(models.Model):
 
     def link(self):
         return self.pilt.url
+    
+    @property
+    def orientation(self):
+        return "portree" if self.pilt_height_field/self.pilt_width_field > 0.9 else "postkaart"
 
     # Kui objectil puudub viide, siis punane
     def colored_id(self):

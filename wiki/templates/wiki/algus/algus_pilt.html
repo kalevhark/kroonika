@@ -2,7 +2,7 @@
   {% with obj.profiilipildid.first as profiilipilt %}
     <div class="pilt-wiki-algus w3-row" >
       <img
-          class="pilt-{{ tyyp }}-small w3-round"
+          class="pilt-{{ profiilipilt.orientation }}-small w3-round"
           {% if profiilipilt.pilt.width > 400 %}
             src="{{ profiilipilt.pilt_thumbnail.url }}"
           {% else %}
@@ -11,7 +11,7 @@
           alt="{{ profiilipilt }}"
           title="{{ profiilipilt }}"
       />
-      {% if tyyp == "portree" %}
+      {% if profiilipilt.orientation == "portree" %}
           <small class="w3-hide-medium">
             {{ obj.kirjeldus|truncatewords:10 }}
           </small>
