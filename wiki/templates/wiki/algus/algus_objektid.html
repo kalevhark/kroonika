@@ -83,11 +83,11 @@
             id='{{ obj|get_model_name }}_{{ obj.id }}_selkuul'>
         {{ obj }}
       </span>
+      {% if obj.vanus|divisibleby:"5" %}
+        &nbsp;&nbsp;<span class="text-objekt"><b>{{ obj.vanus }}</b></span>
+        {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
+      {% endif %}
     </a>
-    {% if obj.vanus|divisibleby:"5" %}
-      &nbsp;&nbsp;<span class="text-objekt"><b>{{ obj.vanus }}</b></span>
-      {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
-    {% endif %}
   {% endfor %}
 {% endif %}
 {% if andmed.objekt.juubilarid %}
