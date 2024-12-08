@@ -13,7 +13,11 @@
       />
       {% if profiilipilt.orientation == "portree" %}
           <small class="w3-hide-medium">
-            {{ obj.kirjeldus|truncatewords:10 }}
+            {% if obj.body_text %}
+              {{ obj.body_text|truncatewords:10 }}
+            {% else %}
+              {{ obj.kirjeldus|truncatewords:10 }}
+            {% endif %}
           </small>
       {% endif %}
     </div>

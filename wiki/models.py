@@ -1534,9 +1534,9 @@ class Artikkel(models.Model):
         # tekst = add_markdown_objectid(self, tekst)
         return tekst
     
-    @property
-    def kirjeldus(self):
-        return self.body_text
+    # @property
+    # def kirjeldus(self):
+    #     return self.body_text
 
     def colored_id(self):
         if self.kroonika:
