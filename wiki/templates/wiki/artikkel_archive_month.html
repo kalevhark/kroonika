@@ -1,173 +1,178 @@
 {% extends "wiki/wiki_base.html" %}
 {% load wiki_extras %}
+{% load cache %}
 
 {% block title %}{{ block.super }} - {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:"Y" }}{% endblock %}
 
-{% block breadcrumb %}
-{% endblock %}
-
-
 {% block content %}
-<div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
-  <div class="w3-large">
-     <a style="text-decoration: none;" href="{% url 'wiki:wiki_artikkel_filter' %}">
-      <i class="{% icon_artikkel %}"></i>
+  <div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
+    <div class="w3-large">
+      <a style="text-decoration: none;" href="{% url 'wiki:wiki_artikkel_filter' %}">
+        <i class="{% icon_artikkel %}"></i>
+      </a>
+      <b> {% model_name_artikkel %} {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:"Y" }} kohta</b>
+    </div>
+  </div>
+
+  <!-- Lingid eelnevale ja järgnevale kuule -->
+  <div class="w3-cell-row w3-margin-top">
+    <div class="w3-half">
+      <a style="text-decoration: none;" href="{% url 'wiki:artikkel_month_archive' month=previous_month|date:'n' year=previous_month|date:'Y' %}">
+      <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
+          <b><i class="fa fa-angle-double-left w3-large"></i>
+          &nbsp;{% include "wiki/includes/kuu.html" with kuu=previous_month|date:"m" %} {{ previous_month|date:"Y" }}</b>
+        </div>
     </a>
-    <b> {% model_name_artikkel %} {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:"Y" }} kohta</b>
-  </div>
-</div>
-
-<!-- Lingid eelnevale ja järgnevale kuule -->
-<div class="w3-cell-row w3-margin-top">
-  <div class="w3-half">
-    <a style="text-decoration: none;" href="{% url 'wiki:artikkel_month_archive' month=previous_month|date:'n' year=previous_month|date:'Y' %}">
-	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
-        <b><i class="fa fa-angle-double-left w3-large"></i>
-        &nbsp;{% include "wiki/includes/kuu.html" with kuu=previous_month|date:"m" %} {{ previous_month|date:"Y" }}</b>
-      </div>
-	</a>
-  </div>	
-  <div class="w3-half">
-    <a style="text-decoration: none;" href="{% url 'wiki:artikkel_month_archive' month=next_month|date:'n' year=next_month|date:'Y' %}">
-	  <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
-        <b>{% include "wiki/includes/kuu.html" with kuu=next_month|date:"m" %} {{ next_month|date:"Y" }}
-        &nbsp;<i class="fa fa-angle-double-right w3-large"></i></b>
-      </div>
-	</a>
-  </div>
-</div>
-
-<div class="w3-bar">
-  <button
-        class="w3-bar-item w3-button tablink background-artikkel"
-        onclick="openLinks(event, 'artiklid')"
-    >
-    <i class="{% icon_artikkel %}"></i> {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:'Y' }} ({{ object_list.count }})
-  </button>
-  {% if sel_kuul %}
-    <button
-        class="w3-bar-item w3-button tablink"
-        onclick="openLinks(event, 'artiklid_teistel')"
-    >
-      <i class="{% icon_artikkel %}"></i> Teistel aastatel ({{ sel_kuul.count }})
-    </button>
-  {% endif %}
-  {% if syndinud_isikud %}
-    <button
-        class="w3-bar-item w3-button tablink"
-        onclick="openLinks(event, 'isikud_syndinud')"
-    >
-      <i class="{% icon_isik %}"></i> Sünnipäev ({{ syndinud_isikud.count }})
-    </button>
-  {% endif %}
-  {% if surnud_isikud %}
-    <button
-        class="w3-bar-item w3-button tablink"
-        onclick="openLinks(event, 'isikud_surnud')">
-      <i class="{% icon_isik %}"></i> Surmapäev ({{ surnud_isikud.count }})
-    </button>
-  {% endif %}
-  {% if loodud_organisatsioonid %}
-    <button
-        class="w3-bar-item w3-button tablink"
-        onclick="openLinks(event, 'organisatsioonid')">
-      <i class="{% icon_organisatsioon %}"></i> Asutati ({{ loodud_organisatsioonid.count }})
-    </button>
-  {% endif %}
-  {% if valminud_objektid %}
-    <button
-        class="w3-bar-item w3-button tablink"
-        onclick="openLinks(event, 'objektid')">
-      <i class="{% icon_objekt %}"></i> Valmis ({{ valminud_objektid.count }})
-    </button>
-  {% endif %}
-</div>
-
-<!-- Loend valitud aasta ja kuu artiklitest -->
-<div
-    id="artiklid"
-    class="seotud">
-  {% if object_list %}
-    <div class="w3-cell-row w3-container background-artikkel w3-text-white">
-      <div class="w3-cell w3-cell-middle">
-        <h5><i class="{% icon_artikkel %} w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} {{ month|date:'Y' }}</h5>
-      </div>
+    </div>	
+    <div class="w3-half">
+      <a style="text-decoration: none;" href="{% url 'wiki:artikkel_month_archive' month=next_month|date:'n' year=next_month|date:'Y' %}">
+      <div class="w3-container background-artikkel w3-padding-16  w3-hover-white w3-center">
+          <b>{% include "wiki/includes/kuu.html" with kuu=next_month|date:"m" %} {{ next_month|date:"Y" }}
+          &nbsp;<i class="fa fa-angle-double-right w3-large"></i></b>
+        </div>
+    </a>
     </div>
-    {% include 'wiki/includes/object_list.html' %}
-  {% else %}
-    <div class="w3-container w3-padding-16">
-      Valitud kuu ja aasta ({% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:'Y' }}) kohta andmed puuduvad!
-      <a class="w3-button background-artikkel tablink" href="{% url 'wiki:wiki_artikkel_filter' %}"> Proovige uuesti</a>
-    </div>
-  {% endif %}
-</div>
+  </div>
 
-<!-- Loend valitud kuu teiste aastate artiklitest -->
-{% if sel_kuul %}
+  <div class="w3-bar">
+    <button
+          class="w3-bar-item w3-button tablink background-artikkel"
+          onclick="openLinks(event, 'artiklid')"
+      >
+      <i class="{% icon_artikkel %}"></i> {% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:'Y' }} ({{ object_list.count }})
+    </button>
+    {% if sel_kuul %}
+      <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'artiklid_teistel')"
+      >
+        <i class="{% icon_artikkel %}"></i> {% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} ajaloos ({{ sel_kuul.count }})
+      </button>
+    {% endif %}
+    {% if syndinud_isikud %}
+      <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'isikud_syndinud')"
+      >
+        <i class="{% icon_isik %}"></i> Sünnipäev ({{ syndinud_isikud.count }})
+      </button>
+    {% endif %}
+    {% if surnud_isikud %}
+      <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'isikud_surnud')">
+        <i class="{% icon_isik %}"></i> Surmapäev ({{ surnud_isikud.count }})
+      </button>
+    {% endif %}
+    {% if loodud_organisatsioonid %}
+      <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'organisatsioonid')">
+        <i class="{% icon_organisatsioon %}"></i> Asutati ({{ loodud_organisatsioonid.count }})
+      </button>
+    {% endif %}
+    {% if valminud_objektid %}
+      <button
+          class="w3-bar-item w3-button tablink"
+          onclick="openLinks(event, 'objektid')">
+        <i class="{% icon_objekt %}"></i> Valmis ({{ valminud_objektid.count }})
+      </button>
+    {% endif %}
+  </div>
+
+  <!-- Loend valitud aasta ja kuu artiklitest -->
   <div
-      id="artiklid_teistel"
+      id="artiklid"
       class="seotud">
-    <div class="w3-cell-row w3-container background-artikkel w3-text-white">
-      <div class="w3-cell w3-cell-middle">
-        <h5><i class="{% icon_artikkel %} w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} teistel aastatel ({{ sel_kuul.count }}):</h5>
+    {% if object_list %}
+      <div class="w3-cell-row w3-container background-artikkel w3-text-white">
+        <div class="w3-cell w3-cell-middle">
+          <h5><i class="{% icon_artikkel %} w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} {{ month|date:'Y' }}</h5>
+        </div>
+      </div>
+      {% include 'wiki/includes/object_list.html' %}
+    {% else %}
+      <div class="w3-container w3-padding-16">
+        Valitud kuu ja aasta ({% include "wiki/includes/kuu.html" with kuu=month|date:"m" %} {{ month|date:'Y' }}) kohta andmed puuduvad!
+        <a class="w3-button background-artikkel tablink" href="{% url 'wiki:wiki_artikkel_filter' %}"> Proovige uuesti</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Loend valitud kuu teiste aastate artiklitest -->
+  {% if sel_kuul %}
+    <div
+        id="artiklid_teistel"
+        class="seotud">
+      <div class="w3-cell-row w3-container background-artikkel w3-text-white">
+        <div class="w3-cell w3-cell-middle">
+          <h5><i class="{% icon_artikkel %} w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} ajaloos ({{ sel_kuul.count }}):</h5>
+        </div>
+      </div>
+      <div class="w3-padding-16"
+            id="artikkel_month_archive_otheryears"
+            data-url="{% url 'wiki:artikkel_month_archive_otheryears' year=month|date:"Y" month=month|date:"m" %}"
+      >
+        <div id="artikkel_month_archive_otheryears_content"></div>
+        <div id="artikkel_month_archive_otheryears_loader">
+          <div class="w3-container">See päring on mahukas ja võib võtta aega...</div>
+          {% include 'wiki/includes/div_loader_book.html' %}
+        </div>
       </div>
     </div>
-    <div class="w3-padding-16"
-          id="artikkel_month_archive_otheryears"
-          data-url="{% url 'wiki:artikkel_month_archive_otheryears' year=month|date:"Y" month=month|date:"m" %}"
-    >
-      <div id="artikkel_month_archive_otheryears_content"></div>
-      <div id="artikkel_month_archive_otheryears_loader">
-        <div class="w3-container">See päring on mahukas ja võib võtta aega...</div>
-        {% include 'wiki/includes/div_loader_book.html' %}
+  {% endif %}
+
+  <!-- Loend samal kuul sündinud isikutest -->
+  {% cache 3600 syndinud_isikud month|date:"Y" month|date:"m" %}
+    {% if syndinud_isikud %}
+      <div
+          id="isikud_syndinud"
+          class="seotud w3-cell-row">
+        {% with object_list=syndinud_isikud %}
+          {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=syndinud_isikud_pealkiri bookmark='syndinud' %}
+        {% endwith %}
       </div>
-    </div>
-  </div>
-{% endif %}
+    {% endif%}
+  {% endcache %}
+  <!-- Loend samal kuul surnud isikutest -->
+  {% cache 3600 surnud_isikud month|date:"Y" month|date:"m" %}
+    {% if surnud_isikud %}
+      <div
+          id="isikud_surnud"
+          class="seotud w3-cell-row">
+        {% with object_list=surnud_isikud %}
+          {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=surnud_isikud_pealkiri bookmark='surnud' %}
+        {% endwith %}
+      </div>
+    {% endif%}
+  {% endcache %}
 
-<!-- Loend samal kuul sündinud isikutest -->
-{% if syndinud_isikud %}
-  <div
-      id="isikud_syndinud"
-      class="seotud w3-cell-row">
-    {% with object_list=syndinud_isikud %}
-      {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=syndinud_isikud_pealkiri bookmark='syndinud' %}
-    {% endwith %}
-  </div>
-{% endif%}
+  <!-- Loend samal kuul loodud organisatsioonidest -->
+  {% cache 3600 loodud_organisatsioonid month|date:"Y" month|date:"m" %}
+    {% if loodud_organisatsioonid %}
+      <div
+          id="organisatsioonid"
+          class="seotud w3-cell-row">
+        {% with object_list=loodud_organisatsioonid %}
+          {% include 'wiki/includes/object_list_organisatsioonid.html' with periood=month pealkiri=loodud_organisatsioonid_pealkiri %}
+        {% endwith %}
+      </div>
+    {% endif%}
+  {% endcache %}
 
-<!-- Loend samal kuul surnud isikutest -->
-{% if surnud_isikud %}
-  <div
-      id="isikud_surnud"
-      class="seotud w3-cell-row">
-    {% with object_list=surnud_isikud %}
-      {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=surnud_isikud_pealkiri bookmark='surnud' %}
-    {% endwith %}
-  </div>
-{% endif%}
+  <!-- Samal samal kuul valminud objektid -->
+  {% cache 3600 valminud_objektid month|date:"Y" month|date:"m" %}
+    {% if valminud_objektid %}
+      <div
+          id="objektid"
+          class="seotud w3-cell-row">
+        {% with object_list=valminud_objektid %}
+          {% include 'wiki/includes/object_list_objektid.html' with periood=month pealkiri=valminud_objektid_pealkiri %}
+        {% endwith %}
+      </div>
+    {% endif%}
+  {% endcache %}
 
-<!-- Loend samal kuul loodud organisatsioonidest -->
-{% if loodud_organisatsioonid %}
-  <div
-      id="organisatsioonid"
-      class="seotud w3-cell-row">
-    {% with object_list=loodud_organisatsioonid %}
-      {% include 'wiki/includes/object_list_organisatsioonid.html' with periood=month pealkiri=loodud_organisatsioonid_pealkiri %}
-    {% endwith %}
-  </div>
-{% endif%}
-
-<!-- Samal samal kuul valminud objektid -->
-{% if valminud_objektid %}
-  <div
-      id="objektid"
-      class="seotud w3-cell-row">
-    {% with object_list=valminud_objektid %}
-      {% include 'wiki/includes/object_list_objektid.html' with periood=month pealkiri=valminud_objektid_pealkiri %}
-    {% endwith %}
-  </div>
-{% endif%}
 {% endblock %}
 
 {% block javascript %}
@@ -195,14 +200,14 @@
         },
         complete: function () {
           $("#artikkel_month_archive_otheryears_loader").hide();
-          // Kuupäevaväljade unikaalsete id-de lisamine
+          {% comment %} // Kuupäevaväljade unikaalsete id-de lisamine
           let dates = document.body.getElementsByClassName('date');
           let counter = 0;
           for (let i = 0; i < dates.length; i++) {
             if (!dates[i].id) {
               dates[i].id = "_date_" + counter++;
             }
-          }
+          } {% endcomment %}
           getObjectData4tooltip(get_object_data4tooltip_url);
         }
       });

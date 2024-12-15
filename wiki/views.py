@@ -1861,7 +1861,7 @@ def artikkel_month_archive_otheryears(request, year, month):
     sel_kuul_bydate_ids_list = artikkel_qs.filter(Q(dob__month=month) | Q(doe__month=month)).values_list('id', flat=True)
     sel_kuul_bymonth_ids_list = artikkel_qs.filter(dob__isnull=True, hist_month=month).values_list('id', flat=True)
     # sel_kuul_ids = [*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list]
-    sel_kuul_ids = {*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list}
+    sel_kuul_ids = (*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list)
     kirjeid_kokku = len(sel_kuul_ids)
     # if start > kirjeid_kokku: # kui kysitakse rohkem, kui kirjeid on
     #     start = 0

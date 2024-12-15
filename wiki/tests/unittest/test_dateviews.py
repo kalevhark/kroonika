@@ -66,6 +66,32 @@ class WikiDateViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
+    def test_month_view(self):
+        # initial request
+        time_start = datetime.now()
+        response = self.client.get(
+            reverse(
+                'wiki:artikkel_month_archive',
+                kwargs={'year': 1920, 'month': 10}
+            )
+        )
+        time_stopp_initial = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp_initial.seconds < 3, f'Laadimisaeg (initial): {time_stopp_initial.seconds}.{time_stopp_initial.microseconds}')
+        # request from cache
+        time_start = datetime.now()
+        response = self.client.get(
+            reverse(
+                'wiki:artikkel_month_archive',
+                kwargs={'year': 1920, 'month': 10}
+            )
+        )
+        time_stopp_from_cache = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp_from_cache < time_stopp_initial, f'initial {time_stopp_from_cache} < from cache {time_stopp_initial}')
+        self.assertTrue(time_stopp_from_cache.seconds < 3, f'Laadimisaeg: {time_stopp_from_cache.seconds}.{time_stopp_from_cache.microseconds}')
+
+
     def test_day_view(self):
         time_start = datetime.now()
         response = self.client.get(
