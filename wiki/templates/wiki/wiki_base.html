@@ -236,14 +236,14 @@
     {% if COOKIE_CONSENT_INUSE %}showCookieConsent();{% endif %}
     // Navigatsiooniriba asukoha kontrollimiseks
     window.addEventListener('scroll', throttle(onScroll, 25));
-    // Kuupäevaväljade unikaalsete id-de lisamine
+    {% comment %} // Kuupäevaväljade unikaalsete id-de lisamine
     let dates = document.body.getElementsByClassName('date');
     let counter = 0;
     for (let i = 0; i < dates.length; i++) {
       if (!dates[i].id) {
         dates[i].id = "_date_" + counter++;
       }
-    }
+    } {% endcomment %}
     // initialize tooltips
     var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
     getObjectData4tooltip(get_object_data4tooltip_url);

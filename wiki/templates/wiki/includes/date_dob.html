@@ -1,7 +1,11 @@
 {# cs - lingi värv ("artikkel", "isik", "organisatsioon", "objekt") #}
+{% load wiki_extras %}
 {% with sd=obj.dob y=obj.hist_year m=obj.hist_month %}
 	{% if sd %}
-		<div class="date {% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% endif %}">
+		<div 
+			class="date {% if obj.dob|date:'d.m.Y' != obj.hist_date|date:'d.m.Y' %}text-ukj{% endif %}"
+			id="_date_{% get_uuid %}"
+		>
 			<a
 					class="text-{{ cs }} day"
 					href="{% url 'wiki:artikkel_day_archive' year=sd|date:'Y' month=sd|date:'m' day=sd|date:'j' %}"
@@ -32,7 +36,10 @@
 		</div>
 	{% else %}
 		{% if m %}
-			<div class="date">
+			<div 
+				class="date"
+				id="_date_{% get_uuid %}"
+			>
 				<a
 						class="text-{{ cs }} month"
 						href="{% url 'wiki:artikkel_month_archive' year=y month=m %}"
@@ -54,7 +61,10 @@
 			</div>
 		{% else %}
 			{% if y %}
-				<div class="date">
+				<div 
+					class="date"
+					id="_date_{% get_uuid %}"
+				>
 					<a
 							class="text-{{ cs }} year"
 							href="{% url 'wiki:artikkel_year_archive' year=y %}"

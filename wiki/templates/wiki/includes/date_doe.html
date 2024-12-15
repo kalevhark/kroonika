@@ -1,7 +1,11 @@
 {# cs - lingi värv ("artikkel", "isik", "organisatsioon", "objekt") #}
+{% load wiki_extras %}
 {% with ed=obj.doe ey=obj.hist_endyear %}
 	{% if ed %}
-		<div class="date {% if obj.doe|date:'d.m.Y' != obj.hist_enddate|date:'d.m.Y' %}text-ukj{% endif %}">
+		<div 
+			class="date {% if obj.doe|date:'d.m.Y' != obj.hist_enddate|date:'d.m.Y' %}text-ukj{% endif %}"
+			id="_date_{% get_uuid %}"
+		>
 			<a
 					class="text-{{ cs }} day"
 					href="{% url 'wiki:artikkel_day_archive' year=ed|date:'Y' month=ed|date:'m' day=ed|date:'d' %}"
@@ -31,7 +35,10 @@
 			</a>
 		</div>
 	{% elif ey %}
-		<div class="date">
+		<div 
+			class="date"
+			id="_date_{% get_uuid %}"
+		>
 			<a
 					class="text-{{ cs }} year"
 					href="{% url 'wiki:artikkel_year_archive' year=ey %}"
