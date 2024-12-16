@@ -27,19 +27,40 @@ class DateTimeEncoder(json.JSONEncoder):
 
 def logfile2df(logfile):
     # fn tagastab logifailist kuup2evav2lja
-    def datestrings2date(rows):
+    def datestrings2date(row):
         try:
-            t = ''.join([rows.time_str, rows.TZ_str])[1:-1]
+            t = ''.join([row.time_str, row.TZ_str])[1:-1]
         except:
             return None
         return datetime.strptime(t, '%d/%b/%Y:%H:%M:%S%z')
 
-    def intorzero(rows):
+    def intorzero(row):
         try:
-            return int(rows.resp_size)
+            return int(row.resp_size)
         except:
             return 0
 
+    def ip24_subnet(row):
+        try:
+            splits = row.ip.split('.')
+            return '.'.join(splits[:3])
+        except:
+            return row.ip
+    
+    def ip16_subnet(row):
+        try:
+            splits = row.ip.split('.')
+            return '.'.join(splits[:2])
+        except:
+            return row.ip
+    
+    def ip8_subnet(row):
+        try:
+            splits = row.ip.split('.')
+            return '.'.join(splits[0])
+        except:
+            return row.ip
+        
     # Logifaili veerunimed
     names = [
         'IP_address',
@@ -66,6 +87,9 @@ def logfile2df(logfile):
     # Teisendame kuup2evaveeruks
     df['time'] = df.apply(datestrings2date, axis=1)
     df['resp_size'] = df.apply(intorzero, axis=1)
+    df['ip24'] = df.apply(ip24_subnet, axis=1)
+    df['ip16'] = df.apply(ip16_subnet, axis=1)
+    df['ip8'] = df.apply(ip8_subnet, axis=1)
     # Tagastame ainult vajalikud veerud
     return df.drop(['time_str'], axis=1)
 
@@ -112,6 +136,27 @@ def parse_int(x):
 
 
 def logfile2df2(logfile):
+    def ip24_subnet(row):
+        try:
+            splits = row.ip.split('.')
+            return '.'.join(splits[:3])
+        except:
+            return row.ip
+    
+    def ip16_subnet(row):
+        try:
+            splits = row.ip.split('.')
+            return '.'.join(splits[:2])
+        except:
+            return row.ip
+    
+    def ip8_subnet(row):
+        try:
+            splits = row.ip.split('.')
+            return '.'.join(splits[0])
+        except:
+            return row.ip
+        
     data = pd.read_csv(
         logfile,
         sep=r'\s(?=(?:[^"]*"[^"]*")*[^"]*$)(?![^\[]*\])',
@@ -129,6 +174,9 @@ def logfile2df2(logfile):
             'user_agent': parse_str
         }
     )
+    data['ip24'] = data.apply(ip24_subnet, axis=1)
+    data['ip16'] = data.apply(ip16_subnet, axis=1)
+    data['ip8'] = data.apply(ip8_subnet, axis=1)
     print(data.shape, data.columns)
     return data
 
@@ -153,6 +201,7 @@ def whoisinfo(ip_addr=''):
 
 # Tagastab IP aadressi alusel hosti kirjelduse
 def whoisinfo_asn_description(row):
+    asn_description = None
     try:
         asn_description = whoisinfo(row.name)['asn_description']
     except HTTPLookupError:
@@ -166,12 +215,28 @@ def find_tiles_map(row):
     except:
         return None
 
-
+def is_kroonika_month_views(row):
+    pattern = r'/tiles/\d{4}/'
+    try:
+        return re.search(r'/tiles/(\d{4})/', row.request).groups()[0]
+    except:
+        return None
+    
 # Tagastab, kas on bot
 def is_bot(rows):
     bots = ['bot', 'index']
     pat = rf'(?:{"|".join(bots)})'
     return re.search(pat, str(rows.user_agent), re.IGNORECASE) != None
+
+def is_kroonika_dateview_crawler(row):
+    pat = r'\s/wiki/kroonika/\d{4}/'
+    # pat = rf'(?:{"|".join(bots)})'
+    return re.search(pat, str(row.request), re.IGNORECASE) != None
+
+def is_kroonika_month_crawler(row):
+    pat = r'\s/wiki/kroonika/\d{4}/\d{2}/\s'
+    # pat = rf'(?:{"|".join(bots)})'
+    return re.search(pat, str(row.request), re.IGNORECASE) != None
 
 
 # Tagastab stringist sÃµna, millel on boti laadne nimi *bot, *index vms
@@ -293,6 +358,28 @@ def show_calc_results(log_df_filtered):
     print(result)
     print()
 
+    # IP aadressid, kes pärisid kuuvaateid
+    print('month view crawlers x.x.*.*:')
+    result = log_df_filtered[log_df_filtered.apply(is_kroonika_month_crawler, axis=1)] \
+        .groupby('ip16')['size'] \
+        .agg(['count']) \
+        .sort_values(by=['count'], ascending=[False]) \
+        .head(30)
+    # result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
+    print(result)
+    print()
+
+    # IP aadressid, kes pärisid kronovaateid /wiki/kroonika/y/?/?/
+    print('dateview crawlers x.x.*.*:')
+    result = log_df_filtered[log_df_filtered.apply(is_kroonika_dateview_crawler, axis=1)] \
+        .groupby('ip16')['size'] \
+        .agg(['count']) \
+        .sort_values(by=['count'], ascending=[False]) \
+        .head(30)
+    # result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
+    print(result)
+    print()
+
     print('404 status:')
     result = log_df_filtered[log_df_filtered['status'] == 404].groupby('request')['size'] \
         .agg(['count']) \
@@ -365,12 +452,21 @@ async def main():
     # log_df = logfile2df(logfile)
     utc = pytz.utc
     now = utc.localize(datetime.now())
+    latest = log_df['time'].max()
+    time10minutesago = latest - timedelta(seconds=10*60)
+    time01hoursago = latest - timedelta(hours=1)
     time24hoursago = now - timedelta(days=1)
     timelastdaybegan = utc.localize(datetime.combine(datetime.now(), time.min) - timedelta(days=1))
 
-    log_df_filtered = log_df[log_df.time >= time24hoursago]
-    show_calc_results(log_df_filtered)
+    log_df_filtered_24h = log_df[log_df.time >= time24hoursago]
+    show_calc_results(log_df_filtered_24h)
 
+    # log_df_filtered_01h = log_df[log_df.time >= time01hoursago]
+    # show_calc_results(log_df_filtered_01h)
+
+    # log_df_filtered_10m = log_df[log_df.time >= time10minutesago]
+    # show_calc_results(log_df_filtered_10m)
+    
     log_df_filtered_from_last_day_began = log_df[log_df.time >= timelastdaybegan]
 
     name = "valgalinn_access_log_requests_total"
