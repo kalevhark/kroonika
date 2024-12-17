@@ -13,7 +13,7 @@
 	>
 		<a
 				class="text-{{ cs }} day"
-				href="{% url 'wiki:artikkel_day_archive' year=sd|date:'Y' month=sd|date:'m' day=sd|date:'j' %}"
+				href="{% url 'wiki:artikkel_day_archive' year=sd|date:'Y' month=sd|date:'m' day=sd|date:'j' %}?v6ti={{ request.session.session_key }}"
 				onmouseover="hoverDate(this)"
 				onmouseout="normalDate(this)"
 				title="Mis juhtus {{ sd|date:'j.m.Y' }}?"
@@ -22,7 +22,7 @@
 		</a>
 		<a
 				class="text-{{ cs }} month"
-				href="{% url 'wiki:artikkel_month_archive' year=sd|date:'Y' month=sd|date:'m' %}"
+				href="{% url 'wiki:artikkel_month_archive' year=sd|date:'Y' month=sd|date:'m' %}?v6ti={{ request.session.session_key }}"
 				onmouseover="hoverDate(this)"
 				onmouseout="normalDate(this)"
 				title="Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=sd|date:'m' %} {{ sd|date:'Y' }}?"
@@ -31,7 +31,7 @@
 		</a>
 		<a
 				class="text-{{ cs }} year"
-				href="{% url 'wiki:artikkel_year_archive' year=sd|date:'Y' %}"
+				href="{% url 'wiki:artikkel_year_archive' year=sd|date:'Y' %}?v6ti={{ request.session.session_key }}"
 				onmouseover="hoverDate(this)"
 				onmouseout="normalDate(this)"
 				title="Mis juhtus {{ sd|date:'Y' }}?"
@@ -47,7 +47,7 @@
 		>
 			<a
 					class="text-{{ cs }} month"
-					href="{% url 'wiki:artikkel_month_archive' year=y month=m %}"
+					href="{% url 'wiki:artikkel_month_archive' year=y month=m %}?v6ti={{ request.session.session_key }}"
 					onmouseover="hoverDate(this)"
 					onmouseout="normalDate(this)"
 					title="Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=m|stringformat:'02i' %} {{ y }}?"
@@ -56,7 +56,7 @@
 			</a>
 			<a
 					class="text-{{ cs }} year"
-					href="{% url 'wiki:artikkel_year_archive' year=y %}"
+					href="{% url 'wiki:artikkel_year_archive' year=y %}?v6ti={{ request.session.session_key }}"
 					onmouseover="hoverDate(this)"
 					onmouseout="normalDate(this)"
 					title="Mis juhtus {{ y }}?"
@@ -72,7 +72,7 @@
 			>
 				<a
 						class="text-{{ cs }} year"
-						href="{% url 'wiki:artikkel_year_archive' year=y %}"
+						href="{% url 'wiki:artikkel_year_archive' year=y %}?v6ti={{ request.session.session_key }}"
 						onmouseover="hoverDate(this)"
 						onmouseout="normalDate(this)"
 						title="Mis juhtus {{ y }}?"
@@ -91,7 +91,7 @@
 	>
 		<a
 				class="text-{{ cs }} day"
-				href="{% url 'wiki:artikkel_day_archive' year=ed|date:'Y' month=ed|date:'m' day=ed|date:'d' %}"
+				href="{% url 'wiki:artikkel_day_archive' year=ed|date:'Y' month=ed|date:'m' day=ed|date:'d' %}?v6ti={{ request.session.session_key }}"
 				onmouseover="hoverDate(this)"
 				onmouseout="normalDate(this)"
 				title="Mis juhtus {{ ed|date:'j.m.Y' }}?"
@@ -100,7 +100,7 @@
 		</a>
 		<a
 				class="text-{{ cs }} month"
-				href="{% url 'wiki:artikkel_month_archive' year=ed|date:'Y' month=ed|date:'m' %}"
+				href="{% url 'wiki:artikkel_month_archive' year=ed|date:'Y' month=ed|date:'m' %}?v6ti={{ request.session.session_key }}"
 				onmouseover="hoverDate(this)"
 				onmouseout="normalDate(this)"
 				title="Mis juhtus {% include 'wiki/includes/kuul.html' with kuu=ed|date:'m' %} {{ ed|date:'Y' }}?"
@@ -109,7 +109,7 @@
 		</a>
 		<a
 				class="text-{{ cs }} year"
-				href="{% url 'wiki:artikkel_year_archive' year=ed|date:'Y' %}"
+				href="{% url 'wiki:artikkel_year_archive' year=ed|date:'Y' %}?v6ti={{ request.session.session_key }}"
 				onmouseover="hoverDate(this)"
 				onmouseout="normalDate(this)"
 				title="Mis juhtus {{ ed|date:'Y' }}?"
@@ -125,7 +125,7 @@
 	>
 		<a
 				class="text-{{ cs }} year"
-				href="{% url 'wiki:artikkel_year_archive' year=ey %}"
+				href="{% url 'wiki:artikkel_year_archive' year=ey %}?v6ti={{ request.session.session_key }}"
 				onmouseover="hoverDate(this)"
 				onmouseout="normalDate(this)"
 				title="Mis juhtus {{ ey }}?"

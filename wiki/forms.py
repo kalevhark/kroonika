@@ -285,3 +285,17 @@ class V6rdleFormObjekt(Form):
         required=False,
         help_text=''
     )
+
+from allauth.account.forms import LoginForm
+from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV3
+
+class ConfirmForm(LoginForm):
+    recaptcha = ReCaptchaField(
+        widget=ReCaptchaV3(
+            action='wiki:confirm_with_recaptcha',
+            attrs={
+                'required_score':0.85
+            }
+        )
+    )

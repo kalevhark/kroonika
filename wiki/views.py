@@ -1774,6 +1774,15 @@ class ArtikkelYearArchiveView(YearArchiveView):
         )
         return context
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+       ip = x_forwarded_for.split(',')[0]
+    else:
+       ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+from urllib.parse import urlencode
 
 class ArtikkelMonthArchiveView(MonthArchiveView):
     date_field = 'hist_searchdate'
@@ -1782,6 +1791,31 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
     allow_empty = True
     paginate_by = 20
     # ordering = ('hist_searchdate', 'id')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            session_key = request.session.session_key
+            url_v6ti = request.GET.get('v6ti')
+            ip = get_client_ip(request)
+            path = request.path
+            # print(session_key == url_v6ti, self.get_month(), self.get_year(), path)
+            if session_key != url_v6ti:
+                logger.info(f'{session_key} != {url_v6ti}: {ip} {path}')
+                base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
+                query_string =  urlencode(
+                    {
+                        'edasi': reverse(
+                            'wiki:artikkel_month_archive',
+                            kwargs={
+                                'year': self.get_year(),
+                                'month': self.get_month()
+                            }
+                        )
+                    }
+                )  # 2 edasi=/wiki/kroonika/1918/2/
+                url = '{}?{}'.format(base_url, query_string)  # 3 /confirm_with_recaptcha/?edasi=/wiki/kroonika/1918/2/
+                # return redirect(url)  # 4
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
@@ -2790,3 +2824,31 @@ def get_qrcode_from_uri(request):
     # qrcode_image = f'<img id="qrcode" src="data:image/png;base64, {image_data}"></img>'
     qrcode_image = f'data:image/png;base64, {image_data}'
     return HttpResponse(qrcode_image)
+
+from wiki.forms import ConfirmForm
+
+def confirm_with_recaptcha(request):
+    # if this is a POST request we need to process the form data
+    if request.method == "POST":
+        # create a form instance and populate it with data from the request:
+        form = ConfirmForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect("/")
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        edasi = request.GET.get('edasi')
+        form = ConfirmForm()
+
+    return render(
+        request, 
+        "wiki/confirm_with_recaptcha.html", 
+        {
+            "form": form,
+            'edasi': edasi
+        }
+    )

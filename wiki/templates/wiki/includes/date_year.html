@@ -8,7 +8,7 @@
 		>
 			<a
 					class="text-{{ cs }} year"
-					href="{% url 'wiki:artikkel_year_archive' year=sd|date:'Y' %}"
+					href="{% url 'wiki:artikkel_year_archive' year=sd|date:'Y' %}?v6ti={{ request.session.session_key }}"
 					onmouseover="hoverDate(this)"
 					onmouseout="normalDate(this)"
 					title="Mis juhtus {{ sd|date:'Y' }}?"
@@ -21,7 +21,7 @@
 			<div class="date">
 				<a
 						class="text-{{ cs }} year"
-						href="{% url 'wiki:artikkel_year_archive' year=y %}"
+						href="{% url 'wiki:artikkel_year_archive' year=y %}?v6ti={{ request.session.session_key }}"
 						onmouseover="hoverDate(this)"
 						onmouseout="normalDate(this)"
 						title="Mis juhtus {{ y }}?"

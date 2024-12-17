@@ -27,6 +27,7 @@ urlpatterns = [
     path('get_v6rdle_object/', views.get_v6rdle_object, name='get_v6rdle_object'),
     path('get_update_object_with_object/', views.get_update_object_with_object, name='get_update_object_with_object'),
     path('feedback/', views.feedback, name='feedback'),
+    path('confirm_with_recaptcha/', views.confirm_with_recaptcha, name='confirm_with_recaptcha'),
     path('kroonika/', ArtikkelArchiveIndexView.as_view(), name='artikkel_index_archive'),
     path('kroonika/infinite/', views.artikkel_index_archive_infinite, name='artikkel_index_archive_infinite'),
     path('kroonika/<int:year>/', (cache_page(settings.CACHE_MIDDLEWARE_SECONDS)(ArtikkelYearArchiveView.as_view())), name='artikkel_year_archive'),

@@ -1,0 +1,33 @@
+{% extends "wiki/wiki_base.html" %}
+
+{% block title %}
+  {{ block.super }} - {{ edasi }}?
+{% endblock %}
+
+{% block content %}
+	<div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
+		<form method="POST"
+						action="{{ edasi }}?v6ti={{ request.session.session_key }}"
+						id="confirmForm"
+						novalidate>
+				{% csrf_token %}
+				{% if form.non_field_errors %}
+						<div class="alert alert-danger">
+								{{ form.non_field_errors }}
+						</div>
+				{% endif %}
+				{% if form.recaptcha.errors %}
+						<div class="alert alert-danger">
+								{{ form.recaptcha.errors }}
+						</div>
+				{% endif %}
+
+				ikka läheme? {{ edasi }}
+
+				<div class="d-none">
+						{{ form.recaptcha }}
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+{% endblock %}
