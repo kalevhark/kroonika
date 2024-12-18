@@ -2883,7 +2883,7 @@ from wiki.forms import ConfirmForm
 
 def confirm_with_recaptcha(request):
     # if this is a POST request we need to process the form data
-    if request.method == "POST" and check_recaptcha(request):
+    if request.method == "POST":
         form = ConfirmForm(request.POST)
         # create a form instance and populate it with data from the request:
         # check whether it's valid:
