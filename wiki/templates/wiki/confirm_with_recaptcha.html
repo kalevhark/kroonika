@@ -16,18 +16,19 @@
 								{{ form.non_field_errors }}
 						</div>
 				{% endif %}
-				{% comment %} {% if form.recaptcha.errors %}
+				<input id="edasi" type="hidden" name="edasi" maxlength="100" value="{{ edasi }}">
+				{% if form.recaptcha.errors %}
 						<div class="alert alert-danger">
 								{{ form.recaptcha.errors }}
 						</div>
-				{% endif %} {% endcomment %}
+				{% endif %}
 
-				ikka läheme? {{ edasi }}
+				Palun kinnita, et päringu {{ edasi }} tegi inimene:
 
 				<div class="d-none">
 						{{ form.recaptcha }}
 				</div>
-				<button type="submit" class="btn btn-primary">Submit</button>
+				<button type="submit" class="btn btn-primary">Jah</button>
 		</form>
 	</div>
 {% endblock %}

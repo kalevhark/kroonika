@@ -611,7 +611,7 @@ class OrganisatsioonViewTests(TestCase):
         url = f'/wiki/organisatsioon/{obj.id}-{obj.slug}/'
         _ = self.client.get(url)
         time_stopp = datetime.now() - time_start
-        self.assertTrue(time_stopp.seconds < 5)
+        self.assertTrue(time_stopp.seconds < 5, f'Laadimisaeg: {obj} {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_view_uses_correct_template(self):
         obj = Organisatsioon.objects.get(id=self.test_object_id)

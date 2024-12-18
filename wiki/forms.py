@@ -299,4 +299,4 @@ class ConfirmForm(forms.Form):
     #         }
     #     )
     # )
-    edasi = forms.CharField(max_length=200, initial='tyhi')
+    edasi = forms.CharField(label="Edasi", max_length=200, initial='tyhi', required=False)

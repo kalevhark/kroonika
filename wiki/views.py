@@ -109,7 +109,7 @@ def check_recaptcha(request):
             ip = x_forwarded_for.split(',')[0]
         else:
             ip = request.META.get('REMOTE_ADDR')
-        # print('recaptcha:', ip, result_json)
+        logger.info(f'recaptcha failed: {ip}')
         return False
 
 #
@@ -1628,6 +1628,31 @@ class ArtikkelYearArchiveView(YearArchiveView):
     paginate_by = 20
     # ordering = ('hist_searchdate', 'id')
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            session_key = request.session.session_key
+            url_v6ti = request.GET.get('v6ti')
+            ip = get_client_ip(request)
+            path = request.path
+            if session_key != url_v6ti:
+                logger.warning(f'{session_key} != {url_v6ti}: {ip} {path}')
+                base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
+                query_string =  urlencode(
+                    {
+                        'edasi': reverse(
+                            'wiki:artikkel_year_archive',
+                            kwargs={
+                                'year': self.get_year(),
+                            }
+                        )
+                    }
+                )  # 2 edasi=/wiki/kroonika/1918/
+                url = '{}?{}'.format(base_url, query_string)  # 3 /confirm_with_recaptcha/?edasi=/wiki/kroonika/1918/
+                return redirect(url)  # 4
+                # return HttpResponseForbidden("You do not have permission to view this resource.")
+
+        return super().dispatch(request, *args, **kwargs)
+    
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
 
@@ -1798,7 +1823,6 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
             url_v6ti = request.GET.get('v6ti')
             ip = get_client_ip(request)
             path = request.path
-            # print(session_key == url_v6ti, self.get_month(), self.get_year(), path)
             if session_key != url_v6ti:
                 logger.warning(f'{session_key} != {url_v6ti}: {ip} {path}')
                 base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
@@ -1814,8 +1838,8 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
                     }
                 )  # 2 edasi=/wiki/kroonika/1918/2/
                 url = '{}?{}'.format(base_url, query_string)  # 3 /confirm_with_recaptcha/?edasi=/wiki/kroonika/1918/2/
-                # return redirect(url)  # 4
-                return HttpResponseForbidden("You do not have permission to view this resource.")
+                return redirect(url)  # 4
+                # return HttpResponseForbidden("You do not have permission to view this resource.")
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -1924,6 +1948,34 @@ class ArtikkelDayArchiveView(DayArchiveView):
     allow_future = True
     allow_empty = True
 
+    
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            session_key = request.session.session_key
+            url_v6ti = request.GET.get('v6ti')
+            ip = get_client_ip(request)
+            path = request.path
+            if session_key != url_v6ti:
+                logger.warning(f'{session_key} != {url_v6ti}: {ip} {path}')
+                base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
+                query_string =  urlencode(
+                    {
+                        'edasi': reverse(
+                            'wiki:artikkel_day_archive',
+                            kwargs={
+                                'year': self.get_year(),
+                                'month': self.get_month(),
+                                'day': self.get_day()
+                            }
+                        )
+                    }
+                )  # 2 edasi=/wiki/kroonika/1918/2/12/
+                url = '{}?{}'.format(base_url, query_string)  # 3 /confirm_with_recaptcha/?edasi=/wiki/kroonika/1918/2/12/
+                return redirect(url)  # 4
+                # return HttpResponseForbidden("You do not have permission to view this resource.")
+
+        return super().dispatch(request, *args, **kwargs)
+    
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
 
@@ -2833,21 +2885,18 @@ def confirm_with_recaptcha(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST" and check_recaptcha(request):
         form = ConfirmForm(request.POST)
-        print(form.fields['edasi'])
-        return HttpResponseRedirect(form.fields['edasi'].initial)
         # create a form instance and populate it with data from the request:
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
-            # redirect to a new URL:
-            return HttpResponseRedirect('/')
+            base_url = form.cleaned_data['edasi']
+            session_key = request.session.session_key
+            url = f'{base_url}?v6ti={session_key}'
+            return redirect(url)
 
     # if a GET (or any other method) we'll create a blank form
     else:
         edasi = request.GET.get('edasi')
         form = ConfirmForm()
-        form.fields['edasi'].initial = edasi
 
 
     return render(
