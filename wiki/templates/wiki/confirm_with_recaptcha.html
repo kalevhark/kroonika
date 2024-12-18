@@ -7,7 +7,7 @@
 {% block content %}
 	<div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
 		<form method="POST"
-						action="{{ edasi }}?v6ti={{ request.session.session_key }}"
+						action="{% url 'wiki:confirm_with_recaptcha' %}"
 						id="confirmForm"
 						novalidate>
 				{% csrf_token %}
@@ -16,11 +16,11 @@
 								{{ form.non_field_errors }}
 						</div>
 				{% endif %}
-				{% if form.recaptcha.errors %}
+				{% comment %} {% if form.recaptcha.errors %}
 						<div class="alert alert-danger">
 								{{ form.recaptcha.errors }}
 						</div>
-				{% endif %}
+				{% endif %} {% endcomment %}
 
 				ikka läheme? {{ edasi }}
 

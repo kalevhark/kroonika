@@ -34,7 +34,7 @@ from django.db.models import \
     Value, IntegerField, \
     ExpressionWrapper
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, QueryDict
+from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, QueryDict
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
@@ -1800,7 +1800,7 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
             path = request.path
             # print(session_key == url_v6ti, self.get_month(), self.get_year(), path)
             if session_key != url_v6ti:
-                logger.info(f'{session_key} != {url_v6ti}: {ip} {path}')
+                logger.warning(f'{session_key} != {url_v6ti}: {ip} {path}')
                 base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
                 query_string =  urlencode(
                     {
@@ -1815,6 +1815,8 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
                 )  # 2 edasi=/wiki/kroonika/1918/2/
                 url = '{}?{}'.format(base_url, query_string)  # 3 /confirm_with_recaptcha/?edasi=/wiki/kroonika/1918/2/
                 # return redirect(url)  # 4
+                return HttpResponseForbidden("You do not have permission to view this resource.")
+
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -2829,20 +2831,24 @@ from wiki.forms import ConfirmForm
 
 def confirm_with_recaptcha(request):
     # if this is a POST request we need to process the form data
-    if request.method == "POST":
-        # create a form instance and populate it with data from the request:
+    if request.method == "POST" and check_recaptcha(request):
         form = ConfirmForm(request.POST)
+        print(form.fields['edasi'])
+        return HttpResponseRedirect(form.fields['edasi'].initial)
+        # create a form instance and populate it with data from the request:
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect('/')
 
     # if a GET (or any other method) we'll create a blank form
     else:
         edasi = request.GET.get('edasi')
         form = ConfirmForm()
+        form.fields['edasi'].initial = edasi
+
 
     return render(
         request, 
