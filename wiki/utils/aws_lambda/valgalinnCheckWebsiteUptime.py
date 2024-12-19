@@ -1,6 +1,6 @@
 # lambda_function.py
 #
-# Check valgalinn.ee uptime in every 5 minutes:
+# Check valgalinn.ee uptime in every 1 minutes:
 # Amazon EventBridge: arn:aws:scheduler:eu-west-1:700227816743:schedule/default/rulevalgalinnWebsiteUptimeNotifications
 
 from datetime import datetime

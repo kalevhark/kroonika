@@ -454,7 +454,7 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'file': {
-            'level': 'ERROR',
+            'level': 'WARNING',
             'class': 'logging.FileHandler',
             'filename': 'logs/kroonika_django.log',
             'formatter': 'verbose',
