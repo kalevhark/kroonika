@@ -138,17 +138,16 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-Milwi Jeret, Õie Kallas, Renate Kübar, Linda Palmiste, Maria Pikk, Marie Wallner, Greeta Wisnapuu, Rosalie Metsla, Leili Senter, Johanna Tuwikene,
-Marta Parts, Antonie Wares, Helmi Wähi
+Johannes Aaran, August Arbeiter, Leida Arro, Georg Bachwerk, Mirdza Bremse, Arwid Duwin, Leo Fiks, Ella Grauer, Heljo Inn, Lembit Isak, Maimo Jänes, Endla Raid, Arseni Kallaste, Georg Karki, Arno Karolin, Jahnis Kasak, Kalju Kits, Heljo Kont, Helgi Kokker, Arnold Kuhi, Milda Kütt, Ernst Kõwask, Hugo Laater, Wello Lepik, Woldemar Lindenberg, Eduard Lindma, Oliwer Lääts, Asta Madisson, Irene Marits, Jewronia Mets, Endel Morel, Hilja Mägraken, Leonhard Paluwits, Artur Pang, H. Patte, W. Pruks, Werner Rebane, Salme Rimm, Poigo Ritson, Weronika Roi, Oswald Saag, August Saar, Juta Saukas, Wiktor Schinmann, Heinrich Siiman, H. Siirak, Maria Snetkow, Linda Subert, Helmi Tamm, Hanelle Tein, Arnold Till, Hermine Till, Heino Tiiwel, Heinrich Tänna, Agnia Uibo, Ludwig Wernik, Heino Wibo, Leida Wiiding, Elsa Wisnapuu
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=13489)
+    art = Artikkel.objects.get(id=1789)
     print(art)
     # Millise pildiga siduda isik
     pilt = Pilt.objects.get(id=13913)
     print(pilt)
     # Milline organisatsioon lisada isikule
-    org = Organisatsioon.objects.get(id=2768) # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
+    org = Organisatsioon.objects.get(id=2800) # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
     viited_ids = [15761]
@@ -156,7 +155,7 @@ Marta Parts, Antonie Wares, Helmi Wähi
     viitestring = ' '.join([f'[viide_{viite_id}]' for viite_id in viited_ids])
     print(viited, viitestring)
     # Isiku kirjeldus
-    isik_kirjeldus = f'Valga naiskutsekooli lõpetaja 1937 {viitestring}'
+    isik_kirjeldus = f'Valga Keskkooli lõpetaja 1937 {viitestring}'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
