@@ -188,19 +188,19 @@ Linda Altosaar, Enestin-Rosalie Kiima, Natalie Lill, Linda Põldmaa, Linda Emili
 # tools.massikanne_from_json()
 def massikanne_from_json():
     # Millise aasta lend
-    aasta = '1936'
+    aasta = '1937'
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=1708)
+    art = Artikkel.objects.get(id=1789)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=12816)
+    pilt = Pilt.objects.get(id=13913)
     print(pilt)
     # Milline organisatsioon lisada isikule
     org = Organisatsioon.objects.get(
         id=2777)  # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [15093, 15094]
+    viited_ids = [15761, 15762]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     viitestring = ' '.join(['[viide_{viite_id}]' for viite_id in viited_ids])
