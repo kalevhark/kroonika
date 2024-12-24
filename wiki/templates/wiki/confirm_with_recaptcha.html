@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-	<div class="w3-cell-row w3-container background-artikkel w3-text-white w3-padding-16">
+	<div class="w3-cell-row w3-container w3-padding-16">
 		<form method="POST"
 						action="{% url 'wiki:confirm_with_recaptcha' %}"
 						id="confirmForm"
@@ -23,12 +23,13 @@
 						</div>
 				{% endif %}
 
-				Palun kinnita, et päringu {{ edasi }} tegi inimene:
+				Ole hea ja kinnita, et päringu {{ edasi }} tegid Sina:
 
 				<div class="d-none">
 						{{ form.recaptcha }}
 				</div>
 				<button type="submit" class="btn btn-primary">Jah</button>
+				<small>Suur tänu, et aitad agressiivsete veebirobotite vastu võidelda!</small>
 		</form>
 	</div>
 {% endblock %}
