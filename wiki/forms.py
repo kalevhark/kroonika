@@ -8,8 +8,8 @@ from django.forms import (
     Textarea,
     # SelectMultiple,
     ValidationError,
-    # CharField,
-    ChoiceField, RadioSelect, Select
+    CharField,
+    # ChoiceField, RadioSelect, Select
     # ModelMultipleChoiceField,
 )
 
@@ -231,7 +231,7 @@ class VihjeForm(ModelForm):
                     css_class="vihje-kontakt w3-input w3-border w3-round"
                 ),
                 HTML(
-                    '<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" >'
+                    '<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" />'
                 ),
                 ButtonHolder(
                     Submit('save', 'Saada', css_class='w3-button w3-round w3-left w3-green'),
@@ -286,11 +286,10 @@ class V6rdleFormObjekt(Form):
         help_text=''
     )
 
-from django import forms
-from django_recaptcha.fields import ReCaptchaField
-from django_recaptcha.widgets import ReCaptchaV3
+# from django_recaptcha.fields import ReCaptchaField
+# from django_recaptcha.widgets import ReCaptchaV3
 
-class ConfirmForm(forms.Form):
+class ConfirmForm(Form):
     # recaptcha = ReCaptchaField(
     #     widget=ReCaptchaV3(
     #         action='wiki:confirm_with_recaptcha',
@@ -299,4 +298,4 @@ class ConfirmForm(forms.Form):
     #         }
     #     )
     # )
-    edasi = forms.CharField(label="Edasi", max_length=200, initial='tyhi', required=False)
+    edasi = CharField(label="Edasi", max_length=200, initial='tyhi', required=False)

@@ -9,26 +9,28 @@
 		<form method="POST"
 						action="{% url 'wiki:confirm_with_recaptcha' %}"
 						id="confirmForm"
-						novalidate>
-				{% csrf_token %}
-				{% if form.non_field_errors %}
-						<div class="alert alert-danger">
-								{{ form.non_field_errors }}
-						</div>
-				{% endif %}
-				<input id="edasi" type="hidden" name="edasi" maxlength="100" value="{{ edasi }}">
-				{% if form.recaptcha.errors %}
-						<div class="alert alert-danger">
-								{{ form.recaptcha.errors }}
-						</div>
-				{% endif %}
-
-				Ole hea ja kinnita, et päringu {{ edasi }} tegid Sina:
-				<div class="d-none">
-						{{ form.recaptcha }}
+						novalidate
+		>
+			{% csrf_token %}
+			{% if form.non_field_errors %}
+				<div class="alert alert-danger">
+					{{ form.non_field_errors }}
 				</div>
-				<button type="submit" class="btn btn-primary">Jah</button>
-				<p><small>Suur tänu, et aitad agressiivsete veebirobotite vastu võidelda!</small></p>
+			{% endif %}
+			<input id="edasi" type="hidden" name="edasi" maxlength="100" value="{{ edasi }}">
+			<input type="hidden" value="" name="g-recaptcha-response" class="g-recaptcha-response" />
+			{% comment %} {% if form.recaptcha.errors %}
+				<div class="alert alert-danger">
+					{{ form.recaptcha.errors }}
+				</div>
+			{% endif %} {% endcomment %}
+
+			Ole hea ja kinnita, et päringu {{ edasi }} tegid Sina:
+			{% comment %} <div class="d-none">
+					{{ form.recaptcha }}
+			</div> {% endcomment %}
+			<button type="submit" class="btn btn-primary">Jah</button>
+			<p><small>Suur tänu, et aitad agressiivsete veebirobotite vastu võidelda!</small></p>
 		</form>
 	</div>
 {% endblock %}
