@@ -301,8 +301,7 @@ def show_calc_results(log_df_filtered):
         .agg(['sum', 'count']) \
         .sort_values(by=['sum'], ascending=[False]) \
         .head(10)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",",
-                                                                                                    regex=False)
+    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",", regex=False)
     print(result)
     print()
 
