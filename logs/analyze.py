@@ -442,7 +442,7 @@ def make_json_reports(log_df_filtered, name):
 
 async def main():
     path = os.path.dirname(sys.argv[0])
-    logfile = os.path.join(path, 'valgalinn.access.log')
+    logfile = os.path.join(path, 'valgalinn.access_48h.log')
     if not os.path.isfile(logfile):
         path = '/usr/local/apache2/logs/'
         logfile = os.path.join(path, 'access_log')
