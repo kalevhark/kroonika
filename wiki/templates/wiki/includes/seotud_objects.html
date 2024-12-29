@@ -9,9 +9,9 @@
 
 <script>
   var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
-  window.onload = (event) => {
+  $(document).ready( function() {
     // Laadime objektiga seosed
     wiki_object_detail_seotud();
     wiki_object_detail_seotud_pildirida();
-  };
+  });
 </script>
