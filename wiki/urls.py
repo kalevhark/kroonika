@@ -40,6 +40,7 @@ urlpatterns = [
     path('isik/', IsikFilterView.as_view(), name='wiki_isik_filter'),
     path('isik/<int:pk>-<str:slug>/', IsikDetailView.as_view(), name='wiki_isik_detail'),
     path('object_detail_seotud/<str:model>-<int:id>/', views.object_detail_seotud, name='wiki_object_detail_seotud'),
+    path('object_detail_seotud_pildirida/<str:model>-<int:id>/', views.object_detail_seotud_pildirida, name='wiki_object_detail_seotud_pildirida'),
     path('get_object_data4tooltip/', views.get_object_data4tooltip, name='get_object_data4tooltip'),
     path('get_qrcode_from_uri/', views.get_qrcode_from_uri, name='get_qrcode_from_uri'),
     path('organisatsioon/', OrganisatsioonFilterView.as_view(), name='wiki_organisatsioon_filter'),

@@ -105,7 +105,37 @@ class DetailViewUnitTest(TestCase):
         self.assertIn('seotud_objektid', response.context_data)
         self.assertIn('seotud_pildid', response.context_data)
 
+    def test_object_seotud_pildid_pildirida_exists(self):
+        SELECT_COUNT = 3
+        models = [Isik, Organisatsioon, Objekt]
+        # Juhuslikud artiklid kontrolliks
+        for model in models:
+            objs = model.objects.filter(pildid__isnull=False).order_by('?')[:SELECT_COUNT]
+            for obj in objs:
+                kwargs = {
+                    'model': model.__name__.lower(),
+                    'id': obj.id
+                }
+                response = self.client.get(reverse('wiki:wiki_object_detail_seotud_pildirida', kwargs=kwargs))
+                self.assertEqual(response.status_code, 200)
+                self.assertIn('seotud pildid', str(response.content))
+    
+    def test_object_seotud_pildid_pildirida_not_exists(self):
+        SELECT_COUNT = 1
+        models = [Isik, Organisatsioon, Objekt]
+        # Juhuslikud artiklid kontrolliks
+        for model in models:
+            objs = model.objects.filter(pildid__isnull=True).order_by('?')[:SELECT_COUNT]
+            for obj in objs:
+                kwargs = {
+                    'model': model.__name__.lower(),
+                    'id': obj.id
+                }
+                response = self.client.get(reverse('wiki:wiki_object_detail_seotud_pildirida', kwargs=kwargs))
+                self.assertEqual(response.status_code, 200)
+                self.assertNotIn('seotud pildid', str(response.content))
 
+    
 class ArtikkelViewTests(TestCase):
 
     def setUp(self):

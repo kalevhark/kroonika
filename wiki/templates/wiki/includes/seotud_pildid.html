@@ -1,0 +1,137 @@
+{% load static %}
+{% load wiki_extras %}
+{% include 'wiki/includes/div_loader_book.html' with n='_wiki_object_detail_seotud_pildirida' %}
+<!-- Pildigalerii -->
+{% with pildid=seotud_pildid %}
+  {% if pildid %}
+    {% block src %}
+      <script src="{% static 'ilm/js/swiped-events.js' %}"></script>
+    {% endblock %}
+    {#    Pildirida, mis laaditakse ajax funktsiooniga wiki_object_detail_seotud_pildirida() #}
+    <div 
+      class="wiki_object_detail_seotud_pildirida"
+      data-url="{% url 'wiki:wiki_object_detail_seotud_pildirida' model=object|to_model_name_lower id=object.id %}"
+      id="wiki_object_detail_seotud_pildirida"
+    >
+      Laadime {{ object }} pilte...      
+    </div>
+
+    <script>
+      function openModal() {
+        {# Järgnev rida tagab, et navbar ei tuleks modal akna peale #}
+        document.getElementsByTagName("header")[0].style.zIndex = 0;
+        document.getElementById("myModal").style.display = "block";
+        window.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape') {
+            closeModal();
+          }
+        })
+        $(document).click(function (e) {
+          if ($(e.target).is('#myModal')) {
+              closeModal();
+          }
+        });
+      }
+
+      function closeModal() {
+        $('#myModal').fadeOut(200, "linear");
+      }
+
+      // var slideIndex = 1;
+      // showSlides(slideIndex);
+
+      function plusSlides(n) {
+        showSlides(slideIndex += n);
+      }
+
+      function currentSlide(n) {
+        showSlides(slideIndex = n);
+      }
+
+      function showSlides(n) {
+        var slides = document.getElementsByClassName("mySlides");
+        var pildirida = document.getElementsByClassName("pilt-pildirida");
+        var captionText = document.getElementById("captionmodal");
+        var markdownTag = document.getElementById("markdown-tag");
+        if (n > slides.length) {slideIndex = 1}
+        if (n < 1) {slideIndex = slides.length}
+        for (var i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        slides[slideIndex-1].style.display = "block";
+        captionText.innerHTML = pildirida[slideIndex-1].alt;
+        markdownTag.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-markdown-tag");
+        if (slides.length > 1) {
+          var numberText = document.getElementById("numbertext");
+          numberText.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-itemnr") + " / {{ pildid.count }}";
+        }
+      }
+
+      {# Pildile klikkimisel leitakse vaste modaalakna pildireast ja avatakse valitud pilt #}
+      function showPilt(event) {
+        if ($(event.target).is('img')) {
+          var piltId = event.target.getAttribute("data-pilt-id");
+          var pildirida = document.getElementsByClassName("pilt-pildirida");
+          var pildItemNr = 1;
+          for (i = 0; i < pildirida.length; i++) {
+            if (pildirida[i].getAttribute("data-pilt-id") === piltId) {
+              pildItemNr = pildirida[i].getAttribute("data-pilt-itemnr");
+              break;
+            }
+          }
+          if (pildItemNr) {
+            openModal();
+            currentSlide(parseInt(pildItemNr));
+          }
+        }
+      }
+
+      {# Profiilipildi peal klikkimisel avaneb modaal #}
+      var img = document.getElementById("profiiliPilt");
+      if (img) {img.onclick = showPilt;}
+
+      {# Lisame object sisus olevatele piltidele klikkimisel modaalakna avamise #}
+      var pildidtekstis = document.getElementsByClassName("pilt-pildidtekstis");
+      for (i = 0; i < pildidtekstis.length; i++) {
+        pildidtekstis[i].classList.add("pilt-detail");
+        pildidtekstis[i].onclick = showPilt;
+      }
+
+      // button onclick="markdownTagCopy(this)"
+      function markdownTagCopy(btn) {
+        var markdownTag = document.getElementById("markdown-tag");
+        navigator.clipboard.writeText(markdownTag.innerText);
+        markdownTag.parentElement.classList.add("w3-pale-green");
+        setTimeout(function () {
+          markdownTag.parentElement.classList.remove("w3-pale-green");
+        }, 2500);
+      }
+
+      {#Vasakule või paremale libistamisel vahetame pilte#}
+      $(function(){
+        document.addEventListener('swiped-left', swipeHandler);
+        document.addEventListener('swiped-right', swipeHandler);
+
+        function swipeHandler( event ){
+          if(event.handled !== true) // This will prevent event triggering more then once
+          {
+            // if ($(event.target).is('img')) {
+              if ($(event.target).hasClass('pilt-pildimodal')) {
+              switch (event.type) {
+                case "swiped-left":
+                  plusSlides(1);
+                  break;
+                case "swiped-right":
+                  plusSlides(-1);
+                  break;
+              }
+              event.handled = true;
+            }
+          }
+          return false;
+        }
+      });
+    </script>
+
+  {% endif %}
+{% endwith %}

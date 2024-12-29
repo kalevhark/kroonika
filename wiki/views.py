@@ -2184,9 +2184,9 @@ class IsikDetailView(generic.DetailView):
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).\
             filter(isik=self.object)
         context['seotud_pildid'] = Pilt.objects.sorted(). \
-            filter(isikud=self.object) #. \
-            # order_by('tyyp', '-profiilipilt_isik', 'hist_year', 'hist_date')
-
+            exists()
+            # filter(isikud=self.object)
+        
         # Lisame eellaste ja j2rglaste andmed
         context = add_eellased_j2rglane2context(self, context)
 
@@ -2243,6 +2243,35 @@ def object_detail_seotud(request, model, id):
     )
     return render(request, 'wiki/includes/seotud_artiklikaudu.html', context)
 
+#
+# object detailvaates ajax seotud pildirida kuvamiseks
+#
+def object_detail_seotud_pildirida(request, model, id):
+    # queryparams = QueryDict(mutable=True)
+    # queryparams.update(
+    #     {model: id}
+    # )
+    # context = {
+    #     'model': model,
+    #     'id': id,
+    #     'queryparams': '?' + queryparams.urlencode()
+    # }
+
+    model_filters = {
+        'isik':           'isikud__id',
+        'organisatsioon': 'organisatsioonid__id',
+        'objekt':         'objektid__id'
+    }
+    # Objectiga seotud pildid
+    filter = {
+        model_filters[model]: id
+    }
+    seotud_pildid = Pilt.objects.sorted().filter(**filter)
+    context = {
+        'seotud_pildid': seotud_pildid
+    }
+    return render(request, 'wiki/includes/seotud_pildid_pildirida.html', context)
+    
 #
 # Organisatsioonide otsimiseks/filtreerimiseks
 #
@@ -2337,8 +2366,8 @@ class OrganisatsioonDetailView(generic.DetailView):
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).\
             filter(organisatsioon__id=self.object.id)
         context['seotud_pildid'] = Pilt.objects.sorted(). \
-            filter(organisatsioonid=self.object) # . \
-            # order_by('tyyp', '-profiilipilt_organisatsioon', 'hist_year', 'hist_date')
+            exists()
+            # filter(organisatsioonid=self.object)
 
         # Lisame eellaste ja j2rglaste andmed
         context = add_eellased_j2rglane2context(self, context)
@@ -2493,13 +2522,14 @@ class ObjektDetailView(generic.DetailView):
             daatumitega(self.request).\
             filter(objektid=self.object)
         context['seotud_pildid'] = Pilt.objects.sorted(). \
-            filter(objektid=self.object) #. \
-            # order_by('tyyp', '-profiilipilt_objekt', 'hist_year', 'hist_date')
-
+            exists()
+            # filter(objektid=self.object)
+        
         # Lisame eellaste ja j2rglaste andmed
         context = add_eellased_j2rglane2context(self, context)
 
         # Artikli kaudu seotud objects lisab ajax func object_detail_seotud()
+        # Artikli kaudu seotud pildid lisab ajax func object_detail_pildirida()
         return context
 
 

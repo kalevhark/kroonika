@@ -1,0 +1,66 @@
+{% load static %}
+{% load wiki_extras %}
+<!-- Pildigalerii -->
+{% with pildid=seotud_pildid %}
+  {% if pildid %}
+    <h5>
+      <i class="{% icon_object pildid.first %} w3-xlarge text-pilt"></i> seotud pildid
+    </h5>
+    <div>
+      {% for obj in pildid %}
+        <a href="#">
+          <img
+            class="pilt-pildirida"
+            src="{{ obj.pilt_icon.url }}"
+            alt="{{ obj.caption }}"
+            data-pilt-id="{{ obj.id }}"
+            data-pilt-itemnr="{{ forloop.counter }}"
+            data-pilt-markdown-tag="{{ obj.markdown_tag }}"
+            title="{{ obj }}"
+            data-img-big="{{ obj.pilt.url }}"
+            onclick="openModal();currentSlide({{ forloop.counter }})"
+          >
+        </a>
+      {% endfor %}
+    </div>
+
+    {#    Modal #}
+    <div id="myModal" class="modal">
+      {% if pildid.count > 1 %}
+        <span class="numbertext" id="numbertext"></span>
+      {% endif %}
+      <span id="button-close-modal" class="close cursor" onclick="closeModal()">&times;</span>
+
+      <div class="modal-content">
+        {% for obj in pildid %}
+          <div class="mySlides">
+            <img
+                    class="pilt-pildimodal"
+                    src="{{ obj.pilt.url }}"
+                    data-pilt-id="{{ obj.id }}"
+                    data-pilt-itemnr="{{ forloop.counter }}"
+                    style="width:{% if obj.pilt.width > obj.pilt.height %}100{% else %}60{% endif %}%;"
+            />
+          </div>
+        {% endfor %}
+
+        <a
+                class="infoimage"
+                onclick="markdownTagCopy(this)"
+        >
+          <i class="fa fa-info"></i>
+          <span id="markdown-tag">id</span>
+        </a>
+        {% if pildid.count > 1 %}
+          <a class="previmage" onclick="plusSlides(-1)">&#10094;</a>
+          <a class="nextimage" onclick="plusSlides(1)">&#10095;</a>
+        {% endif %}
+
+        <div class="caption-container">
+          <p id="captionmodal">Pildiallkiri</p>
+        </div>
+
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}
