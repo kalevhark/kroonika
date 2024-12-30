@@ -19,7 +19,7 @@ import os
 import os.path
 import re
 import string
-from tkinter import NO
+# from tkinter import NO
 
 from django.apps import apps
 from django.conf import settings
