@@ -8,6 +8,7 @@
 # dob = vastavalt valikule vkj v6i ukj hist_date j2rgi arvutatud kuup2ev
 # doe = vastavalt valikule vkj v6i ukj hist_enddate j2rgi arvutatd kuup2ev
 
+from calendar import month
 from datetime import date, datetime, timedelta
 from functools import reduce
 from io import BytesIO
@@ -18,6 +19,7 @@ import os
 import os.path
 import re
 import string
+from tkinter import NO
 
 from django.apps import apps
 from django.conf import settings
@@ -381,6 +383,10 @@ class DaatumitegaManager(models.Manager):
                 dob=F('hist_date'),
                 doe=F('hist_enddate')
             )
+        filtered_queryset = filtered_queryset.annotate(
+            # dobm=Coalesce('dob__month', 'hist_month', 0, output_field=IntegerField()),
+            yob=Coalesce('dob__year', 'hist_year', 0, output_field=IntegerField()),
+        )
         if model_name == 'Artikkel':
             filtered_queryset = filtered_queryset.annotate(
                 search_index=Concat(
@@ -404,7 +410,44 @@ class DaatumitegaManager(models.Manager):
             ).order_by('search_index')
         return filtered_queryset
 
+    def sel_kuul(self, request=None, month=None):
+        initial_qs = self.model.objects.daatumitega(request)
+        
+        sel_kuul_dob = initial_qs.filter(dob__month=month). \
+                    values_list('id', flat=True)
+        
+        if self.model == Isik:
+            sel_kuul_mob = initial_qs.none().values_list('id', flat=True)
+        else:
+            sel_kuul_mob = initial_qs.exclude(dob__isnull=True). \
+                    filter(dob__month=month). \
+                    values_list('id', flat=True)
+        
+        if self.model == Artikkel:
+            sel_kuul_doe = initial_qs.filter(doe__month=month). \
+                    values_list('id', flat=True)
+        else:
+            sel_kuul_doe = initial_qs.none().values_list('id', flat=True)
 
+        model_ids = reduce(or_, [sel_kuul_dob, sel_kuul_mob, sel_kuul_doe])
+        sel_kuul = initial_qs.filter(id__in=model_ids).order_by(ExtractDay('dob'))
+        return sel_kuul
+    
+    def sel_aastal(self, request=None, year=None):
+        initial_qs = self.model.objects.daatumitega(request)
+        sel_aastal_dob = initial_qs.filter(dob__year=year). \
+                values_list('id', flat=True)
+        sel_aastal_yob = initial_qs.exclude(dob__isnull=True). \
+                filter(dob__year=year). \
+                values_list('id', flat=True)
+        if self.model == Artikkel:
+            sel_aastal_doe = initial_qs.filter(doe__year=year). \
+                    values_list('id', flat=True)
+        else:
+            sel_aastal_doe = initial_qs.none().values_list('id', flat=True)
+        model_ids = reduce(or_, [sel_aastal_dob, sel_aastal_yob, sel_aastal_doe])
+        sel_aastal = initial_qs.filter(id__in=model_ids).order_by(ExtractDay('dob'))
+        return sel_aastal
 #
 # Allikad: raamatud. ajakirjandusväljaanded, veebilehed, arhiivid jne
 #
@@ -807,7 +850,7 @@ class Objekt(models.Model):
         if self.hist_date:
             return d.year - self.dob.year
         elif self.hist_year:
-            return d.year - self.hist_year
+            return d.year - self.yob
         else:
             return None
 
@@ -1028,7 +1071,7 @@ class Organisatsioon(models.Model):
         if self.hist_date:
             return d.year - self.dob.year
         elif self.hist_year:
-            return d.year - self.hist_year
+            return d.year - self.yob
         else:
             return None
 
@@ -1308,7 +1351,7 @@ class Isik(models.Model):
         if self.hist_date:
             return d.year - self.dob.year # arvutatakse vastavalt vkj või ukj järgi
         elif self.hist_year:
-            return d.year - self.hist_year
+            return d.year - self.yob
         else:
             return None
 
@@ -1391,8 +1434,8 @@ class Kroonika(models.Model):
     class Meta:
         verbose_name = "Kroonika"
         verbose_name_plural = "Kroonikad"
-
-
+ 
+   
 class Artikkel(models.Model):
     slug = models.SlugField(
         default='',

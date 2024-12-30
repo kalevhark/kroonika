@@ -3,7 +3,6 @@
         class="card w3-round w3-hide-large w3-hide-medium"
 >
   <a
-{#          style="text-decoration: none;" #}
           class="hover-isik"
           href="{% url 'wiki:wiki_isik_filter' %}"
   >
@@ -22,7 +21,6 @@
 {% if andmed.isik.sel_p2eval %}
   <h5>
     <a
-{#            style="text-decoration:none;" #}
             class="hover-isik"
             href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_syndinud"
             title="Kõik {% now "j.m." %} sündinud"
@@ -36,29 +34,12 @@
     {% endif %}
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
-    <a
-        class="hover-isik tooltip-content"
-        href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}"
-    >
-      <span
-            title='{{ obj }}'
-            data-model='{{ obj|get_model_name }}'
-            data-id='{{ obj.id }}'
-            id='{{ obj|get_model_name }}_{{ obj.id }}_selp2eval'
-      >
-        {{ obj }}
-        {% if obj.vanus|divisibleby:"5" %}
-          &nbsp;&nbsp;<span class="text-isik"><b>{{ obj.vanus }}</b></span>
-        {% endif %}
-      </span>
-      {% include 'wiki/algus/algus_pilt.html' with tyyp='portree' %}
-    </a>
+    {% include 'wiki/algus/algus_isikud_isik_pildiga.html' with section='sel_p2eval' %}
   {% endfor %}
 {% endif %}
 {% if andmed.isik.sel_kuul %}
   <h5>
     <a
-{#            style="text-decoration:none;" #}
             class="hover-isik"
             href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_isikud_syndinud"
             title="Kõik {% include 'wiki/includes/kuul.html' with kuu=kuu %} sündinud"
@@ -72,28 +53,12 @@
     {% endif %}
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
-    <a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-      <span
-              title='{{ obj }}'
-              data-model='{{ obj|get_model_name }}'
-              data-id='{{ obj.id }}'
-              id='{{ obj|get_model_name }}_{{ obj.id }}_selkuul'
-      >
-        {{ obj }}
-        {% if obj.vanus|divisibleby:"5" %}
-          &nbsp;&nbsp;<span class="text-isik"><b>{{ obj.vanus }}</b></span>
-        {% endif %}
-      </span>
-      {% if obj.vanus|divisibleby:"5" %}
-        {% include 'wiki/algus/algus_pilt.html' with tyyp='portree' %}
-      {% endif %}
-    </a>
+    {% include 'wiki/algus/algus_isikud_isik_pildiga.html' with section='sel_kuul' %}
   {% endfor %}
 {% endif %}
 {% if andmed.isik.juubilarid %}
   <h5>
     <a
-{#            style="text-decoration:none;" #}
             class="hover-isik"
             href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_isikud_syndinud"
             title="Kõik {% now "Y" %} juubilarid"
@@ -107,24 +72,13 @@
     {% endif %}
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
-    <a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-      <span
-            title='{{ obj }}'
-            data-model='{{ obj|get_model_name }}'
-            data-id='{{ obj.id }}'
-            id='{{ obj|get_model_name }}_{{ obj.id }}_juubilarid'
-      >
-        {{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}  <span class="text-isik"><b>{{ obj.vanus }}</b></span>
-      </span>
-      {% include 'wiki/algus/algus_pilt.html' with tyyp='portree' %}
-    </a>
+    {% include 'wiki/algus/algus_isikud_isik_pildiga.html' with section='juubilarid' %}
   {% endfor %}
 {% endif %}
 {% if andmed.isik.sel_p2eval_surnud %}
   <hr>
   <h5>
     <a
-{#            style="text-decoration:none;" #}
             class="hover-isik"
             href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_surnud"
             title="Kõik {% now "j.m." %} surnud"
@@ -139,15 +93,7 @@
     <strong>&#9840;&nbsp;</strong>
     <strong>{% include 'wiki/includes/date_doe.html' with obj=obj %}</strong>
     &nbsp;
-    <a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-      <span
-            title='{{ obj }}'
-            data-model='{{ obj|get_model_name }}'
-            data-id='{{ obj.id }}'
-            id='{{ obj|get_model_name }}_{{ obj.id }}_selp2evalsurnud'>
-        {{ obj }}
-      </span>
-    </a>
+    {% include 'wiki/algus/algus_isikud_isik_pildita.html' with section='sel_p2eval_surnud' %}
   {% endfor %}
 {% endif %}
 {% if andmed.isik.sel_kuul_surnud %}
@@ -168,14 +114,6 @@
     <strong>&#9840;&nbsp;</strong>
     <strong>{% include 'wiki/includes/date_doe.html' with obj=obj %}</strong>
     &nbsp;
-    <a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
-      <span
-            title='{{ obj }}'
-            data-model='{{ obj|get_model_name }}'
-            data-id='{{ obj.id }}'
-            id='{{ obj|get_model_name }}_{{ obj.id }}_selkuulsurnud'>
-        {{ obj }}
-      </span>
-    </a>
+    {% include 'wiki/algus/algus_isikud_isik_pildita.html' with section='sel_kuul_surnud' %}
   {% endfor %}
 {% endif %}

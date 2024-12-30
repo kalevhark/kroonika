@@ -1,0 +1,11 @@
+{% load wiki_extras %}
+<a class="hover-artikkel tooltip-content" href="{% url 'wiki:wiki_artikkel_detail' pk=obj.id slug=obj.slug %}">
+	<span
+					title='{{ obj }}'
+					data-model='{{ obj|get_model_name }}'
+					data-id='{{ obj.id }}'
+					id='{{ obj|get_model_name }}_{{ obj.id }}_{{ section }}'
+	>
+		{{ obj.body_text|truncatewords:10 }}
+	{% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
+</a>

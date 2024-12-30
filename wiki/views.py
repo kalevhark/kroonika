@@ -1,4 +1,5 @@
 import base64
+from functools import reduce
 import json
 import sys
 from collections import Counter, OrderedDict
@@ -9,6 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import math
+from operator import or_
 import os
 from pathlib import Path
 import pkg_resources
@@ -439,7 +441,17 @@ def _get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
             a['sel_p2eval'] = sel_p2eval
         a['sel_p2eval_kirjeid'] = sel_p2eval_kirjeid
         # Samal kuul toimunud TODO: probleem kui dob__month ja doe__month ei ole järjest
-        sel_kuul = artikkel_qs.filter(Q(dob__month=kuu) | Q(hist_month=kuu) | Q(doe__month=kuu))
+        # sel_kuul = artikkel_qs.filter(Q(dob__month=kuu) | Q(hist_month=kuu) | Q(doe__month=kuu))
+        # sel_kuul_dob = artikkel_qs.filter(dob__month=kuu). \
+        #             values_list('id', flat=True)
+        # sel_kuul_mob = artikkel_qs.exclude(dob__isnull=True). \
+        #             filter(dob__month=kuu). \
+        #             values_list('id', flat=True)
+        # sel_kuul_doe = artikkel_qs.filter(doe__month=kuu). \
+        #             values_list('id', flat=True)
+        # model_ids = reduce(or_, [sel_kuul_dob, sel_kuul_mob, sel_kuul_doe])
+        # sel_kuul = artikkel_qs.filter(id__in=model_ids)
+        sel_kuul = Artikkel.objects.sel_kuul(request, kuu)
         sel_kuul_kirjeid = len(sel_kuul)
         if sel_kuul_kirjeid > artikleid_max_split: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
             a['sel_kuul'] = (
@@ -486,9 +498,10 @@ def _get_algus_isikud(request, p2ev, kuu, aasta):
             dob__month=kuu
         ).order_by('hist_year')
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
-        a['sel_kuul'] = isik_qs. \
-            filter(dob__month=kuu). \
-            order_by(ExtractDay('dob'))
+        # a['sel_kuul'] = isik_qs. \
+        #     filter(dob__month=kuu). \
+        #     order_by(ExtractDay('dob'))
+        a['sel_kuul'] = Isik.objects.sel_kuul(request, kuu)
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         a['sel_p2eval_surnud'] = isik_qs.filter(
             doe__day=p2ev,
@@ -522,9 +535,19 @@ def _get_algus_organisatsioonid(request, p2ev, kuu, aasta):
             dob__month=kuu
         ).order_by('hist_year')
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
-        a['sel_kuul'] = organisatsioon_qs. \
-            filter(dob__month=kuu). \
-            order_by(ExtractDay('dob'))
+        # a['sel_kuul'] = organisatsioon_qs. \
+        #     filter(dob__month=kuu). \
+        #     order_by(ExtractDay('dob'))
+        # sel_kuul_dob = organisatsioon_qs.filter(dob__month=kuu). \
+        #             values_list('id', flat=True)
+        # sel_kuul_mob = organisatsioon_qs.exclude(dob__isnull=True). \
+        #             filter(dob__month=kuu). \
+        #             values_list('id', flat=True)
+        # sel_kuul_doe = organisatsioon_qs.filter(doe__month=kuu). \
+        #             values_list('id', flat=True)
+        # model_ids = reduce(or_, [sel_kuul_dob, sel_kuul_mob, sel_kuul_doe])
+        # a['sel_kuul'] = organisatsioon_qs.filter(id__in=model_ids)
+        a['sel_kuul'] = Organisatsioon.objects.sel_kuul(request, kuu)
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         juubilarid = get_juubilarid(organisatsioon_qs)
         a['juubilarid'] = juubilarid
@@ -549,9 +572,19 @@ def _get_algus_objektid(request, p2ev, kuu, aasta):
             dob__month = kuu
         ).order_by('hist_year')
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
-        a['sel_kuul'] = objekt_qs.\
-            filter(dob__month = kuu).\
-            order_by(ExtractDay('dob'))
+        # a['sel_kuul'] = objekt_qs.\
+        #     filter(dob__month = kuu).\
+        #     order_by(ExtractDay('dob'))
+        # sel_kuul_dob = objekt_qs.filter(dob__month=kuu). \
+        #             values_list('id', flat=True)
+        # sel_kuul_mob = objekt_qs.exclude(dob__isnull=True). \
+        #             filter(dob__month=kuu). \
+        #             values_list('id', flat=True)
+        # sel_kuul_doe = objekt_qs.filter(doe__month=kuu). \
+        #             values_list('id', flat=True)
+        # model_ids = reduce(or_, [sel_kuul_dob, sel_kuul_mob, sel_kuul_doe])
+        # a['sel_kuul'] = objekt_qs.filter(id__in=model_ids)
+        a['sel_kuul'] = Objekt.objects.sel_kuul(request, kuu)
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         juubilarid = get_juubilarid(objekt_qs)
         a['juubilarid'] = juubilarid
@@ -1668,9 +1701,13 @@ class ArtikkelYearArchiveView(YearArchiveView):
 
         # Leiame samal aastal sündinud isikud
         isik_qs = Isik.objects.daatumitega(self.request)
+        # syndinud_isikud = isik_qs.\
+        #     filter(dob__year = aasta).\
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())).\
+        #     order_by(ExtractMonth('dob'), ExtractDay('dob'))
         syndinud_isikud = isik_qs.\
-            filter(dob__year = aasta).\
-            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())).\
+            filter(yob = aasta).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('yob'), output_field=IntegerField())).\
             order_by(ExtractMonth('dob'), ExtractDay('dob'))
         context['syndinud_isikud'] = syndinud_isikud
         context['syndinud_isikud_pealkiri'] = '{0}. aastal sündinud {1}'.format(
@@ -1678,28 +1715,6 @@ class ArtikkelYearArchiveView(YearArchiveView):
             Isik._meta.verbose_name_plural.lower()
         )
         # Leiame selle aasta juubilarid
-        # syndinud_isikud_date = isik_qs. \
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
-        # juubilarid_isikud_ids_date = [
-        #     isik.id
-        #     for isik
-        #     in syndinud_isikud_date
-        #     if (isik.dob and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
-        # ]
-        # syndinud_isikud_year = isik_qs. \
-        #     filter(hist_date__isnull=True). \
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
-        # juubilarid_isikud_ids_year = [
-        #     isik.id
-        #     for isik
-        #     in syndinud_isikud_year
-        #     if (isik.hist_year and isik.vanus_gen > 0 and isik.vanus_gen % 5 == 0)
-        # ]
-        # juubilarid_isikud_ids = juubilarid_isikud_ids_date + juubilarid_isikud_ids_year
-        # juubilarid_isikud = isik_qs. \
-        #     filter(id__in=juubilarid_isikud_ids). \
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
-        #     order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
         juubilarid_isikud = get_juubilarid(isik_qs, aasta=aasta)
         context['juubilarid_isikud'] = juubilarid_isikud
         context['juubilarid_isikud_pealkiri'] = '{0}. aasta juubilarid {1}'.format(
@@ -1718,9 +1733,13 @@ class ArtikkelYearArchiveView(YearArchiveView):
         )
         # Leiame samal aastal loodud organisatsioonid
         organisatsioon_qs = Organisatsioon.objects.daatumitega(self.request)
+        # loodud_organisatsioonid = organisatsioon_qs. \
+        #     filter(Q(dob__year = aasta) | Q(hist_year = aasta)).\
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+        #     order_by(ExtractMonth('dob'), ExtractDay('dob'))
         loodud_organisatsioonid = organisatsioon_qs. \
-            filter(Q(dob__year = aasta) | Q(hist_year = aasta)).\
-            annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+            filter(yob = aasta).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('yob'), output_field=IntegerField())). \
             order_by(ExtractMonth('dob'), ExtractDay('dob'))
         context['loodud_organisatsioonid'] = loodud_organisatsioonid
         context['loodud_organisatsioonid_pealkiri'] = '{0}. aastal loodud {1}'.format(
@@ -1728,28 +1747,6 @@ class ArtikkelYearArchiveView(YearArchiveView):
             Organisatsioon._meta.verbose_name_plural.lower()
         )
         # Leiame selle aasta juubilarid organisatsioonid
-        # syndinud_organisatsioonid_date = organisatsioon_qs. \
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
-        # juubilarid_organisatsioonid_ids_date = [
-        #     organisatsioon.id
-        #     for organisatsioon
-        #     in syndinud_organisatsioonid_date
-        #     if (organisatsioon.dob and organisatsioon.vanus_gen > 0 and organisatsioon.vanus_gen % 5 == 0)
-        # ]
-        # syndinud_organisatsioonid_year = organisatsioon_qs. \
-        #     filter(hist_date__isnull=True). \
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
-        # juubilarid_organisatsioonid_ids_year = [
-        #     organisatsioon.id
-        #     for organisatsioon
-        #     in syndinud_organisatsioonid_year
-        #     if (organisatsioon.hist_year and organisatsioon.vanus_gen > 0 and organisatsioon.vanus_gen % 5 == 0)
-        # ]
-        # juubilarid_organisatsioonid_ids = juubilarid_organisatsioonid_ids_date + juubilarid_organisatsioonid_ids_year
-        # juubilarid_organisatsioonid = organisatsioon_qs. \
-        #     filter(id__in=juubilarid_organisatsioonid_ids). \
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
-        #     order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
         juubilarid_organisatsioonid = get_juubilarid(organisatsioon_qs, aasta=aasta)
         context['juubilarid_organisatsioonid'] = juubilarid_organisatsioonid
         context['juubilarid_organisatsioonid_pealkiri'] = '{0}. aasta juubilarid {1}'.format(
@@ -1759,9 +1756,13 @@ class ArtikkelYearArchiveView(YearArchiveView):
 
         # Leiame samal aastal avatud objektid
         objekt_qs = Objekt.objects.daatumitega(self.request)
+        # valminud_objektid = objekt_qs. \
+        #     filter(Q(dob__year = aasta) | Q(hist_year = aasta)). \
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField())). \
+        #     order_by(ExtractMonth('dob'), ExtractDay('dob'))
         valminud_objektid = objekt_qs. \
-            filter(Q(dob__year = aasta) | Q(hist_year = aasta)). \
-            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField())). \
+            filter(yob = aasta). \
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('yob'), output_field=IntegerField())). \
             order_by(ExtractMonth('dob'), ExtractDay('dob'))
         context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid_pealkiri'] = '{0}. aastal valminud {1}'.format(
@@ -1769,28 +1770,6 @@ class ArtikkelYearArchiveView(YearArchiveView):
             Objekt._meta.verbose_name_plural.lower()
         )
         # Leiame selle aasta juubilarid objektid
-        # syndinud_objektid_date = objekt_qs. \
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
-        # juubilarid_objektid_ids_date = [
-        #     objekt.id
-        #     for objekt
-        #     in syndinud_objektid_date
-        #     if (objekt.dob and objekt.vanus_gen > 0 and objekt.vanus_gen % 5 == 0)
-        # ]
-        # syndinud_objektid_year = objekt_qs. \
-        #     filter(hist_date__isnull=True). \
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
-        # juubilarid_objektid_ids_year = [
-        #     objekt.id
-        #     for objekt
-        #     in syndinud_objektid_year
-        #     if (objekt.hist_year and objekt.vanus_gen > 0 and objekt.vanus_gen % 5 == 0)
-        # ]
-        # juubilarid_objektid_ids = juubilarid_objektid_ids_date + juubilarid_objektid_ids_year
-        # juubilarid_objektid = objekt_qs. \
-        #     filter(id__in=juubilarid_objektid_ids). \
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
-        #     order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
         juubilarid_objektid = get_juubilarid(objekt_qs, aasta=aasta)
         context['juubilarid_objektid'] = juubilarid_objektid
         context['juubilarid_objektid_pealkiri'] = '{0}. aasta juubilarid {1}'.format(
@@ -1857,15 +1836,20 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         # Salvestame kasutaja viimase kuupäevavaliku
         self.request.session['user_calendar_view_last'] = f'{aasta}-{kuu}'
         # Samal kuul toimunud
-        context['object_list'] = artikkel_qs.\
-            filter(hist_year=aasta).\
-            filter(Q(dob__month=kuu) | Q(doe__month=kuu) | Q(hist_month=kuu))
+        # context['object_list'] = artikkel_qs.\
+        #     filter(hist_year=aasta).\
+        #     filter(Q(dob__month=kuu) | Q(doe__month=kuu) | Q(hist_month=kuu))
+        # context['object_list'] = Artikkel.objects.sel_kuul(self.request, kuu).filter(hist_year=aasta)
+        context['object_list'] = \
+                Artikkel.objects.sel_kuul(self.request, kuu). \
+                intersection(Artikkel.objects.sel_aastal(self.request, aasta))
         # Leiame samal kuul teistel aastatel märgitud artiklid
         # TODO: 1) hist_year != dob.year ja 2) kui dob ja doe ei ole samal kuul
-        sel_kuul = artikkel_qs.\
-            exclude(hist_year=aasta).\
-            filter(Q(dob__month=kuu)| Q(doe__month=kuu) | Q(hist_month=kuu))
-        context['sel_kuul'] = sel_kuul
+        # sel_kuul = artikkel_qs.\
+        #     exclude(hist_year=aasta).\
+        #     filter(Q(dob__month=kuu)| Q(doe__month=kuu) | Q(hist_month=kuu))
+        # context['sel_kuul'] = sel_kuul
+        context['sel_kuul'] = Artikkel.objects.sel_kuul(self.request, kuu)
         # Leiame samal kuul sündinud isikud
         isik_qs = Isik.objects.daatumitega(self.request)
         syndinud_isikud = isik_qs.\
@@ -1873,6 +1857,7 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
             annotate(vanus_gen=ExpressionWrapper(p2ev.year - ExtractYear('dob'), output_field=IntegerField())). \
             order_by(ExtractDay('dob'))
         context['syndinud_isikud'] = syndinud_isikud
+        context['syndinud_isikud'] = Isik.objects.sel_kuul(self.request, kuu)
         context['syndinud_isikud_pealkiri'] = '{0} sündinud {1}'.format(
             mis_kuul(kuu),
             Isik._meta.verbose_name_plural.lower()
@@ -1888,23 +1873,25 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
             Isik._meta.verbose_name_plural.lower()
         )
         # Leiame samal kuul loodud organisatsioonid
-        organisatsioon_qs = Organisatsioon.objects.daatumitega(self.request)
-        loodud_organisatsioonid = organisatsioon_qs.\
-            filter(dob__month = kuu).\
-            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())). \
-            order_by(ExtractDay('dob'))
-        context['loodud_organisatsioonid'] = loodud_organisatsioonid
+        # organisatsioon_qs = Organisatsioon.objects.daatumitega(self.request)
+        # loodud_organisatsioonid = organisatsioon_qs.\
+        #     filter(dob__month = kuu).\
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())). \
+        #     order_by(ExtractDay('dob'))
+        # context['loodud_organisatsioonid'] = loodud_organisatsioonid
+        context['loodud_organisatsioonid'] = Organisatsioon.objects.sel_kuul(self.request, kuu)
         context['loodud_organisatsioonid_pealkiri'] = '{0} loodud {1}'.format(
             mis_kuul(kuu),
             Organisatsioon._meta.verbose_name_plural.lower()
         )
         # Leiame samal kuul avatud objektid
-        objekt_qs = Objekt.objects.daatumitega(self.request)
-        valminud_objektid = objekt_qs.\
-            filter(dob__month = kuu).\
-            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())). \
-            order_by(ExtractDay('dob'))
-        context['valminud_objektid'] = valminud_objektid
+        # objekt_qs = Objekt.objects.daatumitega(self.request)
+        # valminud_objektid = objekt_qs.\
+        #     filter(dob__month = kuu).\
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())). \
+        #     order_by(ExtractDay('dob'))
+        # context['valminud_objektid'] = valminud_objektid
+        context['valminud_objektid'] = Objekt.objects.sel_kuul(self.request, kuu)
         context['valminud_objektid_pealkiri'] = '{0} valminud {1}'.format(
             mis_kuul(kuu),
             Objekt._meta.verbose_name_plural.lower()
@@ -1914,18 +1901,20 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
 def artikkel_month_archive_otheryears(request, year, month):
     start = int(request.GET.get('start', 0))
     kirjeid = 50
-    artikkel_qs = Artikkel.objects.daatumitega(request)
+    # artikkel_qs = Artikkel.objects.daatumitega(request)
     # sel_kuul = artikkel_qs. \
     #     exclude(hist_year=year). \
     #     filter(Q(dob__month=month) | Q(doe__month=month) | Q(hist_month=month))
-    sel_kuul_bydate_ids_list = artikkel_qs.filter(Q(dob__month=month) | Q(doe__month=month)).values_list('id', flat=True)
-    sel_kuul_bymonth_ids_list = artikkel_qs.filter(dob__isnull=True, hist_month=month).values_list('id', flat=True)
+    # sel_kuul_bydate_ids_list = artikkel_qs.filter(Q(dob__month=month) | Q(doe__month=month)).values_list('id', flat=True)
+    # sel_kuul_bymonth_ids_list = artikkel_qs.filter(dob__isnull=True, hist_month=month).values_list('id', flat=True)
     # sel_kuul_ids = [*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list]
-    sel_kuul_ids = (*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list)
-    kirjeid_kokku = len(sel_kuul_ids)
+    # sel_kuul_ids = (*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list)
+    # kirjeid_kokku = len(sel_kuul_ids)
     # if start > kirjeid_kokku: # kui kysitakse rohkem, kui kirjeid on
     #     start = 0
-    qs = artikkel_qs.filter(id__in=sel_kuul_ids)
+    # qs = artikkel_qs.filter(id__in=sel_kuul_ids)
+    qs = Artikkel.objects.sel_kuul(request, month)
+    kirjeid_kokku = len(qs)
     if qs.exists():
         sel_kuul = qs[start:start+kirjeid]
     else:
@@ -2053,38 +2042,20 @@ class ArtikkelDayArchiveView(DayArchiveView):
 
 def get_juubilarid(qs, aasta=timezone.now().year):
     # Leiame selle aasta juubilarid
-    # syndinud_date = qs. \
-    #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField()))
-    # juubilarid_ids_date = [
-    #     object.id
-    #     for object
-    #     in syndinud_date
-    #     if (object.dob and object.vanus_gen > 0 and object.vanus_gen % 5 == 0)
-    # ]
-    # syndinud_year = qs. \
-    #     filter(hist_date__isnull=True). \
-    #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField()))
-    # juubilarid_ids_year = [
-    #     object.id
-    #     for object
-    #     in syndinud_year
-    #     if (object.hist_year and object.vanus_gen > 0 and object.vanus_gen % 5 == 0)
-    # ]
-    # juubilarid_ids = juubilarid_ids_date + juubilarid_ids_year
-    # juubilarid = qs. \
-    #     filter(id__in=juubilarid_ids). \
-    #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
-    #     order_by('-vanus_gen', ExtractMonth('dob'), ExtractDay('dob'))
     juubilarid_ids = [
         object.id
         for object
         in qs
         if (object.vanus(datetime(aasta, 1, 1)) and (object.vanus(datetime(aasta, 1, 1)) % 5 == 0))
     ]
+    # juubilarid = qs. \
+    #     filter(id__in=juubilarid_ids). \
+    #     annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
+    #     order_by('hist_year', 'dob')
     juubilarid = qs. \
         filter(id__in=juubilarid_ids). \
-        annotate(vanus_gen=ExpressionWrapper(aasta - F('hist_year'), output_field=IntegerField())). \
-        order_by('hist_year', 'dob')
+        annotate(vanus_gen=ExpressionWrapper(aasta - F('yob'), output_field=IntegerField())). \
+        order_by('yob', 'dob')
     return juubilarid
 
 #

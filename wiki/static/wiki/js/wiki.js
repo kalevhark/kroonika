@@ -116,7 +116,7 @@ function wiki_object_detail_seotud() {
     });
   }
 
-  // Küsib object kohta seotud andmed ja kuvab need detail vaates
+// Küsib object kohta seotud andmed ja kuvab need detail vaates
 function wiki_object_detail_seotud_pildirida() {
   // Küsime andmed
   $.ajax({

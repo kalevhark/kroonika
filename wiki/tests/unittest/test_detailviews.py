@@ -4,6 +4,7 @@ from operator import or_
 import time
 import urllib
 
+from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sessions.middleware import SessionMiddleware
@@ -12,7 +13,7 @@ from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from wiki import views
-from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
+from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt
 from wiki.tests import test_base
 
 
@@ -120,6 +121,36 @@ class DetailViewUnitTest(TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertIn('seotud pildid', str(response.content))
     
+    def test_object_seotud_pildid_pildirida_exists(self):
+        SELECT_COUNT = 3
+        models = [Isik, Organisatsioon, Objekt]
+        # Juhuslikud artiklid kontrolliks
+        for model in models:
+            objs = model.objects.filter(pildid__isnull=False).order_by('?')[:SELECT_COUNT]
+            for obj in objs:
+                model_filters = {
+                    'isik':           'isikud__id',
+                    'organisatsioon': 'organisatsioonid__id',
+                    'objekt':         'objektid__id'
+                }
+                # Objectiga seotud pildid
+                filter = {
+                    model_filters[model.__name__.lower()]: obj.id
+                }
+                seotud_pildid = Pilt.objects.sorted().filter(**filter)
+                seotud_pildid_count = seotud_pildid.count()
+
+                kwargs = {
+                    'model': model.__name__.lower(),
+                    'id': obj.id
+                }
+                response = self.client.get(reverse('wiki:wiki_object_detail_seotud_pildirida', kwargs=kwargs))
+                response_soup = BeautifulSoup(response.content, features="html.parser")
+                img_elements_pildirida = response_soup.find_all('img', {'class': 'pilt-pildirida'})
+                self.assertEqual(len(img_elements_pildirida), seotud_pildid_count) # pildirida
+                img_elements_pildimodals = response_soup.find_all('img', {'class': 'pilt-pildimodal'})
+                self.assertEqual(len(img_elements_pildimodals), seotud_pildid_count) # modal pildid
+
     def test_object_seotud_pildid_pildirida_not_exists(self):
         SELECT_COUNT = 1
         models = [Isik, Organisatsioon, Objekt]
@@ -135,7 +166,23 @@ class DetailViewUnitTest(TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertNotIn('seotud pildid', str(response.content))
 
-    
+    def test_object_seotud_pildid_pildirida_bad_request(self):
+        response = self.client.get(
+            '/wiki/object_detail_seotud_pildirida/'
+        )
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get(
+            '/wiki/object_detail_seotud_pildirida/',
+            {'model': 'isik'}
+        )
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get(
+            '/wiki/object_detail_seotud_pildirida/objekt-/',
+            {'id': '402'}
+        )
+        self.assertEqual(response.status_code, 404)
+
+
 class ArtikkelViewTests(TestCase):
 
     def setUp(self):

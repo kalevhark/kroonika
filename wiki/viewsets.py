@@ -71,7 +71,7 @@ class ArtikkelFilter(filters.FilterSet):
         value = value.translate(str.maketrans(TRANSLATION))
         tags = value.split(' ')
         for tag in tags:
-            queryset = queryset.filter(kirjeldus__iregex=rf'{tag}')
+            queryset = queryset.filter(aasta_ja_kirjeldus__iregex=rf'{tag}')
         return queryset
 
 class ArtikkelViewSet(viewsets.ModelViewSet):
@@ -85,9 +85,12 @@ class ArtikkelViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Artikkel.objects.daatumitega(self.request). \
             annotate(
-                kirjeldus=Concat(
+                # kirjeldus=Concat(
+                #     F('hist_year'), Value(' '), F('body_text'), output_field=CharField()
+                # ),
+                aasta_ja_kirjeldus=Concat(
                     F('hist_year'), Value(' '), F('body_text'), output_field=CharField()
-                )
+                ),
         )
         return queryset
 
