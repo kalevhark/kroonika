@@ -703,17 +703,21 @@ def _get_algus(request):
 
 # Avakuva
 def algus(request):
+    # salvestame valitud kalendrisysteemi j2rgi
+    calendar_system = request.session.get("calendar_system")
+    tmpfile = f'{calendar_system}_{TMP_ALGUSKUVA}'
+
     if all(
         [
             settings.TMP_ALGUSKUVA_CACHE,
-            os.path.isfile(TMP_ALGUSKUVA),
+            os.path.isfile(tmpfile),
             isinstance(request.user, AnonymousUser)
         ]
     ):
-        filestat = os.stat(TMP_ALGUSKUVA)
+        filestat = os.stat(tmpfile)
         now = datetime.now()
         if now.timestamp() - filestat.st_mtime < 60: # vähem kui minut vana avakuva salvestus
-            with open(TMP_ALGUSKUVA, 'r', encoding='utf-8') as f:
+            with open(tmpfile, 'r', encoding='utf-8') as f:
                 response_content = f.read()
             return HttpResponse(response_content)
 

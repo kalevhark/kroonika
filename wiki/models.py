@@ -19,11 +19,11 @@ import os
 import os.path
 import re
 import string
-# from tkinter import NO
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import FieldDoesNotExist
 from django.core.files.base import ContentFile
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
@@ -150,8 +150,6 @@ def add_markdownx_pildid(string):
     pattern = re.compile(r'\[pilt_([0-9]*)]')
     tagid = re.finditer(pattern, string)
     for tag in tagid:
-        # tag = tag_leitud[0] # '[pilt_nnnn]'
-        # id = int(tag.split('_')[-1][:-1])
         id = tag.groups()[0]
         pilt = Pilt.objects.get(id=id)
         if pilt:
@@ -188,7 +186,6 @@ def remove_markdown_tags(obj, string):
                 string = string.replace(tag[0], '')
     return string
 
-from django.core.exceptions import FieldDoesNotExist
 # Töötleb lingitagid [Duck Duck Go]([isik_nnnn]) linkideks
 def add_markdown_objectid(obj, string):
     """
@@ -203,16 +200,6 @@ def add_markdown_objectid(obj, string):
         pass
 
     if viited:
-        # Ajutine: asendame viited kujul [^n] viite koodiga kujul [viide_nnnn]
-        # c = itertools.count(1)
-        # translate_viited = {
-        #     f'[^{next(c)}]': f'[viide_{viide.id}]'
-        #     for viide
-        #     in viited
-        # }
-        # for translate_viide in translate_viited:
-        #     string = string.replace(translate_viide, translate_viited[translate_viide])
-        # Asendame viited koodi [viide_nnnn] viite markdown kujule [^n]
         c = itertools.count(1)
         translate_viited = {
             f'[viide_{viide.id}]': f'[^{next(c)}]'
@@ -298,7 +285,6 @@ def get_kirjeldus_lyhike(self):
                     break
     return kirjeldus
 
-# def add_calendarstatus(request):
 def get_calendarstatus(request):
     CALENDAR_SYSTEM_DEFAULT = settings.KROONIKA['CALENDAR_SYSTEM_DEFAULT']
     if request:
@@ -322,7 +308,7 @@ class DaatumitegaManager(models.Manager):
         model_name = self.model.__name__
 
         # Kontrollime kas kasutaja on autenditud ja admin
-        user_is_staff = request and request.user.is_authenticated and request.user.is_staff
+        user_is_staff = (request and request.user.is_authenticated and request.user.is_staff)
 
         # kalendrisüsteemi valik
         calendar_system = get_calendarstatus(request)
@@ -419,8 +405,8 @@ class DaatumitegaManager(models.Manager):
         if self.model == Isik:
             sel_kuul_mob = initial_qs.none().values_list('id', flat=True)
         else:
-            sel_kuul_mob = initial_qs.exclude(dob__isnull=True). \
-                    filter(dob__month=month). \
+            sel_kuul_mob = initial_qs.exclude(hist_date__isnull=True). \
+                    filter(hist_month=month). \
                     values_list('id', flat=True)
         
         if self.model == Artikkel:
@@ -435,11 +421,14 @@ class DaatumitegaManager(models.Manager):
     
     def sel_aastal(self, request=None, year=None):
         initial_qs = self.model.objects.daatumitega(request)
+
         sel_aastal_dob = initial_qs.filter(dob__year=year). \
                 values_list('id', flat=True)
-        sel_aastal_yob = initial_qs.exclude(dob__isnull=True). \
-                filter(dob__year=year). \
+        
+        sel_aastal_yob = initial_qs.exclude(hist_date__isnull=True). \
+                filter(hist_year=year). \
                 values_list('id', flat=True)
+        
         if self.model == Artikkel:
             sel_aastal_doe = initial_qs.filter(doe__year=year). \
                     values_list('id', flat=True)
