@@ -27,6 +27,14 @@ def render_logged_in_user_list(context):
         'users': get_all_logged_in_users()
     }
 
+# 'Artikkel', 'Isik', 'Organisatsioon', 'Objekt', ...
+@register.filter
+def get_model_name(object):
+    # name = str(value.__class__.__name__)
+    # return name
+    return object.__class__.__name__
+
+# 'artikkel', 'isik', 'organisatsioon', 'objekt', ...
 @register.filter
 def to_model_name_lower(object):
     return object.__class__.__name__.lower()
@@ -188,12 +196,6 @@ def get_verbose_name(object):
 @register.simple_tag
 def get_verbose_name_plural(object):
     return object._meta.verbose_name_plural.lower()
-
-# Sektsiooni nimi objectist
-@register.filter
-def get_model_name(value):
-    name = str(value.__class__.__name__)
-    return name
 
 @register.filter
 def duration(td):

@@ -802,22 +802,19 @@ class Objekt(models.Model):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
     # Create a property that returns the markdown instead
-    # Lisame siia ka viited
     @property
     def formatted_markdown(self):
         tekst = self.kirjeldus
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
         tekst = add_markdown_objectid(self, tekst)
-        # tekst = add_markdownx_pildid(tekst)
         viite_string = add_markdownx_viited(self)
         markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
         # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
         markdownified_text = add_markdownx_pildid(markdownified_text)
         if viite_string: # viidete puhul ilmneb markdownx viga
-            return fix_markdownified_text(markdownified_text)
-        else:
-            return markdownified_text
+            markdownified_text = fix_markdownified_text(markdownified_text)
+        return markdownified_text
 
     # Tekstis MarkDown kodeerimiseks
     def markdown_tag(self):
@@ -829,11 +826,12 @@ class Objekt(models.Model):
         return object2keywords(self)
 
     def get_absolute_url(self):
+        model = self.__class__.__name__.lower()
         kwargs = {
             'pk': self.id,
             'slug': self.slug
         }
-        return reverse('wiki:wiki_objekt_detail', kwargs=kwargs)
+        return reverse(f'wiki:wiki_{model}_detail', kwargs=kwargs)
 
     def vanus(self, d=datetime.now()):
         if self.hist_date:
@@ -844,8 +842,17 @@ class Objekt(models.Model):
             return None
 
     def profiilipilt(self):
-        # return Pilt.objects.filter(objektid=self.id, profiilipilt_objekt=True).first()
-        return Pilt.objects.filter(profiilipilt_objektid=self).first()
+        model = self.__class__.__name__.lower()
+        model_filters = {
+            'artikkel':       'profiilipilt_artiklid__id',
+            'isik':           'profiilipilt_isikud__id',
+            'organisatsioon': 'profiilipilt_organisatsioonid__id',
+            'objekt':         'profiilipilt_objektid__id',
+        }
+        filter = {
+            model_filters[model]: self.id
+        }
+        return Pilt.objects.filter(**filter).first()
 
     def save(self, *args, **kwargs):
         # Loome slugi

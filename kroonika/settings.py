@@ -463,7 +463,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console', 'file'],
-            'level': 'ERROR',
+            'level': 'INFO' if DEBUG else 'WARNING',
         },
         'wiki': {
             'handlers': ['console', 'file'],

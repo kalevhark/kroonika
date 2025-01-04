@@ -22,10 +22,11 @@
           {% if forloop.counter > 1 %}
             <br>
           {% endif %}
-          <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
+          ...asutati {% include 'wiki/algus/algus_organisatsioonid_organisatsioon_pildiga.html' with section='sada_aastat_tagasi' %}
+          {% comment %} <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
             ...asutati <strong>{{ obj }}</strong>
             {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
-          </a>
+          </a> {% endcomment %}
         {% endfor %}
       </div>
     {% endif %}
@@ -35,10 +36,11 @@
           {% if forloop.counter > 1 %}
             <br>
           {% endif %}
-          <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
+          ...valmis {% include 'wiki/algus/algus_objektid_objekt_pildiga.html' with section='sada_aastat_tagasi' %}
+          {% comment %} <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=obj.id slug=obj.slug %}">
             ...valmis <strong>{{ obj }}</strong>
             {% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
-          </a>
+          </a> {% endcomment %}
         {% endfor %}
       </div>
     {% endif %}

@@ -262,7 +262,7 @@ class CalendarSystemQuerysetTestCase(TestCase):
         
         test_ids = {
             715: {'vkj': datetime(1875, 12, 19), 'ukj': datetime(1875, 12, 31)}, # /wiki/isik/715-peeter-pähkel/
-            82: {'vkj': datetime(1884, 12, 20), 'ukj': datetime(1885, 1, 1)}, # /wiki/isik/82-karl-robert-p%C3%B5lde/
+            647: {'vkj': datetime(1911, 12, 19), 'ukj': datetime(1912, 1, 1)}, # /wiki/isik/647-nikolai-kuks/
         }
         # anonymous user queryset not empty
         self.request.user = self.user_anonymous
