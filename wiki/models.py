@@ -437,9 +437,42 @@ class DaatumitegaManager(models.Manager):
         model_ids = reduce(or_, [sel_aastal_dob, sel_aastal_yob, sel_aastal_doe])
         sel_aastal = initial_qs.filter(id__in=model_ids).order_by(ExtractDay('dob'))
         return sel_aastal
+
+
+class BaasAddUpdateInfoModel(models.Model):
+    """
+    Tehnilised väljad andmete lisamise/muutmise kohta
+    """
+    inp_date = models.DateTimeField(
+        'Lisatud',
+        auto_now_add=True
+    )
+    mod_date = models.DateTimeField(
+        'Muudetud',
+        auto_now=True
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name='Lisaja'
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='+',
+        verbose_name='Muutja'
+    )
+
+    class Meta:
+        abstract = True
+
+
 #
 # Allikad: raamatud. ajakirjandusväljaanded, veebilehed, arhiivid jne
 #
+# class Allikas(BaasAddUpdateInfoModel):
 class Allikas(models.Model):
     """
     Raamatu, ajakirja, ajalehe, andmebaasi või fondi andmed
@@ -510,6 +543,7 @@ class Allikas(models.Model):
         verbose_name_plural = "Allikad"
 
 
+# class Viide(BaasAddUpdateInfoModel):
 class Viide(models.Model):
     """
     Viide artikli, isiku, organisatsiooni, objekti tekstis kasutatud allikatele
@@ -621,6 +655,120 @@ class Viide(models.Model):
         else:
             return viide
 
+
+class BaasObjectDatesModel(models.Model):
+    """
+    Objecti daatumid
+    """
+    # hist_date = models.DateField(
+    #     null=True,
+    #     blank=True,
+    #     default=None
+    # )
+    # hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
+    #     'Aasta',
+    #     null=True,
+    #     blank=True,
+    #     help_text="Aasta",
+    #     default=None
+    # )
+    # hist_month = models.PositiveSmallIntegerField(  # juhuks kui on teada aasta ja kuu
+    #     'Kuu',
+    #     null=True,
+    #     blank=True,
+    #     choices=KUUD,
+    #     help_text="ja/või kuu",
+    #     default=None
+    # )
+    
+    # hist_enddate = models.DateField( # juhuks kui lõppaeg on teada
+    #     'Lõppes',
+    #     null=True,
+    #     blank=True,
+    #     help_text="Lõppes",
+    #     default=None
+    # )
+    # hist_endyear = models.IntegerField( # juhuks kui on teada ainult aasta
+    #     'Likvideerimise aasta',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Likvideerimise aasta'
+    # )
+    # hist_endmonth = models.PositiveSmallIntegerField(  # juhuks kui on teada aasta ja kuu
+    #     'Kuu',
+    #     null=True,
+    #     blank=True,
+    #     choices=KUUD,
+    #     help_text="ja/või kuu",
+    #     default=None
+    # )
+
+    class Meta:
+        abstract = True
+
+
+class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
+    """
+    Objecti kirjeldus ja seosed teiste objectidega
+    """
+    # kirjeldus = MarkdownxField(
+    #     'Lugu',
+    #     blank=True,
+    #     help_text='<br>'.join(
+    #         [
+    #             'Tekst (MarkDown on toetatud);',
+    #             'Pildi lisamiseks: [pilt_nnnn];',
+    #             'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
+    #         ]
+    #     ),
+    #     default=''
+    # )
+
+    # # Viited
+    # viited = models.ManyToManyField(
+    #     Viide,
+    #     blank=True,
+    #     related_name="%(app_label)s_%(class)s_related",
+    #     related_query_name="%(app_label)s_%(class)ss",
+    #     verbose_name='Viited',
+    # )
+
+    # # seos eelneva objectiga
+    # eellased = models.ManyToManyField(
+    #     "self",
+    #     blank=True,
+    #     verbose_name='Eellased',
+    #     related_name='j2rglane',
+    #     symmetrical=False
+    # )
+
+    # # Vaatamisi
+    # last_accessed = models.DateTimeField(
+    #     verbose_name='Vaadatud',
+    #     default=timezone.now
+    # )
+    # total_accessed = models.PositiveIntegerField(
+    #     verbose_name='Vaatamisi',
+    #     default=0
+    # )
+    # objects = DaatumitegaManager()
+
+    class Meta:
+        abstract = True
+
+    # def save(self, *args, **kwargs):
+    #     print('mixin')
+    #     # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+    #     if self.hist_date:
+    #         self.hist_year = self.hist_date.year
+    #         self.hist_month = self.hist_date.month
+    #     if self.hist_enddate:
+    #         self.hist_endyear = self.hist_enddate.year
+    #         self.hist_endmonth = self.hist_enddate.month
+    #     super().save(*args, **kwargs)
+
+
+# class Objekt(BaasObjectMixinModel):
 class Objekt(models.Model):
     OBJEKTITYYP = (
         ('H', 'Hoone'), # maja
@@ -871,8 +1019,9 @@ class Objekt(models.Model):
         ordering = ['slug'] # erimärkidega nimetuste välistamiseks
         verbose_name = 'objektid'
         verbose_name_plural = "Kohad" # kasutame eesti keeles suupärasemaks tegemiseks
-        
 
+
+# class Organisatsioon(BaasObjectMixinModel):
 class Organisatsioon(models.Model):
     nimi = models.CharField(
         'Asutise nimi',
@@ -1094,6 +1243,7 @@ class Organisatsioon(models.Model):
         verbose_name_plural = "Asutised" # kasutame eesti keeles suupärasemaks tegemiseks
 
 
+# class Isik(BaasObjectMixinModel):
 class Isik(models.Model):
     perenimi = models.CharField(
         'Perekonnanimi',
@@ -1217,7 +1367,6 @@ class Isik(models.Model):
         verbose_name='Muutja'
     )
 
-    # objects = models.Manager()
     objects = DaatumitegaManager()
 
     def __str__(self):
@@ -1385,6 +1534,7 @@ class Isik(models.Model):
         verbose_name_plural = "Isikud"  # kasutame eesti keeles suupärasemaks tegemiseks
 
 
+# class Kroonika(BaasAddUpdateInfoModel):
 class Kroonika(models.Model):
     """
     A. Duvini kroonikaraamatud
@@ -1432,6 +1582,7 @@ class Kroonika(models.Model):
         verbose_name_plural = "Kroonikad"
  
    
+# class Artikkel(BaasObjectMixinModel):
 class Artikkel(models.Model):
     slug = models.SlugField(
         default='',
@@ -1748,6 +1899,7 @@ class PiltSortedManager(models.Manager):
         return queryset
 
 
+# class Pilt(BaasAddUpdateInfoModel):
 class Pilt(models.Model):
     PILT = 'P'
     TEKST = 'T'
@@ -2067,6 +2219,7 @@ class Vihje(models.Model):
 
 
 # Kaartide andmed
+# class Kaart(BaasAddUpdateInfoModel):
 class Kaart(models.Model):
 
     nimi = models.CharField(
@@ -2144,6 +2297,7 @@ class Kaart(models.Model):
         verbose_name_plural = "Kaardid"
 
 
+# class Kaardiobjekt(BaasAddUpdateInfoModel):
 class Kaardiobjekt(models.Model):
     TYYP = (
         ('H', 'Hoone(d)'),
