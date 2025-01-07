@@ -472,8 +472,8 @@ class BaasAddUpdateInfoModel(models.Model):
 #
 # Allikad: raamatud. ajakirjandusväljaanded, veebilehed, arhiivid jne
 #
-# class Allikas(BaasAddUpdateInfoModel):
-class Allikas(models.Model):
+class Allikas(BaasAddUpdateInfoModel):
+# class Allikas(models.Model):
     """
     Raamatu, ajakirja, ajalehe, andmebaasi või fondi andmed
     """
@@ -502,28 +502,28 @@ class Allikas(models.Model):
         blank=True,
     ) # Allika internetiaadress
 
-    # Tehnilised väljad
-    inp_date = models.DateTimeField(
-        'Lisatud',
-        auto_now_add=True
-    )
-    mod_date = models.DateTimeField(
-        'Muudetud',
-        auto_now=True
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name='Lisaja'
-    )
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='+',
-        verbose_name='Muutja'
-    )
+    # # Tehnilised väljad
+    # inp_date = models.DateTimeField(
+    #     'Lisatud',
+    #     auto_now_add=True
+    # )
+    # mod_date = models.DateTimeField(
+    #     'Muudetud',
+    #     auto_now=True
+    # )
+    # created_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     verbose_name='Lisaja'
+    # )
+    # updated_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     related_name='+',
+    #     verbose_name='Muutja'
+    # )
 
     def __str__(self):
         ilmumis_aasta = ''
@@ -543,8 +543,8 @@ class Allikas(models.Model):
         verbose_name_plural = "Allikad"
 
 
-# class Viide(BaasAddUpdateInfoModel):
-class Viide(models.Model):
+class Viide(BaasAddUpdateInfoModel):
+# class Viide(models.Model):
     """
     Viide artikli, isiku, organisatsiooni, objekti tekstis kasutatud allikatele
     """
@@ -590,15 +590,15 @@ class Viide(models.Model):
         'Internet',
         blank=True,
     )
-    # Tehnilised väljad
-    inp_date = models.DateTimeField( # selle j2rgi markdown j2rjestab!
-        'Lisatud',
-        auto_now_add=True
-    )
-    mod_date = models.DateTimeField(
-        'Kasutatud',
-        auto_now=True
-    )
+    # # Tehnilised väljad
+    # inp_date = models.DateTimeField( # selle j2rgi markdown j2rjestab!
+    #     'Lisatud',
+    #     auto_now_add=True
+    # )
+    # mod_date = models.DateTimeField(
+    #     'Kasutatud',
+    #     auto_now=True
+    # )
 
     class Meta:
         ordering = ['inp_date'] # NB! selle j2rgi j2rjestab viited markdownx!
@@ -768,8 +768,8 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     #     super().save(*args, **kwargs)
 
 
-# class Objekt(BaasObjectMixinModel):
-class Objekt(models.Model):
+class Objekt(BaasObjectMixinModel):
+# class Objekt(models.Model):
     OBJEKTITYYP = (
         ('H', 'Hoone'), # maja
         ('T', 'Tänav'),
@@ -863,30 +863,30 @@ class Objekt(models.Model):
         blank=True,
         verbose_name='Viited',
     )
-    # Tehnilised väljad
-    inp_date = models.DateTimeField(
-        'Lisatud',
-        auto_now_add=True
-    )
-    mod_date = models.DateTimeField(
-        'Muudetud',
-        auto_now=True
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name='Lisaja'
-    )
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name='+',
-        verbose_name='Muutja'
-    )
+    # # Tehnilised väljad
+    # inp_date = models.DateTimeField(
+    #     'Lisatud',
+    #     auto_now_add=True
+    # )
+    # mod_date = models.DateTimeField(
+    #     'Muudetud',
+    #     auto_now=True
+    # )
+    # created_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name='Lisaja'
+    # )
+    # updated_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True,
+    #     related_name='+',
+    #     verbose_name='Muutja'
+    # )
 
     objects = DaatumitegaManager()
 
@@ -1021,8 +1021,8 @@ class Objekt(models.Model):
         verbose_name_plural = "Kohad" # kasutame eesti keeles suupärasemaks tegemiseks
 
 
-# class Organisatsioon(BaasObjectMixinModel):
-class Organisatsioon(models.Model):
+class Organisatsioon(BaasObjectMixinModel):
+# class Organisatsioon(models.Model):
     nimi = models.CharField(
         'Asutise nimi',
         max_length=200,
@@ -1097,30 +1097,30 @@ class Organisatsioon(models.Model):
         verbose_name='Viited',
     )
 
-    # Tehnilised väljad
-    inp_date = models.DateTimeField(
-        'Lisatud',
-        auto_now_add=True
-    )
-    mod_date = models.DateTimeField(
-        'Muudetud',
-        auto_now=True
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name='Lisaja'
-    )
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='+',
-        verbose_name='Muutja'
-    )
+    # # Tehnilised väljad
+    # inp_date = models.DateTimeField(
+    #     'Lisatud',
+    #     auto_now_add=True
+    # )
+    # mod_date = models.DateTimeField(
+    #     'Muudetud',
+    #     auto_now=True
+    # )
+    # created_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     verbose_name='Lisaja'
+    # )
+    # updated_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     related_name='+',
+    #     verbose_name='Muutja'
+    # )
 
     objects = DaatumitegaManager()
 
@@ -1243,8 +1243,8 @@ class Organisatsioon(models.Model):
         verbose_name_plural = "Asutised" # kasutame eesti keeles suupärasemaks tegemiseks
 
 
-# class Isik(BaasObjectMixinModel):
-class Isik(models.Model):
+class Isik(BaasObjectMixinModel):
+# class Isik(models.Model):
     perenimi = models.CharField(
         'Perekonnanimi',
         max_length=100,
@@ -1342,30 +1342,30 @@ class Isik(models.Model):
         blank=True,
         verbose_name='Viited',
     )
-    # Tehnilised väljad
-    inp_date = models.DateTimeField(
-        'Lisatud',
-        auto_now_add=True
-    )
-    mod_date = models.DateTimeField(
-        'Muudetud',
-        auto_now=True
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name='Lisaja'
-    )
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='+',
-        verbose_name='Muutja'
-    )
+    # # Tehnilised väljad
+    # inp_date = models.DateTimeField(
+    #     'Lisatud',
+    #     auto_now_add=True
+    # )
+    # mod_date = models.DateTimeField(
+    #     'Muudetud',
+    #     auto_now=True
+    # )
+    # created_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     verbose_name='Lisaja'
+    # )
+    # updated_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     related_name='+',
+    #     verbose_name='Muutja'
+    # )
 
     objects = DaatumitegaManager()
 
@@ -1534,8 +1534,8 @@ class Isik(models.Model):
         verbose_name_plural = "Isikud"  # kasutame eesti keeles suupärasemaks tegemiseks
 
 
-# class Kroonika(BaasAddUpdateInfoModel):
-class Kroonika(models.Model):
+class Kroonika(BaasAddUpdateInfoModel):
+# class Kroonika(models.Model):
     """
     A. Duvini kroonikaraamatud
     """
@@ -1548,28 +1548,28 @@ class Kroonika(models.Model):
     )
     kirjeldus = models.TextField()
 
-    # Tehnilised väljad
-    inp_date = models.DateTimeField(
-        'Lisatud',
-        auto_now_add=True
-    )
-    mod_date = models.DateTimeField(
-        'Muudetud',
-        auto_now=True
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name='Lisaja'
-    )
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='+',
-        verbose_name='Muutja'
-    )
+    # # Tehnilised väljad
+    # inp_date = models.DateTimeField(
+    #     'Lisatud',
+    #     auto_now_add=True
+    # )
+    # mod_date = models.DateTimeField(
+    #     'Muudetud',
+    #     auto_now=True
+    # )
+    # created_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     verbose_name='Lisaja'
+    # )
+    # updated_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     related_name='+',
+    #     verbose_name='Muutja'
+    # )
 
     def __str__(self):
         return self.nimi
@@ -1582,8 +1582,8 @@ class Kroonika(models.Model):
         verbose_name_plural = "Kroonikad"
  
    
-# class Artikkel(BaasObjectMixinModel):
-class Artikkel(models.Model):
+class Artikkel(BaasObjectMixinModel):
+# class Artikkel(models.Model):
     slug = models.SlugField(
         default='',
         editable=False,
@@ -1652,30 +1652,30 @@ class Artikkel(models.Model):
         blank=True,
         verbose_name='Seotud viited',
     )
-    # Tehnilised väljad
-    inp_date = models.DateTimeField(
-        'Lisatud',
-        auto_now_add=True
-    )
-    mod_date = models.DateTimeField(
-        'Muudetud',
-        auto_now=True
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name='Lisaja'
-    )
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='+',
-        verbose_name='Muutja'
-    )
+    # # Tehnilised väljad
+    # inp_date = models.DateTimeField(
+    #     'Lisatud',
+    #     auto_now_add=True
+    # )
+    # mod_date = models.DateTimeField(
+    #     'Muudetud',
+    #     auto_now=True
+    # )
+    # created_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     verbose_name='Lisaja'
+    # )
+    # updated_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     related_name='+',
+    #     verbose_name='Muutja'
+    # )
     last_accessed = models.DateTimeField(
         verbose_name='Vaadatud',
         default=timezone.now
@@ -1861,8 +1861,9 @@ class Artikkel(models.Model):
 
 
 class PiltSortedManager(models.Manager):
-
-    # J2rjestame pildid kronoloogiliselt pildi hist_date, hist_year, kui need puuduvad, siis viite hist_date, hist_year
+    """
+    J2rjestame pildid kronoloogiliselt pildi hist_date, hist_year, kui need puuduvad, siis viite hist_date, hist_year
+    """
     def sorted(self):
         queryset = self.annotate(
             search_year=Case(
@@ -1899,8 +1900,8 @@ class PiltSortedManager(models.Manager):
         return queryset
 
 
-# class Pilt(BaasAddUpdateInfoModel):
-class Pilt(models.Model):
+class Pilt(BaasAddUpdateInfoModel):
+# class Pilt(models.Model):
     PILT = 'P'
     TEKST = 'T'
     MUU = 'M'
@@ -2061,30 +2062,30 @@ class Pilt(models.Model):
         related_name='profiilipildid',
         verbose_name='Seotud objektid'
     )
-    # Tehnilised väljad
-    inp_date = models.DateTimeField(
-        'Lisatud',
-        auto_now_add=True
-    )
-    mod_date = models.DateTimeField(
-        'Muudetud',
-        auto_now=True
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name='Lisaja'
-    )
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='+',
-        verbose_name='Muutja'
-    )
+    # # Tehnilised väljad
+    # inp_date = models.DateTimeField(
+    #     'Lisatud',
+    #     auto_now_add=True
+    # )
+    # mod_date = models.DateTimeField(
+    #     'Muudetud',
+    #     auto_now=True
+    # )
+    # created_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     verbose_name='Lisaja'
+    # )
+    # updated_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     related_name='+',
+    #     verbose_name='Muutja'
+    # )
 
     objects = PiltSortedManager()
 
@@ -2218,9 +2219,11 @@ class Vihje(models.Model):
         verbose_name_plural = "Vihjed"
 
 
-# Kaartide andmed
-# class Kaart(BaasAddUpdateInfoModel):
-class Kaart(models.Model):
+class Kaart(BaasAddUpdateInfoModel):
+# class Kaart(models.Model):
+    """
+    Kaartide andmed
+    """
 
     nimi = models.CharField(
         'Pealkiri',
@@ -2250,32 +2253,32 @@ class Kaart(models.Model):
         blank=True,
         verbose_name='Viited',
     )
-    # Tehnilised väljad
-    inp_date = models.DateTimeField(
-        'Lisatud',
-        auto_now_add=True,
-        blank=True
-    )
-    mod_date = models.DateTimeField(
-        'Muudetud',
-        auto_now=True,
-        blank=True
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name='Lisaja'
-    )
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name='+',
-        verbose_name='Muutja'
-    )
+    # # Tehnilised väljad
+    # inp_date = models.DateTimeField(
+    #     'Lisatud',
+    #     auto_now_add=True,
+    #     blank=True
+    # )
+    # mod_date = models.DateTimeField(
+    #     'Muudetud',
+    #     auto_now=True,
+    #     blank=True
+    # )
+    # created_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name='Lisaja'
+    # )
+    # updated_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True,
+    #     related_name='+',
+    #     verbose_name='Muutja'
+    # )
 
     def __str__(self):
         return f'{self.aasta} {self.nimi}'
@@ -2297,8 +2300,8 @@ class Kaart(models.Model):
         verbose_name_plural = "Kaardid"
 
 
-# class Kaardiobjekt(BaasAddUpdateInfoModel):
-class Kaardiobjekt(models.Model):
+class Kaardiobjekt(BaasAddUpdateInfoModel):
+# class Kaardiobjekt(models.Model):
     TYYP = (
         ('H', 'Hoone(d)'),
         ('A', 'Ala'),
@@ -2356,30 +2359,30 @@ class Kaardiobjekt(models.Model):
         blank=True,
         help_text='Lisainfo kaardikihil'
     )
-    # Tehnilised väljad
-    inp_date = models.DateTimeField(
-        'Lisatud',
-        auto_now_add=True
-    )
-    mod_date = models.DateTimeField(
-        'Muudetud',
-        auto_now=True
-    )
-    created_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name='Lisaja'
-    )
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name='+',
-        verbose_name='Muutja'
-    )
+    # # Tehnilised väljad
+    # inp_date = models.DateTimeField(
+    #     'Lisatud',
+    #     auto_now_add=True
+    # )
+    # mod_date = models.DateTimeField(
+    #     'Muudetud',
+    #     auto_now=True
+    # )
+    # created_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True,
+    #     verbose_name='Lisaja'
+    # )
+    # updated_by = models.ForeignKey(
+    #     User,
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True,
+    #     related_name='+',
+    #     verbose_name='Muutja'
+    # )
 
     def __str__(self):
         return ' '.join([self.kaart.aasta, self.tn, self.nr, self.tyyp, self.lisainfo])
