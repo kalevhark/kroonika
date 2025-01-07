@@ -871,7 +871,7 @@ class Objekt(models.Model):
         ordering = ['slug'] # erimärkidega nimetuste välistamiseks
         verbose_name = 'objektid'
         verbose_name_plural = "Kohad" # kasutame eesti keeles suupärasemaks tegemiseks
-
+        
 
 class Organisatsioon(models.Model):
     nimi = models.CharField(

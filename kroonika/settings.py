@@ -476,4 +476,4 @@ LOGGING = {
     },
 }
 
-J6UL2024 = True
+J6UL2024 = False
