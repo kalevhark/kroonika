@@ -469,11 +469,7 @@ class BaasAddUpdateInfoModel(models.Model):
         abstract = True
 
 
-#
-# Allikad: raamatud. ajakirjandusväljaanded, veebilehed, arhiivid jne
-#
 class Allikas(BaasAddUpdateInfoModel):
-# class Allikas(models.Model):
     """
     Raamatu, ajakirja, ajalehe, andmebaasi või fondi andmed
     """
@@ -526,16 +522,15 @@ class Allikas(BaasAddUpdateInfoModel):
     # )
 
     def __str__(self):
-        ilmumis_aasta = ''
+        ilmumise_aasta = ''
         if self.hist_year:
-            ilmumis_aasta = f' ({self.hist_year})'
-        return self.nimi + ilmumis_aasta
+            ilmumise_aasta = f' ({self.hist_year})'
+        return self.nimi + ilmumise_aasta
 
     def __repr__(self):
         return self.nimi
 
     def profiilipilt(self):
-        # return Pilt.objects.filter(allikad=self.id, profiilipilt_allikas=True).first()
         return Pilt.objects.filter(profiilipilt_allikad=self).first()
 
     class Meta:
@@ -543,8 +538,54 @@ class Allikas(BaasAddUpdateInfoModel):
         verbose_name_plural = "Allikad"
 
 
-class Viide(BaasAddUpdateInfoModel):
-# class Viide(models.Model):
+class BaasObjectDatesModel(models.Model):
+    """
+    Object, Viide, Pilt, Kaart daatumid
+    """
+    hist_date = models.DateField(
+        null=True,
+        blank=True,
+        help_text="kuupäev",
+        default=None
+    )
+    hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
+        null=True,
+        blank=True,
+        help_text="aasta",
+        default=None
+    )
+    hist_month = models.PositiveSmallIntegerField(  # juhuks kui on teada aasta ja kuu
+        null=True,
+        blank=True,
+        choices=KUUD,
+        help_text="kuu",
+        default=None
+    )
+    
+    hist_enddate = models.DateField( # juhuks kui lõppaeg on teada
+        null=True,
+        blank=True,
+        help_text="kuupäev",
+        default=None
+    )
+    hist_endyear = models.IntegerField( # juhuks kui on teada ainult aasta
+        null=True,
+        blank=True,
+        help_text='aasta'
+    )
+    hist_endmonth = models.PositiveSmallIntegerField(  # juhuks kui on teada aasta ja kuu
+        null=True,
+        blank=True,
+        choices=KUUD,
+        help_text="kuu",
+        default=None
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Viide(BaasAddUpdateInfoModel, BaasObjectDatesModel):
     """
     Viide artikli, isiku, organisatsiooni, objekti tekstis kasutatud allikatele
     """
@@ -562,24 +603,24 @@ class Viide(BaasAddUpdateInfoModel):
         blank=True,
         help_text='Artikli või peatüki pealkiri'
     )
-    # TODO: Wiki markup süsteem viitamiseks tekstis, pole enam vaja
-    marker = models.CharField( # Tekstis sisalduvad viite markerid
-        'Marker',
-        max_length=10,
-        blank=True
-    )
-    hist_date = models.DateField(
-        'Avaldatud',
-        null=True,
-        blank=True,
-        help_text='Avaldatud'
-    )
-    hist_year = models.IntegerField( # juhuks kui on teada ainult aasta
-        'Avaldatud',
-        null=True,
-        blank=True,
-        help_text='Avaldamise aasta'
-    )
+    # Wiki markup süsteem viitamiseks tekstis, pole enam vaja
+    # marker = models.CharField( # Tekstis sisalduvad viite markerid
+    #     'Marker',
+    #     max_length=10,
+    #     blank=True
+    # )
+    # hist_date = models.DateField(
+    #     'Avaldatud',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Avaldatud'
+    # )
+    # hist_year = models.IntegerField( # juhuks kui on teada ainult aasta
+    #     'Avaldatud',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Avaldamise aasta'
+    # )
     kohaviit = models.CharField( # fonditähis, aastakäigu/väljaande nr, lehekülje nr,
         'Leidandmed',
         max_length=50,
@@ -656,55 +697,13 @@ class Viide(BaasAddUpdateInfoModel):
             return viide
 
 
-class BaasObjectDatesModel(models.Model):
-    """
-    Objecti daatumid
-    """
-    # hist_date = models.DateField(
-    #     null=True,
-    #     blank=True,
-    #     default=None
-    # )
-    # hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
-    #     'Aasta',
-    #     null=True,
-    #     blank=True,
-    #     help_text="Aasta",
-    #     default=None
-    # )
-    # hist_month = models.PositiveSmallIntegerField(  # juhuks kui on teada aasta ja kuu
-    #     'Kuu',
-    #     null=True,
-    #     blank=True,
-    #     choices=KUUD,
-    #     help_text="ja/või kuu",
-    #     default=None
-    # )
-    
-    # hist_enddate = models.DateField( # juhuks kui lõppaeg on teada
-    #     'Lõppes',
-    #     null=True,
-    #     blank=True,
-    #     help_text="Lõppes",
-    #     default=None
-    # )
-    # hist_endyear = models.IntegerField( # juhuks kui on teada ainult aasta
-    #     'Likvideerimise aasta',
-    #     null=True,
-    #     blank=True,
-    #     help_text='Likvideerimise aasta'
-    # )
-    # hist_endmonth = models.PositiveSmallIntegerField(  # juhuks kui on teada aasta ja kuu
-    #     'Kuu',
-    #     null=True,
-    #     blank=True,
-    #     choices=KUUD,
-    #     help_text="ja/või kuu",
-    #     default=None
-    # )
-
-    class Meta:
-        abstract = True
+model = Viide
+model._meta.get_field('hist_date').verbose_name = "Avaldatud"
+model._meta.get_field('hist_year').verbose_name = "Avaldamise aasta"
+model._meta.get_field('hist_month').verbose_name = "Avaldamise kuu"
+model._meta.get_field('hist_enddate').verbose_name = "Avaldamise lõpu aeg"
+model._meta.get_field('hist_endyear').verbose_name= "Avaldamise lõpu aasta"
+model._meta.get_field('hist_endmonth').verbose_name = "Avaldamise lõpu kuu"
 
 
 class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
@@ -769,7 +768,6 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
 
 
 class Objekt(BaasObjectMixinModel):
-# class Objekt(models.Model):
     OBJEKTITYYP = (
         ('H', 'Hoone'), # maja
         ('T', 'Tänav'),
@@ -793,37 +791,37 @@ class Objekt(BaasObjectMixinModel):
         blank=True,
         help_text='Varasemad aadressikujud'
     )
-    hist_date = models.DateField(
-        'Valminud',
-        null=True,
-        blank=True,
-        help_text='Valmimise aeg'
-    )
-    hist_year = models.IntegerField( # juhuks kui on teada ainult aasta
-        'Valmimisaasta',
-        null=True,
-        blank=True,
-        help_text='Valmimisaasta'
-    )
-    hist_month = models.PositiveSmallIntegerField( # juhuks kui on teada aasta ja kuu
-        'Valmimiskuu',
-        null=True,
-        blank=True,
-        choices=KUUD,
-        help_text='ja/või kuu'
-    )
-    hist_enddate = models.DateField(
-        'Likvideeritud',
-        null=True,
-        blank=True,
-        help_text='Hävimise või likvideerimise aeg'
-    )
-    hist_endyear = models.IntegerField( # juhuks kui on teada ainult aasta
-        'Likvideerimise aasta',
-        null=True,
-        blank=True,
-        help_text='Likvideerimise aasta'
-    )
+    # hist_date = models.DateField(
+    #     'Valminud',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Valmimise aeg'
+    # )
+    # hist_year = models.IntegerField( # juhuks kui on teada ainult aasta
+    #     'Valmimisaasta',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Valmimisaasta'
+    # )
+    # hist_month = models.PositiveSmallIntegerField( # juhuks kui on teada aasta ja kuu
+    #     'Valmimiskuu',
+    #     null=True,
+    #     blank=True,
+    #     choices=KUUD,
+    #     help_text='ja/või kuu'
+    # )
+    # hist_enddate = models.DateField(
+    #     'Likvideeritud',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Hävimise või likvideerimise aeg'
+    # )
+    # hist_endyear = models.IntegerField( # juhuks kui on teada ainult aasta
+    #     'Likvideerimise aasta',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Likvideerimise aasta'
+    # )
     gone = models.BooleanField(  # surnud teadmata ajal
         'Hävinud/likvideeritud',
         default=False,
@@ -1021,8 +1019,16 @@ class Objekt(BaasObjectMixinModel):
         verbose_name_plural = "Kohad" # kasutame eesti keeles suupärasemaks tegemiseks
 
 
+model = Objekt
+model._meta.get_field('hist_date').verbose_name = "Valmimise aeg"
+model._meta.get_field('hist_year').verbose_name = "Valmimise aasta"
+model._meta.get_field('hist_month').verbose_name = "Valmimise kuu"
+model._meta.get_field('hist_enddate').verbose_name = "Likvideerimise aeg"
+model._meta.get_field('hist_endyear').verbose_name= "Likvideerimise aasta"
+model._meta.get_field('hist_endmonth').verbose_name = "Likvideerimise kuu"
+
+
 class Organisatsioon(BaasObjectMixinModel):
-# class Organisatsioon(models.Model):
     nimi = models.CharField(
         'Asutise nimi',
         max_length=200,
@@ -1033,37 +1039,37 @@ class Organisatsioon(BaasObjectMixinModel):
         editable=False,
         max_length=200,
     )
-    hist_date = models.DateField(
-        'Loodud',
-        null=True,
-        blank=True,
-        help_text='Loodud'
-    )
-    hist_year = models.IntegerField( # juhuks kui on teada ainult aasta
-        'Loomise aasta',
-        null=True,
-        blank=True,
-        help_text='Loomise aasta'
-    )
-    hist_month = models.PositiveSmallIntegerField( # juhuks kui on teada aasta ja kuu
-        'Loomise kuu',
-        null=True,
-        blank=True,
-        choices=KUUD,
-        help_text='ja/või kuu'
-    )
-    hist_enddate = models.DateField(
-        'Lõpetatud',
-        null=True,
-        blank=True,
-        help_text='Lõpetatud'
-    )
-    hist_endyear = models.IntegerField( # juhuks kui on teada ainult aasta
-        'Lõpetamise aasta',
-        null=True,
-        blank=True,
-        help_text='Lõpetamise aasta'
-    )
+    # hist_date = models.DateField(
+    #     'Loodud',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Loodud'
+    # )
+    # hist_year = models.IntegerField( # juhuks kui on teada ainult aasta
+    #     'Loomise aasta',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Loomise aasta'
+    # )
+    # hist_month = models.PositiveSmallIntegerField( # juhuks kui on teada aasta ja kuu
+    #     'Loomise kuu',
+    #     null=True,
+    #     blank=True,
+    #     choices=KUUD,
+    #     help_text='ja/või kuu'
+    # )
+    # hist_enddate = models.DateField(
+    #     'Lõpetatud',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Lõpetatud'
+    # )
+    # hist_endyear = models.IntegerField( # juhuks kui on teada ainult aasta
+    #     'Lõpetamise aasta',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Lõpetamise aasta'
+    # )
     gone = models.BooleanField(  # surnud teadmata ajal
         'Lõpetatud/likvideeritud',
         default=False,
@@ -1243,8 +1249,16 @@ class Organisatsioon(BaasObjectMixinModel):
         verbose_name_plural = "Asutised" # kasutame eesti keeles suupärasemaks tegemiseks
 
 
+model = Organisatsioon
+model._meta.get_field('hist_date').verbose_name = "Loomise aeg"
+model._meta.get_field('hist_year').verbose_name = "Loomise aasta"
+model._meta.get_field('hist_month').verbose_name = "Loomise kuu"
+model._meta.get_field('hist_enddate').verbose_name = "Lõpetamise aeg"
+model._meta.get_field('hist_endyear').verbose_name= "Lõpetamise aasta"
+model._meta.get_field('hist_endmonth').verbose_name = "Lõpetamise kuu"
+
+
 class Isik(BaasObjectMixinModel):
-# class Isik(models.Model):
     perenimi = models.CharField(
         'Perekonnanimi',
         max_length=100,
@@ -1261,37 +1275,37 @@ class Isik(BaasObjectMixinModel):
         editable=False,
         max_length=200,
     )
-    # Eludaatumid
-    hist_date = models.DateField(
-        'Sünniaeg',
-        null=True,
-        blank=True,
-        help_text="Sündinud"
-    )
-    hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
-        'Sünniaasta',
-        null=True,
-        blank=True,
-        help_text='Sünniaasta'
-    )
+    # # Eludaatumid
+    # hist_date = models.DateField(
+    #     'Sünniaeg',
+    #     null=True,
+    #     blank=True,
+    #     help_text="Sündinud"
+    # )
+    # hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
+    #     'Sünniaasta',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Sünniaasta'
+    # )
     synd_koht = models.CharField(
         'Sünnikoht',
         max_length=100,
         blank=True,
         help_text="Sünnikoht"
     )
-    hist_enddate = models.DateField(
-        'Surmaaeg',
-        null=True,
-        blank=True,
-        help_text="Surmaaeg"
-    )
-    hist_endyear = models.IntegerField(  # juhuks kui on teada ainult aasta
-        'Surma-aasta',
-        null=True,
-        blank=True,
-        help_text='Surma-aasta'
-    )
+    # hist_enddate = models.DateField(
+    #     'Surmaaeg',
+    #     null=True,
+    #     blank=True,
+    #     help_text="Surmaaeg"
+    # )
+    # hist_endyear = models.IntegerField(  # juhuks kui on teada ainult aasta
+    #     'Surma-aasta',
+    #     null=True,
+    #     blank=True,
+    #     help_text='Surma-aasta'
+    # )
     gone = models.BooleanField( # surnud
         'Surnud',
         default=False,
@@ -1534,8 +1548,16 @@ class Isik(BaasObjectMixinModel):
         verbose_name_plural = "Isikud"  # kasutame eesti keeles suupärasemaks tegemiseks
 
 
+model = Isik
+model._meta.get_field('hist_date').verbose_name = "Sünniaeg"
+model._meta.get_field('hist_year').verbose_name = "Sünniaasta"
+model._meta.get_field('hist_month').verbose_name = "Sünnikuu"
+model._meta.get_field('hist_enddate').verbose_name = "Surma-aeg"
+model._meta.get_field('hist_endyear').verbose_name= "Surma-aasta"
+model._meta.get_field('hist_endmonth').verbose_name = "Surma-kuu"
+
+
 class Kroonika(BaasAddUpdateInfoModel):
-# class Kroonika(models.Model):
     """
     A. Duvini kroonikaraamatud
     """
@@ -1583,38 +1605,37 @@ class Kroonika(BaasAddUpdateInfoModel):
  
    
 class Artikkel(BaasObjectMixinModel):
-# class Artikkel(models.Model):
     slug = models.SlugField(
         default='',
         editable=False,
         max_length=200,
     )
-    # Toimumisaeg
-    hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
-        'Aasta',
-        null=True,
-        blank=True,
-        help_text="Aasta"
-    )
-    hist_month = models.PositiveSmallIntegerField(  # juhuks kui on teada aasta ja kuu
-        'Kuu',
-        null=True,
-        blank=True,
-        choices=KUUD,
-        help_text="ja/või kuu"
-    )
-    hist_date = models.DateField( # Sündmus toimus või algas
-        'Kuupäev',
-        null=True,
-        blank=True,
-        help_text="Algas"
-    )
-    hist_enddate = models.DateField( # juhuks kui lõppaeg on teada
-        'Lõppes',
-        null=True,
-        blank=True,
-        help_text="Lõppes"
-    )
+    # # Toimumisaeg
+    # hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
+    #     'Aasta',
+    #     null=True,
+    #     blank=True,
+    #     help_text="Aasta"
+    # )
+    # hist_month = models.PositiveSmallIntegerField(  # juhuks kui on teada aasta ja kuu
+    #     'Kuu',
+    #     null=True,
+    #     blank=True,
+    #     choices=KUUD,
+    #     help_text="ja/või kuu"
+    # )
+    # hist_date = models.DateField( # Sündmus toimus või algas
+    #     'Kuupäev',
+    #     null=True,
+    #     blank=True,
+    #     help_text="Algas"
+    # )
+    # hist_enddate = models.DateField( # juhuks kui lõppaeg on teada
+    #     'Lõppes',
+    #     null=True,
+    #     blank=True,
+    #     help_text="Lõppes"
+    # )
     hist_searchdate = models.DateField(  # automaatne väli, kui täpset kuupäeva pole teada
         'Tuletatud kuupäev',
         null=True,
@@ -1786,11 +1807,6 @@ class Artikkel(BaasObjectMixinModel):
     headline.short_description = 'Lugu'
 
     def profiilipilt(self):
-        # return Pilt.objects.filter(
-        #     artiklid=self.id,
-        #     profiilipilt_artikkel=True
-        # ).first()
-        # return Pilt.objects.filter(profiilipilt_artklid=self).first()
         return Pilt.objects. \
             filter(profiilipilt_artiklid__in=[self]). \
             first()
@@ -1860,6 +1876,15 @@ class Artikkel(BaasObjectMixinModel):
         return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
 
 
+model = Artikkel
+model._meta.get_field('hist_date').verbose_name = "Toimumise aeg"
+model._meta.get_field('hist_year').verbose_name = "Toimumise aasta"
+model._meta.get_field('hist_month').verbose_name = "Toimumise kuu"
+model._meta.get_field('hist_enddate').verbose_name = "Toimumise lõpuaeg"
+model._meta.get_field('hist_endyear').verbose_name= "Toimumise lõpu aasta"
+model._meta.get_field('hist_endmonth').verbose_name = "Toimumise lõpu kuu"
+
+
 class PiltSortedManager(models.Manager):
     """
     J2rjestame pildid kronoloogiliselt pildi hist_date, hist_year, kui need puuduvad, siis viite hist_date, hist_year
@@ -1900,8 +1925,7 @@ class PiltSortedManager(models.Manager):
         return queryset
 
 
-class Pilt(BaasAddUpdateInfoModel):
-# class Pilt(models.Model):
+class Pilt(BaasAddUpdateInfoModel, BaasObjectDatesModel):
     PILT = 'P'
     TEKST = 'T'
     MUU = 'M'
@@ -1950,24 +1974,24 @@ class Pilt(BaasAddUpdateInfoModel):
         editable=False,
         blank=True
     )
-    hist_date = models.DateField(
-        'Kuupäev',
-        null=True,
-        blank=True
-    )
-    hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
-        'Aasta',
-        null=True,
-        blank=True,
-        help_text="Aasta"
-    )
-    hist_month = models.PositiveSmallIntegerField(  # juhuks kui on teada aasta ja kuu
-        'Kuu',
-        null=True,
-        blank=True,
-        choices=KUUD,
-        help_text="ja/või kuu"
-    )
+    # hist_date = models.DateField(
+    #     'Kuupäev',
+    #     null=True,
+    #     blank=True
+    # )
+    # hist_year = models.IntegerField(  # juhuks kui on teada ainult aasta
+    #     'Aasta',
+    #     null=True,
+    #     blank=True,
+    #     help_text="Aasta"
+    # )
+    # hist_month = models.PositiveSmallIntegerField(  # juhuks kui on teada aasta ja kuu
+    #     'Kuu',
+    #     null=True,
+    #     blank=True,
+    #     choices=KUUD,
+    #     help_text="ja/või kuu"
+    # )
     tyyp = models.CharField(
         max_length=1,
         choices=PILDITYYP,
@@ -2010,27 +2034,27 @@ class Pilt(BaasAddUpdateInfoModel):
         blank=True,
         verbose_name='Viited'
     )
-    # Kas näidatakse objecti profiilipildina (pole kasutusel)
-    profiilipilt_allikas = models.BooleanField(
-        'Allika profiilipilt',
-        default=False
-    )
-    profiilipilt_artikkel = models.BooleanField(
-        'Artikli profiilipilt',
-        default=False
-    )
-    profiilipilt_isik = models.BooleanField(
-        'Isiku profiilipilt',
-        default=False
-    )
-    profiilipilt_organisatsioon = models.BooleanField(
-        'Organisatsiooni profiilipilt',
-        default=False
-    )
-    profiilipilt_objekt = models.BooleanField(
-        'Objekti profiilipilt',
-        default=False
-    )
+    # # Kas näidatakse objecti profiilipildina (pole kasutusel)
+    # profiilipilt_allikas = models.BooleanField(
+    #     'Allika profiilipilt',
+    #     default=False
+    # )
+    # profiilipilt_artikkel = models.BooleanField(
+    #     'Artikli profiilipilt',
+    #     default=False
+    # )
+    # profiilipilt_isik = models.BooleanField(
+    #     'Isiku profiilipilt',
+    #     default=False
+    # )
+    # profiilipilt_organisatsioon = models.BooleanField(
+    #     'Organisatsiooni profiilipilt',
+    #     default=False
+    # )
+    # profiilipilt_objekt = models.BooleanField(
+    #     'Objekti profiilipilt',
+    #     default=False
+    # )
     # Millistele objectidel kuvatakse profiilipildina (uus lahendus)
     profiilipilt_allikad = models.ManyToManyField(
         Allikas,
@@ -2220,7 +2244,6 @@ class Vihje(models.Model):
 
 
 class Kaart(BaasAddUpdateInfoModel):
-# class Kaart(models.Model):
     """
     Kaartide andmed
     """
@@ -2301,7 +2324,6 @@ class Kaart(BaasAddUpdateInfoModel):
 
 
 class Kaardiobjekt(BaasAddUpdateInfoModel):
-# class Kaardiobjekt(models.Model):
     TYYP = (
         ('H', 'Hoone(d)'),
         ('A', 'Ala'),
@@ -2396,9 +2418,6 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
     @property
     def centroid(self, *args, **kwargs):
         try:
-            # s = shape(self.geometry).centroid # andis vale tulemuse!
-            # print(s.x, s.y, s.wkt)
-            # return s # s.x ja s.y kasutamiseks
             s = shape(self.geometry).bounds
             return [
                 (s[3]+s[1])/2,
