@@ -69,6 +69,12 @@ VIGA_TEKSTIS = '[?]'
 PATTERN_OBJECTS = r'\[([\wÀ-ÿ\s\"\-\,\.\(\)]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)'
 
 PREDECESSOR_DESCENDANT_NAMES = {
+    'Artikkel': {
+        'predecessor_name': 'Eelnenud lugu',
+        'predecessor_name_plural': 'Eelnenud lood',
+        'descendant_name': 'Järgnev lugu',
+        'descendant_name_plural': 'Järgnevad lood'
+    },
     'Isik': {
         'predecessor_name': 'Vanem',
         'predecessor_name_plural': 'Vanemad',
@@ -710,46 +716,46 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     """
     Objecti kirjeldus ja seosed teiste objectidega
     """
-    # kirjeldus = MarkdownxField(
-    #     'Lugu',
-    #     blank=True,
-    #     help_text='<br>'.join(
-    #         [
-    #             'Tekst (MarkDown on toetatud);',
-    #             'Pildi lisamiseks: [pilt_nnnn];',
-    #             'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
-    #         ]
-    #     ),
-    #     default=''
-    # )
+    kirjeldus = MarkdownxField(
+        'Kirjeldus',
+        blank=True,
+        help_text='<br>'.join(
+            [
+                'Tekst (MarkDown on toetatud);',
+                'Pildi lisamiseks: [pilt_nnnn];',
+                'Viite lisamiseks loole, isikule, asutisele või kohale: nt [Mingi Nimi]([isik_nnnn])',
+            ]
+        ),
+        default=''
+    )
 
-    # # Viited
-    # viited = models.ManyToManyField(
-    #     Viide,
-    #     blank=True,
-    #     related_name="%(app_label)s_%(class)s_related",
-    #     related_query_name="%(app_label)s_%(class)ss",
-    #     verbose_name='Viited',
-    # )
+    # Viited
+    viited = models.ManyToManyField(
+        Viide,
+        blank=True,
+        related_name="%(app_label)s_%(class)s_related",
+        related_query_name="%(app_label)s_%(class)s",
+        verbose_name='Viited',
+    )
 
-    # # seos eelneva objectiga
-    # eellased = models.ManyToManyField(
-    #     "self",
-    #     blank=True,
-    #     verbose_name='Eellased',
-    #     related_name='j2rglane',
-    #     symmetrical=False
-    # )
+    # seos eelneva objectiga
+    eellased = models.ManyToManyField(
+        "self",
+        blank=True,
+        verbose_name='Eellased',
+        related_name='j2rglane',
+        symmetrical=False
+    )
 
-    # # Vaatamisi
-    # last_accessed = models.DateTimeField(
-    #     verbose_name='Vaadatud',
-    #     default=timezone.now
-    # )
-    # total_accessed = models.PositiveIntegerField(
-    #     verbose_name='Vaatamisi',
-    #     default=0
-    # )
+    # Vaatamisi
+    last_accessed = models.DateTimeField(
+        verbose_name='Vaadatud',
+        default=timezone.now
+    )
+    total_accessed = models.PositiveIntegerField(
+        verbose_name='Vaatamisi',
+        default=0
+    )
     # objects = DaatumitegaManager()
 
     class Meta:
@@ -832,35 +838,35 @@ class Objekt(BaasObjectMixinModel):
         choices=OBJEKTITYYP,
         help_text='Mis tüüpi koht'
     )
-    kirjeldus = MarkdownxField(
-        'Kirjeldus',
-        blank=True,
-        help_text = '<br>'.join(
-        [
-            'Koha või objekti kirjeldus (MarkDown on toetatud);',
-            'Pildi lisamiseks: [pilt_nnnn];',
-            'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
-        ]
-    )
-    )
-    # Seotud:
-    eellased = models.ManyToManyField(
-        "self",
-        blank=True,
-        verbose_name='Eellased',
-        related_name='j2rglane',
-        symmetrical=False
-    )
+    # kirjeldus = MarkdownxField(
+    #     'Kirjeldus',
+    #     blank=True,
+    #     help_text = '<br>'.join(
+    #     [
+    #         'Koha või objekti kirjeldus (MarkDown on toetatud);',
+    #         'Pildi lisamiseks: [pilt_nnnn];',
+    #         'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
+    #     ]
+    # )
+    # )
+    # # Seotud:
+    # eellased = models.ManyToManyField(
+    #     "self",
+    #     blank=True,
+    #     verbose_name='Eellased',
+    #     related_name='j2rglane',
+    #     symmetrical=False
+    # )
     objektid = models.ManyToManyField(
         "self",
         blank=True,
         verbose_name='Kohad'
     )
-    viited = models.ManyToManyField(
-        Viide,
-        blank=True,
-        verbose_name='Viited',
-    )
+    # viited = models.ManyToManyField(
+    #     Viide,
+    #     blank=True,
+    #     verbose_name='Viited',
+    # )
     # # Tehnilised väljad
     # inp_date = models.DateTimeField(
     #     'Lisatud',
@@ -1075,33 +1081,33 @@ class Organisatsioon(BaasObjectMixinModel):
         default=False,
         help_text='Lõpetatud/likvideeritud'
     )
-    kirjeldus=MarkdownxField(
-        blank=True,
-        help_text='<br>'.join(
-            [
-                'Asutise kirjeldus (MarkDown on toetatud);',
-                'Pildi lisamiseks: [pilt_nnnn];',
-                'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
-            ]
-        )
-    )
-    # Seotud:
-    eellased = models.ManyToManyField(
-        "self",
-        blank=True,
-        verbose_name='Eellased',
-        related_name='j2rglane',
-        symmetrical=False
-    )
+    # kirjeldus=MarkdownxField(
+    #     blank=True,
+    #     help_text='<br>'.join(
+    #         [
+    #             'Asutise kirjeldus (MarkDown on toetatud);',
+    #             'Pildi lisamiseks: [pilt_nnnn];',
+    #             'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
+    #         ]
+    #     )
+    # )
+    # # Seotud:
+    # eellased = models.ManyToManyField(
+    #     "self",
+    #     blank=True,
+    #     verbose_name='Eellased',
+    #     related_name='j2rglane',
+    #     symmetrical=False
+    # )
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
     )
-    viited = models.ManyToManyField(
-        Viide,
-        blank=True,
-        verbose_name='Viited',
-    )
+    # viited = models.ManyToManyField(
+    #     Viide,
+    #     blank=True,
+    #     verbose_name='Viited',
+    # )
 
     # # Tehnilised väljad
     # inp_date = models.DateTimeField(
@@ -1323,24 +1329,24 @@ class Isik(BaasObjectMixinModel):
         blank=True,
         help_text="Matmiskoht"
     )
-    kirjeldus=MarkdownxField(
-        blank=True,
-        help_text='<br>'.join(
-            [
-                'Isiku kirjeldus ja elulugu (MarkDown on toetatud);',
-                'Pildi lisamiseks: [pilt_nnnn];',
-                'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
-            ]
-        )
-    )
-    # Seotud
-    eellased = models.ManyToManyField(
-        "self",
-        blank=True,
-        verbose_name='Eellased',
-        related_name='j2rglane',
-        symmetrical=False
-    )
+    # kirjeldus=MarkdownxField(
+    #     blank=True,
+    #     help_text='<br>'.join(
+    #         [
+    #             'Isiku kirjeldus ja elulugu (MarkDown on toetatud);',
+    #             'Pildi lisamiseks: [pilt_nnnn];',
+    #             'Viite lisamiseks isikule, asutisele või kohale: nt [Mingi Isik]([isik_nnnn])',
+    #         ]
+    #     )
+    # )
+    # # Seotud
+    # eellased = models.ManyToManyField(
+    #     "self",
+    #     blank=True,
+    #     verbose_name='Eellased',
+    #     related_name='j2rglane',
+    #     symmetrical=False
+    # )
     objektid = models.ManyToManyField(
         Objekt,
         blank=True,
@@ -1351,11 +1357,11 @@ class Isik(BaasObjectMixinModel):
         blank=True,
         help_text="Milliste organisatsioonidega seotud"
     )
-    viited = models.ManyToManyField(
-        Viide,
-        blank=True,
-        verbose_name='Viited',
-    )
+    # viited = models.ManyToManyField(
+    #     Viide,
+    #     blank=True,
+    #     verbose_name='Viited',
+    # )
     # # Tehnilised väljad
     # inp_date = models.DateTimeField(
     #     'Lisatud',
@@ -1668,11 +1674,11 @@ class Artikkel(BaasObjectMixinModel):
         blank=True,
         verbose_name='Seotud kohad'
     )
-    viited = models.ManyToManyField(
-        Viide,
-        blank=True,
-        verbose_name='Seotud viited',
-    )
+    # viited = models.ManyToManyField(
+    #     Viide,
+    #     blank=True,
+    #     verbose_name='Seotud viited',
+    # )
     # # Tehnilised väljad
     # inp_date = models.DateTimeField(
     #     'Lisatud',
@@ -1697,14 +1703,14 @@ class Artikkel(BaasObjectMixinModel):
     #     related_name='+',
     #     verbose_name='Muutja'
     # )
-    last_accessed = models.DateTimeField(
-        verbose_name='Vaadatud',
-        default=timezone.now
-    )
-    total_accessed = models.PositiveIntegerField(
-        verbose_name='Vaatamisi',
-        default=0
-    )
+    # last_accessed = models.DateTimeField(
+    #     verbose_name='Vaadatud',
+    #     default=timezone.now
+    # )
+    # total_accessed = models.PositiveIntegerField(
+    #     verbose_name='Vaatamisi',
+    #     default=0
+    # )
     # A. Duvini kroonikaraamatu viited:
     kroonika = models.ForeignKey(
         Kroonika,
@@ -1745,10 +1751,6 @@ class Artikkel(BaasObjectMixinModel):
         # tekst = add_markdown_objectid(self, tekst)
         return tekst
     
-    # @property
-    # def kirjeldus(self):
-    #     return self.body_text
-
     def colored_id(self):
         if self.kroonika:
             color = 'red'

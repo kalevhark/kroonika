@@ -165,10 +165,10 @@ def info(request):
     andmebaasid = []
     # Allikad ja viited
     tyhjad_viited = Viide.objects.annotate(
-        num_art=Count('artikkel__id'),
-        num_isik=Count('isik__id'),
-        num_org=Count('organisatsioon__id'),
-        num_obj=Count('objekt__id'),
+        num_art=Count('wiki_artikkel__id'),
+        num_isik=Count('wiki_isik__id'),
+        num_org=Count('wiki_organisatsioon__id'),
+        num_obj=Count('wiki_objekt__id'),
         num_pilt=Count('pilt__id')
     ).filter(
         num_art=0,
