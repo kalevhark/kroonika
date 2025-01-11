@@ -408,10 +408,14 @@ class DaatumitegaManager(models.Manager):
         sel_kuul_dob = initial_qs.filter(dob__month=month). \
                     values_list('id', flat=True)
         
-        if self.model == Isik:
-            sel_kuul_mob = initial_qs.none().values_list('id', flat=True)
-        else:
-            sel_kuul_mob = initial_qs.exclude(hist_date__isnull=True). \
+        # if self.model == Isik:
+        #     sel_kuul_mob = initial_qs.none().values_list('id', flat=True)
+        # else:
+        #     sel_kuul_mob = initial_qs.exclude(hist_date__isnull=True). \
+        #             filter(hist_month=month). \
+        #             values_list('id', flat=True)
+        
+        sel_kuul_mob = initial_qs.filter(hist_date__isnull=True). \
                     filter(hist_month=month). \
                     values_list('id', flat=True)
         
@@ -431,7 +435,7 @@ class DaatumitegaManager(models.Manager):
         sel_aastal_dob = initial_qs.filter(dob__year=year). \
                 values_list('id', flat=True)
         
-        sel_aastal_yob = initial_qs.exclude(hist_date__isnull=True). \
+        sel_aastal_yob = initial_qs.filter(hist_date__isnull=True). \
                 filter(hist_year=year). \
                 values_list('id', flat=True)
         

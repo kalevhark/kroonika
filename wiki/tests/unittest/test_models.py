@@ -338,3 +338,51 @@ class CalendarSystemQuerysetTestCase(TestCase):
                     ordered_expected,
                     msg=f'user:{user} kalender:{calendar_system} expect: test:{[art.id for art in ordered_expected]} test:{[art.id for art in ordered_tested]}'
                 )
+
+    def test_daatumitega_manager_sel_kuul(self):
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        
+        test_ids = {
+            84: {'vkj': datetime(1915, 1, 29), 'ukj': datetime(1915, 2, 11)}, # /wiki/objekt/84-elektrijaam/
+        }
+        # anonymous user queryset not empty
+        self.request.user = self.user_anonymous
+
+        for id in test_ids.keys():
+            # set calendar system
+            self.request.session["calendar_system"] = self.CALENDAR_SYSTEM_VKJ
+            self.request.session.save()
+            # Update session's cookie
+            session_cookie_name = django_settings.SESSION_COOKIE_NAME
+            self.client.cookies[session_cookie_name] = self.request.session.session_key
+            # test dob == vkj
+            objekt = Objekt.objects.daatumitega(self.request).get(id=id)
+            objekt_vkj_date = objekt.dob
+            self.assertEqual(objekt_vkj_date.month, test_ids[id]['vkj'].month, msg=f'vkj {objekt_vkj_date} {test_ids[id]["vkj"]}')
+            # test obj in objs sel kuul vkj
+            objekts_sel_kuul = Objekt.objects.sel_kuul(
+                self.request, 
+                test_ids[id]["vkj"].month
+            )
+            self.assertTrue(objekt in objekts_sel_kuul)
+
+            # set calendar system
+            self.request.session["calendar_system"] = self.CALENDAR_SYSTEM_UKJ
+            self.request.session.save()
+            # Update session's cookie
+            session_cookie_name = django_settings.SESSION_COOKIE_NAME
+            self.client.cookies[session_cookie_name] = self.request.session.session_key
+            # test dob == ukj
+            objekt_ukj_date = Objekt.objects.daatumitega(self.request).get(id=id).dob
+            self.assertEqual(objekt_ukj_date.month, test_ids[id]['ukj'].month, msg=f'ukj {objekt_ukj_date} {test_ids[id]["ukj"]}')
+            # test obj in objs sel kuul ukj
+            objekts_sel_kuul = Objekt.objects.sel_kuul(
+                self.request, 
+                test_ids[id]["ukj"].month
+            )
+            self.assertTrue(objekt in objekts_sel_kuul)
