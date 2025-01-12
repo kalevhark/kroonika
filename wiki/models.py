@@ -42,6 +42,7 @@ from django.utils.text import slugify
 
 import folium
 
+from idna import intranges_contain
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
 
@@ -169,7 +170,20 @@ def add_markdownx_pildid(string):
 
 def remove_markdown_tags(obj, string):
     if string: # not blank or None
-        # otsime ja eemaldame k6ik lingid pbjectidele
+        # eemaldame markdown tagid
+        string = re.sub(r'\*\*(.*?)\*\*', r'\1', string)
+        string = re.sub(r'__(.*?)__', r'\1', string)
+        
+        string = re.sub(r'\*(.*?)\*', r'\1', string)
+        string = re.sub(r'_(.*?)_', r'\1', string)
+        
+        string = re.sub(r'`(.*?)`', r'\1', string)
+        
+        string = re.sub(r'~~(.*?)~~', r'\1', string)
+        string = re.sub(r'###',"", string)
+        # cleaned_text = cleaned_text.replace(' - ', '・')
+        
+        # otsime ja eemaldame k6ik lingid objectidele
         pattern = re.compile(PATTERN_OBJECTS)
         tagid = re.finditer(pattern, string)
         for tag in tagid:
@@ -277,18 +291,22 @@ def object2keywords(obj):
 # v6etakse esimene l6ik (reavahetuseni)
 # kui esimene lõik on pikem määratud tähtede arvust, siis lühendatakse s6nade kaupa
 def get_kirjeldus_lyhike(self):
-    kirjeldus = ''
-    if self.kirjeldus:
+    if isinstance(self, Artikkel): # TODO: Ajutine kuni body_text -> kirjeldus
+        kirjeldus = str(self.body_text)
+    else:
         kirjeldus = str(self.kirjeldus)
-        kirjeldus = kirjeldus.splitlines()[0]
-        if len(kirjeldus) > 500:
-            splitid = kirjeldus.split(' ')
-            for n in range(len(splitid)):
-                kirjeldus = ' '.join(splitid[:n])
-                if len(kirjeldus) > 500:
-                    if len(kirjeldus) < len(str(self.kirjeldus)):
-                        kirjeldus += '...'
-                    break
+
+    kirjeldus = remove_markdown_tags(self, kirjeldus) # puhastame markdown koodist
+    kirjeldus = kirjeldus.splitlines()[0] # v6tame esimese rea kirjeldusest
+
+    if len(kirjeldus) > 500:
+        splitid = kirjeldus.split(' ')
+        for n in range(len(splitid)):
+            kirjeldus = ' '.join(splitid[:n])
+            if len(kirjeldus) > 500:
+                if len(kirjeldus) < len(str(self.kirjeldus)):
+                    kirjeldus += '...'
+                break
     return kirjeldus
 
 def get_calendarstatus(request):
@@ -305,6 +323,21 @@ def get_calendarstatus(request):
     else:
         return CALENDAR_SYSTEM_DEFAULT
 
+def get_object_nimi(obj):
+    if isinstance(obj, Artikkel):
+        dates = []
+        if obj.hist_date:
+            dates.append(obj.dob.strftime('%d.%m.%Y'))
+        elif obj.hist_month:
+            dates.append(f'{obj.get_hist_month_display()} {obj.hist_year}')
+        else:
+            dates.append(str(obj.hist_year))
+        if obj.hist_enddate:
+            dates.append(obj.doe.strftime('%d.%m.%Y'))
+        return '-'.join(date for date in dates)
+    if isinstance(obj, Isik):
+        return ' '.join(nimi for nimi in [obj.eesnimi, obj.perenimi] if nimi)
+    return str(obj) # kui object nimi
 
 # Filtreerime kanded, mille kohta on teada daatumid, vastavalt valikule vkj/ukj
 # vastavalt kasutajaõigustele
@@ -742,7 +775,7 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         verbose_name='Viited',
     )
 
-    # seos eelneva objectiga
+    # parent objects
     eellased = models.ManyToManyField(
         "self",
         blank=True,
@@ -760,7 +793,9 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         verbose_name='Vaatamisi',
         default=0
     )
-    # objects = DaatumitegaManager()
+    
+    # show base object dates according ukj/vkj choice
+    objects = DaatumitegaManager()
 
     class Meta:
         abstract = True
@@ -775,6 +810,124 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     #         self.hist_endyear = self.hist_enddate.year
     #         self.hist_endmonth = self.hist_enddate.month
     #     super().save(*args, **kwargs)
+    
+    def save(self, *args, **kwargs):
+        # Loome slugi
+        if isinstance(self, Artikkel):
+            # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
+            value = ' '.join(self.body_text.split(' ')[:10])[:200]
+            # Täidame järjestuseks vajaliku kuupäevavälja olemasolevate põhjal
+            if self.hist_date:
+                self.hist_searchdate = self.hist_date
+            else:
+                if self.hist_year:
+                    y = self.hist_year
+                    if self.hist_month:
+                        m = self.hist_month
+                    else:
+                        m = 1
+                    self.hist_searchdate = datetime(y, m, 1)
+                else:
+                    self.hist_searchdate = None
+        elif isinstance(self, Isik):
+            # Loome slugi isikunimedest
+            value = ' '.join(filter(None, [self.eesnimi, self.perenimi]))
+        else:
+            value = self.nimi
+        self.slug = slugify(value, allow_unicode=True)
+        # # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+        # if self.hist_date:
+        #     self.hist_year = self.hist_date.year
+        #     self.hist_month = self.hist_date.month
+        # if self.hist_enddate:
+        #     self.hist_endyear = self.hist_enddate.year
+        super().save(*args, **kwargs)
+
+    # Keywords
+    @property
+    def keywords(self):
+        return object2keywords(self)
+
+    def get_absolute_url(self):
+        model = self.__class__.__name__.lower()
+        kwargs = {
+            'pk': self.id,
+            'slug': self.slug
+        }
+        return reverse(f'wiki:wiki_{model}_detail', kwargs=kwargs)
+
+    def vanus(self, d=datetime.now()):
+        if self.hist_date:
+            return d.year - self.dob.year
+        elif self.hist_year:
+            return d.year - self.yob
+        else:
+            return None
+
+    def profiilipilt(self):
+        model = self.__class__.__name__.lower()
+        model_filters = {
+            'artikkel':       'profiilipilt_artiklid__id',
+            'isik':           'profiilipilt_isikud__id',
+            'organisatsioon': 'profiilipilt_organisatsioonid__id',
+            'objekt':         'profiilipilt_objektid__id',
+        }
+        filter = {
+            model_filters[model]: self.id
+        }
+        return Pilt.objects.filter(**filter).first()
+    
+    # Kui kirjelduses on vigase koha märge
+    @property
+    def vigane(self):
+        return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
+
+    # Create a property that returns the markdown instead
+    @property
+    def formatted_markdown(self):
+        if isinstance(self, Artikkel): # TODO: Kui body_text -> kirjeldus, siis pole vajalik
+            tekst = self.body_text
+        else:
+            tekst = self.kirjeldus
+        if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+            tekst = '<br>'
+        tekst = add_markdown_objectid(self, tekst)
+        viite_string = add_markdownx_viited(self)
+        markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+        markdownified_text = add_markdownx_pildid(markdownified_text)
+        if viite_string: # viidete puhul ilmneb markdownx viga
+            markdownified_text = fix_markdownified_text(markdownified_text)
+        return markdownified_text
+
+    # Tekstis MarkDown kodeerimiseks
+    def markdown_tag(self):
+        return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
+    
+    @property
+    def kirjeldus_lyhike(self):
+        return get_kirjeldus_lyhike(self)
+
+    # Kui objectil puudub viide, siis punane
+    def colored_id(self):
+        if isinstance(self, Artikkel): # TODO: Vaja üle vaadata algoritm
+            if self.kroonika:
+                color = 'red'
+            else:
+                color = ''
+        else:
+            if self.viited.exists():
+                color = ''
+            elif not all(el.kroonika for el in self.artikkel_set.all()): 
+                color = ''
+            else:
+                color = 'red'
+        return format_html(
+            '<strong><span style="color: {};">{}</span></strong>',
+            color,
+            self.id
+        )
+    colored_id.short_description = 'ID'
 
 
 class Objekt(BaasObjectMixinModel):
@@ -896,7 +1049,7 @@ class Objekt(BaasObjectMixinModel):
     #     verbose_name='Muutja'
     # )
 
-    objects = DaatumitegaManager()
+    # objects = DaatumitegaManager()
 
     def __repr__(self):
         return self.nimi
@@ -933,94 +1086,94 @@ class Objekt(BaasObjectMixinModel):
             nimeosad.append(f'{sy}-{su}')
         return ' '.join(nimeosad)
 
-    @property
-    def kirjeldus_lyhike(self):
-        return get_kirjeldus_lyhike(self)
+    # @property
+    # def kirjeldus_lyhike(self):
+    #     return get_kirjeldus_lyhike(self)
 
-    # Kui objectil puudub viide, siis punane
-    def colored_id(self):
-        if self.viited.exists():
-            color = ''
-        elif not all(el.kroonika for el in self.artikkel_set.all()):
-            color = ''
-        else:
-            color = 'red'
-        return format_html(
-            '<strong><span style="color: {};">{}</span></strong>',
-            color,
-            self.id
-        )
-    colored_id.short_description = 'ID'
+    # # Kui objectil puudub viide, siis punane
+    # def colored_id(self):
+    #     if self.viited.exists():
+    #         color = ''
+    #     elif not all(el.kroonika for el in self.artikkel_set.all()):
+    #         color = ''
+    #     else:
+    #         color = 'red'
+    #     return format_html(
+    #         '<strong><span style="color: {};">{}</span></strong>',
+    #         color,
+    #         self.id
+    #     )
+    # colored_id.short_description = 'ID'
 
-    # Kui kirjelduses on vigase koha märge
-    @property
-    def vigane(self):
-        return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
+    # # Kui kirjelduses on vigase koha märge
+    # @property
+    # def vigane(self):
+    #     return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
-    # Create a property that returns the markdown instead
-    @property
-    def formatted_markdown(self):
-        tekst = self.kirjeldus
-        if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
-            tekst = '<br>'
-        tekst = add_markdown_objectid(self, tekst)
-        viite_string = add_markdownx_viited(self)
-        markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
-        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
-        markdownified_text = add_markdownx_pildid(markdownified_text)
-        if viite_string: # viidete puhul ilmneb markdownx viga
-            markdownified_text = fix_markdownified_text(markdownified_text)
-        return markdownified_text
+    # # Create a property that returns the markdown instead
+    # @property
+    # def formatted_markdown(self):
+    #     tekst = self.kirjeldus
+    #     if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+    #         tekst = '<br>'
+    #     tekst = add_markdown_objectid(self, tekst)
+    #     viite_string = add_markdownx_viited(self)
+    #     markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+    #     # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+    #     markdownified_text = add_markdownx_pildid(markdownified_text)
+    #     if viite_string: # viidete puhul ilmneb markdownx viga
+    #         markdownified_text = fix_markdownified_text(markdownified_text)
+    #     return markdownified_text
 
-    # Tekstis MarkDown kodeerimiseks
-    def markdown_tag(self):
-        return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
+    # # Tekstis MarkDown kodeerimiseks
+    # def markdown_tag(self):
+    #     return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
 
-    # Keywords
-    @property
-    def keywords(self):
-        return object2keywords(self)
+    # # Keywords
+    # @property
+    # def keywords(self):
+    #     return object2keywords(self)
 
-    def get_absolute_url(self):
-        model = self.__class__.__name__.lower()
-        kwargs = {
-            'pk': self.id,
-            'slug': self.slug
-        }
-        return reverse(f'wiki:wiki_{model}_detail', kwargs=kwargs)
+    # def get_absolute_url(self):
+    #     model = self.__class__.__name__.lower()
+    #     kwargs = {
+    #         'pk': self.id,
+    #         'slug': self.slug
+    #     }
+    #     return reverse(f'wiki:wiki_{model}_detail', kwargs=kwargs)
 
-    def vanus(self, d=datetime.now()):
-        if self.hist_date:
-            return d.year - self.dob.year
-        elif self.hist_year:
-            return d.year - self.yob
-        else:
-            return None
+    # def vanus(self, d=datetime.now()):
+    #     if self.hist_date:
+    #         return d.year - self.dob.year
+    #     elif self.hist_year:
+    #         return d.year - self.yob
+    #     else:
+    #         return None
 
-    def profiilipilt(self):
-        model = self.__class__.__name__.lower()
-        model_filters = {
-            'artikkel':       'profiilipilt_artiklid__id',
-            'isik':           'profiilipilt_isikud__id',
-            'organisatsioon': 'profiilipilt_organisatsioonid__id',
-            'objekt':         'profiilipilt_objektid__id',
-        }
-        filter = {
-            model_filters[model]: self.id
-        }
-        return Pilt.objects.filter(**filter).first()
+    # def profiilipilt(self):
+    #     model = self.__class__.__name__.lower()
+    #     model_filters = {
+    #         'artikkel':       'profiilipilt_artiklid__id',
+    #         'isik':           'profiilipilt_isikud__id',
+    #         'organisatsioon': 'profiilipilt_organisatsioonid__id',
+    #         'objekt':         'profiilipilt_objektid__id',
+    #     }
+    #     filter = {
+    #         model_filters[model]: self.id
+    #     }
+    #     return Pilt.objects.filter(**filter).first()
 
-    def save(self, *args, **kwargs):
-        # Loome slugi
-        value = self.nimi
-        self.slug = slugify(value, allow_unicode=True)
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if self.hist_date:
-            self.hist_year = self.hist_date.year
-            self.hist_month = self.hist_date.month
-        if self.hist_enddate:
-            self.hist_endyear = self.hist_enddate.year
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Loome slugi
+    #     value = self.nimi
+    #     self.slug = slugify(value, allow_unicode=True)
+    #     # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+    #     if self.hist_date:
+    #         self.hist_year = self.hist_date.year
+    #         self.hist_month = self.hist_date.month
+    #     if self.hist_enddate:
+    #         self.hist_endyear = self.hist_enddate.year
+    #     super().save(*args, **kwargs)
 
 
     class Meta:
@@ -1138,7 +1291,7 @@ class Organisatsioon(BaasObjectMixinModel):
     #     verbose_name='Muutja'
     # )
 
-    objects = DaatumitegaManager()
+    # objects = DaatumitegaManager()
 
     def __repr__(self):
         return self.nimi
@@ -1168,89 +1321,89 @@ class Organisatsioon(BaasObjectMixinModel):
         daatumid = f' {sy}-{su}' if any([sy, su]) else ''
         return self.nimi + daatumid
 
-    @property
-    def kirjeldus_lyhike(self):
-        return get_kirjeldus_lyhike(self)
+    # @property
+    # def kirjeldus_lyhike(self):
+    #     return get_kirjeldus_lyhike(self)
 
-    # Kui objectil puudub viide, siis punane
-    def colored_id(self):
-        if self.viited.exists():
-            color = ''
-        elif not all(el.kroonika for el in self.artikkel_set.all()):
-            color = ''
-        else:
-            color = 'red'
-        return format_html(
-            '<strong><span style="color: {};">{}</span></strong>',
-            color,
-            self.id
-        )
-    colored_id.short_description = 'ID'
+    # # Kui objectil puudub viide, siis punane
+    # def colored_id(self):
+    #     if self.viited.exists():
+    #         color = ''
+    #     elif not all(el.kroonika for el in self.artikkel_set.all()):
+    #         color = ''
+    #     else:
+    #         color = 'red'
+    #     return format_html(
+    #         '<strong><span style="color: {};">{}</span></strong>',
+    #         color,
+    #         self.id
+    #     )
+    # colored_id.short_description = 'ID'
 
-    # Kui kirjelduses on vigase koha märge
-    @property
-    def vigane(self):
-        return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
+    # # Kui kirjelduses on vigase koha märge
+    # @property
+    # def vigane(self):
+    #     return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
-    # Create a property that returns the markdown instead
-    # Lisame siia ka viited
-    @property
-    def formatted_markdown(self):
-        tekst = self.kirjeldus
-        if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
-            tekst = '<br>'
-        tekst = add_markdown_objectid(self, tekst)
-        # tekst = add_markdownx_pildid(tekst)
-        viite_string = add_markdownx_viited(self)
-        # return markdownify(escape_numberdot(tekst) + viite_string)
-        markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
-        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
-        markdownified_text = add_markdownx_pildid(markdownified_text)
-        if viite_string:  # viidete puhul ilmneb markdownx viga
-            return fix_markdownified_text(markdownified_text)
-        else:
-            return markdownified_text
+    # # Create a property that returns the markdown instead
+    # # Lisame siia ka viited
+    # @property
+    # def formatted_markdown(self):
+    #     tekst = self.kirjeldus
+    #     if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+    #         tekst = '<br>'
+    #     tekst = add_markdown_objectid(self, tekst)
+    #     # tekst = add_markdownx_pildid(tekst)
+    #     viite_string = add_markdownx_viited(self)
+    #     # return markdownify(escape_numberdot(tekst) + viite_string)
+    #     markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+    #     # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+    #     markdownified_text = add_markdownx_pildid(markdownified_text)
+    #     if viite_string:  # viidete puhul ilmneb markdownx viga
+    #         return fix_markdownified_text(markdownified_text)
+    #     else:
+    #         return markdownified_text
 
-    # Tekstis MarkDown kodeerimiseks
-    def markdown_tag(self):
-        # return f'[{self.nimi}] ([org_{self.id}])'
-        return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
+    # # Tekstis MarkDown kodeerimiseks
+    # def markdown_tag(self):
+    #     # return f'[{self.nimi}] ([org_{self.id}])'
+    #     return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
 
-    def get_absolute_url(self):
-        kwargs = {
-            'pk': self.id,
-            'slug': self.slug
-        }
-        return reverse('wiki:wiki_organisatsioon_detail', kwargs=kwargs)
+    # def get_absolute_url(self):
+    #     kwargs = {
+    #         'pk': self.id,
+    #         'slug': self.slug
+    #     }
+    #     return reverse('wiki:wiki_organisatsioon_detail', kwargs=kwargs)
 
-    # Keywords
-    @property
-    def keywords(self):
-        return object2keywords(self)
+    # # Keywords
+    # @property
+    # def keywords(self):
+    #     return object2keywords(self)
 
-    def vanus(self, d=datetime.now()):
-        if self.hist_date:
-            return d.year - self.dob.year
-        elif self.hist_year:
-            return d.year - self.yob
-        else:
-            return None
+    # def vanus(self, d=datetime.now()):
+    #     if self.hist_date:
+    #         return d.year - self.dob.year
+    #     elif self.hist_year:
+    #         return d.year - self.yob
+    #     else:
+    #         return None
 
-    def profiilipilt(self):
-        # return Pilt.objects.filter(organisatsioonid=self.id, profiilipilt_organisatsioon=True).first()
-        return Pilt.objects.filter(profiilipilt_organisatsioonid=self).first()
+    # def profiilipilt(self):
+    #     # return Pilt.objects.filter(organisatsioonid=self.id, profiilipilt_organisatsioon=True).first()
+    #     return Pilt.objects.filter(profiilipilt_organisatsioonid=self).first()
 
-    def save(self, *args, **kwargs):
-        # Loome slugi
-        value = self.nimi
-        self.slug = slugify(value, allow_unicode=True)
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if self.hist_date:
-            self.hist_year = self.hist_date.year
-            self.hist_month = self.hist_date.month
-        if self.hist_enddate:
-            self.hist_endyear = self.hist_enddate.year
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Loome slugi
+    #     value = self.nimi
+    #     self.slug = slugify(value, allow_unicode=True)
+    #     # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+    #     if self.hist_date:
+    #         self.hist_year = self.hist_date.year
+    #         self.hist_month = self.hist_date.month
+    #     if self.hist_enddate:
+    #         self.hist_endyear = self.hist_enddate.year
+    #     super().save(*args, **kwargs)
 
 
     class Meta:
@@ -1391,7 +1544,7 @@ class Isik(BaasObjectMixinModel):
     #     verbose_name='Muutja'
     # )
 
-    objects = DaatumitegaManager()
+    # objects = DaatumitegaManager()
 
     def __str__(self):
         # Eesnimi
@@ -1436,38 +1589,39 @@ class Isik(BaasObjectMixinModel):
             lyhinimi += ', ' + eesnimi
         return lyhinimi
 
-    @property
-    def kirjeldus_lyhike(self):
-        return get_kirjeldus_lyhike(self)
+    # @property
+    # def kirjeldus_lyhike(self):
+    #     return get_kirjeldus_lyhike(self)
 
-    # Kui objectil puudub viide, siis punane
-    def colored_id(self):
-        if self.viited.exists():
-            color = ''
-        elif not all(el.kroonika for el in self.artikkel_set.all()):
-            color = ''
-        else:
-            color = 'red'
-        return format_html(
-            '<strong><span style="color: {};">{}</span></strong>',
-            color,
-            self.id
-        )
-    colored_id.short_description = 'ID'
+    # # Kui objectil puudub viide, siis punane
+    # def colored_id(self):
+    #     if self.viited.exists():
+    #         color = ''
+    #     elif not all(el.kroonika for el in self.artikkel_set.all()):
+    #         color = ''
+    #     else:
+    #         color = 'red'
+    #     return format_html(
+    #         '<strong><span style="color: {};">{}</span></strong>',
+    #         color,
+    #         self.id
+    #     )
+    # colored_id.short_description = 'ID'
 
     # @property
     def nimi(self):
-        isikunimi = ' '.join(nimi for nimi in [self.eesnimi, self.perenimi] if nimi)
-        return isikunimi
+        # isikunimi = ' '.join(nimi for nimi in [self.eesnimi, self.perenimi] if nimi)
+        # return isikunimi
+        return get_object_nimi(self)
 
     @property
     def lyhinimi(self):
         return repr(self)
 
-    # Kui kirjelduses on vigase koha märge
-    @property
-    def vigane(self):
-        return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
+    # # Kui kirjelduses on vigase koha märge
+    # @property
+    # def vigane(self):
+    #     return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
     # # Create a property that returns the markdown instead
     # # Lisame siia ka viited
@@ -1481,48 +1635,48 @@ class Isik(BaasObjectMixinModel):
 
     # Create a property that returns the markdown instead
     # Lisame siia ka viited
-    @property
-    def formatted_markdown(self):
-        tekst = self.kirjeldus
-        if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
-            tekst = '<br>'
-        tekst = add_markdown_objectid(self, tekst)
-        # tekst = add_markdownx_pildid(tekst)
-        viite_string = add_markdownx_viited(self)
-        # return markdownify(escape_numberdot(tekst) + viite_string)
-        markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
-        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
-        markdownified_text = add_markdownx_pildid(markdownified_text)
-        if viite_string:  # viidete puhul ilmneb markdownx viga
-            return fix_markdownified_text(markdownified_text)
-        else:
-            return markdownified_text
+    # @property
+    # def formatted_markdown(self):
+    #     tekst = self.kirjeldus
+    #     if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+    #         tekst = '<br>'
+    #     tekst = add_markdown_objectid(self, tekst)
+    #     # tekst = add_markdownx_pildid(tekst)
+    #     viite_string = add_markdownx_viited(self)
+    #     # return markdownify(escape_numberdot(tekst) + viite_string)
+    #     markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+    #     # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+    #     markdownified_text = add_markdownx_pildid(markdownified_text)
+    #     if viite_string:  # viidete puhul ilmneb markdownx viga
+    #         return fix_markdownified_text(markdownified_text)
+    #     else:
+    #         return markdownified_text
 
-    # Tekstis MarkDown kodeerimiseks
-    @property
-    def markdown_tag(self):
-        # return f'[{self.nimi()}] ([isik_{self.id}])'
-        return f'[{self.nimi()}]([{self.__class__.__name__.lower()}_{self.id}])'
+    # # Tekstis MarkDown kodeerimiseks
+    # @property
+    # def markdown_tag(self):
+    #     # return f'[{self.nimi()}] ([isik_{self.id}])'
+    #     return f'[{self.nimi()}]([{self.__class__.__name__.lower()}_{self.id}])'
 
-    def get_absolute_url(self):
-        kwargs = {
-            'pk': self.id,
-            'slug': self.slug
-        }
-        return reverse('wiki:wiki_isik_detail', kwargs=kwargs)
+    # def get_absolute_url(self):
+    #     kwargs = {
+    #         'pk': self.id,
+    #         'slug': self.slug
+    #     }
+    #     return reverse('wiki:wiki_isik_detail', kwargs=kwargs)
 
-    # Keywords
-    @property
-    def keywords(self):
-        return object2keywords(self)
+    # # Keywords
+    # @property
+    # def keywords(self):
+    #     return object2keywords(self)
 
-    def vanus(self, d=datetime.now()):
-        if self.hist_date:
-            return d.year - self.dob.year # arvutatakse vastavalt vkj või ukj järgi
-        elif self.hist_year:
-            return d.year - self.yob
-        else:
-            return None
+    # def vanus(self, d=datetime.now()):
+    #     if self.hist_date:
+    #         return d.year - self.dob.year # arvutatakse vastavalt vkj või ukj järgi
+    #     elif self.hist_year:
+    #         return d.year - self.yob
+    #     else:
+    #         return None
 
     # def vanus_ukj(self, d=timezone.now()):
     #     if self.hist_date_ukj:
@@ -1532,25 +1686,24 @@ class Isik(BaasObjectMixinModel):
     #     else:
     #         return None
 
-    def profiilipilt(self):
-        # return Pilt.objects.filter(isikud=self.id, profiilipilt_isik=True).first()
-        return Pilt.objects.filter(profiilipilt_isikud=self).first()
+    # def profiilipilt(self):
+    #     # return Pilt.objects.filter(isikud=self.id, profiilipilt_isik=True).first()
+    #     return Pilt.objects.filter(profiilipilt_isikud=self).first()
 
-    def save(self, *args, **kwargs):
-        # Loome slugi
-        value = ' '.join(filter(None, [self.eesnimi, self.perenimi]))
-        self.slug = slugify(value, allow_unicode=True)
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if self.hist_date:
-            self.hist_year = self.hist_date.year
-        if self.hist_enddate:
-            self.hist_endyear = self.hist_enddate.year
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Loome slugi
+    #     value = ' '.join(filter(None, [self.eesnimi, self.perenimi]))
+    #     self.slug = slugify(value, allow_unicode=True)
+    #     # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+    #     if self.hist_date:
+    #         self.hist_year = self.hist_date.year
+    #     if self.hist_enddate:
+    #         self.hist_endyear = self.hist_enddate.year
+    #     super().save(*args, **kwargs)
 
 
     class Meta:
         ordering = [
-            # 'id',
             'perenimi',
             'eesnimi'
         ]
@@ -1731,8 +1884,7 @@ class Artikkel(BaasObjectMixinModel):
         help_text="lehekülg"
     )
 
-    # objects = models.Manager()  # The default manager
-    objects = DaatumitegaManager()
+    # objects = DaatumitegaManager()
 
     def __str__(self):
         summary = self.body_text
@@ -1755,54 +1907,54 @@ class Artikkel(BaasObjectMixinModel):
         # tekst = add_markdown_objectid(self, tekst)
         return tekst
     
-    def colored_id(self):
-        if self.kroonika:
-            color = 'red'
-        else:
-            color = ''
-        return format_html(
-            '<strong><span style="color: {};">{}</span></strong>',
-            color,
-            self.id
-        )
-    colored_id.short_description = 'ID'
+    # def colored_id(self):
+    #     if self.kroonika:
+    #         color = 'red'
+    #     else:
+    #         color = ''
+    #     return format_html(
+    #         '<strong><span style="color: {};">{}</span></strong>',
+    #         color,
+    #         self.id
+    #     )
+    # colored_id.short_description = 'ID'
 
-    def save(self, *args, **kwargs):
-        # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
-        value = ' '.join(self.body_text.split(' ')[:10])[:200]
-        self.slug = slugify(value, allow_unicode=True)
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        if self.hist_date:
-            self.hist_year = self.hist_date.year
-            self.hist_month = self.hist_date.month
-            self.hist_searchdate = self.hist_date
-        else:
-            if self.hist_year:
-                y = self.hist_year
-                if self.hist_month:
-                    m = self.hist_month
-                else:
-                    m = 1
-                self.hist_searchdate = datetime(y, m, 1)
-            else:
-                self.hist_searchdate = None
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
+    #     value = ' '.join(self.body_text.split(' ')[:10])[:200]
+    #     self.slug = slugify(value, allow_unicode=True)
+    #     # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+    #     if self.hist_date:
+    #         self.hist_year = self.hist_date.year
+    #         self.hist_month = self.hist_date.month
+    #         self.hist_searchdate = self.hist_date
+    #     else:
+    #         if self.hist_year:
+    #             y = self.hist_year
+    #             if self.hist_month:
+    #                 m = self.hist_month
+    #             else:
+    #                 m = 1
+    #             self.hist_searchdate = datetime(y, m, 1)
+    #         else:
+    #             self.hist_searchdate = None
+    #     super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Lugu"
         verbose_name_plural = "Lood" # kasutame eesti keeles suupärasemaks tegemiseks
 
-    # Keywords
-    @property
-    def keywords(self):
-        return object2keywords(self)
+    # # Keywords
+    # @property
+    # def keywords(self):
+    #     return object2keywords(self)
 
-    def get_absolute_url(self):
-        kwargs = {
-            'pk': self.id,
-            'slug': self.slug
-        }
-        return reverse('wiki:wiki_artikkel_detail', kwargs=kwargs)
+    # def get_absolute_url(self):
+    #     kwargs = {
+    #         'pk': self.id,
+    #         'slug': self.slug
+    #     }
+    #     return reverse('wiki:wiki_artikkel_detail', kwargs=kwargs)
 
     def headline(self):
         if len(self.body_text) > 50:
@@ -1812,15 +1964,15 @@ class Artikkel(BaasObjectMixinModel):
         return self.body_text[:50]
     headline.short_description = 'Lugu'
 
-    def profiilipilt(self):
-        return Pilt.objects. \
-            filter(profiilipilt_artiklid__in=[self]). \
-            first()
+    # def profiilipilt(self):
+    #     return Pilt.objects. \
+    #         filter(profiilipilt_artiklid__in=[self]). \
+    #         first()
 
     # Kui tekstis on vigase koha märge
-    @property
-    def vigane(self):
-        return VIGA_TEKSTIS in self.body_text
+    # @property
+    # def vigane(self):
+    #     return VIGA_TEKSTIS in self.body_text
 
     @property
     def hist_dates_string(self):
@@ -1839,20 +1991,20 @@ class Artikkel(BaasObjectMixinModel):
                     tekst += vahemiku_p2eva_string
         return tekst
 
-    # Create a property that returns the markdown instead
-    # Lisame siia ka viited
-    @property
-    def formatted_markdown(self):
-        tekst = self.body_text
-        tekst = add_markdown_objectid(self, tekst)
-        viite_string = add_markdownx_viited(self)
-        markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
-        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
-        markdownified_text = add_markdownx_pildid(markdownified_text)
-        if viite_string:  # viidete puhul ilmneb markdownx viga
-            return fix_markdownified_text(markdownified_text)
-        else:
-            return markdownified_text
+    # # Create a property that returns the markdown instead
+    # # Lisame siia ka viited
+    # @property
+    # def formatted_markdown(self):
+    #     tekst = self.body_text
+    #     tekst = add_markdown_objectid(self, tekst)
+    #     viite_string = add_markdownx_viited(self)
+    #     markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+    #     # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+    #     markdownified_text = add_markdownx_pildid(markdownified_text)
+    #     if viite_string:  # viidete puhul ilmneb markdownx viga
+    #         return fix_markdownified_text(markdownified_text)
+    #     else:
+    #         return markdownified_text
 
     # Create a property that returns the summary markdown instead
     @property
@@ -1864,22 +2016,23 @@ class Artikkel(BaasObjectMixinModel):
 
     @property
     def nimi(self):
-        dates = []
-        if self.hist_date:
-            dates.append(self.dob.strftime('%d.%m.%Y'))
-        elif self.hist_month:
-            dates.append(f'{self.get_hist_month_display()} {self.hist_year}')
-        else:
-            dates.append(str(self.hist_year))
-        if self.hist_enddate:
-            dates.append(self.doe.strftime('%d.%m.%Y'))
-        return '-'.join(date for date in dates)
+        # dates = []
+        # if self.hist_date:
+        #     dates.append(self.dob.strftime('%d.%m.%Y'))
+        # elif self.hist_month:
+        #     dates.append(f'{self.get_hist_month_display()} {self.hist_year}')
+        # else:
+        #     dates.append(str(self.hist_year))
+        # if self.hist_enddate:
+        #     dates.append(self.doe.strftime('%d.%m.%Y'))
+        # return '-'.join(date for date in dates)
+        return get_object_nimi(self)
 
     # Tekstis MarkDown kodeerimiseks
-    @property
-    def markdown_tag(self):
-        # return f'[{self.nimi}] ([art_{self.id}])'
-        return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
+    # @property
+    # def markdown_tag(self):
+    #     # return f'[{self.nimi}] ([art_{self.id}])'
+    #     return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
 
 
 model = Artikkel
@@ -2414,12 +2567,6 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
 
     def __str__(self):
         return ' '.join([self.kaart.aasta, self.tn, self.nr, self.tyyp, self.lisainfo])
-
-    def get_absolute_url(self):
-        kwargs = {
-            'pk': self.id,
-        }
-        return reverse('wiki:wiki_kaardiobjekt_detail', kwargs=kwargs)
 
     @property
     def centroid(self, *args, **kwargs):
