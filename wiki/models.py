@@ -182,7 +182,7 @@ def remove_markdown_tags(obj, string):
         string = re.sub(r'~~(.*?)~~', r'\1', string)
         string = re.sub(r'###',"", string)
         # cleaned_text = cleaned_text.replace(' - ', '・')
-        
+
         # otsime ja eemaldame k6ik lingid objectidele
         pattern = re.compile(PATTERN_OBJECTS)
         tagid = re.finditer(pattern, string)

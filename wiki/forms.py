@@ -40,138 +40,167 @@ class PiltForm(ModelForm):
         exclude = ()
 
 
-class ArtikkelForm(ModelForm):
+class BaasObjectForm(ModelForm):
+    
+    objektid = AutoCompleteSelectMultipleField('objektid', required=False)
+    viited = AutoCompleteSelectMultipleField('viited', required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["kirjeldus"].widget.attrs.update(cols="100")
 
+    def clean(self, *args, **kwargs):
+        # Kontrollime et kõik viitetagid oleks defineeritud
+        string = self.cleaned_data.get('kirjeldus')
+        pattern = re.compile(r'\s?\[viide_([0-9]*)]')
+        tagid = re.finditer(pattern, string)
+        for tag in tagid:
+            id = tag.groups()[0]
+            if id not in self.cleaned_data.get('viited'):
+                raise ValidationError(f"Viide {tag[0]} pole defineeritud")
+        
+        # # Kontrollime, et loo algusaeg on märgitud
+        # if self.model == Artikkel and not any([self.cleaned_data.get('hist_date'), self.cleaned_data.get('hist_year')]):
+        #     raise ValidationError("Alguskuupäev või -aasta peab olema")
+
+        return self.cleaned_data
+            
+
+class ArtikkelForm(BaasObjectForm):
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields["kirjeldus"].widget.attrs.update(cols="100")
+
     isikud = AutoCompleteSelectMultipleField('isikud', required=False)
     organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
-    objektid = AutoCompleteSelectMultipleField('objektid', required=False)
-    viited = AutoCompleteSelectMultipleField('viited', required=False)
+    # objektid = AutoCompleteSelectMultipleField('objektid', required=False)
+    # viited = AutoCompleteSelectMultipleField('viited', required=False)
+    eellased = AutoCompleteSelectMultipleField('artiklid', required=False, help_text='')
 
+    def clean(self, *args, **kwargs):
+        # Kontrollime, et loo algusaeg on märgitud
+        if not any([self.cleaned_data.get('hist_date'), self.cleaned_data.get('hist_year')]):
+            raise ValidationError("Alguskuupäev või -aasta peab olema")
+        super().clean(*args, **kwargs)
+        return self.cleaned_data
+    
     class Meta:
         model = Artikkel
         fields = ('kirjeldus',
                   'hist_date', 'hist_year', 'hist_month',
-                  'hist_enddate',
+                  'hist_enddate','hist_endyear', 'hist_endmonth',
                   'isikud',
                   'organisatsioonid',
                   'objektid',
                   'viited',
-                  'kroonika', 'lehekylg',
+                  'kroonika', 'lehekylg', 'eellased',
         )
 
-    def clean(self):
-        # Kontrollime et kõik viitetagid oleks defineeritud
-        string = self.cleaned_data.get('kirjeldus')
-        pattern = re.compile(r'\s?\[viide_([0-9]*)]')
-        tagid = re.finditer(pattern, string)
-        for tag in tagid:
-            id = tag.groups()[0]
-            if id not in self.cleaned_data.get('viited'):
-                raise ValidationError(f"Viide {tag[0]} pole defineeritud")
+    # def clean(self):
+    #     # Kontrollime et kõik viitetagid oleks defineeritud
+    #     string = self.cleaned_data.get('kirjeldus')
+    #     pattern = re.compile(r'\s?\[viide_([0-9]*)]')
+    #     tagid = re.finditer(pattern, string)
+    #     for tag in tagid:
+    #         id = tag.groups()[0]
+    #         if id not in self.cleaned_data.get('viited'):
+    #             raise ValidationError(f"Viide {tag[0]} pole defineeritud")
 
-        # Kontrollime, et loo algusaeg on märgitud
-        if not any([self.cleaned_data.get('hist_date'), self.cleaned_data.get('hist_year')]):
-            raise ValidationError("Alguskuupäev või -aasta peab olema")
+    #     # Kontrollime, et loo algusaeg on märgitud
+    #     if not any([self.cleaned_data.get('hist_date'), self.cleaned_data.get('hist_year')]):
+    #         raise ValidationError("Alguskuupäev või -aasta peab olema")
 
-        return self.cleaned_data
+    #     return self.cleaned_data
 
 
-class IsikForm(ModelForm):
-    # error_css_class = 'error'
+class IsikForm(BaasObjectForm):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # self.helper = FormHelper(self)
-        self.fields["kirjeldus"].widget.attrs.update(cols="100")
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields["kirjeldus"].widget.attrs.update(cols="100")
 
-    def clean(self):
-        # Kontrollime et kõik viitetagid oleks defineeritud
-        string = self.cleaned_data.get('kirjeldus')
-        pattern = re.compile(r'\s?\[viide_([0-9]*)]')
-        tagid = re.finditer(pattern, string)
-        for tag in tagid:
-            id = tag.groups()[0]
-            if id not in self.cleaned_data.get('viited'):
-                raise ValidationError(f"Viide {tag[0]} pole defineeritud")
+    # def clean(self):
+    #     # Kontrollime et kõik viitetagid oleks defineeritud
+    #     string = self.cleaned_data.get('kirjeldus')
+    #     pattern = re.compile(r'\s?\[viide_([0-9]*)]')
+    #     tagid = re.finditer(pattern, string)
+    #     for tag in tagid:
+    #         id = tag.groups()[0]
+    #         if id not in self.cleaned_data.get('viited'):
+    #             raise ValidationError(f"Viide {tag[0]} pole defineeritud")
 
     organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False, help_text='')
-    objektid = AutoCompleteSelectMultipleField('objektid', required=False, help_text='')
-    viited = AutoCompleteSelectMultipleField('viited', required=False, help_text='')
+    # objektid = AutoCompleteSelectMultipleField('objektid', required=False, help_text='')
+    # viited = AutoCompleteSelectMultipleField('viited', required=False, help_text='')
     eellased = AutoCompleteSelectMultipleField('isikud', required=False, help_text='')
 
     class Meta:
         model = Isik
         fields = ('eesnimi', 'perenimi',
                   'kirjeldus',
-                  'hist_date', 'synd_koht', 'hist_year',
-                  'hist_enddate', 'surm_koht', 'hist_endyear', 'gone', 'maetud',
+                  'hist_date', 'synd_koht', 'hist_year', 'hist_month',
+                  'hist_enddate', 'surm_koht', 'hist_endyear', 'hist_endmonth', 'gone', 'maetud',
                   'objektid', 'organisatsioonid', 'eellased',
                   'viited'
         )
-        # widgets = {
-        #     'kirjeldus': Textarea(attrs={'cols': '100', 'rows': '10'}),
-        # }
 
 
-class OrganisatsioonForm(ModelForm):
+class OrganisatsioonForm(BaasObjectForm):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["kirjeldus"].widget.attrs.update(cols="100")
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields["kirjeldus"].widget.attrs.update(cols="100")
 
-    def clean(self):
-        # Kontrollime et kõik viitetagid oleks defineeritud
-        string = self.cleaned_data.get('kirjeldus')
-        pattern = re.compile(r'\s?\[viide_([0-9]*)]')
-        tagid = re.finditer(pattern, string)
-        for tag in tagid:
-            id = tag.groups()[0]
-            if id not in self.cleaned_data.get('viited'):
-                raise ValidationError(f"Viide {tag[0]} pole defineeritud")
+    # def clean(self):
+    #     # Kontrollime et kõik viitetagid oleks defineeritud
+    #     string = self.cleaned_data.get('kirjeldus')
+    #     pattern = re.compile(r'\s?\[viide_([0-9]*)]')
+    #     tagid = re.finditer(pattern, string)
+    #     for tag in tagid:
+    #         id = tag.groups()[0]
+    #         if id not in self.cleaned_data.get('viited'):
+    #             raise ValidationError(f"Viide {tag[0]} pole defineeritud")
 
-    viited = AutoCompleteSelectMultipleField('viited', required=False)
-    objektid = AutoCompleteSelectMultipleField('objektid', required=False)
+    # viited = AutoCompleteSelectMultipleField('viited', required=False)
+    # objektid = AutoCompleteSelectMultipleField('objektid', required=False)
     eellased = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
 
     class Meta:
         model = Organisatsioon
         fields = ('nimi', 'kirjeldus',
                   'hist_date', 'hist_year', 'hist_month',
-                  'hist_enddate', 'hist_endyear', 'gone',
+                  'hist_enddate', 'hist_endyear', 'hist_endmonth', 'gone',
                   'objektid', 'eellased',
                   'viited'
         )
 
 
-class ObjektForm(ModelForm):
+class ObjektForm(BaasObjectForm):
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["kirjeldus"].widget.attrs.update(cols="100")
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields["kirjeldus"].widget.attrs.update(cols="100")
 
-    def clean(self):
-        # Kontrollime et kõik viitetagid oleks defineeritud
-        string = self.cleaned_data.get('kirjeldus')
-        pattern = re.compile(r'\s?\[viide_([0-9]*)]')
-        tagid = re.finditer(pattern, string)
-        for tag in tagid:
-            id = tag.groups()[0]
-            if id not in self.cleaned_data.get('viited'):
-                raise ValidationError(f"Viide {tag[0]} pole defineeritud")
+    # def clean(self):
+    #     # Kontrollime et kõik viitetagid oleks defineeritud
+    #     string = self.cleaned_data.get('kirjeldus')
+    #     pattern = re.compile(r'\s?\[viide_([0-9]*)]')
+    #     tagid = re.finditer(pattern, string)
+    #     for tag in tagid:
+    #         id = tag.groups()[0]
+    #         if id not in self.cleaned_data.get('viited'):
+    #             raise ValidationError(f"Viide {tag[0]} pole defineeritud")
 
-    objektid = AutoCompleteSelectMultipleField('objektid', required=False)
-    viited = AutoCompleteSelectMultipleField('viited', required=False)
+    # objektid = AutoCompleteSelectMultipleField('objektid', required=False)
+    # viited = AutoCompleteSelectMultipleField('viited', required=False)
     eellased = AutoCompleteSelectMultipleField('objektid', required=False)
 
     class Meta:
         model = Objekt
         fields = ('nimi', 'tyyp', 'asukoht', 'kirjeldus',
                   'hist_date', 'hist_year', 'hist_month',
-                  'hist_enddate', 'hist_endyear', 'gone',
+                  'hist_enddate', 'hist_endyear', 'hist_endmonth', 'gone',
                   'objektid', 'eellased',
                   'viited',
         )
@@ -248,13 +277,6 @@ class VihjeForm(ModelForm):
             'kirjeldus',
             'kontakt'
         )
-        # widgets = {
-        #     'kirjeldus': Textarea(attrs={
-        #         'rows': 5,
-        #         'placeholder': 'Siia palun kirjuta vihje parandamiseks/täiendamiseks'
-        #     }),
-        #     'kontakt': Textarea(attrs={'rows': 1, 'placeholder': 'Nimi ja kontaktandmed'})
-        # }
         help_texts = {
             'kirjeldus': None,
             'kontakt': None,

@@ -504,7 +504,6 @@ class ArtikkelAdmin(AjaxSelectAdmin):
         'last_accessed', 'total_accessed'
     ]
     list_display = (
-        # 'id',
         'colored_id', # punane, kui läbi vaatamata
         'headline',
         'hist_year',
@@ -529,11 +528,11 @@ class ArtikkelAdmin(AjaxSelectAdmin):
             }
          ),
         ('Toimus', {
-            'fields': [('hist_date', 'hist_year', 'hist_month'), ('hist_enddate')]
+            'fields': [('hist_date', 'hist_year', 'hist_month'), ('hist_enddate', 'hist_endyear', 'hist_endmonth')]
             }
          ),
         ('Seotud', {
-            'fields': [('viited'), ('isikud'), ('organisatsioonid', 'objektid')]
+            'fields': [('viited'), ('isikud'), ('organisatsioonid', 'objektid'), ('eellased')]
             }
          ),
         ('Kroonika', {
@@ -619,21 +618,6 @@ class ArtikkelAdmin(AjaxSelectAdmin):
             objekt.created_by = request.user
         else:
             objekt.updated_by = request.user
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        # if objekt.hist_date:
-        #     objekt.hist_year = objekt.hist_date.year
-        #     objekt.hist_month = objekt.hist_date.month
-        #     objekt.hist_searchdate = objekt.hist_date
-        # else:
-        #     if objekt.hist_year:
-        #         y = objekt.hist_year
-        #         if objekt.hist_month:
-        #             m = objekt.hist_month
-        #         else:
-        #             m = 1
-        #         objekt.hist_searchdate = datetime.datetime(y, m, 1)
-        #     else:
-        #         objekt.hist_searchdate = None
         objekt.save()
         form.save_m2m()
         return objekt
@@ -643,7 +627,6 @@ class ArtikkelAdmin(AjaxSelectAdmin):
 class IsikAdmin(AjaxSelectAdmin):
     form = IsikForm
     list_display = (
-        # 'id',
         'colored_id',
         'perenimi',
         'eesnimi',
@@ -670,8 +653,8 @@ class IsikAdmin(AjaxSelectAdmin):
         ('Elas',
              {
                 'fields': [
-                    ('hist_date', 'synd_koht', 'hist_year'),
-                    ('hist_enddate', 'surm_koht', 'hist_endyear'),
+                    ('hist_date', 'synd_koht', 'hist_year', 'hist_month'),
+                    ('hist_enddate', 'surm_koht', 'hist_endyear', 'hist_endmonth'),
                     ('gone', 'maetud')
                 ]
              }
@@ -693,11 +676,6 @@ class IsikAdmin(AjaxSelectAdmin):
             }
          ),
     ]
-    filter_horizontal = [
-        # 'viited',
-        # 'organisatsioonid',
-        # 'objektid',
-    ]
     inlines = [
         PiltIsikInline,
     ]
@@ -710,9 +688,6 @@ class IsikAdmin(AjaxSelectAdmin):
             objekt.created_by = request.user
         else:
             objekt.updated_by = request.user
-        # Lisame sünnikuupäeva põhjal sünniaasta
-        # if objekt.hist_date:
-        #     objekt.hist_year = objekt.hist_date.year
         objekt.save()
         form.save_m2m()
         return objekt
@@ -766,7 +741,6 @@ class OrganisatsioonAdmin(AjaxSelectAdmin):
         'updated_by'
     ]
     list_display = [
-        # 'id',
         'colored_id',
         'nimi',
         'hist_date',
@@ -784,7 +758,7 @@ class OrganisatsioonAdmin(AjaxSelectAdmin):
         (None, {
             'fields': [
                 ('hist_date', 'hist_year', 'hist_month'),
-                ('hist_enddate', 'hist_endyear', 'gone')
+                ('hist_enddate', 'hist_endyear', 'hist_endmonth', 'gone')
             ]
         }
          ),
@@ -799,10 +773,6 @@ class OrganisatsioonAdmin(AjaxSelectAdmin):
             'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
         }
          ),
-    ]
-    filter_horizontal = [
-        # 'viited',
-        # 'objektid',
     ]
     inlines = [
         PiltOrganisatsioonInline,
@@ -844,7 +814,6 @@ class ObjektAdmin(AjaxSelectAdmin):
 
     form = ObjektForm
     readonly_fields = [
-        # 'hist_searchdate',
         'inp_date', 'created_by',
         'mod_date', 'updated_by',
     ]
@@ -871,7 +840,7 @@ class ObjektAdmin(AjaxSelectAdmin):
         (None, {
             'fields': [
                 ('hist_date', 'hist_year', 'hist_month'),
-                ('hist_enddate', 'hist_endyear', 'gone')
+                ('hist_enddate', 'hist_endyear', 'hist_endmonth', 'gone')
             ]
             }
          ),
@@ -888,10 +857,6 @@ class ObjektAdmin(AjaxSelectAdmin):
             }
          ),
     ]
-    filter_horizontal = [
-        # 'viited',
-        # 'objektid',
-    ]
     inlines = [
         PiltObjektInline,
         KaardiobjektObjektInline,
@@ -905,23 +870,6 @@ class ObjektAdmin(AjaxSelectAdmin):
             objekt.created_by = request.user
         else:
             objekt.updated_by = request.user
-        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        # if objekt.hist_date:
-        #     objekt.hist_year = objekt.hist_date.year
-        #     objekt.hist_month = objekt.hist_date.month
-        #     objekt.hist_searchdate = objekt.hist_date
-        # else:
-        #     if objekt.hist_year:
-        #         y = objekt.hist_year
-        #         if objekt.hist_month:
-        #             m = objekt.hist_month
-        #         else:
-        #             m = 1
-        #         objekt.hist_searchdate = datetime.datetime(y, m, 1)
-        #     else:
-        #         objekt.hist_searchdate = None
-        # if objekt.hist_enddate:
-        #     objekt.hist_endyear = objekt.hist_enddate.year
         objekt.save()
         form.save_m2m()
         return objekt
