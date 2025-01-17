@@ -800,22 +800,15 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     class Meta:
         abstract = True
 
-    # def save(self, *args, **kwargs):
-    #     print('mixin')
-    #     # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-    #     if self.hist_date:
-    #         self.hist_year = self.hist_date.year
-    #         self.hist_month = self.hist_date.month
-    #     if self.hist_enddate:
-    #         self.hist_endyear = self.hist_enddate.year
-    #         self.hist_endmonth = self.hist_enddate.month
-    #     super().save(*args, **kwargs)
-    
     def save(self, *args, **kwargs):
-        # Loome slugi
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+        if self.hist_date:
+            self.hist_year = self.hist_date.year
+            self.hist_month = self.hist_date.month
+        if self.hist_enddate:
+            self.hist_endyear = self.hist_enddate.year
+            self.hist_endmonth = self.hist_enddate.month
         if isinstance(self, Artikkel):
-            # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
-            value = ' '.join(self.kirjeldus.split(' ')[:10])[:200]
             # Täidame järjestuseks vajaliku kuupäevavälja olemasolevate põhjal
             if self.hist_date:
                 self.hist_searchdate = self.hist_date
@@ -829,18 +822,18 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
                     self.hist_searchdate = datetime(y, m, 1)
                 else:
                     self.hist_searchdate = None
+
+        # Loome slugi
+        if isinstance(self, Artikkel):
+            # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
+            value = ' '.join(self.kirjeldus.split(' ')[:10])[:200]
         elif isinstance(self, Isik):
             # Loome slugi isikunimedest
             value = ' '.join(filter(None, [self.eesnimi, self.perenimi]))
-        else:
+        else: # Organisatsioon, Objekt
             value = self.nimi
         self.slug = slugify(value, allow_unicode=True)
-        # # Täidame tühjad kuupäevaväljad olemasolevate põhjal
-        # if self.hist_date:
-        #     self.hist_year = self.hist_date.year
-        #     self.hist_month = self.hist_date.month
-        # if self.hist_enddate:
-        #     self.hist_endyear = self.hist_enddate.year
+
         super().save(*args, **kwargs)
 
     # Keywords
