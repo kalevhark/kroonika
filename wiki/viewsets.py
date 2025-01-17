@@ -54,7 +54,7 @@ class ArtikkelFilter(filters.FilterSet):
     aasta = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='year')
     kuu = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='month')
     p2ev = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='day')
-    # body_text = django_filters.CharFilter(field_name='body_text', lookup_expr='icontains')
+    # kirjeldus = django_filters.CharFilter(field_name='kirjeldus', lookup_expr='icontains')
     sisaldab = django_filters.CharFilter(method='filter_tags')
 
     # def filter_tags(self, queryset, field_name, value):
@@ -62,10 +62,10 @@ class ArtikkelFilter(filters.FilterSet):
     #     tags = value.split(' ')
     #     if len(tags) > 1:
     #         for tag in tags:
-    #             queryset = queryset.filter(body_text__iregex=tag)
+    #             queryset = queryset.filter(kirjeldus__iregex=tag)
     #         return queryset
     #     else:
-    #         return queryset.filter(body_text__iregex=value)
+    #         return queryset.filter(kirjeldus__iregex=value)
 
     def filter_tags(self, queryset, field_name, value):
         value = value.translate(str.maketrans(TRANSLATION))
@@ -86,10 +86,10 @@ class ArtikkelViewSet(viewsets.ModelViewSet):
         queryset = Artikkel.objects.daatumitega(self.request). \
             annotate(
                 # kirjeldus=Concat(
-                #     F('hist_year'), Value(' '), F('body_text'), output_field=CharField()
+                #     F('hist_year'), Value(' '), F('kirjeldus'), output_field=CharField()
                 # ),
                 aasta_ja_kirjeldus=Concat(
-                    F('hist_year'), Value(' '), F('body_text'), output_field=CharField()
+                    F('hist_year'), Value(' '), F('kirjeldus'), output_field=CharField()
                 ),
         )
         return queryset

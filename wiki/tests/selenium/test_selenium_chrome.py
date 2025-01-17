@@ -229,7 +229,7 @@ class SeleniumTestsChromeDetailViewObjectArtikkel(SeleniumTestsChromeBase):
             self.selenium.get('%s%s' % (self.live_server_url, path))
             # Kontrollime kas sisu esimene sõna on avanenud lehel
             el = self.selenium.find_element(By.TAG_NAME, "body").text
-            esimene_s6na = obj.body_text.split(' ')[0]
+            esimene_s6na = obj.kirjeldus.split(' ')[0]
             self.assertIn(esimene_s6na, el)
 
     def test_view_show_sarnased_artiklid(self):

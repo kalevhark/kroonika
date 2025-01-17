@@ -15,7 +15,7 @@
           {% if artikkel.hist_month %}{% include 'wiki/includes/kuu.html' with kuu=artikkel.hist_month|stringformat:"02d" %} {% endif %}{{ artikkel.hist_year }}
         {% endif %}
         :
-        &nbsp;{{ artikkel.body_text|truncatewords:10 }}
+        &nbsp;{{ artikkel.kirjeldus|truncatewords:10 }}
       </span>
     </a>
   {% endfor %}

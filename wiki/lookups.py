@@ -26,7 +26,7 @@ class ArtikkelLookup(LookupChannel):
             full_viide=Concat(
                 F('id'),
                 Value(' '),
-                F('body_text'),
+                F('kirjeldus'),
                 Value(' '),
                 F('hist_date'),
                 Value(' '),

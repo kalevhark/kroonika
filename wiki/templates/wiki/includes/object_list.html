@@ -14,7 +14,7 @@
                 data-id='{{ obj.id }}'
                 id='{{ obj|get_model_name }}_{{ obj.id }}_object_list'
           >
-            {{ obj.body_text|truncatewords:10 }}
+            {{ obj.kirjeldus|truncatewords:10 }}
           </span>
         </a>
       </div>

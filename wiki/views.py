@@ -1143,7 +1143,7 @@ def seotud_artiklikaudu(request, model, seotud_artiklid, object_self):
             filter(**filter_map). \
             values(
             'id', 'slug',
-            'body_text',
+            'kirjeldus',
             'hist_date', 'dob', 'hist_year', 'hist_month',
             'hist_enddate', 'doe'
         )
@@ -1563,7 +1563,7 @@ class ArtikkelFilter(django_filters.FilterSet):
         model = Artikkel
         fields = {
             'hist_year': ['exact'],
-            # 'body_text': ['icontains'],
+            # 'kirjeldus': ['icontains'],
             # 'isikud__perenimi': ['icontains'],
             }
 
@@ -1590,7 +1590,7 @@ class ArtikkelFilter(django_filters.FilterSet):
         if len(fraasid) > 0:
             for fraas in fraasid:
                 queryset = queryset.filter(
-                    body_text__icontains=fraas
+                    kirjeldus__icontains=fraas
                 )
         return queryset
 
@@ -1604,7 +1604,7 @@ class ArtikkelFilterView(FilterView):
     template_name = 'wiki/artikkel_filter.html'
     # filterset_fields = {
     #         'hist_year',
-    #         'body_text',
+    #         'kirjeldus',
     #         'isikud__perenimi',
     #         }
 

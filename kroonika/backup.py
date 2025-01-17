@@ -598,7 +598,7 @@ def story_artiklid(story, objects=10, algus_aasta=0, l6pp_aasta=1899):
         story.append(Spacer(18, 18))
 
         # Artikli daatum ja sisu
-        lugu = ' '.join([hist_dates, obj.body_text]).strip()
+        lugu = ' '.join([hist_dates, obj.kirjeldus]).strip()
         story.append(Paragraph(f'{lugu}{seotud_objectid_index}', P))
         url = obj.get_absolute_url() # link valgalinn.ee veebi
         story.append(

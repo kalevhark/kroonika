@@ -44,7 +44,7 @@ class ArtikkelForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["body_text"].widget.attrs.update(cols="100")
+        self.fields["kirjeldus"].widget.attrs.update(cols="100")
 
     isikud = AutoCompleteSelectMultipleField('isikud', required=False)
     organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
@@ -53,7 +53,7 @@ class ArtikkelForm(ModelForm):
 
     class Meta:
         model = Artikkel
-        fields = ('body_text',
+        fields = ('kirjeldus',
                   'hist_date', 'hist_year', 'hist_month',
                   'hist_enddate',
                   'isikud',
@@ -65,7 +65,7 @@ class ArtikkelForm(ModelForm):
 
     def clean(self):
         # Kontrollime et kõik viitetagid oleks defineeritud
-        string = self.cleaned_data.get('body_text')
+        string = self.cleaned_data.get('kirjeldus')
         pattern = re.compile(r'\s?\[viide_([0-9]*)]')
         tagid = re.finditer(pattern, string)
         for tag in tagid:

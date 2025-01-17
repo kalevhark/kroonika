@@ -94,12 +94,12 @@ class SeleniumTestsEdgeOtsi(SeleniumTestsEdgeBase):
         time.sleep(1)
         try:
             WebDriverWait(self.selenium, timeout=3).until(
-                EC.text_to_be_present_in_element((By.ID, "answer"), "vähemalt")
+                EC.text_to_be_present_in_element((By.ID, "answer"), "Leidsime")
             )
         except TimeoutException:
             pass
         el = self.selenium.find_element(By.ID, "answer").text
-        self.assertIn("vähemalt", el)
+        self.assertIn("Leidsime", el)
 
         search_input.send_keys('õõõõõ')
         try:
@@ -136,7 +136,7 @@ class SeleniumTestsEdgeDetailViewObjectArtikkel(SeleniumTestsEdgeBase):
             self.selenium.get('%s%s' % (self.live_server_url, path))
             # Kontrollime kas sisu esimene sõna on avanenud lehel
             el = self.selenium.find_element(By.TAG_NAME, "body").text
-            esimene_s6na = obj.body_text.split(' ')[0]
+            esimene_s6na = obj.kirjeldus.split(' ')[0]
             self.assertIn(esimene_s6na, el)
 
     def test_view_show_sarnased_artiklid(self):

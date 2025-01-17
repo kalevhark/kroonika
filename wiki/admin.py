@@ -520,12 +520,12 @@ class ArtikkelAdmin(AjaxSelectAdmin):
     )
     list_filter = ['hist_year']
     search_fields = [
-        'body_text',
+        'kirjeldus',
         'id'
     ]
     fieldsets = [
         (None, {
-            'fields': [('body_text')]
+            'fields': [('kirjeldus')]
             }
          ),
         ('Toimus', {
@@ -1089,7 +1089,7 @@ class PiltAdmin(AjaxSelectAdmin):
         # pildi_tag = f'[pilt_{obj.id}]'
         return (
             obj.artiklid.count() +
-            # Artikkel.objects.filter(body_text__icontains=pildi_tag).count() +
+            # Artikkel.objects.filter(kirjeldus__icontains=pildi_tag).count() +
             obj.isikud.count() +
             obj.organisatsioonid.count() +
             obj.objektid.count() +
@@ -1098,7 +1098,7 @@ class PiltAdmin(AjaxSelectAdmin):
 
     def pildid_tekstis_artiklid(self, obj):
         pildi_tag = f'[pilt_{obj.id}]'
-        id_list = list(Artikkel.objects.filter(body_text__icontains=pildi_tag).values_list('id', flat=True))
+        id_list = list(Artikkel.objects.filter(kirjeldus__icontains=pildi_tag).values_list('id', flat=True))
         return ', '.join([str(el) for el in id_list])
     pildid_tekstis_artiklid.short_description = 'Artiklites'
 

@@ -52,7 +52,7 @@ def get_data4massikanne():
         for id in ids:
             art = Artikkel.objects.get(id=id)
 
-            f.write(f'{art.hist_searchdate.year} {art.body_text}\n')
+            f.write(f'{art.hist_searchdate.year} {art.kirjeldus}\n')
             f.write(f'art {art.id}\n')
             f.write(f'pil {[pilt.id for pilt in art.pilt_set.all()][0]}\n')
             f.write(f'org {[org.id for org in art.organisatsioonid.all()][0]}\n')
@@ -886,12 +886,12 @@ def check_profiilipildid_notin_pildid():
 # Ühe sisuga artiklite lisamiseks
 def lisa_artikkel_20200321():
     hist_years = [1384, 1385, 1387, 1391, 1393, 1396, 1398, 1410, 1412]
-    body_text = 'Valgas toimus Liivimaa linnade päev'
+    kirjeldus = 'Valgas toimus Liivimaa linnade päev'
     viide = Viide.objects.get(id=7841)
     for hist_year in hist_years:
         uus_art = Artikkel(
             hist_year = hist_year,
-            body_text = body_text
+            kirjeldus = kirjeldus
         )
         uus_art.save()
         uus_art.viited.add(viide)
@@ -929,14 +929,14 @@ def lisa_artikkel_20230209():
         (1883, 8, 1),
         (1883, 9, 1),
     ]
-    body_text = 'Peeti Valga linnavolikogu koosolek'
+    kirjeldus = 'Peeti Valga linnavolikogu koosolek'
     viide = Viide.objects.get(id=13803)
     org = Organisatsioon.objects.get(id=3240)
     print(org, viide)
     for date_tuple in date_tuples:
         uus_art = Artikkel(
             hist_date = date(*date_tuple),
-            body_text = body_text
+            kirjeldus = kirjeldus
         )
         uus_art.save()
         uus_art.viited.add(viide)
@@ -974,27 +974,11 @@ def task_art11802():
         isik.viited.add(viide)
         # pilt.isikud.add(isik)
 
-def task_20230316():
-    from blog.models import Post
-    from datetime import datetime
-    p = Post.objects.first()
-    tzinfo = p.created_on.tzinfo
-    posts = [
-        [24, (2022, 4, 1)],
-        [25, (2022, 5, 1)],
-        [26, (2022, 6, 1)],
-        [27, (2022, 8, 1)],
-        [28, (2022, 9, 1)],
-        [29, (2022, 10, 1)],
-        [30, (2022, 11, 1)],
-        [31, (2022, 12, 1)],
-        [32, (2023, 1, 1)],
-    ]
-    for post in posts:
-        obj = Post.objects.get(id=post[0])
-        obj.created_on = datetime(*post[1], tzinfo=tzinfo)
-        print(obj.created_on, obj)
-        obj.save()
+def task_transform_body_text2kirjeldus():
+    arts = Artikkel.objects.all()
+    for art in arts:
+        art.kirjeldus = art.body_text
+        art.save(update_fields=['kirjeldus'])
 
 import itertools
 def viited_uusformaat():
@@ -1027,9 +1011,9 @@ def viited_uusformaat():
         ]:
             pattern = '(\[\^[0-9]*])'
             if model == Artikkel:
-                for obj in model.objects.filter(body_text__iregex=rf'{pattern}'):
-                    obj.body_text = replace_viite_tag(obj, obj.body_text, f)
-                    obj.save(update_fields=['body_text'])
+                for obj in model.objects.filter(kirjeldus__iregex=rf'{pattern}'):
+                    obj.kirjeldus = replace_viite_tag(obj, obj.kirjeldus, f)
+                    obj.save(update_fields=['kirjeldus'])
             else:
                 for obj in model.objects.filter(kirjeldus__iregex=rf'{pattern}'):
                     obj.kirjeldus = replace_viite_tag(obj, obj.kirjeldus, f)

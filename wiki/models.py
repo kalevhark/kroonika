@@ -291,11 +291,11 @@ def object2keywords(obj):
 # v6etakse esimene l6ik (reavahetuseni)
 # kui esimene lõik on pikem määratud tähtede arvust, siis lühendatakse s6nade kaupa
 def get_kirjeldus_lyhike(self):
-    if isinstance(self, Artikkel): # TODO: Ajutine kuni body_text -> kirjeldus
-        kirjeldus = str(self.body_text)
-    else:
-        kirjeldus = str(self.kirjeldus)
-
+    # if isinstance(self, Artikkel): # TODO: Ajutine kuni body_text -> kirjeldus
+    #     kirjeldus = str(self.body_text)
+    # else:
+    #     kirjeldus = str(self.kirjeldus)
+    kirjeldus = str(self.kirjeldus)
     kirjeldus = remove_markdown_tags(self, kirjeldus) # puhastame markdown koodist
     kirjeldus = kirjeldus.splitlines()[0] # v6tame esimese rea kirjeldusest
 
@@ -815,7 +815,7 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         # Loome slugi
         if isinstance(self, Artikkel):
             # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
-            value = ' '.join(self.body_text.split(' ')[:10])[:200]
+            value = ' '.join(self.kirjeldus.split(' ')[:10])[:200]
             # Täidame järjestuseks vajaliku kuupäevavälja olemasolevate põhjal
             if self.hist_date:
                 self.hist_searchdate = self.hist_date
@@ -886,7 +886,7 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     @property
     def formatted_markdown(self):
         if isinstance(self, Artikkel): # TODO: Kui body_text -> kirjeldus, siis pole vajalik
-            tekst = self.body_text
+            tekst = self.kirjeldus
         else:
             tekst = self.kirjeldus
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
@@ -1887,14 +1887,14 @@ class Artikkel(BaasObjectMixinModel):
     # objects = DaatumitegaManager()
 
     def __str__(self):
-        summary = self.body_text
+        summary = self.kirjeldus
         if summary:
             summary = remove_markdown_tags(self, summary)
             if summary and summary.find('\n') > 0:
                 summary = summary[:summary.find('\n')]
             splits = summary.split(' ')
             tekst = ' '.join(splits[:10]) # 10 esimest sõna
-            if len(tekst) < len(self.body_text):
+            if len(tekst) < len(self.kirjeldus):
                 tekst += '...'
             # tekst = add_markdown_objectid(self, tekst)
         else:
@@ -1902,7 +1902,7 @@ class Artikkel(BaasObjectMixinModel):
         return tekst
 
     def __repr__(self):
-        tekst = str(self.hist_year) + ':' + self.body_text
+        tekst = str(self.hist_year) + ':' + self.kirjeldus
         tekst = remove_markdown_tags(self, tekst)
         # tekst = add_markdown_objectid(self, tekst)
         return tekst
@@ -1921,7 +1921,7 @@ class Artikkel(BaasObjectMixinModel):
 
     # def save(self, *args, **kwargs):
     #     # Loome slugi teksti esimesest 10 sõnast max 200 tähemärki
-    #     value = ' '.join(self.body_text.split(' ')[:10])[:200]
+    #     value = ' '.join(self.kirjeldus.split(' ')[:10])[:200]
     #     self.slug = slugify(value, allow_unicode=True)
     #     # Täidame tühjad kuupäevaväljad olemasolevate põhjal
     #     if self.hist_date:
@@ -1957,11 +1957,11 @@ class Artikkel(BaasObjectMixinModel):
     #     return reverse('wiki:wiki_artikkel_detail', kwargs=kwargs)
 
     def headline(self):
-        if len(self.body_text) > 50:
-            tyhik = self.body_text.find(' ',50,70)
+        if len(self.kirjeldus) > 50:
+            tyhik = self.kirjeldus.find(' ',50,70)
             if tyhik > 0:
-                return self.body_text[:tyhik] + '...'
-        return self.body_text[:50]
+                return self.kirjeldus[:tyhik] + '...'
+        return self.kirjeldus[:50]
     headline.short_description = 'Lugu'
 
     # def profiilipilt(self):
@@ -1972,7 +1972,7 @@ class Artikkel(BaasObjectMixinModel):
     # Kui tekstis on vigase koha märge
     # @property
     # def vigane(self):
-    #     return VIGA_TEKSTIS in self.body_text
+    #     return VIGA_TEKSTIS in self.kirjeldus
 
     @property
     def hist_dates_string(self):
@@ -1995,7 +1995,7 @@ class Artikkel(BaasObjectMixinModel):
     # # Lisame siia ka viited
     # @property
     # def formatted_markdown(self):
-    #     tekst = self.body_text
+    #     tekst = self.kirjeldus
     #     tekst = add_markdown_objectid(self, tekst)
     #     viite_string = add_markdownx_viited(self)
     #     markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
@@ -2009,7 +2009,7 @@ class Artikkel(BaasObjectMixinModel):
     # Create a property that returns the summary markdown instead
     @property
     def formatted_markdown_summary(self):
-        summary = self.body_text
+        summary = self.kirjeldus
         if summary.find('\n') > 0:
             summary = summary[:summary.find('\n')]
         return markdownify(escape_numberdot(summary[:100]) + "...")
