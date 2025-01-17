@@ -387,10 +387,10 @@ class ViideAdmin(admin.ModelAdmin):
             'fields': [
                 'allikas',
                 'kohaviit',
-                'hist_date',
-                'hist_year',
+                'hist_date', 'hist_year', 'hist_month',
+                # 'hist_enddate', 'hist_endyear', 'hist_endmonth', # neid ei kasuta
                 'peatykk',
-                'marker',
+                # 'marker',
                 'url'
             ]
         }),
