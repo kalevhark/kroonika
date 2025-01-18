@@ -170,19 +170,6 @@ def add_markdownx_pildid(string):
 
 def remove_markdown_tags(obj, string):
     if string: # not blank or None
-        # eemaldame markdown tagid
-        string = re.sub(r'\*\*(.*?)\*\*', r'\1', string)
-        string = re.sub(r'__(.*?)__', r'\1', string)
-        
-        string = re.sub(r'\*(.*?)\*', r'\1', string)
-        string = re.sub(r'_(.*?)_', r'\1', string)
-        
-        string = re.sub(r'`(.*?)`', r'\1', string)
-        
-        string = re.sub(r'~~(.*?)~~', r'\1', string)
-        string = re.sub(r'###',"", string)
-        # cleaned_text = cleaned_text.replace(' - ', '・')
-
         # otsime ja eemaldame k6ik lingid objectidele
         pattern_objects = re.compile(PATTERN_OBJECTS)
         tagid = re.finditer(pattern_objects, string)
@@ -205,6 +192,19 @@ def remove_markdown_tags(obj, string):
         tagid = re.finditer(pattern_viited, string)
         for tag in tagid:
             string = string.replace(tag[0], '')
+        
+        # eemaldame markdown tagid
+        string = re.sub(r'\*\*(.*?)\*\*', r'\1', string)
+        string = re.sub(r'__(.*?)__', r'\1', string)
+        
+        string = re.sub(r'\*(.*?)\*', r'\1', string)
+        string = re.sub(r'_(.*?)_', r'\1', string)
+        
+        string = re.sub(r'`(.*?)`', r'\1', string)
+        
+        string = re.sub(r'~~(.*?)~~', r'\1', string)
+        string = re.sub(r'###',"", string)
+        # cleaned_text = cleaned_text.replace(' - ', '・')
     return string
 
 # Töötleb lingitagid [Duck Duck Go]([isik_nnnn]) linkideks
