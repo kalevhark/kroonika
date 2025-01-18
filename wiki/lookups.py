@@ -28,9 +28,9 @@ class ArtikkelLookup(LookupChannel):
                 Value(' '),
                 F('kirjeldus'),
                 Value(' '),
-                F('hist_date'),
+                F('dob'),
                 Value(' '),
-                F('hist_year'),
+                F('yob'),
                 output_field=CharField()
             )
         )
@@ -39,10 +39,11 @@ class ArtikkelLookup(LookupChannel):
         return queryset[:50]
 
     def format_match(self, item):
-        return f"({item.hist_year}:{item.id}) {item} "
+        return f"({item.yob}:{item.id}) {item} "
 
     def format_item_display(self, item):
-        return f"({item.hist_year}:{item.id}) {item}"
+        return f"({item.yob}:{item.id}) {item}"
+
 
 @ajax_select.register('isikud')
 class IsikLookup(LookupChannel):

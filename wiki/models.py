@@ -1936,6 +1936,7 @@ class Artikkel(BaasObjectMixinModel):
     class Meta:
         verbose_name = "Lugu"
         verbose_name_plural = "Lood" # kasutame eesti keeles suupärasemaks tegemiseks
+        default_manager_name = "objects"
 
     # # Keywords
     # @property

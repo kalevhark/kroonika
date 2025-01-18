@@ -3,17 +3,11 @@
     {% if andmed.artikkel.kirjeid > 0 %}
       <h5>Viimasena lisatud:</h5>
       <strong>{% include 'wiki/includes/date_year.html' with obj=andmed.artikkel.viimane_lisatud %}</strong>
-<!--      <a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=andmed.artikkel.viimane_lisatud.hist_year %}>-->
-<!--        {{ andmed.artikkel.viimane_lisatud.hist_year }}:-->
-<!--      </a>-->
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=andmed.artikkel.viimane_lisatud.id slug=andmed.artikkel.viimane_lisatud.slug %}">
         {{ andmed.artikkel.viimane_lisatud }}
       </a>
       <h5>Viimasena muudeti:</h5>
       <strong>{% include 'wiki/includes/date_year.html' with obj=andmed.artikkel.viimane_muudetud %}</strong>
-<!--      <a class="hover-artikkel" href={% url 'wiki:artikkel_year_archive' year=andmed.artikkel.viimane_muudetud.hist_year %}>-->
-<!--        {{ andmed.artikkel.viimane_muudetud.hist_year }}:-->
-<!--      </a>-->
       <a class="hover-artikkel" href="{% url 'wiki:wiki_artikkel_detail' pk=andmed.artikkel.viimane_muudetud.id slug=andmed.artikkel.viimane_muudetud.slug %}">
         {{ andmed.artikkel.viimane_muudetud }}
       </a>

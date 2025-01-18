@@ -77,6 +77,8 @@ class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_artikkel_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
+    dob = serializers.SerializerMethodField()
+    yob = serializers.SerializerMethodField()
     pildid = PiltListingField(
         many=True,
         read_only=True,
@@ -84,6 +86,12 @@ class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_link(self, obj):
         return obj.get_absolute_url()
+    
+    def get_dob(self, obj):
+        return obj.dob
+    
+    def get_yob(self, obj):
+        return obj.yob
 
     class Meta:
         model = Artikkel
