@@ -201,7 +201,7 @@ def remove_markdown_tags(obj, string):
                 string = string.replace(tag[0], f'Pilt: {pildi_caption}')
         
         # Otsime kõik viitetagid
-        pattern_viited = re.compile(r'\s?\[(viide_|\^)([0-9]*)]')
+        pattern_viited = re.compile(r'\s?\[(viide\_|\^)([0-9]*)]')
         tagid = re.finditer(pattern_viited, string)
         for tag in tagid:
             string = string.replace(tag[0], '')
