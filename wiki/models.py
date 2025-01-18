@@ -184,26 +184,27 @@ def remove_markdown_tags(obj, string):
         # cleaned_text = cleaned_text.replace(' - ', '・')
 
         # otsime ja eemaldame k6ik lingid objectidele
-        pattern = re.compile(PATTERN_OBJECTS)
-        tagid = re.finditer(pattern, string)
+        pattern_objects = re.compile(PATTERN_OBJECTS)
+        tagid = re.finditer(pattern_objects, string)
         for tag in tagid:
             tekst, model_name, id = tag.groups()
             string = string.replace(tag[0], tekst, 1)
-            # Otsime kõik pilditagid
-            pattern = re.compile(r'\[pilt_([0-9]*)]')
-            tagid = re.finditer(pattern, string)
-            for tag in tagid:
-                id = tag.groups()[0]
-                pilt = Pilt.objects.get(id=id)
-                if pilt:
-                    pildi_caption = pilt.caption()
-                    string = string.replace(tag[0], f'Pilt: {pildi_caption}')
-            # Otsime kõik viitetagid
-            pattern = re.compile(r'\s?\[viide_([0-9]*)]')
-            tagid = re.finditer(pattern, string)
-            for tag in tagid:
-                # id = tag.groups()[0]
-                string = string.replace(tag[0], '')
+        
+        # Otsime kõik pilditagid
+        pattern_pildid = re.compile(r'\[pilt_([0-9]*)]')
+        tagid = re.finditer(pattern_pildid, string)
+        for tag in tagid:
+            id = tag.groups()[0]
+            pilt = Pilt.objects.get(id=id)
+            if pilt:
+                pildi_caption = pilt.caption()
+                string = string.replace(tag[0], f'Pilt: {pildi_caption}')
+        
+        # Otsime kõik viitetagid
+        pattern_viited = re.compile(r'\s?\[(viide_|\^)([0-9]*)]')
+        tagid = re.finditer(pattern_viited, string)
+        for tag in tagid:
+            string = string.replace(tag[0], '')
     return string
 
 # Töötleb lingitagid [Duck Duck Go]([isik_nnnn]) linkideks
@@ -291,19 +292,15 @@ def object2keywords(obj):
 # v6etakse esimene l6ik (reavahetuseni)
 # kui esimene lõik on pikem määratud tähtede arvust, siis lühendatakse s6nade kaupa
 def get_kirjeldus_lyhike(self):
-    # if isinstance(self, Artikkel): # TODO: Ajutine kuni body_text -> kirjeldus
-    #     kirjeldus = str(self.body_text)
-    # else:
-    #     kirjeldus = str(self.kirjeldus)
     kirjeldus = str(self.kirjeldus)
     kirjeldus = remove_markdown_tags(self, kirjeldus) # puhastame markdown koodist
     kirjeldus = kirjeldus.splitlines()[0] # v6tame esimese rea kirjeldusest
 
-    if len(kirjeldus) > 500:
+    if len(kirjeldus) > 100:
         splitid = kirjeldus.split(' ')
         for n in range(len(splitid)):
             kirjeldus = ' '.join(splitid[:n])
-            if len(kirjeldus) > 500:
+            if len(kirjeldus) > 100:
                 if len(kirjeldus) < len(str(self.kirjeldus)):
                     kirjeldus += '...'
                 break
