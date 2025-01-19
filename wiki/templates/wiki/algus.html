@@ -6,9 +6,6 @@
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'wiki/css/wiki_calendar3.css' %}">
 {% endblock %}
-{% block src %}
-  <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.3/TweenMax.min.js"></script>
-{% endblock %}
 {% block content %}
 	<!-- Lingid teemalehtedele -->
   <div class="w3-margin-bottom">
@@ -22,20 +19,15 @@
     {% now "Y" as aasta %}
     <!-- Artiklite esitlus -->
 	  <div class="w3-quarter">
-      {% if j6ul2024 %}
+      {% comment %} {% if j6ul2024 %}
       <div class="w3-container w3-center">
         {% include 'wiki/special/algus_message_j6ul2024_lights.html' %}
       </div>
-      {% endif %}
+      {% endif %} {% endcomment %}
       {# Teadete esitamiseks #}
       {#      <div class="w3-container w3-hover-white w3-padding-16 w3-center">#}
       {#        {% include 'wiki/special/algus_message_440.html' %}#}
       {#      </div>#}
-      {% if j6ul2024 %}
-      <div class="w3-container w3-hover-white w3-padding-16 w3-center w3-round">
-        {% include 'wiki/special/algus_message_j6ul2024.html' %}
-      </div>
-      {% endif %}
       <!--      Kalender -->
       <div class="card w3-hide-medium w3-padding-16 w3-hover-white w3-round">
         {% include 'wiki/includes/wiki_calendar3.html' %}
@@ -47,22 +39,12 @@
     </div>
     <!-- Isikute esitlus -->
     <div class="w3-quarter">
-      {% if j6ul2024 %}
-      <div class="w3-container w3-center">
-        {% include 'wiki/special/algus_message_j6ul2024_lights.html' %}
-      </div>
-      {% endif %}
       <div class="card w3-container w3-round w3-padding-16 w3-hover-white">
         {% include 'wiki/algus/algus_isikud.html' %}
       </div>
     </div>
     <!-- Organisatsioonide esitlus -->
     <div class="w3-quarter">
-      {% if j6ul2024 %}
-      <div class="w3-container w3-center">
-        {% include 'wiki/special/algus_message_j6ul2024_lights.html' %}
-      </div>
-      {% endif %}
       <div class="card w3-container w3-round w3-padding-16 w3-hover-white">
         {% include 'wiki/algus/algus_organisatsioonid.html' %}
       </div>
@@ -108,47 +90,4 @@
       x.style.opacity = "1";
     });
   </script>
-
-  {% if j6ul2024 %}
-  <script>
-    // Jõuluvalgus 2024 Christmas Lights by Jason Knott https://codepen.io/jgknott/pen/XNwPby
-    var lightswitch = document.getElementById("j6ul2024-switch"),
-      on = false;
-    lightswitch.addEventListener('click', toggleLights, false);
-
-    var tl = new TimelineMax({delay: .5});  
-
-    function toggleLights(){
-      $(".Site").toggleClass("darker");
-
-      if(on){
-        on = false;
-        TweenMax.to('.light',.2, {filter:'', opacity: 0.55})
-      }else{
-        TweenMax.staggerTo('.light', .5, {filter:'url(\'#glow\')', opacity: 1}, .04)
-        on = true;
-      }
-    }
-
-    TweenLite.set(".anim-container",{perspective:600})
-
-    var total = 30;
-    var warp = document.getElementById("container"),	w = window.innerWidth , h = window.innerHeight;
-
-    for (i=0; i<total; i++){ 
-      var Div = document.createElement('div');
-      TweenLite.set(Div,{attr:{class:'dot'},x:R(0,w),y:R(-200,-150),z:R(-200,200)});
-      warp.appendChild(Div);
-      animm(Div);
-    }
-
-    function animm(elm){   
-      TweenMax.to(elm,R(6,15),{y:h+100,ease:Linear.easeNone,repeat:-1,delay:-15});
-      TweenMax.to(elm,R(4,8),{x:'+=100',rotationZ:R(0,180),repeat:-1,yoyo:true,ease:Sine.easeInOut});
-      TweenMax.to(elm,R(2,8),{rotationX:R(0,360),rotationY:R(0,360),repeat:-1,yoyo:true,ease:Sine.easeInOut,delay:-5});
-    };
-
-    function R(min,max) {return min+Math.random()*(max-min)};
-  </script>
-  {% endif %}
 {% endblock %}

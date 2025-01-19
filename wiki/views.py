@@ -683,7 +683,7 @@ def _get_algus(request):
         {
             'kalender': kalender,
             'andmed': andmed,
-            'j6ul2024': settings.J6UL2024
+            # 'j6ul2024': settings.J6UL2024
         },
         request,
     )
