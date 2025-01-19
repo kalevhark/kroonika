@@ -79,6 +79,8 @@ class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
     )
     dob = serializers.SerializerMethodField()
     yob = serializers.SerializerMethodField()
+    kirjeldus_lyhike = serializers.SerializerMethodField()
+
     pildid = PiltListingField(
         many=True,
         read_only=True,
@@ -92,6 +94,9 @@ class ArtikkelSerializer(serializers.HyperlinkedModelSerializer):
     
     def get_yob(self, obj):
         return obj.yob
+    
+    def get_kirjeldus_lyhike(self, obj):
+        return obj.kirjeldus_lyhike
 
     class Meta:
         model = Artikkel

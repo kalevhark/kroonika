@@ -271,7 +271,8 @@
                           data-model='Artikkel'
                           v-bind:data-id="result.id"
                           v-bind:id="'Artikkel_'+result.id">
-                    [[ result.yob ]]: [[ result.kirjeldus.slice(0, 100) ]][[ result.kirjeldus.length>100 ? '...' : '' ]]
+                    {% comment %} [[ result.yob ]]: [[ result.kirjeldus.slice(0, 100) ]][[ result.kirjeldus.length>100 ? '...' : '' ]] {% endcomment %}
+                    [[ result.yob ]]: [[ result.kirjeldus_lyhike ]]
                   </span>
                 </a>
             </li>

@@ -39,10 +39,12 @@ class ArtikkelLookup(LookupChannel):
         return queryset[:50]
 
     def format_match(self, item):
-        return f"({item.yob}:{item.id}) {item} "
+        artikkel = self.model.objects.daatumitega().get(id=item.id)
+        return f"({artikkel.yob}:{item.id}) {item}"
 
     def format_item_display(self, item):
-        return f"({item.yob}:{item.id}) {item}"
+        artikkel = self.model.objects.daatumitega().get(id=item.id)
+        return f"({artikkel.yob}:{item.id}) {item}"
 
 
 @ajax_select.register('isikud')

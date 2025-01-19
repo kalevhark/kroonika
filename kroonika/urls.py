@@ -68,6 +68,7 @@ urlpatterns = [
     # path('j6ul2023/', specials.special_j6ul2023, name='special_j6ul2023'),
     path('j6ul2024/', specials.special_j6ul2024, name='special_j6ul2024'),
     path('vgvk/', include('vgvk.urls')),
+    path('raise_500_error/', views.raise_500_error, name='raise_500_error'),
     # path("__debug__/", include("debug_toolbar.urls")), # https://django-debug-toolbar.readthedocs.io
 ]
 

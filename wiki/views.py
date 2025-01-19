@@ -79,6 +79,10 @@ TMP_ALGUSKUVA = Path(tempfile.gettempdir()) / '_valgalinn.ee_algus.tmp'
 def custom_500(request):
     return render(request,'500.html', status=500)
 
+# Veateatega lehe testimiseks
+def raise_500_error(request):
+    print(sellist_muutujat_pole_olemas)
+
 #
 # reCAPTCHA kontrollifunktsioon
 #

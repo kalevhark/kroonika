@@ -171,12 +171,13 @@ def add_markdownx_pildid(string):
 def remove_markdown_tags(obj, string):
     if string: # not blank or None
         # otsime ja eemaldame k6ik lingid objectidele
-        pattern_objects = re.compile(PATTERN_OBJECTS)
-        tagid = re.finditer(pattern_objects, string)
-        for tag in tagid:
-            tekst, model_name, id = tag.groups()
-            string = string.replace(tag[0], tekst, 1)
-        
+        # pattern_objects = re.compile(PATTERN_OBJECTS)
+        # tagid = re.finditer(pattern_objects, string)
+        # for tag in tagid:
+        #     tekst, model_name, id = tag.groups()
+        #     string = string.replace(tag[0], tekst, 1)
+        string = re.sub(PATTERN_OBJECTS, r'\1', string)
+
         # Otsime kõik pilditagid
         pattern_pildid = re.compile(r'\[pilt_([0-9]*)]')
         tagid = re.finditer(pattern_pildid, string)
@@ -188,11 +189,12 @@ def remove_markdown_tags(obj, string):
                 string = string.replace(tag[0], f'Pilt: {pildi_caption}')
         
         # Otsime kõik viitetagid
-        pattern_viited = re.compile(r'\s?\[(viide\_|\^)([0-9]*)]')
-        tagid = re.finditer(pattern_viited, string)
-        for tag in tagid:
-            string = string.replace(tag[0], '')
-        
+        # pattern_viited = re.compile(r'\s?\[(viide\_|\^)([0-9]*)]')
+        # tagid = re.finditer(pattern_viited, string)
+        # for tag in tagid:
+        #     string = string.replace(tag[0], '')
+        string = re.sub(r'\s?\[(viide\_|\^)([0-9]*)]', '', string)
+
         # eemaldame markdown tagid
         string = re.sub(r'\*\*(.*?)\*\*', r'\1', string)
         string = re.sub(r'__(.*?)__', r'\1', string)

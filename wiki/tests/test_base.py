@@ -38,7 +38,7 @@ SPECIAL_OBJECTS = {
 class ServevErrorViewTestClass(TestCase):
     def test_error_page_500(self):
         self.client.raise_request_exception = False
-        response = self.client.get(reverse('error-page'))
+        response = self.client.get(reverse('raise_500_error'))
         self.assertEqual(response.status_code, 500)
         self.assertTrue(
             'Serveriviga'
