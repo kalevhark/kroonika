@@ -54,7 +54,7 @@
 
         <div
                 id="isik{{ obj.id }}"
-                class="w3-container sisu isik {{ obj.id }}"
+                class="w3-container sisu isik {{ obj.id }} w3-animate-opacity"
         >
           {% if obj_isikud_count > 0 %}
             {% for isik in obj.isikud.all %}
@@ -70,7 +70,7 @@
 
         <div
                 id="organisatsioon{{ obj.id }}"
-                class="w3-container sisu organisatsioon {{ obj.id }}"
+                class="w3-container sisu organisatsioon {{ obj.id }} w3-animate-opacity"
                 style="display:{% if obj.isikud.exists %}none{% else %}block{% endif %}"
         >
           {% if obj_organisatsioonid_count > 0 %}
@@ -87,7 +87,7 @@
 
         <div
                 id="objekt{{ obj.id }}"
-                class="w3-container sisu objekt {{ obj.id }}"
+                class="w3-container sisu objekt {{ obj.id }} w3-animate-opacity"
                 style="display:{% if obj.isikud.exists or obj.organisatsioonid.exists %}none{% else %}block{% endif %}">
           {% if obj_objektid_count > 0 %}
             {% for objekt in obj.objektid.all %}
@@ -103,7 +103,7 @@
 
         <div
                 id="pilt{{ obj.id }}"
-                class="w3-container sisu pilt {{ obj.id }}"
+                class="w3-container sisu pilt {{ obj.id }} w3-animate-opacity"
                 style="display:{% if obj.isikud.exists or obj.organisatsioonid.exists or obj.objektid.exists %}none{% else %}block{% endif %}"
         >
           {% if obj_pildid_count > 0 %}

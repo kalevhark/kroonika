@@ -32,31 +32,30 @@
   {% endif %}
 </div>
 
-<!-- Seotud artiklid: -->
+{% comment %} Seotud objectid {% endcomment %}
 <div
     id="artiklid"
-    class="seotud"
+    class="seotud w3-animate-opacity"
 >
   {% include 'wiki/includes/seotud_artiklid.html' with querparams=queryparams %}
 </div>
-<!--Seotud andmebaasid-->
 <div
     id="isikud"
-    class="seotud"
+    class="seotud w3-animate-opacity"
     style="display:none"
 >
   {% include 'wiki/includes/seotud_artiklikaudu_isikud.html' %}
 </div>
 <div
     id = "organisatsioonid"
-    class="seotud"
+    class="seotud w3-animate-opacity"
     style="display:none"
 >
   {% include 'wiki/includes/seotud_artiklikaudu_organisatsioonid.html' %}
 </div>
 <div
     id = "objektid"
-    class="seotud"
+    class="seotud w3-animate-opacity"
     style="display:none"
 >
   {% include 'wiki/includes/seotud_artiklikaudu_objektid.html' %}

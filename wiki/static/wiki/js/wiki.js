@@ -92,27 +92,27 @@ function wiki_object_detail_seotud() {
       url: $("#wiki_object_detail_seotud").attr("data-url"),
       dataType: 'html',
       timeout: 300000,
-    beforeSend: function() {
-        $("#loaderDiv1").show();
-    },
-    success: function (data) {
-      document.getElementById("wiki_object_detail_seotud").innerHTML = data;
-    },
-    error: function (XMLHttpRequest, textstatus, errorThrown) {
-      console.log(textstatus);
-    },
-    complete: function () {
-      $("#loaderDiv1").hide();
-      // Kuupäevaväljade unikaalsete id-de lisamine
-      let dates = document.body.getElementsByClassName('date');
-      let counter = 0;
-      for (let i = 0; i < dates.length; i++) {
-        if (!dates[i].id) {
-          dates[i].id = "_date_" + counter++;
+      beforeSend: function() {
+          $("#loaderDiv1").show();
+      },
+      success: function (data) {
+        document.getElementById("wiki_object_detail_seotud").innerHTML = data;
+      },
+      error: function (XMLHttpRequest, textstatus, errorThrown) {
+        console.log(textstatus);
+      },
+      complete: function () {
+        $("#loaderDiv1").hide();
+        // Kuupäevaväljade unikaalsete id-de lisamine
+        let dates = document.body.getElementsByClassName('date');
+        let counter = 0;
+        for (let i = 0; i < dates.length; i++) {
+          if (!dates[i].id) {
+            dates[i].id = "_date_" + counter++;
+          }
         }
+        getObjectData4tooltip(get_object_data4tooltip_url);
       }
-      getObjectData4tooltip(get_object_data4tooltip_url);
-    }
     });
   }
 

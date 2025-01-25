@@ -83,7 +83,7 @@
   <!-- Loend valitud aasta ja kuu artiklitest -->
   <div
       id="artiklid"
-      class="seotud">
+      class="seotud  w3-animate-opacity">
     {% if object_list %}
       <div class="w3-cell-row w3-container background-artikkel w3-text-white">
         <div class="w3-cell w3-cell-middle">
@@ -103,7 +103,7 @@
   {% if sel_kuul %}
     <div
         id="artiklid_teistel"
-        class="seotud">
+        class="seotud w3-animate-opacity">
       <div class="w3-cell-row w3-container background-artikkel w3-text-white">
         <div class="w3-cell w3-cell-middle">
           <h5><i class="{% icon_artikkel %} w3-large"></i>&nbsp;{% include "wiki/includes/kuul.html" with kuu=month|date:"m" %} ajaloos ({{ sel_kuul.count }}):</h5>
@@ -127,24 +127,24 @@
     {% if syndinud_isikud %}
       <div
           id="isikud_syndinud"
-          class="seotud w3-cell-row">
+          class="seotud  w3-animate-opacity w3-cell-row">
         {% with object_list=syndinud_isikud %}
           {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=syndinud_isikud_pealkiri bookmark='syndinud' %}
         {% endwith %}
       </div>
-    {% endif%}
+    {% endif %}
   {% endcache %}
   <!-- Loend samal kuul surnud isikutest -->
   {% cache 3600 surnud_isikud month|date:"Y" month|date:"m" %}
     {% if surnud_isikud %}
       <div
           id="isikud_surnud"
-          class="seotud w3-cell-row">
+          class="seotud w3-animate-opacity w3-cell-row">
         {% with object_list=surnud_isikud %}
           {% include 'wiki/includes/object_list_isikud.html' with periood=month pealkiri=surnud_isikud_pealkiri bookmark='surnud' %}
         {% endwith %}
       </div>
-    {% endif%}
+    {% endif %}
   {% endcache %}
 
   <!-- Loend samal kuul loodud organisatsioonidest -->
@@ -152,12 +152,12 @@
     {% if loodud_organisatsioonid %}
       <div
           id="organisatsioonid"
-          class="seotud w3-cell-row">
+          class="seotud w3-animate-opacity w3-cell-row">
         {% with object_list=loodud_organisatsioonid %}
           {% include 'wiki/includes/object_list_organisatsioonid.html' with periood=month pealkiri=loodud_organisatsioonid_pealkiri %}
         {% endwith %}
       </div>
-    {% endif%}
+    {% endif %}
   {% endcache %}
 
   <!-- Samal samal kuul valminud objektid -->
@@ -165,12 +165,12 @@
     {% if valminud_objektid %}
       <div
           id="objektid"
-          class="seotud w3-cell-row">
+          class="seotud w3-animate-opacity w3-cell-row">
         {% with object_list=valminud_objektid %}
           {% include 'wiki/includes/object_list_objektid.html' with periood=month pealkiri=valminud_objektid_pealkiri %}
         {% endwith %}
       </div>
-    {% endif%}
+    {% endif %}
   {% endcache %}
 
 {% endblock %}
