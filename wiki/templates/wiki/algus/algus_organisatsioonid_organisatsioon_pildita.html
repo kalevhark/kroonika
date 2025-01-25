@@ -1,15 +1,19 @@
 {% load wiki_extras %}
-<a class="hover-organisatsioon tooltip-content" href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}">
+<a 
+	class="hover-organisatsioon tooltip-content" 
+	href="{% url 'wiki:wiki_organisatsioon_detail' pk=obj.id slug=obj.slug %}"
+	{% comment %} onmouseenter="showTooltip(event)" {% endcomment %}
+>
 	<span
-			title='{{ obj }}'
-			data-model='{{ obj|get_model_name }}'
-			data-id='{{ obj.id }}'
-			id='{{ obj|get_model_name }}_{{ obj.id }}_{{ section }}'
+		title='{{ obj }}'
+		data-model='{{ obj|get_model_name }}'
+		data-id='{{ obj.id }}'
+		id='{{ obj|get_model_name }}_{{ obj.id }}_{{ section }}'
 	>
 		{{ obj }}
 		{% if obj.vanus and obj.vanus|divisibleby:"5" %}
-				&nbsp;&nbsp;<span class="text-organisatsioon"><b>{{ obj.vanus }}</b></span>
-				{% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
+			&nbsp;&nbsp;<span class="text-organisatsioon"><b>{{ obj.vanus }}</b></span>
+			{% include 'wiki/algus/algus_pilt.html' with tyyp='postkaart' %}
 		{% endif %}
 	</span>
 </a>

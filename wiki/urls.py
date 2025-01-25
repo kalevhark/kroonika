@@ -19,6 +19,7 @@ app_name = 'wiki'
 
 urlpatterns = [
     path('', ArtikkelFilterView.as_view(), name='wiki_artikkel_filter'),
+    path('get_algus_extra/', views.get_algus_extra, name='get_algus_extra'),
     path('<int:pk>-<str:slug>/', ArtikkelDetailView.as_view(), name='wiki_artikkel_detail'),
     # path('info/', views.info, name='info'),
     path('otsi/', views.otsi, name='otsi'),

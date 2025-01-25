@@ -1,14 +1,18 @@
 {% load wiki_extras %}
-<a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}">
+<a 
+		class="hover-isik tooltip-content" 
+		href="{% url 'wiki:wiki_isik_detail' pk=obj.id slug=obj.slug %}"
+		{% comment %} onmouseenter="showTooltip(event)" {% endcomment %}
+>
 	<span
-			title='{{ obj }}'
-			data-model='{{ obj|get_model_name }}'
-			data-id='{{ obj.id }}'
-			id='{{ obj|get_model_name }}_{{ obj.id }}_{{ section }}'
+		title='{{ obj }}'
+		data-model='{{ obj|get_model_name }}'
+		data-id='{{ obj.id }}'
+		id='{{ obj|get_model_name }}_{{ obj.id }}_{{ section }}'
 	>
-			{{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
-			{% if obj.vanus and obj.vanus|divisibleby:"5" %}
-				&nbsp;&nbsp;<span class="text-isik"><b>{{ obj.vanus }}</b></span>
+		{{ obj.eesnimi }}&nbsp;{{ obj.perenimi }}
+		{% if obj.vanus and obj.vanus|divisibleby:"5" %}
+			&nbsp;&nbsp;<span class="text-isik"><b>{{ obj.vanus }}</b></span>
 		{% endif %}
 	</span>
 	{% include 'wiki/algus/algus_pilt.html' with tyyp='portree' %}

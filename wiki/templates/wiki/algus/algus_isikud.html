@@ -37,6 +37,26 @@
     {% include 'wiki/algus/algus_isikud_isik_pildiga.html' with section='sel_p2eval' %}
   {% endfor %}
 {% endif %}
+{% if andmed.isik.sel_p2eval_surnud %}
+  <h5>
+    <a
+            class="hover-isik"
+            href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_surnud"
+            title="Kõik {% now "j.m." %} surnud"
+    >
+      {% now "j.m." %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_surnud_kirjeid }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.isik.sel_p2eval_surnud %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    <strong>&#9840;&nbsp;</strong>
+    <strong>{% include 'wiki/includes/date_doe.html' with obj=obj %}</strong>
+    &nbsp;
+    {% include 'wiki/algus/algus_isikud_isik_pildita.html' with section='sel_p2eval_surnud' %}
+  {% endfor %}
+{% endif %}
 {% if andmed.isik.sel_kuul %}
   <h5>
     <a
@@ -56,7 +76,7 @@
     {% include 'wiki/algus/algus_isikud_isik_pildiga.html' with section='sel_kuul' %}
   {% endfor %}
 {% endif %}
-{% if andmed.isik.juubilarid %}
+{% comment %} {% if andmed.isik.juubilarid %}
   <h5>
     <a
             class="hover-isik"
@@ -73,27 +93,6 @@
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
     {% include 'wiki/algus/algus_isikud_isik_pildiga.html' with section='juubilarid' %}
-  {% endfor %}
-{% endif %}
-{% if andmed.isik.sel_p2eval_surnud %}
-  <hr>
-  <h5>
-    <a
-            class="hover-isik"
-            href="{% url 'wiki:artikkel_day_archive' day=p2ev month=kuu year=aasta %}#bookmark_isikud_surnud"
-            title="Kõik {% now "j.m." %} surnud"
-    >
-      {% now "j.m." %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_p2eval_surnud_kirjeid }}</span>
-    </a>
-  </h5>
-  {% for obj in andmed.isik.sel_p2eval_surnud %}
-    {% if forloop.counter > 1 %}
-      <br>
-    {% endif %}
-    <strong>&#9840;&nbsp;</strong>
-    <strong>{% include 'wiki/includes/date_doe.html' with obj=obj %}</strong>
-    &nbsp;
-    {% include 'wiki/algus/algus_isikud_isik_pildita.html' with section='sel_p2eval_surnud' %}
   {% endfor %}
 {% endif %}
 {% if andmed.isik.sel_kuul_surnud %}
@@ -116,4 +115,5 @@
     &nbsp;
     {% include 'wiki/algus/algus_isikud_isik_pildita.html' with section='sel_kuul_surnud' %}
   {% endfor %}
-{% endif %}
+{% endif %} {% endcomment %}
+<div id="extra_content_isikud">{% include 'wiki/includes/div_loader_book.html' with n='extra_content_isikud' %}</div>

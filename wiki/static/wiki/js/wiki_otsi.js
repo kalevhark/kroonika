@@ -130,9 +130,6 @@ $( document ).ready(function() {
         .then(function (response) {
           vm.isik_results_count_all = response.data.count;
           vm.isik_results_count_1st_page = response.data.results.length;
-          // if (response.data.next) {
-          //   response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-          // }
           vm.isik_results_next_page = response.data.next;
           vm.total_count = vm.total_count + vm.isik_results_count_all;
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
@@ -156,9 +153,6 @@ $( document ).ready(function() {
         .then(function (response) {
           vm.organisatsioon_results_count_all = response.data.count;
           vm.organisatsioon_results_count_1st_page = response.data.results.length;
-          // if (response.data.next) {
-          //   response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-          // }
           vm.organisatsioon_results_next_page = response.data.next;
           vm.total_count = vm.total_count + vm.organisatsioon_results_count_all
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
@@ -177,15 +171,11 @@ $( document ).ready(function() {
         axios.get(url, {
           params: {
             sisaldab: this.question,
-            // page: page
           }
         })
         .then(function (response) {
           vm.objekt_results_count_all = response.data.count;
           vm.objekt_results_count_1st_page = response.data.results.length;
-          // if (response.data.next) {
-          //   response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-          // }
           vm.objekt_results_next_page = response.data.next;
           vm.total_count = vm.total_count + vm.objekt_results_count_all;
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
@@ -210,16 +200,12 @@ $( document ).ready(function() {
         .then(function (response) {
           vm.artikkel_results_count_all = response.data.count; // kokku leitud artikleid
           vm.artikkel_results_count_1st_page = response.data.results.length; // esimesel leheküljel artikleid
-          // if (response.data.next) {
-          //   response.data.next = response.data.next.replace("http://valgalinn.ee", "https://valgalinn.ee");
-          // }
           vm.artikkel_results_next_page = response.data.next;
           vm.total_count = vm.total_count + vm.artikkel_results_count_all;
           vm.answer = 'Leidsime ' + vm.total_count + ' vastet';
           if (vm.artikkel_results_count_all > 0) {
             vm.artikkel_results = response.data.results;
             vm.updateTooltips();
-            // console.log(vm.artikkel_results);
           }
         })
         .catch(function (error) {

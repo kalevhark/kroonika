@@ -293,7 +293,35 @@ KROONIKA = {
         Valga linna kroonika. Lood Valga linna ajaloost seotuna isikute, asutiste ja kohtadega. 
         """.strip(),
     'KEYWORDS': ['Valga', 'linn', 'Valga linn', 'kroonika', 'ajalugu'],
-    'CALENDAR_SYSTEM_DEFAULT': 'ukj'
+    'CALENDAR_SYSTEM_DEFAULT': 'ukj',
+    'VIGA_TEKSTIS':'[?]', # Märgib kirjelduses vigase või kontrollimist vajavat kohta
+    'PATTERN_OBJECTS': r'\[([\wÀ-ÿ\s\"\-\,\.\(\)]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)',
+    'PREDECESSOR_DESCENDANT_NAMES': { # Objecti eellased välja labelid
+        'Artikkel': {
+            'predecessor_name': 'Eelnenud lugu',
+            'predecessor_name_plural': 'Eelnenud lood',
+            'descendant_name': 'Järgnev lugu',
+            'descendant_name_plural': 'Järgnevad lood'
+        },
+        'Isik': {
+            'predecessor_name': 'Vanem',
+            'predecessor_name_plural': 'Vanemad',
+            'descendant_name': 'Laps',
+            'descendant_name_plural': 'Lapsed'
+        },
+        'Organisatsioon': {
+            'predecessor_name': 'Eelkäija',
+            'predecessor_name_plural': 'Eelkäijad',
+            'descendant_name': 'Järeltulija',
+            'descendant_name_plural': 'Järeltulijad'
+        },
+        'Objekt': {
+            'predecessor_name': 'Eelkäija',
+            'predecessor_name_plural': 'Eelkäijad',
+            'descendant_name': 'Järeltulija',
+            'descendant_name_plural': 'Järeltulijad'
+        },
+    }
 }
 
 # sites framework: django.contrib.sites

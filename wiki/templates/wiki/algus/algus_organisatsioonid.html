@@ -54,7 +54,7 @@
     {% include 'wiki/algus/algus_organisatsioonid_organisatsioon_pildita.html' with section='sel_kuul' %}
   {% endfor %}
 {% endif %}
-{% if andmed.organisatsioon.juubilarid %}
+{% comment %} {% if andmed.organisatsioon.juubilarid %}
   <h5>
     <a
             class="hover-organisatsioon"
@@ -72,4 +72,5 @@
     &nbsp;
     {% include 'wiki/algus/algus_organisatsioonid_organisatsioon_pildiga.html' with section='juubilarid' %}
   {% endfor %}
-{% endif %}
+{% endif %} {% endcomment %}
+<div id="extra_content_organisatsioonid">{% include 'wiki/includes/div_loader_book.html' with n='extra_content_organisatsioonid' %}</div>

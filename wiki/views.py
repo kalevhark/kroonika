@@ -429,10 +429,6 @@ def _get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
         a['viimane_lisatud'] = artikkel_qs.latest('inp_date')
         a['viimane_muudetud'] = artikkel_qs.latest('mod_date')
         # Samal kuupäeval erinevatel aastatel toimunud
-        # sel_p2eval_exactly = artikkel_qs.filter( # hist_date == KKPP
-        #     dob__day = p2ev,
-        #     dob__month = kuu
-        # )
         sel_p2eval = inrange_dates_artikkel(artikkel_qs, p2ev, kuu) # hist_date < KKPP <= hist_enddate
         sel_p2eval_kirjeid = len(sel_p2eval)
         if sel_p2eval_kirjeid > artikleid_max_split: # Kui leiti palju artikleid, teeme splitid
@@ -445,16 +441,6 @@ def _get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
             a['sel_p2eval'] = sel_p2eval
         a['sel_p2eval_kirjeid'] = sel_p2eval_kirjeid
         # Samal kuul toimunud TODO: probleem kui dob__month ja doe__month ei ole järjest
-        # sel_kuul = artikkel_qs.filter(Q(dob__month=kuu) | Q(hist_month=kuu) | Q(doe__month=kuu))
-        # sel_kuul_dob = artikkel_qs.filter(dob__month=kuu). \
-        #             values_list('id', flat=True)
-        # sel_kuul_mob = artikkel_qs.exclude(dob__isnull=True). \
-        #             filter(dob__month=kuu). \
-        #             values_list('id', flat=True)
-        # sel_kuul_doe = artikkel_qs.filter(doe__month=kuu). \
-        #             values_list('id', flat=True)
-        # model_ids = reduce(or_, [sel_kuul_dob, sel_kuul_mob, sel_kuul_doe])
-        # sel_kuul = artikkel_qs.filter(id__in=model_ids)
         sel_kuul = Artikkel.objects.sel_kuul(request, kuu)
         sel_kuul_kirjeid = len(sel_kuul)
         if sel_kuul_kirjeid > artikleid_max_split: # Kui leiti rohkem kui 9 kirjet võetakse 4 algusest + 1 keskelt + 4 lõpust
@@ -467,23 +453,22 @@ def _get_algus_artiklid(request, p2ev, kuu, aasta, artikkel_qs):
             a['sel_kuul'] = sel_kuul
         a['sel_kuul_kirjeid'] = sel_kuul_kirjeid
         # sada aastat tagasi toimunud
-        # a['sada_aastat_tagasi'] = sel_p2eval_exactly.filter(dob__year = (aasta-100))
         a['sada_aastat_tagasi'] = sel_p2eval.filter(dob__year=(aasta - 100))
-        a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:40] # 40 loetumat artiklit
+        a['loetumad'] = artikkel_qs.order_by('-total_accessed')[:20] # 20 loetumat artiklit
         # Koondnäitajad aastate ja kuude kaupa
-        artikleid_aasta_kaupa = artikkel_qs.\
-            values('hist_year').\
-            annotate(Count('hist_year')).\
-            order_by('hist_year')
-        a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
-        artikleid_kuu_kaupa = artikkel_qs.\
-            values('hist_year', 'hist_month').\
-            annotate(Count('hist_month')).\
-            order_by('hist_year', 'hist_month')
-        a['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
+        # artikleid_aasta_kaupa = artikkel_qs.\
+        #     values('hist_year').\
+        #     annotate(Count('hist_year')).\
+        #     order_by('hist_year')
+        # a['artikleid_aasta_kaupa'] = artikleid_aasta_kaupa
+        # artikleid_kuu_kaupa = artikkel_qs.\
+        #     values('hist_year', 'hist_month').\
+        #     annotate(Count('hist_month')).\
+        #     order_by('hist_year', 'hist_month')
+        # a['artikleid_kuu_kaupa'] = artikleid_kuu_kaupa
     return a
 
-# Andmebaas Isik andmed veebi
+# Andmebaas Isik põhiandmed avalehele
 def _get_algus_isikud(request, p2ev, kuu, aasta):
     a = dict()
     isik_qs = Isik.objects.daatumitega(request)
@@ -502,16 +487,26 @@ def _get_algus_isikud(request, p2ev, kuu, aasta):
             dob__month=kuu
         ).order_by('hist_year')
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
-        # a['sel_kuul'] = isik_qs. \
-        #     filter(dob__month=kuu). \
-        #     order_by(ExtractDay('dob'))
-        a['sel_kuul'] = Isik.objects.sel_kuul(request, kuu)
-        a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
         a['sel_p2eval_surnud'] = isik_qs.filter(
             doe__day=p2ev,
             doe__month=kuu
         )
         a['sel_p2eval_surnud_kirjeid'] = len(a['sel_p2eval_surnud'])
+        a['sel_kuul'] = Isik.objects.sel_kuul(request, kuu)
+        a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
+        # a['sel_kuul_surnud'] = isik_qs. \
+        #     filter(doe__month=kuu). \
+        #     order_by(ExtractDay('doe'))
+        # a['sel_kuul_surnud_kirjeid'] = len(a['sel_kuul_surnud'])
+        # juubilarid = get_juubilarid(isik_qs)
+        # a['juubilarid'] = juubilarid
+    return a
+
+# Andmebaas Isik lisaandmed avalehele
+def _get_algus_isikud_extra(request, p2ev, kuu, aasta):
+    a = dict()
+    isik_qs = Isik.objects.daatumitega(request)
+    if isik_qs.exists():
         a['sel_kuul_surnud'] = isik_qs. \
             filter(doe__month=kuu). \
             order_by(ExtractDay('doe'))
@@ -520,7 +515,7 @@ def _get_algus_isikud(request, p2ev, kuu, aasta):
         a['juubilarid'] = juubilarid
     return a
 
-# Andmebaas Organisatsioon andmed veebi
+# Andmebaas Organisatsioon põhiandmed avalehele
 def _get_algus_organisatsioonid(request, p2ev, kuu, aasta):
     a = dict()
     organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
@@ -539,25 +534,22 @@ def _get_algus_organisatsioonid(request, p2ev, kuu, aasta):
             dob__month=kuu
         ).order_by('hist_year')
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
-        # a['sel_kuul'] = organisatsioon_qs. \
-        #     filter(dob__month=kuu). \
-        #     order_by(ExtractDay('dob'))
-        # sel_kuul_dob = organisatsioon_qs.filter(dob__month=kuu). \
-        #             values_list('id', flat=True)
-        # sel_kuul_mob = organisatsioon_qs.exclude(dob__isnull=True). \
-        #             filter(dob__month=kuu). \
-        #             values_list('id', flat=True)
-        # sel_kuul_doe = organisatsioon_qs.filter(doe__month=kuu). \
-        #             values_list('id', flat=True)
-        # model_ids = reduce(or_, [sel_kuul_dob, sel_kuul_mob, sel_kuul_doe])
-        # a['sel_kuul'] = organisatsioon_qs.filter(id__in=model_ids)
         a['sel_kuul'] = Organisatsioon.objects.sel_kuul(request, kuu)
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
+        # juubilarid = get_juubilarid(organisatsioon_qs)
+        # a['juubilarid'] = juubilarid
+    return a
+
+# Andmebaas Organisatsioon lisaandmed avalehele
+def _get_algus_organisatsioonid_extra(request, p2ev, kuu, aasta):
+    a = dict()
+    organisatsioon_qs = Organisatsioon.objects.daatumitega(request)
+    if organisatsioon_qs.exists():
         juubilarid = get_juubilarid(organisatsioon_qs)
         a['juubilarid'] = juubilarid
     return a
 
-# Andmebaas Objekt andmed veebi
+# Andmebaas Objekt põhiandmed avalehele
 def _get_algus_objektid(request, p2ev, kuu, aasta):
     a = dict()
     objekt_qs = Objekt.objects.daatumitega(request)
@@ -576,20 +568,17 @@ def _get_algus_objektid(request, p2ev, kuu, aasta):
             dob__month = kuu
         ).order_by('hist_year')
         a['sel_p2eval_kirjeid'] = len(a['sel_p2eval'])
-        # a['sel_kuul'] = objekt_qs.\
-        #     filter(dob__month = kuu).\
-        #     order_by(ExtractDay('dob'))
-        # sel_kuul_dob = objekt_qs.filter(dob__month=kuu). \
-        #             values_list('id', flat=True)
-        # sel_kuul_mob = objekt_qs.exclude(dob__isnull=True). \
-        #             filter(dob__month=kuu). \
-        #             values_list('id', flat=True)
-        # sel_kuul_doe = objekt_qs.filter(doe__month=kuu). \
-        #             values_list('id', flat=True)
-        # model_ids = reduce(or_, [sel_kuul_dob, sel_kuul_mob, sel_kuul_doe])
-        # a['sel_kuul'] = objekt_qs.filter(id__in=model_ids)
         a['sel_kuul'] = Objekt.objects.sel_kuul(request, kuu)
         a['sel_kuul_kirjeid'] = len(a['sel_kuul'])
+        # juubilarid = get_juubilarid(objekt_qs)
+        # a['juubilarid'] = juubilarid
+    return a
+
+# Andmebaas Objekt lisaandmed avalehele
+def _get_algus_objektid_extra(request, p2ev, kuu, aasta):
+    a = dict()
+    objekt_qs = Objekt.objects.daatumitega(request)
+    if objekt_qs.exists():
         juubilarid = get_juubilarid(objekt_qs)
         a['juubilarid'] = juubilarid
     return a
@@ -678,6 +667,7 @@ def _get_algus(request):
     #         'andmed': andmed,
     #     }
     # )
+
     response_content = render_to_string(
         'wiki/algus.html',
         {
@@ -704,6 +694,46 @@ def _get_algus(request):
     # else:
     #     response.set_cookie('last_visit', datetime.now())
     return response_content
+
+#
+# Avakuva lisandmete rendertamine (ajax)
+#
+def get_algus_extra(request):
+    andmed = {} # Selle muutuja saadame veebi
+    p2ev = date.today().day # str(p2ev).zfill(2) -> PP
+    kuu = date.today().month # str(kuu).zfill(2) -> KK
+    aasta = date.today().year
+    # andmed['artikkel'] = _get_algus_artiklid_extra(request, p2ev, kuu, aasta, artikkel_qs)
+    andmed['isik'] = _get_algus_isikud_extra(request, p2ev, kuu, aasta)
+    andmed['organisatsioon'] = _get_algus_organisatsioonid_extra(request, p2ev, kuu, aasta)
+    andmed['objekt'] = _get_algus_objektid_extra(request, p2ev, kuu, aasta)
+    extra_content_isikud = render_to_string(
+        'wiki/algus/algus_isikud_extra.html',
+        {
+            'andmed': andmed,
+        },
+        request,
+    )
+    extra_content_organisatsioonid = render_to_string(
+        'wiki/algus/algus_organisatsioonid_extra.html',
+        {
+            'andmed': andmed,
+        },
+        request,
+    )
+    extra_content_objektid = render_to_string(
+        'wiki/algus/algus_objektid_extra.html',
+        {
+            'andmed': andmed,
+        },
+        request,
+    )
+    extra_content = {
+        'extra_content_isikud': extra_content_isikud,
+        'extra_content_organisatsioonid': extra_content_organisatsioonid,
+        'extra_content_objektid': extra_content_objektid
+    }
+    return JsonResponse(extra_content, safe=False)
 
 # Avakuva
 def algus(request):
@@ -836,6 +866,9 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         if old.hist_year:
             if not new.hist_year:
                 new.hist_year = old.hist_year
+        if old.hist_month:
+            if not new.hist_month:
+                new.hist_month = old.hist_month
     if old.hist_enddate:
         if not new.hist_enddate:
             new.hist_enddate = old.hist_enddate
@@ -843,6 +876,9 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         if old.hist_endyear:
             if not new.hist_endyear:
                 new.hist_endyear = old.hist_endyear
+        if old.hist_endmonth:
+            if not new.hist_endmonth:
+                new.hist_endmonth = old.hist_endmonth
 
     # Seotud viited
     viited = old.viited.all()
@@ -905,11 +941,6 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
             print(pilt.id, pilt)
             pilt.profiilipilt_isikud.add(new)
     elif model == Organisatsioon:
-        if not old.hist_date:
-            if old.hist_month:
-                if not new.month:
-                    print(old.month)
-                    new.month = old.month
         print('Artiklid:')
         artiklid = Artikkel.objects.filter(organisatsioonid=old)
         for art in artiklid:
@@ -931,11 +962,6 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
             print(pilt.id, pilt)
             pilt.profiilipilt_organisatsioonid.add(new)
     elif model == Objekt:
-        if not old.hist_date:
-            if old.hist_month:
-                if not new.month:
-                    print(old.month)
-                    new.month = old.month
         if old.asukoht:
             print(old.asukoht)
             if new.asukoht:

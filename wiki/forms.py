@@ -3,6 +3,9 @@ import re
 from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField, AutoCompleteField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, Fieldset, HTML, ButtonHolder
+
+from django.apps import apps
+from django.conf import settings
 from django.forms import (
     Form, ModelForm,
     Textarea,
@@ -19,6 +22,9 @@ from .models import (
     Kaart, Kaardiobjekt
 )
 
+VIGA_TEKSTIS = settings.KROONIKA['VIGA_TEKSTIS']
+PATTERN_OBJECTS = settings.KROONIKA['PATTERN_OBJECTS']
+PREDECESSOR_DESCENDANT_NAMES = settings.KROONIKA['PREDECESSOR_DESCENDANT_NAMES']
 
 class PiltForm(ModelForm):
     viited = AutoCompleteSelectMultipleField('viited', required=False)
@@ -50,14 +56,26 @@ class BaasObjectForm(ModelForm):
         self.fields["kirjeldus"].widget.attrs.update(cols="100")
 
     def clean(self, *args, **kwargs):
-        # Kontrollime et kõik viitetagid oleks defineeritud
         string = self.cleaned_data.get('kirjeldus')
-        pattern = re.compile(r'\s?\[viide_([0-9]*)]')
-        tagid = re.finditer(pattern, string)
+
+        # Kontrollime et kõik viitetagid oleks defineeritud
+        pattern_viited = re.compile(r'\s?\[viide_([0-9]*)]')
+        tagid = re.finditer(pattern_viited, string)
         for tag in tagid:
             id = tag.groups()[0]
             if id not in self.cleaned_data.get('viited'):
                 raise ValidationError(f"Viide {tag[0]} pole defineeritud")
+        
+        # Kontrollime tekstisisesed markdown viited üle
+        pattern = re.compile(PATTERN_OBJECTS)
+        tagid = re.finditer(pattern, string)
+        for tag in tagid:
+            tekst, model_name, id = tag.groups()
+            model = apps.get_model('wiki', model_name)
+            try:
+                _ = model.objects.get(id=id)
+            except model.DoesNotExist:
+                raise ValidationError(f"Viga: {model_name} id={id}")
         
         # # Kontrollime, et loo algusaeg on märgitud
         # if self.model == Artikkel and not any([self.cleaned_data.get('hist_date'), self.cleaned_data.get('hist_year')]):

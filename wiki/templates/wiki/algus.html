@@ -79,6 +79,7 @@
     var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"
     var userCalendarViewLast = '{{ request.session.user_calendar_view_last }}'
     var calendarSystem = '{{ request.session.calendar_system }}'
+    var get_algus_extra_url = "{% url 'wiki:get_algus_extra' %}"
 
     $( document ).ready(function() {
       {# Kalendrividina käivitamine #}
@@ -88,6 +89,26 @@
       // toome kalendri nähtavale
       var x = document.getElementById("wiki_calendar");
       x.style.opacity = "1";
+      // laadime extra Sisu
+      $.ajax({
+        url: get_algus_extra_url,
+        type:'get',
+        success: function(response) {
+          // Setting content
+          document.getElementById('extra_content_isikud').innerHTML = response['extra_content_isikud'];
+          document.getElementById('extra_content_organisatsioonid').innerHTML = response['extra_content_organisatsioonid'];
+          document.getElementById('extra_content_objektid').innerHTML = response['extra_content_objektid'];
+        },
+        error: function (XMLHttpRequest, textstatus, errorThrown) {
+          console.log(errorThrown);
+          document.getElementById('extra_content_isikud').innerHTML = ''
+          document.getElementById('extra_content_organisatsioonid').innerHTML = ''
+          document.getElementById('extra_content_objektid').innerHTML = ''
+        },
+        complete: function(XMLHttpRequest, textstatus) {
+          getObjectData4tooltip(get_object_data4tooltip_url);
+        }
+      });
     });
   </script>
 {% endblock %}

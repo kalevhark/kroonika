@@ -51,50 +51,54 @@ from PIL import Image
 from shapely.geometry import shape
 
 KUUD = (
-        (1, 'jaanuar'),
-        (2, 'veebruar'),
-        (3, 'märts'),
-        (4, 'aprill'),
-        (5, 'mai'),
-        (6, 'juuni'),
-        (7, 'juuli'),
-        (8, 'august'),
-        (9, 'september'),
-        (10, 'oktoober'),
-        (11, 'november'),
-        (12, 'detsember'),
-        )
+    (1, 'jaanuar'),
+    (2, 'veebruar'),
+    (3, 'märts'),
+    (4, 'aprill'),
+    (5, 'mai'),
+    (6, 'juuni'),
+    (7, 'juuli'),
+    (8, 'august'),
+    (9, 'september'),
+    (10, 'oktoober'),
+    (11, 'november'),
+    (12, 'detsember'),
+)
 
-VIGA_TEKSTIS = '[?]'
+# VIGA_TEKSTIS = '[?]'
 
-PATTERN_OBJECTS = r'\[([\wÀ-ÿ\s\"\-\,\.\(\)]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)'
+# PATTERN_OBJECTS = r'\[([\wÀ-ÿ\s\"\-\,\.\(\)]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)'
 
-PREDECESSOR_DESCENDANT_NAMES = {
-    'Artikkel': {
-        'predecessor_name': 'Eelnenud lugu',
-        'predecessor_name_plural': 'Eelnenud lood',
-        'descendant_name': 'Järgnev lugu',
-        'descendant_name_plural': 'Järgnevad lood'
-    },
-    'Isik': {
-        'predecessor_name': 'Vanem',
-        'predecessor_name_plural': 'Vanemad',
-        'descendant_name': 'Laps',
-        'descendant_name_plural': 'Lapsed'
-    },
-    'Organisatsioon': {
-        'predecessor_name': 'Eelkäija',
-        'predecessor_name_plural': 'Eelkäijad',
-        'descendant_name': 'Järeltulija',
-        'descendant_name_plural': 'Järeltulijad'
-    },
-    'Objekt': {
-        'predecessor_name': 'Eelkäija',
-        'predecessor_name_plural': 'Eelkäijad',
-        'descendant_name': 'Järeltulija',
-        'descendant_name_plural': 'Järeltulijad'
-    },
-}
+# PREDECESSOR_DESCENDANT_NAMES = {
+#     'Artikkel': {
+#         'predecessor_name': 'Eelnenud lugu',
+#         'predecessor_name_plural': 'Eelnenud lood',
+#         'descendant_name': 'Järgnev lugu',
+#         'descendant_name_plural': 'Järgnevad lood'
+#     },
+#     'Isik': {
+#         'predecessor_name': 'Vanem',
+#         'predecessor_name_plural': 'Vanemad',
+#         'descendant_name': 'Laps',
+#         'descendant_name_plural': 'Lapsed'
+#     },
+#     'Organisatsioon': {
+#         'predecessor_name': 'Eelkäija',
+#         'predecessor_name_plural': 'Eelkäijad',
+#         'descendant_name': 'Järeltulija',
+#         'descendant_name_plural': 'Järeltulijad'
+#     },
+#     'Objekt': {
+#         'predecessor_name': 'Eelkäija',
+#         'predecessor_name_plural': 'Eelkäijad',
+#         'descendant_name': 'Järeltulija',
+#         'descendant_name_plural': 'Järeltulijad'
+#     },
+# }
+
+VIGA_TEKSTIS = settings.KROONIKA['VIGA_TEKSTIS']
+PATTERN_OBJECTS = settings.KROONIKA['PATTERN_OBJECTS']
+PREDECESSOR_DESCENDANT_NAMES = settings.KROONIKA['PREDECESSOR_DESCENDANT_NAMES']
 
 def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
     """
@@ -231,6 +235,7 @@ def add_markdown_objectid(obj, string):
         }
         for translate_viide in translate_viited:
             string = string.replace(translate_viide, translate_viited[translate_viide])
+    
     # Asendame markdown koodid linkidega objectidele
     pattern = re.compile(PATTERN_OBJECTS)
     tagid = re.finditer(pattern, string)

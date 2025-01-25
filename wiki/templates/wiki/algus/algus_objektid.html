@@ -50,7 +50,7 @@
     {% include 'wiki/algus/algus_objektid_objekt_pildita.html' with section='sel_kuul' %}
   {% endfor %}
 {% endif %}
-{% if andmed.objekt.juubilarid %}
+{% comment %} {% if andmed.objekt.juubilarid %}
   <h5>
     <a
         class="hover-objekt"
@@ -68,4 +68,5 @@
     &nbsp;
     {% include 'wiki/algus/algus_objektid_objekt_pildiga.html' with section='juubilarid' %}
   {% endfor %}
-{% endif %}
+{% endif %} {% endcomment %}
+<div id="extra_content_objektid">{% include 'wiki/includes/div_loader_book.html' with n='extra_content_objektid' %}</div>

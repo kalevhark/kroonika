@@ -1,0 +1,44 @@
+{% load wiki_extras %}
+{% now "d" as p2ev %}
+{% now "m" as kuu %}
+{% now "Y" as aasta %}
+{% if andmed.isik.juubilarid %}
+  <h5>
+    <a
+            class="hover-isik"
+            href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_isikud_syndinud"
+            title="Kõik {% now "Y" %} juubilarid"
+    >
+      {% now "Y" %} juubilarid <span class="w3-badge background-isik">{{ andmed.isik.juubilarid.count }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.isik.juubilarid %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
+    &nbsp;
+    {% include 'wiki/algus/algus_isikud_isik_pildiga.html' with section='juubilarid' %}
+  {% endfor %}
+{% endif %}
+{% if andmed.isik.sel_kuul_surnud %}
+  <h5>
+    <a
+            style="text-decoration:none;"
+            class="hover-isik"
+            href="{% url 'wiki:artikkel_month_archive' month=kuu year=aasta %}#bookmark_isikud_surnud"
+            title="Kõik {% include 'wiki/includes/kuul.html' with kuu=kuu %} surnud"
+    >
+      {% include 'wiki/includes/kuul.html' with kuu=kuu %} surnud <span class="w3-badge background-isik">{{ andmed.isik.sel_kuul_surnud_kirjeid }}</span>
+    </a>
+  </h5>
+  {% for obj in andmed.isik.sel_kuul_surnud %}
+    {% if forloop.counter > 1 %}
+      <br>
+    {% endif %}
+    <strong>&#9840;&nbsp;</strong>
+    <strong>{% include 'wiki/includes/date_doe.html' with obj=obj %}</strong>
+    &nbsp;
+    {% include 'wiki/algus/algus_isikud_isik_pildita.html' with section='sel_kuul_surnud' %}
+  {% endfor %}
+{% endif %}

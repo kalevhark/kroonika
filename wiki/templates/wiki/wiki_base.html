@@ -55,16 +55,22 @@
       gtag('config', 'UA-151102639-1');
     </script>
 
-    {# Laetavad moodulid#}
+    {% comment %} Laetavad moodulid {% endcomment %}
     <!-- jQuery -->
     {% block jquery_src %}
       <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/jquery-ui.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.14.1/jquery-ui.min.js"></script>
     {% endblock jquery_src %}
     <!-- Google reCAPTCHA -->
     <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=grecaptcha_onload"></script>
     <!-- wiki teegid -->
-    <script src="{% static 'wiki/js/wiki.js'%}?ver=2024.12.29"></script>
+    <script src="{% static 'wiki/js/wiki.js'%}?ver=2025.1"></script>
+
+    {% comment %} tooltips content url {% endcomment %}
+    <script type="text/javascript">
+      var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
+    </script>
+    
     {% block src %}{% endblock %}
 
     <!-- CSS -->
@@ -237,7 +243,8 @@
     // Navigatsiooniriba asukoha kontrollimiseks
     window.addEventListener('scroll', throttle(onScroll, 25));
     // initialize tooltips
-    var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
+    $('*').tooltip({track: false});
+    // var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
     getObjectData4tooltip(get_object_data4tooltip_url);
   });
   </script>

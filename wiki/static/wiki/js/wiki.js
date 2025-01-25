@@ -1,4 +1,4 @@
-// ver 2024.12.29
+// ver 2025.1
 
 // Tagastab eestikeelse kuunime
 function getEstonianMonthName(idx) {
@@ -278,35 +278,36 @@ function getObjectData4tooltip( url ) {
     if (!isMobile) {
       var elContentTooltipFields = $( ".tooltip-content span" );
       // initialize tooltip
-      elContentTooltipFields.tooltip({
-        track: false,
-        open: function( event, ui ) {
-          var id = this.id;
-          var model = $(this).attr('data-model');
-          var obj_id = $(this).attr('data-id');
-          $.ajax({
-            url: url,
-            type:'get',
-            data:{
-              model:model,
-              obj_id:obj_id
-            },
-            success: function(response){
-              // Setting content option
-              $("#"+id).tooltip('option','content', response);
-            },
-            error: function (XMLHttpRequest, textstatus, errorThrown) {
-              console.log(errorThrown);
-            }
-          });
+      elContentTooltipFields.tooltip(
+        {
+          track: false,
+          open: function( event, ui ) {
+            var id = this.id;
+            var model = $(this).attr('data-model');
+            var obj_id = $(this).attr('data-id');
+            $.ajax({
+              url: url,
+              type:'get',
+              data:{
+                model:model,
+                obj_id:obj_id
+              },
+              success: function(response){
+                // Setting content option
+                $("#"+id).tooltip('option','content', response);
+              },
+              error: function (XMLHttpRequest, textstatus, errorThrown) {
+                console.log(errorThrown);
+              }
+            });
+          },
+          hide: { duration: 1000 }
         }
-      });
+      );
 
       elContentTooltipFields.mouseout(function(){
-        // re-initializing tooltip
-        // $(this).attr('title','...');
-        // $(this).tooltip();
-        window.setTimeout($('.ui-tooltip').hide(), 1000);
+        $('.ui-tooltip').hide();
+        // setTimeout(function(){$('.ui-tooltip').hide()}, 1000); // annab vea
       });
     }
   });

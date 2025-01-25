@@ -32,19 +32,29 @@ class ArtikkelLookup(LookupChannel):
                 Value(' '),
                 F('yob'),
                 output_field=CharField()
-            )
+            ),
+            # display=Concat(
+            #     F('yob'),
+            #     Value(':'),
+            #     F('id'),
+            #     Value(' '),
+            #     F('kirjeldus_lyhike'),
+            #     output_field=CharField()
+            # )
         )
         for split in splits:
             queryset = queryset.filter(full_viide__iregex=split)
         return queryset[:50]
 
     def format_match(self, item):
-        artikkel = self.model.objects.daatumitega().get(id=item.id)
-        return f"({artikkel.yob}:{item.id}) {item}"
+        # artikkel = self.model.objects.daatumitega().get(id=item.id)
+        return f"({item.hist_year}:{item.id}) {item}"
+        # return item.display
 
     def format_item_display(self, item):
-        artikkel = self.model.objects.daatumitega().get(id=item.id)
-        return f"({artikkel.yob}:{item.id}) {item}"
+        # artikkel = self.model.objects.daatumitega().get(id=item.id)
+        return f"({item.hist_year}:{item.id}) {item}"
+        # return item.display
 
 
 @ajax_select.register('isikud')
