@@ -1,3 +1,4 @@
+{% load wiki_extras %}
 {#    Kui kasutaja autenditud pakume muutmisvõimalust#}
 {% if user.is_authenticated %}
   {% if user.is_staff %}
@@ -42,8 +43,7 @@
 
   {% if user.is_authenticated %}
     {% if user.is_staff %}
-{#      &nbsp;{{ object.markdown_tag }}#}
-      <span id="markdown-tag-object"> {{ object.markdown_tag }}</span>
+      <span id="markdown-tag-object"> [{{ object }}] ([{{ object|get_model_name|lower }}_{{ object.id}}])</span>
     {% endif %}
   {% endif %}
 </a>

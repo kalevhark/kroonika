@@ -882,10 +882,7 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     # Create a property that returns the markdown instead
     @property
     def formatted_markdown(self):
-        if isinstance(self, Artikkel): # TODO: Kui body_text -> kirjeldus, siis pole vajalik
-            tekst = self.kirjeldus
-        else:
-            tekst = self.kirjeldus
+        tekst = self.kirjeldus
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
         tekst = add_markdown_objectid(self, tekst)
