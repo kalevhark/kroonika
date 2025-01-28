@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 import pytz
 from pytz import timezone
 import requests
+# from shapely import length
 
 if __name__ == '__main__':
     import os
@@ -411,10 +412,116 @@ def add_data(failinimi):
     print(before, after)
     return before, after
 
+def longest_period_aboveandbelow():
+    longest_periods = {}
+    days = Ilm.objects \
+        .values('timestamp__year', 'timestamp__month', 'timestamp__day') \
+        .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
+        .order_by('timestamp__year', 'timestamp__month', 'timestamp__day')
+    
+    print('pikim periood: päevakeskmine ei ole alla nulli')
+    period = {
+        'start_date': None,
+        'end_date': None,
+        'length': 0
+    }
+    length = 0
+    for day in days:
+        if day['airtemperature__avg'] >= 0:
+            if length == 0:
+                start_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+                end_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+            else:
+                end_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+            length += 1
+            if period['length'] < length:
+                period['start_date'] = start_date
+                period['end_date'] = end_date
+                period['length'] = length
+        else:
+            length = 0
+    print(period)
+    longest_periods['above_avg_zero_longest'] = period
 
+    print('pikim periood: päevamiinumum ei ole alla nulli')
+    period = {
+        'start_date': None,
+        'end_date': None,
+        'length': 0
+    }
+    length = 0
+    for day in days:
+        if day['airtemperature__min'] >= 0:
+            if length == 0:
+                start_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+                end_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+            else:
+                end_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+            length += 1
+            if period['length'] < length:
+                period['start_date'] = start_date
+                period['end_date'] = end_date
+                period['length'] = length
+        else:
+            length = 0
+    print(period)
+    longest_periods['above_min_zero_longest'] = period
+
+    print('pikim periood: päevakeskmine ei ole üle nulli')
+    period = {
+        'start_date': None,
+        'end_date': None,
+        'length': 0
+    }
+    length = 0
+    for day in days:
+        if day['airtemperature__avg'] < 0:
+            if length == 0:
+                start_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+                end_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+            else:
+                end_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+            length += 1
+            if period['length'] < length:
+                period['start_date'] = start_date
+                period['end_date'] = end_date
+                period['length'] = length
+        else:
+            length = 0
+    print(period)
+    longest_periods['below_avg_zero_longest'] = period
+
+    print('pikim periood: päevamaksimum ei ole üle nulli')
+    period = {
+        'start_date': None,
+        'end_date': None,
+        'length': 0
+    }
+    length = 0
+    for day in days:
+        if day['airtemperature__max'] < 0:
+            if length == 0:
+                start_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+                end_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+            else:
+                end_date = [day['timestamp__year'], day['timestamp__month'], day['timestamp__day']]
+            length += 1
+            if period['length'] < length:
+                period['start_date'] = start_date
+                period['end_date'] = end_date
+                period['length'] = length
+        else:
+            length = 0
+    print(period)
+    longest_periods['below_max_zero_longest'] = period
+
+    return longest_periods
+
+    
 if __name__ == '__main__':
     # see osa koodist käivitub, kui mooodul panna tööle käsurealt
     # (topeltklõps, must aken, IDLE's F5 vms)
     ##    run()
     STATIC_DIR = 'static/ilm/bdi/'
     bdi = IlmateenistusData()
+    longest_period_aboveandbelow_zero()
