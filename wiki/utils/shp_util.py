@@ -6,10 +6,10 @@ import time
 if __name__ == "__main__":
     import os
     import django
-#    from django.test.utils import setup_test_environment
+    # from django.test.utils import setup_test_environment
     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
     django.setup()
-#    setup_test_environment()
+    # setup_test_environment()
     from django.conf import settings
     UTIL_DIR = Path(__file__).resolve().parent
     print('Töökataloog:', UTIL_DIR)
@@ -200,11 +200,11 @@ def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9'
         """
 
         # K6ik asumid Valga linnas
-        query = f"""
-        area['admin_level'='2']['name'='Eesti']->.searchArea;
-        area['admin_level'='9']['name'='Valga linn'](area.searchArea)->.searchArea;
-        nwr["place"="quarter"](area.searchArea);
-        """
+        # query = f"""
+        # area['admin_level'='2']['name'='Eesti']->.searchArea;
+        # area['admin_level'='9']['name'='Valga linn'](area.searchArea)->.searchArea;
+        # nwr["place"="quarter"](area.searchArea);
+        # """
 
         # Pärime andmed operpass APIst
         overpass_query = f"""
@@ -356,14 +356,16 @@ def get_osm_data_quarter(quarter=None, country='Eesti', admin_level='9', city='V
 def get_shp_data(asukoht=None, kataster=None):
     # asukoht aadress 'Sulevi 9a'
     # kataster katastritunnus '85401:016:0510'
+    # asukoht aadress 'Kraavikalda 19'
+    # kataster '79517:019:0003'
 
     shp = "wiki\\utils\\SHP_KATASTRIYKSUS_VALGA" # ainult Valga linn
-    # shp = "wiki\\utils\\SHP_KATASTRIYKSUS" # kogu Eesti
+    shp = "wiki\\utils\\Tartu linn" # ainult Tartu linn
     with shapefile.Reader(shp, encoding="latin1") as sf:
         for rec in sf.iterShapeRecords():
             if asukoht:
                 street, housenumber = split_address(asukoht)
-                if street in rec.record.L_AADRESS.split(' ') and housenumber in rec.record.L_AADRESS.split(' '):
+                if street in rec.record.l_aadress.split(' ') and housenumber in rec.record.l_aadress.split(' '):
                     points = rec.shape.points
                     parts = rec.shape.parts
                     # print(parts)
@@ -376,9 +378,9 @@ def get_shp_data(asukoht=None, kataster=None):
                         'type': 'Polygon',
                         'coordinates': [nodes]
                     }
-                    print('A', rec.record.L_AADRESS, json.dumps(geometry))
+                    print('A', rec.record.l_aadress, json.dumps(geometry))
             if kataster:
-                if kataster == rec.record.TUNNUS:
+                if kataster == rec.record.tunnus:
                     points = rec.shape.points
                     parts = rec.shape.parts
                     nodes = [
@@ -390,7 +392,7 @@ def get_shp_data(asukoht=None, kataster=None):
                         'type': 'Polygon',
                         'coordinates': [nodes]
                     }
-                    print('A', rec.record.TUNNUS, json.dumps(geometry))
+                    print('A', rec.record.tunnus, json.dumps(geometry))
 
 
 # Loeb katastriyksuse failist ja leiab kas on kattuvusi andmebaasi kaardiobjektidega
@@ -1416,12 +1418,13 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id):
 
 if __name__ == "__main__":
     # make_big_maps_leaflet(aasta=1824, objekt=970)
-    kaardiobjektid2geojson()
+    # kaardiobjektid2geojson()
     # read_kaardiobjekt_csv_to_db('2021')
     # geometry = get_osm_data(street='Rigas', housenumber='9', admin_level='7', country='Latvija', city='Valka')
     # geometry = get_osm_data(street='Kesk', housenumber='12')
-    # geometry = get_shp_data('Maleva 3')
-    # print(geometry)
+    geometry = get_shp_data(kataster='79517:019:0003')
+    # geometry = get_osm_data(street='Kraavikalda', housenumber='19', admin_level='9', country='Eesti', city='Tartu linn')
+    print(geometry)
     # kaardiobjekt_match_db(20938)
     # read_shp_to_db(aasta='1912') # Loeb kaardikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1800') # Kirjutab andmebaasist kaardikihi shp faili

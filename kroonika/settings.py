@@ -492,6 +492,7 @@ LOGGING = {
         'django': {
             'handlers': ['console', 'file'],
             'level': 'INFO' if DEBUG else 'WARNING',
+            "propagate": False,
         },
         'wiki': {
             'handlers': ['console', 'file'],
