@@ -85,7 +85,7 @@ class Post(models.Model):
         summary = self.body
         if summary.find('\n') > 0:
             summary = summary[:summary.find('\n')]
-        return markdownify(escape_numberdot(summary[:300]) + "...")
+        return markdownify(summary[:300] + "...")
 
 
     class Meta:
