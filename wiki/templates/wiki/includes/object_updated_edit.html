@@ -43,7 +43,7 @@
 
   {% if user.is_authenticated %}
     {% if user.is_staff %}
-      <span id="markdown-tag-object"> [{{ object }}] ([{{ object|get_model_name|lower }}_{{ object.id}}])</span>
+      <span id="markdown-tag-object"> [{{ object }}]([{{ object|get_model_name|lower }}_{{ object.id}}])</span>
     {% endif %}
   {% endif %}
 </a>

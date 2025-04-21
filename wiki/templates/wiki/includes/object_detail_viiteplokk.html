@@ -1,0 +1,7 @@
+{% load wiki_extras %}
+{% if object.formatted_markdown_viited %}
+  <i class="{% icon_viide %} icon-viide" alt="Viited"></i>
+  <div class="w3-panel w3-small text-viide">
+    {{ object.formatted_markdown_viited | safe }}
+  </div>
+{% endif %}

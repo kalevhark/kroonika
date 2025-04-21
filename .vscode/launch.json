@@ -15,6 +15,14 @@
             "django": true,
             "autoStartBrowser": false,
             "program": "${workspaceFolder}\\manage.py"
+        },
+        {
+            "name": "Django Shell",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/manage.py",
+            "args": ["shell"],
+            "django": true
         }
     ]
 }

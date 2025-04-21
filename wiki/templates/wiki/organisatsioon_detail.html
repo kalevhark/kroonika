@@ -54,6 +54,7 @@
           <div class="w3-margin-right">
             {# {{ object.formatted_markdown | safe }}#}
             {% inlineedit "object.kirjeldus" "formatted_markdown" template='inlineedit/default_formatted_markdown.html' %}
+            {% include 'wiki/includes/object_detail_viiteplokk.html' %}
           </div>
           {% include 'wiki/includes/seotud_special_links.html' %}
           {% include 'wiki/includes/object_detail_mainitud_aastatel.html' %}

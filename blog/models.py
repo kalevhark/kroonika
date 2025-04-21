@@ -7,7 +7,7 @@ from django.utils.text import slugify
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
 
-from wiki.models import escape_numberdot, add_markdownx_pildid, add_markdown_objectid
+# from wiki.models import escape_numberdot, add_markdownx_pildid, add_markdown_objectid
 
 class Category(models.Model):
     name = models.CharField(max_length=20)
@@ -67,8 +67,8 @@ class Post(models.Model):
         tekst = self.body
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
-        tekst = add_markdown_objectid(self, tekst)
-        tekst = add_markdownx_pildid(tekst)
+        # tekst = add_markdown_objectid(self, tekst)
+        # tekst = add_markdownx_pildid(tekst)
         # viite_string = add_markdownx_viited(self)
         # return markdownify(escape_numberdot(tekst) + viite_string)
         # markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
@@ -76,7 +76,8 @@ class Post(models.Model):
         #     return fix_markdownified_text(markdownified_text)
         # else:
         #     return markdownified_text
-        return markdownify(escape_numberdot(tekst))
+        # return markdownify(escape_numberdot(tekst))
+        return markdownify(tekst)
 
     # Create a property that returns the summary markdown instead
     @property

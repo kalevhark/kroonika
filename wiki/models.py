@@ -19,6 +19,7 @@ import os
 import os.path
 import re
 import string
+import uuid
 
 from django.apps import apps
 from django.conf import settings
@@ -143,17 +144,17 @@ def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_'):
 
 # Lisab numbri ja punkti vahele backslashi
 # Vajalik funktsiooni escape_numberdot jaoks
-def add_escape(matchobj):
-    leiti = matchobj.group(0)
-    return "\\".join([leiti[:-1], "."])
+# def add_escape(matchobj):
+#     leiti = matchobj.group(0)
+#     return "\\".join([leiti[:-1], "."])
 
 # Muudab teksti, et markdown ei märgistaks automaatselt nummerdatud liste
-def escape_numberdot(string):
-    # Otsime kas teksti alguses on arv ja punkt
-    string_modified = re.sub(r"(\A)(\d+)*\.", add_escape, string)
-    # Otsime kas lõigu alguses on arv ja punkt
-    string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
-    return string_modified
+# def escape_numberdot(string):
+#     # Otsime kas teksti alguses on arv ja punkt
+#     string_modified = re.sub(r"(\A)(\d+)*\.", add_escape, string)
+#     # Otsime kas lõigu alguses on arv ja punkt
+#     string_modified = re.sub(r"(\n)(\d+)*\.", add_escape, string_modified)
+#     return string_modified
 
 # Töötleb pilditagid [pilt_nnnn] piltideks
 def add_markdownx_pildid(string):
@@ -214,18 +215,45 @@ def remove_markdown_tags(obj, string):
     return string
 
 # Töötleb lingitagid [Duck Duck Go]([isik_nnnn]) linkideks
-def add_markdown_objectid(obj, string):
-    """
-    @param string:
-    @return:
-    """
-    viited = None
-    try:
-        _ = obj._meta.get_field('viited')
-        viited = obj.viited.all()
-    except FieldDoesNotExist: # Kui viited väli puudub
-        pass
+# def add_markdown_objectid(obj, string):
+#     """
+#     @param string:
+#     @return:
+#     """
+#     viited = None
+#     try:
+#         _ = obj._meta.get_field('viited')
+#         viited = obj.viited.all()
+#     except FieldDoesNotExist: # Kui viited väli puudub
+#         pass
 
+#     if viited:
+#         c = itertools.count(1)
+#         translate_viited = {
+#             f'[viide_{viide.id}]': f'[^{next(c)}]'
+#             for viide
+#             in viited
+#         }
+#         for translate_viide in translate_viited:
+#             string = string.replace(translate_viide, translate_viited[translate_viide])
+    
+    # Asendame markdown koodid linkidega objectidele
+    # pattern = re.compile(PATTERN_OBJECTS)
+    # tagid = re.finditer(pattern, string)
+    # for tag in tagid:
+    #     tekst, model_name, id = tag.groups()
+    #     pos = tag.span()[0]
+    #     model = apps.get_model('wiki', model_name)
+    #     obj = model.objects.get(id=id)
+    #     url = obj.get_absolute_url()
+    #     data_attrs = f'data-model="{model_name}" data-id="{obj.id}"'
+    #     span = f'<span id="{model_name}_{obj.id}_pos{pos}" title="{obj}" {data_attrs}>{tekst}</span>'
+    #     html = f'<a class="text-{model_name} hover-{model_name} tooltip-content" href="{url}">{span}</a>'
+    #     string = string.replace(tag[0], html, 1)
+    # return string
+
+def replace_wiki_viited_to_markdown(obj, viited):
+    kirjeldus_formatted_markdown = obj.kirjeldus
     if viited:
         c = itertools.count(1)
         translate_viited = {
@@ -234,54 +262,51 @@ def add_markdown_objectid(obj, string):
             in viited
         }
         for translate_viide in translate_viited:
-            string = string.replace(translate_viide, translate_viited[translate_viide])
-    
-    # Asendame markdown koodid linkidega objectidele
-    pattern = re.compile(PATTERN_OBJECTS)
-    tagid = re.finditer(pattern, string)
-    for tag in tagid:
-        tekst, model_name, id = tag.groups()
-        pos = tag.span()[0]
-        model = apps.get_model('wiki', model_name)
-        obj = model.objects.get(id=id)
-        url = obj.get_absolute_url()
-        data_attrs = f'data-model="{model_name}" data-id="{obj.id}"'
-        span = f'<span id="{model_name}_{obj.id}_pos{pos}" title="{obj}" {data_attrs}>{tekst}</span>'
-        html = f'<a class="text-{model_name} hover-{model_name} tooltip-content" href="{url}">{span}</a>'
-        string = string.replace(tag[0], html, 1)
-    return string
+            kirjeldus_formatted_markdown = kirjeldus_formatted_markdown.replace(translate_viide, translate_viited[translate_viide])
+    return kirjeldus_formatted_markdown
 
-# Lisab objecti tekstile markdown formaadis viited
-def add_markdownx_viited(obj):
-    viited = obj.viited.all()
+def make_wiki_viited_list(viited):
+    viiteplokk = ''
     if viited:
-        viite_string = '<i class="{% icon_viide %} icon-viide" alt="Viited"></i>'
         viitenr = 1
         for viide in viited:
-            viite_string += f'\n[^{viitenr}]: '
+            viiteplokk += f'\n[^{viitenr}]: '
             if viide.url:
-                viite_string += f'<a class="hover-viide" href="{viide.url}" target="_blank">{viide}</a>'
+                viiteplokk += f'<a class="hover-viide" href="{viide.url}" target="_blank">{viide}</a>'
             else:
-                viite_string += f'<span>{viide}</span>'
+                viiteplokk += f'<span>{viide}</span>'
             viitenr += 1
-        viite_string = f'<div class="w3-panel w3-small text-viide">{viite_string}</div>'
+        # viiteplokk = f'<div class="w3-panel w3-small text-viide">{viiteplokk}</div>'
+    return viiteplokk
+
+# Lisab objecti tekstile markdown formaadis viited tekstis ja viiteloendi
+def add_markdownx_viited(obj): 
+    viited = obj.viited.all()
+    kirjeldus = replace_wiki_viited_to_markdown(obj, viited)
+    viiteplokk = make_wiki_viited_list(viited)
+    formatted_markdown = markdownify(f'{kirjeldus}{viiteplokk}')
+    viiteploki_algus = formatted_markdown.find('<div class="footnote">')
+    if viiteploki_algus > 0:
+        kirjeldus_formatted_markdown = formatted_markdown[:viiteploki_algus]
+        viiteplokk_formatted_markdown = formatted_markdown[viiteploki_algus:]
     else:
-        viite_string = ''
-    return viite_string
+        kirjeldus_formatted_markdown = formatted_markdown
+        viiteplokk_formatted_markdown = ''
+    return (kirjeldus_formatted_markdown, viiteplokk_formatted_markdown)
 
 # Parandab markdownify renderdamise vea
-def fix_markdownified_text(text):
-    # k6rvaldame ülearuse horisontaaleraldaja
-    text = text.replace('<hr />', '')
-    # k6rvaldame vale <p> tagi algusest
-    text = text[3:]
-    # k6rvaldame vale </p> tagi
-    text = text.replace('</p>\n<div class="footnote">', '\n<div class="footnote">')
-    # k6rvaldame vigase </div> tagi
-    text = text.replace('</div>&#160;', '&#160;')
-    # lisame l6ppu </div> tagi
-    text = text + '</div>'
-    return text
+# def fix_markdownified_text(text):
+#     # k6rvaldame ülearuse horisontaaleraldaja
+#     text = text.replace('<hr />', '')
+#     # k6rvaldame vale <p> tagi algusest
+#     text = text[3:]
+#     # k6rvaldame vale </p> tagi
+#     text = text.replace('</p>\n<div class="footnote">', '\n<div class="footnote">')
+#     # k6rvaldame vigase </div> tagi
+#     text = text.replace('</div>&#160;', '&#160;')
+#     # lisame l6ppu </div> tagi
+#     text = text + '</div>'
+#     return text
 
 # map punctuation to space
 # Vajalik funktsiooni object2keywords jaoks
@@ -881,19 +906,40 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
 
     # Create a property that returns the markdown instead
     @property
-    def formatted_markdown(self):
+    def formatted_markdown_old(self):
         tekst = self.kirjeldus
         if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
             tekst = '<br>'
         tekst = add_markdown_objectid(self, tekst)
         viite_string = add_markdownx_viited(self)
-        markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+        # markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
+        markdownified_text = markdownify(tekst + viite_string)
         # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
         markdownified_text = add_markdownx_pildid(markdownified_text)
         if viite_string: # viidete puhul ilmneb markdownx viga
             markdownified_text = fix_markdownified_text(markdownified_text)
         return markdownified_text
 
+    # Create a property that returns the markdown instead
+    @property
+    def formatted_markdown(self):
+        kirjeldus_formatted_markdown, _ = add_markdownx_viited(self)
+        if len(kirjeldus_formatted_markdown) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+            kirjeldus_formatted_markdown = '<br>'
+        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+        kirjeldus_formatted_markdown = add_markdownx_pildid(kirjeldus_formatted_markdown)
+        # if viite_string: # viidete puhul ilmneb markdownx viga
+        #     markdownified_text = fix_markdownified_text(markdownified_text)
+        return kirjeldus_formatted_markdown
+    
+    # Create a property that returns the reference block in markdown
+    @property
+    def formatted_markdown_viited(self):
+        _, viiteplokk_formatted_markdown = add_markdownx_viited(self)
+        # k6rvaldame ülearuse horisontaaleraldaja
+        viiteplokk_formatted_markdown = viiteplokk_formatted_markdown.replace('<hr />', '')
+        return viiteplokk_formatted_markdown
+    
     # Tekstis MarkDown kodeerimiseks
     def markdown_tag(self):
         return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'

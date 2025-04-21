@@ -143,8 +143,8 @@
           </div>
           {% include 'wiki/includes/vigane.html' %}
           <div class="w3-margin-right">
-            {# {{ object.formatted_markdown | safe }}#}
             {% inlineedit "object.kirjeldus" "formatted_markdown" template='inlineedit/default_formatted_markdown.html' %}
+            {% include 'wiki/includes/object_detail_viiteplokk.html' %}
           </div>
           <div class="w3-row">
             {% include 'wiki/includes/object_fbshare.html' %}

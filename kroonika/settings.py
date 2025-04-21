@@ -273,6 +273,7 @@ GOOGLE_RECAPTCHA_PUBLIC_KEY = config['recaptcha']['GOOGLE_RECAPTCHA_PUBLIC_KEY']
 
 # Markdown settings https://python-markdown.github.io/extensions/index.html
 MARKDOWNX_MARKDOWN_EXTENSIONS = [
+    'wiki.markdown_custom_processors',
     'markdown.extensions.extra',
     'markdown.extensions.footnotes',
     'markdown.extensions.nl2br',
