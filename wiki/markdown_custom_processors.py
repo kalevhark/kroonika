@@ -9,7 +9,6 @@ blockprocessor WikiPiltProcessor: Teeb tekstisisesed pildid markdown jaoks sobiv
 
 from __future__ import annotations
 import re
-from turtle import ht
 import xml.etree.ElementTree as etree
 
 from django.apps import apps
