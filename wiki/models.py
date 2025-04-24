@@ -253,30 +253,28 @@ def remove_markdown_tags(obj, string):
     # return string
 
 def replace_wiki_viited_to_markdown(obj, viited):
-    kirjeldus_formatted_markdown = obj.kirjeldus
+    kirjeldus = obj.kirjeldus
     if viited:
-        c = itertools.count(1)
+        viitenr = itertools.count(1)
         translate_viited = {
-            f'[viide_{viide.id}]': f'[^{next(c)}]'
+            f'[viide_{viide.id}]': f'[^{next(viitenr)}]'
             for viide
             in viited
         }
         for translate_viide in translate_viited:
-            kirjeldus_formatted_markdown = kirjeldus_formatted_markdown.replace(translate_viide, translate_viited[translate_viide])
-    return kirjeldus_formatted_markdown
+            kirjeldus = kirjeldus.replace(translate_viide, translate_viited[translate_viide])
+    return kirjeldus
 
 def make_wiki_viited_list(viited):
     viiteplokk = ''
     if viited:
-        viitenr = 1
+        viitenr = itertools.count(1)
         for viide in viited:
-            viiteplokk += f'\n[^{viitenr}]: '
+            viiteplokk += f'\n[^{next(viitenr)}]: '
             if viide.url:
                 viiteplokk += f'<a class="hover-viide" href="{viide.url}" target="_blank">{viide}</a>'
             else:
                 viiteplokk += f'<span>{viide}</span>'
-            viitenr += 1
-        # viiteplokk = f'<div class="w3-panel w3-small text-viide">{viiteplokk}</div>'
     return viiteplokk
 
 # Lisab objecti tekstile markdown formaadis viited tekstis ja viiteloendi
@@ -285,6 +283,7 @@ def add_markdownx_viited(obj):
     kirjeldus = replace_wiki_viited_to_markdown(obj, viited)
     viiteplokk = make_wiki_viited_list(viited)
     formatted_markdown = markdownify(f'{kirjeldus}{viiteplokk}')
+    # jagame kaheks osaks, et saaks kasutada eraldi
     viiteploki_algus = formatted_markdown.find('<div class="footnote">')
     if viiteploki_algus > 0:
         kirjeldus_formatted_markdown = formatted_markdown[:viiteploki_algus]
@@ -2053,7 +2052,7 @@ class Artikkel(BaasObjectMixinModel):
         summary = self.kirjeldus
         if summary.find('\n') > 0:
             summary = summary[:summary.find('\n')]
-        return markdownify(escape_numberdot(summary[:100]) + "...")
+        return markdownify(summary[:100] + "...")
 
     @property
     def nimi(self):
@@ -2511,7 +2510,7 @@ class Kaart(BaasAddUpdateInfoModel):
         kirjeldus = '<br>'.join(
             [
                 f'<h4>{self.aasta} {self.nimi}</h4>',
-                markdownify(escape_numberdot(self.kirjeldus)),
+                markdownify(self.kirjeldus),
                 f'Allikas: {self.viited.first()}'
             ]
         )
