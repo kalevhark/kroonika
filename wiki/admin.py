@@ -414,46 +414,46 @@ class ViideAdmin(admin.ModelAdmin):
 
     # Kui palju on viitega seotud artikleid
     def seotud_artikleid(self, obj):
-        return obj.artikkel_set.count()
+        return obj.wiki_artikkel_related.count()
 
     seotud_artikleid.short_description = 'Lugusid'
 
     # Seotud artiklid
     def seotud_artiklid(self, obj):
-        id_list = list(obj.artikkel_set.values_list('id', flat=True))
+        id_list = list(obj.wiki_artikkel_related.values_list('id', flat=True))
         return ', '.join([str(el) for el in id_list])
 
     # Kui palju on viitega seotud isikuid
     def seotud_isikuid(self, obj):
-        return obj.isik_set.count()
+        return obj.wiki_isik_related.count()
 
     seotud_isikuid.short_description = 'Isikuid'
 
     # Seotud isikud
     def seotud_isikud(self, obj):
-        id_list = list(obj.isik_set.values_list('id', flat=True))
+        id_list = list(obj.wiki_isik_related.values_list('id', flat=True))
         return ', '.join([str(el) for el in id_list])
 
     # Kui palju on viitega seotud organisatsioone
     def seotud_organisatsioone(self, obj):
-        return obj.organisatsioon_set.count()
+        return obj.wiki_organisatsioon_related.count()
 
     seotud_organisatsioone.short_description = 'Asutisi'
 
     # Seotud organisatsioonid
     def seotud_organisatsioonid(self, obj):
-        id_list = list(obj.organisatsioon_set.values_list('id', flat=True))
+        id_list = list(obj.wiki_organisatsioon_related.values_list('id', flat=True))
         return ', '.join([str(el) for el in id_list])
 
     # Kui palju on viitega seotud objekte
     def seotud_objekte(self, obj):
-        return obj.objekt_set.count()
+        return obj.wiki_objekt_related.count()
 
     seotud_objekte.short_description = 'Kohti'
 
     # Seotud objektid
     def seotud_objektid(self, obj):
-        id_list = list(obj.objekt_set.values_list('id', flat=True))
+        id_list = list(obj.wiki_objekt_related.values_list('id', flat=True))
         return ', '.join([str(el) for el in id_list])
 
     # Kui palju on viitega seotud pilte
