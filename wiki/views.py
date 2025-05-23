@@ -1686,6 +1686,7 @@ def artikkel_index_archive_infinite(request):
         artiklid = paginator.page(paginator.num_pages)
     return render(request, 'wiki/artikkel_archive_infinite.html', {'artiklid': artiklid})
 
+
 class ArtikkelYearArchiveView(YearArchiveView):
     date_field = "hist_searchdate"
     context_object_name = 'artiklid'
@@ -1701,8 +1702,8 @@ class ArtikkelYearArchiveView(YearArchiveView):
             url_v6ti = request.GET.get('v6ti')
             ip = get_client_ip(request)
             path = request.path
-            if session_key != url_v6ti:
-                logger.warning(f'{session_key} != {url_v6ti}: {ip} {path}')
+            if (url_v6ti == None) or (session_key != url_v6ti):
+                logger.warning(f'session_key:{session_key} vs v6ti:{url_v6ti}: {ip} {path}')
                 base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
                 query_string =  urlencode(
                     {
@@ -1836,8 +1837,8 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
             url_v6ti = request.GET.get('v6ti')
             ip = get_client_ip(request)
             path = request.path
-            if session_key != url_v6ti:
-                logger.warning(f'{session_key} != {url_v6ti}: {ip} {path}')
+            if (url_v6ti == None) or (session_key != url_v6ti):
+                logger.warning(f'session_key:{session_key} vs v6ti:{url_v6ti}: {ip} {path}')
                 base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
                 query_string =  urlencode(
                     {
@@ -1978,8 +1979,8 @@ class ArtikkelDayArchiveView(DayArchiveView):
             url_v6ti = request.GET.get('v6ti')
             ip = get_client_ip(request)
             path = request.path
-            if session_key != url_v6ti:
-                logger.warning(f'{session_key} != {url_v6ti}: {ip} {path}')
+            if (url_v6ti == None) or (session_key != url_v6ti):
+                logger.warning(f'session_key:{session_key} vs v6ti:{url_v6ti}: {ip} {path}')
                 base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
                 query_string =  urlencode(
                     {
