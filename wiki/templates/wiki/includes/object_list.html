@@ -12,7 +12,7 @@
                 title='{{ obj }}'
                 data-model='{{ obj|get_model_name }}'
                 data-id='{{ obj.id }}'
-                id='{{ obj|get_model_name }}_{{ obj.id }}_object_list'
+                id='{{ obj|get_model_name }}_{{ obj.id }}_{% get_uuid %}'
           >
             {{ obj.kirjeldus|truncatewords:10 }}
           </span>
@@ -61,8 +61,14 @@
               {% if forloop.counter > 1 %}
                 &ensp;
               {% endif %}
-              <a class="hover-isik" href="{% url 'wiki:wiki_isik_detail' pk=isik.id slug=isik.slug %}">
-                {{ isik }}
+              <a class="hover-isik tooltip-content" href="{% url 'wiki:wiki_isik_detail' pk=isik.id slug=isik.slug %}">
+                <span
+                        title='{{ isik }}'
+                        data-model='{{ isik|get_model_name }}'
+                        data-id='{{ isik.id }}'
+                        id='{{ isik|get_model_name }}_{{ isik.id }}_{% get_uuid %}'>
+                  {{ isik }}
+                </span>
               </a>
             {% endfor %}
           {% endif %}
@@ -78,8 +84,14 @@
               {% if forloop.counter > 1 %}
                 &ensp;
               {% endif %}
-              <a class="hover-organisatsioon" href="{% url 'wiki:wiki_organisatsioon_detail' pk=organisatsioon.id slug=organisatsioon.slug %}">
-                {{ organisatsioon }}
+              <a class="hover-organisatsioon tooltip-content" href="{% url 'wiki:wiki_organisatsioon_detail' pk=organisatsioon.id slug=organisatsioon.slug %}">
+                <span
+                        title='{{ organisatsioon }}'
+                        data-model='{{ organisatsioon|get_model_name }}'
+                        data-id='{{ organisatsioon.id }}'
+                        id='{{ organisatsioon|get_model_name }}_{{ organisatsioon.id }}_{% get_uuid %}'>
+                  {{ organisatsioon }}
+                </span>
               </a>
             {% endfor %}
           {% endif %}
@@ -94,8 +106,14 @@
               {% if forloop.counter > 1 %}
                 &ensp;
               {% endif %}
-              <a class="hover-objekt" href="{% url 'wiki:wiki_objekt_detail' pk=objekt.id  slug=objekt.slug %}">
-                {{ objekt }}
+              <a class="hover-objekt tooltip-content" href="{% url 'wiki:wiki_objekt_detail' pk=objekt.id  slug=objekt.slug %}">
+                <span
+                        title='{{ objekt }}'
+                        data-model='{{ objekt|get_model_name }}'
+                        data-id='{{ objekt.id }}'
+                        id='{{ objekt|get_model_name }}_{{ objekt.id }}_{% get_uuid %}'>
+                  {{ objekt }}
+                </span>
               </a>
             {% endfor %}
           {% endif %}

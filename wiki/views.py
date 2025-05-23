@@ -2542,7 +2542,6 @@ class ObjektDetailView(generic.DetailView):
 def get_object_data4tooltip(request):
     model_name = request.GET.get('model')
     id = request.GET.get('obj_id')
-
     try:
         model = apps.get_model('wiki', model_name)
         obj = model.objects.get(id=id)
