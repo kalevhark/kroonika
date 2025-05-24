@@ -11,7 +11,7 @@
 					href="{% url 'wiki:artikkel_day_archive' year=ed|date:'Y' month=ed|date:'m' day=ed|date:'d' %}?v6ti={{ request.session.session_key }}"
 					onmouseover="hoverDate(this)"
 					onmouseout="normalDate(this)"
-					title="Mis juhtus {{ ed|date:'j.m.Y' }}?"
+					title="Mis juhtus {{ ed|date:'j.' }} {% include 'wiki/includes/kuul.html' with kuu=ed|date:'m' l6pp='l' %} {{ ed|date:'Y' }}?"
 			>
 				{{ ed|date:"j." }}
 			</a>
