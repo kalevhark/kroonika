@@ -1,10 +1,9 @@
 import base64
-from functools import reduce
-import json
-import sys
 from collections import Counter, OrderedDict
 from datetime import date, datetime, timedelta
+from functools import reduce
 from io import BytesIO
+import json
 
 import logging
 logger = logging.getLogger(__name__)
@@ -14,8 +13,10 @@ from operator import or_
 import os
 from pathlib import Path
 import pkg_resources
+import sys
 import tempfile
 from typing import Dict, Any
+from urllib.parse import urlencode
 
 from ajax_select.fields import autoselect_fields_check_can_add
 
@@ -39,7 +40,7 @@ from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMont
 from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, QueryDict
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse, reverse_lazy, resolve
 from django.utils import timezone
 from django.utils.version import get_version
 from django.views import generic
@@ -1662,8 +1663,58 @@ class ArtikkelFilterView(FilterView):
 
 
 #
-# Kronoloogia
+# Kuupäevavaated
 #
+
+# päringu tegija IP aadress
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+       ip = x_forwarded_for.split(',')[0]
+    else:
+       ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+# abifunktsioon kuupäevavaadete krabamise vastu
+# kui v6ti puudub päringuparameetrites, siis luuakse kontrollsuunamise url
+def redirect_to_recaptcha(request, *args, **kwargs):
+    if not request.user.is_authenticated:
+        session_key = request.session.session_key
+        url_v6ti = request.GET.get('v6ti')
+        ip = get_client_ip(request)
+        path = request.path
+        p2ringu_objekt = resolve(path)
+        if (url_v6ti == None) or (session_key != url_v6ti):
+            # logime kahtlase p2ringu tegemise
+            logger.warning(f'session_key:{session_key} vs v6ti:{url_v6ti}: {ip} {path}')
+            # genereerime selgituse t2psustuse
+            year = kwargs.get('year')
+            month = kwargs.get('month')
+            day = kwargs.get('day')
+            if day:
+                kuup2evastring = f'{day}. {mis_kuul(month, l6pp="l")} {year}'
+            else:
+                if month:
+                    kuup2evastring = f'{mis_kuul(month, l6pp="s")} {year}'
+                else:
+                    kuup2evastring = f'{year}. aastal'
+            selgitus = f', tahan vaadata, mis toimus {kuup2evastring}'
+            # genereerime edasisuunamise urli
+            base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
+            query_string =  urlencode(
+                {
+                    'edasi': reverse(
+                        p2ringu_objekt.view_name,
+                        kwargs=p2ringu_objekt.kwargs
+                    ),
+                    'selgitus': selgitus
+                }
+            )  # 2 edasi=/wiki/kroonika/1918/&selgitus=selgituse tekst
+            redirect_url = '{}?{}'.format(base_url, query_string)  # 3 /confirm_with_recaptcha/?edasi=/wiki/kroonika/1918/
+            return redirect_url  # 4
+            # return HttpResponseForbidden("You do not have permission to view this resource.")
+
+
 class ArtikkelArchiveIndexView(ArchiveIndexView):
     date_field = "hist_searchdate"
     # make_object_list = True
@@ -1674,6 +1725,7 @@ class ArtikkelArchiveIndexView(ArchiveIndexView):
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
 
+# kasutatakse ArtikkelArchiveIndexView vaates ajax andmete laadimiseks
 def artikkel_index_archive_infinite(request):
     artikkel_qs = Artikkel.objects.daatumitega(request)
     page = request.GET.get('page', 1)
@@ -1697,28 +1749,9 @@ class ArtikkelYearArchiveView(YearArchiveView):
     # ordering = ('hist_searchdate', 'id')
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            session_key = request.session.session_key
-            url_v6ti = request.GET.get('v6ti')
-            ip = get_client_ip(request)
-            path = request.path
-            if (url_v6ti == None) or (session_key != url_v6ti):
-                logger.warning(f'session_key:{session_key} vs v6ti:{url_v6ti}: {ip} {path}')
-                base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
-                query_string =  urlencode(
-                    {
-                        'edasi': reverse(
-                            'wiki:artikkel_year_archive',
-                            kwargs={
-                                'year': self.get_year(),
-                            }
-                        )
-                    }
-                )  # 2 edasi=/wiki/kroonika/1918/
-                url = '{}?{}'.format(base_url, query_string)  # 3 /confirm_with_recaptcha/?edasi=/wiki/kroonika/1918/
-                return redirect(url)  # 4
-                # return HttpResponseForbidden("You do not have permission to view this resource.")
-
+        redirect_url = redirect_to_recaptcha(request, *args, **kwargs) # kontrollime kas inimene v6i masin
+        if redirect_url:
+            return redirect(redirect_url)
         return super().dispatch(request, *args, **kwargs)
     
     def get_queryset(self):
@@ -1813,15 +1846,6 @@ class ArtikkelYearArchiveView(YearArchiveView):
         )
         return context
 
-def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-       ip = x_forwarded_for.split(',')[0]
-    else:
-       ip = request.META.get('REMOTE_ADDR')
-    return ip
-
-from urllib.parse import urlencode
 
 class ArtikkelMonthArchiveView(MonthArchiveView):
     date_field = 'hist_searchdate'
@@ -1832,38 +1856,17 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
     # ordering = ('hist_searchdate', 'id')
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            session_key = request.session.session_key
-            url_v6ti = request.GET.get('v6ti')
-            ip = get_client_ip(request)
-            path = request.path
-            if (url_v6ti == None) or (session_key != url_v6ti):
-                logger.warning(f'session_key:{session_key} vs v6ti:{url_v6ti}: {ip} {path}')
-                base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
-                query_string =  urlencode(
-                    {
-                        'edasi': reverse(
-                            'wiki:artikkel_month_archive',
-                            kwargs={
-                                'year': self.get_year(),
-                                'month': self.get_month()
-                            }
-                        )
-                    }
-                )  # 2 edasi=/wiki/kroonika/1918/2/
-                url = '{}?{}'.format(base_url, query_string)  # 3 /confirm_with_recaptcha/?edasi=/wiki/kroonika/1918/2/
-                return redirect(url)  # 4
-                # return HttpResponseForbidden("You do not have permission to view this resource.")
-
+        redirect_url = redirect_to_recaptcha(request, *args, **kwargs) # kontrollime kas inimene v6i masin
+        if redirect_url:
+            return redirect(redirect_url)
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         return Artikkel.objects.daatumitega(self.request)
 
     def get_context_data(self, **kwargs):
-        artikkel_qs = Artikkel.objects.daatumitega(self.request)
+        # artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
-        # context['artikkel_qs'] = artikkel_qs
 
         aasta = context['month'].year
         kuu = context['month'].month
@@ -1871,19 +1874,11 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         # Salvestame kasutaja viimase kuupäevavaliku
         self.request.session['user_calendar_view_last'] = f'{aasta}-{kuu}'
         # Samal kuul toimunud
-        # context['object_list'] = artikkel_qs.\
-        #     filter(hist_year=aasta).\
-        #     filter(Q(dob__month=kuu) | Q(doe__month=kuu) | Q(hist_month=kuu))
-        # context['object_list'] = Artikkel.objects.sel_kuul(self.request, kuu).filter(hist_year=aasta)
         context['object_list'] = \
                 Artikkel.objects.sel_kuul(self.request, kuu). \
                 intersection(Artikkel.objects.sel_aastal(self.request, aasta))
         # Leiame samal kuul teistel aastatel märgitud artiklid
         # TODO: 1) hist_year != dob.year ja 2) kui dob ja doe ei ole samal kuul
-        # sel_kuul = artikkel_qs.\
-        #     exclude(hist_year=aasta).\
-        #     filter(Q(dob__month=kuu)| Q(doe__month=kuu) | Q(hist_month=kuu))
-        # context['sel_kuul'] = sel_kuul
         context['sel_kuul'] = Artikkel.objects.sel_kuul(self.request, kuu)
         # Leiame samal kuul sündinud isikud
         isik_qs = Isik.objects.daatumitega(self.request)
@@ -1907,25 +1902,11 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
             mis_kuul(kuu),
             Isik._meta.verbose_name_plural.lower()
         )
-        # Leiame samal kuul loodud organisatsioonid
-        # organisatsioon_qs = Organisatsioon.objects.daatumitega(self.request)
-        # loodud_organisatsioonid = organisatsioon_qs.\
-        #     filter(dob__month = kuu).\
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())). \
-        #     order_by(ExtractDay('dob'))
-        # context['loodud_organisatsioonid'] = loodud_organisatsioonid
         context['loodud_organisatsioonid'] = Organisatsioon.objects.sel_kuul(self.request, kuu)
         context['loodud_organisatsioonid_pealkiri'] = '{0} loodud {1}'.format(
             mis_kuul(kuu),
             Organisatsioon._meta.verbose_name_plural.lower()
         )
-        # Leiame samal kuul avatud objektid
-        # objekt_qs = Objekt.objects.daatumitega(self.request)
-        # valminud_objektid = objekt_qs.\
-        #     filter(dob__month = kuu).\
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())). \
-        #     order_by(ExtractDay('dob'))
-        # context['valminud_objektid'] = valminud_objektid
         context['valminud_objektid'] = Objekt.objects.sel_kuul(self.request, kuu)
         context['valminud_objektid_pealkiri'] = '{0} valminud {1}'.format(
             mis_kuul(kuu),
@@ -1933,21 +1914,10 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
         )
         return context
 
+# ArtikkelMonthArchiveView teiste aastate ploki ajax laadimiseks
 def artikkel_month_archive_otheryears(request, year, month):
     start = int(request.GET.get('start', 0))
     kirjeid = 50
-    # artikkel_qs = Artikkel.objects.daatumitega(request)
-    # sel_kuul = artikkel_qs. \
-    #     exclude(hist_year=year). \
-    #     filter(Q(dob__month=month) | Q(doe__month=month) | Q(hist_month=month))
-    # sel_kuul_bydate_ids_list = artikkel_qs.filter(Q(dob__month=month) | Q(doe__month=month)).values_list('id', flat=True)
-    # sel_kuul_bymonth_ids_list = artikkel_qs.filter(dob__isnull=True, hist_month=month).values_list('id', flat=True)
-    # sel_kuul_ids = [*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list]
-    # sel_kuul_ids = (*sel_kuul_bydate_ids_list, *sel_kuul_bymonth_ids_list)
-    # kirjeid_kokku = len(sel_kuul_ids)
-    # if start > kirjeid_kokku: # kui kysitakse rohkem, kui kirjeid on
-    #     start = 0
-    # qs = artikkel_qs.filter(id__in=sel_kuul_ids)
     qs = Artikkel.objects.sel_kuul(request, month)
     kirjeid_kokku = len(qs)
     if qs.exists():
@@ -1974,30 +1944,9 @@ class ArtikkelDayArchiveView(DayArchiveView):
 
     
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            session_key = request.session.session_key
-            url_v6ti = request.GET.get('v6ti')
-            ip = get_client_ip(request)
-            path = request.path
-            if (url_v6ti == None) or (session_key != url_v6ti):
-                logger.warning(f'session_key:{session_key} vs v6ti:{url_v6ti}: {ip} {path}')
-                base_url = reverse('wiki:confirm_with_recaptcha')  # 1 /confirm_with_recaptcha/
-                query_string =  urlencode(
-                    {
-                        'edasi': reverse(
-                            'wiki:artikkel_day_archive',
-                            kwargs={
-                                'year': self.get_year(),
-                                'month': self.get_month(),
-                                'day': self.get_day()
-                            }
-                        )
-                    }
-                )  # 2 edasi=/wiki/kroonika/1918/2/12/
-                url = '{}?{}'.format(base_url, query_string)  # 3 /confirm_with_recaptcha/?edasi=/wiki/kroonika/1918/2/12/
-                return redirect(url)  # 4
-                # return HttpResponseForbidden("You do not have permission to view this resource.")
-
+        redirect_url = redirect_to_recaptcha(request, *args, **kwargs) # kontrollime kas inimene v6i masin
+        if redirect_url:
+            return redirect(redirect_url)
         return super().dispatch(request, *args, **kwargs)
     
     def get_queryset(self):
@@ -2006,7 +1955,6 @@ class ArtikkelDayArchiveView(DayArchiveView):
     def get_context_data(self, **kwargs):
         artikkel_qs = Artikkel.objects.daatumitega(self.request)
         context = super().get_context_data(**kwargs)
-        # context['artikkel_qs'] = artikkel_qs
 
         # Milline kuupäevavalik tehti
         context_day = context['day']
@@ -2023,8 +1971,6 @@ class ArtikkelDayArchiveView(DayArchiveView):
         context['sel_p2eval'] = inrange_dates_artikkel(
             artikkel_qs, p2ev, kuu
         )  # hist_date < KKPP <= hist_enddate
-        # sel_p2eval = sel_p2eval_inrange
-        # context['sel_p2eval'] = sel_p2eval
         # Leiame samal kuupäeval sündinud isikud
         isik_qs = Isik.objects.daatumitega(self.request)
         syndinud_isikud = isik_qs.\
@@ -2917,6 +2863,8 @@ def get_qrcode_from_uri(request):
 from wiki.forms import ConfirmForm
 
 def confirm_with_recaptcha(request):
+    edasi = request.GET.get('edasi') # link kuhu p2rast kontrolli suunatakse
+    selgitus = request.GET.get('selgitus') # selgitustekst kontrollivaates
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         form = ConfirmForm(request.POST)
@@ -2930,7 +2878,6 @@ def confirm_with_recaptcha(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        edasi = request.GET.get('edasi')
         form = ConfirmForm()
 
 
@@ -2939,6 +2886,7 @@ def confirm_with_recaptcha(request):
         "wiki/confirm_with_recaptcha.html", 
         {
             "form": form,
-            'edasi': edasi
+            'edasi': edasi,
+            'selgitus': selgitus
         }
     )

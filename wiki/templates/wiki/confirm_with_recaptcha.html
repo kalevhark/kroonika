@@ -24,13 +24,16 @@
 					{{ form.recaptcha.errors }}
 				</div>
 			{% endif %} {% endcomment %}
-
 			Ole hea ja kinnita, et päringu {{ edasi }} tegid Sina:
 			{% comment %} <div class="d-none">
 					{{ form.recaptcha }}
 			</div> {% endcomment %}
-			<button type="submit" class="btn btn-primary">Jah</button>
-			<p><small>Suur tänu, et aitad agressiivsete veebirobotite vastu võidelda!</small></p>
+			<p><button type="submit" class="w3-button w3-round background-artikkel w3-text-white">Jah{{ selgitus }}</button></p>
+			<p><small>
+				Agressiivsed veebirobotid teevad tuhandeid päringuid tunnis ja kurnavad sellega veebiliiklust.<br>
+				Aeg-ajalt on vaja inimese kinnitust, et päringu tegi inimene, mitte masin.<br>
+				Suur tänu abi eest!
+			</small></p>
 		</form>
 	</div>
 {% endblock %}
