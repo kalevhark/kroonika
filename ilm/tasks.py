@@ -279,7 +279,9 @@ def update_uncomplete_observations(path='', verbose=False):
                 print(observation_time, 'ebatäielikud andmed', record['id'])
                 # 11322 2004-05-01 06:00:00+00:00
 
-                ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
+                # ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
+                ilm_observation_veebist = utils.ilmaandmed_apist(observation_time)
+
                 if ilm_observation_veebist and (ilm_observation_veebist['airtemperature'] != None):
                     id = insert_new_observations(ilm_observation_veebist, path)
                     print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
@@ -332,7 +334,8 @@ def update_missing_observations(path='', verbose=False):
         for timestamp in timestamp_missing_records:
             observation_time = timestamp
             print(observation_time, 'puuduvad andmed')
-            ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
+            # ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
+            ilm_observation_veebist = utils.ilmaandmed_apist(observation_time)
             if ilm_observation_veebist and (ilm_observation_veebist['airtemperature'] != None):
                 id = insert_new_observations(ilm_observation_veebist, path)
                 print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
