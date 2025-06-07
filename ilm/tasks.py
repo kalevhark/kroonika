@@ -692,7 +692,8 @@ def update_lasthours(path, verbose=False, hours=72):
         observation = check_observation_exists(observation_time, path)
         # print(observation_time, end=': ')
         if not observation:
-            ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
+            # ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
+            ilm_observation_veebist = utils.ilmaandmed_apist(observation_time)
             # print(ilm_observation_veebist)
             if ilm_observation_veebist:
                 id = insert_new_observations(ilm_observation_veebist, path)

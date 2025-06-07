@@ -325,6 +325,98 @@ def get_maxmin_airtemperature(dt_utc):
         print(error)
     return maxmin_data
 
+import pandas as pd
+# Ilmateenistuse etteantud täistunni mõõtmise andmed APIst
+# https://ilmmicroservice.envir.ee/api_doc/
+def ilmaandmed_apist(dt, verbose=False):
+    """
+    Tagastab etteantud dt (aware v6i naive) viimase möödunud täistunni ilmaandmed
+    ilmateenistus.ee veebilehelt
+    """
+    if dt.tzinfo == None:
+        aware_from_dt = dt.astimezone(tz=ZoneInfo('Europe/Tallinn'))
+    else:
+        aware_from_dt = dt
+    
+    jaam = 'Valga'
+    # NB! päringuks vajalik UTC aeg
+    utc_datetime = aware_from_dt.astimezone(timezone.utc)
+
+    url_observation_data_hourly = "https://publicapi.envir.ee/v1/combinedWeatherData/observationDataHourly"
+    url_observation_temperature_extremums = "https://publicapi.envir.ee/v1/temperature/observationTemperatureExtremums" # temp min max
+
+    headers = {"accept": "application/json"}
+    payload = {
+        'date': utc_datetime.strftime("%Y-%m-%d"),
+        'hour': utc_datetime.strftime("%H")
+    }
+    
+    response = requests.get(
+        url_observation_data_hourly, 
+        headers=headers,
+        params=payload
+    )
+    data = response.json()
+    
+    entries = data['entries']['entry']
+    entries_filtered = [entry for entry in entries if entry.get('Jaam') == jaam]
+    data_observation_data_hourly = entries_filtered[0]
+    if verbose:
+        print(data_observation_data_hourly)
+
+    response = requests.get(
+        url_observation_temperature_extremums, 
+        headers=headers,
+        params=payload
+    )
+    data = response.json()
+
+    entries = data['entries']['entry']
+    entries_filtered = [entry for entry in entries if entry.get('Jaam') == jaam]
+    data_observation_temperature_extremums = entries_filtered[0]
+    if verbose:
+        print(data_observation_temperature_extremums)
+
+    import locale
+    locale.setlocale(locale.LC_NUMERIC, "et_EE.UTF-8")
+    # locale.atof(tains)
+    
+    ilmaandmed = {}
+    ilmaandmed['airtemperature'] = locale.atof(data_observation_data_hourly['tains']) # Õhutemperatuur, 1 m keskmine
+    ilmaandmed['relativehumidity'] = locale.atof(data_observation_data_hourly['rhins']) # Suhteline õhuniiskus
+    ilmaandmed['airpressure'] = locale.atof(data_observation_data_hourly['qffins']) # Õhurõhk merepinnal
+    ilmaandmed['airpressure_delta'] = locale.atof(data_observation_data_hourly['qffmuutus']) # Õhurõhk merepinnal
+    ilmaandmed['winddirection'] = locale.atof(data_observation_data_hourly['wd10ma']) # Tuule suund, 10 m valdav kraad
+    ilmaandmed['windspeedmax'] = locale.atof(data_observation_data_hourly['ws1hx']) # Tuule kiirus, 1 h maksimum
+    ilmaandmed['cloudiness'] = data_observation_data_hourly['ccins'] # Üldpilvisus 1 m avg manuaalvaatlus
+    ilmaandmed['phenomenon'] = data_observation_data_hourly['pw15maEst'] # Tuule kiirus, 1 h maksimum
+    ilmaandmed['phenomenon_observer'] = data_observation_data_hourly['pwm15maEst'] # Nähtus 15 min avg manuaalvaatlus Est
+    ilmaandmed['precipitations'] = locale.atof(data_observation_data_hourly['pr1hs']) # Sademed, 1 h summa (näha kodukal)
+    ilmaandmed['visibility'] = locale.atof(data_observation_data_hourly['vis1ma']) # Nähtavuskaugus, 1 m keskmine
+    # 'airtemperature': 20.4,	'tains': '20,4',	Õhutemperatuur, 1 m keskmine
+    # 'relativehumidity': 53.0,	'rhins': '53.0',	Suhteline õhuniiskus
+    # 'airpressure': 1009.5,	'qffins': '1009,5',	Õhurõhk merepinnal
+    # 'airpressure_delta': -0.9,	'qffmuutus': '-0,9',	Õhurõhk merepinnal
+    # 'winddirection': 201.0,	'wd10ma': '201.0',	Tuule suund, 10 m valdav kraad
+    # 'windspeed': 4.4,	'ws10ma': '4,4',	Tuule kiirus 10 min avg
+    # 'windspeedmax': 9.3,	'ws1hx': '9,3',	Tuule kiirus, 1 h maksimum
+    # 'cloudiness': None,	'ccins': None,	Üldpilvisus 1 m avg manuaalvaatlus
+    # 'phenomenon': 'nähtusteta',	'pw15maEst': 'nähtusteta',	Nähtus 15 min avg Est
+    # 'phenomenon_observer': '',	'pwm15maEst': None,	Nähtus 15 min avg manuaalvaatlus Est
+    # 'precipitations': 0.0,	'pr1hs': '0,0',	Sademed, 1 h summa (näha kodukal)
+    # 'visibility': 28.0,	'vis1ma': '28,0'	Nähtavuskaugus, 1 m keskmine
+    ilmaandmed['airtemperature_max'] = locale.atof(data_observation_temperature_extremums['ta1hx']) # õhutemperatuur 1 h max
+    ilmaandmed['airtemperature_min'] = locale.atof(data_observation_temperature_extremums['ta1hm']) # õhutemperatuur 1 h min
+    # 'airtemperature_max': 20.8,	'ta1hx': '20,8'	õhutemperatuur 1 h max
+    # 'airtemperature_min': 19.0	'ta1hm': '19,0',	õhutemperatuur 1 h min
+    ilmaandmed['station_id'] = 1
+    ilmaandmed['timestamp'] = aware_from_dt
+    # 'station_id': 1,
+    # 'timestamp': datetime.datetime(2025, 6, 7, 17, 0, tzinfo=<DstTzInfo 'Europe/Tallinn' EEST+3:00:00 DST>),
+    if verbose:
+        print(dt, ilmaandmed)
+    return ilmaandmed
+
 # Ilmateenistuse etteantud täistunni mõõtmise andmed veebist
 def ilmaandmed_veebist(dt, verbose=False):
     """
