@@ -3,6 +3,10 @@ from configparser import ConfigParser
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 import json
+
+import locale
+locale.setlocale(locale.LC_NUMERIC, "et_EE.UTF-8")
+
 import os
 import re
 import urllib.request, urllib.error
@@ -106,7 +110,7 @@ def utc2eesti_aeg(dt):
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
 def float_or_none(value):
     try:
-        return float(value)
+        return locale.atof(value)
     except:
         return None
 
@@ -325,7 +329,6 @@ def get_maxmin_airtemperature(dt_utc):
         print(error)
     return maxmin_data
 
-import pandas as pd
 # Ilmateenistuse etteantud täistunni mõõtmise andmed APIst
 # https://ilmmicroservice.envir.ee/api_doc/
 def ilmaandmed_apist(dt, verbose=False):
@@ -376,23 +379,19 @@ def ilmaandmed_apist(dt, verbose=False):
     data_observation_temperature_extremums = entries_filtered[0]
     if verbose:
         print(data_observation_temperature_extremums)
-
-    import locale
-    locale.setlocale(locale.LC_NUMERIC, "et_EE.UTF-8")
-    # locale.atof(tains)
     
     ilmaandmed = {}
-    ilmaandmed['airtemperature'] = locale.atof(data_observation_data_hourly['tains']) # Õhutemperatuur, 1 m keskmine
-    ilmaandmed['relativehumidity'] = locale.atof(data_observation_data_hourly['rhins']) # Suhteline õhuniiskus
-    ilmaandmed['airpressure'] = locale.atof(data_observation_data_hourly['qffins']) # Õhurõhk merepinnal
-    ilmaandmed['airpressure_delta'] = locale.atof(data_observation_data_hourly['qffmuutus']) # Õhurõhk merepinnal
-    ilmaandmed['winddirection'] = locale.atof(data_observation_data_hourly['wd10ma']) # Tuule suund, 10 m valdav kraad
-    ilmaandmed['windspeedmax'] = locale.atof(data_observation_data_hourly['ws1hx']) # Tuule kiirus, 1 h maksimum
+    ilmaandmed['airtemperature'] = float_or_none(data_observation_data_hourly['tains']) # Õhutemperatuur, 1 m keskmine
+    ilmaandmed['relativehumidity'] = float_or_none(data_observation_data_hourly['rhins']) # Suhteline õhuniiskus
+    ilmaandmed['airpressure'] = float_or_none(data_observation_data_hourly['qffins']) # Õhurõhk merepinnal
+    ilmaandmed['airpressure_delta'] = float_or_none(data_observation_data_hourly['qffmuutus']) # Õhurõhk merepinnal
+    ilmaandmed['winddirection'] = float_or_none(data_observation_data_hourly['wd10ma']) # Tuule suund, 10 m valdav kraad
+    ilmaandmed['windspeedmax'] = float_or_none(data_observation_data_hourly['ws1hx']) # Tuule kiirus, 1 h maksimum
     ilmaandmed['cloudiness'] = data_observation_data_hourly['ccins'] # Üldpilvisus 1 m avg manuaalvaatlus
     ilmaandmed['phenomenon'] = data_observation_data_hourly['pw15maEst'] # Tuule kiirus, 1 h maksimum
     ilmaandmed['phenomenon_observer'] = data_observation_data_hourly['pwm15maEst'] # Nähtus 15 min avg manuaalvaatlus Est
-    ilmaandmed['precipitations'] = locale.atof(data_observation_data_hourly['pr1hs']) # Sademed, 1 h summa (näha kodukal)
-    ilmaandmed['visibility'] = locale.atof(data_observation_data_hourly['vis1ma']) # Nähtavuskaugus, 1 m keskmine
+    ilmaandmed['precipitations'] = float_or_none(data_observation_data_hourly['pr1hs']) # Sademed, 1 h summa (näha kodukal)
+    ilmaandmed['visibility'] = float_or_none(data_observation_data_hourly['vis1ma']) # Nähtavuskaugus, 1 m keskmine
     # 'airtemperature': 20.4,	'tains': '20,4',	Õhutemperatuur, 1 m keskmine
     # 'relativehumidity': 53.0,	'rhins': '53.0',	Suhteline õhuniiskus
     # 'airpressure': 1009.5,	'qffins': '1009,5',	Õhurõhk merepinnal
@@ -405,8 +404,8 @@ def ilmaandmed_apist(dt, verbose=False):
     # 'phenomenon_observer': '',	'pwm15maEst': None,	Nähtus 15 min avg manuaalvaatlus Est
     # 'precipitations': 0.0,	'pr1hs': '0,0',	Sademed, 1 h summa (näha kodukal)
     # 'visibility': 28.0,	'vis1ma': '28,0'	Nähtavuskaugus, 1 m keskmine
-    ilmaandmed['airtemperature_max'] = locale.atof(data_observation_temperature_extremums['ta1hx']) # õhutemperatuur 1 h max
-    ilmaandmed['airtemperature_min'] = locale.atof(data_observation_temperature_extremums['ta1hm']) # õhutemperatuur 1 h min
+    ilmaandmed['airtemperature_max'] = float_or_none(data_observation_temperature_extremums['ta1hx']) # õhutemperatuur 1 h max
+    ilmaandmed['airtemperature_min'] = float_or_none(data_observation_temperature_extremums['ta1hm']) # õhutemperatuur 1 h min
     # 'airtemperature_max': 20.8,	'ta1hx': '20,8'	õhutemperatuur 1 h max
     # 'airtemperature_min': 19.0	'ta1hm': '19,0',	õhutemperatuur 1 h min
     ilmaandmed['station_id'] = 1
