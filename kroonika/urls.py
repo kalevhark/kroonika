@@ -62,6 +62,7 @@ urlpatterns = [
     # path('valga438/', specials.special_valga438, name='special_valga438'),
     # path('valga439/', specials.special_valga439, name='special_valga439'),
     # path('valga440/', specials.special_valga440, name='special_valga440'),
+    path('valga441/', specials.special_valga441, name='special_valga441'),
     # path('j6ul2020/', specials.special_j6ul2020, name='special_j6ul2020'),
     # path('j6ul2021/', specials.special_j6ul2021, name='special_j6ul2021'),
     # path('j6ul2022/', specials.special_j6ul2022, name='special_j6ul2022'),

@@ -1,0 +1,80 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block src %}
+{% endblock %}
+
+{% block title %}{{ block.super }} - Valga 441!{% endblock %}
+
+{% block css %}
+  <style>
+    .title-440 {
+      text-align: center;
+      padding-top: 0.5em;
+      padding-bottom: 0.5em;
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+    }
+    .pilt-detail-440 {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      /*padding: 5px;*/
+      max-width: 100%;
+    }
+    div.image-wrapper {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      -webkit-transform: translate(-50%, -50%);
+    }
+
+    .image-wrapper img {
+      display: block;
+    }
+  </style>
+{% endblock %}
+
+{% block og_image %}
+  <meta property="og:image" content="{% static 'wiki/img/special/VaMF2667_10-N_resized_text.png' %}" />
+{% endblock %}
+
+{% block content %}
+  {% with caption="Supelbassein Pedeli ääres. Taga näha Ramsi veski. (VaM F 2667:10/N); Valga Muuseum (koloreeritud hotpot.ai abil)" %}
+    <div class="w3-container image-wrapper pyro">
+      <div class="before"></div>
+      <h3 class="text-artikkel w3-round title-440">
+        Valga linn 441 - Palju õnne!
+      </h3>
+      <img
+          src="{% static 'wiki/img/special/VaMF2667_10-N_resized_text.png' %}"
+          alt="{{ caption }}"
+          title="{{ caption }}"
+          class="pilt-detail-440"
+          style="width:100%"
+      >
+
+      <div
+          style="font-family: 'Just Another Hand', cursive; text-align: center;"
+          id="txtHolder"
+          class="w3-hide-large"
+      >
+      </div>
+
+      <p style="text-align: center;">
+        {{ caption }}
+      </p>
+      {% include 'wiki/includes/object_fbshare.html' %}
+      <div class="after"></div>
+    </div>
+  {% endwith %}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}
