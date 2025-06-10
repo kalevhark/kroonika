@@ -63,7 +63,7 @@
         markdownTag.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-markdown-tag");
         if (slides.length > 1) {
           var numberText = document.getElementById("numbertext");
-          numberText.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-itemnr") + " / {{ pildid.count }}";
+          numberText.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-itemnr") + " / " + slides.length;
         }
       }
 
