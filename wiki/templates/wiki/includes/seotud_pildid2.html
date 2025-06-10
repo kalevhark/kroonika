@@ -114,9 +114,8 @@
         captionText.innerHTML = pildirida[slideIndex-1].alt;
         markdownTag.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-markdown-tag");
         if (slides.length > 1) {
-          var pildidCount = {{ pildid.count }}
           var numberText = document.getElementById("numbertext");
-          numberText.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-itemnr") + " / " + pildidCount;
+          numberText.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-itemnr") + " / " + slides.length;
         }
       }
 
