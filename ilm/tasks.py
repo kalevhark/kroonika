@@ -78,7 +78,6 @@ def get_maxtimestamp(path=''):
 
         row = cur.fetchone()
         # d = pytz.timezone('Europe/Tallinn').localize(datetime.now())
-
         # while row is not None:
         #     # print(row[0], (d - row[0]).seconds)
         #     row = cur.fetchone()
@@ -128,7 +127,6 @@ def check_observation_exists(dt, path=''):
         params = utils.config(path)
         conn = psycopg2.connect(**params)
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        # cur = conn.cursor()
         condition_y = f"date_part('year', timestamp) = {dt.year}"
         condition_m = f"date_part('month', timestamp) = {dt.month}"
         condition_d = f"date_part('day', timestamp) = {dt.day}"
@@ -190,7 +188,6 @@ def insert_new_observations(observation_dict, path=''):
     # Moodustame veergude loendi
     cols = [key for key in observation_dict]
     cols_str = ', '.join(cols)
-    # vals = [observation_dict[col] for col in cols]
     vals_str = ", ".join([f"%({col})s" for col in cols])
     sql = f"INSERT INTO ilm_ilm ({cols_str}) VALUES ({vals_str}) RETURNING id;"
 
@@ -260,10 +257,6 @@ def update_uncomplete_observations(path='', verbose=False):
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         # leiame jooksva aasta ilma õhutemperatuuri näiduta read
         cur.execute("SELECT id, timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) AND airtemperature IS NULL;")
-        # leiame kõik ilma õhutemperatuuri näiduta read
-        # cur.execute(
-        #     "SELECT id, timestamp FROM ilm_ilm WHERE airtemperature IS NULL;"
-        # )
         # get the number of uncomplete rows
         rows_uncomplete = cur.rowcount
         for record in cur:
@@ -314,10 +307,6 @@ def update_missing_observations(path='', verbose=False):
         conn = psycopg2.connect(**params)
         # create a new cursor
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        # leiame kõik kuupäevaread
-        # cur.execute(
-        #     "SELECT timestamp FROM ilm_ilm ORDER BY timestamp ASC;"
-        # )
         # leiame kõik kuupäevaread köesoleval aastal
         cur.execute(
             "SELECT timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) ORDER BY timestamp ASC;"
@@ -334,7 +323,6 @@ def update_missing_observations(path='', verbose=False):
         for timestamp in timestamp_missing_records:
             observation_time = timestamp
             print(observation_time, 'puuduvad andmed')
-            # ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
             ilm_observation_veebist = utils.ilmaandmed_apist(observation_time)
             if ilm_observation_veebist and (ilm_observation_veebist['airtemperature'] != None):
                 id = insert_new_observations(ilm_observation_veebist, path)
@@ -695,9 +683,7 @@ def update_lasthours(path, verbose=False, hours=72):
         observation = check_observation_exists(observation_time, path)
         # print(observation_time, end=': ')
         if not observation:
-            # ilm_observation_veebist = utils.ilmaandmed_veebist(observation_time)
             ilm_observation_veebist = utils.ilmaandmed_apist(observation_time)
-            # print(ilm_observation_veebist)
             if ilm_observation_veebist:
                 id = insert_new_observations(ilm_observation_veebist, path)
                 if verbose:
@@ -712,7 +698,6 @@ def update_lasthours(path, verbose=False, hours=72):
 def update_forecast_logs(path='', verbose=False):
     yAPI = utils.YrnoAPI()
     y = yAPI.yrno_forecasts
-    # o = utils.owm_onecall()
     i = utils.ilmateenistus_forecast()
 
     for forecast_hour in [6, 12, 24]: # Salvestame 6, 12, 24 h prognoosid
@@ -727,17 +712,6 @@ def update_forecast_logs(path='', verbose=False):
         if y_data:
             y_temp = y_data['temperature']
             y_prec = y_data['precipitation']
-
-        # openweathermaps.org
-        # o_temp = None
-        # o_prec = None
-        # o_data = o['forecast'].get(str(ref_dt), None)
-        # if o_data:
-        #     o_temp = o_data['temp']
-        #     try:
-        #         o_prec = o_data['rain']['1h']
-        #     except:
-        #         o_prec = '0.0'
 
         # ilmateenistus.ee
         i_temp = None
@@ -759,18 +733,6 @@ def update_forecast_logs(path='', verbose=False):
         with open(f'logs/forecast_{forecast_hour}h.log', 'a') as f:
             f.write(line + '\n')
 
-# def update_lasthour_log(path='', verbose=False):
-#     now = datetime.now()
-#     observation_time = datetime(now.year, now.month, now.day, now.hour)
-#     observation = check_observation_exists(observation_time, path)
-#     if observation:
-#         with open('logs/observations.log', 'a') as f:
-#             time = str(int(datetime.timestamp(observation['timestamp'])))
-#             temp = str(observation['airtemperature'])
-#             prec = str(observation['precipitations'])
-#             line = ';'.join([time, temp, prec])
-#             f.write(line + '\n')
-
 def make_observations_log(path=''):
     observations = get_observations(datetime.fromtimestamp(1593687600), path) # alates datetime.datetime(2020, 7, 2, 14, 0)
     if observations:
@@ -790,7 +752,6 @@ def update_forecast_log_analyze():
 
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
-    # path = UTIL_DIR
     verbose = True
     now = datetime.now()
 
@@ -807,7 +768,7 @@ if __name__ == '__main__':
         request.user = AnonymousUser()
         views.get_mixed_ilmateade(request)
 
-    if now.minute == 10: # iga tunni 10. minutil
+    if now.hour == 5: # iga p2ev kell 5
         # Kustutame duplikaatread
         rows_deleted = delete_duplicate_observations(path, verbose)
 
@@ -816,6 +777,7 @@ if __name__ == '__main__':
         rows_missing = update_missing_observations(path, verbose)
         update_lasthours(path, verbose, hours=72)
 
+    if now.minute == 10: # iga tunni 10. minutil
         # Tabelid mahukate arvutuste jaoks
         update_maxmin_rolling(path)
 
@@ -823,7 +785,6 @@ if __name__ == '__main__':
         update_forecast_logs(path, verbose)
 
         # Viimase täistunnimõõtmise logimine faili
-        # update_lasthour_log(path, verbose)
         make_observations_log(path) # uus variant
 
         # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
