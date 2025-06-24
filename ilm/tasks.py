@@ -768,7 +768,7 @@ if __name__ == '__main__':
         request.user = AnonymousUser()
         views.get_mixed_ilmateade(request)
 
-    if now.hour == 5: # iga p2ev kell 5
+    if now.hour == 4: # iga p2ev kell 5
         # Kustutame duplikaatread
         rows_deleted = delete_duplicate_observations(path, verbose)
 
