@@ -768,11 +768,13 @@ if __name__ == '__main__':
         request.user = AnonymousUser()
         views.get_mixed_ilmateade(request)
 
-    if now.hour == 2: # iga p2ev kell 2
-        # Kustutame duplikaatread
-        rows_deleted = delete_duplicate_observations(path, verbose)
+    # if now.hour == 2: # iga p2ev kell 2
+    #     # Kustutame duplikaatread
+    #     rows_deleted = delete_duplicate_observations(path, verbose)
 
     if now.minute == 10: # iga tunni 10. minutil
+        # Kustutame duplikaatread
+        rows_deleted = delete_duplicate_observations(path, verbose)
         # Täiendame puudulikke kirjeid
         rows_updated = update_uncomplete_observations(path, verbose)
         rows_missing = update_missing_observations(path, verbose)
