@@ -777,10 +777,9 @@ if __name__ == '__main__':
         rows_updated = update_uncomplete_observations(path, verbose)
         rows_missing = update_missing_observations(path, verbose)
     
-    if now.hour == 4: # iga p2ev kell 4
+    if now.minute == 10: # iga tunni 10. minutil
         update_lasthours(path, verbose, hours=72)
 
-    if now.minute == 10: # iga tunni 10. minutil
         # Tabelid mahukate arvutuste jaoks
         update_maxmin_rolling(path)
 
