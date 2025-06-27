@@ -19,6 +19,8 @@
       <span style="color:red;">{{ hidden_field.errors }}</span>
       {{ hidden_field }}
     {% endfor %}
+    <button type="submit" class="btn btn-sm btn-link">&check;</button>
+    <button type="reset" class="btn btn-sm btn-link"  onClick="inlineedit_exit_editing(this)">&cross;</button>
     {% for field in form.visible_fields %}
       <span style="color:red;">{{ field.errors }}</span>
       <span class="inlineedit-field">{{ field }}</span>
@@ -26,8 +28,7 @@
         <small><br>{{ field.help_text | safe }}</small>
       {% endif %}
     {% endfor %}
-    <button type="submit" class="btn btn-sm btn-link">&check;</button>
-    <button type="reset" class="btn btn-sm btn-link"  onClick="inlineedit_exit_editing(this)">&cross;</button>
+    
   </form>
   {{ form.media }}
 
