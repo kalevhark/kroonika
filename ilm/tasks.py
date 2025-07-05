@@ -244,7 +244,7 @@ def delete_duplicate_observations(path='', verbose=False):
     return rows_deleted
 
 # Täiendab puudulikud kirjed, millel puudub õhutemperatuurinäit
-def update_uncomplete_observations(path='', verbose=False):
+def update_uncomplete_observations(path='', days=30, verbose=False):
     conn = None
     rows_uncomplete = 0
     rows_updated = 0
@@ -268,7 +268,7 @@ def update_uncomplete_observations(path='', verbose=False):
             # ])
             observation_time = record['timestamp']
             timegap = now - datetime(observation_time.year, observation_time.month, observation_time.day)
-            if timegap < timedelta(days=30): # kui vigased andmed on viimase kuu jooksul
+            if timegap < timedelta(days=days): # kui vigased andmed on viimase kuu jooksul
                 print(observation_time, 'ebatäielikud andmed', record['id'])
                 # 11322 2004-05-01 06:00:00+00:00
 
@@ -296,7 +296,7 @@ def update_uncomplete_observations(path='', verbose=False):
     return rows_updated
 
 # Täiendab puudulikud kirjed, millel puudub õhutemperatuurinäit
-def update_missing_observations(path='', verbose=False):
+def update_missing_observations(path='', days=30, verbose=False):
     conn = None
     rows_updated = 0
     timestamp_missing_records = []
@@ -322,14 +322,16 @@ def update_missing_observations(path='', verbose=False):
 
         for timestamp in timestamp_missing_records:
             observation_time = timestamp
-            print(observation_time, 'puuduvad andmed')
-            ilm_observation_veebist = utils.ilmaandmed_apist(observation_time)
-            if ilm_observation_veebist and (ilm_observation_veebist['airtemperature'] != None):
-                id = insert_new_observations(ilm_observation_veebist, path)
-                print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
-                rows_updated += 1
-            else:
-                print(f'{observation_time} uuendamine ebaõnnestus')
+            timegap = now - datetime(observation_time.year, observation_time.month, observation_time.day)
+            if timegap < timedelta(days=days): # kui vigased andmed on viimase kuu jooksul
+                print(observation_time, 'puuduvad andmed')
+                ilm_observation_veebist = utils.ilmaandmed_apist(observation_time)
+                if ilm_observation_veebist and (ilm_observation_veebist['airtemperature'] != None):
+                    id = insert_new_observations(ilm_observation_veebist, path)
+                    print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+                    rows_updated += 1
+                else:
+                    print(f'{observation_time} uuendamine ebaõnnestus')
 
         # Commit the changes to the database
         conn.commit()
@@ -752,6 +754,7 @@ def update_forecast_log_analyze():
 
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
+    days = 30 # kontrollime viimase kuu andmeid
     verbose = True
     now = datetime.now()
 
@@ -776,8 +779,8 @@ if __name__ == '__main__':
         # Kustutame duplikaatread
         rows_deleted = delete_duplicate_observations(path, verbose)
         # Täiendame puudulikke kirjeid
-        rows_updated = update_uncomplete_observations(path, verbose)
-        rows_missing = update_missing_observations(path, verbose)
+        rows_updated = update_uncomplete_observations(path, days=days, verbose=verbose)
+        rows_missing = update_missing_observations(path, days=days, verbose=verbose)
         update_lasthours(path, verbose, hours=72)
 
         # Tabelid mahukate arvutuste jaoks
