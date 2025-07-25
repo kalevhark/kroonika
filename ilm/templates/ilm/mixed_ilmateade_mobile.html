@@ -72,6 +72,7 @@
         {% endfor %}
       </table>
       <div class="w3-row w3-padding">
+        Mõõtmised: <a href="https://ilmateenistus.ee/" class="text-yellow-900 hover:underline">ilmateenistus.ee</a><br>
         Prognoos: <a href="https://www.ilmateenistus.ee/ilm/prognoosid/asukoha-prognoos/?coordinates=57.776678;26.030958" target="_blank">ilmateenistus.ee</a>
       </div>
     </div>
@@ -97,34 +98,15 @@
             <td class="rain {{ data.y_prec_color }}">{{ data.y_prec }}</td>
           </tr>
         {% endfor %}
-{#        {% for day in weather.daily %}#}
-{#          <tr>#}
-{#            <td>{{ day.dt|timestamp_to_time|date:"d.m" }}</td>#}
-{#            <td class="temperature">#}
-{#              <span class="temperature colored-{% if day.temp.min > 0 %}positive{% else %}negative{% endif %}">{{ day.temp.min|floatformat:1 }}</span>#}
-{#              -#}
-{#              <span class="temperature colored-{% if day.temp.max > 0 %}positive{% else %}negative{% endif %}">{{ day.temp.max|floatformat:1 }}</span>#}
-{#              °C#}
-{#            </td>#}
-{#            <td class="rain {{ day.precipitation_color }}">{{ day.rain|floatformat:1 }}</td>#}
-{#            <td>{{ day.kirjeldus }}</td>#}
-{#            <td>#}
-{#              <img#}
-{#                src="https://openweathermap.org/themes/openweathermap/assets/vendor/owm/img/widgets/{{ day.weather.0.icon }}.png"#}
-{#                alt="{{ day.weather.0.description }}"#}
-{#                width="32" height="32"#}
-{#              />#}
-{#            </td>#}
-{#          </tr>#}
-{#        {% endfor %}#}
       </table>
-      <div class="w3-row w3=padding">
+      <div class="w3-row w3-padding">
+        Mõõtmised: <a href="https://ilmateenistus.ee/" class="text-yellow-900 hover:underline">ilmateenistus.ee</a><br>
         Prognoos: <a href="https://www.yr.no/en/forecast/daily-table/2-587876/Estonia/Valgamaa/Valga%20vald/Valga" target="_blank">yr.no</a>
       </div>
     </div>
   </section>
 </article>
 
-<footer class="my-8 text-center">
+{% comment %} <footer class="my-8 text-center">
   Mõõtmised: <a href="https://ilmateenistus.ee/" class="text-yellow-900 hover:underline">ilmateenistus.ee</a>
-</footer>
+</footer> {% endcomment %}
