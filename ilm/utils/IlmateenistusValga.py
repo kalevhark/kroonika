@@ -8,7 +8,7 @@ from astral.sun import sun
 from bs4 import BeautifulSoup
 from django.db import connection
 from django.db.models import Sum, Count, Avg, Min, Max
-# from lxml import etree
+import numpy as np
 import xml.etree.ElementTree as ET
 import pytz
 from pytz import timezone
@@ -190,6 +190,7 @@ class IlmateenistusData():
         self.aasta = dt.year
         self.kuu = dt.month
         self.p2ev = dt.day
+
         # 24h andmete cache
         self.cache24h = dict()
         algus = dt - timedelta(hours=24)
@@ -224,26 +225,43 @@ class IlmateenistusData():
             .values('timestamp__year') \
             .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature'), Sum('precipitations')) \
             .order_by('timestamp__year')
+
         # 12 kuud
         self.qs12 = Ilm.objects \
             .values('timestamp__month') \
             .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
             .order_by('timestamp__month')
+
         # 12 kuud aastate kaupa
-        self.qs_kuud = Ilm.objects \
-            .values('timestamp__year', 'timestamp__month') \
-            .annotate(Sum('precipitations')) \
+        self.qs_kuud = (
+            Ilm.objects
+            .filter(precipitations__gt=0)
+            .values('timestamp__year', 'timestamp__month')
+            .annotate(
+                Sum('precipitations'),
+                days_with_precipitation=Count('timestamp__day', distinct=True)
+            )
             .order_by('timestamp__year', 'timestamp__month')
+        )
+
         # 366 päeva
         self.qs366 = Ilm.objects \
             .values('timestamp__month', 'timestamp__day') \
             .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
             .order_by('timestamp__month', 'timestamp__day')
+        
+        # Agregeeritud näitajad kuupäevade kaupa
+        self.qs_days_maxmin = Ilm.objects \
+            .values('timestamp__year', 'timestamp__month', 'timestamp__day') \
+            .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Avg('airtemperature'), Sum('precipitations')) \
+            .order_by('timestamp__year', 'timestamp__month', 'timestamp__day')
+
         # 366 x 24h
         self.qs8784 = Ilm.objects \
             .values('timestamp__month', 'timestamp__day', 'timestamp__hour') \
             .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
             .order_by('timestamp__month', 'timestamp__day', 'timestamp__hour')
+        
 
     def bdi_startstopp(self):
         # Leian andmebaasi ajaliselt esimese ja viimase kande aja
@@ -412,14 +430,16 @@ def add_data(failinimi):
     print(before, after)
     return before, after
 
-def longest_period_aboveandbelow():
+def longest_period_aboveandbelow(verbose=False):
     longest_periods = {}
     days = Ilm.objects \
         .values('timestamp__year', 'timestamp__month', 'timestamp__day') \
         .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
         .order_by('timestamp__year', 'timestamp__month', 'timestamp__day')
     
-    print('pikim periood: päevakeskmine ei ole alla nulli')
+    
+    if verbose:
+        print('pikim periood: päevakeskmine ei ole alla nulli')
     period = {
         'start_date': None,
         'end_date': None,
@@ -440,10 +460,12 @@ def longest_period_aboveandbelow():
                 period['length'] = length
         else:
             length = 0
-    print(period)
+    if verbose:
+        print(period)
     longest_periods['above_avg_zero_longest'] = period
 
-    print('pikim periood: päevamiinumum ei ole alla nulli')
+    if verbose:
+        print('pikim periood: päevamiinumum ei ole alla nulli')
     period = {
         'start_date': None,
         'end_date': None,
@@ -464,10 +486,12 @@ def longest_period_aboveandbelow():
                 period['length'] = length
         else:
             length = 0
-    print(period)
+    if verbose:
+        print(period)
     longest_periods['above_min_zero_longest'] = period
 
-    print('pikim periood: päevakeskmine ei ole üle nulli')
+    if verbose:
+        print('pikim periood: päevakeskmine ei ole üle nulli')
     period = {
         'start_date': None,
         'end_date': None,
@@ -488,10 +512,12 @@ def longest_period_aboveandbelow():
                 period['length'] = length
         else:
             length = 0
-    print(period)
+    if verbose:
+        print(period)
     longest_periods['below_avg_zero_longest'] = period
 
-    print('pikim periood: päevamaksimum ei ole üle nulli')
+    if verbose:
+        print('pikim periood: päevamaksimum ei ole üle nulli')
     period = {
         'start_date': None,
         'end_date': None,
@@ -512,16 +538,73 @@ def longest_period_aboveandbelow():
                 period['length'] = length
         else:
             length = 0
-    print(period)
+    if verbose:
+        print(period)
     longest_periods['below_max_zero_longest'] = period
 
     return longest_periods
 
-    
+def calc_month_maxmin(verbose=False):
+    qs_kuud = (
+        Ilm.objects
+        .filter(precipitations__gt=0)
+        .values('timestamp__year', 'timestamp__month')
+        .annotate(
+            Sum('precipitations'),
+            days_with_precipitation=Count('timestamp__day', distinct=True)
+        )
+    )
+    # Teeme tühja tabeli
+    ii8 = np.iinfo(np.int8) 
+    month_maxmin = {
+        month: {
+            'precipitations__sum': 0, 
+            'precipitations__sum__timestamp__year': None,
+            'days_with_precipitation': 0, 
+            'days_with_precipitation__timestamp__year': None,
+            'airtemperature_max__max': ii8.min,
+            'airtemperature_max__max__timestamp': None,
+            'airtemperature_min__min': ii8.max,
+            'airtemperature_min__min__timestamp': None,
+        } 
+        for month 
+        in range(1, 13)
+    }
+    for row in qs_kuud:
+        month = row['timestamp__month']
+        if month_maxmin[month]['precipitations__sum'] < row['precipitations__sum']:
+            month_maxmin[month]['precipitations__sum'] = row['precipitations__sum']
+            month_maxmin[month]['precipitations__sum__timestamp__year'] = row['timestamp__year']
+        if month_maxmin[month]['days_with_precipitation'] < row['days_with_precipitation']:
+            month_maxmin[month]['days_with_precipitation'] = row['days_with_precipitation']
+            month_maxmin[month]['days_with_precipitation__timestamp__year'] = row['timestamp__year']
+
+    # Agregeeritud näitajad kuupäevade kaupa
+    days_maxmin_qs = Ilm.objects \
+        .values('timestamp__year', 'timestamp__month', 'timestamp__day') \
+        .annotate(Max('airtemperature_max'), Min('airtemperature_min'), Avg('airtemperature'), Sum('precipitations')) \
+        .order_by('timestamp__year', 'timestamp__month', 'timestamp__day')
+    for row in days_maxmin_qs:
+        month = row['timestamp__month']
+        date = datetime(row['timestamp__year'], row['timestamp__month'], row['timestamp__day'])
+        if month_maxmin[month]['airtemperature_max__max'] < row['airtemperature_max__max']:
+            month_maxmin[month]['airtemperature_max__max'] = row['airtemperature_max__max']
+            month_maxmin[month]['airtemperature_max__max__timestamp'] = date
+        if month_maxmin[month]['airtemperature_min__min'] > row['airtemperature_min__min']:
+            month_maxmin[month]['airtemperature_min__min'] = row['airtemperature_min__min']
+            month_maxmin[month]['airtemperature_min__min__timestamp'] = date
+
+    if verbose:
+        print(month_maxmin)
+
+    return month_maxmin
+
+
 if __name__ == '__main__':
     # see osa koodist käivitub, kui mooodul panna tööle käsurealt
     # (topeltklõps, must aken, IDLE's F5 vms)
     ##    run()
     STATIC_DIR = 'static/ilm/bdi/'
     bdi = IlmateenistusData()
-    longest_period_aboveandbelow_zero()
+    # longest_period_aboveandbelow(verbose=True)
+    calc_month_maxmin(bdi, verbose=True)

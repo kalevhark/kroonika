@@ -2336,7 +2336,7 @@ def maxmin(request):
         cursor.execute('SELECT * FROM ilm_ilm_rolling_8h')
         years_rolling_8h = cursor.fetchall()
 
-    # Maksimum-miinimum tabeli andmed:
+    # Aastate Maksimum-miinimum tabeli andmed:
     for year in years_maxmin_qs:
         y = year['timestamp__year']
         year_min = year['airtemperature_min__min']
@@ -2425,22 +2425,22 @@ def maxmin(request):
     yearMax = max(years_top.keys())
 
     # heatmap data
-    def myFunc(e): # listi sortimiseks
-        return (
-            e[2], # year
-            e[1], # month
-            e[0], # day
-        )
+    # def myFunc(e): # listi sortimiseks
+    #     return (
+    #         e[2], # year
+    #         e[1], # month
+    #         e[0], # day
+    #     )
 
     data = list()
-    days_airtemp_monthmaxmin = dict()
-    for month in range(1, 13):
-        days_airtemp_monthmaxmin[month] = {
-            'airtemperature_max': -40,
-            'airtemperature_max_timestamp': None,
-            'airtemperature_min': 40,
-            'airtemperature_min_timestamp': None,
-        }
+    # days_airtemp_monthmaxmin = dict()
+    # for month in range(1, 13):
+    #     days_airtemp_monthmaxmin[month] = {
+    #         'airtemperature_max': -40,
+    #         'airtemperature_max_timestamp': None,
+    #         'airtemperature_min': 40,
+    #         'airtemperature_min_timestamp': None,
+    #     }
     for day in days_maxmin_qs:
         row = [
             day['timestamp__day'],
@@ -2451,24 +2451,28 @@ def maxmin(request):
         ]
         data.append(row)
 
-        # Kuude ekstreemumid
-        if day['airtemperature_max__max'] and days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_max'] < day['airtemperature_max__max']:
-            days_airtemp_monthmaxmin[day['timestamp__month']] = {
-                'airtemperature_max': day['airtemperature_max__max'],
-                'airtemperature_max_timestamp': datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day']),
-                'airtemperature_min': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_min'],
-                'airtemperature_min_timestamp': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_min_timestamp'],
-            }
-        if day['airtemperature_min__min'] and days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_min'] > day['airtemperature_min__min']:
-            days_airtemp_monthmaxmin[day['timestamp__month']] = {
-                'airtemperature_max': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_max'],
-                'airtemperature_max_timestamp': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_max_timestamp'],
-                'airtemperature_min': day['airtemperature_min__min'],
-                'airtemperature_min_timestamp': datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day']),
-            }
+    #     # Kuude ekstreemumid
+    #     if day['airtemperature_max__max'] and days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_max'] < day['airtemperature_max__max']:
+    #         days_airtemp_monthmaxmin[day['timestamp__month']] = {
+    #             'airtemperature_max': day['airtemperature_max__max'],
+    #             'airtemperature_max_timestamp': datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day']),
+    #             'airtemperature_min': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_min'],
+    #             'airtemperature_min_timestamp': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_min_timestamp'],
+    #         }
+    #     if day['airtemperature_min__min'] and days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_min'] > day['airtemperature_min__min']:
+    #         days_airtemp_monthmaxmin[day['timestamp__month']] = {
+    #             'airtemperature_max': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_max'],
+    #             'airtemperature_max_timestamp': days_airtemp_monthmaxmin[day['timestamp__month']]['airtemperature_max_timestamp'],
+    #             'airtemperature_min': day['airtemperature_min__min'],
+    #             'airtemperature_min_timestamp': datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day']),
+    #         }
 
-    data.sort(key=myFunc)
+    # data.sort(key=myFunc)
 
+    # Kuude ekstreemumid alernatiiv 2
+    month_maxmin = IlmateenistusValga.calc_month_maxmin()
+
+    # Heatmaps
     chartdata_heatmap_daily = "Date,Time,Temperature"
     chartdata_heatmap_relative = "Date,Time,Temperature"
     chartdata_heatmap_precipitations = "Date,Time,Precipitations"
@@ -2529,7 +2533,8 @@ def maxmin(request):
         'chartdata_rolling_year_avg': chartdata_rolling_year_avg,
         # 'chartdata_rolling_year_avg_data_categories': chartdata_rolling_year_avg_data_categories,
         # 'chartdata_rolling_year_avg_data_averages': chartdata_rolling_year_avg_data_averages,
-        'days_airtemp_monthmaxmin': days_airtemp_monthmaxmin,
+        # 'days_airtemp_monthmaxmin': days_airtemp_monthmaxmin,
+        'month_maxmin': month_maxmin,
         'yearMin': yearMin,
         'yearMax': yearMax,
         'histAvg': histAvg
@@ -2541,110 +2546,110 @@ def maxmin(request):
     )
 
 # Ei ole kasutusel, vigane
-def maxmin_new(request=None):
-    columns = ['timestamp', 'airtemperature', 'airtemperature_min', 'airtemperature_max', 'precipitations']
-    qs = Ilm.objects.all().\
-        values_list(*columns).\
-        order_by('timestamp')
-    # NB! timestamp = UTC aeg
-    df = pd.DataFrame(qs, columns=columns)
-    df[
-        ['airtemperature',
-        'airtemperature_min',
-        'airtemperature_max',
-        'precipitations']
-    ] = df[
-        ['airtemperature',
-        'airtemperature_min',
-        'airtemperature_max',
-        'precipitations']
-    ].astype(float)
-    # Lisame Eesti aja
-    ee = pytz.timezone('Europe/Tallinn')
-    df['timestamp_ee'] = df['timestamp'].dt.tz_convert(ee)
-    # test = df[(df['timestamp'].dt.year == 2004) & (df['timestamp'].dt.month == 3) & (df['timestamp'].dt.day == 28)]
-    # test = df[(df['timestamp_ee'].dt.year == 2004) & (df['timestamp_ee'].dt.month == 10) & (df['timestamp_ee'].dt.day == 31)]
-    # print(test.head(10))
-    # print(test['timestamp'].dt.tz_convert('Europe/Tallinn').head(10))
-    # print(test['timestamp'].dt.tz_convert(ee).head(10))
+# def maxmin_new(request=None):
+#     columns = ['timestamp', 'airtemperature', 'airtemperature_min', 'airtemperature_max', 'precipitations']
+#     qs = Ilm.objects.all().\
+#         values_list(*columns).\
+#         order_by('timestamp')
+#     # NB! timestamp = UTC aeg
+#     df = pd.DataFrame(qs, columns=columns)
+#     df[
+#         ['airtemperature',
+#         'airtemperature_min',
+#         'airtemperature_max',
+#         'precipitations']
+#     ] = df[
+#         ['airtemperature',
+#         'airtemperature_min',
+#         'airtemperature_max',
+#         'precipitations']
+#     ].astype(float)
+#     # Lisame Eesti aja
+#     ee = pytz.timezone('Europe/Tallinn')
+#     df['timestamp_ee'] = df['timestamp'].dt.tz_convert(ee)
+#     # test = df[(df['timestamp'].dt.year == 2004) & (df['timestamp'].dt.month == 3) & (df['timestamp'].dt.day == 28)]
+#     # test = df[(df['timestamp_ee'].dt.year == 2004) & (df['timestamp_ee'].dt.month == 10) & (df['timestamp_ee'].dt.day == 31)]
+#     # print(test.head(10))
+#     # print(test['timestamp'].dt.tz_convert('Europe/Tallinn').head(10))
+#     # print(test['timestamp'].dt.tz_convert(ee).head(10))
 
-    window = timedelta(hours=8)
-    df_rolling = df.set_index('timestamp').rolling(window).agg(
-        {
-            'airtemperature_max': ['max'],
-            'airtemperature_min': ['min'],
-            'precipitations': ['sum']
-        }
-    )
-    df_rolling.columns = df_rolling.columns.get_level_values(0) # jätame ainult 1. taseme pealkirjad
+#     window = timedelta(hours=8)
+#     df_rolling = df.set_index('timestamp').rolling(window).agg(
+#         {
+#             'airtemperature_max': ['max'],
+#             'airtemperature_min': ['min'],
+#             'precipitations': ['sum']
+#         }
+#     )
+#     df_rolling.columns = df_rolling.columns.get_level_values(0) # jätame ainult 1. taseme pealkirjad
 
-    days_maxmin_df = df.groupby(
-        [df['timestamp_ee'].dt.year, df['timestamp_ee'].dt.month, df['timestamp_ee'].dt.day]).apply(
-        lambda s: pd.Series(
-            {
-                "airtemperature_max": s["airtemperature_max"].dropna().max(),
-                "airtemperature_min": s["airtemperature_min"].dropna().min(),
-                "airtemperature_avg": s["airtemperature"].dropna().mean(),
-                "precipitations_sum": s["precipitations"].dropna().sum(),
-            }
-        )
-    )
+#     days_maxmin_df = df.groupby(
+#         [df['timestamp_ee'].dt.year, df['timestamp_ee'].dt.month, df['timestamp_ee'].dt.day]).apply(
+#         lambda s: pd.Series(
+#             {
+#                 "airtemperature_max": s["airtemperature_max"].dropna().max(),
+#                 "airtemperature_min": s["airtemperature_min"].dropna().min(),
+#                 "airtemperature_avg": s["airtemperature"].dropna().mean(),
+#                 "precipitations_sum": s["precipitations"].dropna().sum(),
+#             }
+#         )
+#     )
 
-    years_maxmin_df = df.groupby([df['timestamp_ee'].dt.year]).apply(
-        lambda s: pd.Series(
-            {
-                "year_max": s["airtemperature_max"].max(),
-                "obs_max": None,
-                "year_min": s["airtemperature_min"].min(),
-                "obs_min": None,
-                "year_temp_avg": s["airtemperature"].mean(),
-                "year_prec_sum": s["precipitations"].sum(),
-                "days_above30": None,
-                "days_below30": None,
-                "days_above20": None,
-                "days_below20": None,
-            }
-        )
-    )
+#     years_maxmin_df = df.groupby([df['timestamp_ee'].dt.year]).apply(
+#         lambda s: pd.Series(
+#             {
+#                 "year_max": s["airtemperature_max"].max(),
+#                 "obs_max": None,
+#                 "year_min": s["airtemperature_min"].min(),
+#                 "obs_min": None,
+#                 "year_temp_avg": s["airtemperature"].mean(),
+#                 "year_prec_sum": s["precipitations"].sum(),
+#                 "days_above30": None,
+#                 "days_below30": None,
+#                 "days_above20": None,
+#                 "days_below20": None,
+#             }
+#         )
+#     )
 
-    for year, row in years_maxmin_df.iterrows():
-        # Lisama aasta maksimaalse temperatuuri mõõtmise aja
-        if not row['year_max'] != row['year_max']:
-            obs_max_idx = df[df['timestamp_ee'].dt.year == year]['airtemperature_max'].idxmax()
-            obs_max = df.loc[obs_max_idx].at['timestamp_ee']
-            years_maxmin_df.loc[year, 'obs_max'] = obs_max
-            # print(obs_max)
-        # Lisama aasta minimaalse temperatuuri mõõtmise aja
-        if not row['year_min'] != row['year_min']:
-            obs_min_idx = df[df['timestamp_ee'].dt.year == year]['airtemperature_min'].idxmin()
-            obs_min = df.loc[obs_min_idx].at['timestamp_ee']
-            years_maxmin_df.loc[year, 'obs_min'] = obs_min
-            # print(obs_min)
-        # Lisame aasta päevade arvu, millal temperatuur tõusis üle 30
-        days_above30 = days_maxmin_df[
-            (days_maxmin_df.index[0] == year) &
-            (days_maxmin_df['airtemperature_max'] >= 30)
-            ]['airtemperature_max'].count()
-        years_maxmin_df.loc[year, 'days_above30'] = days_above30
-        # Lisame aasta päevade arvu, millal temperatuur langes alla 30
-        days_below30 = days_maxmin_df[
-            (days_maxmin_df.index[0] == year) &
-            (days_maxmin_df['airtemperature_min'] <= -30)
-            ]['airtemperature_min'].count()
-        years_maxmin_df.loc[year, 'days_below30'] = days_below30
-        # Troopiline öö
-        days_above20 = df_rolling[
-            (df_rolling['airtemperature_max'] >= 20) &
-            (df_rolling.index.year == year) &
-            (df_rolling.index.hour == 2)
-            ]['airtemperature_max'].count()
-        years_maxmin_df.loc[year, 'days_above20'] = days_above20
-        # Arktiline päev
-        days_below20 = df_rolling[
-            (df_rolling['airtemperature_min'] <= -20) &
-            (df_rolling.index.year == year) &
-            (df_rolling.index.hour == 17)
-            ]['airtemperature_min'].count()
-        years_maxmin_df.loc[year, 'days_below20'] = days_below20
+#     for year, row in years_maxmin_df.iterrows():
+#         # Lisama aasta maksimaalse temperatuuri mõõtmise aja
+#         if not row['year_max'] != row['year_max']:
+#             obs_max_idx = df[df['timestamp_ee'].dt.year == year]['airtemperature_max'].idxmax()
+#             obs_max = df.loc[obs_max_idx].at['timestamp_ee']
+#             years_maxmin_df.loc[year, 'obs_max'] = obs_max
+#             # print(obs_max)
+#         # Lisama aasta minimaalse temperatuuri mõõtmise aja
+#         if not row['year_min'] != row['year_min']:
+#             obs_min_idx = df[df['timestamp_ee'].dt.year == year]['airtemperature_min'].idxmin()
+#             obs_min = df.loc[obs_min_idx].at['timestamp_ee']
+#             years_maxmin_df.loc[year, 'obs_min'] = obs_min
+#             # print(obs_min)
+#         # Lisame aasta päevade arvu, millal temperatuur tõusis üle 30
+#         days_above30 = days_maxmin_df[
+#             (days_maxmin_df.index[0] == year) &
+#             (days_maxmin_df['airtemperature_max'] >= 30)
+#             ]['airtemperature_max'].count()
+#         years_maxmin_df.loc[year, 'days_above30'] = days_above30
+#         # Lisame aasta päevade arvu, millal temperatuur langes alla 30
+#         days_below30 = days_maxmin_df[
+#             (days_maxmin_df.index[0] == year) &
+#             (days_maxmin_df['airtemperature_min'] <= -30)
+#             ]['airtemperature_min'].count()
+#         years_maxmin_df.loc[year, 'days_below30'] = days_below30
+#         # Troopiline öö
+#         days_above20 = df_rolling[
+#             (df_rolling['airtemperature_max'] >= 20) &
+#             (df_rolling.index.year == year) &
+#             (df_rolling.index.hour == 2)
+#             ]['airtemperature_max'].count()
+#         years_maxmin_df.loc[year, 'days_above20'] = days_above20
+#         # Arktiline päev
+#         days_below20 = df_rolling[
+#             (df_rolling['airtemperature_min'] <= -20) &
+#             (df_rolling.index.year == year) &
+#             (df_rolling.index.hour == 17)
+#             ]['airtemperature_min'].count()
+#         years_maxmin_df.loc[year, 'days_below20'] = days_below20
 
-    return df
+#     return df

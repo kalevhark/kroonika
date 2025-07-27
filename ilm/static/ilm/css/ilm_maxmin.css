@@ -1,0 +1,138 @@
+figure {
+    margin: 0px;
+}
+
+/* hoverable table rows + columns https://codepen.io/chriscoyier/pen/pvwmaR */
+table {
+  overflow: hidden;
+}
+
+td, th {
+  vertical-align: middle;
+  padding: 5px;
+  position: relative;
+  outline: 0;
+}
+
+body:not(.nohover) tbody tr:hover {
+  background-color: #ffa;
+}
+
+td:hover::after,
+thead th:not(:empty):hover::after,
+td:focus::after,
+thead th:not(:empty):focus::after {
+  content: '';
+  height: 10000px;
+  left: 0;
+  position: absolute;
+  top: -5000px;
+  width: 100%;
+  z-index: -1;
+}
+
+td:hover::after,
+th:hover::after {
+  background-color: #ffa;
+}
+
+td:focus::after,
+th:focus::after {
+  background-color: lightblue;
+}
+
+/* Focus stuff for mobile */
+td:focus::before,
+tbody th:focus::before {
+  background-color: lightblue;
+  content: '';
+  height: 100%;
+  top: 0;
+  left: -5000px;
+  position: absolute;
+  width: 10000px;
+  z-index: -1;
+}
+
+/* Tabeliseaded näitajatele */
+.rain,
+.days,
+.temperature {
+  text-align: right;
+}
+
+/*
+td.rain.light::before {
+  content: '';
+  position: relative;
+  background:url('https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/05d.svg');
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+
+td.rain.moderate::before {
+  content: '';
+  position: relative;
+  background:url('https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/09.svg');
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+td.rain.heavy::before {
+  content: '';
+  position: relative;
+  background:url('https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/10.svg');
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+*/
+
+/* vertikaalne eraldusjoon */
+td.verticalborderleft {
+  border-left: 1px solid blue;
+  color: gray;
+}
+
+/* Climacon */
+.fs1 {
+	font-size: 2em;
+}
+
+/* Highcharts */
+.highcharts-figure, .highcharts-data-table table {
+    min-width: 360px;
+    max-width: 800px;
+    /* margin: 1em auto; */
+}
+
+.highcharts-data-table table {
+	font-family: Verdana, sans-serif;
+	border-collapse: collapse;
+	border: 1px solid #EBEBEB;
+	margin: 10px auto;
+	text-align: center;
+	width: 100%;
+	max-width: 500px;
+}
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+.highcharts-data-table th {
+	font-weight: 600;
+    padding: 0.5em;
+}
+.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+    padding: 0.5em;
+}
+.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
+}
