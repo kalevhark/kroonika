@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import json
 
 import logging
+from sqlite3 import Row
 logger = logging.getLogger(__name__)
 
 import os
@@ -24,7 +25,7 @@ if __name__ == "__main__":
 
 from django.contrib.auth.models import AnonymousUser
 from django.db import connection
-from django.db.models import F, RowRange, Window, Sum, Avg, Min, Max
+from django.db.models import F, RowRange, Window, Count, Sum, Avg, Min, Max
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -33,7 +34,6 @@ from ilm.forms import NameForm
 from ilm.models import Ilm
 from ilm.utils import utils, IlmateenistusValga
 import ilm.utils.ephem_util as ephem_data
-# import ilm.utils.utils
 
 if settings.REDIS_INUSE:
     redis_client = redis.Redis(host=settings.REDIS_HOST, port=6379, db=0)
@@ -1439,19 +1439,46 @@ def container_history_kuud_aastatekaupa(request):
     sel = list(Ilm.objects
                .filter(timestamp__month=bdi.kuu)
                .values('timestamp__year')
-               .annotate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature'), Sum('precipitations'))
+               .annotate(
+                   Avg('airtemperature'), 
+                   Min('airtemperature'), 
+                   Max('airtemperature'), 
+                   Sum('precipitations'),
+                )
                .order_by('timestamp__year')
     )
-    hist  = list(Ilm.objects \
-        .filter(timestamp__month=bdi.kuu) \
-        # .order_by('timestamp') \
-        .aggregate(Avg('airtemperature'), Min('airtemperature'), Max('airtemperature')) \
+    hist  = list(Ilm.objects
+        .filter(timestamp__month=bdi.kuu)
+        .aggregate(
+            Avg('airtemperature'), 
+            Min('airtemperature'), 
+            Max('airtemperature')
+        )
         .values()
     )
+    hist_precipitationdays_counts_qs = (
+        Ilm.objects
+        .filter(
+            precipitations__gt=0,
+            timestamp__month=bdi.kuu
+        )
+        .values('timestamp__year')
+        .annotate(
+            days_with_precipitation=Count('timestamp__day', distinct=True)
+        )
+        .order_by('timestamp__year')
+    )
+    hist_precipitationdays_counts = {
+        row['timestamp__year']: row['days_with_precipitation']
+        for row
+        in hist_precipitationdays_counts_qs
+    }
+
     categories = []
     sel_temp_averages = []
     sel_temp_ranges = []
     sel_prec_sums = []
+    sel_prec_days_counts = []
     hist_temp_average = round(float(hist[0]), 1)
     hist_temp_min = round(float(hist[1]), 1)
     hist_temp_max = round(float(hist[2]), 1)
@@ -1470,6 +1497,10 @@ def container_history_kuud_aastatekaupa(request):
             sel_prec_sums.append(round(float(sel[i]['precipitations__sum']), 1))
         else:
             sel_prec_sums.append(0)  # Kui mõõtmistulemusi kogu kuu polnud
+        sel_prec_days_counts.append(
+            hist_precipitationdays_counts.get(sel[i]['timestamp__year'], 0)
+        )
+    
     # Graafiku andmeseeriate kirjeldamine
     series_sel_temp_averages = {
         'name': f'kuu keskmine',
@@ -1502,6 +1533,20 @@ def container_history_kuud_aastatekaupa(request):
         'color': COLORS[0],
         'tooltip': {
             'valueSuffix': ' mm'
+        }
+    }
+    series_sel_prec_days_counts = {
+        'name': f'kuus sajupäevi',
+        'type': 'spline',
+        'yAxis': 1,
+        'data': sel_prec_days_counts,
+        # 'color': COLORS[0],
+        'lineWidth': 0,
+        'marker': {
+            'radius': 6
+        },
+        'tooltip': {
+            'valueSuffix': ' p'
         }
     }
     # Graafiku joonistamine
@@ -1575,7 +1620,8 @@ def container_history_kuud_aastatekaupa(request):
         'series': [
             series_sel_temp_averages,
             series_sel_temp_ranges,
-            series_sel_prec_sums
+            series_sel_prec_sums,
+            series_sel_prec_days_counts
         ]
     }
     return JsonResponse(chart)
