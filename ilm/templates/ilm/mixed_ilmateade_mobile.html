@@ -53,7 +53,7 @@
         {# Ilmateenistus #}
         {% for timestamp, data in forecasts.items %}
           <tr class="row">
-            <td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
+            <td>{{ timestamp|timestamp_to_time|date:"d.m H" }}-{{ timestamp|timestamp_to_time|date:"H"|add:"1"|stringformat:"02d" }}</td>
             <td
                 class="temperature">
               <span class="temperature colored-{% if data.i_temp > 0 %}positive{% else %}negative{% endif %}">

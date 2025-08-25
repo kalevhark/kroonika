@@ -1879,7 +1879,6 @@ def get_mixed_ilmateade(request):
         'mõõtmised: ' +
         '<a href="https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/tunniandmed/" target="_blank">ilmateenistus.ee</a>' + '; ' 
         'prognoos:' + 
-        # '<a href="https://www.yr.no/place/Estonia/Valgamaa/Valga/hour_by_hour.html" target="_blank">yr.no</a>:'
         '<a href="https://www.yr.no/en/forecast/daily-table/2-587876/Estonia/Valgamaa/Valga%20vald/Valga" target="_blank">yr.no</a>' +
         ', <a href="https://www.ilmateenistus.ee/ilm/prognoosid/asukoha-prognoos/?coordinates=57.776678;26.030958" target="_blank">ilmateenistus.ee</a>' + '; '
     )
@@ -2291,8 +2290,8 @@ def mixed_ilmateade(request):
     return JsonResponse(chart)
 
 # veebiversioon
-def forecasts(request):
-    forecast = utils.get_forecasts()
+def forecasts(request, asukoht="valgalinn"):
+    forecast = utils.get_forecasts(asukoht=asukoht)
     context = {
         'forecast': forecast
     }

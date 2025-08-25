@@ -5,6 +5,7 @@ from email.utils import parsedate_to_datetime
 import json
 
 import locale
+from typing import Optional
 locale.setlocale(locale.LC_NUMERIC, "et_EE.UTF-8")
 
 import os
@@ -43,63 +44,94 @@ if settings.REDIS_INUSE:
 from ilm.models import Ilm
 import ilm.utils.ephem_util as ephem_data
 
-# OpenWeatherMaps ilmakoodid
-OWM_CODES = {
-    "200": "nõrk äikesevihm", # thunderstorm with light rain;Thunderstorm
-    "201": "äikesevihm", # thunderstorm with rain;Thunderstorm
-    "202": "tugev äikesevihm", # thunderstorm with heavy rain;Thunderstorm
-    "210": "nõrk äike", # light thunderstorm;Thunderstorm
-    "211": "äike", # thunderstorm;Thunderstorm
-    "212": "tugev äike", # heavy thunderstorm;Thunderstorm
-    "221": "äge äike", # ragged thunderstorm;Thunderstorm
-    "230": "nõrk äikesevihm", # thunderstorm with light drizzle;Thunderstorm
-    "231": "äikesevihm", # thunderstorm with drizzle;Thunderstorm
-    "232": "tugev äikesevihm", # thunderstorm with heavy drizzle;Thunderstorm
-    "300": "nõrk uduvihm", # light intensity drizzle;Drizzle
-    "301": "uduvihm", # drizzle;Drizzle
-    "302": "tugev uduvihm", # heavy intensity drizzle;Drizzle
-    "310": "kerge uduvihm", # light intensity drizzle rain;Drizzle
-    "311": "uduvihm", # drizzle rain;Drizzle
-    "312": "tugev uduvihm", # heavy intensity drizzle rain;Drizzle
-    "313": "tugev uduvihm", # shower rain and drizzle;Drizzle
-    "314": "tugev uduvihm", # heavy shower rain and drizzle;Drizzle
-    "321": "tugev uduvihm", # shower drizzle;Drizzle
-    "500": "nõrk vihm", # light rain;Rain
-    "501": "vihm", # moderate rain;Rain
-    "502": "tugev vihm", # heavy intensity rain;Rain
-    "503": "väga tugev vihm", # very heavy rain;Rain
-    "504": "ekstreemne vihmasadu", # extreme rain;Rain
-    "511": "külmuv vihm", # freezing rain;Rain
-    "520": "nõrk paduvihm", # light intensity shower rain;Rain
-    "521": "paduvihm", # shower rain;Rain
-    "522": "tugev paduvihm", # heavy intensity shower rain;Rain
-    "531": "väga tugev paduvihm", # ragged shower rain;Rain
-    "600": "kerge lumesadu", # light snow;Snow
-    "601": "lumesadu", # Snow;Snow
-    "602": "tugev lumesadu", # Heavy snow;Snow
-    "611": "lörts", # Sleet;Snow
-    "612": "kerge lörtsisadu", # Light shower sleet;Snow
-    "613": "tugev lörtsisadu", # Shower sleet;Snow
-    "615": "kerge lörtsisadu", # Light rain and snow;Snow
-    "616": "lörts", # Rain and snow;Snow
-    "620": "kerge lumesadu", # Light shower snow;Snow
-    "621": "lumesadu", # Shower snow;Snow
-    "622": "tugev lumesadu", # Heavy shower snow;Snow
-    "701": "uduvine", # mist;Mist
-    "711": "suits", # Smoke;Smoke
-    "721": "vine", # Haze;Haze
-    "731": "liiva-/tolmupöörised", # sand/ dust whirls;Dust
-    "741": "udu", # fog;Fog
-    "751": "liiv", # sand;Sand
-    "761": "tolm", # dust;Dust
-    "762": "vulkaaniline tuhk", # volcanic ash;Ash
-    "771": "tuulepuhangud", # squalls;Squall
-    "781": "tornaado", # tornado;Tornado
-    "800": "selge", # clear sky;Clear
-    "801": "õrn pilvisus", # few clouds: 11-25%;Clouds
-    "802": "vahelduv pilvisus", # scattered clouds: 25-50%;Clouds
-    "803": "vahelduv pilvisus", # broken clouds: 51-84%;Clouds
-    "804": "pilvine", # overcast clouds: 85-100%;Clouds
+# # OpenWeatherMaps ilmakoodid
+# OWM_CODES = {
+#     "200": "nõrk äikesevihm", # thunderstorm with light rain;Thunderstorm
+#     "201": "äikesevihm", # thunderstorm with rain;Thunderstorm
+#     "202": "tugev äikesevihm", # thunderstorm with heavy rain;Thunderstorm
+#     "210": "nõrk äike", # light thunderstorm;Thunderstorm
+#     "211": "äike", # thunderstorm;Thunderstorm
+#     "212": "tugev äike", # heavy thunderstorm;Thunderstorm
+#     "221": "äge äike", # ragged thunderstorm;Thunderstorm
+#     "230": "nõrk äikesevihm", # thunderstorm with light drizzle;Thunderstorm
+#     "231": "äikesevihm", # thunderstorm with drizzle;Thunderstorm
+#     "232": "tugev äikesevihm", # thunderstorm with heavy drizzle;Thunderstorm
+#     "300": "nõrk uduvihm", # light intensity drizzle;Drizzle
+#     "301": "uduvihm", # drizzle;Drizzle
+#     "302": "tugev uduvihm", # heavy intensity drizzle;Drizzle
+#     "310": "kerge uduvihm", # light intensity drizzle rain;Drizzle
+#     "311": "uduvihm", # drizzle rain;Drizzle
+#     "312": "tugev uduvihm", # heavy intensity drizzle rain;Drizzle
+#     "313": "tugev uduvihm", # shower rain and drizzle;Drizzle
+#     "314": "tugev uduvihm", # heavy shower rain and drizzle;Drizzle
+#     "321": "tugev uduvihm", # shower drizzle;Drizzle
+#     "500": "nõrk vihm", # light rain;Rain
+#     "501": "vihm", # moderate rain;Rain
+#     "502": "tugev vihm", # heavy intensity rain;Rain
+#     "503": "väga tugev vihm", # very heavy rain;Rain
+#     "504": "ekstreemne vihmasadu", # extreme rain;Rain
+#     "511": "külmuv vihm", # freezing rain;Rain
+#     "520": "nõrk paduvihm", # light intensity shower rain;Rain
+#     "521": "paduvihm", # shower rain;Rain
+#     "522": "tugev paduvihm", # heavy intensity shower rain;Rain
+#     "531": "väga tugev paduvihm", # ragged shower rain;Rain
+#     "600": "kerge lumesadu", # light snow;Snow
+#     "601": "lumesadu", # Snow;Snow
+#     "602": "tugev lumesadu", # Heavy snow;Snow
+#     "611": "lörts", # Sleet;Snow
+#     "612": "kerge lörtsisadu", # Light shower sleet;Snow
+#     "613": "tugev lörtsisadu", # Shower sleet;Snow
+#     "615": "kerge lörtsisadu", # Light rain and snow;Snow
+#     "616": "lörts", # Rain and snow;Snow
+#     "620": "kerge lumesadu", # Light shower snow;Snow
+#     "621": "lumesadu", # Shower snow;Snow
+#     "622": "tugev lumesadu", # Heavy shower snow;Snow
+#     "701": "uduvine", # mist;Mist
+#     "711": "suits", # Smoke;Smoke
+#     "721": "vine", # Haze;Haze
+#     "731": "liiva-/tolmupöörised", # sand/ dust whirls;Dust
+#     "741": "udu", # fog;Fog
+#     "751": "liiv", # sand;Sand
+#     "761": "tolm", # dust;Dust
+#     "762": "vulkaaniline tuhk", # volcanic ash;Ash
+#     "771": "tuulepuhangud", # squalls;Squall
+#     "781": "tornaado", # tornado;Tornado
+#     "800": "selge", # clear sky;Clear
+#     "801": "õrn pilvisus", # few clouds: 11-25%;Clouds
+#     "802": "vahelduv pilvisus", # scattered clouds: 25-50%;Clouds
+#     "803": "vahelduv pilvisus", # broken clouds: 51-84%;Clouds
+#     "804": "pilvine", # overcast clouds: 85-100%;Clouds
+# }
+
+# Asukohtade andmete kirjeldused
+ASUKOHAD = {
+    'k19': {
+        "name": "Ihaste",
+        "id": "8151", # Tartu linn
+        'url_yrno': 'https://www.yr.no/en/forecast/daily-table/2-794112/Estonia/Tartu/Tartu%20linn/Ihaste',
+        'url_ilmateenistus': 'https://www.ilmateenistus.ee/ilm/prognoosid/asukoha-prognoos/?coordinates=58.34972;26.78583',
+        'altitude': "46",
+        'lat': "58.380052",
+        'lon': "26.722116"
+    },
+    'pesa12': { # Pesa 12
+        "name": "Tõrvandi",
+        "id":"8532", # Tõrvandi
+        'url_yrno': 'https://www.yr.no/en/forecast/daily-table/2-794043/Estonia/Tartu/Kambja%20vald/T%C3%B5rvandi',
+        'url_ilmateenistus': 'https://www.ilmateenistus.ee/ilm/prognoosid/asukoha-prognoos/?coordinates=58.321536;26.705269',
+        'altitude': "61",
+        'lat': "58.32192",
+        'lon': "26.70537"
+    },
+    'valgalinn': {
+        "name": "Valga linn",
+        "id":"8918",
+        'url_yrno': 'https://www.yr.no/en/forecast/daily-table/2-587876/Estonia/Valgamaa/Valga%20vald/Valga',
+        'url_ilmateenistus': 'https://www.ilmateenistus.ee/ilm/prognoosid/asukoha-prognoos/?coordinates=57.776678;26.030958',
+        'altitude': "64",
+        'lat': "57.77781",
+        'lon': "26.0473"
+    },
 }
 
 # Teisendab noTZ -> Eesti aeg
@@ -526,9 +558,15 @@ def ilmaandmed_veebist(dt, verbose=False):
         print(dt, andmed)
     return andmed
 
-def yrno_forecast():
+def yrno_forecast(asukoht="valgalinn"):
+    if asukoht not in ASUKOHAD.keys():
+        asukoht="valgalinn"
+    asukoha_andmed = ASUKOHAD[asukoht]
+    lat = asukoha_andmed['lat']
+    lon = asukoha_andmed['lon']
     # Weather forecast from Yr, delivered by the Norwegian Meteorological Institute and the NRK
-    href = "https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=57.78&lon=26.05"
+    # href = "https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=57.78&lon=26.05"
+    href = f"https://api.met.no/weatherapi/locationforecast/2.0/complete?lat={lat}&lon={lon}"
     headers = {
         "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
         "Accept": "application/json"
@@ -537,9 +575,9 @@ def yrno_forecast():
         href,
         headers=headers,
     )
-    print(r.status_code, r.text[:100])
+    # print(r.status_code, r.text[:100])
     yr = json.loads(r.text)
-    print(yr['properties']['timeseries'][0])
+    # print(yr['properties']['timeseries'][0])
     return yr
 
 def yrno_48h():
@@ -658,115 +696,115 @@ def get_ilmateenistus_history():
         history[hour.timestamp]['precipitation_color'] = precipitation_color
     return history
 
-def owm_onecall(path=os.getcwd()):
-    try:
-        from django.conf import settings
-        api_key = settings.OWM_APIKEY
-    except:
-        api_config = config(path, 'ilm/utils/owm.ini', 'OWM')
-        api_key = api_config['owm_apikey']
-    city_id = 587876  # Valga
-    lon = '26.05'
-    lat = '57.78'
-    owm_url = 'https://api.openweathermap.org/data/2.5/'
+# def owm_onecall(path=os.getcwd()):
+#     try:
+#         from django.conf import settings
+#         api_key = settings.OWM_APIKEY
+#     except:
+#         api_config = config(path, 'ilm/utils/owm.ini', 'OWM')
+#         api_key = api_config['owm_apikey']
+#     city_id = 587876  # Valga
+#     lon = '26.05'
+#     lat = '57.78'
+#     owm_url = 'https://api.openweathermap.org/data/2.5/'
 
-    # Hetkeandmed ja prognoos
-    params = {
-        'lat': lat,
-        'lon': lon,
-        'appid': api_key,
-        'units': 'metric',
-    }
-    resp = requests.get(
-        owm_url + 'onecall',
-        # headers=headers,
-        params=params
-    )
-    weather = json.loads(resp.text)
+#     # Hetkeandmed ja prognoos
+#     params = {
+#         'lat': lat,
+#         'lon': lon,
+#         'appid': api_key,
+#         'units': 'metric',
+#     }
+#     resp = requests.get(
+#         owm_url + 'onecall',
+#         # headers=headers,
+#         params=params
+#     )
+#     weather = json.loads(resp.text)
 
-    # Ajalugu
-    now = datetime.now()
-    dt = int(datetime.timestamp(datetime(now.year, now.month, now.day, now.hour)))
-    params['dt'] = dt
-    resp = requests.get(
-        owm_url + 'onecall/timemachine',
-        # headers=headers,
-        params=params
-    )
-    # print(resp.status_code)
-    weather['history'] = json.loads(resp.text)
+#     # Ajalugu
+#     now = datetime.now()
+#     dt = int(datetime.timestamp(datetime(now.year, now.month, now.day, now.hour)))
+#     params['dt'] = dt
+#     resp = requests.get(
+#         owm_url + 'onecall/timemachine',
+#         # headers=headers,
+#         params=params
+#     )
+#     # print(resp.status_code)
+#     weather['history'] = json.loads(resp.text)
 
-    weather['forecast'] = dict()
-    if weather:
-        # weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
-        weather['current']['kirjeldus'] = OWM_CODES.get(
-            str(weather['current']['weather'][0]['id']),
-            weather['current']['weather'][0]['description']
-        )
-        for hour in weather['hourly']:
-            # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
-            hour['kirjeldus'] = OWM_CODES.get(
-                str(hour['weather'][0]['id']),
-                hour['weather'][0]['description']
-            )
-            try:
-                prec_maxvalue = float(hour['rain']['1h'])
-            except:
-                prec_maxvalue = 0
-            if prec_maxvalue > 2:
-                prec_color = 'heavy'
-            elif prec_maxvalue > 1:
-                prec_color = 'moderate'
-            elif prec_maxvalue > 0:
-                prec_color = 'light'
-            else:
-                prec_color = 'none'
-            hour['precipitation_color'] = prec_color
-            weather['forecast'][str(hour['dt'])] = hour
-        for day in weather['daily']:
-            # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
-            day['kirjeldus'] = OWM_CODES.get(
-                str(day['weather'][0]['id']),
-                day['weather'][0]['description']
-            )
-            try:
-                prec_maxvalue = float(day['rain'])
-            except:
-                prec_maxvalue = 0
-            if prec_maxvalue > 2:
-                prec_color = 'heavy'
-            elif prec_maxvalue > 1:
-                prec_color = 'moderate'
-            elif prec_maxvalue > 0:
-                prec_color = 'light'
-            else:
-                prec_color = 'none'
-            day['precipitation_color'] = prec_color
-        try:
-            weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
-        except:
-            weather['history']['hourly3h'] = None
-        if weather['history']['hourly3h']:
-            for hour in weather['history']['hourly']:
-                # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
-                hour['kirjeldus'] = OWM_CODES.get(
-                    str(hour['weather'][0]['id']),
-                    hour['weather'][0]['description']
-                )
-                try:
-                    prec_maxvalue = float(hour['rain']['1h'])
-                except:
-                    prec_maxvalue = 0
-                if prec_maxvalue > 2:
-                    prec_color = 'heavy'
-                elif prec_maxvalue > 1:
-                    prec_color = 'moderate'
-                elif prec_maxvalue > 0:
-                    prec_color = 'light'
-                else:
-                    prec_color = 'none'
-                hour['precipitation_color'] = prec_color
-    return weather
+#     weather['forecast'] = dict()
+#     if weather:
+#         # weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
+#         weather['current']['kirjeldus'] = OWM_CODES.get(
+#             str(weather['current']['weather'][0]['id']),
+#             weather['current']['weather'][0]['description']
+#         )
+#         for hour in weather['hourly']:
+#             # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+#             hour['kirjeldus'] = OWM_CODES.get(
+#                 str(hour['weather'][0]['id']),
+#                 hour['weather'][0]['description']
+#             )
+#             try:
+#                 prec_maxvalue = float(hour['rain']['1h'])
+#             except:
+#                 prec_maxvalue = 0
+#             if prec_maxvalue > 2:
+#                 prec_color = 'heavy'
+#             elif prec_maxvalue > 1:
+#                 prec_color = 'moderate'
+#             elif prec_maxvalue > 0:
+#                 prec_color = 'light'
+#             else:
+#                 prec_color = 'none'
+#             hour['precipitation_color'] = prec_color
+#             weather['forecast'][str(hour['dt'])] = hour
+#         for day in weather['daily']:
+#             # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
+#             day['kirjeldus'] = OWM_CODES.get(
+#                 str(day['weather'][0]['id']),
+#                 day['weather'][0]['description']
+#             )
+#             try:
+#                 prec_maxvalue = float(day['rain'])
+#             except:
+#                 prec_maxvalue = 0
+#             if prec_maxvalue > 2:
+#                 prec_color = 'heavy'
+#             elif prec_maxvalue > 1:
+#                 prec_color = 'moderate'
+#             elif prec_maxvalue > 0:
+#                 prec_color = 'light'
+#             else:
+#                 prec_color = 'none'
+#             day['precipitation_color'] = prec_color
+#         try:
+#             weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
+#         except:
+#             weather['history']['hourly3h'] = None
+#         if weather['history']['hourly3h']:
+#             for hour in weather['history']['hourly']:
+#                 # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
+#                 hour['kirjeldus'] = OWM_CODES.get(
+#                     str(hour['weather'][0]['id']),
+#                     hour['weather'][0]['description']
+#                 )
+#                 try:
+#                     prec_maxvalue = float(hour['rain']['1h'])
+#                 except:
+#                     prec_maxvalue = 0
+#                 if prec_maxvalue > 2:
+#                     prec_color = 'heavy'
+#                 elif prec_maxvalue > 1:
+#                     prec_color = 'moderate'
+#                 elif prec_maxvalue > 0:
+#                     prec_color = 'light'
+#                 else:
+#                     prec_color = 'none'
+#                 hour['precipitation_color'] = prec_color
+#     return weather
 
 # küsib Ilmateenistuse hetkeandmed
 def get_ilmateenistus_now():
@@ -789,19 +827,24 @@ def get_ilmateenistus_location_data(headers):
         return data
 
 
-def get_ilmateenistus_forecast() -> dict or None:
+def get_ilmateenistus_forecast(asukoht="valgalinn") -> Optional[dict]:
+    if asukoht not in ASUKOHAD.keys():
+        asukoht="valgalinn"
+    asukoha_andmed = ASUKOHAD[asukoht]
+    lat = asukoha_andmed['lat']
+    lon = asukoha_andmed['lon']
     headers = {
-        "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
+        # "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
         "Accept": "application/json"
     }
     # t2psustame asukoha
-    try:
-        location_data = get_ilmateenistus_location_data(headers=headers)
-        coordinates = location_data['data'][0]['coordinates']
-    except:
-        coordinates = '57.776678;26.030958' # fallback if location not found
-    url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates={coordinates}"
-
+    # try:
+    #     location_data = get_ilmateenistus_location_data(headers=headers)
+    #     coordinates = location_data['data'][0]['coordinates']
+    # except:
+    #     coordinates = '57.776678;26.030958' # fallback if location not found
+    # url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates={coordinates}"
+    url = f'https://publicapi.envir.ee/v1/modelForecast/meteogram?coordinates={lat}%3B{lon}'
     response = requests.get(
         url,
         headers=headers
@@ -850,7 +893,7 @@ def get_ilmateenistus_forecast() -> dict or None:
             }
             if settings.REDIS_INUSE:
                 redis_client.set(
-                    'ilmateenistus_forecast',
+                    f'ilmateenistus_forecast_{asukoht}',
                     json.dumps({'forecast': forecast}, cls=DjangoJSONEncoder),
                     ex=10*60
                 )
@@ -859,9 +902,11 @@ def get_ilmateenistus_forecast() -> dict or None:
         print(url, response.status_code)
         return None
 
-def ilmateenistus_forecast() -> dict or None:
-    if settings.REDIS_INUSE and redis_client.exists('ilmateenistus_forecast'):
-        forecast_jsondumps = redis_client.get('ilmateenistus_forecast')
+def ilmateenistus_forecast(asukoht="valgalinn") -> Optional[dict]:
+    if asukoht not in ASUKOHAD.keys():
+        asukoht="valgalinn"
+    if settings.REDIS_INUSE and redis_client.exists(f'ilmateenistus_forecast_{asukoht}'):
+        forecast_jsondumps = redis_client.get(f'ilmateenistus_forecast_{asukoht}')
         forecast = json.loads(forecast_jsondumps)
     else:
         forecast = get_ilmateenistus_forecast()
@@ -870,7 +915,15 @@ def ilmateenistus_forecast() -> dict or None:
 # yrno API ver 2 andmete päring
 class YrnoAPI():
 
-    def __init__(self):
+    def __init__(self, asukoht = "valgalinn"):
+        self.asukoht = asukoht
+        if self.asukoht not in ASUKOHAD.keys():
+            self.asukoht = "valgalinn"
+        asukoha_andmed = ASUKOHAD[asukoht]
+        self.lat = asukoha_andmed['lat']
+        self.lon = asukoha_andmed['lon']
+        self.altitude = asukoha_andmed['altitude']
+
         self.utc = pytz.utc
         self.local = pytz.timezone("Europe/Tallinn")
         # Uued ilmasymbolid vs vanad koodid
@@ -920,7 +973,7 @@ class YrnoAPI():
         }
 
         # Küsime ilmaennustuse json täielikud andmed
-        self.yrno_forecast_json = self.get_data('yrno')
+        self.yrno_forecast_json = self.get_data(f'yrno_{self.asukoht}')
         if self.yrno_forecast_json:
             # Filtreerime järgmise 48h ennustuse andmed
             self.timeseries_48h = self.yrno_next48h(self.yrno_forecast_json)
@@ -959,10 +1012,9 @@ class YrnoAPI():
             pass
 
         # Küsime värsked andmed
-        # kohaandmed = Valga
-        altitude = "64"
-        lat = "57.77781"
-        lon = "26.0473"
+        altitude = self.altitude # "64"
+        lat = self.lat # "57.77781"
+        lon = self.lon # "26.0473"
         # yr.no API Valga: https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=57.77781&lon=26.0473&altitude=64
         url = 'https://api.met.no/weatherapi/locationforecast/2.0/complete'
         params = {
@@ -1022,10 +1074,11 @@ class YrnoAPI():
             # data = tag_forecast[n]
             # time = pytz.timezone('Europe/Tallinn').localize(datetime.strptime(data.attrib['from'], '%Y-%m-%dT%H:%M:%S'))
             date_string = hour['time']
-            utc_time = self.utc.localize(datetime.strptime(
-                date_string,
-                '%Y-%m-%dT%H:%M:%SZ'
-            )
+            utc_time = self.utc.localize(
+                datetime.strptime(
+                    date_string,
+                    '%Y-%m-%dT%H:%M:%SZ'
+                )
             )
             loc_time = utc_time.astimezone(self.local)
             cat.append(loc_time)  # Aeg
@@ -1130,11 +1183,12 @@ class YrnoAPI():
             return ''
 
 # küsib ilmaandmed ja moodustab nendest sõnastiku
-def get_forecasts(hours=48):
-    yAPI = YrnoAPI()
+def get_forecasts(hours=48, asukoht="valgalinn"):
+    if asukoht not in ASUKOHAD.keys():
+        asukoht="valgalinn"
+    yAPI = YrnoAPI(asukoht=asukoht)
     y = yAPI.yrno_forecasts
-    # o = owm_onecall()
-    i = ilmateenistus_forecast()
+    i = ilmateenistus_forecast(asukoht=asukoht)
     now = datetime.now()
     forecast = dict()
 
@@ -1155,22 +1209,6 @@ def get_forecasts(hours=48):
             y_prec = y_data['precipitation']
             y_prec_color = y_data['precipitation_color']
             y_pres = float_or_none(y_data['pressure'])
-        # openweathermaps.org
-        # o_temp = None
-        # o_prec = None
-        # o_prec_color = ''
-        # o_pres = None
-        # o_icon = ''
-        # o_data = o['forecast'].get(str(ref_dt), None)
-        # if o_data:
-        #     o_temp = o_data['temp']
-        #     o_icon = o_data['weather'][0]['icon']
-        #     try:
-        #         o_prec = o_data['rain']['1h']
-        #     except:
-        #         o_prec = None
-        #     o_prec_color = o_data['precipitation_color']
-        #     o_pres = float_or_none(o_data['pressure'])
 
         # ilmateenistus.ee
         i_temp = None
@@ -1192,11 +1230,6 @@ def get_forecasts(hours=48):
             'y_prec': str(y_prec),
             'y_prec_color': y_prec_color,
             'y_pres': y_pres,
-            # 'o_temp': o_temp,
-            # 'o_icon': o_icon,
-            # 'o_prec': str(o_prec),
-            # 'o_prec_color': o_prec_color,
-            # 'o_pres': o_pres,
             'i_temp': i_temp,
             'i_icon': i_icon,
             'i_prec': str(i_prec),

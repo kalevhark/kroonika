@@ -7,6 +7,7 @@ urlpatterns = [
     # path('mobile/', views.index_mobile, name='index_mobile'),
     path('history/', views.history, name='history'),
     path('forecasts/', views.forecasts, name='forecasts'),
+    path('forecasts/<str:asukoht>/', views.forecasts),
     # path('forecasts_yrno/', views.forecasts_yrno, name='forecasts_yrno'),
     path('forecasts_quality/', views.forecasts_quality, name='forecasts_quality'),
     path('maxmin/', views.maxmin, name='maxmin'),

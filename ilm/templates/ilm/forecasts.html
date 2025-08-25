@@ -3,7 +3,8 @@
 {% load ilm_extras %}
 
 {% block stylesheet %}
-<style>
+<link rel="stylesheet" href="{% static 'ilm/css/ilm_maxmin.css' %}?ver=2025.07">
+{% comment %} <style>
 /* hoverable table rows + columns https://codepen.io/chriscoyier/pen/pvwmaR */
 table {
   overflow: hidden;
@@ -96,7 +97,7 @@ td.rain.heavy::before {
 .fs1 {
 	font-size: 2em;
 }
-</style>
+</style> {% endcomment %}
 {% endblock %}
 
 {% block javascript %}
@@ -122,14 +123,13 @@ if (screen.width < 500) {
 		<table>
 			<thead>
         <tr>
-          <th>Aeg</th>
-          <th colspan="3">ilmateenistus.ee</th>
-          <th colspan="3">yr.no</th>
-{#          <th colspan="3">openweathermaps.org</th>#}
+          <th></th>
+          <th colspan="3" class="w3-center verticalborderleft">ilmateenistus.ee</th>
+          <th colspan="3" class="w3-center verticalborderleft">yr.no</th>
         </tr>
         <tr>
-          <th class="col"></th>
-          <th class="col temperature">
+          <th class="col">Aeg</th>
+          <th class="col temperature verticalborderleft">
             <span class="fs1 climacon thermometer" aria-hidden="true"></span>
           </th>
           <th class="col w3-center">
@@ -138,7 +138,7 @@ if (screen.width < 500) {
           <th class="col rain">
             <span class="fs1 climacon umbrella" aria-hidden="true"></span>
           </th>
-          <th class="temperature">
+          <th class="temperature verticalborderleft">
             <span class="fs1 climacon thermometer" aria-hidden="true"></span>
           </th>
           <th class="col w3-center">
@@ -147,24 +147,16 @@ if (screen.width < 500) {
           <th class="col rain">
             <span class="fs1 climacon umbrella" aria-hidden="true"></span>
           </th>
-{#          <th class="col temperature">#}
-{#            <span class="fs1 climacon thermometer" aria-hidden="true"></span>#}
-{#          </th>#}
-{#          <th class="col w3-center">#}
-{#            <span class="fa fa-eye"></span>#}
-{#          </th>#}
-{#          <th class="col rain">#}
-{#            <span class="fs1 climacon umbrella" aria-hidden="true"></span>#}
-{#          </th>#}
         </tr>
       </thead>
 			<tbody>
         {% for timestamp, data in forecast.items %}
           <tr class="row">
             {# Ilmateenistus #}
-            <td>{{ timestamp|timestamp_to_time|date:"d.m H:i" }}</td>
+            <td>{{ timestamp|timestamp_to_time|date:"d.m H" }}-{{ timestamp|timestamp_to_time|date:"H"|add:"1"|stringformat:"02d" }}</td>
             <td
-                class="temperature">
+                class="temperature verticalborderleft"
+            >
               <span class="temperature colored-{% if data.i_temp > 0 %}positive{% else %}negative{% endif %}">
                 {{ data.i_temp|floatformat:1 }}
               </span>
@@ -180,7 +172,7 @@ if (screen.width < 500) {
 
             {# yr.no #}
             <td
-                class="temperature">
+                class="temperature verticalborderleft">
               <span class="temperature colored-{% if data.y_temp > 0 %}positive{% else %}negative{% endif %}">
                 {{ data.y_temp|floatformat:1 }}
               </span>
