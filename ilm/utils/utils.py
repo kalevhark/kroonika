@@ -424,26 +424,10 @@ def ilmaandmed_apist(dt, verbose=False):
     ilmaandmed['phenomenon_observer'] = data_observation_data_hourly['pwm15maEst'] # Nähtus 15 min avg manuaalvaatlus Est
     ilmaandmed['precipitations'] = float_or_none(data_observation_data_hourly['pr1hs']) # Sademed, 1 h summa (näha kodukal)
     ilmaandmed['visibility'] = float_or_none(data_observation_data_hourly['vis1ma']) # Nähtavuskaugus, 1 m keskmine
-    # 'airtemperature': 20.4,	'tains': '20,4',	Õhutemperatuur, 1 m keskmine
-    # 'relativehumidity': 53.0,	'rhins': '53.0',	Suhteline õhuniiskus
-    # 'airpressure': 1009.5,	'qffins': '1009,5',	Õhurõhk merepinnal
-    # 'airpressure_delta': -0.9,	'qffmuutus': '-0,9',	Õhurõhk merepinnal
-    # 'winddirection': 201.0,	'wd10ma': '201.0',	Tuule suund, 10 m valdav kraad
-    # 'windspeed': 4.4,	'ws10ma': '4,4',	Tuule kiirus 10 min avg
-    # 'windspeedmax': 9.3,	'ws1hx': '9,3',	Tuule kiirus, 1 h maksimum
-    # 'cloudiness': None,	'ccins': None,	Üldpilvisus 1 m avg manuaalvaatlus
-    # 'phenomenon': 'nähtusteta',	'pw15maEst': 'nähtusteta',	Nähtus 15 min avg Est
-    # 'phenomenon_observer': '',	'pwm15maEst': None,	Nähtus 15 min avg manuaalvaatlus Est
-    # 'precipitations': 0.0,	'pr1hs': '0,0',	Sademed, 1 h summa (näha kodukal)
-    # 'visibility': 28.0,	'vis1ma': '28,0'	Nähtavuskaugus, 1 m keskmine
     ilmaandmed['airtemperature_max'] = float_or_none(data_observation_temperature_extremums['ta1hx']) # õhutemperatuur 1 h max
     ilmaandmed['airtemperature_min'] = float_or_none(data_observation_temperature_extremums['ta1hm']) # õhutemperatuur 1 h min
-    # 'airtemperature_max': 20.8,	'ta1hx': '20,8'	õhutemperatuur 1 h max
-    # 'airtemperature_min': 19.0	'ta1hm': '19,0',	õhutemperatuur 1 h min
     ilmaandmed['station_id'] = 1
     ilmaandmed['timestamp'] = aware_from_dt
-    # 'station_id': 1,
-    # 'timestamp': datetime.datetime(2025, 6, 7, 17, 0, tzinfo=<DstTzInfo 'Europe/Tallinn' EEST+3:00:00 DST>),
     if verbose:
         print(dt, ilmaandmed)
     return ilmaandmed
@@ -695,116 +679,6 @@ def get_ilmateenistus_history():
                 precipitation_color = 'light'
         history[hour.timestamp]['precipitation_color'] = precipitation_color
     return history
-
-# def owm_onecall(path=os.getcwd()):
-#     try:
-#         from django.conf import settings
-#         api_key = settings.OWM_APIKEY
-#     except:
-#         api_config = config(path, 'ilm/utils/owm.ini', 'OWM')
-#         api_key = api_config['owm_apikey']
-#     city_id = 587876  # Valga
-#     lon = '26.05'
-#     lat = '57.78'
-#     owm_url = 'https://api.openweathermap.org/data/2.5/'
-
-#     # Hetkeandmed ja prognoos
-#     params = {
-#         'lat': lat,
-#         'lon': lon,
-#         'appid': api_key,
-#         'units': 'metric',
-#     }
-#     resp = requests.get(
-#         owm_url + 'onecall',
-#         # headers=headers,
-#         params=params
-#     )
-#     weather = json.loads(resp.text)
-
-#     # Ajalugu
-#     now = datetime.now()
-#     dt = int(datetime.timestamp(datetime(now.year, now.month, now.day, now.hour)))
-#     params['dt'] = dt
-#     resp = requests.get(
-#         owm_url + 'onecall/timemachine',
-#         # headers=headers,
-#         params=params
-#     )
-#     # print(resp.status_code)
-#     weather['history'] = json.loads(resp.text)
-
-#     weather['forecast'] = dict()
-#     if weather:
-#         # weather['current']['datetime'] = datetime.fromtimestamp(weather['current']['dt'], timezone.utc)
-#         weather['current']['kirjeldus'] = OWM_CODES.get(
-#             str(weather['current']['weather'][0]['id']),
-#             weather['current']['weather'][0]['description']
-#         )
-#         for hour in weather['hourly']:
-#             # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
-#             hour['kirjeldus'] = OWM_CODES.get(
-#                 str(hour['weather'][0]['id']),
-#                 hour['weather'][0]['description']
-#             )
-#             try:
-#                 prec_maxvalue = float(hour['rain']['1h'])
-#             except:
-#                 prec_maxvalue = 0
-#             if prec_maxvalue > 2:
-#                 prec_color = 'heavy'
-#             elif prec_maxvalue > 1:
-#                 prec_color = 'moderate'
-#             elif prec_maxvalue > 0:
-#                 prec_color = 'light'
-#             else:
-#                 prec_color = 'none'
-#             hour['precipitation_color'] = prec_color
-#             weather['forecast'][str(hour['dt'])] = hour
-#         for day in weather['daily']:
-#             # day['datetime'] = datetime.fromtimestamp(day['dt'], timezone.utc)
-#             day['kirjeldus'] = OWM_CODES.get(
-#                 str(day['weather'][0]['id']),
-#                 day['weather'][0]['description']
-#             )
-#             try:
-#                 prec_maxvalue = float(day['rain'])
-#             except:
-#                 prec_maxvalue = 0
-#             if prec_maxvalue > 2:
-#                 prec_color = 'heavy'
-#             elif prec_maxvalue > 1:
-#                 prec_color = 'moderate'
-#             elif prec_maxvalue > 0:
-#                 prec_color = 'light'
-#             else:
-#                 prec_color = 'none'
-#             day['precipitation_color'] = prec_color
-#         try:
-#             weather['history']['hourly3h'] = weather['history']['hourly'][-3:]  # viimased kolm tundi
-#         except:
-#             weather['history']['hourly3h'] = None
-#         if weather['history']['hourly3h']:
-#             for hour in weather['history']['hourly']:
-#                 # hour['datetime'] = datetime.fromtimestamp(hour['dt'], timezone.utc)
-#                 hour['kirjeldus'] = OWM_CODES.get(
-#                     str(hour['weather'][0]['id']),
-#                     hour['weather'][0]['description']
-#                 )
-#                 try:
-#                     prec_maxvalue = float(hour['rain']['1h'])
-#                 except:
-#                     prec_maxvalue = 0
-#                 if prec_maxvalue > 2:
-#                     prec_color = 'heavy'
-#                 elif prec_maxvalue > 1:
-#                     prec_color = 'moderate'
-#                 elif prec_maxvalue > 0:
-#                     prec_color = 'light'
-#                 else:
-#                     prec_color = 'none'
-#                 hour['precipitation_color'] = prec_color
-#     return weather
 
 # küsib Ilmateenistuse hetkeandmed
 def get_ilmateenistus_now():
@@ -1209,6 +1083,7 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
             y_prec = y_data['precipitation']
             y_prec_color = y_data['precipitation_color']
             y_pres = float_or_none(y_data['pressure'])
+            y_windspeed = y_data['windSpeed']
 
         # ilmateenistus.ee
         i_temp = None
@@ -1222,6 +1097,7 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
             i_prec = i_data['precipitation']
             i_prec_color = i_data['precipitation_color']
             i_pres = float_or_none(i_data['pressure'])
+            i_windspeed = i_data['windSpeed']
             i_icon = i_data['symbol']
 
         forecast[str(ref_dt)] = {
@@ -1230,11 +1106,13 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
             'y_prec': str(y_prec),
             'y_prec_color': y_prec_color,
             'y_pres': y_pres,
+            'y_windspeed': y_windspeed,
             'i_temp': i_temp,
             'i_icon': i_icon,
             'i_prec': str(i_prec),
             'i_prec_color': i_prec_color,
             'i_pres': i_pres,
+            'i_windspeed': i_windspeed,
         }
     return forecast
 

@@ -2291,8 +2291,11 @@ def mixed_ilmateade(request):
 
 # veebiversioon
 def forecasts(request, asukoht="valgalinn"):
+    from ilm.utils.utils import ASUKOHAD
+    asukoha_andmed = ASUKOHAD.get(asukoht, None)
     forecast = utils.get_forecasts(asukoht=asukoht)
     context = {
+        'asukoha_andmed': asukoha_andmed,
         'forecast': forecast
     }
     return render(request, 'ilm/forecasts.html', context)
