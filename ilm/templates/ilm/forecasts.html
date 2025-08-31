@@ -28,12 +28,31 @@ if (screen.width < 500) {
   <div class="w3-row">
 		<table>
 			<thead>
-        <tr>
+        {% comment %} <tr>
           <th>{{ asukoha_andmed.name }}</th>
           <th colspan="4" class="w3-center verticalborderleft">ilmateenistus.ee</th>
           <th colspan="4" class="w3-center verticalborderleft">yr.no</th>
-        </tr>
+        </tr> {% endcomment %}
         <tr>
+          <th>{{ asukoha_andmed.name }}</th>
+          <th scope="row" colspan="4" class="w3-center verticalborderleft">
+            <a 
+              href="{{ asukoha_andmed.url_ilmateenistus }}" 
+              target="_blank"
+            >
+              ilmateenistus.ee
+            </a>
+          </th>
+          <th scope="row" colspan="4" class="w3-center verticalborderleft">
+            <a 
+              href="{{ asukoha_andmed.url_yrno }}" 
+              target="_blank"
+            >
+              yr.no
+            </a>
+          </th>
+        </tr>
+        {% comment %} <tr>
           <th class="col">Aeg</th>
           <th class="col temperature verticalborderleft">
             <span class="fs1 climacon thermometer" aria-hidden="true"></span>
@@ -41,8 +60,8 @@ if (screen.width < 500) {
           <th class="col w3-center">
             <span class="fa fa-eye"></span>
           </th>
-          <th class="col w3-center">
-            <span class="fs1 climacon wind"></span>
+          <th class="col w3-right">
+            <span class="fs1 climacon wind" aria-hidden="true"></span>
           </th>
           <th class="col rain">
             <span class="fs1 climacon umbrella" aria-hidden="true"></span>
@@ -53,13 +72,23 @@ if (screen.width < 500) {
           <th class="col w3-center">
             <span class="fa fa-eye"></span>
           </th>
-          <th class="col w3-center">
-            <span class="fs1 climacon wind"></span>
+          <th class="col w3-right">
+            <span class="fs1 climacon wind" aria-hidden="true"></span>
           </th>
           <th class="col rain">
             <span class="fs1 climacon umbrella" aria-hidden="true"></span>
           </th>
-        </tr>
+        </tr> {% endcomment %}
+        {% comment %} <tr>
+          <th class="col">Aeg</th>
+          <th class="col verticalborderleft" colspan="2">Õhk</th>
+          <th class="col w3-right">Tuul</th>
+          <th></th>
+          <th class="col w3-right">Vihm</th>
+          <th class="col verticalborderleft" colspan="2">Õhk</th>
+          <th class="col w3-right">Tuul</th>
+          <th class="col w3-right">Vihm</th>
+        </tr> {% endcomment %}
       </thead>
 			<tbody>
         {% for timestamp, data in forecast.items %}
@@ -105,25 +134,23 @@ if (screen.width < 500) {
       </tbody>
       <tfoot>
         <tr>
-          <th scope="row" colspan="8">
-            Allikad:&nbsp;
+          <th>Allikad:</th>
+          <th scope="row" colspan="4">
             <a 
               href="{{ asukoha_andmed.url_ilmateenistus }}" 
-              class="text-yellow-900 hover:underline"
               target="_blank"
             >
               ilmateenistus.ee
             </a>
-            &nbsp;
+          </th>
+          <th scope="row" colspan="4">
             <a 
               href="{{ asukoha_andmed.url_yrno }}" 
-              class="text-yellow-900 hover:underline"
               target="_blank"
             >
               yr.no
             </a>
           </th>
-          <td></td>
         </tr>
       </tfoot>
     </table>
