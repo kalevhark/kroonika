@@ -718,7 +718,8 @@ def get_ilmateenistus_forecast(asukoht="valgalinn") -> Optional[dict]:
     # except:
     #     coordinates = '57.776678;26.030958' # fallback if location not found
     # url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates={coordinates}"
-    url = f'https://publicapi.envir.ee/v1/modelForecast/meteogram?coordinates={lat}%3B{lon}'
+    # url = f'https://publicapi.envir.ee/v1/modelForecast/meteogram?coordinates={lat}%3B{lon}'
+    url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?coordinates={lat}%3B{lon}"
     response = requests.get(
         url,
         headers=headers
