@@ -784,7 +784,7 @@ def ilmateenistus_forecast(asukoht="valgalinn") -> Optional[dict]:
         forecast_jsondumps = redis_client.get(f'ilmateenistus_forecast_{asukoht}')
         forecast = json.loads(forecast_jsondumps)
     else:
-        forecast = get_ilmateenistus_forecast()
+        forecast = get_ilmateenistus_forecast(asukoht=asukoht)
     return forecast
 
 # yrno API ver 2 andmete päring
