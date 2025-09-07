@@ -59,6 +59,7 @@ tbody th:focus::before {
 .days,
 .temperature {
   text-align: right;
+  text-wrap: nowrap;
 }
 
 /*

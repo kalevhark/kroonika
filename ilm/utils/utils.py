@@ -1085,6 +1085,8 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
             y_prec_color = y_data['precipitation_color']
             y_pres = float_or_none(y_data['pressure'])
             y_windspeed = y_data['windSpeed']
+            y_winddirection = y_data['windDirection']
+            y_winddirection_icon = int(float(y_winddirection) // 10 * 10)
 
         # ilmateenistus.ee
         i_temp = None
@@ -1095,10 +1097,13 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
         i_data = i['forecast'].get(str(ref_dt), None)
         if i_data:
             i_temp = float_or_none(i_data['temperature'])
+            i_phenomen = i_data['phenomen']
             i_prec = i_data['precipitation']
             i_prec_color = i_data['precipitation_color']
             i_pres = float_or_none(i_data['pressure'])
             i_windspeed = i_data['windSpeed']
+            i_winddirection = i_data['windDirection']
+            i_winddirection_icon = int(float(i_winddirection.get('deg', 0)) // 10 * 10)
             i_icon = i_data['symbol']
 
         forecast[str(ref_dt)] = {
@@ -1108,12 +1113,17 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
             'y_prec_color': y_prec_color,
             'y_pres': y_pres,
             'y_windspeed': y_windspeed,
+            'y_winddirection': y_winddirection,
+            'y_winddirection_icon': y_winddirection_icon,
             'i_temp': i_temp,
+            'i_phenomen': i_phenomen,
             'i_icon': i_icon,
             'i_prec': str(i_prec),
             'i_prec_color': i_prec_color,
             'i_pres': i_pres,
             'i_windspeed': i_windspeed,
+            'i_winddirection': i_winddirection,
+            'i_winddirection_icon': i_winddirection_icon
         }
     return forecast
 

@@ -4,6 +4,7 @@
 
 {% block stylesheet %}
   <link rel="stylesheet" href="{% static 'ilm/css/ilm_maxmin.css' %}?ver=2025.07">
+  <link rel="stylesheet" href="{% static 'ilm/css/wind.css' %}" />
 {% endblock %}
 
 {% block javascript %}
@@ -26,133 +27,162 @@ if (screen.width < 500) {
 
 {% block content %}
   <div class="w3-row">
-		<table>
-			<thead>
-        {% comment %} <tr>
-          <th>{{ asukoha_andmed.name }}</th>
-          <th colspan="4" class="w3-center verticalborderleft">ilmateenistus.ee</th>
-          <th colspan="4" class="w3-center verticalborderleft">yr.no</th>
-        </tr> {% endcomment %}
-        <tr>
-          <th>{{ asukoha_andmed.name }}</th>
-          <th scope="row" colspan="4" class="w3-center verticalborderleft">
-            <a 
-              href="{{ asukoha_andmed.url_ilmateenistus }}" 
-              target="_blank"
-            >
-              ilmateenistus.ee
-            </a>
-          </th>
-          <th scope="row" colspan="4" class="w3-center verticalborderleft">
-            <a 
-              href="{{ asukoha_andmed.url_yrno }}" 
-              target="_blank"
-            >
-              yr.no
-            </a>
-          </th>
-        </tr>
-        {% comment %} <tr>
-          <th class="col">Aeg</th>
-          <th class="col temperature verticalborderleft">
-            <span class="fs1 climacon thermometer" aria-hidden="true"></span>
-          </th>
-          <th class="col w3-center">
-            <span class="fa fa-eye"></span>
-          </th>
-          <th class="col w3-right">
-            <span class="fs1 climacon wind" aria-hidden="true"></span>
-          </th>
-          <th class="col rain">
-            <span class="fs1 climacon umbrella" aria-hidden="true"></span>
-          </th>
-          <th class="temperature verticalborderleft">
-            <span class="fs1 climacon thermometer" aria-hidden="true"></span>
-          </th>
-          <th class="col w3-center">
-            <span class="fa fa-eye"></span>
-          </th>
-          <th class="col w3-right">
-            <span class="fs1 climacon wind" aria-hidden="true"></span>
-          </th>
-          <th class="col rain">
-            <span class="fs1 climacon umbrella" aria-hidden="true"></span>
-          </th>
-        </tr> {% endcomment %}
-        {% comment %} <tr>
-          <th class="col">Aeg</th>
-          <th class="col verticalborderleft" colspan="2">Õhk</th>
-          <th class="col w3-right">Tuul</th>
-          <th></th>
-          <th class="col w3-right">Vihm</th>
-          <th class="col verticalborderleft" colspan="2">Õhk</th>
-          <th class="col w3-right">Tuul</th>
-          <th class="col w3-right">Vihm</th>
-        </tr> {% endcomment %}
-      </thead>
-			<tbody>
-        {% for timestamp, data in forecast.items %}
-          <tr class="row">
-            {# Ilmateenistus #}
-            <td>{{ timestamp|timestamp_to_time|date:"d.m H" }}-{{ timestamp|timestamp_to_time|date:"H"|add:"1"|stringformat:"02d" }}</td>
-            <td
-                class="temperature verticalborderleft"
-            >
-              <span class="temperature colored-{% if data.i_temp > 0 %}positive{% else %}negative{% endif %}">
-                {{ data.i_temp|floatformat:1 }}
-              </span>
-            </td>
-            <td class="w3-center">
-              <img
-                      src="https://www.ilmateenistus.ee/wp-content/themes/ilm2020/images/{{ data.i_icon }}.svg"
-                      alt="{{ data.i_icon }}"
-                      width="32" height="32"
-              />
-            </td>
-            <td class="rain">{{ data.i_windspeed|floatformat:1 }}</td>
-            <td class="rain {{ data.i_prec_color }}">{{ data.i_prec|floatformat:1 }}</td>
-
-            {# yr.no #}
-            <td
-                class="temperature verticalborderleft">
-              <span class="temperature colored-{% if data.y_temp > 0 %}positive{% else %}negative{% endif %}">
-                {{ data.y_temp|floatformat:1 }}
-              </span>
-            </td>
-            <td class="w3-center">
-              <img
-                      src="{% static "" %}ilm/img/weathericon/svg/{{ data.y_icon }}.svg"
-                      alt="{{ data.y_icon }}"
-                      width="32" height="32"
-              />
-            </td>
-            <td class="rain">{{ data.y_windspeed|floatformat:1 }}</td>
-            <td class="rain {{ data.y_prec_color }}">{{ data.y_prec }}</td>
-
+    <div class="w3-responsive">
+      <table>
+        <thead>
+          {% comment %} <tr>
+            <th>{{ asukoha_andmed.name }}</th>
+            <th colspan="4" class="w3-center verticalborderleft">ilmateenistus.ee</th>
+            <th colspan="4" class="w3-center verticalborderleft">yr.no</th>
+          </tr> {% endcomment %}
+          <tr>
+            <th>{{ asukoha_andmed.name }}</th>
+            <th scope="row" colspan="3" class="w3-center verticalborderleft">
+              <a 
+                href="{{ asukoha_andmed.url_ilmateenistus }}" 
+                target="_blank"
+              >
+                ilmateenistus.ee
+              </a>
+            </th>
+            <th scope="row" colspan="3" class="w3-center verticalborderleft">
+              <a 
+                href="{{ asukoha_andmed.url_yrno }}" 
+                target="_blank"
+              >
+                yr.no
+              </a>
+            </th>
           </tr>
-        {% endfor %}
-      </tbody>
-      <tfoot>
-        <tr>
-          <th>Allikad:</th>
-          <th scope="row" colspan="4">
-            <a 
-              href="{{ asukoha_andmed.url_ilmateenistus }}" 
-              target="_blank"
-            >
-              ilmateenistus.ee
-            </a>
-          </th>
-          <th scope="row" colspan="4">
-            <a 
-              href="{{ asukoha_andmed.url_yrno }}" 
-              target="_blank"
-            >
-              yr.no
-            </a>
-          </th>
-        </tr>
-      </tfoot>
-    </table>
+          {% comment %} <tr>
+            <th class="col">Aeg</th>
+            <th class="col temperature verticalborderleft">
+              <span class="fs1 climacon thermometer" aria-hidden="true"></span>
+            </th>
+            <th class="col w3-center">
+              <span class="fa fa-eye"></span>
+            </th>
+            <th class="col w3-right">
+              <span class="fs1 climacon wind" aria-hidden="true"></span>
+            </th>
+            <th class="col rain">
+              <span class="fs1 climacon umbrella" aria-hidden="true"></span>
+            </th>
+            <th class="temperature verticalborderleft">
+              <span class="fs1 climacon thermometer" aria-hidden="true"></span>
+            </th>
+            <th class="col w3-center">
+              <span class="fa fa-eye"></span>
+            </th>
+            <th class="col w3-right">
+              <span class="fs1 climacon wind" aria-hidden="true"></span>
+            </th>
+            <th class="col rain">
+              <span class="fs1 climacon umbrella" aria-hidden="true"></span>
+            </th>
+          </tr> {% endcomment %}
+          {% comment %} <tr>
+            <th class="col">Aeg</th>
+            <th class="col verticalborderleft" colspan="2">Õhk</th>
+            <th class="col w3-right">Tuul</th>
+            <th></th>
+            <th class="col w3-right">Vihm</th>
+            <th class="col verticalborderleft" colspan="2">Õhk</th>
+            <th class="col w3-right">Tuul</th>
+            <th class="col w3-right">Vihm</th>
+          </tr> {% endcomment %}
+        </thead>
+        <tbody>
+          {% for timestamp, data in forecast.items %}
+            <tr class="row">
+              {# Ilmateenistus #}
+              <td>
+                {{ timestamp|timestamp_to_time|date:"d.m" }}<br>
+                {{ timestamp|timestamp_to_time|date:"H" }}&#8209;{{ timestamp|timestamp_to_time|date:"H"|add:"1"|stringformat:"02d" }}
+              </td>
+              <td
+                  class="temperature verticalborderleft"
+              >
+                <img
+                        src="https://www.ilmateenistus.ee/wp-content/themes/ilm2020/images/{{ data.i_icon }}.svg"
+                        alt="{{ data.i_phenomen.et }}"
+                        title="{{ data.i_phenomen.et }}"
+                        width="32" height="32"
+                />
+                <br>
+                <span class="temperature colored-{% if data.i_temp > 0 %}positive{% else %}negative{% endif %}">
+                  {{ data.i_temp|floatformat:1 }}
+                </span>
+              </td>
+              <td 
+                class="rain"
+              >
+                <span 
+                  alt="{{ data.i_winddirection.icon }}" 
+                  title="{{ data.i_winddirection.deg }}° {{ data.i_winddirection.name }}" 
+                  class="wind-orientation-small direction-{{ data.i_winddirection_icon }}"
+                >
+                </span>
+              </td>
+              <td class="rain {{ data.i_prec_color }}">
+                {{ data.i_windspeed|floatformat:1 }} m/s
+                {% if data.i_prec != "0" %}<br>{{ data.i_prec }} mm{% endif %}
+              </td>
+
+              {# yr.no #}
+              <td
+                  class="temperature verticalborderleft"
+              >
+                <img
+                        src="{% static "" %}ilm/img/weathericon/svg/{{ data.y_icon }}.svg"
+                        alt="{{ data.y_icon }}"
+                        width="32" height="32"
+                />
+                <br>
+                <span class="temperature colored-{% if data.y_temp > 0 %}positive{% else %}negative{% endif %}">
+                  {{ data.y_temp|floatformat:1 }}
+                </span>
+              </td>
+              <td 
+                class="rain"
+              >
+                <span 
+                  alt="{{ data.y_winddirection }}" 
+                  title="{{ data.y_winddirection }}°" 
+                  class="wind-orientation-small direction-{{ data.y_winddirection_icon }}"
+                >
+                </span>
+              </td>
+              <td class="rain {{ data.y_prec_color }}">
+                {{ data.y_windspeed|floatformat:1 }} m/s
+                {% if data.y_prec != "0.0" %}<br>{{ data.y_prec }} mm{% endif %}
+              </td>
+
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Allikad:</th>
+            <th scope="row" colspan="3">
+              <a 
+                href="{{ asukoha_andmed.url_ilmateenistus }}" 
+                target="_blank"
+              >
+                ilmateenistus.ee
+              </a>
+            </th>
+            <th scope="row" colspan="3">
+              <a 
+                href="{{ asukoha_andmed.url_yrno }}" 
+                target="_blank"
+              >
+                yr.no
+              </a>
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
 {% endblock %}

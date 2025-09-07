@@ -1,0 +1,180 @@
+/**
+ *  Wind icons https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/
+ */
+
+.wind {
+    text-align:     center;
+
+    font-size:      12px;
+    line-height:    .8em;
+    display:        block;
+    font-weight:    700;
+    color:          #2f5dab;
+
+    text-shadow:    0 1px 0px rgba( 255, 255, 255, 1 );
+
+    /*
+    border:         1px solid #bbb;
+    border-radius:  8px;
+    padding:        2px 0;
+    background:     #fff;
+    background:     rgba( 255, 255, 255, 0.8 );
+    */
+}
+.wind-unit {
+    font-size:      10px;
+}
+.wind-orientation {
+    display:        inline-block;
+    width:          50px;
+    height:         50px;
+    background:     url("https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/wind-sprites.png") no-repeat 0 0;
+}
+.wind-orientation-inline {
+    display:        inline-block;
+    width:          50px;
+    height:         50px;
+    background:     url("https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/wind-sprites.png") no-repeat 0 0;
+}
+
+.north_wind {
+    background-position: 0 0;
+}
+.northeast_wind {
+    background-position: 0 -200px;
+}
+.east_wind {
+    background-position: 0 -450px;
+}
+.southeast_wind {
+    background-position: 0 -700px;
+}
+.south_wind {
+    background-position: 0 -900px;
+}
+.southwest_wind {
+    background-position: 0 -1150px;
+}
+.west_wind {
+    background-position: 0 -1350px;
+}
+.northwest_wind {
+    background-position: 0 -1550px;
+}
+
+.northerly_winds {
+    background:     url("https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/around_north-f60.png") no-repeat 0 0;
+}
+.southerly_winds {
+    background:     url("https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/around_south-f60.png") no-repeat 0 0;
+}
+.easterly_winds {
+    background:     url("https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/around_east-f60.png") no-repeat 0 0;
+}
+.westerly_winds {
+    background:     url("https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/around_west-f60.png") no-repeat 0 0;
+}
+
+.variable_winds {
+    background:     url("https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/variable_clockwise-f60.png") no-repeat 0 0;
+}
+.variable_winds {
+    background:     url("https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/variable_anticlockwise-f60.png") no-repeat 0 0;
+}
+
+.wind-inline {
+    display:        block;
+    width:          50px;
+    height:         50px;
+    background:     url("https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/wind-sprites.png") no-repeat 0 0;
+}
+
+.wind-orientation.direction-00,
+.wind-orientation.direction-0,
+.wind-orientation.direction-360,
+.wind-inline.direction-00,
+.wind-inline.direction-0,
+.wind-inline.direction-360 { background-position: 0 0; }
+.wind-orientation.direction-10, .wind-inline.direction-10 { background-position: 0 -50px; }
+.wind-orientation.direction-20, .wind-inline.direction-20 { background-position: 0 -100px; }
+.wind-orientation.direction-30, .wind-inline.direction-30 { background-position: 0 -150px; }
+.wind-orientation.direction-40, .wind-inline.direction-40 { background-position: 0 -200px; }
+.wind-orientation.direction-50, .wind-inline.direction-50 { background-position: 0 -250px; }
+.wind-orientation.direction-60, .wind-inline.direction-60 { background-position: 0 -300px; }
+.wind-orientation.direction-70, .wind-inline.direction-70 { background-position: 0 -350px; }
+.wind-orientation.direction-80, .wind-inline.direction-80 { background-position: 0 -400px; }
+.wind-orientation.direction-90, .wind-inline.direction-90 { background-position: 0 -450px; }
+.wind-orientation.direction-100, .wind-inline.direction-100 { background-position: 0 -500px; }
+.wind-orientation.direction-110, .wind-inline.direction-110 { background-position: 0 -550px; }
+.wind-orientation.direction-120, .wind-inline.direction-120 { background-position: 0 -600px; }
+.wind-orientation.direction-130, .wind-inline.direction-130 { background-position: 0 -650px; }
+.wind-orientation.direction-140, .wind-inline.direction-140 { background-position: 0 -700px; }
+.wind-orientation.direction-150, .wind-inline.direction-150 { background-position: 0 -750px; }
+.wind-orientation.direction-160, .wind-inline.direction-160 { background-position: 0 -800px; }
+.wind-orientation.direction-170, .wind-inline.direction-170 { background-position: 0 -850px; }
+.wind-orientation.direction-180, .wind-inline.direction-180 { background-position: 0 -900px; }
+.wind-orientation.direction-190, .wind-inline.direction-190 { background-position: 0 -950px; }
+.wind-orientation.direction-200, .wind-inline.direction-200 { background-position: 0 -1000px; }
+.wind-orientation.direction-210, .wind-inline.direction-210 { background-position: 0 -1050px; }
+.wind-orientation.direction-220, .wind-inline.direction-220 { background-position: 0 -1100px; }
+.wind-orientation.direction-230, .wind-inline.direction-230 { background-position: 0 -1150px; }
+.wind-orientation.direction-240, .wind-inline.direction-240 { background-position: 0 -1200px; }
+.wind-orientation.direction-250, .wind-inline.direction-250 { background-position: 0 -1250px; }
+.wind-orientation.direction-260, .wind-inline.direction-260 { background-position: 0 -1300px; }
+.wind-orientation.direction-270, .wind-inline.direction-270 { background-position: 0 -1350px; }
+.wind-orientation.direction-280, .wind-inline.direction-280 { background-position: 0 -1400px; }
+.wind-orientation.direction-290, .wind-inline.direction-290 { background-position: 0 -1450px; }
+.wind-orientation.direction-300, .wind-inline.direction-300 { background-position: 0 -1500px; }
+.wind-orientation.direction-310, .wind-inline.direction-310 { background-position: 0 -1550px; }
+.wind-orientation.direction-320, .wind-inline.direction-320 { background-position: 0 -1600px; }
+.wind-orientation.direction-330, .wind-inline.direction-330 { background-position: 0 -1650px; }
+.wind-orientation.direction-340, .wind-inline.direction-340 { background-position: 0 -1700px; }
+.wind-orientation.direction-350, .wind-inline.direction-350 { background-position: 0 -1750px; }
+
+.wind-inline-small,
+.wind-orientation-small {
+    display:    block;
+    width:      25px;
+    height:     25px;
+    background: url("https://www.ilmateenistus.ee/wp-content/themes/emhi2013/images/wind/wind-small.png") no-repeat;
+}
+.wind-inline-small {
+    display:    inline-block;
+}
+.wind-inline-small.direction-0, .wind-inline-small.direction-360,
+.wind-orientation-small.direction-0, .wind-orientation-small.direction-360 { background-position: 0 0; }
+.wind-inline-small.direction-10, .wind-orientation-small.direction-10 { background-position: 0 -25px; }
+.wind-inline-small.direction-20, .wind-orientation-small.direction-20 { background-position: 0 -50px; }
+.wind-inline-small.direction-30, .wind-orientation-small.direction-30 { background-position: 0 -75px; }
+.wind-inline-small.direction-40, .wind-orientation-small.direction-40 { background-position: 0 -100px; }
+.wind-inline-small.direction-50, .wind-orientation-small.direction-50 { background-position: 0 -125px; }
+.wind-inline-small.direction-60, .wind-orientation-small.direction-60 { background-position: 0 -150px; }
+.wind-inline-small.direction-70, .wind-orientation-small.direction-70 { background-position: 0 -175px; }
+.wind-inline-small.direction-80, .wind-orientation-small.direction-80 { background-position: 0 -200px; }
+.wind-inline-small.direction-90, .wind-orientation-small.direction-90 { background-position: 0 -225px; }
+.wind-inline-small.direction-100, .wind-orientation-small.direction-100 { background-position: 0 -250px; }
+.wind-inline-small.direction-110, .wind-orientation-small.direction-110 { background-position: 0 -275px; }
+.wind-inline-small.direction-120, .wind-orientation-small.direction-120 { background-position: 0 -300px; }
+.wind-inline-small.direction-130, .wind-orientation-small.direction-130 { background-position: 0 -325px; }
+.wind-inline-small.direction-140, .wind-orientation-small.direction-140 { background-position: 0 -350px; }
+.wind-inline-small.direction-150, .wind-orientation-small.direction-150 { background-position: 0 -375px; }
+.wind-inline-small.direction-160, .wind-orientation-small.direction-160 { background-position: 0 -400px; }
+.wind-inline-small.direction-170, .wind-orientation-small.direction-170 { background-position: 0 -425px; }
+.wind-inline-small.direction-180, .wind-orientation-small.direction-180 { background-position: 0 -450px; }
+.wind-inline-small.direction-190, .wind-orientation-small.direction-190 { background-position: 0 -475px; }
+.wind-inline-small.direction-200, .wind-orientation-small.direction-200 { background-position: 0 -500px; }
+.wind-inline-small.direction-210, .wind-orientation-small.direction-210 { background-position: 0 -525px; }
+.wind-inline-small.direction-220, .wind-orientation-small.direction-220 { background-position: 0 -550px; }
+.wind-inline-small.direction-230, .wind-orientation-small.direction-230 { background-position: 0 -575px; }
+.wind-inline-small.direction-240, .wind-orientation-small.direction-240 { background-position: 0 -600px; }
+.wind-inline-small.direction-250, .wind-orientation-small.direction-250 { background-position: 0 -625px; }
+.wind-inline-small.direction-260, .wind-orientation-small.direction-260 { background-position: 0 -650px; }
+.wind-inline-small.direction-270, .wind-orientation-small.direction-270 { background-position: 0 -675px; }
+.wind-inline-small.direction-280, .wind-orientation-small.direction-280 { background-position: 0 -700px; }
+.wind-inline-small.direction-290, .wind-orientation-small.direction-290 { background-position: 0 -725px; }
+.wind-inline-small.direction-300, .wind-orientation-small.direction-300 { background-position: 0 -750px; }
+.wind-inline-small.direction-310, .wind-orientation-small.direction-310 { background-position: 0 -775px; }
+.wind-inline-small.direction-320, .wind-orientation-small.direction-320 { background-position: 0 -800px; }
+.wind-inline-small.direction-330, .wind-orientation-small.direction-330 { background-position: 0 -825px; }
+.wind-inline-small.direction-340, .wind-orientation-small.direction-340 { background-position: 0 -850px; }
+.wind-inline-small.direction-350, .wind-orientation-small.direction-350 { background-position: 0 -875px; }
