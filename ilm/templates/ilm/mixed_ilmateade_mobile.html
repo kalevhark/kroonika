@@ -6,7 +6,12 @@
     {% for hour, data in history.items %}
       <tr>
         <td>{{ hour|time:"H:i" }}</td>
-        <td class="temperature colored-{% if data.airtemperature > 0 %}positive{% else %}negative{% endif %}">{{ data.airtemperature|floatformat:1 }}°C</td>
+        {% comment %} <td class="temperature colored-{% if data.airtemperature > 0 %}positive{% else %}negative{% endif %}">{{ data.airtemperature|floatformat:1 }}°C</td> {% endcomment %}
+        <td class="temperature">
+          <span class="temperature colored-{% if data.airtemperature > 0 %}positive{% else %}negative{% endif %}">
+            {{ data.airtemperature|floatformat:1 }}°C
+          </span>
+        </td>
         <td class="rain {{ data.precipitation_color }}"> {{ data.precipitations|floatformat:1 }}</td>
 {#        <td>{{ data.phenomenon }}</td>#}
         <td>

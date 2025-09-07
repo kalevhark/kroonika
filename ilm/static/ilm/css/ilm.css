@@ -7,13 +7,14 @@ td {
 .rain,
 .temperature {
   text-align: right;
+  display: inline-block;
+  text-wrap-mode: nowrap;
 }
 
 .temperature.colored-negative {
   color: #48AFE8;
 }
 .temperature.colored-positive::before {
-  display: inline-block;
   content: '+';
   position: relative;
 }
