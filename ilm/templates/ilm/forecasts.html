@@ -125,8 +125,8 @@ if (screen.width < 500) {
                 </span>
               </td>
               <td class="rain {{ data.i_prec_color }}">
-                {{ data.i_windspeed|floatformat:1 }} m/s
-                {% if data.i_prec != "0" %}<br>{{ data.i_prec }} mm{% endif %}
+                {{ data.i_windspeed|floatformat:1 }}&nbsp;m/s
+                {% if data.i_prec != "0" %}<br>{{ data.i_prec }}&nbsp;mm{% endif %}
               </td>
 
               {# yr.no #}
@@ -154,8 +154,8 @@ if (screen.width < 500) {
                 </span>
               </td>
               <td class="rain {{ data.y_prec_color }}">
-                {{ data.y_windspeed|floatformat:1 }} m/s
-                {% if data.y_prec != "0.0" %}<br>{{ data.y_prec }} mm{% endif %}
+                {{ data.y_windspeed|floatformat:1 }}&nbsp;m/s
+                {% if data.y_prec != "0.0" %}<br>{{ data.y_prec }}&nbsp;mm{% endif %}
               </td>
 
             </tr>
