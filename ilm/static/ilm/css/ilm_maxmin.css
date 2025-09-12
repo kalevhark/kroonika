@@ -95,7 +95,7 @@ td.rain.heavy::before {
 /* vertikaalne eraldusjoon */
 td.verticalborderleft,
 th.verticalborderleft {
-  border-left: 1px solid blue;
+  border-left: 1px dotted gray;
   color: gray;
 }
 

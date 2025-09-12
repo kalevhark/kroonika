@@ -7,7 +7,6 @@ td {
 .rain,
 .temperature {
   text-align: right;
-  display: inline-block;
   text-wrap-mode: nowrap;
 }
 
