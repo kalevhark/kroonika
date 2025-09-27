@@ -205,12 +205,10 @@ def whoisinfo(ip_addr=''):
 
 # Tagastab IP aadressi alusel hosti kirjelduse
 def whoisinfo_asn_description(row):
-    asn_description = None
     try:
-        asn_description = whoisinfo(row.name)['asn_description']
-    except HTTPLookupError:
-        asn_description = f'Err: {row.name}'
-    return asn_description
+        return whoisinfo(row.name)['asn_description']
+    except Exception as err:
+        return f'Err {err=}: {row.name}'
 
 def find_tiles_map(row):
     pattern = r'/tiles/\d{4}/'
