@@ -195,20 +195,18 @@ def ipggeoinfo(ip_addr=''):
 # eeldus pip install --upgrade ipwhois
 def whoisinfo(ip_addr=''):
     obj = IPWhois(ip_addr)
-    try:
-        whois_data = obj.lookup_rdap(asn_methods=["whois"])
-        return whois_data
-    except Exception as err:
-        return f"Unexpected {err=}, {type(err)=}"
-    
+    whois_data = obj.lookup_rdap(asn_methods=["whois"])
+    return whois_data
 
 
 # Tagastab IP aadressi alusel hosti kirjelduse
 def whoisinfo_asn_description(row):
+    asn_description = None
     try:
-        return whoisinfo(row.name)['asn_description']
-    except Exception as err:
-        return f'Err {err=}: {row.name}'
+        asn_description = whoisinfo(row.name)['asn_description']
+    except HTTPLookupError:
+        asn_description = f'Err: {row.name}'
+    return asn_description
 
 def find_tiles_map(row):
     pattern = r'/tiles/\d{4}/'
