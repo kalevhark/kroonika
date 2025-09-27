@@ -195,8 +195,12 @@ def ipggeoinfo(ip_addr=''):
 # eeldus pip install --upgrade ipwhois
 def whoisinfo(ip_addr=''):
     obj = IPWhois(ip_addr)
-    whois_data = obj.lookup_rdap(asn_methods=["whois"])
-    return whois_data
+    try:
+        whois_data = obj.lookup_rdap(asn_methods=["whois"])
+        return whois_data
+    except Exception as err:
+        return f"Unexpected {err=}, {type(err)=}"
+    
 
 
 # Tagastab IP aadressi alusel hosti kirjelduse
