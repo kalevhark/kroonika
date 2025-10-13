@@ -241,7 +241,7 @@ def is_kroonika_month_crawler(row):
 
 # Tagastab stringist sÃµna, millel on boti laadne nimi *bot, *index vms
 def find_bot_name(rows):
-    bots = ['bot', 'index']
+    bots = ['bot', 'index', 'crawler']
     pat = rf'(\w*{"|".join(bots)})\w*'
     bot = re.search(pat, rows.name, flags=re.IGNORECASE)
     if bot:
