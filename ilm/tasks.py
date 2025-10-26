@@ -761,9 +761,9 @@ def make_observations_log(path=''):
                 f.write(line + '\n')
 
 def update_forecast_log_analyze():
-    # from .utils import forecast_log_analyze
+    from ilm.utils import forecast_log_analyze
     path = Path(__file__).resolve().parent.parent
-    utils.forecast_log_analyze.logs2bigdata(path)
+    forecast_log_analyze.logs2bigdata(path)
 
 
 if __name__ == '__main__':
