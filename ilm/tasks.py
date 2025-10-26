@@ -758,6 +758,27 @@ if __name__ == '__main__':
     verbose = True
     now = datetime.now()
 
+    # uuendame ilmateenistuse prognoosi
+    utils.ilmateenistus_forecast()
+
+    # Kustutame duplikaatread
+    delete_duplicate_observations(path, verbose)
+    
+    # Tabelid mahukate arvutuste jaoks
+    update_lasthours(path, verbose, hours=72)
+    
+    # Tabelid mahukate arvutuste jaoks
+    update_maxmin_rolling(path)
+
+    # Ilmaennustuste logi
+    update_forecast_logs(path, verbose)
+
+    # Viimase täistunnimõõtmise logimine faili
+    make_observations_log(path) # uus variant
+
+    # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
+    update_forecast_log_analyze()
+
     if now.minute % 5 == 0: # Iga 5 minuti j2rel teeme ilm avalehe salvestuse
         # uuendame ilmateenistuse prognoosi
         utils.ilmateenistus_forecast()
