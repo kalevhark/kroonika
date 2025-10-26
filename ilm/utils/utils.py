@@ -1115,15 +1115,15 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
             'y_windspeed': y_windspeed,
             'y_winddirection': y_winddirection,
             'y_winddirection_icon': y_winddirection_icon,
-            'i_temp': i_temp,
-            'i_phenomen': i_phenomen,
-            'i_icon': i_icon,
-            'i_prec': str(i_prec),
-            'i_prec_color': i_prec_color,
-            'i_pres': i_pres,
-            'i_windspeed': i_windspeed,
-            'i_winddirection': i_winddirection,
-            'i_winddirection_icon': i_winddirection_icon
+            'i_temp': i_temp if i_data else None,
+            'i_phenomen': i_phenomen if i_data else None,
+            'i_icon': i_icon if i_data else None,
+            'i_prec': str(i_prec) if i_data else None,
+            'i_prec_color': i_prec_color if i_data else None,
+            'i_pres': i_pres if i_data else None,
+            'i_windspeed': i_windspeed if i_data else None,
+            'i_winddirection': i_winddirection if i_data else None,
+            'i_winddirection_icon': i_winddirection_icon if i_data else None
         }
     return forecast
 
