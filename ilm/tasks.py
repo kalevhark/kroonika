@@ -20,6 +20,7 @@ from django.conf import settings
 #     UTIL_DIR = settings.BASE_DIR / 'ilm' / 'utils'
 
 UTIL_DIR = settings.BASE_DIR / 'ilm' / 'utils'
+settings.configure()
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.middleware import SessionMiddleware
