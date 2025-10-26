@@ -10,17 +10,28 @@ import os
 from pathlib import Path
 import sys
 
-import django
-from django.conf import settings
-# if __name__ == "__main__":
-#     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
-#     django.setup()
-#     UTIL_DIR = Path(__file__).resolve().parent / 'utils'
-# else:
-#     UTIL_DIR = settings.BASE_DIR / 'ilm' / 'utils'
+# Set the project path 
+project_path = "/home/ec2-user/django/kroonika" 
+sys.path.append(project_path) 
+ 
+# Set the DJANGO_SETTINGS_MODULE environment variable 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kroonika.settings") 
+ 
+# Import necessary modules after setting up the environment 
+import django 
+ 
+# Initialize the Django setup 
+django.setup()
 
-UTIL_DIR = settings.BASE_DIR / 'ilm' / 'utils'
-settings.configure()
+# import django
+from django.conf import settings
+
+if __name__ == "__main__":
+    # os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
+    # django.setup()
+    UTIL_DIR = Path(__file__).resolve().parent / 'utils'
+else:
+    UTIL_DIR = settings.BASE_DIR / 'ilm' / 'utils'
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.middleware import SessionMiddleware
@@ -757,30 +768,38 @@ def update_forecast_log_analyze():
 
 if __name__ == '__main__':
     path = os.path.dirname(sys.argv[0])
+    
+    # käivitamiseks python ilm/tasks.py test
+    try:
+        arg = sys.argv[1]
+    except IndexError:
+        arg = None
+
     days = 30 # kontrollime viimase kuu andmeid
     verbose = True
     now = datetime.now()
 
-    # uuendame ilmateenistuse prognoosi
-    utils.ilmateenistus_forecast()
+    if arg and arg == 'test':
+        # uuendame ilmateenistuse prognoosi
+        utils.ilmateenistus_forecast()
 
-    # Kustutame duplikaatread
-    delete_duplicate_observations(path, verbose)
-    
-    # Tabelid mahukate arvutuste jaoks
-    update_lasthours(path, verbose, hours=72)
-    
-    # Tabelid mahukate arvutuste jaoks
-    update_maxmin_rolling(path)
+        # Kustutame duplikaatread
+        delete_duplicate_observations(path, verbose)
+        
+        # Tabelid mahukate arvutuste jaoks
+        update_lasthours(path, verbose, hours=72)
+        
+        # Tabelid mahukate arvutuste jaoks
+        update_maxmin_rolling(path)
 
-    # Ilmaennustuste logi
-    update_forecast_logs(path, verbose)
+        # Ilmaennustuste logi
+        update_forecast_logs(path, verbose)
 
-    # Viimase täistunnimõõtmise logimine faili
-    make_observations_log(path) # uus variant
+        # Viimase täistunnimõõtmise logimine faili
+        make_observations_log(path) # uus variant
 
-    # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
-    update_forecast_log_analyze()
+        # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
+        update_forecast_log_analyze()
 
     if now.minute % 5 == 0: # Iga 5 minuti j2rel teeme ilm avalehe salvestuse
         # uuendame ilmateenistuse prognoosi
