@@ -12,12 +12,14 @@ import sys
 
 import django
 from django.conf import settings
-if __name__ == "__main__":
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
-    django.setup()
-    UTIL_DIR = Path(__file__).resolve().parent / 'utils'
-else:
-    UTIL_DIR = settings.BASE_DIR / 'ilm' / 'utils'
+# if __name__ == "__main__":
+#     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
+#     django.setup()
+#     UTIL_DIR = Path(__file__).resolve().parent / 'utils'
+# else:
+#     UTIL_DIR = settings.BASE_DIR / 'ilm' / 'utils'
+
+UTIL_DIR = settings.BASE_DIR / 'ilm' / 'utils'
 
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.middleware import SessionMiddleware
