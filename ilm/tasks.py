@@ -1,4 +1,4 @@
-#!/home/ec2-user/django/kroonika_env/bin/python3
+# /home/ec2-user/django/kroonika_env/bin/python3
 
 #
 # Ilmaandmete regulaarseks uuendamiseks andmebaasis
@@ -11,8 +11,8 @@ from pathlib import Path
 import sys
 
 # Set the project path 
-project_path = "/home/ec2-user/django/kroonika" 
-sys.path.append(project_path) 
+# project_path = "/home/ec2-user/django/kroonika"
+# sys.path.append(project_path) 
  
 # Set the DJANGO_SETTINGS_MODULE environment variable 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "kroonika.settings") 
