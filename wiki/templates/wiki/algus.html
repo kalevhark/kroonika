@@ -5,6 +5,22 @@
 {% block css %}
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'wiki/css/wiki_calendar3.css' %}">
+  {% if j6ul2025 %}
+  <style>
+    body {
+      background-color: lightgrey;
+      color: black;
+      transition: background-color 2s; /* Makes the color change smooth */
+    }
+
+    /* Define the darker style here */
+    .dark-mode {
+      background-color: #333333; /* Very dark grey */
+      color: white; /* Change text to white so it's readable */
+      transition: background-color 2s; /* Makes the color change smooth */
+    }
+  </style>
+  {% endif %}
 {% endblock %}
 {% block content %}
 	<!-- Lingid teemalehtedele -->
@@ -19,11 +35,14 @@
     {% now "Y" as aasta %}
     <!-- Artiklite esitlus -->
 	  <div class="w3-quarter">
-      {% comment %} {% if j6ul2024 %}
-      <div class="w3-container w3-center">
-        {% include 'wiki/special/algus_message_j6ul2024_lights.html' %}
-      </div>
-      {% endif %} {% endcomment %}
+      {% if j6ul2025 %}
+        <div class="w3-container w3-center">
+          {% include 'wiki/special/algus_message_j6ul2025_lights.html' %}
+        </div>
+        <div class="w3-container w3-hover-white w3-padding-16 w3-center">
+          {% include 'wiki/special/algus_message_j6ul2025.html' %}
+        </div> 
+      {% endif %}
       {# Teadete esitamiseks #}
       {% comment %} <div class="w3-container w3-hover-white w3-padding-16 w3-center">
         {% include 'wiki/special/algus_message_441.html' %}
@@ -39,20 +58,30 @@
     </div>
     <!-- Isikute esitlus -->
     <div class="w3-quarter">
+      {% if j6ul2025 %}
+        <div class="w3-container w3-center">
+          {% include 'wiki/special/algus_message_j6ul2025_lights.html' %}
+        </div>
+      {% endif %}
       <div class="card w3-container w3-round w3-padding-16 w3-hover-white">
         {% include 'wiki/algus/algus_isikud.html' %}
       </div>
     </div>
     <!-- Organisatsioonide esitlus -->
     <div class="w3-quarter">
+      {% if j6ul2025 %}
+        <div class="w3-container w3-center">
+          {% include 'wiki/special/algus_message_j6ul2025_lights.html' %}
+        </div>
+      {% endif %}
       <div class="card w3-container w3-round w3-padding-16 w3-hover-white">
         {% include 'wiki/algus/algus_organisatsioonid.html' %}
       </div>
     </div>
     <div class="w3-quarter">
-      {% if j6ul2024 %}
+      {% if j6ul2025 %}
       <div class="w3-container w3-center">
-        {% include 'wiki/special/algus_message_j6ul2024_lights.html' %}
+        {% include 'wiki/special/algus_message_j6ul2025_lights.html' %}
       </div>
       {% endif %}
       <!-- Kaartide esitlus -->
@@ -73,13 +102,17 @@
 {% block javascript %}
   <script src="{% static 'ilm/js/swiped-events.js' %}"></script>
   <script src="{% static 'wiki/js/wiki_calendar3.js'%}?ver=2024"></script>
+  {% if j6ul2025 %}
+    <script src="{% static 'wiki/js/special/wiki_special_j6ul2025.js'%}?ver=2025"></script>
+  {% endif %}
+
   <script>
     var calendar_days_with_events_in_month_url = "{% url 'wiki:calendar_days_with_events_in_month' %}"
     var yearsWithEvents = {{ kalender.years_with_events }}
     var kroonikaUrl = "{% url 'wiki:artikkel_index_archive' %}"
     var userCalendarViewLast = '{{ request.session.user_calendar_view_last }}'
     var calendarSystem = '{{ request.session.calendar_system }}'
-    var get_algus_extra_url = "{% url 'wiki:get_algus_extra' %}"
+    var get_algus_extra_url = "{% url 'wiki:get_algus_extra' %}"  
 
     $( document ).ready(function() {
       {# Kalendrividina käivitamine #}
@@ -109,6 +142,16 @@
           getObjectData4tooltip(get_object_data4tooltip_url);
         }
       });
+
+      // j6ul2025 start
+      document.body.classList.toggle("dark-mode");
+      changeClassColor('text-ukj', '#FF00FF');
+      setTimeout(function() {
+          toggleLights();
+      }, 5000);
+      // j6ul2025 end
+
     });
   </script>
+  
 {% endblock %}

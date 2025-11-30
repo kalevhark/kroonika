@@ -1,0 +1,127 @@
+/*ver=2024.11.23*/
+
+/*@import url('https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&display=swap');*/
+
+@font-face{
+  font-family: "1942";
+  src: url("../fonts/1942.ttf") format("truetype");
+}
+
+@media screen and (min-width: 1024px) {
+  div.image-wrapper {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+  }
+}
+
+/* Alla 800px laiuse sätted */
+@media screen and (max-width: 1023px) {
+  div.image-wrapper {
+    width: 90%;
+    display: table;
+    margin: 0 auto;
+  }
+}
+
+div.image-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+}
+
+.image-wrapper img {
+  display: block;
+}
+
+#divGreeting {
+  background-color: #FAEBD7;
+  top: -100px;
+  opacity: 0.5;
+  border-radius: 0.5rem;
+}
+
+.holidays-title {
+  position: relative;
+  border-right: solid 3px red;
+  white-space: nowrap;
+  overflow: hidden;
+  /*font-family: 'Mountains of Christmas', cursive;*/
+  font-family: '1942', monospace;
+  font-size: 1.5em;
+  color: red;
+}
+
+.holidays-title-small {
+  font-size: 1.2em;
+  color: red;
+  /*font-family: 'Mountains of Christmas', cursive;*/
+  font-family: '1942', monospace;
+  margin: .5em;
+  text-align: center;
+  justify-content: center;
+}
+
+/*Jõulutuled*/
+section {
+  /* padding: 2rem 2rem; */
+  text-align: center;
+  color: gray;
+  font-family: system-ui;
+  min-width: 50%;
+  /*max-width: 600px;*/
+  /* margin: 1rem 0; */
+  /*background: rgba(255,255,255,.025);*/
+  position: relative;
+}
+
+section:has(img) {
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+section:has(img)::after {
+  /*content: 'Images need a container div';*/
+  position: absolute;
+  /* padding: 1rem; */
+  background: rgba(0,0,0,.5);
+  border-radius: 5px;
+  /*color: lightgray;*/
+}
+
+/*
+Typewriter Text Animation
+Aakhya Singh
+https://codepen.io/aakhya/pen/EOxqOV
+*/
+
+/* Animation */
+
+.holidays-title {
+  animation: animated-text 4s steps(29,end) 1s 1 normal both,
+             animated-cursor 600ms steps(29,end) infinite;
+}
+
+/* text animation */
+
+@keyframes animated-text{
+  from{width: 0;}
+  to{width: 600px;}
+}
+
+/* cursor animations */
+
+@keyframes animated-cursor{
+  from{border-right-color: red;}
+  to{border-right-color: transparent;}
+}

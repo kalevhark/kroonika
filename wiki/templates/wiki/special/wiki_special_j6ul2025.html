@@ -1,0 +1,161 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block src %}{% endblock %}
+
+{% block title %}{{ block.super }} - {{ pyhadesoov }}!{% endblock %}
+
+{% block css %}
+  <style>
+    .Site {
+        background-color: #FAEBD7;
+    }
+
+    /* Define the darker style here */
+    .dark-mode {
+      background-color: #333333; /* Very dark grey */
+      color: white; /* Change text to white so it's readable */
+      transition: background-color 2s; /* Makes the color change smooth */
+    }
+
+    /* 1. The Container: Holds the image and cuts off snow that falls past it */
+    .snow-container {
+      position: relative;
+      display: inline-block; /* Fits the size of the image */
+      overflow: hidden;      /* Hides snow when it leaves the box */
+    }
+
+    /* 2. The Image: Just standard styling */
+    .snow-container img {
+      width: 100%;
+      display: block;
+    }
+
+    /* 3. The Snowflake: Initial styling */
+    .snowflake {
+      position: absolute;
+      top: -10px;   /* Start just above the image */
+      color: white; /* Color of snow */
+      font-size: 1em;
+      pointer-events: none; /* Lets you click through the snow to the image */
+      animation-name: fall;
+      animation-timing-function: linear;
+    }
+
+    /* 4. The Animation: Falling down */
+    @keyframes fall {
+      to {
+        transform: translateY(100vh); /* Fall far enough to clear container */
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block og_image %}
+  <meta property="og:image" content="https://valgalinn.ee{% static 'wiki/img/special/VaMF2744_5_j6ul2024_fb_1200x630.jpg' %}" />
+  <meta property="og:image:alt" content="{{ pyhadesoov }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="w3-container image-wrapper snow-container" id="snowWrapper">
+    <div
+        style="color: red; text-align: center; padding-top: 1em"
+        class="holidays-title-small w3-hide-large"
+    >
+      {{ pyhadesoov }} soovib {{ tervitaja }}!
+    </div>
+    <section>
+      <div class="snow-container" id="snowWrapper">
+      <img
+          src="{% static 'wiki/img/special/VaMF2744_5_j6ul2024.jpg' %}"
+          alt="{{ pyhadesoov }} - 110 aasta tagune fotopostkaart Valga linna vaatega (VaM F 2744:5; Valga Muuseum)"
+          style="width:100%; border-radius: 1.5rem;"
+      >
+      </div>
+      <div id="divGreeting" class="holidays-title w3-hide-small w3-hide-medium">
+        {{ pyhadesoov }} soovib {{ tervitaja }}!
+      </div>
+    </section>
+    <div class="w3-container w3-center">
+      {% include 'wiki/special/algus_message_j6ul2025_lights.html' %}
+    </div>
+    <div style="text-align: center;">
+        110 aasta tagune fotopostkaart Valga linna vaatega (VaM F 2744:5; Valga Muuseum)
+        <div class="w3-tiny">
+        Oma nimega jõulukaardi saatmiseks kasutage aadressi: https://valgalinn.ee/j6ul2025/?<i>minginimi</i> NB! Küsimärk peab olema!
+      </div>
+    </div>
+    
+    <div
+        class="fb-share-button"
+        data-href="{% url 'special_j6ul2025' %}"
+        data-layout="button"
+        data-size="small">
+      <a
+          target="_blank"
+          href="https://www.facebook.com/sharer/sharer.php?u={% url 'special_j6ul2025' %}%2F&amp;src=sdkpreparse"
+          class="fb-xfbml-parse-ignore">Jaga
+      </a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  <script src="{% static 'wiki/js/special/wiki_special_j6ul2025.js'%}?ver=2025"></script>
+  <script>
+    $(document).ready(function() {
+      var divGreeting = document.getElementById("divGreeting");
+      var textLength = divGreeting.innerText.length;
+      if (textLength > 41) {
+        divGreeting.style.fontSize = "1.3em";
+      } else if (textLength > 37) {
+        divGreeting.style.fontSize = "1.4em";
+      }
+
+      document.body.classList.toggle("dark-mode");
+      changeClassColor('text-ukj', '#FF00FF');
+      setTimeout(function() {
+          toggleLights();
+      }, 5000);
+    });
+  </script>
+
+  <script>
+    // Lumesade
+    // Configuration
+    const container = document.getElementById('snowWrapper');
+    const snowflakeSymbol = '❄'; // You can use '.', '*', or '❅'
+    
+    function createSnowflake() {
+      const flake = document.createElement('div');
+      flake.classList.add('snowflake');
+      flake.textContent = snowflakeSymbol;
+
+      // Randomize Horizontal Position (0% to 100% of container width)
+      flake.style.left = Math.random() * 100 + '%';
+      
+      // Randomize Animation Duration (Speed): Between 2s and 5s
+      const duration = Math.random() * 3 + 2; 
+      flake.style.animationDuration = duration + 's';
+      
+      // Randomize Opacity: Between 0.3 and 1
+      flake.style.opacity = Math.random() * 0.7 + 0.3;
+      
+      // Randomize Size: Between 10px and 25px
+      const size = Math.random() * 15 + 10;
+      flake.style.fontSize = size + 'px';
+
+      // Add to container
+      container.appendChild(flake);
+
+      // Remove snowflake after it finishes falling to prevent memory leaks
+      setTimeout(() => {
+        flake.remove();
+      }, duration * 1000);
+    }
+
+    // Create a new snowflake every 100 milliseconds
+    setInterval(createSnowflake, 100);
+  </script>
+
+{% endblock %}

@@ -64,13 +64,15 @@
     <!-- Google reCAPTCHA -->
     <script src="https://www.google.com/recaptcha/api.js?render=explicit&onload=grecaptcha_onload"></script>
     <!-- wiki teegid -->
-    <script src="{% static 'wiki/js/wiki.js'%}?ver=2025.1"></script>
+    <script src="{% static 'wiki/js/wiki.js'%}?ver=2025.11"></script>
 
     {% comment %} tooltips content url {% endcomment %}
     <script type="text/javascript">
       var get_object_data4tooltip_url = '{% url "wiki:get_object_data4tooltip" %}'
     </script>
-    
+    {% if j6ul2025 %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.3/TweenMax.min.js"></script>
+    {% endif %}
     {% block src %}{% endblock %}
 
     <!-- CSS -->
@@ -85,8 +87,10 @@
     {% endblock jquery_css %}
     {# Alternatiivsed värvivalikud metro või colorful #}
     <link rel="stylesheet" href="{% static 'wiki/css/kroonika_color_metro.css' %}?ver=2023.1">
-    {% comment %} j6ul2024 css {% endcomment %}
-    <link rel="stylesheet" href="{% static 'wiki/css/special/wiki_special_j6ul2024.css' %}?ver=2024.1">
+    {% comment %} j6ul2025 css {% endcomment %}
+    {% if j6ul2025 %}
+      <link rel="stylesheet" href="{% static 'wiki/css/special/wiki_special_j6ul2025.css' %}?ver=2025">
+    {% endif %}
     {% block css %}{% endblock %}
 
     <title>
@@ -111,7 +115,7 @@
       <main class="Site-content">
         {# Süsteemiteadete näitamiseks #}
         {% include 'wiki/wiki_base/wiki_base_body_messages.html' %}
-        <div class="w3-container">
+        <div class="w3-container" id="container">
           {# Tagasiside vorm #}
           <div id="panelFeedBack" class="w3-panel w3-round w3-padding w3-card-4 w3-light-grey w3-hide">
             {% crispy feedbackform %}

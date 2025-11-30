@@ -151,7 +151,7 @@ def special_j6ul2023(request):
     )
 
 #
-# Jõulutervituse lehekülg 2023
+# Jõulutervituse lehekülg 2024
 #
 def special_j6ul2024(request):
     tervitaja = request.META['QUERY_STRING']
@@ -180,6 +180,41 @@ def special_j6ul2024(request):
         {
             'tervitaja': tervitaja,
             'pyhadesoov': pyhadesoov,
+            'searchsmallwidgethidden': True,  # ei näita mobiiliotsinguvidinat
+        }
+    )
+
+#
+# Jõulutervituse lehekülg 2025
+#
+def special_j6ul2025(request):
+    tervitaja = request.META['QUERY_STRING']
+    # Kui tervituses on mitu osa
+    tykid = tervitaja.split('&')
+    # Filtreerime välja FB lisa
+    tervitaja = '&'.join([tykk.replace('+', ' ') for tykk in tykid if 'fbclid=' not in tykk])
+    # eemaldame urlist tyhiku asendaja
+    # tervitaja = tervitaja.replace('%20', ' ')
+    tervitaja = urllib.parse.unquote(tervitaja)
+    if tervitaja:
+        tervitaja = tervitaja[:20]
+        if tervitaja == 'XKH':
+            tervitaja = 'Kalev Härk'
+        elif tervitaja == 'S9a': # Sulevi 9a rahvas
+            tervitaja = 'Sulevi 9a rahvas'
+    else:
+        tervitaja = 'valgalinn.ee'
+    if NOW.year == 2025:
+        pyhadesoov = 'Ilusat jõuluaega'
+    else:
+        pyhadesoov = 'Head uut aastat'
+    return render(
+        request,
+        'wiki/special/wiki_special_j6ul2025.html',
+        {
+            'tervitaja': tervitaja,
+            'pyhadesoov': pyhadesoov,
+            'j6ul2025': True,
             'searchsmallwidgethidden': True,  # ei näita mobiiliotsinguvidinat
         }
     )

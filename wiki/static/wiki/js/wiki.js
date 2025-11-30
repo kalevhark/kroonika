@@ -1,4 +1,4 @@
-// ver 2025.1
+// ver 2025.11
 
 // Tagastab eestikeelse kuunime
 function getEstonianMonthName(idx) {
@@ -335,4 +335,14 @@ function outLinkCopy() {
   var tooltip = document.getElementById("linkCopyTooltip");
   tooltip.classList.remove("w3-pale-green");
   tooltip.innerHTML = "kopeeri link";
+}
+// vahetab valitud css class color v2rvi nt changeClassColor('text-ukj', '#FF00FF');
+function changeClassColor(className, color) {
+  // 1. Find all elements with the class
+  const elements = document.querySelectorAll('.' + className);
+
+  // 2. Loop through them and change the style of each one
+  elements.forEach(element => {
+    element.style.color = color;
+  });
 }
