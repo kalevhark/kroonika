@@ -121,7 +121,7 @@ function mixed_ilmateade() {
 
         // Täiendame eelneva 24h andmed ilmasümbolitega
         $.each(chart.series[1].data, function (i, point) {
-          if (i < 24 && i % 2 === 0 && data.yrno_symbols[i] != null) {
+          if (i < 24 && i % 2 === 0 && typeof point.y == "number" && data.yrno_symbols[i] != null) {
             chart.renderer
               .image(
                 'https://cdn.jsdelivr.net/gh/YR/weather-symbols@6.0.2/dist/svg/' +
