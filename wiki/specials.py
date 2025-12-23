@@ -191,8 +191,21 @@ def special_j6ul2025(request):
     tervitaja = request.META['QUERY_STRING']
     # Kui tervituses on mitu osa
     tykid = tervitaja.split('&')
-    # Filtreerime välja FB lisa
-    tervitaja = '&'.join([tykk.replace('+', ' ') for tykk in tykid if 'fbclid=' not in tykk])
+    exclude = ["fbclid=", "brid="]
+    filtered_tykid = [
+        item 
+        for item 
+        in tykid 
+        if not any(
+            bad_word 
+            in item 
+            for bad_word 
+            in exclude
+        )
+    ]
+
+    # Filtreerime välja FB lisad
+    tervitaja = '&'.join([tykk.replace('+', ' ') for tykk in filtered_tykid])
     # eemaldame urlist tyhiku asendaja
     # tervitaja = tervitaja.replace('%20', ' ')
     tervitaja = urllib.parse.unquote(tervitaja)
