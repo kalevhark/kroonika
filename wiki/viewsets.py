@@ -277,9 +277,9 @@ class KroonikaViewSet(viewsets.ModelViewSet):
     def get_view_name(self) -> str:
         return "Kroonika staatus"
 
-    def get_view_description(self, request, html=False) -> str:
+    def get_view_description(self, html=False) -> str:
         # Kontrollime kas kasutaja on autenditud ja admin
-        user_is_staff = (request and request.user.is_authenticated and request.user.is_staff)
+        user_is_staff = (self.request and self.request.user.is_authenticated and self.request.user.is_staff)
         text = "Kroonika staatus"
         if user_is_staff:
             text = """
