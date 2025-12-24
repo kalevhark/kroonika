@@ -411,7 +411,7 @@
     });
 
     {% if user.is_authenticated %}
-    Highcharts.chart('container_aws_monitor', {
+    const chartOptionsContainerAWSMonitor = {
       chart: {
         type: 'spline'
       },
@@ -456,7 +456,7 @@
           dataRefreshRate: 60,
           name: 'Server monitoring'
       },
-
+      
       series: [
         {
           yAxis: 0,
@@ -484,7 +484,21 @@
         }
 
       ]
-    });
+    };
+
+    chartOptionsContainerAWSMonitor.chart.events = {
+      // The render event fires both on the first chart render and on redraws
+      load: function() {
+        // console.time("chartContainerAWSMonitor");
+      },
+
+      render: function() {
+        // console.timeLog("chartContainerAWSMonitor");
+      }
+    }
+
+    Highcharts.chart('container_aws_monitor', chartOptionsContainerAWSMonitor)
+
     {% endif %}
 
   </script>
