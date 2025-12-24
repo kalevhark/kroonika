@@ -12,7 +12,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import (
-    # Kroonika,
+    Kroonika,
     Artikkel,
     Isik,
     Objekt,
@@ -23,14 +23,14 @@ from .models import (
 )
 from .serializers import (
     UserSerializer,
-    # KroonikaSerializer,
     ArtikkelSerializer,
     IsikSerializer,
     ObjektSerializer,
     OrganisatsioonSerializer,
     PiltSerializer,
     AllikasSerializer,
-    ViideSerializer
+    ViideSerializer,
+    KroonikaSerializer
 )
 
 from wiki.utils.monitoring import get_aws_data
@@ -44,13 +44,8 @@ class UserViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
 
 
-# class KroonikaViewSet(viewsets.ModelViewSet):
-#     queryset = Kroonika.objects.all()
-#     serializer_class = KroonikaSerializer
-
-
 class ArtikkelFilter(filters.FilterSet):
-    # Võimaldab API päringuid: http://18.196.203.237/api/artikkel/?aasta=1913&kuu=10
+    # Võimaldab API päringuid: https://valgalinn.ee/api/artikkel/?aasta=1913&kuu=10
     aasta = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='year')
     kuu = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='month')
     p2ev = django_filters.NumberFilter(field_name='hist_searchdate', lookup_expr='day')
@@ -235,16 +230,11 @@ class PiltViewSet(viewsets.ModelViewSet):
         else:
             return text
 
+
 class AllikasViewSet(viewsets.ModelViewSet):
     queryset = Allikas.objects.all()
     serializer_class = AllikasSerializer
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
-
-    @action(detail=False)
-    def monitor(self, request):
-        self.text = 'Monitor'
-        history = get_aws_data(None)
-        return Response(history)
 
     def get_view_name(self) -> str:
         return "Allikad"
@@ -272,3 +262,31 @@ class ViideViewSet(viewsets.ModelViewSet):
         else:
             return text
 
+
+class KroonikaViewSet(viewsets.ModelViewSet):
+    queryset = Kroonika.objects.none()
+    serializer_class = KroonikaSerializer
+    http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
+
+    @action(detail=False)
+    def monitor(self, request):
+        self.text = 'Monitor'
+        history = get_aws_data(None)
+        return Response(history)
+
+    def get_view_name(self) -> str:
+        return "Kroonika staatus"
+
+    def get_view_description(self, request, html=False) -> str:
+        # Kontrollime kas kasutaja on autenditud ja admin
+        user_is_staff = (request and request.user.is_authenticated and request.user.is_staff)
+        text = "Kroonika staatus"
+        if user_is_staff:
+            text = """
+            serveri staatuse andmed:<br>
+            /api/kroonika/monitor/ - Serveri logiandmed<br>
+            """
+        if html:
+            return mark_safe(f"<p>{text}</p>")
+        else:
+            return text

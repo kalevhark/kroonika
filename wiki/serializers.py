@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models import Field
 
 from .models import (
-    # Kroonika,
+    Kroonika,
     Artikkel,
     Isik,
     Objekt,
@@ -53,10 +53,12 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'username', 'first_name', 'last_name')
 
 
-# class KroonikaSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model = Kroonika
-#         fields = '__all__'
+# Kasutame serveri monitoorimise info jaoks
+class KroonikaSerializer(serializers.HyperlinkedModelSerializer):
+    
+    class Meta:
+        model = Kroonika
+        fields = "__all__"
 
 
 class PiltSerializer(serializers.HyperlinkedModelSerializer):
@@ -111,10 +113,6 @@ class IsikSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_isik_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
-    # pilt_set = PiltListingField(
-    #     many = True,
-    #     read_only=True,
-    # )
     pildid = PiltListingField(
         many=True,
         read_only=True,
@@ -126,10 +124,7 @@ class IsikSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Isik
         fields = '__all__'
-        # lookup_field = 'slug'
-        # extra_kwargs = {
-        #     'url': {'lookup_field': 'slug'}
-        # }
+
 
 class ObjektSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
@@ -138,10 +133,6 @@ class ObjektSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_objekt_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
-    # pilt_set = PiltListingField(
-    #     many=True,
-    #     read_only=True,
-    # )
     pildid = PiltListingField(
         many=True,
         read_only=True,
@@ -162,10 +153,6 @@ class OrganisatsioonSerializer(serializers.HyperlinkedModelSerializer):
         view_name='wiki:wiki_organisatsioon_detail',
         lookup_fields=(('pk', 'pk'), ('slug', 'slug'))
     )
-    # pilt_set = PiltListingField(
-    #     many=True,
-    #     read_only=True,
-    # )
     pildid = PiltListingField(
         many=True,
         read_only=True,
@@ -189,3 +176,9 @@ class ViideSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Viide
         fields = '__all__'
+
+
+
+
+
+    

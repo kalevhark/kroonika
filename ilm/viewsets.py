@@ -56,7 +56,7 @@ class IlmViewSet(viewsets.ModelViewSet):
             /api/i?y=aasta&m=kuu&d=päev<br>
             /api/i?y=aasta&m=kuu&d=päev&h=tund<br>
             /api/i/now/ - Valga linna hetkeilm<br>
-            /api/i/forecasts/ - Valga linna ilmaennustus kolmest allikast
+            /api/i/forecasts/ - Valga linna ilmaennustus erinevatest allikatest
             """
         if html:
             return mark_safe(f"<p>{text}</p>")
