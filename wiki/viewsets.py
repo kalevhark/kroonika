@@ -33,7 +33,7 @@ from .serializers import (
     KroonikaSerializer
 )
 
-from wiki.utils.monitoring import get_aws_data
+from wiki.utils.monitoring import get_aws_log_data, get_aws_restarts_data
 
 TRANSLATION = settings.TRANSLATION
 
@@ -268,10 +268,18 @@ class KroonikaViewSet(viewsets.ModelViewSet):
     serializer_class = KroonikaSerializer
     http_method_names = ['get', 'head']  # post, put, delete, patch pole lubatud
 
+    # Andmed AWS logidest
     @action(detail=False)
     def monitor(self, request):
         self.text = 'Monitor'
-        history = get_aws_data(None)
+        history = get_aws_log_data(None)
+        return Response(history)
+    
+    # Andmed serveri restartide kohta
+    @action(detail=False)
+    def restarts(self, request):
+        self.text = 'Restardid'
+        history = get_aws_restarts_data(None)
         return Response(history)
 
     def get_view_name(self) -> str:
@@ -285,8 +293,10 @@ class KroonikaViewSet(viewsets.ModelViewSet):
             text = """
             serveri staatuse andmed:<br>
             /api/kroonika/monitor/ - Serveri logiandmed<br>
+            /api/kroonika/restarts/ - Serveri restardid<br>
             """
         if html:
             return mark_safe(f"<p>{text}</p>")
         else:
             return text
+

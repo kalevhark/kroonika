@@ -438,6 +438,10 @@
           headerFormat: '{point.key:%d.%m %H:%M}<br>',
       },
 
+      xAxis: [{
+        gridLineWidth: 1,
+      }],
+
       yAxis: [{
         title: {
           text: '%'
@@ -487,13 +491,19 @@
     };
 
     chartOptionsContainerAWSMonitor.chart.events = {
-      // The render event fires both on the first chart render and on redraws
       load: function() {
-        // console.time("chartContainerAWSMonitor");
+        const chart = this,
+          series = chart.series,
+          xAxis = chart.xAxis,
+          yAxis = chart.yAxis;
       },
 
+      // The render event fires both on the first chart render and on redraws
       render: function() {
-        // console.timeLog("chartContainerAWSMonitor");
+        const chart = this,
+          series = chart.series,
+          xAxis = chart.xAxis,
+          yAxis = chart.yAxis;
       }
     }
 
