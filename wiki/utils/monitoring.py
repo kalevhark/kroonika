@@ -74,7 +74,7 @@ def get_aws_restarts_data(request=None):
     data = json.loads(r.get(report))
     aws_data = {}
     aws_data[report] = {
-        str(int(el['Timestamp'])): el
+        el: el
         for el
         in data
     }
