@@ -1,9 +1,13 @@
 from datetime import datetime
 import json
 from zoneinfo import ZoneInfo
+
+from django.http import HttpRequest
 import redis
 
-def get_aws_log_data(request=None):
+def get_aws_log_data(
+    request: HttpRequest = None
+) -> list:
     r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     reports = [
         "aws_compute_resource_usage",
@@ -68,14 +72,16 @@ def get_aws_log_data(request=None):
         )
     return monitoring_data
 
-def get_aws_restarts_data(request=None):
+def get_aws_restarts_data(
+    request: HttpRequest = None
+) -> list:
     r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     report = 'restarts_from_journal'
     data = json.loads(r.get(report))
     aws_data = {}
-    aws_data[report] = {
-        el: el
+    aws_data[report] = [
+        [el]
         for el
         in data
-    }
+    ]
     return aws_data
