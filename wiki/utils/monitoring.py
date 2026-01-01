@@ -78,10 +78,10 @@ def get_aws_restarts_data(
     r = redis.Redis(host='localhost', port=6379, decode_responses=True)
     report = 'restarts_from_journal'
     data = json.loads(r.get(report))
-    aws_data = {}
-    aws_data[report] = [
-        [el]
-        for el
-        in data
-    ]
-    return aws_data
+    # aws_data = {}
+    # aws_data[report] = [
+    #     [el]
+    #     for el
+    #     in data
+    # ]
+    return data

@@ -188,6 +188,7 @@ def special_j6ul2024(request):
 # Jõulutervituse lehekülg 2025
 #
 def special_j6ul2025(request):
+    now = datetime.now(TZ_ESTONIA)
     tervitaja = request.META['QUERY_STRING']
     # Kui tervituses on mitu osa
     tykid = tervitaja.split('&')
@@ -217,7 +218,7 @@ def special_j6ul2025(request):
             tervitaja = 'Sulevi 9a rahvas'
     else:
         tervitaja = 'valgalinn.ee'
-    if NOW.year == 2025:
+    if now.year == 2025:
         pyhadesoov = 'Ilusat jõuluaega'
     else:
         pyhadesoov = 'Head uut aastat'
