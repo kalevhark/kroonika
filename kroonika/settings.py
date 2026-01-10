@@ -506,4 +506,4 @@ LOGGING = {
     },
 }
 
-J6UL2025 = True
+J6UL2025 = False
