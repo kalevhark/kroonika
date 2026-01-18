@@ -2,7 +2,6 @@
 Django settings for kroonika project.
 
 """
-import os
 from pathlib import Path
 
 import configparser
@@ -15,7 +14,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
 PROJECT_DIR = Path(__file__).resolve().parent
-# print('settings.PROJECT_DIR:', PROJECT_DIR)
 
 # Access configparser to load variable values
 config = configparser.ConfigParser(allow_no_value=True)
@@ -34,10 +32,8 @@ SERVER_TYPE = config['django'].get('SERVER_TYPE', '')
 
 ALLOWED_HOSTS = [
     'valgalinn.ee', 'www.valgalinn.ee',
-    # '18.217.172.167', # a1.medium
     '63.33.55.93', # t4g.small
     '127.0.0.1', 'localhost',
-    'testserver'
 ]
 
 INTERNAL_IPS = [
@@ -46,7 +42,6 @@ INTERNAL_IPS = [
 
 ADMINS = [
     ('Kalev', config['superuser']['ADMINEMAIL']),
-    # ('Mary', 'mary@example.com')
 ]
 
 INSTALLED_APPS = [
@@ -104,7 +99,6 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'templates',
-            # PROJECT_DIR.parent / 'templates'
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -240,8 +234,20 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 MEDIA_URL = '/media/'
 
-def FILTERS_VERBOSE_LOOKUPS():
-    from django_filters.conf import DEFAULTS
+
+DATE_INPUT_FORMATS = [
+    '%d.%m.%Y',
+    '%d.%m.%y',
+    ]
+
+from django_filters.conf import DEFAULTS
+def FILTERS_VERBOSE_LOOKUPS() -> dict:
+    """
+    Settings of django-filters and their default values. Used to localize filter lookups.
+
+    Information about settings:
+    https://django-filter.readthedocs.io/en/stable/ref/settings.html#verbose-lookups
+    """
     verbose_lookups = DEFAULTS['VERBOSE_LOOKUPS'].copy()
     verbose_lookups.update({
         'icontains': 'sisaldab',
@@ -249,11 +255,8 @@ def FILTERS_VERBOSE_LOOKUPS():
     })
     return verbose_lookups
 
-DATE_INPUT_FORMATS = [
-    '%d.%m.%Y',
-    '%d.%m.%y',
-    ]
-
+# Settings for django-rest-framework
+# https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
@@ -266,7 +269,6 @@ REST_FRAMEWORK = {
 }
 
 # https://www.google.com/recaptcha/intro/v3.html
-# SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 SILENCED_SYSTEM_CHECKS = ['django_recaptcha.recaptcha_test_key_error']
 GOOGLE_RECAPTCHA_SECRET_KEY = config['recaptcha']['GOOGLE_RECAPTCHA_SECRET_KEY']
 GOOGLE_RECAPTCHA_PUBLIC_KEY = config['recaptcha']['GOOGLE_RECAPTCHA_PUBLIC_KEY']
@@ -329,20 +331,6 @@ KROONIKA = {
 # django-allauth
 SITE_ID = 1
 
-# OpenWeatherMap API
-OWM_APIKEY = config['OpenWeatherMap']['OWM_APIKEY']
-
-# DEFINE THE SEARCH CHANNELS:
-
-# AJAX_LOOKUP_CHANNELS = {
-#     # simplest way, automatically construct a search channel by passing a dict
-#     # 'label': {'model': 'example.label', 'search_field': 'name'},
-#
-#     # Custom channels are specified with a tuple
-#     # channel: ( module.where_lookup_is, ClassNameOfLookup )
-#     'objektid': ('wiki.lookups', 'ObjektLookup'),
-# }
-
 # Otsingutes kasutamiseks
 TRANSLATION = {
     'w': '[vw]',
@@ -373,16 +361,11 @@ EMAIL_PORT = config['aws_mail']['PORT']
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = config['aws_mail']['DEFAULT_FROM_EMAIL']
 
-# ajax-select no js & css download
-# AJAX_SELECT_BOOTSTRAP  = False
-
 # https://github.com/adamchainz/django-cors-headers
 CORS_ALLOW_ALL_ORIGINS = True # Lubatakse k6ik
 CORS_URLS_REGEX = r"^/api/.*$"
-
 CSRF_TRUSTED_ORIGINS = [
     'https://valgalinn.ee',
-    # 'http://test.valgalinn.ee',
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -395,8 +378,6 @@ COOKIE_CONSENT_INUSE = False
 
 # leafleti jaoks
 DEFAULT_CENTER = (57.7769268, 26.0308911) # {'lon': 26.0308911, 'lat': 57.7769268} # Jaani kiriku koordinaadid
-# DEFAULT_MAP = Kaart.objects.filter(aasta='2021').first() # Vaikimisi OpenStreetMap internetikaart
-
 DEFAULT_MAP_AASTA = '2021' # objektide vaates kaardi vaikimise kiht
 DEFAULT_BIGMAP_AASTA = '1683' # suures kaardivaates vaikimisi kiht
 DEFAULT_MAP_ZOOM_START = 17
@@ -422,7 +403,6 @@ GEOJSON_STYLE = {
 
 # https://python-visualization.github.io/folium/modules.html#module-folium.map
 LEAFLET_DEFAULT_CSS = [
-    # ('leaflet_css', 'https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css'),
     ("leaflet_css", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"),
     ('bootstrap_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'),
     ('bootstrap_theme_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css'),
@@ -431,27 +411,11 @@ LEAFLET_DEFAULT_CSS = [
     ('awesome_rotate_css', 'https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css')
 ]
 LEAFLET_DEFAULT_JS = [
-    # ('leaflet', 'https://unpkg.com/leaflet@1.8.0/dist/leaflet.js'),
     ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"),
     ('jquery', 'https://code.jquery.com/jquery-1.12.4.min.js'),
     ('bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'),
     ('awesome_markers', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js')
 ]
-
-# from branca.element import Element
-# Kroonika default font kasutamiseks + custom elementide css
-# LEAFLET_DEFAULT_HEADER = Element(
-#     '<frame-options policy="SAMEORIGIN" />'
-#     '<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">'
-#     '<style>'
-#     '.kaart-control-layers,'
-#     '.kaardiobjekt-tooltip,'
-#     '.kaart-tooltip {'
-#     '  font-size: 14px;'
-#     '  font-family: "Raleway", sans-serif;'
-#     '}'
-#     '</style>'
-# )
 
 # Indicates the frontend framework django crispy forms use
 # https://github.com/django-crispy-forms/crispy-bootstrap4
@@ -506,4 +470,5 @@ LOGGING = {
     },
 }
 
+# Kas on jõuluaeg aktiivne?
 J6UL2025 = False
