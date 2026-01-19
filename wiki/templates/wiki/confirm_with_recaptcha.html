@@ -9,6 +9,7 @@
 		<form method="POST"
 						action="{% url 'wiki:confirm_with_recaptcha' %}"
 						id="confirmForm"
+						onsubmit="openLoader()"
 						novalidate
 		>
 			{% csrf_token %}
@@ -34,6 +35,17 @@
 				Aeg-ajalt on vaja inimese kinnitust, et päringu tegi inimene, mitte masin.<br>
 				Suur tänu abi eest!
 			</small></p>
+			<div style="display:none;" id="loadingModal">
+				{% include "includes/div_loader_book.html" %}
+			</div>
 		</form>
 	</div>
+{% endblock %}
+{% block javascript %}
+	<script>
+		function openLoader() {
+    		document.getElementById("loadingModal").style.display = "block";
+			document.getElementById("confirmForm").submit();
+	}
+	</script>
 {% endblock %}

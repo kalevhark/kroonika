@@ -1749,6 +1749,8 @@ class ArtikkelYearArchiveView(YearArchiveView):
     # ordering = ('hist_searchdate', 'id')
 
     def dispatch(self, request, *args, **kwargs):
+        if kwargs.get('year') < 1000 or kwargs.get('year') > 3000:
+            raise Http404("Aasta peab olema vahemikus 1000-3000.")
         redirect_url = redirect_to_recaptcha(request, *args, **kwargs) # kontrollime kas inimene v6i masin
         if redirect_url:
             return redirect(redirect_url)
@@ -1856,6 +1858,10 @@ class ArtikkelMonthArchiveView(MonthArchiveView):
     # ordering = ('hist_searchdate', 'id')
 
     def dispatch(self, request, *args, **kwargs):
+        if kwargs.get('year') < 1000 or kwargs.get('year') > 3000:
+            raise Http404("Aasta peab olema vahemikus 1000-3000.")
+        if kwargs.get('month') < 1 or kwargs.get('month') > 12:
+            raise Http404("Kuu peab olema vahemikus 1-12.")
         redirect_url = redirect_to_recaptcha(request, *args, **kwargs) # kontrollime kas inimene v6i masin
         if redirect_url:
             return redirect(redirect_url)
@@ -1944,7 +1950,24 @@ class ArtikkelDayArchiveView(DayArchiveView):
 
     
     def dispatch(self, request, *args, **kwargs):
-        redirect_url = redirect_to_recaptcha(request, *args, **kwargs) # kontrollime kas inimene v6i masin
+        # kontrollime kuupäeva kehtivust
+        if kwargs.get('year') < 1000 or kwargs.get('year') > 3000:
+            raise Http404("Aasta peab olema vahemikus 1000-3000.")
+        if kwargs.get('month') < 1 or kwargs.get('month') > 12:
+            raise Http404("Kuu peab olema vahemikus 1-12.")
+        if kwargs.get('day') < 1 or kwargs.get('day') > 31:
+            raise Http404("Päev peab olema vahemikus 1-31.")
+        try:
+            datetime(
+                year=kwargs.get('year'),
+                month=kwargs.get('month'),
+                day=kwargs.get('day')
+            ) # kontrollime kas kuupäev on kehtiv
+        except ValueError:
+            raise Http404("Kuupäev ei ole kehtiv.")
+        
+        # kontrollime kas inimene v6i masin
+        redirect_url = redirect_to_recaptcha(request, *args, **kwargs)
         if redirect_url:
             return redirect(redirect_url)
         return super().dispatch(request, *args, **kwargs)
