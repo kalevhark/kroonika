@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
     'valgalinn.ee', 'www.valgalinn.ee',
     '63.33.55.93', # t4g.small
     '127.0.0.1', 'localhost',
+    'testserver',
 ]
 
 INTERNAL_IPS = [

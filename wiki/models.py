@@ -43,6 +43,7 @@ from django.utils.text import slugify
 
 import folium
 
+from h11 import Request
 from idna import intranges_contain
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
@@ -69,6 +70,7 @@ KUUD = (
 VIGA_TEKSTIS = settings.KROONIKA['VIGA_TEKSTIS']
 PATTERN_OBJECTS = settings.KROONIKA['PATTERN_OBJECTS']
 PREDECESSOR_DESCENDANT_NAMES = settings.KROONIKA['PREDECESSOR_DESCENDANT_NAMES']
+CALENDAR_SYSTEM_DEFAULT = settings.KROONIKA['CALENDAR_SYSTEM_DEFAULT']
 
 
 def get_calendarstatus(request) -> str:
@@ -78,7 +80,6 @@ def get_calendarstatus(request) -> str:
     :return: calendar_system
     :rtype: str
     """
-    CALENDAR_SYSTEM_DEFAULT = settings.KROONIKA['CALENDAR_SYSTEM_DEFAULT']
     if request:
         # kalendrivalik calendar_system='ukj' v6i calendar_system='vkj'
         request.session['calendar_system'] = request.session.get('calendar_system', CALENDAR_SYSTEM_DEFAULT)
