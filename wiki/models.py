@@ -43,7 +43,6 @@ from django.utils.text import slugify
 
 import folium
 
-from h11 import Request
 from idna import intranges_contain
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
