@@ -1226,7 +1226,7 @@ class Artikkel(BaasObjectMixinModel):
 
     def __repr__(self):
         tekst = str(self.hist_year) + ':' + self.kirjeldus
-        tekst = remove_markdown_tags(self, tekst)
+        tekst = remove_markdown_tags(self)
         return tekst
     
     class Meta:

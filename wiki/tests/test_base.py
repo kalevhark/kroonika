@@ -1,6 +1,8 @@
-#
-# python manage.py test wiki
-#
+"""
+Testid wiki rakenduse baastasemel.
+
+Using: python manage.py test wiki
+"""
 from datetime import datetime
 
 from django.apps import apps
@@ -30,10 +32,11 @@ SPECIAL_OBJECTS = {
         81,  # J. Kuperjanovi 9, Moreli maja
         102,  # Kesk 22, linnakooli hoone
         187,  # Kesk 19, Klasmanni maja
-        # 256,  # Aia 12, Zenckeri villa
+        256,  # Aia 12, Zenckeri villa
         354,  # J. Kuperjanovi 12, lõvidega maja
     ]
 }
+
 
 class ServevErrorViewTestClass(TestCase):
     def test_error_page_500(self):
@@ -54,6 +57,7 @@ class ServevErrorViewTestClass(TestCase):
             'Lehekülge ei leitud'
             in response.content.decode('utf8')
         )
+
 
 class WikiBaseUrlTests(TestCase):
     def setUp(self) -> None:
@@ -119,12 +123,14 @@ class WikiBaseViewTests(TestCase):
         response = self.client.get(reverse('blog:blog_index'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_ilm_view(self):
         time_start = datetime.now()
         response = self.client.get(reverse('ilm:index'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
     def test_kaart_view_default(self):
         time_start = datetime.now()
@@ -132,6 +138,7 @@ class WikiBaseViewTests(TestCase):
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
+
 
 class WikiKaartViewTests(TestCase):
 

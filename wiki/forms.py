@@ -75,7 +75,7 @@ class BaasObjectForm(ModelForm):
             try:
                 _ = model.objects.get(id=id)
             except model.DoesNotExist:
-                raise ValidationError(f"Viga: {model_name} id={id}")
+                raise ValidationError(f"Viga: {model_name} id={id} ei eksisteeri: {tag}")
         
         # # Kontrollime, et loo algusaeg on märgitud
         # if self.model == Artikkel and not any([self.cleaned_data.get('hist_date'), self.cleaned_data.get('hist_year')]):

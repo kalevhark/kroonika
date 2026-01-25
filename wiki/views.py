@@ -58,11 +58,16 @@ import requests
 
 from blog.models import Comment
 from wiki.models import (
-    Allikas, Viide,
-    Artikkel, Isik, Objekt, Organisatsioon,
+    Allikas, 
+    Viide,
+    Artikkel, 
+    Isik, 
+    Objekt, 
+    Organisatsioon,
     Pilt,
     Vihje,
-    Kaart, Kaardiobjekt
+    Kaart, 
+    Kaardiobjekt
 )
 from wiki.forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, KaardiobjektForm
 from wiki.forms import VihjeForm, V6rdleFormIsik, V6rdleFormObjekt
@@ -1686,7 +1691,7 @@ def redirect_to_recaptcha(request, *args, **kwargs):
         p2ringu_objekt = resolve(path)
         if (url_v6ti == None) or (session_key != url_v6ti):
             # logime kahtlase p2ringu tegemise
-            logger.warning(f'session_key:{session_key} vs v6ti:{url_v6ti}: {ip} {path}')
+            logger.info(f'session_key:{session_key} vs v6ti:{url_v6ti}: {ip} {path}')
             # genereerime selgituse t2psustuse
             year = kwargs.get('year')
             month = kwargs.get('month')
@@ -1949,7 +1954,7 @@ class ArtikkelDayArchiveView(DayArchiveView):
     allow_empty = True
 
     
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs: dict):
         # kontrollime kuupäeva kehtivust
         if kwargs.get('year') < 1000 or kwargs.get('year') > 3000:
             raise Http404("Aasta peab olema vahemikus 1000-3000.")
