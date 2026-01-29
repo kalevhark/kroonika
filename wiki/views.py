@@ -1776,12 +1776,8 @@ class ArtikkelYearArchiveView(YearArchiveView):
 
         # Leiame samal aastal sündinud isikud
         isik_qs = Isik.objects.daatumitega(self.request)
-        # syndinud_isikud = isik_qs.\
-        #     filter(dob__year = aasta).\
-        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('dob'), output_field=IntegerField())).\
-        #     order_by(ExtractMonth('dob'), ExtractDay('dob'))
         syndinud_isikud = isik_qs.\
-            filter(yob = aasta).\
+            filter(yob=aasta).\
             annotate(vanus_gen=ExpressionWrapper(aasta - F('yob'), output_field=IntegerField())).\
             order_by(ExtractMonth('dob'), ExtractDay('dob'))
         context['syndinud_isikud'] = syndinud_isikud
@@ -1797,9 +1793,13 @@ class ArtikkelYearArchiveView(YearArchiveView):
             Isik._meta.verbose_name_plural.lower()
         )
         # Leiame samal aastal surnud isikud
+        # surnud_isikud = isik_qs.\
+        #     filter(doe__year = aasta).\
+        #     annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField())). \
+        #     order_by(ExtractMonth('doe'), ExtractDay('doe'))
         surnud_isikud = isik_qs.\
-            filter(doe__year = aasta).\
-            annotate(vanus_gen=ExpressionWrapper(aasta - ExtractYear('hist_date'), output_field=IntegerField())). \
+            filter(yoe=aasta).\
+            annotate(vanus_gen=ExpressionWrapper(aasta - F('yoe'), output_field=IntegerField())).\
             order_by(ExtractMonth('doe'), ExtractDay('doe'))
         context['surnud_isikud'] = surnud_isikud
         context['surnud_isikud_pealkiri'] = '{0}. aastal surnud {1}'.format(

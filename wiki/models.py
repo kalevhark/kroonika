@@ -2,10 +2,11 @@
 kroonika wiki mudelid.
 
 hist_date: algushetke originaalkuupäev kehtinud kalendri järgi
-hist_year: algushetke aasta, kui ainult teada
+hist_year: algushetke aasta
 hist_month: algushetke kuu, kui see on teada
-hist_enddate: l6pphetke originaalkuup2ev kehtinud kalendri j2rgi
-hist_endyear: l6pphetke aasta, kui ainult teada
+hist_enddate: l6pphetke originaalkuupäev kehtinud kalendri järgi
+hist_endmonth: l6pphetke kuu, kui see on teada
+hist_endyear: l6pphetke aasta
 dob = vastavalt valikule vkj v6i ukj hist_date j2rgi arvutatud kuup2ev
 doe = vastavalt valikule vkj v6i ukj hist_enddate j2rgi arvutatd kuup2ev
 """
@@ -23,7 +24,6 @@ import string
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.models import User
-# from django.core.exceptions import FieldDoesNotExist
 from django.core.files.base import ContentFile
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
@@ -33,7 +33,6 @@ from django.db.models import \
 from django.db.models.functions import Cast, Concat, Coalesce, ExtractYear, ExtractMonth, ExtractDay, LPad
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
-from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -43,7 +42,7 @@ from django.utils.text import slugify
 
 import folium
 
-from idna import intranges_contain
+# from idna import intranges_contain
 from markdownx.models import MarkdownxField
 from markdownx.utils import markdownify
 
@@ -68,13 +67,16 @@ KUUD = (
 
 VIGA_TEKSTIS = settings.KROONIKA['VIGA_TEKSTIS']
 PATTERN_OBJECTS = settings.KROONIKA['PATTERN_OBJECTS']
+PATTERN_PILT = settings.KROONIKA['PATTERN_PILT']
+PATTERN_VIIDE = settings.KROONIKA['PATTERN_VIIDE']
 PREDECESSOR_DESCENDANT_NAMES = settings.KROONIKA['PREDECESSOR_DESCENDANT_NAMES']
 CALENDAR_SYSTEM_DEFAULT = settings.KROONIKA['CALENDAR_SYSTEM_DEFAULT']
 
 
 def get_calendarstatus(request) -> str:
     """
-    Tagasta kasutaja kalendrisüsteemi valik (vkj/ukj)
+    Tagasta kasutaja kalendrisüsteemi valik (vkj/ukj).
+
     :param request: HttpRequest or None
     :return: calendar_system
     :rtype: str
@@ -165,6 +167,7 @@ class DaatumitegaManager(models.Manager):
         filtered_queryset = filtered_queryset.annotate(
             # dobm=Coalesce('dob__month', 'hist_month', 0, output_field=IntegerField()),
             yob=Coalesce('dob__year', 'hist_year', 0, output_field=IntegerField()),
+            yoe=Coalesce('doe__year', 'hist_endyear', 0, output_field=IntegerField()),
         )
         if model_name == 'Artikkel':
             filtered_queryset = filtered_queryset.annotate(
@@ -497,11 +500,10 @@ def make_thumbnail(dst_image_field, src_image_field, name_suffix, sep='_') -> No
         dst_bytes.close()
 
 
-def add_markdownx_pildid(kirjeldus: str) -> str:
+def add_markdownx_pildid(kirjeldus_formatted_markdown: str) -> str:
     """Töötleb kirjelduses pilditagid [pilt_nnnn] piltideks"""
-    # Otsime kõik pilditagid
-    pattern = re.compile(r'\[pilt_([0-9]*)]')
-    tagid = re.finditer(pattern, kirjeldus)
+    pattern = re.compile(PATTERN_PILT)
+    tagid = re.finditer(pattern, kirjeldus_formatted_markdown)
     for tag in tagid:
         id = tag.groups()[0]
         pilt = Pilt.objects.get(id=id)
@@ -511,8 +513,8 @@ def add_markdownx_pildid(kirjeldus: str) -> str:
             img = f'<img src="{pildi_url}" class="pilt-pildidtekstis" alt="{pildi_caption}" data-pilt-id="{pilt.id}" >'
             caption = f'<p><small>{pildi_caption}</small></p>'
             html = f'<div class="w3-row">{img}{caption}</div>'
-            kirjeldus = kirjeldus.replace(tag[0], html)
-    return kirjeldus
+            kirjeldus_formatted_markdown = kirjeldus_formatted_markdown.replace(tag[0], html)
+    return kirjeldus_formatted_markdown
 
 
 def remove_markdown_tags(obj) -> str:
@@ -528,7 +530,7 @@ def remove_markdown_tags(obj) -> str:
         kirjeldus = re.sub(PATTERN_OBJECTS, r'\1', kirjeldus)
 
         # Otsime kõik pilditagid
-        pattern_pildid = re.compile(r'\[pilt_([0-9]*)]')
+        pattern_pildid = re.compile(PATTERN_PILT)
         tagid = re.finditer(pattern_pildid, kirjeldus)
         for tag in tagid:
             id = tag.groups()[0]
@@ -538,7 +540,7 @@ def remove_markdown_tags(obj) -> str:
                 kirjeldus = kirjeldus.replace(tag[0], f'Pilt: {pildi_caption}')
         
         # eemaldame viited
-        kirjeldus = re.sub(r'\s?\[(viide\_|\^)([0-9]*)]', '', kirjeldus)
+        kirjeldus = re.sub(PATTERN_VIIDE, '', kirjeldus)
 
         # eemaldame markdown tagid
         kirjeldus = re.sub(r'\*\*(.*?)\*\*', r'\1', kirjeldus)

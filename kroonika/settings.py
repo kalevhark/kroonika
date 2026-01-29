@@ -300,6 +300,8 @@ KROONIKA = {
     'CALENDAR_SYSTEM_DEFAULT': 'ukj',
     'VIGA_TEKSTIS':'[?]', # Märgib kirjelduses vigase või kontrollimist vajavat kohta
     'PATTERN_OBJECTS': r'\[([\wÀ-ÿ\s\"\-\,\.\(\)]+)\]\(\[(artikkel|isik|organisatsioon|objekt)_([0-9]*)\]\)',
+    'PATTERN_PILT': r'\[pilt_([0-9]*)\]',
+    'PATTERN_VIIDE': r'\[viide_([0-9]*)\]',
     'PREDECESSOR_DESCENDANT_NAMES': { # Objecti eellased välja labelid
         'Artikkel': {
             'predecessor_name': 'Eelnenud lugu',

@@ -42,10 +42,10 @@ from psycopg2.extras import RealDictCursor
 
 try:
     from .utils import utils
-    from ilm import views
+    from ilm import views, models
 except: # kui käivitatakse lokaalselt
     from utils import utils
-    import views
+    import views, models
 
 # The following connect() function connects to the suppliers database and prints out the PostgreSQL database version.
 def connect(path=''):
@@ -161,7 +161,7 @@ def check_observation_exists(dt, path=''):
             conn.close()
     return row
 
-def get_observations(dt, path):
+def get_observations_old(dt, path):
 
     conn = None
     observations = []
@@ -192,6 +192,22 @@ def get_observations(dt, path):
         if conn is not None:
             conn.close()
     return observations
+
+def get_observations(dt, path) -> list:
+    """ query observations from the ilm_ilm table """
+    observations = []
+    dtmin = 1593622800  # 2020-07-01 00:00:00+02:00 in epoch time
+    
+    qs = models.Ilm.objects.filter(timestamp__gte=datetime.fromtimestamp(dtmin))
+    for obs in qs:
+        row = [
+            int(obs.timestamp.timestamp()), # timestamp
+            float(obs.airtemperature) if obs.airtemperature is not None else None,             # airtemperature
+            float(obs.precipitations) if obs.precipitations is not None else None,             # precipitations
+        ]
+        observations.append(row)
+    return observations
+
 
 # Lisab uue vaatlusandmete kirje
 def insert_new_observations(observation_dict, path=''):

@@ -2,6 +2,8 @@ from ast import Is
 from datetime import date, datetime
 from functools import reduce
 from operator import or_
+from re import A
+import re
 import time
 import urllib
 
@@ -14,12 +16,40 @@ from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from wiki import views
+from wiki.models import PATTERN_VIIDE, add_markdownx_pildid, remove_markdown_tags
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 from wiki.tests import test_base
 
 from django.conf import settings as django_settings
 from django.test import TestCase
 from django.urls import reverse
+
+PATTERN_OBJECTS = settings.KROONIKA['PATTERN_OBJECTS']
+PATTERN_PILT = settings.KROONIKA['PATTERN_PILT']
+PATTERN_VIIDE = settings.KROONIKA['PATTERN_VIIDE']
+
+class MarkDownUtilsTestCase(TestCase):
+    def setUp(self) -> None:
+        # GIVEN
+        self.pattern_objects = re.compile(PATTERN_OBJECTS)
+        self.test_artikkel_with_markdown_object_tags = Artikkel.objects.filter(kirjeldus__iregex=PATTERN_OBJECTS).first()
+        # Otsime kõik pilditagid
+        self.pattern_pilt = re.compile(PATTERN_PILT)
+        self.test_artikkel_with_markdown_pilt_tags = Artikkel.objects.filter(kirjeldus__iregex=PATTERN_PILT).first()
+
+    def test__models__remove_markdown_tags(self):
+        """Testib markdowni siltide eemaldamist tekstist."""
+        # WHEN
+        text_without_tags = remove_markdown_tags(self.test_artikkel_with_markdown_object_tags)
+        # THEN
+        self.assertIsInstance(text_without_tags, str)
+
+    def test__models__add_markdownx_pildid(self):
+        """Testib markdownx piltide lisamist tekstile."""
+        # WHEN
+        text_with_pildid = add_markdownx_pildid(self.test_artikkel_with_markdown_pilt_tags.kirjeldus)
+        # THEN
+        self.assertIsInstance(text_with_pildid, str)
 
 
 class SwitchCalendarSystemTestCase(TestCase):
