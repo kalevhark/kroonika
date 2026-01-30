@@ -6,6 +6,7 @@ import json
 
 import locale
 from typing import Optional
+
 locale.setlocale(locale.LC_NUMERIC, "et_EE.UTF-8")
 
 import os
@@ -139,8 +140,9 @@ def utc2eesti_aeg(dt):
     eesti_aeg = pytz.timezone('Europe/Tallinn')
     return dt.astimezone(eesti_aeg)
 
-# Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
-def float_or_none(value):
+
+def float_or_none(value: str) -> Optional[float]:
+    """string andmeväljade teisendamiseks ujukomaarvuks, mis võivad olla tühjad <NULL>"""
     try:
         return locale.atof(value)
     except:
