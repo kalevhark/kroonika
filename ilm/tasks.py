@@ -161,13 +161,46 @@ def check_observation_exists(dt, path=''):
             conn.close()
     return row
 
+def get_observations(dt, path):
+    """ query observations from the ilm_ilm table """
+    # dtmin = 1593622800  # 2020-07-01 00:00:00+02:00 in epoch time in forecasts
+    conn = None
+    observations = []
+    try:
+        params = utils.config(path)
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+        fields = "date_part('epoch', timestamp) as timestamp, airtemperature, precipitations"
+        condition = f"timestamp >= '{dt.year}-{dt.month}-{dt.day} {dt.hour}:00:00'"
+        query = f'SELECT {fields} FROM ilm_ilm WHERE {condition} ORDER BY timestamp;'
 
-def get_observations(dt, path) -> list:
+        cur.execute(query)
+        # print("Kandeid: ", cur.rowcount)
+
+        row = cur.fetchone()
+        while row is not None:
+            observations.append([
+                int(row[0]), # timestamp
+                utils.float_or_none(row[1]), # airtemperature
+                utils.float_or_none(row[2]), # precipitations
+            ])
+            row = cur.fetchone()
+
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+    return observations
+
+
+def get_observations_new(dt, path) -> list:
     """ query observations from the ilm_ilm table """
     observations = []
     dtmin = 1593622800  # 2020-07-01 00:00:00+02:00 in epoch time
     
-    qs = models.Ilm.objects.filter(timestamp__gte=datetime.fromtimestamp(dtmin))
+    qs = Ilm.objects.filter(timestamp__gte=datetime.fromtimestamp(dtmin))
     for obs in qs:
         row = [
             int(obs.timestamp.timestamp()), # timestamp
