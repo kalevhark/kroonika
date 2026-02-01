@@ -142,11 +142,17 @@ def utc2eesti_aeg(dt):
 
 
 def float_or_none(value: str) -> Optional[float]:
-    """string andmeväljade teisendamiseks ujukomaarvuks, mis võivad olla tühjad <NULL>"""
+    """string või Decimal andmeväljade teisendamiseks ujukomaarvuks, mis võivad olla tühjad <NULL>"""
     try:
-        return locale.atof(value)
+        if value is None:
+            return None
+        elif isinstance(value, str):
+            return locale.atof(value)
+        else:
+            return float(value)
     except:
         return None
+
 
 # tagastab kuu viimase pühapäeva UTC
 def last_sunday(year, month):
