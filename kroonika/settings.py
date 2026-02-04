@@ -3,6 +3,7 @@ Django settings for kroonika project.
 
 """
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import configparser
 
@@ -215,6 +216,7 @@ SOCIALACCOUNT_PROVIDERS = {
 LANGUAGE_CODE = 'et'
 
 TIME_ZONE = 'Europe/Tallinn'
+EST_TZ = ZoneInfo("Europe/Tallinn")
 
 USE_I18N = True
 
