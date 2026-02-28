@@ -23,7 +23,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.db import connection
 from django.db.models import F, RowRange, Window, Count, Sum, Avg, Min, Max
 
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from ilm.forms import NameForm
@@ -2311,7 +2311,7 @@ def forecasts_quality(request):
     return render(request, 'ilm/forecasts_quality.html', context)
 
 
-def maxmin(request):
+def maxmin(request) -> HttpResponse:
     """
     Ajaloo ilmanäitajate ekstreemumid, keskmised ja varieerumine
     """
@@ -2511,3 +2511,39 @@ def maxmin(request):
         context
     )
 
+
+def calc_max_belowzero_periods(request):
+    """
+    Arvutab maksimum järjestikuste alla 0 kraadi perioodide pikkused
+    """
+    # Järjestikuste alla 0 kraadi perioodide pikkused päevade kaupa
+    days_max_belowzero_qs = Ilm.objects\
+        .order_by('timestamp')\
+        .values('timestamp__year', 'timestamp__month', 'timestamp__day', 'airtemperature')
+    belowzero_periods = list()
+    current_period = {
+        'start': None,
+        'end': None,
+        'length': 0
+    }
+    for day in days_max_belowzero_qs:
+        if day['airtemperature'] and day['airtemperature'] < 0:
+            if current_period['start'] is None:
+                current_period['start'] = datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day'])
+            current_period['end'] = datetime(day['timestamp__year'], day['timestamp__month'], day['timestamp__day'])
+            current_period['length'] += 1
+        else:
+            if current_period['length'] > 0:
+                belowzero_periods.append(current_period)
+                current_period = {
+                    'start': None,
+                    'end': None,
+                    'length': 0
+                }
+    belowzero_periods.sort(key=lambda x: x['length'], reverse=True)
+    for period in belowzero_periods[:10]:
+        print(f"Periood: {period['start'].strftime('%Y-%m-%d')} - {period['end'].strftime('%Y-%m-%d')}, pikkus: {period['length']//24} päeva {period['length']%24} tundi")
+
+
+if __name__ == "__main__":
+    calc_max_belowzero_periods(None)
