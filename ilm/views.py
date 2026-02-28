@@ -2545,5 +2545,3 @@ def calc_max_belowzero_periods(request):
         print(f"Periood: {period['start'].strftime('%Y-%m-%d')} - {period['end'].strftime('%Y-%m-%d')}, pikkus: {period['length']//24} päeva {period['length']%24} tundi")
 
 
-if __name__ == "__main__":
-    calc_max_belowzero_periods(None)
