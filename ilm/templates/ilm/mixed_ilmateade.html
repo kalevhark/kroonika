@@ -1,5 +1,19 @@
 {% load static %}
-<div id="loader"></div>
+
+{% block stylesheet %}
+  <style>
+    .loaderbook {
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+    }
+  </style>
+{% endblock %}
+
+{% comment %} <div id="loader"></div> {% endcomment %}
+{% include 'wiki/includes/div_loader_book.html' with n='LoadMixedIlmateade' %}
+
 <div
     id="container_mixed_ilmateade"
     class="animate-bottom"

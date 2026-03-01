@@ -97,7 +97,7 @@ function mixed_ilmateade() {
 	  timeout: 300000,
 	  success: function (data)
       {
-        document.getElementById("loader").style.display = "none";
+        document.getElementById("loaderDivLoadMixedIlmateade").style.display = "none";
         document.getElementById("container_mixed_ilmateade").style.display = "block";
         
         var chart = Highcharts.chart("container_mixed_ilmateade", data);
