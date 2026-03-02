@@ -4,5 +4,13 @@
         "*test*.py"
     ],
     "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true
+    "python.testing.unittestEnabled": true,
+    "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+        "source": "PowerShell",
+        "icon": "terminal-powershell",
+        "args": ["-ExecutionPolicy", "Bypass"]
+    }
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
 }
