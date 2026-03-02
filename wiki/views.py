@@ -161,6 +161,10 @@ def info(request):
     time = datetime.now()
     time_log = {}
     time_log['0'] = datetime.now() - time
+    
+    # küsime hosti, et näha, kas on erinev kui valgalinn.ee
+    host = request.get_host()
+
     # Filtreerime kasutaja järgi
     artikkel_qs = Artikkel.objects.daatumitega(request)
     isik_qs = Isik.objects.daatumitega(request)
@@ -323,6 +327,7 @@ def info(request):
     }
 
     context = {
+        'host': host,
         'andmebaasid': andmebaasid,
         'andmed': andmed,
         'artikleid_kuus': artikleid_kuus,
