@@ -8,7 +8,7 @@ crispy-bootstrap4==2023.1
 daphne==4.1.2
 Django==5.1.4
 django-ajax-selects==3.0.2
-django-allauth==0.61.1
+django-allauth==65.14.1
 django-ckeditor==6.7.1
 django-cors-headers==4.3.1
 django-crispy-forms==2.1
