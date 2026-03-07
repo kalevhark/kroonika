@@ -12,7 +12,7 @@ import math
 from operator import or_
 import os
 from pathlib import Path
-import pkg_resources
+# import pkg_resources
 import sys
 import tempfile
 from typing import Dict, Any
@@ -306,9 +306,9 @@ def info(request):
     # Moodulid, mis kasutusel
 
     env = dict(
-        tuple(str(ws).split())
-        for ws
-        in pkg_resources.working_set
+        # tuple(str(ws).split())
+        # for ws
+        # in pkg_resources.working_set
     )
 
     model_example = Isik
@@ -1158,6 +1158,7 @@ def get_mainitud_aastatel_chart(mainitud_aastatel_data):
         graph = base64.b64encode(image_png)
         graph = graph.decode('utf-8')
         buffer.close()
+        plt.close()
     return graph
 
 def seotud_artiklikaudu(request, model, seotud_artiklid, object_self):

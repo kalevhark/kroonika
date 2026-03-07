@@ -76,7 +76,7 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'kiri.apps.KiriConfig', # e-kirja saatmiseks valgalinn.ee aadressilt
     'wiki.apps.WikiConfig',
-    'vgvk', # Valga Gümnaasiumi vilistlaskogu j6ulukaart
+    # 'vgvk', # Valga Gümnaasiumi vilistlaskogu j6ulukaart
 ]
 
 MIDDLEWARE = [
@@ -174,8 +174,14 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-ACCOUNT_EMAIL_REQUIRED = True
+# settings.ACCOUNT_AUTHENTICATION_METHOD is deprecated, use: settings.ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+# ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+
+# settings.ACCOUNT_EMAIL_REQUIRED is deprecated, use: settings.ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+# ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 # https://django-allauth.readthedocs.io/en/latest/forms.html
 ACCOUNT_FORMS = {

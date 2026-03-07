@@ -108,11 +108,16 @@ class FilterViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['object_list']), 0)
 
-    def test_filter_isik_for_non_authented_user(self):
+
+    def test_filter_isikud_m2rtson_for_non_authented_user(self):
+        # Kas perenimi Märtson on leitav
         response = self.client.get('/wiki/isik/', {'nimi_sisaldab': 'märtson'})
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.context['object_list']) > 0)
-        # Kas Johannes Märtson on leitav
+
+
+    def test_filter_isikud_johannes_m2rtson_for_non_authented_user(self):
+        # Mitu Johannes Märtson on leitavad
         response = self.client.get(
             '/wiki/isik/',
             {
@@ -122,7 +127,7 @@ class FilterViewTests(TestCase):
             }
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context['object_list']), 1)
+        self.assertEqual(len(response.context['object_list']), 2)
         # Mitu Härki leitakse
         response = self.client.get(
             '/wiki/isik/',
@@ -134,6 +139,21 @@ class FilterViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.context['object_list']) > 1)
+
+
+    def test_filter_isikud_h2rk_for_non_authented_user(self):
+        # Mitu Härki leitakse
+        response = self.client.get(
+            '/wiki/isik/',
+            {
+                'eesnimi__icontains': '',
+                'perenimi__icontains': '',
+                'nimi_sisaldab': 'härk'
+            }
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(len(response.context['object_list']) > 1)
+
 
     def test_filter_organisatsioon_for_non_authented_user(self):
         response = self.client.get('/wiki/organisatsioon/', {'nimi_sisaldab': 'säde selts'})

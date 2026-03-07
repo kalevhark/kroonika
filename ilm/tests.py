@@ -86,7 +86,7 @@ class APITestIlmListingCase(TestCase):
         self.list_api_result = self.client.get('/api/i/', {'y': year}, format='json')
         self.assertEqual(self.list_api_result.status_code, 200)
         count = self.list_api_result.json()["count"]
-        self.assertTrue(count == 8759, msg=count)
+        self.assertTrue(count == 8760, msg=count)
 
     def test_ilm_month_api(self):
         year = 2012

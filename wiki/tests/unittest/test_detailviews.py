@@ -357,7 +357,7 @@ class ArtikkelViewTests(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn('queryparams', response.context_data)
-        self.assertNotEquals(response.context_data['queryparams'][1:], queryparams.urlencode())
+        self.assertNotEqual(response.context_data['queryparams'][1:], queryparams.urlencode())
         self.assertIn(response.context_data['queryparams'][1:], queryparams.urlencode())
 
     def test_artikkel_with_filter_objects_all_exist_not_related(self):

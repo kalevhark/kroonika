@@ -10,7 +10,7 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include
 
-from rest_framework.documentation import include_docs_urls
+# from rest_framework.documentation import include_docs_urls
 # from rest_framework.schemas import get_schema_view
 
 from .sitemaps import StaticViewSitemap, ArtikkelSitemap, IsikSitemap, OrganisatsioonSitemap, ObjektSitemap
@@ -50,7 +50,7 @@ urlpatterns = [
     path('kiri/', include('kiri.urls'), name='kiri'),
     path('ilm/', include('ilm.urls'), name='ilm'),
     path('inlineedit/', include('inlineedit.urls'), name='save'), # https://github.com/ptav/django-inlineedit
-    path('docs/', include_docs_urls(title='Valga linna kroonika API')),
+    # path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('markdownx/', include('markdownx.urls')),
     path('privacy/', views.privacy, name='privacy'),
     # path('schema/', schema_view),
