@@ -4,6 +4,7 @@ __pycache__/
 /media/
 /static/
 *.ini
+*.geojson
 wiki/utils/Tartu linn.cpg
 wiki/utils/Tartu linn.dbf
 wiki/utils/Tartu linn.prj

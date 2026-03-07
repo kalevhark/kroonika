@@ -11,7 +11,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include
 
 from rest_framework.documentation import include_docs_urls
-from rest_framework.schemas import get_schema_view
+# from rest_framework.schemas import get_schema_view
 
 from .sitemaps import StaticViewSitemap, ArtikkelSitemap, IsikSitemap, OrganisatsioonSitemap, ObjektSitemap
 from .routers import router
@@ -31,11 +31,11 @@ sitemaps = {
 # ]
 
 # API
-schema_view = get_schema_view(
-    title='Valga linna kroonika API',
+# schema_view = get_schema_view(
+    # title='Valga linna kroonika API',
     # url='https://valgalinn/api/',
     # patterns=schema_url_patterns
-)
+# )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -53,23 +53,15 @@ urlpatterns = [
     path('docs/', include_docs_urls(title='Valga linna kroonika API')),
     path('markdownx/', include('markdownx.urls')),
     path('privacy/', views.privacy, name='privacy'),
-    path('schema/', schema_view),
+    # path('schema/', schema_view),
     path('wiki/', include('wiki.urls')),
     path('kaart/', views.kaart, name='kaart'),
     path('kaart/get_big_leaflet_map/', views.get_big_leaflet_map, name='get_big_leaflet_map'),
     path('kaart/<int:aasta>/', views.kaart, name='kaart'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    # path('valga438/', specials.special_valga438, name='special_valga438'),
-    # path('valga439/', specials.special_valga439, name='special_valga439'),
-    # path('valga440/', specials.special_valga440, name='special_valga440'),
     # path('valga441/', specials.special_valga441, name='special_valga441'),
-    # path('j6ul2020/', specials.special_j6ul2020, name='special_j6ul2020'),
-    # path('j6ul2021/', specials.special_j6ul2021, name='special_j6ul2021'),
-    # path('j6ul2022/', specials.special_j6ul2022, name='special_j6ul2022'),
-    # path('j6ul2023/', specials.special_j6ul2023, name='special_j6ul2023'),
-    # path('j6ul2024/', specials.special_j6ul2024, name='special_j6ul2024'),
-    path('j6ul2025/', specials.special_j6ul2025, name='special_j6ul2025'),
-    path('vgvk/', include('vgvk.urls')),
+    # path('j6ul2025/', specials.special_j6ul2025, name='special_j6ul2025'),
+    # path('vgvk/', include('vgvk.urls')),
     path('raise_500_error/', views.raise_500_error, name='raise_500_error'), # http500 veateate testimiseks
     # path("__debug__/", include("debug_toolbar.urls")), # https://django-debug-toolbar.readthedocs.io
 ]
