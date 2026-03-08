@@ -7,6 +7,7 @@ import json
 
 import logging
 logger = logging.getLogger(__name__)
+import pkgutil
 
 import math
 from operator import or_
@@ -304,12 +305,29 @@ def info(request):
     time_log['5'] = datetime.now() - time
 
     # Moodulid, mis kasutusel
-
-    env = dict(
+    # env = dict(
         # tuple(str(ws).split())
         # for ws
         # in pkg_resources.working_set
-    )
+    # )
+    
+    def get_ver(name):
+        try:
+            return str(__import__(name).__version__)
+        except:
+            return None
+    
+    env = [
+        {
+            # 'path': m.module_finder.path,
+            'name': m.name,
+            'version': get_ver(m.name),
+        } 
+        for m 
+        in list(pkgutil.iter_modules())
+        if m.module_finder.path and m.module_finder.path.endswith('site-packages')
+        # Näitab ainult projekti mooduleid
+    ]
 
     model_example = Isik
     model_example_obj = model_example.objects.daatumitega(request).first()

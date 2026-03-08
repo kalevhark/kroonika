@@ -265,8 +265,11 @@
       Host: {{ host }}<br>
       Python {{ python }}<br>
       Lisaks:
-      {% for key, item in env.items|dictsort:0 %}
+      {% comment %} {% for key, item in env.items|dictsort:0 %}
         <br><small>{{ key }}: {{ item }}</small>
+      {% endfor %} {% endcomment %}
+      {% for package in env %}
+        <br><small>{{ package.name }}: {{ package.version }}</small>
       {% endfor %}
       <div>
         <div>
