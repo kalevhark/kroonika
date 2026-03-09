@@ -82,13 +82,20 @@ from wiki.utils.shp_util import (
 
 TMP_ALGUSKUVA = Path(tempfile.gettempdir()) / '_valgalinn.ee_algus.tmp'
 
-# Error Handling Templates
 def custom_500(request):
+    """Error Handling Templates"""
     return render(request,'500.html', status=500)
 
-# Veateatega lehe testimiseks
+def maintenance(request):
+    """Maintenance page"""
+    if settings.MAINTENANCE_MODE:
+        return render(request, 'maintenance.html')
+    return redirect(reverse('algus'))
+
 def raise_500_error(request):
+    """Veateatega lehe testimiseks"""
     print(sellist_muutujat_pole_olemas)
+
 
 #
 # reCAPTCHA kontrollifunktsioon

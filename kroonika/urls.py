@@ -40,6 +40,7 @@ sitemaps = {
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.algus, name='algus'),
+    path('maintenance/', views.maintenance, name='maintenance'),
     path('info/', views.info, name='info'),
     # path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('allauth.urls')), # django-allauth

@@ -91,6 +91,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware', # site info lisamiseks
     'allauth.account.middleware.AccountMiddleware',
+    'wiki.middleware.MaintenanceModeMiddleware', # Hooldusrežiimi jaoks
     # "debug_toolbar.middleware.DebugToolbarMiddleware", # https://django-debug-toolbar.readthedocs.io
 ]
 
@@ -483,3 +484,6 @@ LOGGING = {
 
 # Kas on jõuluaeg aktiivne?
 J6UL2025 = False
+
+# Maintenance mode in use?
+MAINTENANCE_MODE = config['django'].getboolean('MAINTENANCE_MODE', fallback=False)

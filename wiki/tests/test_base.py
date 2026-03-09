@@ -98,18 +98,31 @@ class WikiBaseUrlTests(TestCase):
 class WikiBaseViewTests(TestCase):
 
     def test_algus_view(self):
+        """Alguslehe testid"""
         time_start = datetime.now()
         response = self.client.get(reverse('algus'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
+
+    def test_maintenance_view(self):
+        """Maintenance page view test"""
+        time_start = datetime.now()
+        response = self.client.get(reverse('maintenance'))
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
+
+
     def test_info_view(self):
+        """Info lehe testid"""
         time_start = datetime.now()
         response = self.client.get(reverse('info'))
         time_stopp = datetime.now() - time_start
         self.assertEqual(response.status_code, 200)
         self.assertTrue(time_stopp.seconds < 3, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
+
 
     def test_otsi_view(self):
         time_start = datetime.now()
