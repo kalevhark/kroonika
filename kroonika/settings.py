@@ -305,6 +305,7 @@ KROONIKA = {
         """
         Valga linna kroonika. Lood Valga linna ajaloost seotuna isikute, asutiste ja kohtadega. 
         """.strip(),
+    'ADMINEMAIL': config['superuser']['ADMINEMAIL'],
     'KEYWORDS': ['Valga', 'linn', 'Valga linn', 'kroonika', 'ajalugu'],
     'CALENDAR_SYSTEM_DEFAULT': 'ukj',
     'VIGA_TEKSTIS':'[?]', # Märgib kirjelduses vigase või kontrollimist vajavat kohta

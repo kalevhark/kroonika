@@ -8,7 +8,7 @@ class KiriForm(forms.Form):
 
     name = forms.CharField(
         max_length=120,
-        initial='valgalinn.ee',
+        initial=f'{settings.KROONIKA["TITLE"]}',
         required=False,
         label='Saatja nimi'
     )

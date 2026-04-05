@@ -429,7 +429,10 @@ def feedback(request):
             #     fail_silently=False,
             # )
 
-            from_email, to = f'valgalinn.ee <{settings.DEFAULT_FROM_EMAIL}>', 'kalevhark@gmail.com'
+            from_email, to = (
+                f'{settings.KROONIKA["TITLE"]} <{settings.DEFAULT_FROM_EMAIL}>',
+                f'{settings.KROONIKA["ADMINEMAIL"]}',
+            )
             merge_data = {
                 'message': message
             }
