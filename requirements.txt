@@ -17,7 +17,7 @@ crispy-bootstrap4==2026.2
 cryptography==46.0.5
 cycler==0.12.1
 daphne==4.2.1
-Django==6.0.3
+Django==6.0.4
 django-ajax-selects==3.0.3
 django-allauth==65.14.3
 django-ckeditor==6.7.3
