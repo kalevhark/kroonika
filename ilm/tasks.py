@@ -836,7 +836,7 @@ if __name__ == '__main__':
     #     # Kustutame duplikaatread
     #     rows_deleted = delete_duplicate_observations(path, verbose)
 
-    if now.minute == 10: # iga tunni 10. minutil
+    if now.minute == 20: # iga tunni 20. minutil
         # Kustutame duplikaatread
         rows_deleted = delete_duplicate_observations(path, verbose)
         # Täiendame puudulikke kirjeid
