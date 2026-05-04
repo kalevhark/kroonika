@@ -313,7 +313,7 @@ def show_calc_results(log_df_filtered):
         .head(10)
     # print(result)
 
-    result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
+    # ['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
     result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",",
                                                                                                     regex=False)
     print(result)
@@ -325,7 +325,7 @@ def show_calc_results(log_df_filtered):
         .agg(['sum', 'count']) \
         .sort_values(by=['count'], ascending=[False]) \
         .head(10)
-    result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
+    # result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
     result['sum'] = result['sum'] \
         .map('{:,}'.format).str \
         .replace(",", " ", regex=False).str \
