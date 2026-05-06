@@ -837,21 +837,29 @@ if __name__ == '__main__':
     #     rows_deleted = delete_duplicate_observations(path, verbose)
 
     if now.minute == 20: # iga tunni 20. minutil
+        print(f'{datetime.now()}: Alustame ilmaennustuste logi ja kvaliteedi arvutustega')
         # Kustutame duplikaatread
         rows_deleted = delete_duplicate_observations(path, verbose)
+        print(f'{datetime.now()}: Duplikaatide kustutamine lõpetatud, kustutatud kirjeid: {rows_deleted}')
         # Täiendame puudulikke kirjeid
         rows_updated = update_uncomplete_observations(path, days=days, verbose=verbose)
+        print(f'{datetime.now()}: Uuendatud puudulikke kirjeid: {rows_updated}')
         rows_missing = update_missing_observations(path, days=days, verbose=verbose)
+        print(f'{datetime.now()}: Uuendatud puuduvaid kirjeid: {rows_missing}')
         update_lasthours(path, verbose, hours=72)
+        print(f'{datetime.now()}: Viimase 72 tunni andmete kontroll ja uuendamine lõpetatud')
 
         # Tabelid mahukate arvutuste jaoks
         update_maxmin_rolling(path)
-
+        print(f'{datetime.now()}: Mahukate arvutuste tabelid uuendatud')
         # Ilmaennustuste logi
         update_forecast_logs(path, verbose)
+        print(f'{datetime.now()}: Ilmaennustuste logid uuendatud')
 
         # Viimase täistunnimõõtmise logimine faili
         make_observations_log(path) # uus variant
-
+        print(f'{datetime.now()}: Viimase täistunnimõõtmise logimine faili lõpetatud')
         # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
         update_forecast_log_analyze()
+        print(f'{datetime.now()}: Ilmaennustuste kvaliteedi arvutuste faili moodustamine lõpetatud')
+        print(f'{datetime.now()}: Uue ilmaennustuste kvaliteedi arvutuste faili moodustamine lõpetatud')
