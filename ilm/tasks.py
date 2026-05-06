@@ -6,6 +6,7 @@
 # /python-env-path-to/python3 /path-to-ilm-app/tasks.py
 
 from datetime import datetime, timedelta, timezone
+import logging
 import os
 from pathlib import Path
 import sys
@@ -46,6 +47,13 @@ try:
 except: # kui käivitatakse lokaalselt
     from utils import utils
     import views, models
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    filename=settings.LOGGING['handlers']['file']['filename'],
+    format=settings.LOGGING['formatters']['verbose']['format'],
+)
 
 # The following connect() function connects to the suppliers database and prints out the PostgreSQL database version.
 def connect(path=''):
@@ -837,29 +845,29 @@ if __name__ == '__main__':
     #     rows_deleted = delete_duplicate_observations(path, verbose)
 
     if now.minute == 20: # iga tunni 20. minutil
-        print(f'{datetime.now()}: Alustame ilmaennustuste logi ja kvaliteedi arvutustega')
+        # print(f'{datetime.now()}: Alustame ilmaennustuste logi ja kvaliteedi arvutustega')
+        logging.info(f"Alustame ilmaennustuste logi ja kvaliteedi arvutustega.")
         # Kustutame duplikaatread
         rows_deleted = delete_duplicate_observations(path, verbose)
-        print(f'{datetime.now()}: Duplikaatide kustutamine lõpetatud, kustutatud kirjeid: {rows_deleted}')
+        logging.info(f"Duplikaatide kustutamine lõpetatud, kustutatud kirjeid: {rows_deleted}")
         # Täiendame puudulikke kirjeid
         rows_updated = update_uncomplete_observations(path, days=days, verbose=verbose)
-        print(f'{datetime.now()}: Uuendatud puudulikke kirjeid: {rows_updated}')
+        logging.info(f"Uuendatud puudulikke kirjeid: {rows_updated}")
         rows_missing = update_missing_observations(path, days=days, verbose=verbose)
-        print(f'{datetime.now()}: Uuendatud puuduvaid kirjeid: {rows_missing}')
+        logging.info(f"Uuendatud puuduvaid kirjeid: {rows_missing}")
         update_lasthours(path, verbose, hours=72)
-        print(f'{datetime.now()}: Viimase 72 tunni andmete kontroll ja uuendamine lõpetatud')
+        logging.info(f"Viimase 72 tunni andmete kontroll ja uuendamine lõpetatud")
 
         # Tabelid mahukate arvutuste jaoks
         update_maxmin_rolling(path)
-        print(f'{datetime.now()}: Mahukate arvutuste tabelid uuendatud')
+        logging.info(f"Mahukate arvutuste tabelid uuendatud")
         # Ilmaennustuste logi
         update_forecast_logs(path, verbose)
-        print(f'{datetime.now()}: Ilmaennustuste logid uuendatud')
+        logging.info(f"Ilmaennustuste logid uuendatud")
 
         # Viimase täistunnimõõtmise logimine faili
         make_observations_log(path) # uus variant
-        print(f'{datetime.now()}: Viimase täistunnimõõtmise logimine faili lõpetatud')
+        logging.info(f"Viimase täistunnimõõtmise logimine faili lõpetatud")
         # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
         update_forecast_log_analyze()
-        print(f'{datetime.now()}: Ilmaennustuste kvaliteedi arvutuste faili moodustamine lõpetatud')
-        print(f'{datetime.now()}: Uue ilmaennustuste kvaliteedi arvutuste faili moodustamine lõpetatud')
+        logging.info(f"Ilmaennustuste kvaliteedi arvutuste faili moodustamine lõpetatud")
