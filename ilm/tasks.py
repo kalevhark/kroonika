@@ -52,7 +52,7 @@ except: # kui käivitatakse lokaalselt
 logging.basicConfig(
     level=logging.INFO,
     filename=settings.LOGGING['handlers']['file']['filename'],
-    format=settings.LOGGING['formatters']['verbose']['format'],
+    # format=settings.LOGGING['formatters']['verbose']['format'],
 )
 
 # The following connect() function connects to the suppliers database and prints out the PostgreSQL database version.
