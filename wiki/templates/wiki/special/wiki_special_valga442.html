@@ -1,0 +1,84 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+
+{% block breadcrumb %}
+{% endblock %}
+
+{% block src %}
+{% endblock %}
+
+{% block title %}{{ block.super }} - Valga 442!{% endblock %}
+
+{% block css %}
+  <style>
+    .title-440 {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translate(-50%, 0%);
+      font-family: 'Just Another Hand', cursive;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      text-align: center;
+    }
+    
+    .pilt-detail-440 {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      /*padding: 5px;*/
+      max-width: 100%;
+      max-height: 500px;
+    }
+    div.image-wrapper {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      -webkit-transform: translate(-50%, -50%);
+    }
+
+    .image-wrapper img {
+      display: block;
+    }
+  </style>
+{% endblock %}
+
+{% block og_image %}
+  <meta property="og:image" content="{% static 'wiki/img/special/VaMF1816_5_1_fragment_resized_fb.jpg' %}" />
+{% endblock %}
+
+{% block content %}
+  {% with caption="2026. aastal saab 210 aastat Jaani kiriku valmimisest (Allikas: Valga Muuseum, VaM F 1816:5, 05.11.2022)" %}
+    <div class="w3-container image-wrapper pyro">
+      <div class="before"></div>
+      <img
+          src="{% static 'wiki/img/special/VaMF1816_5_1_fragment_resized.jpg' %}"
+          alt="{{ caption }}"
+          title="{{ caption }}"
+          class="pilt-detail-440"
+      >
+      <h3 class="text-artikkel w3-round title-440">
+        Valga linn 442<br>Palju õnne!
+      </h3>
+        
+      <div
+          style="font-family: 'Just Another Hand', cursive; text-align: center;"
+          id="txtHolder"
+          class="w3-hide-large"
+      >
+      </div>
+
+      <div class="w3-tiny w3-center" style="margin-top: 0.5em;">
+        {{ caption }}
+      </div>
+      {% include 'wiki/includes/object_fbshare.html' %}
+      <div class="after"></div>
+    </div>
+  {% endwith %}
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}

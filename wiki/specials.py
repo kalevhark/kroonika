@@ -291,3 +291,12 @@ def special_valga441(request):
         'wiki/special/wiki_special_valga441.html',
         {}
     )
+
+# Linna sünnipäevatervituse lehekülg 442
+#
+def special_valga442(request):
+    return render(
+        request,
+        'wiki/special/wiki_special_valga442.html',
+        {}
+    )
