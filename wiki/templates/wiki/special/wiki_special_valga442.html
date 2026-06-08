@@ -52,7 +52,7 @@
 
 {% block content %}
   {% with caption="2026. aastal saab 210 aastat Jaani kiriku valmimisest (Allikas: Valga Muuseum, VaM F 1816:5, 05.11.2022)" %}
-    <div class="w3-container image-wrapper pyro">
+    <div class="w3-container image-wrapper pyro w3-hide-small">
       <div class="before"></div>
       <img
           src="{% static 'wiki/img/special/VaMF1816_5_1_fragment_resized.jpg' %}"
@@ -74,10 +74,13 @@
       <div class="w3-tiny w3-center" style="margin-top: 0.5em;">
         {{ caption }}
       </div>
-      {% include 'wiki/includes/object_fbshare.html' %}
       <div class="after"></div>
+      {% include 'wiki/includes/object_fbshare.html' %}
     </div>
-  {% endwith %}
+    <div class="w3-container w3-hide-large w3-hide-medium w3-center">
+      {% include 'wiki/special/algus_message_442.html' %}
+    </div>
+    {% endwith %}
 {% endblock %}
 
 {% block javascript %}
