@@ -587,13 +587,15 @@ def calc_month_maxmin(verbose=False):
     for row in days_maxmin_qs:
         month = row['timestamp__month']
         date = datetime(row['timestamp__year'], row['timestamp__month'], row['timestamp__day'])
-        if month_maxmin[month]['airtemperature_max__max'] < row['airtemperature_max__max']:
-            month_maxmin[month]['airtemperature_max__max'] = row['airtemperature_max__max']
-            month_maxmin[month]['airtemperature_max__max__timestamp'] = date
-        if month_maxmin[month]['airtemperature_min__min'] > row['airtemperature_min__min']:
-            month_maxmin[month]['airtemperature_min__min'] = row['airtemperature_min__min']
-            month_maxmin[month]['airtemperature_min__min__timestamp'] = date
-
+        try: # TODO: Kas on võimalik, et mõni päev on ilmaandmeteta ja siis on Max ja Min väärtused None? Kui jah, siis tuleks need eraldi käsitleda
+            if month_maxmin[month]['airtemperature_max__max'] < row['airtemperature_max__max']:
+                month_maxmin[month]['airtemperature_max__max'] = row['airtemperature_max__max']
+                month_maxmin[month]['airtemperature_max__max__timestamp'] = date
+            if month_maxmin[month]['airtemperature_min__min'] > row['airtemperature_min__min']:
+                month_maxmin[month]['airtemperature_min__min'] = row['airtemperature_min__min']
+                month_maxmin[month]['airtemperature_min__min__timestamp'] = date
+        except:
+            print('Viga:', row)
     if verbose:
         print(month_maxmin)
 
