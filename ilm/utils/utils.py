@@ -323,8 +323,8 @@ def get_maxmin_airtemperature(dt_utc):
     p2ev = dt_loc.strftime("%d.%m.%Y")
     tund = dt_loc.strftime("%H")
 
-    # url = 'https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/maxmin-ohutemp/'
-    url = 'https://vana.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/maxmin-ohutemp/'
+    url = 'https://www.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/maxmin-ohutemp/'
+    # url = 'https://vana.ilmateenistus.ee/ilm/ilmavaatlused/vaatlusandmed/maxmin-ohutemp/'
     params = {
         'lang': 'et',
         r'filter%5BmaxDate%5D': p2ev,
