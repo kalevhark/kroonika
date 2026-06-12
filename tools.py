@@ -1349,6 +1349,7 @@ def update_ilmaandmed_min_max():
     ilmaandmed_min_puudu = Ilm.objects.filter(station=j, airtemperature_min__isnull=True)
     ilmaandmed_max_puudu = Ilm.objects.filter(station=j, airtemperature_max__isnull=True)
     ilmaandmed_puudu = ilmaandmed_min_puudu.union(ilmaandmed_max_puudu)
+    print('Ilmaandmed, millel puudub airtemperature_min või airtemperature_max:', ilmaandmed_puudu.count())
 
     for ilm in ilmaandmed_puudu:
         print(ilm.timestamp)
@@ -1356,12 +1357,17 @@ def update_ilmaandmed_min_max():
         if ilm_andmed_veebist:
             ilm.airtemperature_min = ilm_andmed_veebist['airtemperature_min']
             ilm.airtemperature_max = ilm_andmed_veebist['airtemperature_max']
-            # ilm.save(update_fields=["airtemperature_min", "airtemperature_max"])
+            ilm.save(update_fields=["airtemperature_min", "airtemperature_max"])
             print(
                 'Uuendatud', ilm.timestamp, 
                 'airtemperature_min:', ilm.airtemperature_min, 
                 'airtemperature_max:', ilm.airtemperature_max
             )
+
+    ilmaandmed_min_puudu = Ilm.objects.filter(station=j, airtemperature_min__isnull=True)
+    ilmaandmed_max_puudu = Ilm.objects.filter(station=j, airtemperature_max__isnull=True)
+    ilmaandmed_puudu = ilmaandmed_min_puudu.union(ilmaandmed_max_puudu)
+    print('Kontroll: Ilmaandmed, millel puudub airtemperature_min või airtemperature_max:', ilmaandmed_puudu.count())
 
 
 if __name__ == "__main__":
