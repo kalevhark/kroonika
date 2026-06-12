@@ -1341,6 +1341,28 @@ def update_ilmaandmed(aasta=2024):
             ilm_uus = Ilm(**row)
             ilm_uus.save()
 
+def update_ilmaandmed_min_max():
+    from ilm.utils import utils
+    # Täiendame ilmaandmeid, millel on ainult timestamp ja station, aga puuduvad temperatuurid
+    jaam = 'Valga'
+    j = Jaam.objects.filter(name=jaam).first()
+    ilmaandmed_min_puudu = Ilm.objects.filter(station=j, airtemperature_min__isnull=True)
+    ilmaandmed_max_puudu = Ilm.objects.filter(station=j, airtemperature_max__isnull=True)
+    ilmaandmed_puudu = ilmaandmed_min_puudu.union(ilmaandmed_max_puudu)
+
+    for ilm in ilmaandmed_puudu:
+        print(ilm.timestamp)
+        ilm_andmed_veebist = utils.get_maxmin_airtemperature(ilm.timestamp)
+        if ilm_andmed_veebist:
+            ilm.airtemperature_min = ilm_andmed_veebist['airtemperature_min']
+            ilm.airtemperature_max = ilm_andmed_veebist['airtemperature_max']
+            # ilm.save(update_fields=["airtemperature_min", "airtemperature_max"])
+            print(
+                'Uuendatud', ilm.timestamp, 
+                'airtemperature_min:', ilm.airtemperature_min, 
+                'airtemperature_max:', ilm.airtemperature_max
+            )
+
 
 if __name__ == "__main__":
     # get_vg_vilistlased()
