@@ -60,7 +60,7 @@ urlpatterns = [
     path('kaart/get_big_leaflet_map/', views.get_big_leaflet_map, name='get_big_leaflet_map'),
     path('kaart/<int:aasta>/', views.kaart, name='kaart'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('valga442/', specials.special_valga442, name='special_valga442'),
+    # path('valga442/', specials.special_valga442, name='special_valga442'),
     # path('j6ul2025/', specials.special_j6ul2025, name='special_j6ul2025'),
     # path('vgvk/', include('vgvk.urls')),
     path('raise_500_error/', views.raise_500_error, name='raise_500_error'), # http500 veateate testimiseks
