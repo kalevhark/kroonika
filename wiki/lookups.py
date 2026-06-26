@@ -83,7 +83,7 @@ class IsikLookup(LookupChannel):
         return f"{item} ({item.id})"
 
     def format_item_display(self, item):
-        return f"{item} ({item.id})"
+        return f"{item} (isik_{item.id})"
 
 
 @ajax_select.register('organisatsioonid')
@@ -98,6 +98,12 @@ class OrganisatsioonLookup(LookupChannel):
         for split in splits:
             queryset = queryset.filter(nimi__iregex=split)
         return queryset[:50]
+    
+    def format_match(self, item):
+        return f"{item} ({item.id})"
+
+    def format_item_display(self, item):
+        return f"{item} (organisatsioon_{item.id})"
 
 
 @ajax_select.register('objektid')
@@ -120,6 +126,12 @@ class ObjektLookup(LookupChannel):
         for split in splits:
             queryset = queryset.filter(nimi_asukoht__iregex=split)
         return queryset[:50]
+    
+    def format_match(self, item):
+        return f"{item} ({item.id})"
+
+    def format_item_display(self, item):
+        return f"{item} (objekt_{item.id})"
 
 
 @ajax_select.register('kaardiobjektid')
@@ -218,4 +230,4 @@ class PiltLookup(LookupChannel):
         return f"{item} ({item.id})"
 
     def format_item_display(self, item):
-        return f"{item} ({item.id})"
+        return f"{item} (pilt_{item.id})"
