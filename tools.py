@@ -138,24 +138,24 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-Johannes Aaran, August Arbeiter, Leida Arro, Georg Bachwerk, Mirdza Bremse, Arwid Duwin, Leo Fiks, Ella Grauer, Heljo Inn, Lembit Isak, Maimo Jänes, Endla Raid, Arseni Kallaste, Georg Karki, Arno Karolin, Jahnis Kasak, Kalju Kits, Heljo Kont, Helgi Kokker, Arnold Kuhi, Milda Kütt, Ernst Kõwask, Hugo Laater, Wello Lepik, Woldemar Lindenberg, Eduard Lindma, Oliwer Lääts, Asta Madisson, Irene Marits, Jewronia Mets, Endel Morel, Hilja Mägraken, Leonhard Paluwits, Artur Pang, H. Patte, W. Pruks, Werner Rebane, Salme Rimm, Poigo Ritson, Weronika Roi, Oswald Saag, August Saar, Juta Saukas, Wiktor Schinmann, Heinrich Siiman, H. Siirak, Maria Snetkow, Linda Subert, Helmi Tamm, Hanelle Tein, Arnold Till, Hermine Till, Heino Tiiwel, Heinrich Tänna, Agnia Uibo, Ludwig Wernik, Heino Wibo, Leida Wiiding, Elsa Wisnapuu
+Väino Aab, Leo Allas, Adele Amandus, Sinaida Ehaver, Rene Einer, Georg Gross, Väino Haas, Elfriede Kotter, Aino Kõiv, Eino Kütt, Aeto Laidla, Maiu Lepik, Johannes Leetus, Peeter-Lehespalu, Maimu Mast, Helga Neimre, Arnold Priuhka, Artur Pähklamets, Ingeborg Raid, Adolf Rajavee, Linda Rebane, Saima Rooleid, Ite Saks, Feliks Schinmann, Helgi Sild, Endel Stafenau, Rudolf Tammark, Teo Tarnaste, Erene Tera, Endel Voika, Vaike Väli
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=1789)
+    art = Artikkel.objects.get(id=13987)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=13913)
+    pilt = Pilt.objects.get(id=14897)
     print(pilt)
     # Milline organisatsioon lisada isikule
-    org = Organisatsioon.objects.get(id=2800) # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
+    org = Organisatsioon.objects.get(id=2802) # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool, 2802=reaalkool(1937)
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [15761]
+    viited_ids = [16387]
     viited = Viide.objects.filter(id__in=viited_ids)
     viitestring = ' '.join([f'[viide_{viite_id}]' for viite_id in viited_ids])
     print(viited, viitestring)
     # Isiku kirjeldus
-    isik_kirjeldus = f'Valga Keskkooli lõpetaja 1937 {viitestring}'
+    isik_kirjeldus = f'Valga reaalkooli lõpetaja 1938 {viitestring}'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
