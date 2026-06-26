@@ -138,19 +138,19 @@ def massikanne_from_xml():
 def massikanne_from_data():
     # Millised isikud lisada artiklile
     isik_str = """
-Luise Adamson, Georgi-Eduard Aru, Elfriide Kaik, Anna-Marie Karulin, Leili-Sale Kelk, Linda Kudevita, Leonie-Alvine Kurg, Heino Käis, Olev Neemeste, Karla Pae, Aino-Aleksandra Perli, Hilda Rechenberg, Liidia-Rosalie Ristain, Laene Siida, Viktor Usatenko, Salme Varblane, Floreida Zilmer, Ganja Berner, Linda Jaakson, Gaida-Johanna Laats, Aino Liiv
+Olga Aas, Natalie Ammas, Leida Anderson, Hermine Hermann, Asne Kaplan, Villemine Korp, Linda Martinson, Marie Mõtsküla, Helene Sprenk, Salme Tamm, Jenny Teitelbaum, Eugenie Vaardt, Julie Vaher, Laine Vähi, Linda Ilves, Linda Kiima, Loreida Lääts, Erna Lepik, Aino Luik, Valve Niglas, Emmi Pettai, Rute Raska, Adele Tamm, Õie Salundi, Aita Värk, Leida Visnapuu, Aide Kivi, Klaudia Lainovool, Armanda Saretok, Loreida Johanson, Magda Lepik, Liine Till
     """
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=13988)
+    art = Artikkel.objects.get(id=13989)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=14898)
+    pilt = Pilt.objects.get(id=14899)
     print(pilt)
     # Milline organisatsioon lisada isikule
     # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 
     # 2743=tööstuskool, 19=6.algkool, 2802=reaalkool(1937), 2801=progümnaasium(1937)
-    # 3274=kaubvanduskool(1937)
-    org = Organisatsioon.objects.get(id=3274) 
+    # 3274=kaubanduskool(1937)
+    org = Organisatsioon.objects.get(id=2768) 
     print(org)
     # Milline viide lisada isikule
     viited_ids = [16387]
@@ -158,7 +158,7 @@ Luise Adamson, Georgi-Eduard Aru, Elfriide Kaik, Anna-Marie Karulin, Leili-Sale 
     viitestring = ' '.join([f'[viide_{viite_id}]' for viite_id in viited_ids])
     print(viited, viitestring)
     # Isiku kirjeldus
-    isik_kirjeldus = f'Valga kaubanduskooli lõpetaja 1938 {viitestring}'
+    isik_kirjeldus = f'Valga naiskutsekooli lõpetaja 1938 {viitestring}'
     isikud = isik_str.split(',')
     for isik in isikud:
         # Loome uue isiku
