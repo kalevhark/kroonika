@@ -187,19 +187,19 @@ Johannes Aaran, August Arbeiter, Leida Arro, Georg Bachwerk, Mirdza Bremse, Arwi
 # tools.massikanne_from_json()
 def massikanne_from_json():
     # Millise aasta lend
-    aasta = '1937'
+    aasta = '1938'
     # Millise artikliga siduda isik
-    art = Artikkel.objects.get(id=1789)
+    art = Artikkel.objects.get(id=1869)
     print(art)
     # Millise pildiga siduda isik
-    pilt = Pilt.objects.get(id=13913)
+    pilt = Pilt.objects.get(id=14896)
     print(pilt)
     # Milline organisatsioon lisada isikule
     org = Organisatsioon.objects.get(
         id=2777)  # 2777=ühisgümn, 2768=naiskutsekool, 2736=vene gymn, 2770=läti kesk, 2743=tööstuskool, 19=6.algkool
     print(org)
     # Milline viide lisada isikule
-    viited_ids = [15761, 15762]
+    viited_ids = [16387, 16388]
     viited = Viide.objects.filter(id__in=viited_ids)
     print(viited)
     viitestring = ' '.join([f'[viide_{viite_id}]' for viite_id in viited_ids])
@@ -225,7 +225,7 @@ def massikanne_from_json():
                     eesnimi = isik_eesnimi,
                     kirjeldus = isik_kirjeldus
                 )
-                uus_isik.save()
+                # uus_isik.save()
                 print(uus_isik)
                 # Lisame isikule seotud organisatsiooni
                 uus_isik.organisatsioonid.add(org)
@@ -234,9 +234,9 @@ def massikanne_from_json():
                     uus_isik.viited.add(viide)
                     # pass
                 # Lisame isiku artiklile
-                art.isikud.add(uus_isik)
+                # art.isikud.add(uus_isik)
                 # Lisame isiku pildile
-                pilt.isikud.add(uus_isik)
+                # pilt.isikud.add(uus_isik)
 
 # Topeltviidete korrastus TODO:Teha siis, kui kroonikaraamat on läbi
 def tvk():
