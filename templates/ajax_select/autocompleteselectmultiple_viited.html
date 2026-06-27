@@ -8,6 +8,33 @@
 </div>
 {% block extra_script %}
   <script type="text/javascript">
+
+    // lisab kopeerimise nupule clipboardi funktsionaalsuse
+    // object: viide, artikkel, isik, organisatsioon, objekt
+    function addCopyEvent() {
+      $(document).on("click", ".ui-icon-copy", function() {
+        var elementId = this.id; // Faster native JS way to get ID
+        const keywords = ["viide", "artikkel", "isik", "organisatsioon", "objekt", "pilt"];
+        const regex = new RegExp("copy_" + keywords.join("|"), "i"); // "i" makes it case-insensitive
+        if (!regex.test(elementId)) {
+          console.error('Element ID does not match any of the expected keywords:', elementId);
+          return;
+        }
+        var objectId = "[" + elementId.replace("copy_", "") + "]";
+        navigator.clipboard.writeText(objectId).then(function() {
+          var el = $('#' + elementId);
+          el.addClass('ui-icon-check');
+          el.removeClass('ui-icon-copy');
+          setTimeout(() => {
+            el.addClass('ui-icon-copy');
+            el.removeClass('ui-icon-check');
+          }, "1000");
+        }).catch(function(err) {
+          console.error('Could not copy text: ', err);
+        });
+      });
+    }
+
     // numereerib viited
     function numereeri() {
       var outerDiv = document.getElementById("{{html_id}}_on_deck");
@@ -30,12 +57,14 @@
 
     setTimeout(() => {
       numereeri();
+      addCopyEvent();
     }, "500");
 
     $("#{{html_id}}_on_deck").bind('added', function() {
       // var id = $("#{{html_id}}").val();
       // console.log('added id:' + id );
       numereeri();
+      addCopyEvent();
     });
     $("#{{html_id}}_on_deck").bind('killed', function() {
       // var current = $("#{{html_id}}").val()

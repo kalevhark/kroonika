@@ -47,14 +47,12 @@ class ArtikkelLookup(LookupChannel):
         return queryset[:50]
 
     def format_match(self, item):
-        # artikkel = self.model.objects.daatumitega().get(id=item.id)
         return f"({item.hist_year}:{item.id}) {item}"
-        # return item.display
 
     def format_item_display(self, item):
-        # artikkel = self.model.objects.daatumitega().get(id=item.id)
-        return f"({item.hist_year}:{item.id}) {item}"
-        # return item.display
+        # return f"({item.hist_year}:{item.id}) {item}"
+        copy_icon = f'<span class="ui-icon ui-icon-copy" id="copy_artikkel_{item.id}">X</span>'
+        return f'({item.hist_year}:{item.id}) {item} (artikkel_{item.id}) {copy_icon}'
 
 
 @ajax_select.register('isikud')
@@ -65,9 +63,7 @@ class IsikLookup(LookupChannel):
     def get_query(self, q, request):
         q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
-        # queryset = self.model.objects.daatumitega(request)
         queryset = self.model.objects.daatumitega(request).annotate(
-        # queryset = self.model.objects.annotate(
             nimi=Concat(
                 F('eesnimi'),
                 Value(' '),
@@ -83,7 +79,8 @@ class IsikLookup(LookupChannel):
         return f"{item} ({item.id})"
 
     def format_item_display(self, item):
-        return f"{item} (isik_{item.id})"
+        copy_icon = f'<span class="ui-icon ui-icon-copy" id="copy_isik_{item.id}">X</span>'
+        return f'{item} (isik_{item.id}) {copy_icon}'
 
 
 @ajax_select.register('organisatsioonid')
@@ -103,7 +100,8 @@ class OrganisatsioonLookup(LookupChannel):
         return f"{item} ({item.id})"
 
     def format_item_display(self, item):
-        return f"{item} (organisatsioon_{item.id})"
+        copy_icon = f'<span class="ui-icon ui-icon-copy" id="copy_organisatsioon_{item.id}">X</span>'
+        return f'{item} (organisatsioon_{item.id}) {copy_icon}'
 
 
 @ajax_select.register('objektid')
@@ -114,7 +112,6 @@ class ObjektLookup(LookupChannel):
     def get_query(self, q, request):
         q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
-        # queryset = self.model.objects.daatumitega(request)
         queryset = self.model.objects.daatumitega(request).annotate(
             nimi_asukoht=Concat(
                 F('nimi'),
@@ -131,7 +128,8 @@ class ObjektLookup(LookupChannel):
         return f"{item} ({item.id})"
 
     def format_item_display(self, item):
-        return f"{item} (objekt_{item.id})"
+        copy_icon = f'<span class="ui-icon ui-icon-copy" id="copy_objekt_{item.id}">X</span>'
+        return f'{item} (objekt_{item.id}) {copy_icon}'
 
 
 @ajax_select.register('kaardiobjektid')
@@ -185,7 +183,8 @@ class ViideLookup(LookupChannel):
         return f"{item} ({item.id})"
 
     def format_item_display(self, item):
-        return f"{item} (viide_{item.id})"
+        copy_icon = f'<span class="ui-icon ui-icon-copy" id="copy_viide_{item.id}">X</span>'
+        return f'{item} (viide_{item.id}) {copy_icon}'
 
 @ajax_select.register('allikad')
 class AllikasLookup(LookupChannel):
@@ -230,4 +229,5 @@ class PiltLookup(LookupChannel):
         return f"{item} ({item.id})"
 
     def format_item_display(self, item):
-        return f"{item} (pilt_{item.id})"
+        copy_icon = f'<span class="ui-icon ui-icon-copy" id="copy_pilt_{item.id}">X</span>'
+        return f'{item} (pilt_{item.id}) {copy_icon}'
