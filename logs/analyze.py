@@ -122,10 +122,11 @@ def parse_datetime(x):
         dt_tz = int(x[-6:-3]) * 60 + int(x[-3:-1])
         return dt.replace(tzinfo=pytz.FixedOffset(dt_tz))
     except:
-        x = "[02/May/2021:03:20:40 +0700]"
-        dt = datetime.strptime(x[1:-7], '%d/%b/%Y:%H:%M:%S')
-        dt_tz = int(x[-6:-3]) * 60 + int(x[-3:-1])
-        return dt.replace(tzinfo=pytz.FixedOffset(dt_tz))
+        return pd.NaT
+        # x = "[02/May/2021:03:20:40 +0700]"
+        # dt = datetime.strptime(x[1:-7], '%d/%b/%Y:%H:%M:%S')
+        # dt_tz = int(x[-6:-3]) * 60 + int(x[-3:-1])
+        # return dt.replace(tzinfo=pytz.FixedOffset(dt_tz))
 
 
 def parse_int(x):
@@ -276,8 +277,10 @@ async def calc_results_ipaddresses_traffic(log_df_filtered):
         .sort_values(by=['sum'], ascending=[False]) \
         .head(10)
     result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
-    result['sum'] = result['sum'].map('{:,}'.format).str \
-        .replace(",", " ", regex=False).str.replace(".", ",", regex=False)
+    result['sum'] = result['sum'] \
+        .map('{:,}'.format).str \
+        .replace(",", " ", regex=False).str \
+        .replace(".", ",", regex=False)
     return ['Downloader IPaddresses traffic:', result]
 
 
@@ -289,23 +292,29 @@ async def calc_results_ipaddresses_hits(log_df_filtered):
         .sort_values(by=['count'], ascending=[False]) \
         .head(10)
     result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
-    result['sum'] = result['sum'].map('{:,}'.format).str \
-        .replace(",", " ", regex=False).str.replace(".", ",", regex=False)
+    result['sum'] = result['sum'] \
+        .map('{:,}'.format).str \
+        .replace(",", " ", regex=False).str \
+        .replace(".", ",", regex=False)
     return ['Downloader IPaddresses hits:', result]
 
 
 def show_calc_results(log_df_filtered):
     # Agendid aadressid allalaadimise mahu jÃ¤rgi
     print('Downloader Agents:')
-    result = log_df_filtered.groupby('user_agent')['size'] \
+    result = log_df_filtered \
+        .groupby('user_agent')['size'] \
         .agg(['sum', 'count']) \
         .sort_values(by=['sum'], ascending=[False]) \
         .head(10)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",", regex=False)
+    result['sum'] = result['sum'] \
+        .map('{:,}'.format).str \
+        .replace(",", " ", regex=False).str \
+        .replace(".", ",", regex=False)
     print(result)
     print()
 
-    # IP aadressid allalaadimise mahu jÃ¤rgi
+    # IP aadressid allalaadimise mahu j2rgi
     print('Downloader IPaddresses traffic:')
     result = log_df_filtered.groupby('ip')['size'] \
         .agg(['sum', 'count']) \
@@ -314,8 +323,10 @@ def show_calc_results(log_df_filtered):
     # print(result)
 
     # ['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
-    result['sum'] = result['sum'].map('{:,}'.format).str.replace(",", " ", regex=False).str.replace(".", ",",
-                                                                                                    regex=False)
+    result['sum'] = result['sum'] \
+        .map('{:,}'.format).str \
+        .replace(",", " ", regex=False).str \
+        .replace(".", ",", regex=False)
     print(result)
     print()
 
@@ -349,7 +360,28 @@ def show_calc_results(log_df_filtered):
 
     # IP aadressid, kes said 403
     print('403 status:')
-    result = log_df_filtered[log_df_filtered['status'] == 403].groupby('ip')['size'] \
+    result = log_df_filtered[log_df_filtered['status'] == 403] \
+        .groupby('ip')['size'] \
+        .agg(['count']) \
+        .sort_values(by=['count'], ascending=[False]) \
+        .head(10)
+    # result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
+    print(result)
+    print()
+
+    print('404 status:')
+    result = log_df_filtered[log_df_filtered['status'] == 404] \
+        .groupby('request')['size'] \
+        .agg(['count']) \
+        .sort_values(by=['count'], ascending=[False]) \
+        .head(10)
+    print(result)
+    print()
+
+    # IP aadressid, kes said 503
+    print('503 status:')
+    result = log_df_filtered[log_df_filtered['status'] == 503] \
+        .groupby('ip')['size'] \
         .agg(['count']) \
         .sort_values(by=['count'], ascending=[False]) \
         .head(10)
@@ -376,14 +408,6 @@ def show_calc_results(log_df_filtered):
         .sort_values(by=['count'], ascending=[False]) \
         .head(30)
     # result['asn_description'] = result.apply(whoisinfo_asn_description, axis=1)
-    print(result)
-    print()
-
-    print('404 status:')
-    result = log_df_filtered[log_df_filtered['status'] == 404].groupby('request')['size'] \
-        .agg(['count']) \
-        .sort_values(by=['count'], ascending=[False]) \
-        .head(10)
     print(result)
     print()
 
@@ -447,6 +471,7 @@ async def main():
         logfile = os.path.join(path, 'access_log')
     print('Analüüsime logifaili:', logfile)
     log_df = logfile2df2(logfile)
+    print(log_df.shape, log_df.info())
 
     # log_df = logfile2df(logfile)
     utc = pytz.utc
