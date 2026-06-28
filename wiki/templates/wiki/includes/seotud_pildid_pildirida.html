@@ -26,9 +26,9 @@
 
     {#    Modal #}
     <div id="myModal" class="modal">
-      {% if pildid.count > 1 %}
+      {% comment %} {% if pildid.count > 1 %}
         <span class="numbertext" id="numbertext"></span>
-      {% endif %}
+      {% endif %} {% endcomment %}
       <span id="button-close-modal" class="close cursor" onclick="closeModal()">&times;</span>
 
       <div class="modal-content">
@@ -52,6 +52,7 @@
           <span id="markdown-tag">id</span>
         </a>
         {% if pildid.count > 1 %}
+          <span class="numbertext" id="numbertext"></span>
           <a class="previmage" onclick="plusSlides(-1)">&#10094;</a>
           <a class="nextimage" onclick="plusSlides(1)">&#10095;</a>
         {% endif %}
