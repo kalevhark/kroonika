@@ -1012,7 +1012,7 @@ def viited_uusformaat():
             Organisatsioon,
             Objekt
         ]:
-            pattern = '(\[\^[0-9]*])'
+            pattern = r'(\[\^[0-9]*])'
             if model == Artikkel:
                 for obj in model.objects.filter(kirjeldus__iregex=rf'{pattern}'):
                     obj.kirjeldus = replace_viite_tag(obj, obj.kirjeldus, f)
@@ -1344,8 +1344,8 @@ def update_ilmaandmed(aasta=2025):
             ilm_uus = Ilm(**row)
             try:
                 ilm_uus.save()
-            except:
-                print(f"Viga andmete salvestamisel: {y} {m} {d} {t}:{ilm_uus}")
+            except Exception as e:
+                print(f"Viga {e} andmete salvestamisel: {y} {m} {d} {t}:{ilm_uus}")
 
 def update_ilmaandmed_min_max():
     from ilm.utils import utils
