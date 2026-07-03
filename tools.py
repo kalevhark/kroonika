@@ -1275,10 +1275,10 @@ def get_qrcode_from_uri():
 from datetime import datetime, timezone
 import numpy as np
 from ilm.models import Jaam, Ilm
-def update_ilmaandmed(aasta=2024):
+def update_ilmaandmed(aasta=2025):
     print('Loeme faili...')
     # Alusfail "C:\Users\kalev\Documents\itiasjad\django\kroonika\Valga-2004-juuni-2024.xlsx"
-    df_bigdata = pd.read_excel("Valga-2004-juuni-2024.xlsx", header=2)
+    df_bigdata = pd.read_excel("Valga-2025.xlsx", header=2)
     df = df_bigdata[df_bigdata['Aasta']==aasta]
     print('Kontrollime kandeid...')
     jaam = 'Valga'
