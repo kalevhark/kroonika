@@ -1312,7 +1312,7 @@ def update_ilmaandmed(aasta=2025):
         airtemperature_max = df.iloc[i]['Tunni maksimum õhutemperatuur °C']
         if not np.isnan(airtemperature_max):
             row['airtemperature_max'] = airtemperature_max
-        winddirection = df.iloc[i]['10 minuti keskmine tuule suund °']
+        winddirection = df.iloc[i]['10 minuti keskmine tuule suund']
         if not np.isnan(winddirection):
             row['winddirection'] = winddirection
         windspeed = df.iloc[i]['10 minuti keskmine tuule kiirus m/s']
