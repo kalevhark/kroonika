@@ -1342,7 +1342,10 @@ def update_ilmaandmed(aasta=2025):
         else:
             print("Lisame: ", timestamp)
             ilm_uus = Ilm(**row)
-            ilm_uus.save()
+            try:
+                ilm_uus.save()
+            except:
+                print(f"Viga andmete salvestamisel: {y} {m} {d} {h}:{ilm_uus}")
 
 def update_ilmaandmed_min_max():
     from ilm.utils import utils
