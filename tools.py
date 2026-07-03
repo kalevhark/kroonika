@@ -1280,6 +1280,7 @@ def update_ilmaandmed(aasta=2025):
     # Alusfail "C:\Users\kalev\Documents\itiasjad\django\kroonika\Valga-2004-juuni-2024.xlsx"
     df_bigdata = pd.read_excel("Valga-2025.xlsx", header=2)
     df = df_bigdata[df_bigdata['Aasta']==aasta]
+    print(df.info())
     print('Kontrollime kandeid...')
     jaam = 'Valga'
     j = Jaam.objects.filter(name=jaam).first()
@@ -1345,7 +1346,7 @@ def update_ilmaandmed(aasta=2025):
             try:
                 ilm_uus.save()
             except Exception as e:
-                print(f"Viga {e} andmete salvestamisel: {y} {m} {d} {t}:{ilm_uus}")
+                print(f"Viga {e} andmete salvestamisel: {y} {m} {d} {t}:{row}")
 
 def update_ilmaandmed_min_max():
     from ilm.utils import utils
