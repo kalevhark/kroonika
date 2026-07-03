@@ -1275,6 +1275,8 @@ def get_qrcode_from_uri():
 from datetime import datetime, timezone
 from decimal import *
 import numpy as np
+import time
+
 from ilm.models import Jaam, Ilm
 def update_ilmaandmed(aasta=2025):
     print('Loeme faili...')
@@ -1295,8 +1297,9 @@ def update_ilmaandmed(aasta=2025):
     jaam = 'Valga'
     j = Jaam.objects.filter(name=jaam).first()
     for i in range(df.shape[0]):
-        # if i%10_000 == 0:
-        #     print(i)
+        time.sleep(0.1)
+        if i%1_000 == 0:
+            print(i)
         y = df.iloc[i]['Aasta']
         m = df.iloc[i]['Kuu']
         d = df.iloc[i]['Päev']
