@@ -1345,7 +1345,7 @@ def update_ilmaandmed(aasta=2025):
             try:
                 ilm_uus.save()
             except:
-                print(f"Viga andmete salvestamisel: {y} {m} {d} {h}:{ilm_uus}")
+                print(f"Viga andmete salvestamisel: {y} {m} {d} {t}:{ilm_uus}")
 
 def update_ilmaandmed_min_max():
     from ilm.utils import utils
