@@ -1273,6 +1273,7 @@ def get_qrcode_from_uri():
 
 # ilmaandmete täiendamiseks ilmateenistus.ee veebilehelt
 from datetime import datetime, timezone
+from decimal import *
 import numpy as np
 from ilm.models import Jaam, Ilm
 def update_ilmaandmed(aasta=2025):
@@ -1280,6 +1281,15 @@ def update_ilmaandmed(aasta=2025):
     # Alusfail "C:\Users\kalev\Documents\itiasjad\django\kroonika\Valga-2004-juuni-2024.xlsx"
     df_bigdata = pd.read_excel("Valga-2025.xlsx", header=2)
     df = df_bigdata[df_bigdata['Aasta']==aasta]
+    
+    # Select only columns that are float64 and convert them to float32
+    # float64_cols = df.select_dtypes(include=['float64']).columns
+    # df[float64_cols] = df[float64_cols].map(Decimal)
+    # Select only columns that are int64 and convert them to int32
+    # int64_cols = df.select_dtypes(include=['int64']).columns
+    # df[int64_cols] = df[int64_cols].map(Decimal)
+    # df['Aasta'] = df['Aasta'].map(Decimal)
+    
     print(df.info())
     print('Kontrollime kandeid...')
     jaam = 'Valga'
@@ -1342,6 +1352,11 @@ def update_ilmaandmed(aasta=2025):
                 print('Uuendatud precipitations', timestamp)
         else:
             print("Lisame: ", timestamp)
+            for key, value in row.items():
+                if isinstance(value, np.float64):
+                    row[key] = float(value)
+                if isinstance(value, np.int64):
+                    row[key] = int(value)
             ilm_uus = Ilm(**row)
             try:
                 ilm_uus.save()

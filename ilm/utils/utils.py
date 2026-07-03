@@ -734,7 +734,6 @@ def get_ilmateenistus_forecast(asukoht="valgalinn") -> Optional[dict]:
     )
     if response.status_code == requests.codes.ok:
         data = json.loads(response.text)
-        print(data)
         hours = [hour for hour in data['forecast']['tabular']['time']]
 
         forecast = dict()
