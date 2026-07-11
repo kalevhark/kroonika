@@ -5,12 +5,14 @@ from email.utils import parsedate_to_datetime
 import json
 
 import locale
-from typing import Optional
-
 locale.setlocale(locale.LC_NUMERIC, "et_EE.UTF-8")
+
+import logging
+logger = logging.getLogger(__name__)
 
 import os
 import re
+from typing import Optional
 import urllib.request, urllib.error
 import xml.etree.ElementTree as ET
 from zoneinfo import ZoneInfo
@@ -44,65 +46,6 @@ if settings.REDIS_INUSE:
 
 from ilm.models import Ilm
 import ilm.utils.ephem_util as ephem_data
-
-# # OpenWeatherMaps ilmakoodid
-# OWM_CODES = {
-#     "200": "nõrk äikesevihm", # thunderstorm with light rain;Thunderstorm
-#     "201": "äikesevihm", # thunderstorm with rain;Thunderstorm
-#     "202": "tugev äikesevihm", # thunderstorm with heavy rain;Thunderstorm
-#     "210": "nõrk äike", # light thunderstorm;Thunderstorm
-#     "211": "äike", # thunderstorm;Thunderstorm
-#     "212": "tugev äike", # heavy thunderstorm;Thunderstorm
-#     "221": "äge äike", # ragged thunderstorm;Thunderstorm
-#     "230": "nõrk äikesevihm", # thunderstorm with light drizzle;Thunderstorm
-#     "231": "äikesevihm", # thunderstorm with drizzle;Thunderstorm
-#     "232": "tugev äikesevihm", # thunderstorm with heavy drizzle;Thunderstorm
-#     "300": "nõrk uduvihm", # light intensity drizzle;Drizzle
-#     "301": "uduvihm", # drizzle;Drizzle
-#     "302": "tugev uduvihm", # heavy intensity drizzle;Drizzle
-#     "310": "kerge uduvihm", # light intensity drizzle rain;Drizzle
-#     "311": "uduvihm", # drizzle rain;Drizzle
-#     "312": "tugev uduvihm", # heavy intensity drizzle rain;Drizzle
-#     "313": "tugev uduvihm", # shower rain and drizzle;Drizzle
-#     "314": "tugev uduvihm", # heavy shower rain and drizzle;Drizzle
-#     "321": "tugev uduvihm", # shower drizzle;Drizzle
-#     "500": "nõrk vihm", # light rain;Rain
-#     "501": "vihm", # moderate rain;Rain
-#     "502": "tugev vihm", # heavy intensity rain;Rain
-#     "503": "väga tugev vihm", # very heavy rain;Rain
-#     "504": "ekstreemne vihmasadu", # extreme rain;Rain
-#     "511": "külmuv vihm", # freezing rain;Rain
-#     "520": "nõrk paduvihm", # light intensity shower rain;Rain
-#     "521": "paduvihm", # shower rain;Rain
-#     "522": "tugev paduvihm", # heavy intensity shower rain;Rain
-#     "531": "väga tugev paduvihm", # ragged shower rain;Rain
-#     "600": "kerge lumesadu", # light snow;Snow
-#     "601": "lumesadu", # Snow;Snow
-#     "602": "tugev lumesadu", # Heavy snow;Snow
-#     "611": "lörts", # Sleet;Snow
-#     "612": "kerge lörtsisadu", # Light shower sleet;Snow
-#     "613": "tugev lörtsisadu", # Shower sleet;Snow
-#     "615": "kerge lörtsisadu", # Light rain and snow;Snow
-#     "616": "lörts", # Rain and snow;Snow
-#     "620": "kerge lumesadu", # Light shower snow;Snow
-#     "621": "lumesadu", # Shower snow;Snow
-#     "622": "tugev lumesadu", # Heavy shower snow;Snow
-#     "701": "uduvine", # mist;Mist
-#     "711": "suits", # Smoke;Smoke
-#     "721": "vine", # Haze;Haze
-#     "731": "liiva-/tolmupöörised", # sand/ dust whirls;Dust
-#     "741": "udu", # fog;Fog
-#     "751": "liiv", # sand;Sand
-#     "761": "tolm", # dust;Dust
-#     "762": "vulkaaniline tuhk", # volcanic ash;Ash
-#     "771": "tuulepuhangud", # squalls;Squall
-#     "781": "tornaado", # tornado;Tornado
-#     "800": "selge", # clear sky;Clear
-#     "801": "õrn pilvisus", # few clouds: 11-25%;Clouds
-#     "802": "vahelduv pilvisus", # scattered clouds: 25-50%;Clouds
-#     "803": "vahelduv pilvisus", # broken clouds: 51-84%;Clouds
-#     "804": "pilvine", # overcast clouds: 85-100%;Clouds
-# }
 
 # Asukohtade andmete kirjeldused
 ASUKOHAD = {
@@ -154,13 +97,13 @@ def float_or_none(value: str) -> Optional[float]:
         return None
 
 
-# tagastab kuu viimase pühapäeva UTC
 def last_sunday(year, month):
+    """tagastab kuu viimase pühapäeva UTC"""
     last_sunday = max(week[-1] for week in calendar.monthcalendar(year, month))
     return pytz.utc.localize(datetime(year, month, last_sunday))
 
 def sun_moon(dt):
-    # Tagastab konkreetese kuupäeva (ajavööndi väärtusega) päikese- ja kuuandmed
+    """Tagastab konkreetese kuupäeva (ajavööndi väärtusega) päikese- ja kuuandmed"""
     tallinn_tz = ZoneInfo('Europe/Tallinn')
     city = LocationInfo("Valga", "Estonia", "Europe/Tallinn", 57.776944, 26.031111)
     s = {}
@@ -250,6 +193,7 @@ def ilman2htus_yrnosymboliks(phenomenon, dt):
         symbol = phenomenons[phenomenon]
     else:
         symbol = None
+
     # Kas lisada d või n vastavalt valgele või pimedale ajale
     if symbol == None or symbol in [
             '04', '09', '10', '11', '12', '13', '14', '15',
@@ -257,6 +201,7 @@ def ilman2htus_yrnosymboliks(phenomenon, dt):
             '46', '47', '48', '49', '50'
             ]:
         return symbol
+    
     sun = sun_moon(dt)['sun']
     if dt > sun['sunrise'] and dt < sun['sunset']:
         symbol = symbol + 'd'
@@ -719,23 +664,21 @@ def get_ilmateenistus_forecast(asukoht="valgalinn") -> Optional[dict]:
         # "User-Agent": "Mozilla/5.0 (iPad; CPU OS 11_0 like Mac OS X) AppleWebKit/604.1.34 (KHTML, like Gecko) Version/11.0 Mobile/15A5341f Safari/604.1",
         "Accept": "application/json"
     }
-    # t2psustame asukoha
-    # try:
-    #     location_data = get_ilmateenistus_location_data(headers=headers)
-    #     coordinates = location_data['data'][0]['coordinates']
-    # except:
-    #     coordinates = '57.776678;26.030958' # fallback if location not found
-    # url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?locationId=784&coordinates={coordinates}"
-    # url = f'https://publicapi.envir.ee/v1/modelForecast/meteogram?coordinates={lat}%3B{lon}'
+
     url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?coordinates={lat}%3B{lon}"
     response = requests.get(
         url,
         headers=headers
     )
+    
     if response.status_code == requests.codes.ok:
         data = json.loads(response.text)
-        hours = [hour for hour in data['forecast']['tabular']['time']]
-
+        try:
+            hours = [hour for hour in data['forecast']['tabular']['time']]
+        except Exception as e:
+            logger.error(f'ilmaennustuse andmed vigased: {url} -> {response.text}')
+            return None
+        
         forecast = dict()
         for hour in hours:
             time = pytz.timezone('Europe/Tallinn').localize(
