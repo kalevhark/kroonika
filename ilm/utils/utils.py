@@ -1044,8 +1044,8 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
         i_prec_color = ''
         i_pres = None
         i_icon = ''
-        i_data = i['forecast'].get(str(ref_dt), None)
-        if i_data:
+        if i and 'forecast' in i:
+            i_data = i['forecast'].get(str(ref_dt), None)
             i_temp = float_or_none(i_data['temperature'])
             i_phenomen = i_data['phenomen']
             i_prec = i_data['precipitation']
@@ -1065,15 +1065,15 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
             'y_windspeed': y_windspeed,
             'y_winddirection': y_winddirection,
             'y_winddirection_icon': y_winddirection_icon,
-            'i_temp': i_temp if i_data else None,
-            'i_phenomen': i_phenomen if i_data else None,
-            'i_icon': i_icon if i_data else None,
-            'i_prec': str(i_prec) if i_data else None,
-            'i_prec_color': i_prec_color if i_data else None,
-            'i_pres': i_pres if i_data else None,
-            'i_windspeed': i_windspeed if i_data else None,
-            'i_winddirection': i_winddirection if i_data else None,
-            'i_winddirection_icon': i_winddirection_icon if i_data else None
+            'i_temp': i_temp if i else None,
+            'i_phenomen': i_phenomen if i else None,
+            'i_icon': i_icon if i else None,
+            'i_prec': str(i_prec) if i else None,
+            'i_prec_color': i_prec_color if i else None,
+            'i_pres': i_pres if i else None,
+            'i_windspeed': i_windspeed if i else None,
+            'i_winddirection': i_winddirection if i else None,
+            'i_winddirection_icon': i_winddirection_icon if i else None
         }
     return forecast
 
