@@ -1486,7 +1486,7 @@ class Pilt(BaasAddUpdateInfoModel, BaasObjectDatesModel):
 
     def image_preview(self):
         if self.pilt_thumbnail:
-            return mark_safe('<img src="{0}" width="150" height="150" />'.format(self.pilt_thumbnail.url))
+            return mark_safe('<img src="{0}" style="max-width: 60%; height: 150px;" />'.format(self.pilt_thumbnail.url))
         else:
             return '(No image)'
 
