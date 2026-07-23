@@ -48,11 +48,12 @@ except: # kui käivitatakse lokaalselt
     from utils import utils
     import views, models
 
-
+FORMAT = '%(asctime)s %(levelname)-8s %(name)-15s %(message)s'
+# 'format': '{asctime} {levelname:8s} {name:15s} {message}',
 logging.basicConfig(
     level=logging.INFO,
     filename=settings.LOGGING['handlers']['file']['filename'],
-    format=settings.LOGGING['formatters']['verbose']['format'],
+    format=FORMAT,
 )
 
 # The following connect() function connects to the suppliers database and prints out the PostgreSQL database version.
