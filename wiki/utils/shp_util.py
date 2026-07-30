@@ -162,8 +162,8 @@ def write_db_to_shp(aasta='1912'):
         kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart)
         print(kaardiobjektid)
         if kaardiobjektid:
-            with shapefile.Writer(f'{aasta}_uus') as w:
-                with shapefile.Reader('shp_template') as r:
+            with shapefile.Writer(UTIL_DIR / f'{aasta}_uus') as w:
+                with shapefile.Reader(UTIL_DIR / f'{aasta}') as r:
                     w.fields = r.fields[1:]  # skip first deletion field
                 for kaardiobjekt in kaardiobjektid:
                     objekt = kaardiobjekt.objekt.id if kaardiobjekt.objekt else None
@@ -177,8 +177,8 @@ def write_db_to_shp(aasta='1912'):
                     w.shape(kaardiobjekt.geometry)
                 print(w.recNum, w.shpNum)
             # Lisame projektsioonifaili
-            with open('shp_template.prj') as r:
-                with open(f'{aasta}_uus.prj', 'w') as w:
+            with open(UTIL_DIR / f'{aasta}.prj') as r:
+                with open(UTIL_DIR / f'{aasta}_uus.prj', 'w') as w:
                     w.write(r.read())
 
 # Hoonestuse andmed OpenStreetMap kaardilt OverPass API abil
