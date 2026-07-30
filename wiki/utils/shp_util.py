@@ -162,7 +162,7 @@ def write_db_to_shp(aasta='1912'):
         kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart)
         print(kaardiobjektid)
         if kaardiobjektid:
-            with shapefile.Writer(aasta + '_uus') as w:
+            with shapefile.Writer(f'{aasta}_uus') as w:
                 with shapefile.Reader('shp_template') as r:
                     w.fields = r.fields[1:]  # skip first deletion field
                 for kaardiobjekt in kaardiobjektid:
