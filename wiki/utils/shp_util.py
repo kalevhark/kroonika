@@ -1,10 +1,10 @@
 import json
+import os
 from pathlib import Path
 import re
 import time
 
 if __name__ == "__main__":
-    import os
     import django
     # from django.test.utils import setup_test_environment
     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
