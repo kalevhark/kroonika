@@ -1787,6 +1787,111 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
         verbose_name_plural = "Kaardiobjektid"
 
 
+class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
+    """
+    Aadressi kirjeldus ja seosed teiste objectidega
+    """
+    nimi = models.CharField(
+        'Kohanimi',
+        max_length=200,
+        help_text='Aadressi kohanimi (nt "Sulevi 9a")'
+    )
+    korter = models.CharField(
+        'Korterinumber',
+        max_length=80,
+        blank=True,
+        help_text='Korteri number'
+    )
+    kirjeldus = MarkdownxField(
+        'Kirjeldus',
+        blank=True,
+        help_text='<br>'.join(
+            [
+                'Tekst (MarkDown on toetatud);',
+                'Pildi lisamiseks: [pilt_nnnn];',
+                'Viite lisamiseks loole, isikule, asutisele või kohale: nt [Mingi Nimi]([isik_nnnn])',
+            ]
+        ),
+        default=''
+    )
+
+    # Viited
+    viited = models.ManyToManyField(
+        Viide,
+        blank=True,
+        related_name="%(app_label)s_%(class)s_related",
+        related_query_name="%(app_label)s_%(class)s",
+        verbose_name='Viited',
+    )
+
+    # parent objects
+    eellased = models.ManyToManyField(
+        "self",
+        blank=True,
+        verbose_name='Eellased',
+        related_name='j2rglane',
+        symmetrical=False
+    )
+    objekt = models.ForeignKey(
+        Objekt,
+        on_delete=models.SET_NULL,
+        verbose_name='Objekt',
+        help_text='Seotud objekt',
+        null=True,
+        blank=True
+    )
+    aadressid = models.ManyToManyField(
+        "self",
+        blank=True,
+        verbose_name='Aadressid',
+    )
+
+    def save(self, *args, **kwargs):
+        # Täidame tühjad kuupäevaväljad olemasolevate põhjal
+        if self.hist_date:
+            self.hist_year = self.hist_date.year
+            self.hist_month = self.hist_date.month
+        if self.hist_enddate:
+            self.hist_endyear = self.hist_enddate.year
+            self.hist_endmonth = self.hist_enddate.month
+        super().save(*args, **kwargs)
+
+    # Create a property that returns the markdown instead
+    @property
+    def formatted_markdown(self):
+        kirjeldus_formatted_markdown, _ = add_markdownx_viited(self)
+        if len(kirjeldus_formatted_markdown) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
+            kirjeldus_formatted_markdown = '<br>'
+        # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
+        kirjeldus_formatted_markdown = add_markdownx_pildid(kirjeldus_formatted_markdown)
+        return kirjeldus_formatted_markdown
+    
+    # Create a property that returns the reference block in markdown
+    @property
+    def formatted_markdown_viited(self):
+        _, viiteplokk_formatted_markdown = add_markdownx_viited(self)
+        # k6rvaldame ülearuse horisontaaleraldaja
+        viiteplokk_formatted_markdown = viiteplokk_formatted_markdown.replace('<hr />', '')
+        return viiteplokk_formatted_markdown
+    
+    # Tekstis MarkDown kodeerimiseks
+    def markdown_tag(self):
+        return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
+    
+    # Kui objectil puudub viide, siis punane
+    def colored_id(self):
+        if self.viited.exists():
+            color = ''
+        else:
+            color = 'red'
+        return format_html(
+            '<strong><span style="color: {};">{}</span></strong>',
+            color,
+            self.id
+        )
+    colored_id.short_description = 'ID'
+
+
 #signal used for is_active=False to is_active=True
 # @receiver(pre_save, sender=User, dispatch_uid='active')
 # def active(sender, instance, **kwargs):
