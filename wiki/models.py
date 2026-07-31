@@ -1645,7 +1645,7 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
         on_delete=models.SET_NULL,
         verbose_name='Objekt',
         help_text='Seotud objekt',
-        # related_name='kaardiobjektid',
+        related_name='kaardiobjektid',
         null=True,
         blank=True
     )
@@ -1686,7 +1686,7 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
     )
 
     def __str__(self):
-        return ' '.join([self.kaart.aasta, self.tn, self.nr, self.tyyp, self.lisainfo])
+        return ' '.join([self.kaart.aasta, self.tn, self.nr, self.lisainfo])
 
     @property
     def centroid(self, *args, **kwargs):
@@ -1727,16 +1727,6 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
             map.default_css = settings.LEAFLET_DEFAULT_CSS
             map.default_js = settings.LEAFLET_DEFAULT_JS
 
-            feature_group_kaardiobjekt = folium.FeatureGroup(
-                name=f'<span class="kaart-control-layers">{self.kaart.aasta}</span>',
-                overlay=False
-            )
-            folium.TileLayer(
-                tiles=self.kaart.tiles,
-                attr=f'{self.kaart.__str__()}<br>{self.kaart.viited.first()}',
-            ).add_to(feature_group_kaardiobjekt)
-            feature_group_kaardiobjekt.add_to(map)
-
             feature_group_default = folium.FeatureGroup(
                 name=f'<span class="kaart-control-layers">{DEFAULT_MAP.aasta}</span>',
                 overlay=False
@@ -1746,6 +1736,16 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
                 attr=f'{DEFAULT_MAP.__str__()}<br>{DEFAULT_MAP.viited.first()}',
             ).add_to(feature_group_default)
             feature_group_default.add_to(map)
+
+            feature_group_kaardiobjekt = folium.FeatureGroup(
+                name=f'<span class="kaart-control-layers">{self.kaart.aasta}</span>',
+                overlay=False
+            )
+            folium.TileLayer(
+                tiles=self.kaart.tiles,
+                attr=f'{self.kaart.__str__()}<br>{self.kaart.viited.first()}',
+            ).add_to(feature_group_kaardiobjekt)
+            feature_group_kaardiobjekt.add_to(map)
 
             # lisame vektorkihid
             geometry = self.geometry
@@ -1846,6 +1846,9 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         verbose_name='Aadressid',
     )
 
+    def __str__(self):
+        return ' '.join([str(self.hist_year), self.nimi, self.korter])
+    
     def save(self, *args, **kwargs):
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
         if self.hist_date:
@@ -1880,10 +1883,10 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     
     # Kui objectil puudub viide, siis punane
     def colored_id(self):
-        if self.viited.exists():
-            color = ''
-        else:
+        if not self.objekt:
             color = 'red'
+        else:
+            color = ''
         return format_html(
             '<strong><span style="color: {};">{}</span></strong>',
             color,
@@ -1891,6 +1894,13 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         )
     colored_id.short_description = 'ID'
 
+model = Aadress
+model._meta.get_field('hist_date').verbose_name = "Algusaeg"
+model._meta.get_field('hist_year').verbose_name = "Algusaasta"
+model._meta.get_field('hist_month').verbose_name = "Alguskuu"
+model._meta.get_field('hist_enddate').verbose_name = "Lõpuaeg"
+model._meta.get_field('hist_endyear').verbose_name= "Lõpuaasta"
+model._meta.get_field('hist_endmonth').verbose_name = "Lõpukuu"
 
 #signal used for is_active=False to is_active=True
 # @receiver(pre_save, sender=User, dispatch_uid='active')

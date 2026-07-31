@@ -1116,7 +1116,7 @@ def make_objekt_leaflet_combo_add_vectorlayer(obj, kaardiobjekt, status):
 # Konkreetse objekti erinevate aastate kaardid koos
 def make_objekt_leaflet_combo(objekt=1):
     obj = Objekt.objects.get(id=objekt)
-    kaardiobjektid_objektiga = obj.kaardiobjekt_set.all()
+    kaardiobjektid_objektiga = obj.kaardiobjektid.all()
     kaardid_objektiga_aastad = kaardiobjektid_objektiga.values_list('kaart__aasta', flat=True)
 
     if kaardid_objektiga_aastad: # kui v2hemalt yhel kaardil objekt m2rgitud
@@ -1177,10 +1177,10 @@ def make_objekt_leaflet_combo(objekt=1):
 
             # lisame vektorkihid
             if kaart == DEFAULT_MAP and DEFAULT_MAP.aasta != objekt_last_seen_on_map:
-                kaardiobjektid = obj.kaardiobjekt_set.filter(kaart__aasta=objekt_last_seen_on_map)
+                kaardiobjektid = obj.kaardiobjektid.filter(kaart__aasta=objekt_last_seen_on_map)
                 status = 'H' # pole m2rgitud
             else:
-                kaardiobjektid = obj.kaardiobjekt_set.filter(kaart=kaart)
+                kaardiobjektid = obj.kaardiobjektid.filter(kaart=kaart)
                 status = 'E' # sellel kaardil m2rgitud
 
             for kaardiobjekt in kaardiobjektid:

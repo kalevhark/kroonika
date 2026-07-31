@@ -17,9 +17,10 @@ from django.forms import (
 )
 
 from .models import (
-    PATTERN_PILT, PATTERN_VIIDE, Artikkel, Isik, Organisatsioon, Objekt,
+    PATTERN_PILT, PATTERN_VIIDE, 
+    Artikkel, Isik, Organisatsioon, Objekt,
     Vihje, Pilt,
-    Kaart, Kaardiobjekt
+    Kaart, Kaardiobjekt, Aadress,
 )
 
 VIGA_TEKSTIS = settings.KROONIKA['VIGA_TEKSTIS']
@@ -172,6 +173,7 @@ class KaartForm(ModelForm):
         fields = ('nimi', 'aasta', 'kirjeldus', 'tiles', 'viited')
 
 
+
 class KaardiobjektForm(ModelForm):
 
     objekt = AutoCompleteSelectField('objektid', required=False)
@@ -184,6 +186,19 @@ class KaardiobjektForm(ModelForm):
             'tyyp', 'objekt', 'geometry', 'zoom', 'tn', 'nr', 'lisainfo'
         )
 
+
+class AadressForm(BaasObjectForm):
+
+    eellased = AutoCompleteSelectMultipleField('objektid', required=False)
+
+    class Meta:
+        model = Aadress
+        fields = ('nimi', 'korter', 'kirjeldus',
+                  'hist_date', 'hist_year', 'hist_month',
+                  'hist_enddate', 'hist_endyear', 'hist_endmonth',
+                  'objektid', 'eellased',
+                  'viited',
+        )
 
 
 class VihjeForm(ModelForm):

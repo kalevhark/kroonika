@@ -2,7 +2,7 @@ import json
 
 from ajax_select import make_ajax_field, make_ajax_form
 from ajax_select.admin import AjaxSelectAdmin, AjaxSelectAdminTabularInline, AjaxSelectAdminStackedInline
-from ajax_select.fields import AutoCompleteSelectWidget
+from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectWidget
 from ajax_select.registry import registry
 
 from django.conf import settings
@@ -26,12 +26,12 @@ from .models import (
     Allikas, Viide, Kroonika,
     Artikkel, Isik, Organisatsioon, Objekt,
     Pilt, Vihje,
-    Kaart, Kaardiobjekt
+    Kaart, Kaardiobjekt, Aadress
 )
 from .forms import (
     ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm,
     PiltForm,
-    KaartForm, KaardiobjektForm
+    KaartForm, KaardiobjektForm, AadressForm
 )
 
 # EI OLE KASUTUSEL
@@ -268,24 +268,33 @@ class IsikOrganisatsioonInline(AjaxSelectAdminTabularInline):
     })
 
 
+from ajax_select.admin import AjaxSelectAdminInlineFormsetMixin
 #
 # Kaardiobjektide lisamiseks objektide halduris
 #
 # class KaardiobjektObjektInline(AjaxSelectAdminTabularInline):
 class KaardiobjektObjektInline(admin.StackedInline):
+# class KaardiobjektObjektInline(AjaxSelectAdminInlineFormsetMixin, admin.StackedInline):
     model = Kaardiobjekt
-    fields = ('id',)
-    # form = make_ajax_form(Kaardiobjekt, {
-    #     'objekt': 'objektid',
-    #     'id': 'kaardiobjektid'
-    # })
+    fields = ('get_leaflet',)
+    readonly_fields = ('get_leaflet',)
     extra = 0
+    # extra = 1
+    # template = 'admin/edit_inline/tabular_pilt.html'
+    # form = make_ajax_form(Kaardiobjekt, {
+    #     'objekt': 'kaardiobjektid',
+    # })
+    
 
-    def get_max_num(self, request, obj=None, **kwargs):
-        max_num = 0
-        if obj:
-            return Kaardiobjekt.objects.filter(id=obj.id).count()
-        return max_num
+    def get_leaflet(self, obj):
+        return obj.get_leaflet()
+
+    # def get_max_num(self, request, obj=None, **kwargs):
+    #     max_num = 0
+    #     if obj:
+    #         return Kaardiobjekt.objects.filter(id=obj.id).count()
+    #     return max_num + 1
+
 
 
 # Piltide lisamiseks isikute halduris
@@ -892,7 +901,7 @@ class ObjektAdmin(AjaxSelectAdmin):
 
     def seotud_kaardiga(self, obj):
         return _boolean_icon(
-            obj.kaardiobjekt_set.count() > 0
+            obj.kaardiobjektid.count() > 0
         )
     seotud_kaardiga.short_description = 'Kaardiga'
 
@@ -1239,6 +1248,25 @@ class KaardiobjektAdmin(AjaxSelectAdmin):
     ]
 
 admin.site.register(Kaardiobjekt, KaardiobjektAdmin)
+
+
+class AadressAdmin(AjaxSelectAdmin):
+
+    form=AadressForm
+
+    list_display = (
+        'colored_id',
+        '__str__',
+    )
+    list_filter = ['hist_year', 'nimi']
+    search_fields = [
+        'nimi',
+        'kirjeldus',
+        'id',
+        'hist_year'
+    ]
+
+admin.site.register(Aadress, AadressAdmin)
 
 # from django.contrib import admin
 # from ajax_select import make_ajax_form

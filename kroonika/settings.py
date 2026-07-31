@@ -484,6 +484,11 @@ LOGGING = {
     },
 }
 
+
+# Optional but recommended for modern Django Admin styling
+AJAX_SELECT_BOOTSTRAP = True
+AJAX_SELECT_INLINES = 'inline'
+
 # Kas on jõuluaeg aktiivne?
 J6UL2025 = False
 
