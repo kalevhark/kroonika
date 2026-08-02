@@ -154,7 +154,7 @@ def read_shp_to_db(aasta, do=False):
         print('Sellist kaarti ei ole andmebaasis')
 
 # Kirjutab andmebaasist kaardikihi shp faili
-def write_db_to_shp(aasta='1912'):
+def write_db_to_shp(aasta: str):
     kaart = Kaart.objects.filter(aasta=aasta).first()
     if kaart:
         print(os.getcwd())
