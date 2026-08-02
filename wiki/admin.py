@@ -79,6 +79,49 @@ def make_plugin_options(lookup, channel_name, widget_plugin_options, initial):
         )
     }
 
+
+class AlphabetListFilter(admin.SimpleListFilter):
+    """This is a simple list filter that allows filtering by the first letter of a field's value."""
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = "tähestikuline filter"
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = "first_letter"
+
+    def lookups(self, request, model_admin):
+        """
+        Only show the lookups if there actually is
+        anyone born in the corresponding decades.
+        """
+        qs = model_admin.get_queryset(request)
+        if model_admin.model == Isik:
+            field_name = "perenimi"
+        elif model_admin.model == Kaardiobjekt:
+            field_name = "tn"
+        else:
+            field_name = "nimi"
+        nimi_list = list(qs.values_list(field_name, flat=True))
+        alphabet = sorted(set(nimi[0].upper() for nimi in nimi_list if nimi))
+        for letter in alphabet:
+            if letter and qs.filter(**{f"{field_name}__istartswith": letter}).exists():
+                yield (letter, letter)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            if queryset.model == Isik:
+                field_name = "perenimi"
+            elif queryset.model == Kaardiobjekt:
+                field_name = "tn"
+            else:
+                field_name = "nimi"
+            return queryset.filter(
+                **{f"{field_name}__istartswith": self.value()}
+            )
+        else:
+            return queryset
+        
+
 # Kohandatud, et lisada parent object
 class PiltAutoCompleteSelectWidget(AutoCompleteSelectWidget):
     """
@@ -532,6 +575,7 @@ class IsikAdmin(AjaxSelectAdmin):
         'seotud_pilte',
         'seotud_viiteid',
     )
+    list_filter = [AlphabetListFilter]
     search_fields = [
         'id',
         'perenimi'
@@ -729,6 +773,7 @@ class ObjektAdmin(AjaxSelectAdmin):
         'seotud_viiteid',
     ]
     search_fields = ['id', 'nimi', 'asukoht']
+    list_filter = [AlphabetListFilter]
     fieldsets = [
         (None, {
             'fields': ['nimi', 'tyyp', 'asukoht', 'aadressid', 'kirjeldus']
@@ -1135,7 +1180,7 @@ class KaardiobjektAdmin(AjaxSelectAdmin):
         'tyyp',
         '__str__',
     )
-    list_filter = ['kaart', 'tn']
+    list_filter = ['kaart', AlphabetListFilter, 'tn']
     search_fields = [
         'tn',
         'nr',
@@ -1154,7 +1199,7 @@ class AadressAdmin(AjaxSelectAdmin):
         'colored_id',
         '__str__',
     )
-    list_filter = ['hist_year', 'nimi']
+    list_filter = ['hist_year', AlphabetListFilter]
     search_fields = [
         'nimi',
         'kirjeldus',
