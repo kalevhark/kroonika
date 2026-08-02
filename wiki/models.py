@@ -1686,7 +1686,7 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
     )
 
     def __str__(self):
-        return ' '.join([self.kaart.aasta, self.tn, self.nr, self.lisainfo])
+        return ' '.join([self.kaart.aasta, self.tn, self.nr, self.tyyp, self.lisainfo])
 
     @property
     def centroid(self, *args, **kwargs):
@@ -1847,7 +1847,7 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     )
 
     def __str__(self):
-        return ' '.join([str(self.hist_year), self.nimi, self.korter])
+        return ' '.join([str(self.hist_year), self.nimi, self.korter, self.kirjeldus[:40]])
     
     def save(self, *args, **kwargs):
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal
@@ -1881,7 +1881,7 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     def markdown_tag(self):
         return f'[{self.nimi}]([{self.__class__.__name__.lower()}_{self.id}])'
     
-    # Kui objectil puudub viide, siis punane
+    # Kui aadressil puudub objektivaste, siis punane
     def colored_id(self):
         if not self.objekt:
             color = 'red'
@@ -1893,6 +1893,11 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
             self.id
         )
     colored_id.short_description = 'ID'
+
+    class Meta:
+        ordering = ['hist_year', 'nimi', 'korter']
+        verbose_name_plural = "Aadressid"
+
 
 model = Aadress
 model._meta.get_field('hist_date').verbose_name = "Algusaeg"

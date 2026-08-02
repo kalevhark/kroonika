@@ -1,19 +1,22 @@
 import re
 
-from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField, AutoCompleteField
+from ajax_select.fields import (
+    AutoCompleteSelectField, AutoCompleteSelectMultipleField, 
+    AutoCompleteSelectMultipleWidget
+)
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, Fieldset, HTML, ButtonHolder
 
 from django.apps import apps
 from django.conf import settings
 from django.forms import (
-    Form, ModelForm,
+    Form, ModelChoiceField, ModelForm, MultipleChoiceField,
     Textarea,
     # SelectMultiple,
     ValidationError,
-    CharField,
+    CharField, IntegerField,
     # ChoiceField, RadioSelect, Select
-    # ModelMultipleChoiceField,
+    ModelMultipleChoiceField,
 )
 
 from .models import (
@@ -52,8 +55,12 @@ class PiltForm(ModelForm):
 
 class BaasObjectForm(ModelForm):
     
-    objektid = AutoCompleteSelectMultipleField('objektid', required=False)
-    viited = AutoCompleteSelectMultipleField('viited', required=False)
+    # objektid = AutoCompleteSelectMultipleField('objektid', required=False)
+    viited = AutoCompleteSelectMultipleField(
+        'viited', 
+        required=False, 
+        label=None,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -92,9 +99,27 @@ class BaasObjectForm(ModelForm):
 
 class ArtikkelForm(BaasObjectForm):
 
-    isikud = AutoCompleteSelectMultipleField('isikud', required=False)
-    organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
-    eellased = AutoCompleteSelectMultipleField('artiklid', required=False, help_text='')
+    isikud = AutoCompleteSelectMultipleField(
+        'isikud', 
+        required=False, 
+        label=None,
+    )
+    organisatsioonid = AutoCompleteSelectMultipleField(
+        'organisatsioonid', 
+        required=False,
+        label=None,
+    )
+    objektid = AutoCompleteSelectMultipleField(
+        'objektid', 
+        required=False,
+        label=None,
+    )
+    eellased = AutoCompleteSelectMultipleField(
+        'artiklid', 
+        required=False, 
+        help_text=None,
+        label=None
+    )
 
     def clean(self, *args, **kwargs):
         # Kontrollime, et loo algusaeg on märgitud
@@ -118,8 +143,23 @@ class ArtikkelForm(BaasObjectForm):
 
 class IsikForm(BaasObjectForm):
 
-    organisatsioonid = AutoCompleteSelectMultipleField('organisatsioonid', required=False, help_text='')
-    eellased = AutoCompleteSelectMultipleField('isikud', required=False, help_text='')
+    organisatsioonid = AutoCompleteSelectMultipleField(
+        'organisatsioonid', 
+        required=False, 
+        help_text=None,
+        label=None,
+    )
+    objektid = AutoCompleteSelectMultipleField(
+        'objektid', 
+        required=False, 
+        label=None,
+    )
+    eellased = AutoCompleteSelectMultipleField(
+        'isikud', 
+        required=False, 
+        help_text=None,
+        label=None
+    )
 
     class Meta:
         model = Isik
@@ -134,7 +174,16 @@ class IsikForm(BaasObjectForm):
 
 class OrganisatsioonForm(BaasObjectForm):
 
-    eellased = AutoCompleteSelectMultipleField('organisatsioonid', required=False)
+    objektid = AutoCompleteSelectMultipleField(
+        'objektid', 
+        required=False, 
+        label=None,
+    )
+    eellased = AutoCompleteSelectMultipleField(
+        'organisatsioonid', 
+        required=False, 
+        label=None
+    )
 
     class Meta:
         model = Organisatsioon
@@ -148,17 +197,47 @@ class OrganisatsioonForm(BaasObjectForm):
 
 class ObjektForm(BaasObjectForm):
 
-    eellased = AutoCompleteSelectMultipleField('objektid', required=False)
-
+    objektid = AutoCompleteSelectMultipleField(
+        'objektid', 
+        required=False, 
+        label=None,
+        help_text=None,
+    )
+    eellased = AutoCompleteSelectMultipleField(
+        'objektid', 
+        required=False,
+        label=None,
+        help_text=None
+    )
+    aadressid = ModelMultipleChoiceField(
+        queryset=Aadress.objects.all(), 
+        widget=AutoCompleteSelectMultipleWidget('aadressid'),
+        required=False, 
+        label=None,
+    )
+    kaardiobjektid = ModelMultipleChoiceField(
+        queryset=Kaardiobjekt.objects.all(), 
+        widget=AutoCompleteSelectMultipleWidget('kaardiobjektid'),
+        required=False, 
+        label=None,
+    )
+    
     class Meta:
         model = Objekt
-        fields = ('nimi', 'tyyp', 'asukoht', 'kirjeldus',
-                  'hist_date', 'hist_year', 'hist_month',
-                  'hist_enddate', 'hist_endyear', 'hist_endmonth', 'gone',
-                  'objektid', 'eellased',
-                  'viited',
-        )
+        # fields = ('nimi', 'tyyp', 'asukoht', 'kirjeldus',
+        #           'hist_date', 'hist_year', 'hist_month',
+        #           'hist_enddate', 'hist_endyear', 'hist_endmonth', 'gone',
+        #           'objektid', 'eellased',
+        #           'viited', 'kaardiobjektid'
+        # )
+        fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        obj = self.instance
+        self.initial["kaardiobjektid"] = obj.kaardiobjektid.all() if obj.pk else None
+        self.initial["aadressid"] = obj.aadress_set.all() if obj.pk else None
+    
 
 class KaartForm(ModelForm):
 
@@ -185,20 +264,23 @@ class KaardiobjektForm(ModelForm):
             'objekt',
             'tyyp', 'objekt', 'geometry', 'zoom', 'tn', 'nr', 'lisainfo'
         )
-
+    
 
 class AadressForm(BaasObjectForm):
 
-    eellased = AutoCompleteSelectMultipleField('objektid', required=False)
+    objekt = AutoCompleteSelectField('objektid', required=False)
+    aadressid = AutoCompleteSelectMultipleField('aadressid', required=False)
+    eellased = AutoCompleteSelectMultipleField('aadressid', required=False)
 
     class Meta:
         model = Aadress
-        fields = ('nimi', 'korter', 'kirjeldus',
-                  'hist_date', 'hist_year', 'hist_month',
-                  'hist_enddate', 'hist_endyear', 'hist_endmonth',
-                  'objektid', 'eellased',
-                  'viited',
-        )
+        # fields = ('nimi', 'korter', 'kirjeldus',
+        #           'hist_date', 'hist_year', 'hist_month',
+        #           'hist_enddate', 'hist_endyear', 'hist_endmonth',
+        #           'objekt', 'eellased',
+        #           'viited',
+        # )
+        fields = '__all__'
 
 
 class VihjeForm(ModelForm):

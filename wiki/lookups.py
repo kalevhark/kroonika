@@ -6,7 +6,7 @@ from django.db.models.functions import Concat
 from django.db.models import F, Value, CharField
 
 from .models import (
-    Artikkel, Isik, Organisatsioon, Objekt,
+    Aadress, Artikkel, Isik, Organisatsioon, Objekt,
     Allikas, Viide,
     Pilt,
     Kaardiobjekt
@@ -145,6 +145,8 @@ class KaardiobjektLookup(LookupChannel):
                 F('tn'),
                 Value(' '),
                 F('nr'),
+                Value(' '),
+                F('lisainfo'),
                 output_field=CharField()
             )
         )
@@ -152,6 +154,39 @@ class KaardiobjektLookup(LookupChannel):
             queryset = queryset.filter(nimi_asukoht__iregex=split)
         return queryset[:50]
 
+    def format_match(self, item):
+        return f"{item} ({item.id})"
+
+    def format_item_display(self, item):
+        return f'<p>{item}</p>{item.get_leaflet()}'
+    
+
+@ajax_select.register('aadressid')
+class AadressLookup(LookupChannel):
+
+    model = Aadress
+
+    def get_query(self, q, request):
+        q = q.translate(str.maketrans(TRANSLATION))
+        splits = q.split(' ')
+        queryset = self.model.objects.annotate(
+            nimi_asukoht=Concat(
+                F('nimi'),
+                Value(' '),
+                F('korter'),
+                output_field=CharField()
+            )
+        )
+        for split in splits:
+            queryset = queryset.filter(nimi_asukoht__iregex=split)
+        return queryset[:50]
+
+    def format_match(self, item):
+        return f"{item} ({item.id})"
+
+    def format_item_display(self, item):
+        return f'{item} ({item.id})'
+    
 
 @ajax_select.register('viited')
 class ViideLookup(LookupChannel):

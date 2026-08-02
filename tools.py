@@ -31,7 +31,7 @@ from django.db.models import (
 from django.db.models.functions import Extract, Trunc, ExtractDay
 
 from wiki.models import (
-    Artikkel, Isik, Organisatsioon, Objekt, Pilt,
+    Aadress, Artikkel, Isik, Organisatsioon, Objekt, Pilt,
     Kaardiobjekt,
     Viide, Allikas
 )
@@ -1393,6 +1393,74 @@ def update_ilmaandmed_min_max():
     ilmaandmed_max_puudu = Ilm.objects.filter(station=j, airtemperature_max__isnull=True)
     ilmaandmed_puudu = ilmaandmed_min_puudu.union(ilmaandmed_max_puudu)
     print('Kontroll: Ilmaandmed, millel puudub airtemperature_min või airtemperature_max:', ilmaandmed_puudu.count())
+
+def update_addresses_from_kaardiobjektid():
+    kaardiobjektid = Kaardiobjekt.objects \
+        .filter(tyyp='H') \
+        .filter(kaart__aasta__in=[1905, 1912, 2021])
+    for kaardiobjekt in kaardiobjektid:
+        nimi = ' '.join([kaardiobjekt.tn, kaardiobjekt.nr])
+        kirjeldus = kaardiobjekt.lisainfo
+        viide = kaardiobjekt.kaart.viited.first()
+        objekt = kaardiobjekt.objekt
+        hist_year = kaardiobjekt.kaart.aasta
+
+        aadress = Aadress(
+            nimi=nimi,
+            kirjeldus=kirjeldus,
+            objekt=objekt,
+            # viited=viide,
+            hist_year=hist_year
+        )
+        aadress.save()
+        aadress.viited.add(viide)
+
+def update_addresses_from_aadressraamat_1909():
+    """Process the data from the address book for 1909"""
+    path = settings.BASE_DIR / 'wiki' / 'static' / 'wiki' / 'data'
+    with open(path /'1909 majaomanikud.csv', encoding = 'UTF-8') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+        hist_year = 1909
+        viide = Viide.objects.get(id=14410)  # Adolf Richters Baltische Verkehrs- und Adressbücher
+        print(f'Processing address book for year {hist_year} with reference {viide}:')
+        for row in reader:
+            tn = row[0].strip()
+            nr = row[2].strip()
+            # district = row[1].strip()
+            nimi = ' '.join([tn, nr])
+            kirjeldus = ' '.join(row)
+            print(nimi, kirjeldus)
+
+            aadress = Aadress(
+                nimi=nimi,
+                kirjeldus=kirjeldus,
+                hist_year=hist_year
+            )
+            aadress.save()
+            aadress.viited.add(viide)
+
+def update_addresses_from_aadressraamat_1925():
+    """Process the data from the address book for 1925"""
+    path = settings.BASE_DIR / 'wiki' / 'static' / 'wiki' / 'data'
+    with open(path /'1925 majaomanikud.csv', encoding = 'UTF-8') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+        hist_year = 1925
+        viide = Viide.objects.get(id=14811)  # walga juht
+        print(f'Processing address book for year {hist_year} with reference {viide}:')
+        for row in reader:
+            tn = row[0].strip().replace('tänaw.', 'tänaw')
+            nr = row[1].strip()
+            nimi = ' '.join([tn, nr])
+            kirjeldus = ' '.join(row)
+            print(nimi, kirjeldus)
+
+            aadress = Aadress(
+                nimi=nimi,
+                kirjeldus=kirjeldus,
+                hist_year=hist_year
+            )
+            aadress.save()
+            aadress.viited.add(viide)
 
 
 if __name__ == "__main__":

@@ -11,6 +11,13 @@ from django.contrib.admin import site as admin_site
 from django.contrib.admin.templatetags.admin_list import _boolean_icon
 from django.contrib.admin.views.main import IS_POPUP_VAR, TO_FIELD_VAR
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+from django.db.models.functions import (
+    Concat, Extract, ExtractYear, ExtractMonth, ExtractDay, LPad
+)
+from django.db.models import \
+    Count, Max, Min, \
+    Case, F, Func, Q, When, \
+    Value, CharField, IntegerField
 from django.forms.utils import flatatt
 from django.template.defaultfilters import force_escape
 from django.template.loader import render_to_string
@@ -18,8 +25,6 @@ from django.urls import reverse
 from django.utils.module_loading import import_string
 from django.utils.safestring import mark_safe
 
-# from django.db.models import Case, F, When, IntegerField
-# from django.db.models.functions import ExtractDay
 from markdownx.admin import MarkdownxModelAdmin
 
 from .models import (
@@ -33,59 +38,6 @@ from .forms import (
     PiltForm,
     KaartForm, KaardiobjektForm, AadressForm
 )
-
-# EI OLE KASUTUSEL
-# class MyRelatedFieldWidgetWrapper(RelatedFieldWidgetWrapper):
-#     """
-#     This class is a wrapper to a given widget to add the add icon for the
-#     admin interface.
-#     """
-# 
-#     def __init__(self, *args, **kwargs):
-#         self.parent_object = kwargs.get('parent_object')
-#         try:
-#             del kwargs['parent_object']  # superclass will choke on this
-#         except:
-#             pass
-#         super(MyRelatedFieldWidgetWrapper, self).__init__(*args, **kwargs)
-# 
-#     def get_context(self, name, value, attrs):
-#         rel_opts = self.rel.model._meta
-#         info = (rel_opts.app_label, rel_opts.model_name)
-#         # self.widget.choices = self.choices
-#         related_field_name = self.rel.get_related_field().name
-#         url_params = "&".join(
-#             "%s=%s" % param
-#             for param in [
-#                 (TO_FIELD_VAR, related_field_name),
-#                 (IS_POPUP_VAR, 1),
-#                 (self.parent_object.__class__.__name__.lower(), self.parent_object.id) # lisame viite parent objectile
-#             ]
-#         )
-#         context = {
-#             "rendered_widget": self.widget.render(name, value, attrs),
-#             "is_hidden": self.is_hidden,
-#             "name": name,
-#             "url_params": url_params,
-#             "model": rel_opts.verbose_name,
-#             "can_add_related": self.can_add_related,
-#             "can_change_related": self.can_change_related,
-#             "can_delete_related": self.can_delete_related,
-#             "can_view_related": self.can_view_related,
-#             "model_has_limit_choices_to": self.rel.limit_choices_to,
-#         }
-#         if self.can_add_related:
-#             context["add_related_url"] = self.get_related_url(info, "add")
-#         if self.can_delete_related:
-#             context["delete_related_template_url"] = self.get_related_url(
-#                 info, "delete", "__fk__"
-#             )
-#         if self.can_view_related or self.can_change_related:
-#             context["view_related_url_params"] = f"{TO_FIELD_VAR}={related_field_name}"
-#             context["change_related_template_url"] = self.get_related_url(
-#                 info, "change", "__fk__"
-#             )
-#         return context
 
 #
 # Vajalikud PiltAutoCompleteSelectWidget jaoks
@@ -188,37 +140,6 @@ class PiltAutoCompleteSelectWidget(AutoCompleteSelectWidget):
 
 
 #
-# Piltide lisamiseks artiklite halduris
-#
-# EI OLE KASUTUSEL
-# class PiltArtikkelInline(admin.TabularInline):
-#     model = Pilt.artiklid.through
-#     extra = 1
-#     template = 'admin/edit_inline/tabular_pilt.html'
-#
-#     def __init__(self, *args, **kwargs):
-#         self.parent_object = kwargs.get('obj')
-#         try:
-#             del kwargs['obj']  # superclass will choke on this
-#         except:
-#             pass
-#         super(PiltArtikkelInline, self).__init__(*args, **kwargs)
-#
-#     # lisame pildi lisamisel artikli viited, isikud, organisatsioonid, objektid
-#     def get_formset(self, request, obj=None, **kwargs):
-#         formset = super(PiltArtikkelInline, self).get_formset(request, obj, **kwargs)
-#         if obj:
-#             form = formset.form
-#             form.base_fields['pilt'].widget = MyRelatedFieldWidgetWrapper(
-#                 form.base_fields['pilt'].widget,
-#                 self.model._meta.get_field('pilt').remote_field,
-#                 admin_site,
-#                 parent_object=obj
-#             )
-#         return formset
-
-
-#
 # Piltide lisamiseks artiklite halduris ver 2
 #
 class PiltArtikkelInline(AjaxSelectAdminTabularInline):
@@ -268,35 +189,7 @@ class IsikOrganisatsioonInline(AjaxSelectAdminTabularInline):
     })
 
 
-from ajax_select.admin import AjaxSelectAdminInlineFormsetMixin
 #
-# Kaardiobjektide lisamiseks objektide halduris
-#
-# class KaardiobjektObjektInline(AjaxSelectAdminTabularInline):
-class KaardiobjektObjektInline(admin.StackedInline):
-# class KaardiobjektObjektInline(AjaxSelectAdminInlineFormsetMixin, admin.StackedInline):
-    model = Kaardiobjekt
-    fields = ('get_leaflet',)
-    readonly_fields = ('get_leaflet',)
-    extra = 0
-    # extra = 1
-    # template = 'admin/edit_inline/tabular_pilt.html'
-    # form = make_ajax_form(Kaardiobjekt, {
-    #     'objekt': 'kaardiobjektid',
-    # })
-    
-
-    def get_leaflet(self, obj):
-        return obj.get_leaflet()
-
-    # def get_max_num(self, request, obj=None, **kwargs):
-    #     max_num = 0
-    #     if obj:
-    #         return Kaardiobjekt.objects.filter(id=obj.id).count()
-    #     return max_num + 1
-
-
-
 # Piltide lisamiseks isikute halduris
 #
 class PiltIsikInline(AjaxSelectAdminTabularInline):
@@ -497,11 +390,6 @@ class ViideAdmin(admin.ModelAdmin):
 
     short_url.short_description = 'Link'
 
-from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay, LPad
-from django.db.models import \
-    Count, Max, Min, \
-    Case, F, Func, Q, When, \
-    Value, CharField, IntegerField
 
 class ArtikkelAdmin(AjaxSelectAdmin):
 
@@ -843,7 +731,7 @@ class ObjektAdmin(AjaxSelectAdmin):
     search_fields = ['id', 'nimi', 'asukoht']
     fieldsets = [
         (None, {
-            'fields': ['nimi', 'tyyp', 'asukoht', 'kirjeldus']
+            'fields': ['nimi', 'tyyp', 'asukoht', 'aadressid', 'kirjeldus']
             }
          ),
         (None, {
@@ -858,7 +746,7 @@ class ObjektAdmin(AjaxSelectAdmin):
         }
          ),
         ('Seotud', {
-            'fields': ['objektid', 'eellased']
+            'fields': ['objektid', 'eellased', 'kaardiobjektid']
             }
          ),
         (None, {
@@ -868,9 +756,8 @@ class ObjektAdmin(AjaxSelectAdmin):
     ]
     inlines = [
         PiltObjektInline,
-        KaardiobjektObjektInline,
     ]
-
+    
     # Admin moodulis lisamise/muutmise automaatsed väljatäited
     def save_model(self, request, obj, form, change):
         objekt = form.save(commit=False)
@@ -881,8 +768,35 @@ class ObjektAdmin(AjaxSelectAdmin):
             objekt.updated_by = request.user
         objekt.save()
         form.save_m2m()
-        return objekt
+        
+        # Uuendame objekti seose kaardiobjektidega
+        kaardiobjektid = form.cleaned_data.get("kaardiobjektid")
+        kaardiobjektid_has_changed = form.fields["kaardiobjektid"].has_changed(
+            obj.kaardiobjektid.all(), 
+            form.cleaned_data.get("kaardiobjektid")
+        )
+        if kaardiobjektid_has_changed:
+            # Eemaldame kõik seotud kaardiobjektid
+            obj.kaardiobjektid.clear()
+            # Lisame uued seotud kaardiobjektid
+            for kaardiobjekt in kaardiobjektid:
+                obj.kaardiobjektid.add(kaardiobjekt)
+        
+        # Uuendame objekti seose aadressidega
+        aadressid = form.cleaned_data.get("aadressid")
+        aadressid_has_changed = form.fields["aadressid"].has_changed(
+            obj.aadress_set.all(), 
+            form.cleaned_data.get("aadressid")
+        )
+        if aadressid_has_changed:
+            # Eemaldame kõik seotud aadressid
+            obj.aadress_set.clear()
+            # Lisame uued seotud aadressid
+            for aadress in aadressid:
+                obj.aadress_set.add(aadress)
 
+        return objekt
+    
     # Kui palju on objektiga seotud artikleid
     def seotud_artikleid(self, obj):
         return obj.artikkel_set.count()
@@ -922,7 +836,6 @@ class KroonikaAdmin(admin.ModelAdmin):
     ]
     
 
-# class PiltAdmin(admin.ModelAdmin):
 class PiltAdmin(AjaxSelectAdmin):
     save_on_top = True
 
@@ -1197,23 +1110,6 @@ def create_modeladmin(modeladmin, model, name = None):
     return modeladmin
 
 
-# class IsikPiltidetaAdmin(IsikAdmin):
-#     inlines = []
-#
-# create_modeladmin(IsikPiltidetaAdmin, name='isikud-kiirparandusteks', model=Isik)
-#
-#
-# class OrganisatsioonPiltidetaAdmin(OrganisatsioonAdmin):
-#     inlines = []
-#
-# create_modeladmin(OrganisatsioonPiltidetaAdmin, name='asutised-kiirparandusteks', model=Organisatsioon)
-#
-# class ObjektPiltidetaAdmin(ObjektAdmin):
-#     inlines = []
-#
-# create_modeladmin(ObjektPiltidetaAdmin, name='kohad-kiirparandusteks', model=Objekt)
-
-
 class KaartAdmin(AjaxSelectAdmin):
 
     form = KaartForm
@@ -1267,14 +1163,3 @@ class AadressAdmin(AjaxSelectAdmin):
     ]
 
 admin.site.register(Aadress, AadressAdmin)
-
-# from django.contrib import admin
-# from ajax_select import make_ajax_form
-#
-# # @admin.register(Pilt.artiklid.through)
-# class YourModelAdmin(AjaxSelectAdmin):
-#
-#     form = make_ajax_form(Pilt.artiklid.through, {
-#         'artikkel': 'artiklid',  # ManyToManyField
-#         'pilt':'pildid'      # ForeignKeyField
-#     })
