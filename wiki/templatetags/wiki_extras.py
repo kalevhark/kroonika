@@ -4,7 +4,7 @@ import uuid
 from django import template
 from django.conf import settings
 
-from wiki.models import VIGA_TEKSTIS, Artikkel, Isik, Organisatsioon, Objekt, Kaart, Kaardiobjekt
+from wiki.models import VIGA_TEKSTIS, Aadress, Artikkel, Isik, Organisatsioon, Objekt, Kaart, Kaardiobjekt
 from wiki.views import get_all_logged_in_users #, artikkel_qs_userfilter
 
 register = template.Library()
@@ -15,7 +15,8 @@ ICONS = {
     'organisatsioon': 'fa fa-group',
     'objekt': 'fa fa-map-marker',
     'kaart': 'fa fa-map',
-    'kaardiobjekt': 'fa fa-map',
+    'kaardiobjekt': 'fa fa-map-o',
+    'aadress': 'fa fa-envelope-o',
     'pilt': 'fa fa-camera-retro',
     'viide': 'fa fa-binoculars'
 }
@@ -122,11 +123,11 @@ def icon_objekt():
 
 @register.simple_tag
 def icon_kaart():
-    return 'fa fa-map'
+    return 'fa fa-map-o'
 
 @register.simple_tag
 def icon_kaardiobjekt():
-    return 'fa fa-map'
+    return 'fa fa-map-o'
 
 @register.simple_tag
 def icon_pilt():
@@ -184,6 +185,10 @@ def model_name_kaart():
 @register.simple_tag
 def model_name_kaardiobjekt():
     return Kaardiobjekt._meta.verbose_name_plural
+
+@register.simple_tag
+def model_name_aadress():
+    return Aadress._meta.verbose_name_plural
 
 @register.simple_tag
 def recaptcha_public_key():

@@ -534,8 +534,7 @@ class ArtikkelAdmin(AjaxSelectAdmin):
 
     # Kui palju on objektiga seotud pilte
     def seotud_pilte(self, obj):
-        # return obj.pilt_set.count()
-        return obj.pildid.count()
+        return obj.pildid.filter(tyyp=Pilt.PILT).count()
     seotud_pilte.short_description = 'Pilte'
 
     # Kui palju on objektiga seotud viiteid
@@ -663,8 +662,7 @@ class IsikAdmin(AjaxSelectAdmin):
 
     # Kui palju on isikuga seotud pilte
     def seotud_pilte(self, obj):
-        # return obj.pilt_set.count()
-        return obj.pildid.count()
+        return obj.pildid.filter(tyyp=Pilt.PILT).count()
     seotud_pilte.short_description = 'Pilte'
 
     # Kui palju on objektiga seotud viiteid
@@ -728,8 +726,7 @@ class OrganisatsioonAdmin(AjaxSelectAdmin):
 
     # Kui palju on organisatsiooniga seotud pilte
     def seotud_pilte(self, obj):
-        # return obj.pilt_set.count()
-        return obj.pildid.count()
+        return obj.pildid.filter(tyyp=Pilt.PILT).count()
     seotud_pilte.short_description = 'Pilte'
 
     # Kui palju on organisatsiooniga seotud viiteid
@@ -763,14 +760,15 @@ class ObjektAdmin(AjaxSelectAdmin):
         'colored_id',
         'seotud_kaardiga',
         's2ilinud',
-        'nimi',
+        # 'nimi',
+        'colored_nimi',
         'asukoht',
         # '__str__',
-        'hist_date',
-        'hist_year',
+        # 'hist_date',
+        # 'hist_year',
         'seotud_artikleid',
         'seotud_pilte',
-        'seotud_viiteid',
+        # 'seotud_viiteid',
     ]
     search_fields = ['id', 'nimi', 'asukoht']
     list_filter = [AlphabetListFilter]
@@ -849,8 +847,7 @@ class ObjektAdmin(AjaxSelectAdmin):
 
     # Kui palju on objektiga seotud pilte
     def seotud_pilte(self, obj):
-        # return obj.pilt_set.count()
-        return obj.pildid.count()
+        return obj.pildid.filter(tyyp=Pilt.PILT).count()
     seotud_pilte.short_description = 'Pilte'
 
     # Kui palju on objektiga seotud viiteid
@@ -1177,6 +1174,7 @@ class KaardiobjektAdmin(AjaxSelectAdmin):
 
     list_display = (
         'colored_id',
+        'kaart__aasta',
         'tyyp',
         '__str__',
     )
@@ -1197,6 +1195,7 @@ class AadressAdmin(AjaxSelectAdmin):
 
     list_display = (
         'colored_id',
+        'hist_year',
         '__str__',
     )
     list_filter = ['hist_year', AlphabetListFilter]

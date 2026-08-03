@@ -1,0 +1,51 @@
+{% extends "wiki/wiki_base.html" %}
+{% load static %}
+{% load wiki_extras %}
+
+{% block title %}{{ block.super }} - {{ object }}{% endblock %}
+
+{% block content %}
+  <div class="w3-panel w3-card-4 w3-light-grey w3-round" >
+    <!-- Sisukaardi päis-->
+    <div class="w3-row text-objekt" >
+      <h4>
+        <a style="text-decoration: none;" href="{% url 'wiki:wiki_aadress_filter' %}">
+          <i class="{% icon_object object %}"></i>
+        </a>
+        {{ object }}
+        {% if object.objekt %} ->
+          <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_detail' pk=object.objekt.pk slug=object.objekt.slug  %}">
+            <strong>{{ object.objekt }}</strong>
+          </a>
+        {% endif %}
+      </h4>
+      <h5>Allikas: {{ object.viited.first }}</h5><br />
+    </div>
+
+    <!-- Sisukaardi kirjeldav osa-->
+    <div class="w3-twothird">
+      <div class="w3-third">
+        <!-- Sisukaardi kaardiosa-->
+        <div class="w3-margin-right w3-center w3-padding-16">
+          {% comment %} <div
+                  class="kaardiobjekt"
+                  id="get_kaardiobjekt_leaflet_{{ object.id }}"
+                  data-url="{% url 'wiki:get_kaardiobjekt_leaflet' object.id %}"
+          ></div> {% endcomment %}
+        </div>
+      </div>
+      <!-- Sisukaardi andmete osa-->
+      <div class="w3-twothird">
+        Kirjeldus:<br />
+        {{ object.kirjeldus }}
+      </div>
+      <!-- Andmete lisamise/muutmise andmed: -->
+      {% include 'wiki/includes/object_updated_edit.html' with model='aadress' %}
+    </div>
+
+    <!--  Sisukaardi otseseosed-->
+    <div class="w3-third" >
+      {#      tühi#}
+    </div>
+  </div>
+{% endblock content %}

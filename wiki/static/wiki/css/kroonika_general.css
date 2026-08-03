@@ -182,6 +182,10 @@ form#search svg:hover {
   }
 }
 
+.gone {
+    text-decoration: dotted line-through gray;
+}
+
 .tooltip {
     position: relative;
     display: inline-block;

@@ -59,6 +59,7 @@ import requests
 
 from blog.models import Comment
 from wiki.models import (
+    Aadress,
     Allikas, 
     Viide,
     Artikkel, 
@@ -70,7 +71,7 @@ from wiki.models import (
     Kaart, 
     Kaardiobjekt
 )
-from wiki.forms import ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, KaardiobjektForm
+from wiki.forms import AadressForm, ArtikkelForm, IsikForm, OrganisatsioonForm, ObjektForm, KaardiobjektForm
 from wiki.forms import VihjeForm, V6rdleFormIsik, V6rdleFormObjekt
 
 from wiki.utils.shp_util import (
@@ -1024,7 +1025,7 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
         for pilt in pildid:
             print(pilt.id, pilt)
             pilt.objektid.add(new)
-        print('Pildid:')
+        print('Profiilipildid:')
         pildid = Pilt.objects.filter(profiilipilt_objektid=old)
         for pilt in pildid:
             print(pilt.id, pilt)
@@ -1035,6 +1036,12 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
             print(kaardiobjekt.id, kaardiobjekt)
             kaardiobjekt.objekt = new
             kaardiobjekt.save(update_fields=['objekt'])
+        print('Aadressid:')
+        aadressid = Aadress.objects.filter(objekt=old)
+        for aadress in aadressid:
+            print(aadress.id, aadress)
+            aadress.objekt = new
+            aadress.save(update_fields=['objekt'])
     # Salvestame muudatused
     new.save()
     print(f'Uuendati objecti: {new} (id={new.id})')
@@ -1603,6 +1610,7 @@ class ObjektUpdate(ObjectUpdate):
 
 
 class KaardiobjektUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+
     redirect_field_name = 'next'
     model = Kaardiobjekt
     form_class = KaardiobjektForm
@@ -1620,6 +1628,26 @@ class KaardiobjektUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         kaardiobjekt.save()
         form.save_m2m()
         return redirect('wiki:wiki_kaardiobjekt_detail', pk=self.object.id)
+
+class AadressUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+
+    redirect_field_name = 'next'
+    model = Aadress
+    form_class = AadressForm
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def form_valid(self, form):
+        aadress = form.save(commit=False)
+        # Lisaja/muutja andmed
+        if not aadress.id:
+            aadress.created_by = self.request.user
+        else:
+            aadress.updated_by = self.request.user
+        aadress.save()
+        form.save_m2m()
+        return redirect('wiki:wiki_aadress_detail', pk=self.object.id)
 
 
 #
@@ -2478,6 +2506,7 @@ class ObjektFilterView(FilterView):
         context['searchsmallwidgethidden'] = True  # ei näita mobiiliotsinguvidinat
         return context
 
+
 class ObjektDetailView(generic.DetailView):
     model = Objekt
     query_pk_and_slug = True
@@ -2512,18 +2541,50 @@ class ObjektDetailView(generic.DetailView):
             filter(profiilipilt_objektid__in=[self.object]). \
             first()
         # Kas objektil on kaardivaateid
-        if self.request.user.is_authenticated and self.request.user.is_staff:
-            context['seotud_kaardiobjektid'] = Kaardiobjekt.objects. \
-                filter(objekt__id=self.object.id). \
-                all()
-        else:
-            context['seotud_kaardiobjektid'] = Kaardiobjekt.objects.\
-                filter(objekt__id=self.object.id).\
-                exists()
+        # if self.request.user.is_authenticated and self.request.user.is_staff:
+        #     context['seotud_kaardiobjektid'] = Kaardiobjekt.objects. \
+        #         filter(objekt__id=self.object.id). \
+        #         all()
+        # else:
+        #     context['seotud_kaardiobjektid'] = Kaardiobjekt.objects.\
+        #         filter(objekt__id=self.object.id).\
+        #         exists()
+        seotud_kaardiobjektid = Kaardiobjekt.objects. \
+            filter(objekt__id=self.object.id). \
+            filter(tyyp=self.object.tyyp)
+        context['seotud_kaardiobjektid'] = seotud_kaardiobjektid
+        # Kas objektil on seotud aadresse
+        seotud_aadressid = []
+        for kaardiobjekt in seotud_kaardiobjektid:
+            hist_year = str(kaardiobjekt.kaart.aasta)
+            seotud_aadressid.append(
+                {
+                    # 'id': kaardiobjekt.id,
+                    'hist_year': hist_year,
+                    # 'nimi': kaardiobjekt,
+                    # 'model': 'kaardiobjekt',
+                    'object': kaardiobjekt,
+                    'viide': kaardiobjekt.kaart.viited.first() if kaardiobjekt.kaart.viited.exists() else None,
+                }
+            )
+        seotud_aadressid_queryset = Aadress.objects. \
+            filter(objekt__id=self.object.id)
+        for aadress in seotud_aadressid_queryset:
+            hist_year = str(aadress.hist_year)
+            if hist_year not in seotud_aadressid:
+                seotud_aadressid.append(
+                    {
+                        # 'id': aadress.id,
+                        'hist_year': hist_year,
+                        # 'nimi': aadress,
+                        # 'model': 'aadress',
+                        'object': aadress,
+                        'viide': aadress.viited.first() if aadress.viited.exists() else None,
+                    }
+                )
+        context['seotud_aadressid'] = seotud_aadressid
         # Mainimine läbi aastate
-        # context['mainitud_aastatel'] = get_mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
         mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
-        # context['mainitud_aastatel'] = mainitud_aastatel_data
         context['mainitud_aastatel_chart'] = get_mainitud_aastatel_chart(mainitud_aastatel_data)
         # Otseseosed objektidega
         context['seotud_isikud'] = Isik.objects.\
@@ -2537,7 +2598,6 @@ class ObjektDetailView(generic.DetailView):
             filter(objektid=self.object)
         context['seotud_pildid'] = Pilt.objects.sorted(). \
             exists()
-            # filter(objektid=self.object)
         
         # Lisame eellaste ja j2rglaste andmed
         context = add_eellased_j2rglane2context(self, context)
@@ -2556,7 +2616,8 @@ def get_object_data4tooltip(request):
         obj = model.objects.get(id=id)
         content = str(obj)
     except:
-        print(f'vigane tooltip päring model={model_name}; id={id}')
+        logger.error(f'vigane tooltip päring model={model_name}; id={id}')
+        # print(f'vigane tooltip päring model={model_name}; id={id}')
         model = None
         obj = None
         content = ''
@@ -2569,6 +2630,11 @@ def get_object_data4tooltip(request):
                 img = f'<img class="tooltip-content-img" src="{img}" alt="{profiilipilt}">'
             else:
                 img = ''
+            
+            heading += f'<br><small><span class="w3-text-red">Kaasajal pole olemas või on nime muudetud.</span></small><br>' \
+                if model is Objekt and (obj.gone or obj.hist_enddate or obj.hist_endyear) \
+                else ''
+            
             content = f'<div>{heading}<p>{img}<small>{obj.kirjeldus_lyhike}</small><p></div>'
     elif model == Artikkel:
         if obj.hist_date:
@@ -2705,6 +2771,7 @@ def switch_vkj_ukj(request, calendar_system):
 
 
 class KaardiobjektFilter(django_filters.FilterSet):
+
     kaardiobjekt_sisaldab = django_filters.CharFilter(method='kaardiobjekt_sisaldab_filter')
 
     class Meta:
@@ -2735,7 +2802,8 @@ class KaardiobjektFilter(django_filters.FilterSet):
 # Artiklite otsimise/filtreerimise vaade
 #
 class KaardiobjektFilterView(FilterView):
-    model = Artikkel
+
+    model = Kaardiobjekt
     paginate_by = 50
     template_name = 'wiki/kaardiobjekt_filter.html'
 
@@ -2761,6 +2829,7 @@ class KaardiobjektFilterView(FilterView):
 
 
 class KaardiobjektDetailView(generic.DetailView):
+
     model = Kaardiobjekt
 
     def get_queryset(self):
@@ -2770,6 +2839,78 @@ class KaardiobjektDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         # Kas on kattuvaid objekte teistel kaartidel
         context['kaardiobjekt_match'] = kaardiobjekt_match_db(self.object.id)
+        return context
+
+
+class AadressFilter(django_filters.FilterSet):
+
+    aadress_sisaldab = django_filters.CharFilter(method='aadress_sisaldab_filter')
+
+    class Meta:
+        model = Aadress
+        fields = {
+            'hist_year': ['exact'],
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(AadressFilter, self).__init__(*args, **kwargs)
+        # at startup user doesn't push Submit button, and QueryDict (in data) is empty
+        if self.data == {}:
+            self.queryset = self.queryset.none()
+
+    def aadress_sisaldab_filter(self, queryset, name, value):
+        # päritud fraas nimes
+        if self.data.get('aadress_sisaldab'):
+            queryset = queryset.annotate(nimi=Concat('nimi', Value(' '), 'kirjeldus'))
+            fraasid = self.data.get('aadress_sisaldab', '').split(' ')
+            for fraas in fraasid:
+                queryset = queryset.filter(
+                    nimi__icontains=fraas
+                )
+        return queryset
+
+
+#
+# Aadresside otsimise/filtreerimise vaade
+#
+class AadressFilterView(FilterView):
+
+    model = Aadress
+    paginate_by = 50
+    template_name = 'wiki/aadress_filter.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = Aadress.objects.all()
+        # filtreerime aadressid vastavalt filtrile
+        filter = AadressFilter(self.request.GET, queryset=queryset)
+        list = filter.qs
+
+        paginator = Paginator(list, self.paginate_by)
+        page = self.request.GET.get('page', 1)
+        try:
+            objects = paginator.page(page)
+        except PageNotAnInteger:
+            objects = paginator.page(1)
+        except EmptyPage:
+            objects = paginator.page(paginator.num_pages)
+        context['object_list'] = objects
+        context['filter'] = filter
+        context['searchsmallwidgethidden'] = True  # ei näita mobiiliotsinguvidinat
+        return context
+
+
+class AadressDetailView(generic.DetailView):
+
+    model = Aadress
+
+    def get_queryset(self):
+        return Aadress.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Kas on kattuvaid objekte teistel kaartidel
+        # context['kaardiobjekt_match'] = kaardiobjekt_match_db(self.object.id)
         return context
 
 

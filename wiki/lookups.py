@@ -6,7 +6,7 @@ from django.db.models.functions import Concat
 from django.db.models import F, Value, CharField
 
 from .models import (
-    Aadress, Artikkel, Isik, Organisatsioon, Objekt,
+    Aadress, Artikkel, Isik, Kaart, Organisatsioon, Objekt,
     Allikas, Viide,
     Pilt,
     Kaardiobjekt
@@ -109,6 +109,15 @@ class ObjektLookup(LookupChannel):
 
     model = Objekt
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.latest_map = Kaart.objects.order_by('-aasta').first()
+
+    def _exists_on_latest_map(self, item):
+        if item.kaardiobjektid.filter(kaart=self.latest_map).exists():
+            return True
+        return False
+    
     def get_query(self, q, request):
         q = q.translate(str.maketrans(TRANSLATION))
         splits = q.split(' ')
@@ -125,11 +134,20 @@ class ObjektLookup(LookupChannel):
         return queryset[:50]
     
     def format_match(self, item):
-        return f"{item} ({item.id})"
+        if self._exists_on_latest_map(item):
+            color = settings.OBJEKT_COLOR
+            exists_on_latest_map = f'<span style="color: {color};">&checkmark;</span>'
+        else:
+            exists_on_latest_map = ''
+        return f"{item} ({item.id}) {exists_on_latest_map}"
 
     def format_item_display(self, item):
-        copy_icon = f'<span class="ui-icon ui-icon-copy" id="copy_objekt_{item.id}">X</span>'
-        return f'{item} (objekt_{item.id}) {copy_icon}'
+        if self._exists_on_latest_map(item):
+            color = settings.OBJEKT_COLOR
+        else:
+            color = ''
+        copy_icon = f'<span class="ui-icon ui-icon-copy" id="copy_objekt_{item.id}"></span>'
+        return f"{item} (objekt_{item.id}) <span style='color: {color};'>&checkmark;</span> {copy_icon}"
 
 
 @ajax_select.register('kaardiobjektid')

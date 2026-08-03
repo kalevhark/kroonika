@@ -3,7 +3,7 @@
         onclick="getLinkCopy(this)"
         data-uri="{{ request.build_absolute_uri }}"
 >
-  {{ object.nimi }}
+  {{ object.nimi }} {% if object.asukoht %}({{ object.asukoht }}){% endif %}
   <span
           class="copylink-confirmation w3-text"
           id="linkCopyTooltip"

@@ -8,13 +8,39 @@ from django.views.decorators.cache import cache_page
 from . import views
 
 # Objektivaated
-from wiki.views import ArtikkelDetailView, IsikDetailView, OrganisatsioonDetailView, ObjektDetailView, KaardiobjektDetailView
+from wiki.views import (
+    ArtikkelDetailView, 
+    IsikDetailView, 
+    OrganisatsioonDetailView, 
+    ObjektDetailView, 
+    KaardiobjektDetailView,
+    AadressDetailView, 
+)
 # Filtreerimisvaated
-from wiki.views import ArtikkelFilterView, IsikFilterView, OrganisatsioonFilterView, ObjektFilterView, KaardiobjektFilterView
+from wiki.views import (
+    ArtikkelFilterView, 
+    IsikFilterView, 
+    OrganisatsioonFilterView, 
+    ObjektFilterView, 
+    KaardiobjektFilterView,
+    AadressFilterView, 
+)
 # Loendivaated
-from wiki.views import ArtikkelArchiveIndexView, ArtikkelYearArchiveView, ArtikkelMonthArchiveView, ArtikkelDayArchiveView
+from wiki.views import (
+    ArtikkelArchiveIndexView, 
+    ArtikkelYearArchiveView, 
+    ArtikkelMonthArchiveView, 
+    ArtikkelDayArchiveView
+)
 # Muutmisvaated
-from wiki.views import ArtikkelUpdate, IsikUpdate, OrganisatsioonUpdate, ObjektUpdate, KaardiobjektUpdate
+from wiki.views import (
+    ArtikkelUpdate, 
+    IsikUpdate, 
+    OrganisatsioonUpdate, 
+    ObjektUpdate, 
+    KaardiobjektUpdate,
+    AadressUpdate, 
+)
 # API vaated
 # from wiki.views import UserDetail, UserList
 
@@ -56,11 +82,14 @@ urlpatterns = [
     path('kaardiobjekt/<int:pk>/', KaardiobjektDetailView.as_view(), name='wiki_kaardiobjekt_detail'),
     path('kaardiobjekt/get_kaardiobjekt_leaflet/<int:kaardiobjekt_id>/', views.get_kaardiobjekt_leaflet, name='get_kaardiobjekt_leaflet'),
     path('kaardiobjekt/join_kaardiobjekt_with_objekt/<int:kaardiobjekt_id>-<int:objekt_id>/', views.join_kaardiobjekt_with_objekt, name='join_kaardiobjekt_with_objekt'),
+    path('aadress/', AadressFilterView.as_view(), name='wiki_aadress_filter'),
+    path('aadress/<int:pk>/', AadressDetailView.as_view(), name='wiki_aadress_detail'),
     path('update/artikkel/<int:pk>', ArtikkelUpdate.as_view(), name='artikkel_update'),
     path('update/isik/<int:pk>', IsikUpdate.as_view(), name='isik_update'),
     path('update/organisatsioon/<int:pk>', OrganisatsioonUpdate.as_view(), name='organisatsioon_update'),
     path('update/objekt/<int:pk>', ObjektUpdate.as_view(), name='objekt_update'),
     path('update/kaardiobjekt/<int:pk>', KaardiobjektUpdate.as_view(), name='kaardiobjekt_update'),
+    path('update/aadress/<int:pk>', AadressUpdate.as_view(), name='aadress_update'),
     path('wiki_base_info/', views.wiki_base_info, name='wiki_base_info'),
     path('switch_vkj_ukj/<str:calendar_system>/', views.switch_vkj_ukj, name='switch_vkj_ukj'),
     # path('users/', UserList.as_view()),

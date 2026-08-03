@@ -10,7 +10,7 @@
     <div class="w3-row text-objekt" >
       <h4>
         <a style="text-decoration: none;" href="{% url 'wiki:wiki_kaardiobjekt_filter' %}">
-          <i class="{% icon_kaardiobjekt %}"></i>
+          <i class="{% icon_object object %}"></i>
         </a>
         {{ object }}
         {% if object.objekt %} ->
@@ -170,4 +170,5 @@
       }
     });
   </script>
-{% endblock %}
+
+{% endblock content %}

@@ -28,7 +28,7 @@ from django.core.files.base import ContentFile
 from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.db.models import \
-    Max, Case, F, When, \
+    Max, Case, F, QuerySet, When, \
     Value, CharField, DateField, IntegerField
 from django.db.models.functions import Cast, Concat, Coalesce, ExtractYear, ExtractMonth, ExtractDay, LPad
 from django.db.models.signals import pre_save, post_save
@@ -555,17 +555,36 @@ def remove_markdown_tags(obj) -> str:
         kirjeldus = re.sub(r'###',"", kirjeldus)
     return kirjeldus
 
+def get_wiki_viited_queryset(obj) -> QuerySet:
+    """
+    Moodusta wiki objekti viidetest viiteloend
+    :param obj: wiki model object
+    :return: viiteloend queryset
+    :rtype: QuerySet
+    """
+    viited_objectile = [viide.id for viide in obj.viited.all()]
+    if obj._meta.model is Objekt:
+        # Lisame viited kaardiobjektidele ja aadressidele
+        kaardiobjektid = obj.kaardiobjektid.all()
+        viited_kaardile = [kaardiobjekt.kaart.viited.first().id for kaardiobjekt in kaardiobjektid]
+        viited_objectile.extend(viited_kaardile)
+        aadressid = obj.aadress_set.all()
+        viited_aadressile = [aadress.viited.first().id for aadress in aadressid]
+        viited_objectile.extend(viited_aadressile)
+    viited = Viide.objects.filter(id__in=viited_objectile)
+    return viited
 
-def replace_wiki_viited_to_markdown(obj) -> str:
+def replace_wiki_viited_to_markdown(obj, viited) -> str:
     """
     Asenda wiki viited markdown formaadis viidetega.
 
     :param obj: wiki model object
+    :param viited: viiteloend queryset
     :param kirjeldus: string
     :return: modified kirjeldus
     """
     kirjeldus = obj.kirjeldus
-    viited = obj.viited.all()
+    # viited = obj.viited.all()
     if viited:
         viitenr = itertools.count(1)
         translate_viited = {
@@ -578,14 +597,25 @@ def replace_wiki_viited_to_markdown(obj) -> str:
     return kirjeldus
 
 
-def make_wiki_viited_list(obj) -> str:
+def make_wiki_viited_list(obj, viited) -> str:
     """
     Moodusta wiki objekti viidetest markdown formaadis viiteloend
     :param obj: wiki model object
+    :param viited: viiteloend queryset
     :return: viiteloend markdown formaadis
     :rtype: str
     """
-    viited = obj.viited.all()
+    # viited_objectile = [viide.id for viide in obj.viited.all()]
+    # if obj._meta.model is Objekt:
+    #     # Lisame viited kaardiobjektidele ja aadressidele
+    #     kaardiobjektid = obj.kaardiobjektid.all()
+    #     viited_kaardile = [kaardiobjekt.kaart.viited.first().id for kaardiobjekt in kaardiobjektid]
+    #     viited_objectile.extend(viited_kaardile)
+    #     aadressid = obj.aadress_set.all()
+    #     viited_aadressile = [aadress.viited.first().id for aadress in aadressid]
+    #     viited_objectile.extend(viited_aadressile)
+    # viited = Viide.objects.filter(id__in=viited_objectile)
+    
     viiteplokk = ''
     if viited:
         viitenr = itertools.count(1)
@@ -606,8 +636,9 @@ def add_markdownx_viited(obj) -> tuple:
     :return: (kirjeldus_formatted_markdown, viiteplokk_formatted_markdown)
     :rtype: tuple
     """
-    kirjeldus = replace_wiki_viited_to_markdown(obj)
-    viiteplokk = make_wiki_viited_list(obj)
+    viited = get_wiki_viited_queryset(obj)
+    kirjeldus = replace_wiki_viited_to_markdown(obj, viited)
+    viiteplokk = make_wiki_viited_list(obj, viited)
     formatted_markdown = markdownify(f'{kirjeldus}{viiteplokk}')
     # jagame kaheks osaks, et saaks kasutada eraldi
     viiteploki_algus = formatted_markdown.find('<div class="footnote">')
@@ -795,22 +826,6 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         return VIGA_TEKSTIS in self.kirjeldus if self.kirjeldus else False
 
     # Create a property that returns the markdown instead
-    # @property
-    # def formatted_markdown_old(self):
-    #     tekst = self.kirjeldus
-    #     if len(tekst) == 0:  # markdownx korrektseks tööks vaja, et sisu ei oleks null
-    #         tekst = '<br>'
-    #     tekst = add_markdown_objectid(self)
-    #     viite_string = add_markdownx_viited(self)
-    #     # markdownified_text = markdownify(escape_numberdot(tekst) + viite_string)
-    #     markdownified_text = markdownify(tekst + viite_string)
-    #     # Töötleme tekstisisesed pildid NB! pärast morkdownify, muidu viga!
-    #     markdownified_text = add_markdownx_pildid(markdownified_text)
-    #     if viite_string: # viidete puhul ilmneb markdownx viga
-    #         markdownified_text = fix_markdownified_text(markdownified_text)
-    #     return markdownified_text
-
-    # Create a property that returns the markdown instead
     @property
     def formatted_markdown(self):
         kirjeldus_formatted_markdown, _ = add_markdownx_viited(self)
@@ -932,6 +947,20 @@ class Objekt(BaasObjectMixinModel):
         if any([sy, su]):
             nimeosad.append(f'{sy}-{su}')
         return ' '.join(nimeosad)
+
+    # Kui objectil puudub viide, siis punane
+    def colored_nimi(self):
+        latest_map = Kaart.objects.order_by('-aasta').first()
+        if self.kaardiobjektid.filter(kaart=latest_map).exists():
+            color = settings.OBJEKT_COLOR
+        else:
+            color = ''
+        return format_html(
+            '<strong><span style="color: {};">{}</span></strong>',
+            color,
+            self.nimi
+        )
+    colored_nimi.short_description = 'Kohanimi'
 
     class Meta:
         ordering = ['slug'] # erimärkidega nimetuste välistamiseks
@@ -1610,6 +1639,10 @@ class Kaart(BaasAddUpdateInfoModel):
         return f'{self.aasta} {self.nimi}'
 
     @property
+    def hist_year(self):
+        return self.aasta
+
+    @property
     def kirjeldus_html(self):
         kirjeldus = '<br>'.join(
             [
@@ -1686,7 +1719,15 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
     )
 
     def __str__(self):
-        return ' '.join([self.kaart.aasta, self.tn, self.nr, self.tyyp, self.lisainfo])
+        return ' '.join([self.tn, self.nr])
+    
+    @property
+    def nimi(self):
+        return ' '.join([self.tn, self.nr])
+    
+    @property
+    def kirjeldus(self):
+        return self.lisainfo if self.lisainfo else self.objekt.nimi
 
     @property
     def centroid(self, *args, **kwargs):
@@ -1847,7 +1888,7 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     )
 
     def __str__(self):
-        return ' '.join([str(self.hist_year), self.nimi, self.korter, self.kirjeldus[:40]])
+        return ' '.join([self.nimi, self.korter])
     
     def save(self, *args, **kwargs):
         # Täidame tühjad kuupäevaväljad olemasolevate põhjal

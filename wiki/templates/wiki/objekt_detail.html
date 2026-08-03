@@ -14,16 +14,18 @@
           <i class="{% icon_objekt %}"></i>
         </a>
         {% include 'wiki/includes/object_detail_nimi.html' %}
+        {% include 'wiki/includes/object_detail_daatumid.html' %}
       </h4>
-      {% if object.asukoht %}
-        <h5>
-          <span style="font-weight: normal;">Varasemad aadressi- või nimekujud:</span> {{ object.asukoht }}
-        </h5>
-      {% endif %}
-      {% if object.gone or object.hist_enddate or object.hist_endyear %}
-        kaasajal pole olemas või on nime muudetud
-      {% endif %}
-      <h5>
+    </div>
+    <div class="w3-row">
+      <p>
+        {% comment %} {% if object.gone or object.hist_enddate or object.hist_endyear %}
+          <span class="w3-text-red">Kaasajal pole olemas või on nime muudetud. </span>
+        {% endif %} {% endcomment %}
+        {% include 'wiki/includes/object_detail_aadressid.html' %}
+      </p>
+      
+      {% comment %} <h5>
         {% if object.hist_date or object.hist_year %}
           <i class="fa fa-asterisk"></i>
           {% if object.hist_date %}
@@ -45,7 +47,7 @@
             <strong>{% include 'wiki/includes/kp.html' with y=object.hist_endyear cs="objekt" %}</strong>
           {% endif %}
         {% endif %}
-      </h5>
+      </h5> {% endcomment %}
       {% include 'wiki/includes/object_detail_eellased_j2rglane.html' with qs=eellased.qs label=eellased.label %}
       {% include 'wiki/includes/object_detail_eellased_j2rglane.html' with qs=j2rglane.qs label=j2rglane.label %}
     </div>
