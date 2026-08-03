@@ -139,15 +139,26 @@ class ObjektLookup(LookupChannel):
             exists_on_latest_map = f'<span style="color: {color};">&checkmark;</span>'
         else:
             exists_on_latest_map = ''
-        return f"{item} ({item.id}) {exists_on_latest_map}"
+        if item.gone or item.hist_enddate or item.hist_endyear:
+            color = settings.GONE_COLOR
+            objekt_gone = f'<span style="color: {color};">&chi;</span>'
+        else:
+            objekt_gone = ''
+        return f"{item} ({item.id}) {exists_on_latest_map}{objekt_gone}"
 
     def format_item_display(self, item):
         if self._exists_on_latest_map(item):
             color = settings.OBJEKT_COLOR
+            exists_on_latest_map = f'<span style="color: {color};">&checkmark;</span>'
         else:
-            color = ''
+            exists_on_latest_map = ''
+        if item.gone or item.hist_enddate or item.hist_endyear:
+            color = settings.GONE_COLOR
+            objekt_gone = f'<span style="color: {color};">&chi;</span>'
+        else:
+            objekt_gone = ''
         copy_icon = f'<span class="ui-icon ui-icon-copy" id="copy_objekt_{item.id}"></span>'
-        return f"{item} (objekt_{item.id}) <span style='color: {color};'>&checkmark;</span> {copy_icon}"
+        return f"{item} (objekt_{item.id}) {exists_on_latest_map}{objekt_gone} {copy_icon}"
 
 
 @ajax_select.register('kaardiobjektid')

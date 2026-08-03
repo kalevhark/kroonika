@@ -399,6 +399,7 @@ DEFAULT_MIN_ZOOM = 13
 
 FUCHSIA = '#FF00FF'
 OBJEKT_COLOR = '#2b5797'
+GONE_COLOR = '#FF0000'
 
 GEOJSON_STYLE = {
     'H': {'fill': FUCHSIA, 'color': FUCHSIA, 'weight': 3}, # hoonestus (default)
