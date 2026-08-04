@@ -1,0 +1,14 @@
+/* ver 2026.08 */
+#div_id_kaardiobjektid {
+  width: 25%;
+  height: 25%;
+}
+
+#div_id_aadressid,
+#div_id_objektid,
+#div_id_eellased,
+#div_id_viited,
+#div_id_isikud,
+#div_id_organisatsioonid {
+  width: 50%;
+}

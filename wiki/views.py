@@ -1398,6 +1398,32 @@ class ObjectUpdate(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                     obj.hist_searchdate = datetime(obj.hist_year, 1, 1)
         obj.save()
         form.save_m2m()
+        if model == 'objekt':
+            # Uuendame objekti seose kaardiobjektidega
+            kaardiobjektid = form.cleaned_data.get("kaardiobjektid")
+            kaardiobjektid_has_changed = form.fields["kaardiobjektid"].has_changed(
+                obj.kaardiobjektid.all(), 
+                form.cleaned_data.get("kaardiobjektid")
+            )
+            if kaardiobjektid_has_changed:
+                # Eemaldame kõik seotud kaardiobjektid
+                obj.kaardiobjektid.clear()
+                # Lisame uued seotud kaardiobjektid
+                for kaardiobjekt in kaardiobjektid:
+                    obj.kaardiobjektid.add(kaardiobjekt)
+            
+            # Uuendame objekti seose aadressidega
+            aadressid = form.cleaned_data.get("aadressid")
+            aadressid_has_changed = form.fields["aadressid"].has_changed(
+                obj.aadress_set.all(), 
+                form.cleaned_data.get("aadressid")
+            )
+            if aadressid_has_changed:
+                # Eemaldame kõik seotud aadressid
+                obj.aadress_set.clear()
+                # Lisame uued seotud aadressid
+                for aadress in aadressid:
+                    obj.aadress_set.add(aadress)
         messages.success(self.request, f"{obj} andmed muudetud.")
 
         return redirect(f'wiki:wiki_{model}_detail', pk=self.object.id, slug=self.object.slug)

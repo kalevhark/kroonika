@@ -224,13 +224,15 @@ class ObjektForm(BaasObjectForm):
     
     class Meta:
         model = Objekt
-        # fields = ('nimi', 'tyyp', 'asukoht', 'kirjeldus',
-        #           'hist_date', 'hist_year', 'hist_month',
-        #           'hist_enddate', 'hist_endyear', 'hist_endmonth', 'gone',
-        #           'objektid', 'eellased',
-        #           'viited', 'kaardiobjektid'
-        # )
-        fields = '__all__'
+        fields = (
+            'nimi', 'tyyp', 'asukoht', 'kirjeldus',
+            'aadressid', 'kaardiobjektid',
+            'hist_date', 'hist_year', 'hist_month',
+            'hist_enddate', 'hist_endyear', 'hist_endmonth', 'gone',
+            'objektid', 'eellased',
+            'viited',
+        )
+        # fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

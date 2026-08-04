@@ -171,6 +171,8 @@ class KaardiobjektLookup(LookupChannel):
         splits = q.split(' ')
         queryset = self.model.objects.annotate(
             nimi_asukoht=Concat(
+                F('kaart__aasta'),
+                Value(' '),
                 F('tn'),
                 Value(' '),
                 F('nr'),
@@ -181,13 +183,13 @@ class KaardiobjektLookup(LookupChannel):
         )
         for split in splits:
             queryset = queryset.filter(nimi_asukoht__iregex=split)
-        return queryset[:50]
+        return queryset[:30]
 
     def format_match(self, item):
-        return f"{item} ({item.id})"
+        return f"{item.kaart.aasta}: {item} ({item.id})"
 
     def format_item_display(self, item):
-        return f'<p>{item}</p>{item.get_leaflet()}'
+        return f'<p>{item.kaart.aasta}: {item}</p>{item.get_leaflet()}'
     
 
 @ajax_select.register('aadressid')
@@ -200,6 +202,8 @@ class AadressLookup(LookupChannel):
         splits = q.split(' ')
         queryset = self.model.objects.annotate(
             nimi_asukoht=Concat(
+                F('hist_year'),
+                Value(' '),
                 F('nimi'),
                 Value(' '),
                 F('korter'),
@@ -211,10 +215,10 @@ class AadressLookup(LookupChannel):
         return queryset[:50]
 
     def format_match(self, item):
-        return f"{item} ({item.id})"
+        return f"{item.hist_year}: {item} ({item.id})"
 
     def format_item_display(self, item):
-        return f'{item} ({item.id})'
+        return f'{item.hist_year}: {item} ({item.id})'
     
 
 @ajax_select.register('viited')
