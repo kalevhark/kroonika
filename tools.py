@@ -32,7 +32,7 @@ from django.db.models.functions import Extract, Trunc, ExtractDay
 
 from wiki.models import (
     Aadress, Artikkel, Isik, Organisatsioon, Objekt, Pilt,
-    Kaardiobjekt,
+    Kaart, Kaardiobjekt,
     Viide, Allikas
 )
 
@@ -1461,6 +1461,48 @@ def update_addresses_from_aadressraamat_1925():
             )
             aadress.save()
             aadress.viited.add(viide)
+
+def update_lisainfo_1912_kaardiobjektid():
+    vasted = """
+    Aia, Garten Strasse    
+    Aleksandri, Alexander Strasse
+    Allee, Allee Strasse
+    Elisabeti, Elisabeth Strasse
+    Isidori, Isidor Strasse
+    Jaani, Johannen Strasse
+    Kitsas, Schmal Strasse
+    Köie, Grosse Reeper Strasse
+    Liiva, Sand Strasse
+    Matuseaia, Kirchhofs Strasse
+    Mesipuu, Bienen Strasse
+    Moskva, Moskausche Strasse
+    Mäe, Berg Strasse
+    Pihkva, Pleskausche Strasse
+    Puškini, Puschkin Strasse
+    Põllu, Feld Strasse
+    Pärnu, Pernausche Strasse
+    Riia, Rigasche Strasse
+    Sauna, Badstuben Strasse
+    Sepa, Schmiede Strasse
+    Tartu, Die Jurjewsche Strasse
+    Uus, Neu Strasse
+    Viljandi, Fellinsche Strasse
+    Vladimiri, Wladimir Strasse
+    Väike Liiva, Kleine Sand Strasse
+    Väike Mäe, Kleine Berg Strasse
+    Väike Puškini, [Kleine Puschkin Strasse]
+    """
+    paarid = vasted.strip().split('\n')
+    kaart = Kaart.objects.get(aasta='1912')
+    for paar in paarid:
+        tn = paar.split(',')[0].strip()
+        print('Alustänav:', tn)
+        kaardiobjektid = Kaardiobjekt.objects.filter(kaart=kaart).filter(tn__startswith=tn)
+        for kaardiobjekt in kaardiobjektid:
+            lisainfo_aadress = ' '.join([paar.split(',')[1].strip(), kaardiobjekt.nr]) if kaardiobjekt.nr else paar.split(',')[1].strip()
+            kaardiobjekt.lisainfo = ', '.join([lisainfo_aadress, kaardiobjekt.lisainfo]) if kaardiobjekt.lisainfo else lisainfo_aadress
+            print(kaardiobjekt.lisainfo)
+            kaardiobjekt.save()
 
 
 if __name__ == "__main__":
