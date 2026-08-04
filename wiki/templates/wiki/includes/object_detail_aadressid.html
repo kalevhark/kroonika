@@ -1,13 +1,13 @@
 {% load wiki_extras %}
-{% if seotud_aadressid %}
-  <div>
-    <ul class="ul-seotud">
-      <span style="margin: 0 -1px 0 10px;">
-        {% if object.gone or object.hist_enddate or object.hist_endyear %}
-          <span class="w3-text-red">Kaasajal pole olemas või on nime muudetud. </span>
-        {% endif %}
-        Varasemad aadressi- või nimekujud:
-      </span>
+<div>
+  <ul class="ul-seotud">
+    <span style="margin: 0 -1px 0 10px;">
+      {% if object.gone or object.hist_enddate or object.hist_endyear %}
+      <span class="w3-text-red">Kaasajal pole olemas või on nime muudetud.&nbsp;</span>
+      {% endif %}
+    </span>
+    {% if seotud_aadressid %}
+    Varasemad aadressi- või nimekujud:
       {% for item in seotud_aadressid|dictsortreversed:'hist_year' %}
         <a
           class="hover-artikkel"
@@ -29,6 +29,6 @@
           </li>
         </a>
       {% endfor %}
-    </ul>
-  </div>
-{% endif %}
+    {% endif %}
+  </ul>
+</div>
