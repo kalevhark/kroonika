@@ -72,6 +72,7 @@ urlpatterns = [
     path('object_detail_seotud/<str:model>-<int:id>/', views.object_detail_seotud, name='wiki_object_detail_seotud'),
     path('object_detail_seotud_pildirida/<str:model>-<int:id>/', views.object_detail_seotud_pildirida, name='wiki_object_detail_seotud_pildirida'),
     path('get_object_data4tooltip/', views.get_object_data4tooltip, name='get_object_data4tooltip'),
+    path('get_object_mainitud_aastatel/<str:model_name>-<int:object_id>/', views.get_object_mainitud_aastatel, name='get_object_mainitud_aastatel'),
     path('get_qrcode_from_uri/', views.get_qrcode_from_uri, name='get_qrcode_from_uri'),
     path('organisatsioon/', OrganisatsioonFilterView.as_view(), name='wiki_organisatsioon_filter'),
     path('organisatsioon/<int:pk>-<str:slug>/', OrganisatsioonDetailView.as_view(), name='wiki_organisatsioon_detail'),

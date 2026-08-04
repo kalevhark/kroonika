@@ -1,6 +1,42 @@
-{% if mainitud_aastatel_chart %}
-  <div class="w3-row">
-    Mainimisi aastatel:<br>
-    <img class="graafik-responsive" src="data:image/png;base64, {{mainitud_aastatel_chart|safe}}" alt="" id="img">
+{% load wiki_extras %}
+{% comment %} {% if mainitud_aastatel %} {% endcomment %}
+  <!-- Sisukaardi maainitud aastatel osa-->
+  <div
+          class="w3-row"
+  >
+    {% include 'wiki/includes/div_loader_book.html' with n='_mainitud_aastatel' %}
+    <div
+          id="get_object_mainitud_aastatel"
+          data-url="{% url 'wiki:get_object_mainitud_aastatel' object|to_model_name_lower object.id %}"
+    ></div>
   </div>
-{% endif %}
+
+  <script>
+    function get_object_mainitud_aastatel() {
+      // Küsime andmed ja näitame kaarti
+      $.ajax({
+        url: $("#get_object_mainitud_aastatel").attr("data-url"),
+        dataType: 'text',
+        timeout: 300000,
+        beforeSend: function() {
+          $("#loaderDiv" + '_mainitud_aastatel').show();
+        },
+        success: function (data) {
+          if (data) {
+              document.getElementById("get_object_mainitud_aastatel").innerHTML = data;
+            }
+          },
+        error: function (XMLHttpRequest, textstatus, errorThrown) {
+          console.log(textstatus);
+        },
+      complete: function () {
+        $("#loaderDiv" + '_mainitud_aastatel').hide();
+      }
+      });
+    }
+
+    $(document).ready(function() {
+      get_object_mainitud_aastatel();
+    });
+  </script>
+{% comment %} {% endif %} {% endcomment %}

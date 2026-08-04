@@ -1,32 +1,32 @@
-<!-- Sisukaardi kaardiosa-->
-<div
-        class="w3-margin-right w3-center w3-padding-16"
-        style="display: {% if seotud_kaardiobjektid %}block{% else %}none{% endif %}"
->
-  {% include 'wiki/includes/div_loader_book.html' with n=2 %}
-  <div
-        id="get_objekt_leaflet_combo"
-        data-url="{% url 'wiki:get_objekt_leaflet_combo' object.id %}"
-  ></div>
-  {% if user.is_authenticated %}
-    <div class="w3-padding-16">
-    <ul class="no-bullets">
-      {% for obj in seotud_kaardiobjektid %}
-        <li>
-          <a
-              class="hover-artikkel"
-              href="{% url 'wiki:wiki_kaardiobjekt_detail' pk=obj.id %}"
-            >
-            {{ obj }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-    </div>
-  {% endif %}
-</div>
-
 {% if seotud_kaardiobjektid %}
+  <!-- Sisukaardi kaardiosa-->
+  <div
+          class="w3-margin-right w3-center w3-padding-16"
+          style="display: block;"
+  >
+    {% include 'wiki/includes/div_loader_book.html' with n='_kaardiobjektid' %}
+    <div
+          id="get_objekt_leaflet_combo"
+          data-url="{% url 'wiki:get_objekt_leaflet_combo' object.id %}"
+    ></div>
+    {% if user.is_authenticated %}
+      <div class="w3-padding-16">
+      <ul class="no-bullets">
+        {% for obj in seotud_kaardiobjektid %}
+          <li>
+            <a
+                class="hover-artikkel"
+                href="{% url 'wiki:wiki_kaardiobjekt_detail' pk=obj.id %}"
+              >
+              {{ obj }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+      </div>
+    {% endif %}
+  </div>
+
   <script>
     function get_objekt_leaflet_combo() {
       // Küsime andmed ja näitame kaarti
@@ -35,7 +35,7 @@
         dataType: 'text',
         timeout: 300000,
         beforeSend: function() {
-          $("#loaderDiv2").show();
+          $("#loaderDiv" + '_kaardiobjektid').show();
         },
         success: function (data) {
           if (data) {
@@ -46,7 +46,7 @@
           console.log(textstatus);
         },
       complete: function () {
-        $("#loaderDiv2").hide();
+        $("#loaderDiv" + '_kaardiobjektid').hide();
       }
       });
     }

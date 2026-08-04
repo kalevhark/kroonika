@@ -16,7 +16,7 @@ from pathlib import Path
 # import pkg_resources
 import sys
 import tempfile
-from typing import Dict, Any
+from typing import Dict, Any, List
 from urllib.parse import urlencode
 
 from ajax_select.fields import autoselect_fields_check_can_add
@@ -34,7 +34,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import \
     Count, Max, Min, \
-    Case, F, Func, Q, When, \
+    Case, F, Func, Q, QuerySet, When, \
     Value, IntegerField, \
     ExpressionWrapper
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
@@ -810,6 +810,42 @@ def inrange_dates_artikkel(qs, p2ev, kuu):
 def user_is_staff_check(user):
     return user.is_staff
 
+def get_kaardiobjektid_for_objekt(objekt: Objekt) -> QuerySet:
+    """Tagastab objekti kaardivaated"""
+    seotud_kaardiobjektid = Kaardiobjekt.objects. \
+        filter(objekt__id=objekt.id). \
+        filter(tyyp=objekt.tyyp)
+    return seotud_kaardiobjektid
+
+def get_seotud_aadressid_for_objekt(
+        objekt: Objekt,
+        seotud_kaardiobjektid: QuerySet
+) -> List[Dict[str, Any]]:
+    """Tagastab objekti seotud aadressid"""
+    seotud_aadressid = []
+    for kaardiobjekt in seotud_kaardiobjektid:
+        hist_year = str(kaardiobjekt.kaart.aasta)
+        seotud_aadressid.append(
+            {
+                'hist_year': hist_year,
+                'object': kaardiobjekt,
+                'viide': kaardiobjekt.kaart.viited.first() if kaardiobjekt.kaart.viited.exists() else None,
+            }
+        )
+    seotud_aadressid_queryset = Aadress.objects. \
+        filter(objekt__id=objekt.id)
+    for aadress in seotud_aadressid_queryset:
+        hist_year = str(aadress.hist_year)
+        if hist_year not in seotud_aadressid:
+            seotud_aadressid.append(
+                {
+                    'hist_year': hist_year,
+                    'object': aadress,
+                    'viide': aadress.viited.first() if aadress.viited.exists() else None,
+                }
+            )
+    return seotud_aadressid
+
 #
 # Objectide v6rdlemiseks
 #
@@ -861,12 +897,24 @@ def get_v6rdle_object(request):
     }
     seotud_artiklid = artikkel_qs.filter(**filter)
 
+    if model is Objekt:
+        seotud_kaardiobjektid = get_kaardiobjektid_for_objekt(object)
+        seotud_aadressid = get_seotud_aadressid_for_objekt(object, seotud_kaardiobjektid)
+    else:
+        seotud_kaardiobjektid = None
+        seotud_aadressid = None
+
+    mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, model, object)
+
     return render(
         request,
         f'wiki/wiki_v6rdle_{model_name.lower()}.html',
         {
             'object': object,
-            'seotud_artiklid': seotud_artiklid
+            'seotud_artiklid': seotud_artiklid,
+            'seotud_kaardiobjektid': seotud_kaardiobjektid,
+            'seotud_aadressid': seotud_aadressid,
+            'mainitud_aastatel': mainitud_aastatel_data,
         }
     )
 
@@ -1132,13 +1180,13 @@ def mis_kuul(kuu, l6pp='s'):
             ]
     return kuud[kuu - 1] + l6pp
 
-def get_mainitud_aastatel(qs, model, obj):
+def get_mainitud_aastatel_data(qs, model, obj):
     # Artiklites mainimine läbi aastate
-    if model == 'Isik':
+    if model is Isik:
         qs = qs.filter(isikud__id=obj.id)
-    elif model == 'Objekt':
+    elif model is Objekt:
         qs = qs.filter(objektid__id=obj.id)
-    elif model == 'Organisatsioon':
+    elif model is Organisatsioon:
         qs = qs.filter(organisatsioonid__id=obj.id)
 
     aastad = list(qs.values_list('hist_year', flat=True).distinct())
@@ -1172,7 +1220,8 @@ def get_mainitud_aastatel_chart(mainitud_aastatel_data):
         # ax.set_xlabel('This is the default font')
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         plt.bar(
-            list(mainitud_aastatel_data.keys()), mainitud_aastatel_data.values(),
+            list(mainitud_aastatel_data.keys()), 
+            mainitud_aastatel_data.values(),
             color='g'
         )
         mainitud_aastatel = [int(aasta) for aasta in mainitud_aastatel_data.keys()]
@@ -1195,6 +1244,21 @@ def get_mainitud_aastatel_chart(mainitud_aastatel_data):
         buffer.close()
         plt.close()
     return graph
+
+def get_object_mainitud_aastatel(
+    request, 
+    model_name: str, 
+    object_id: int
+):
+    model = apps.get_model('wiki', model_name)
+    artikkel_qs = Artikkel.objects.daatumitega(request)
+    object = model.objects.daatumitega(request).get(id=object_id)
+    mainitud_aastatel_data = get_mainitud_aastatel_data(artikkel_qs, model, object)
+    mainitud_aastatel_chart = get_mainitud_aastatel_chart(mainitud_aastatel_data)
+    object_mainitud_aastatel = f"""Mainimisi aastatel:<br>
+    <img class="graafik-responsive" src="data:image/png;base64, {mainitud_aastatel_chart}" alt="" id="img">
+    """
+    return HttpResponse(object_mainitud_aastatel)
 
 def seotud_artiklikaudu(request, model, seotud_artiklid, object_self):
     queryset = model.objects.daatumitega(request)
@@ -2243,10 +2307,10 @@ class IsikDetailView(generic.DetailView):
             filter(profiilipilt_isikud__in=[self.object]). \
             first()
         # Mainimine läbi aastate
-        mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, 'Isik', self.object)
-        # context['mainitud_aastatel'] = mainitud_aastatel_data
-        context['mainitud_aastatel_chart'] = get_mainitud_aastatel_chart(mainitud_aastatel_data)
-        # Otseseosed objektidega
+        # mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, Isik, self.object)
+        # context['mainitud_aastatel'] = mainitud_aastatetel
+        # context['mainitud_aastatel_chart'] = get_mainitud_aastatel_chart(mainitud_aastatel_data)
+        # # Otseseosed objektidega
         context['seotud_organisatsioonid'] = Organisatsioon.objects.daatumitega(self.request).\
             filter(isik=self.object)
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).\
@@ -2425,10 +2489,10 @@ class OrganisatsioonDetailView(generic.DetailView):
 
         # Mainimine läbi aastate
         # context['mainitud_aastatel'] = get_mainitud_aastatel(artikkel_qs, 'Organisatsioon', self.object)
-        mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, 'Organisatsioon', self.object)
-        # context['mainitud_aastatel'] = mainitud_aastatel_data
-        context['mainitud_aastatel_chart'] = get_mainitud_aastatel_chart(mainitud_aastatel_data)
-        # Otseseosed objectidega
+        # mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, Organisatsioon, self.object)
+        # # context['mainitud_aastatel'] = mainitud_aastatel_data
+        # context['mainitud_aastatel_chart'] = get_mainitud_aastatel_chart(mainitud_aastatel_data)
+        # # Otseseosed objectidega
         context['seotud_isikud'] = Isik.objects.daatumitega(self.request).\
             filter(organisatsioonid=self.object)
         context['seotud_objektid'] = Objekt.objects.daatumitega(self.request).\
@@ -2567,51 +2631,15 @@ class ObjektDetailView(generic.DetailView):
             filter(profiilipilt_objektid__in=[self.object]). \
             first()
         # Kas objektil on kaardivaateid
-        # if self.request.user.is_authenticated and self.request.user.is_staff:
-        #     context['seotud_kaardiobjektid'] = Kaardiobjekt.objects. \
-        #         filter(objekt__id=self.object.id). \
-        #         all()
-        # else:
-        #     context['seotud_kaardiobjektid'] = Kaardiobjekt.objects.\
-        #         filter(objekt__id=self.object.id).\
-        #         exists()
-        seotud_kaardiobjektid = Kaardiobjekt.objects. \
-            filter(objekt__id=self.object.id). \
-            filter(tyyp=self.object.tyyp)
+        seotud_kaardiobjektid = get_kaardiobjektid_for_objekt(self.object)
         context['seotud_kaardiobjektid'] = seotud_kaardiobjektid
         # Kas objektil on seotud aadresse
-        seotud_aadressid = []
-        for kaardiobjekt in seotud_kaardiobjektid:
-            hist_year = str(kaardiobjekt.kaart.aasta)
-            seotud_aadressid.append(
-                {
-                    # 'id': kaardiobjekt.id,
-                    'hist_year': hist_year,
-                    # 'nimi': kaardiobjekt,
-                    # 'model': 'kaardiobjekt',
-                    'object': kaardiobjekt,
-                    'viide': kaardiobjekt.kaart.viited.first() if kaardiobjekt.kaart.viited.exists() else None,
-                }
-            )
-        seotud_aadressid_queryset = Aadress.objects. \
-            filter(objekt__id=self.object.id)
-        for aadress in seotud_aadressid_queryset:
-            hist_year = str(aadress.hist_year)
-            if hist_year not in seotud_aadressid:
-                seotud_aadressid.append(
-                    {
-                        # 'id': aadress.id,
-                        'hist_year': hist_year,
-                        # 'nimi': aadress,
-                        # 'model': 'aadress',
-                        'object': aadress,
-                        'viide': aadress.viited.first() if aadress.viited.exists() else None,
-                    }
-                )
+        seotud_aadressid = get_seotud_aadressid_for_objekt(self.object, seotud_kaardiobjektid)
         context['seotud_aadressid'] = seotud_aadressid
         # Mainimine läbi aastate
-        mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, 'Objekt', self.object)
-        context['mainitud_aastatel_chart'] = get_mainitud_aastatel_chart(mainitud_aastatel_data)
+        # mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, Objekt, self.object)
+        # context['mainitud_aastatel_chart'] = get_mainitud_aastatel_chart(mainitud_aastatel_data)
+        # context['mainitud_aastatel'] = True
         # Otseseosed objektidega
         context['seotud_isikud'] = Isik.objects.\
             daatumitega(self.request).\

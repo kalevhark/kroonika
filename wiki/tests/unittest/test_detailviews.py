@@ -13,7 +13,7 @@ from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from wiki import views
-from wiki.models import Artikkel, Isik, Organisatsioon, Objekt, Pilt
+from wiki.models import Aadress, Artikkel, Isik, Kaardiobjekt, Organisatsioon, Objekt, Pilt
 from wiki.tests import test_base
 
 
@@ -105,6 +105,8 @@ class DetailViewUnitTest(TestCase):
         self.assertIn('seotud_isikud', response.context_data)
         self.assertIn('seotud_objektid', response.context_data)
         self.assertIn('seotud_pildid', response.context_data)
+        self.assertIn('seotud_kaardiobjektid', response.context_data)
+        self.assertIn('seotud_aadressid', response.context_data)
 
     def test_object_seotud_pildid_pildirida_exists(self):
         SELECT_COUNT = 3
@@ -890,3 +892,71 @@ class ObjektViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'linnapark')
         self.assertContains(response, 'inlineedit-toggle-area')
+
+    def test_object_gone_text_visible_if_gone_true(self):
+        self.request.user = AnonymousUser()
+        objekt = Objekt.objects.filter(gone=True).first()
+        response = views.ObjektDetailView.as_view()(self.request, pk=objekt.id, slug=objekt.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Kaasajal pole olemas')
+
+    def test_object_gone_text_visible_if_endyear_set(self):
+        self.request.user = AnonymousUser()
+        objekt = Objekt.objects. \
+            exclude(gone=True). \
+            filter(hist_endyear__isnull=False).first()
+        response = views.ObjektDetailView.as_view()(self.request, pk=objekt.id, slug=objekt.slug)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Kaasajal pole olemas')
+
+
+class KaardiobjektViewTests(TestCase):
+    def setUp(self):
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        self.user = User.objects.get(id=1)
+
+        self.test_object_id = Kaardiobjekt.objects.order_by('?').first().id
+
+    def test_object_exists(self):
+        self.assertEqual(Kaardiobjekt.objects.filter(id=self.test_object_id).count(), 1)
+        obj = Kaardiobjekt.objects.get(id=self.test_object_id)
+        url = urllib.parse.unquote(obj.get_absolute_url())
+        self.assertEqual(url, f'/wiki/kaardiobjekt/{obj.id}/')
+
+    def test_view_url_exists_at_desired_location(self):
+        obj = Kaardiobjekt.objects.get(id=self.test_object_id)
+        url = f'/wiki/kaardiobjekt/{obj.id}/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+
+class AadressViewTests(TestCase):
+    def setUp(self):
+        # Every test needs access to the request factory.
+        self.factory = RequestFactory()
+        # Create an instance of a GET request.
+        self.request = self.factory.get('/')
+        middleware = SessionMiddleware(lambda x: x)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        self.user = User.objects.get(id=1)
+
+        self.test_object_id = Aadress.objects.order_by('?').first().id
+
+    def test_object_exists(self):
+        self.assertEqual(Aadress.objects.filter(id=self.test_object_id).count(), 1)
+        obj = Aadress.objects.get(id=self.test_object_id)
+        url = urllib.parse.unquote(obj.get_absolute_url())
+        self.assertEqual(url, f'/wiki/aadress/{obj.id}/')
+
+    def test_view_url_exists_at_desired_location(self):
+        obj = Aadress.objects.get(id=self.test_object_id)
+        url = f'/wiki/aadress/{obj.id}/'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)

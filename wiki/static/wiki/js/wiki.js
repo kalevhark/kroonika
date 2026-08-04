@@ -93,7 +93,7 @@ function wiki_object_detail_seotud() {
       dataType: 'html',
       timeout: 300000,
       beforeSend: function() {
-          $("#loaderDiv1").show();
+          $("#loaderDiv_wiki_object_detail_seotud_objects").show();
       },
       success: function (data) {
         document.getElementById("wiki_object_detail_seotud").innerHTML = data;
@@ -102,7 +102,7 @@ function wiki_object_detail_seotud() {
         console.log(textstatus);
       },
       complete: function () {
-        $("#loaderDiv1").hide();
+        $("#loaderDiv_wiki_object_detail_seotud_objects").hide();
         // Kuupäevaväljade unikaalsete id-de lisamine
         let dates = document.body.getElementsByClassName('date');
         let counter = 0;

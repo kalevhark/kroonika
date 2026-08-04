@@ -5,7 +5,7 @@
 <div class="w3-row">
   <h3 class="text-objekt">
     <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_filter' %}">
-      <i class="{% icon_objekt %}"></i>
+      <i class="{% icon_object objekt %}"></i>
     </a>
     {{ object }} {{ objekt.tyyp }}
   </h3>
@@ -13,43 +13,8 @@
     <br>Varasemad nimekujud: {{ objekt.asukoht }}
   {% endif %}
   <div>
-    <table>
-      {% if object.hist_date or object.hist_year %}
-        <tr>
-          <td><strong><i class="fa fa-asterisk"></i></td>
-          {% if object.hist_date %}
-            <td>
-              <strong>{% include 'wiki/includes/kp.html' with sd=object.hist_date cs='objekt' %}</strong>
-              {% if object.hist_date|vkj %}ukj: {{ object.hist_date|ukj|date:'j.m.Y' }}{% endif %}
-            </td>
-          {% elif object.hist_year %}
-            <td>
-              <strong><i class="fa fa-asterisk"></i>{% include 'wiki/includes/kp.html' with y=object.hist_year cs="objekt" %}</strong>
-            </td>
-          {% endif %}
-        </tr>
-      {% endif %}
-      {% if object.hist_enddate or object.hist_endyear %}
-        <tr>
-          <td>&#9840;</td>
-          {% if object.hist_enddate %}
-            <td>
-              <strong>{% include 'wiki/includes/kp.html' with sd=object.hist_enddate cs="objekt" %}</strong>
-            </td>
-            {% if object.hist_enddate|vkj %}ukj: {{ object.hist_enddate|ukj|date:'j.m.Y' }}{% endif %}
-          {% elif object.hist_endyear %}
-            <td>
-              <strong>&#9840;{% include 'wiki/includes/kp.html' with y=object.hist_endyear cs="objekt" %}</strong>
-            </td>
-          {% endif %}
-        </tr>
-      {% endif %}
-      {% if object.gone %}
-        <tr>
-          <td colspan="3">hävinud/lammutatud</td>
-        </tr>
-      {% endif %}
-    </table>
+    {% include 'wiki/includes/object_detail_daatumid.html' %}
+    {% include 'wiki/includes/object_detail_aadressid.html' %}
     {% if object.eellased.all %}
       Eellased:
       <ul>
@@ -81,6 +46,8 @@
       {{ object.formatted_markdown | safe }}
     </div>
     {% include 'wiki/includes/seotud_special_links.html' %}
+    {{ mainitud_aastatel }}
+    {% comment %} {% include 'wiki/includes/mainitud_aastatel_chart.html' %} {% endcomment %}
 {#    {% include 'wiki/includes/mainitud_aastatel.html' %}#}
     <!-- Andmete lisamise/muutmise andmed: -->
     {% include 'wiki/includes/object_updated_edit.html' with model='objekt' %}
