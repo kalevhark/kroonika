@@ -1504,6 +1504,65 @@ def update_lisainfo_1912_kaardiobjektid():
             print(kaardiobjekt.lisainfo)
             kaardiobjekt.save()
 
+def add_2021_kaardiobjekt_as_objekt():
+    t2navad_wiki = Objekt.objects.filter(tyyp='T').filter(gone=False)
+    viide = Viide.objects.get(id=10490)
+    kaart = Kaart.objects.get(aasta='2021')
+    kaardiobjektid2021_instances = Kaardiobjekt.objects.filter(kaart=kaart).filter(tyyp='H')
+    kinnistud2021 = Kaardiobjekt.objects.filter(kaart=kaart).filter(tyyp='A')
+    v2listame = [
+        'Rigas iela', 'Jaanikese küla, Kaasiku', 'Jaanikese küla, Laasi'
+    ]
+    n = 0
+    for kaardiobjekt in kaardiobjektid2021_instances:
+        if kaardiobjekt.tn in v2listame:
+            continue
+        nimi = ' '.join([kaardiobjekt.tn, kaardiobjekt.nr]).strip()
+        if not Objekt.objects.filter(nimi__exact=nimi).exists():
+            print(kaardiobjekt, end="-> ")
+            tn_wikis = t2navad_wiki.filter(nimi__icontains=kaardiobjekt.tn).first()
+            n += 1
+            objekt = Objekt(
+                nimi=nimi,
+                tyyp='H'
+            )
+            # print(tn_wikis)
+            objekt.save()
+            objekt.viited.add(viide)
+            objekt.objektid.add(tn_wikis)
+            objekt.kaardiobjektid.add(kaardiobjekt)
+            if kinnistud2021.filter(tn=kaardiobjekt.tn, nr=kaardiobjekt.nr).exists():
+                kinnistu = kinnistud2021.filter(tn=kaardiobjekt.tn, nr=kaardiobjekt.nr).first()
+                objekt.kaardiobjektid.add(kinnistu)
+            print('Lisatud:', objekt)
+    print(n)
+    
+def add_2021_t2navad():
+    t2navad_wiki = Objekt.objects.filter(tyyp='T').filter(gone=False)
+    kaart = Kaart.objects.get(aasta='2021')
+    kaardiobjektid2021_instances = Kaardiobjekt.objects.filter(kaart=kaart).filter(tyyp='H')
+    t2navad_2021 = list(set([k.tn for k in kaardiobjektid2021_instances]))
+    viide = Viide.objects.get(id=10490)
+    v2listame = [
+        'Enno', 'Kuperjanovi', 'Rigas iela', 'Jaanikese küla, Kaasiku', 'Jaanikese küla, Laasi'
+    ]
+    for el in v2listame:
+        t2navad_2021.remove(el)
+
+    for tn in t2navad_2021:
+        if t2navad_wiki.filter(nimi__startswith=tn).exists():
+            tn_wikis = t2navad_wiki.filter(nimi__startswith=tn).first()
+            print('Olemas:', tn_wikis)
+            tn_wikis.viited.add(viide)
+        else:
+            print('Pole:', tn)
+            objekt = Objekt(
+                nimi = tn + ' tänav',
+                tyyp = 'T',
+            )
+            objekt.save()
+            objekt.viited.add(viide)
+
 
 if __name__ == "__main__":
     # get_vg_vilistlased()
