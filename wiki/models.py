@@ -947,7 +947,7 @@ class Objekt(BaasObjectMixinModel):
         if any([sy, su]):
             nimeosad.append(f'{sy}-{su}')
         return ' '.join(nimeosad)
-
+    
     # Kui objectil puudub viide, siis punane
     def colored_nimi(self):
         latest_map = Kaart.objects.order_by('-aasta').first()
@@ -1818,10 +1818,11 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
     get_leaflet.short_description = 'Leaflet kaart'
 
     def get_absolute_url(self):
+        model = self.__class__.__name__.lower()
         kwargs = {
             'pk': self.id,
         }
-        return reverse('wiki:wiki_kaardiobjekt_detail', kwargs=kwargs)
+        return reverse(f'wiki:wiki_{model}_detail', kwargs=kwargs)
 
     class Meta:
         ordering = ['kaart', 'tn', 'nr']
@@ -1900,6 +1901,13 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
             self.hist_endmonth = self.hist_enddate.month
         super().save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        model = self.__class__.__name__.lower()
+        kwargs = {
+            'pk': self.id,
+        }
+        return reverse(f'wiki:wiki_{model}_detail', kwargs=kwargs)
+    
     # Create a property that returns the markdown instead
     @property
     def formatted_markdown(self):

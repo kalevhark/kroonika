@@ -511,6 +511,18 @@ class ArtikkelViewTests(TestCase):
         self.assertContains(response, 'dockmann')
         self.assertContains(response, 'inlineedit-toggle-area')
 
+    def test_detailview_responsetime(self):
+        self.request.user = self.user
+        pk = 2504
+        artikkel = Artikkel.objects.get(pk=pk)
+        time_start = datetime.now()
+        response = views.ArtikkelDetailView.as_view()(self.request, pk=pk, slug=artikkel.slug)
+        self.assertEqual(response.status_code, 200)
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 1, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
+
+
 class IsikViewTests(TestCase):
 
     def setUp(self):
@@ -645,6 +657,17 @@ class IsikViewTests(TestCase):
         self.assertContains(response, 'Müllerson')
         self.assertContains(response, 'inlineedit-toggle-area')
 
+    def test_detailview_responsetime(self):
+        self.request.user = self.user
+        pk = 62  # Johann Müllerson
+        isik = Isik.objects.get(pk=pk)
+        time_start = datetime.now()
+        response = views.IsikDetailView.as_view()(self.request, pk=pk, slug=isik.slug)
+        self.assertEqual(response.status_code, 200)
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 1, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
+
 
 class OrganisatsioonViewTests(TestCase):
     def setUp(self):
@@ -759,6 +782,17 @@ class OrganisatsioonViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Rex')
         self.assertContains(response, 'inlineedit-toggle-area')
+
+    def test_detailview_responsetime(self):
+        self.request.user = self.user
+        pk = 3058
+        organisatsioon = Organisatsioon.objects.get(pk=pk)
+        time_start = datetime.now()
+        response = views.OrganisatsioonDetailView.as_view()(self.request, pk=pk, slug=organisatsioon.slug)
+        self.assertEqual(response.status_code, 200)
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 1, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
 
 class ObjektViewTests(TestCase):
@@ -893,14 +927,14 @@ class ObjektViewTests(TestCase):
         self.assertContains(response, 'linnapark')
         self.assertContains(response, 'inlineedit-toggle-area')
 
-    def test_object_gone_text_visible_if_gone_true(self):
+    def test_objekt_gone_text_visible_if_gone_true(self):
         self.request.user = AnonymousUser()
         objekt = Objekt.objects.filter(gone=True).first()
         response = views.ObjektDetailView.as_view()(self.request, pk=objekt.id, slug=objekt.slug)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Kaasajal pole olemas')
 
-    def test_object_gone_text_visible_if_endyear_set(self):
+    def test_objekt_gone_text_visible_if_endyear_set(self):
         self.request.user = AnonymousUser()
         objekt = Objekt.objects. \
             exclude(gone=True). \
@@ -908,6 +942,23 @@ class ObjektViewTests(TestCase):
         response = views.ObjektDetailView.as_view()(self.request, pk=objekt.id, slug=objekt.slug)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Kaasajal pole olemas')
+
+    def test_objekt_without_addresses_and_kaardiobjektid_isvisible(self):
+        self.request.user = AnonymousUser()
+        objekt = Objekt.objects.filter(kaardiobjektid__isnull=True, aadress__isnull=True) .first()
+        response = views.ObjektDetailView.as_view()(self.request, pk=objekt.id, slug=objekt.slug)
+        self.assertEqual(response.status_code, 200)
+
+    def test_detailview_responsetime(self):
+        self.request.user = self.user
+        pk = 256 # Zenckeri villa
+        objekt = Objekt.objects.get(pk=pk)
+        time_start = datetime.now()
+        response = views.ObjektDetailView.as_view()(self.request, pk=pk, slug=objekt.slug)
+        self.assertEqual(response.status_code, 200)
+        time_stopp = datetime.now() - time_start
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(time_stopp.seconds < 1, f'Laadimisaeg: {time_stopp.seconds}.{time_stopp.microseconds}')
 
 
 class KaardiobjektViewTests(TestCase):
