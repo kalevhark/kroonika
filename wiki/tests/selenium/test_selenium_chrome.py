@@ -281,7 +281,7 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
             self.assertIn(nimi, el, msg=str(obj))
             # Kontrollime kas isikuga seotud objectid laeti
             try:
-                el = self.selenium.find_element(By.ID, "loaderDiv1")
+                el = self.selenium.find_element(By.ID, "loaderDiv_wiki_object_detail_seotud_objects")
                 WebDriverWait(self.selenium, timeout=3).until(
                     EC.visibility_of(el)
                 )
@@ -319,7 +319,7 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
             self.assertIn(nimi, el, msg=str(obj))
             # Kontrollime kas isikuga seotud objectid laeti
             try:
-                el = self.selenium.find_element(By.ID, "loaderDiv1")
+                el = self.selenium.find_element(By.ID, "loaderDiv_wiki_object_detail_seotud_objects")
                 WebDriverWait(self.selenium, timeout=3).until(
                     EC.visibility_of(el)
                 )
@@ -358,7 +358,7 @@ class SeleniumTestsChromeDetailViewObjectIsik(SeleniumTestsChromeBase):
             self.assertIn(nimi, el)
             # Kontrollime kas isikuga seotud objectid laeti
             try:
-                el = self.selenium.find_element(By.ID, "loaderDiv1")
+                el = self.selenium.find_element(By.ID, "loaderDiv_wiki_object_detail_seotud_objects")
                 WebDriverWait(self.selenium, timeout=3).until(
                     EC.visibility_of(el)
                 )

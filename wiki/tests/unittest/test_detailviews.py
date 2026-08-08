@@ -125,6 +125,7 @@ class DetailViewUnitTest(TestCase):
         response = views.AadressDetailView.as_view()(self.request, pk=obj.pk)
         self.assertEqual(response.status_code, 200)
         self.assertIn('seotud_aadressid_objekti_kaudu', response.context_data)
+        self.assertIn('seotud_kaardiobjektid', response.context_data)
 
     def test_object_seotud_pildid_pildirida_exists(self):
         SELECT_COUNT = 3

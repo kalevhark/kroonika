@@ -1,72 +1,74 @@
 {% load static %}
 {% load wiki_extras %}
 
-{#    Sisukaardi päis#}
-<div class="w3-row">
-  <h3 class="text-objekt">
-    <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_filter' %}">
-      <i class="{% icon_object objekt %}"></i>
-    </a>
-    {{ object }} {{ objekt.tyyp }}
-  </h3>
-  {% if objekt.asukoht %}
-    <br>Varasemad nimekujud: {{ objekt.asukoht }}
-  {% endif %}
-  <div>
-    {% include 'wiki/includes/object_detail_daatumid.html' %}
-    {% include 'wiki/includes/object_detail_aadressid.html' %}
-    {% if object.eellased.all %}
-      Eellased:
-      <ul>
-        {% for obj in object.eellased.all %}
-          <li>{{ obj }}</li>
-        {% endfor %}
-      </ul>
+<div class="w3-card w3-panel">
+  {# Sisukaardi päis #}
+  <div class="w3-row">
+    <h3 class="text-objekt">
+      <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_filter' %}">
+        <i class="{% icon_object object %}"></i>
+      </a>
+      {{ object }} {{ object.tyyp }}
+    </h3>
+    {% if object.asukoht %}
+      <br>Varasemad nimekujud: {{ object.asukoht }}
     {% endif %}
-    {% if object.j2rglane.all %}
-      Järglased:
-      <ul>
-        {% for obj in object.j2rglane.all %}
-          <li>{{ obj }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
-  </div>
-</div>
-
-{#    Sisukaardi kirjeldav osa#}
-<div class="w3-row">
-  <div class="w3-third">
-    {% include 'wiki/includes/object_detail_pilt2.html' with cls='pilt-postkaart-medium' %}
-  </div>
-  <!-- Sisukaardi tekstiosa-->
-  <div class="w3-twothird">
-    {% include 'wiki/includes/vigane.html' %}
     <div>
-      {{ object.formatted_markdown | safe }}
+      {% include 'wiki/includes/object_detail_daatumid.html' %}
+      {% include 'wiki/includes/object_detail_aadressid.html' %}
+      {% if object.eellased.all %}
+        Eellased:
+        <ul>
+          {% for obj in object.eellased.all %}
+            <li>{{ obj }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if object.j2rglane.all %}
+        Järglased:
+        <ul>
+          {% for obj in object.j2rglane.all %}
+            <li>{{ obj }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
     </div>
-    {% include 'wiki/includes/seotud_special_links.html' %}
-    {{ mainitud_aastatel }}
-    {% comment %} {% include 'wiki/includes/mainitud_aastatel_chart.html' %} {% endcomment %}
-{#    {% include 'wiki/includes/mainitud_aastatel.html' %}#}
-    <!-- Andmete lisamise/muutmise andmed: -->
-    {% include 'wiki/includes/object_updated_edit.html' with model='objekt' %}
   </div>
-</div>
 
-<!--  Sisukaardi otseseosed-->
-<div class="w3-row">
-  {% comment %} {% include 'wiki/includes/del_seotud_isikud.html' %} {% endcomment %}
-  {% comment %} {% include 'wiki/includes/del_seotud_organisatsioonid.html' %} {% endcomment %}
-  {% comment %} {% include 'wiki/includes/seotud_pildid2.html' %} {% endcomment %}
-</div>
+  {#    Sisukaardi kirjeldav osa#}
+  <div class="w3-row">
+    <div class="w3-third">
+      {% include 'wiki/includes/object_detail_pilt2.html' with cls='pilt-postkaart-medium' %}
+    </div>
+    <!-- Sisukaardi tekstiosa-->
+    <div class="w3-twothird">
+      {% include 'wiki/includes/vigane.html' %}
+      <div>
+        {{ object.formatted_markdown | safe }}
+      </div>
+      {% include 'wiki/includes/seotud_special_links.html' %}
+      {{ mainitud_aastatel }}
+      {% comment %} {% include 'wiki/includes/mainitud_aastatel_chart.html' %} {% endcomment %}
+  {#    {% include 'wiki/includes/mainitud_aastatel.html' %}#}
+      <!-- Andmete lisamise/muutmise andmed: -->
+      {% include 'wiki/includes/object_updated_edit.html' with model='objekt' %}
+    </div>
+  </div>
 
-<!-- Seotud artiklid: -->
-<div class="w3-row">
-  <div
-      id="artiklid_{{ object.id }}"
-      class="seotud"
-  >
-    {% include 'wiki/includes/seotud_artiklid.html' %}
+  <!--  Sisukaardi otseseosed-->
+  <div class="w3-row">
+    {% comment %} {% include 'wiki/includes/del_seotud_isikud.html' %} {% endcomment %}
+    {% comment %} {% include 'wiki/includes/del_seotud_organisatsioonid.html' %} {% endcomment %}
+    {% comment %} {% include 'wiki/includes/seotud_pildid2.html' %} {% endcomment %}
+  </div>
+
+  <!-- Seotud artiklid: -->
+  <div class="w3-row">
+    <div
+        id="artiklid_{{ object.id }}"
+        class="seotud"
+    >
+      {% include 'wiki/includes/seotud_artiklid.html' %}
+    </div>
   </div>
 </div>

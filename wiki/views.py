@@ -904,7 +904,7 @@ def get_v6rdle_object(request):
         seotud_kaardiobjektid = None
         seotud_aadressid = None
 
-    mainitud_aastatel_data = get_mainitud_aastatel(artikkel_qs, model, object)
+    mainitud_aastatel_data = get_mainitud_aastatel_data(artikkel_qs, model, object)
 
     return render(
         request,
@@ -2976,6 +2976,9 @@ class AadressDetailView(generic.DetailView):
                 exclude(id=self.object.id). \
                 filter(objekt=self.object.objekt)
             context['seotud_aadressid_objekti_kaudu'] = seotud_aadressid_objekti_kaudu
+            # Kas objektil on kaardivaateid
+            seotud_kaardiobjektid = get_kaardiobjektid_for_objekt(self.object.objekt)
+            context['seotud_kaardiobjektid'] = seotud_kaardiobjektid
         return context
 
 
