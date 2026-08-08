@@ -1,4 +1,5 @@
 {% load wiki_extras %}
+{% with model=obj|to_model_name_lower%}
 <a class="hover-{{model}} tooltip-content" href="{% url 'wiki:wiki_'|add:model|add:'_detail' pk=obj.id slug=obj.slug %}">
   <span
           class='text-{{ obj|get_model_name|lower }}'
@@ -19,3 +20,4 @@
     </b>
   {% endif %}
 {% endif %}
+{% endwith %}

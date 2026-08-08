@@ -41,6 +41,7 @@ from wiki.views import (
     KaardiobjektUpdate,
     AadressUpdate, 
 )
+
 # API vaated
 # from wiki.views import UserDetail, UserList
 

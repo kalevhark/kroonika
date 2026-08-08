@@ -2521,32 +2521,6 @@ class ObjektFilter(django_filters.FilterSet):
             # 'nimi': ['icontains'],
             }
 
-##    def __init__(self, *args, **kwargs):
-##        super(ObjektFilter, self).__init__(*args, **kwargs)
-##        # at startup user doen't push Submit button, and QueryDict (in data) is empty
-##        if self.data == {}:
-##            self.queryset = self.queryset.none()
-
-    # def nimi_sisaldab_filter(self, queryset, name, value):
-    #     # päritud fraas nimes
-    #     fraas = self.data.get('nimi_sisaldab')
-    #     if fraas:
-    #         fragmendid = fraas.split(' ')
-    #         regex_fill = r'\w*\s+\w*'
-    #         otsi_fraas = regex_fill.join([r'({})'.format(fragment) for fragment in fragmendid])
-    #         queryset = queryset.filter(nimi__iregex=r'{}'.format(otsi_fraas))
-    #     return queryset
-
-    # def nimi_sisaldab_filter(self, queryset, name, value):
-    #     # päritud fraas nimes
-    #     if self.data.get('nimi_sisaldab'):
-    #         fraasid = self.data.get('nimi_sisaldab', '').split(' ')
-    #         for fraas in fraasid:
-    #             queryset = queryset.filter(
-    #                 nimi__icontains=fraas
-    #             )
-    #     return queryset
-
     def nimi_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
         if self.data.get('nimi_sisaldab'):
@@ -2571,8 +2545,8 @@ class ObjektFilterView(FilterView):
     paginate_by = 20
     template_name = 'wiki/objekt_filter.html'
     filterset_fields = {
-            'nimi',
-            }
+        'nimi',
+    }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
@@ -2823,16 +2797,19 @@ def switch_vkj_ukj(request, calendar_system):
 
     return HttpResponse(calendar_system)
 
+from django.db.models import JSONField
 
-class KaardiobjektFilter(django_filters.FilterSet):
+class KaardiobjektFilter(django_filters.FilterSet): # TODO: ei tööta, JSONField probleem
 
+    kaart = django_filters.ModelChoiceFilter(
+        queryset=Kaart.objects.all(),
+        label='Kaart:'
+    )
     kaardiobjekt_sisaldab = django_filters.CharFilter(method='kaardiobjekt_sisaldab_filter')
-
-    class Meta:
-        model = Kaardiobjekt
-        fields = {
-            'kaart__aasta': ['exact'],
-        }
+    tyyp = django_filters.ChoiceFilter(
+        choices=Kaardiobjekt.TYYP,
+        label='Tüüp:'
+    )
 
     def __init__(self, *args, **kwargs):
         super(KaardiobjektFilter, self).__init__(*args, **kwargs)
@@ -2843,23 +2820,42 @@ class KaardiobjektFilter(django_filters.FilterSet):
     def kaardiobjekt_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
         if self.data.get('kaardiobjekt_sisaldab'):
-            queryset = queryset.annotate(nimi=Concat('tn', Value(' '), 'nr', Value(' '), 'lisainfo'))
+            queryset = queryset.annotate(nimi_lisainfo=Concat('tn', Value(' '), 'nr', Value(' '), 'lisainfo'))
             fraasid = self.data.get('kaardiobjekt_sisaldab', '').split(' ')
             for fraas in fraasid:
                 queryset = queryset.filter(
-                    nimi__icontains=fraas
+                    nimi_lisainfo__icontains=fraas
                 )
         return queryset
 
+    class Meta:
+        model = Kaardiobjekt
+        fields = {
+            'kaart': ['exact'],
+            'kaart__aasta': ['exact'],
+            'tyyp': ['exact'],
+        }
+        # Generic Search: Override JSONField to allow string-based containment search
+        filter_overrides = {
+            JSONField: {
+                'filter_class': django_filters.CharFilter,
+                'extra': lambda f: {
+                    'lookup_expr': 'icontains',
+                    'label': 'Search (JSON)',
+                },
+            },
+        }
+
 
 #
-# Artiklite otsimise/filtreerimise vaade
+# Kaardiobjektide otsimise/filtreerimise vaade
 #
 class KaardiobjektFilterView(FilterView):
 
     model = Kaardiobjekt
     paginate_by = 50
     template_name = 'wiki/kaardiobjekt_filter.html'
+    filterset_class = KaardiobjektFilter
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -2898,12 +2894,23 @@ class KaardiobjektDetailView(generic.DetailView):
 
 class AadressFilter(django_filters.FilterSet):
 
-    aadress_sisaldab = django_filters.CharFilter(method='aadress_sisaldab_filter')
+    hist_year = django_filters.ChoiceFilter(
+        choices=tuple(
+            (str(aasta), aasta) 
+            for aasta 
+            in set(Aadress.objects.values_list('hist_year', flat=True))
+        ),
+        label='Aasta:'
+    )
+    aadress_sisaldab = django_filters.CharFilter(
+        method='aadress_sisaldab_filter'
+    )
 
     class Meta:
         model = Aadress
         fields = {
             'hist_year': ['exact'],
+            # 'aasta': ['exact'],
         }
 
     def __init__(self, *args, **kwargs):
@@ -2915,7 +2922,7 @@ class AadressFilter(django_filters.FilterSet):
     def aadress_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
         if self.data.get('aadress_sisaldab'):
-            queryset = queryset.annotate(nimi=Concat('nimi', Value(' '), 'kirjeldus'))
+            # queryset = queryset.annotate(nimi_kirjeldus=Concat('nimi', Value(' '), 'kirjeldus'))
             fraasid = self.data.get('aadress_sisaldab', '').split(' ')
             for fraas in fraasid:
                 queryset = queryset.filter(

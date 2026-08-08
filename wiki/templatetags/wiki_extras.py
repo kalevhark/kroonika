@@ -3,6 +3,7 @@ import uuid
 
 from django import template
 from django.conf import settings
+from django.db import models
 
 from wiki.models import VIGA_TEKSTIS, Aadress, Artikkel, Isik, Organisatsioon, Objekt, Kaart, Kaardiobjekt
 from wiki.views import get_all_logged_in_users #, artikkel_qs_userfilter
@@ -140,8 +141,12 @@ def icon_viide():
 # kasutamine {% icon_object object %}
 @register.simple_tag
 def icon_object(object=None):
-    if object:
+    if isinstance(object, models.Model):
         return ICONS[object.__class__.__name__.lower()]
+    if isinstance(object, str):
+        return ICONS[object.lower()]
+    return None
+
 
 @register.simple_tag
 def kalev():
