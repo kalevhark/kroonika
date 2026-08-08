@@ -2970,8 +2970,12 @@ class AadressDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Kas on kattuvaid objekte teistel kaartidel
-        # context['kaardiobjekt_match'] = kaardiobjekt_match_db(self.object.id)
+        # Kas on sobjekti kaudu seotud teisi aadresse
+        if self.object.objekt:
+            seotud_aadressid_objekti_kaudu = Aadress.objects. \
+                exclude(id=self.object.id). \
+                filter(objekt=self.object.objekt)
+            context['seotud_aadressid_objekti_kaudu'] = seotud_aadressid_objekti_kaudu
         return context
 
 

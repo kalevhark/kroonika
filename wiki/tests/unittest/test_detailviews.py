@@ -108,6 +108,24 @@ class DetailViewUnitTest(TestCase):
         self.assertIn('seotud_kaardiobjektid', response.context_data)
         self.assertIn('seotud_aadressid', response.context_data)
 
+    def test_kaardiobjektid_context(self):
+            self.request.user = AnonymousUser()
+            obj = Kaardiobjekt.objects. \
+                filter(tyyp="A"). \
+                filter(tn__icontains="Vabaduse", nr__icontains="6"). \
+                first()
+            response = views.KaardiobjektDetailView.as_view()(self.request, pk=obj.pk)
+            self.assertEqual(response.status_code, 200)
+            self.assertIn('kaardiobjekt_match', response.context_data)
+
+    def test_aadressid_context(self):
+        self.request.user = AnonymousUser()
+        objekt = Objekt.objects.get(id=347)
+        obj = Aadress.objects.filter(objekt=objekt).first()
+        response = views.AadressDetailView.as_view()(self.request, pk=obj.pk)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('seotud_aadressid_objekti_kaudu', response.context_data)
+
     def test_object_seotud_pildid_pildirida_exists(self):
         SELECT_COUNT = 3
         models = [Isik, Organisatsioon, Objekt]

@@ -13,31 +13,48 @@
           <i class="{% icon_object object %}"></i>
         </a>
         {{ object }}
-        {% if object.objekt %} ->
-          <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_detail' pk=object.objekt.pk slug=object.objekt.slug  %}">
-            <strong>{{ object.objekt }}</strong>
-          </a>
-        {% endif %}
       </h4>
-      <h5>Allikas: {{ object.viited.first }}</h5><br />
+      <p>Allikas: {{ object.viited.first }}</p>
     </div>
 
     <!-- Sisukaardi kirjeldav osa-->
     <div class="w3-twothird">
       <div class="w3-third">
         <!-- Sisukaardi kaardiosa-->
-        <div class="w3-margin-right w3-center w3-padding-16">
-          {% comment %} <div
-                  class="kaardiobjekt"
-                  id="get_kaardiobjekt_leaflet_{{ object.id }}"
-                  data-url="{% url 'wiki:get_kaardiobjekt_leaflet' object.id %}"
-          ></div> {% endcomment %}
+        <div class="w3-row">
+          Kirjeldus:<br />
+          {{ object.kirjeldus }}
         </div>
       </div>
       <!-- Sisukaardi andmete osa-->
       <div class="w3-twothird">
-        Kirjeldus:<br />
-        {{ object.kirjeldus }}
+        {% if object.objekt %}
+          Aadressiga seotud koht:&nbsp;
+          <i class="{% icon_object object.objekt %}"></i>&nbsp;
+          <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_detail' pk=object.objekt.pk slug=object.objekt.slug  %}">
+            <strong>{{ object.objekt }}</strong>
+          </a>
+          {% if seotud_aadressid_objekti_kaudu %}
+            <p class="w3-row">
+              Seotud aadressid sama koha kaudu:
+              <ul class="w3-ul">
+                {% for obj in seotud_aadressid_objekti_kaudu %}
+                  <li>
+                    <a
+                        class="hover-artikkel"
+                        href="{% url 'wiki:wiki_aadress_detail' pk=obj.id %}"
+                      >
+                      <i class="{% icon_object obj %}"></i> {{ obj.hist_year }}: {{ obj }}
+                    </a>
+                    {% if obj.kirjeldus %}
+                          , <i>{{ obj.kirjeldus }}</i>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </p>
+          {% endif %}
+        {% endif %}
       </div>
       <!-- Andmete lisamise/muutmise andmed: -->
       {% include 'wiki/includes/object_updated_edit.html' with model='aadress' %}

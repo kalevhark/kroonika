@@ -57,21 +57,23 @@
 	<!-- Lehekülgede nummerdamine -->
 	{% include 'wiki/includes/pagination.html' with model="artikkel" %}
 	<!-- Loend filtriga valitud artiklitest -->
-  <ul>
+  <ul class="w3-ul">
     {% for obj in object_list %}
       <li>
+        <i class="{% icon_object obj %}"></i>&nbsp;
         <a
             class="hover-artikkel"
             href="{% url 'wiki:wiki_kaardiobjekt_detail' pk=obj.id %}"
           >
           {{ obj.kaart.aasta }}: {{ obj }} ({{ obj.get_tyyp_display|lower }}) 
-          {% if obj.lisainfo %}
-          , <i>{{ obj.lisainfo }}</i>
-          {% endif %}
-          {% if obj.objekt %}
-             &nbsp;-> {% include 'wiki/includes/object_list_object.html' with obj=obj.objekt %}
-          {% endif %}
         </a>
+        {% if obj.lisainfo %}
+        , <i>{{ obj.lisainfo }}</i>
+        {% endif %}
+        {% if obj.objekt %}
+            -> <i class="{% icon_object obj.objekt %}"></i>&nbsp;
+            {% include 'wiki/includes/object_list_object.html' with obj=obj.objekt %}
+        {% endif %}
       </li>
     {% endfor %}
   </ul>

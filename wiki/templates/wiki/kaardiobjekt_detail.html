@@ -13,13 +13,13 @@
           <i class="{% icon_object object %}"></i>
         </a>
         {{ object }}
-        {% if object.objekt %} ->
-          <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_detail' pk=object.objekt.pk slug=object.objekt.slug  %}">
-            <strong>{{ object.objekt }}</strong>
-          </a>
-        {% endif %}
       </h4>
-      <h5>Kaart: {{ object.kaart }}</h5><br />
+      {% if object.objekt %}
+        Kaardiobjektiga seotud koht: <i class="{% icon_object object.objekt %}"></i>
+        <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_detail' pk=object.objekt.pk slug=object.objekt.slug  %}">
+          <strong>{{ object.objekt }}</strong>
+        </a>
+      {% endif %}
     </div>
 
     <!-- Sisukaardi kirjeldav osa-->
@@ -36,7 +36,12 @@
       </div>
       <!-- Sisukaardi andmete osa-->
       <div class="w3-twothird">
-        Koordinaadid (CRS: EPSG:3301):<br />
+        Kaart: {{ object.kaart }}
+        <br />Tüüp: {{ object.get_tyyp_display }}
+        {% if object.lisainfo %}
+          <br />Lisainfo: {{ object.lisainfo }}
+        {% endif %}
+        <br />Koordinaadid (CRS: EPSG:3301):<br />
         <ol>
           {% for part in object.geometry.coordinates %}
             <li>{{ part }}</li>
