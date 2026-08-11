@@ -2060,7 +2060,7 @@ if __name__ == "__main__":
     #     coordinates = t2nav["geometry"]["coordinates"] # [[[622426.11, 6406338.99], [622440.76, 6406344.28], [622409.34, 6406398.81], [622391.59, 6406429.59], [622386.09, 6406439.99], [622357.56, 6406489.67], [622329.48, 6406539.36], [622321.08, 6406554.23], [622307.89, 6406546.23], [622335.95, 6406496.55], [622375.9, 6406426.46], [622387.02, 6406408.05], [622405.37, 6406375.24], [622426.11, 6406338.99]]]
     #     new_coordinates = transform2lonlat(coordinates)
     #     print(new_coordinates)
-    # upd_add_t2navad(t2navad_geoportaal_2026)
+    upd_add_t2navad(t2navad_geoportaal_2026)
     add_t2navad_from_json_data(t2navad_geoportaal_2026, data_valgalinn_t2navad)
     logger.info('Done.')
 
