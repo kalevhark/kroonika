@@ -65,6 +65,7 @@ LEAFLET_DEFAULT_HEADER = Element(
 # Asendus stamen_toner kaartidele
 STAMEN_TONER_NEW = {
     'tiles': 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+    'tms': False,
     'attr': 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 }
 
@@ -1086,7 +1087,7 @@ def make_objekt_leaflet_combo_add_tilelayer(kaart, is_objekt_missing_on_defaultm
     if kaart == DEFAULT_MAP and is_objekt_missing_on_defaultmap:
         tiles = STAMEN_TONER_NEW.get('tiles')
         attr = STAMEN_TONER_NEW.get('attr')
-        tms = False
+        tms = STAMEN_TONER_NEW.get('tms')
 
     return folium.TileLayer(
         # location=location,
