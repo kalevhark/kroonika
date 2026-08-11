@@ -74,7 +74,7 @@ proj = pyproj.Transformer.from_crs(3301, 4326, always_xy=True)
 
 def split_address(aadress):
     l2hiaadress = aadress.split(' ')
-    erisus = re.compile('(\.|Julius|Ernst|Alfred)')
+    erisus = re.compile(r'(\.|Julius|Ernst|Alfred)')
     if re.search(erisus, l2hiaadress[0]):
         street = l2hiaadress[1].strip()
     else:

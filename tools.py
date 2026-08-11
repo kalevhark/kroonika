@@ -28,7 +28,10 @@ if __name__ == "__main__":
 
 from django.conf import settings
 
-from ilm.utils import utils
+try:
+    from ilm.utils import utils
+except:
+    pass
 
 MEDIA_DIR = settings.MEDIA_ROOT
 
