@@ -1081,11 +1081,13 @@ def make_objekt_leaflet_combo_add_tilelayer(kaart, is_objekt_missing_on_defaultm
     attr = f'{kaart.__str__()}<br>{kaart.viited.first()}'
     tile_kwargs['aasta'] = kaart.aasta
     # kui objekti kaasajal ei ole
+    tms = True if kaart.aasta == '2026' else False
+
     if kaart == DEFAULT_MAP and is_objekt_missing_on_defaultmap:
         tiles = STAMEN_TONER_NEW.get('tiles')
         attr = STAMEN_TONER_NEW.get('attr')
+        tms = False
 
-    tms = True if kaart.aasta == '2026' else False
     return folium.TileLayer(
         # location=location,
         name=kaart.aasta,

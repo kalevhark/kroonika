@@ -1098,6 +1098,9 @@ def add_2021_t2navad():
 
 from pyproj import Transformer
 
+def sort_l_aadress(e):
+    return e['properties']['l_aadress']
+
 def read_valgalinn_from_ky_json() -> list:
     """Process the data from the address book for 1925"""
     path = settings.BASE_DIR / 'wiki' / 'static' / 'wiki' / 'data'
@@ -1109,6 +1112,7 @@ def read_valgalinn_from_ky_json() -> list:
             in data_valgavald["features"] 
             if feature["properties"]["ay_nimi"] == "Valga linn"
         ]
+    data_valgalinn.sort(key=sort_l_aadress)
     return data_valgalinn
 
 def get_t2navad(data_valgalinn: list) -> list:
@@ -1331,6 +1335,135 @@ Võsa tänav
 Õunapuu tänav
 Ülase tänav
 """
+
+siht1 = {
+    'ARIMAA', 
+    'JAATMEHOIDLA_MAA', 
+    'TOOTMISMAA', 
+    'UHISKONDLIKE_EHITISTE_MAA', 
+    'ELAMUMAA', 
+    'TRANSPORDIMAA', 
+    'ULDKASUTATAV_MAA', 
+    'MAATULUNDUSMAA', 
+    'RIIGIKAITSEMAA', 
+    'SIHTOTSTARBETA_MAA', 
+    'VEEKOGUDE_MAA'
+}
+
+siht1_uldkasutatav_maa = [
+    # 'Ilmajaama tn 3', 
+    # 'Transpordi tn 1b', 
+    # 'Tartu tn 81a', 
+    # 'Kirde tn 2', 
+    # 'Pedeli luht', 
+    'Räni org 1', 
+    'Räni org 2', 
+    # 'Valli tn 34', 
+    # 'Lembitu tn 13', 
+    # 'Kesva tn 7', 
+    # 'Torni tn 9', 
+    # 'Kungla tn 43a', 
+    # 'Pikk tn 21', 
+    # 'Riia tn 3a', 
+    # 'Rükkeli tn 2', 
+    # 'Saviaugu tn 7', 
+    'Tambre oja 1', 
+    'Tambre oja 2', 
+    'Tambre oja 3', 
+    # 'Pipra tn 1a', 
+    # 'Saviaugu tn 3', 
+    # 'Lohu tn 1', 
+    'Plantsi', 
+    'Pedeli virgestusala 3', 
+    # 'Siguri tn 4', 
+    # 'Kirde tn 10', 
+    # 'Viljandi tn 69', 
+    # 'Metsa tn 11', 
+    # 'Tartu tn 34', 
+    # 'Pärna pst 17a', 
+    # 'Raja tn 12', 
+    'Pedeli virgestusala 1', 
+    # 'Pärnu tn 9', 
+    # 'Uus tn 4a', 
+    # 'Uus tn 10b', 
+    # 'Uus tn 8b', 
+    # 'Aia tn 10', 
+    # 'Vabaduse tn 8a', 
+    # 'Vabaduse tn 6a', 
+    # 'Aia tn 12a', 
+    # 'Puiestee tn 6b', 
+    # 'Allika tn 9', 
+    # 'Jaama pst 2f', 
+    # 'Vabaduse tn 1', 
+    # 'Jaama pst 1b', 
+    # 'Kungla tn 30a', 
+    # 'Allika tn 2c', 
+    # 'J. Kuperjanovi tn 36a', 
+    # 'Allika tn 8a', 
+    # 'Kungla tn 24b', 
+    # 'Saviaugu tn 1', 
+    # 'Torni tn 14', 
+    # 'Peebu tn 2', 
+    # 'Roosi tn 2', 
+    # 'Vahtra tn 30', 
+    # 'Pikk tn 29', 
+    # 'Viadukti tn 1', 
+    # 'J. Kuperjanovi tn 78a', 
+    'Linnamets 2', 
+    'Linnamets 3', 
+    # 'Eha tn 4', 
+    'Linnamets 4', 
+    'Linnamets 5', 
+    'Linnamets 6', 
+    'Linnamets 7', 
+    # 'Viadukti tn 2', 
+    # 'Palu põik 2', 
+    # 'Võru tn 117', 
+    # 'Saviaugu tn 5', 
+    # 'Uus tn 41', 
+    # 'Lille tn 20', 
+    # 'Veski tn 24a', 
+    'Räni org 3', 
+    # 'Tartu tn 111', 
+    # 'Sireli tn 2a', 
+    # 'Pedeli jõgi', 
+    # 'Transpordi tn 4', 
+    'Pedeli virgestusala 2', 
+    'Linnamets 1'
+]
+
+siht1_riigikaitsemaa = [
+    # 'Pikk tn 16', 
+    # 'Pikk tn 16b', 
+    'Piiririba', 
+    'Metsaääre', 
+    # 'Sepa tn 15', 
+    # 'Puiestee tn 2', 
+    # 'Puiestee tn 4', 
+    # 'Allika tn 2b', 
+    # 'Jaama pst 16', 
+    # 'Võru tn 12', 
+    'Piiririba', 
+    # 'Torni tn 22', 
+    # 'Karja tn 16', 
+    'Sepa tänav T1', 
+    'Sõpruse tänav T1', 
+    'Piiririba lõik 3', 
+    'Piiririba lõik 4', 
+    'Piiririba lõik 2', 
+    'Piiririba lõik 7', 
+    'Piiririba lõik 8', 
+    'Piiririba lõik 5', 
+    'Piiririba lõik 9', 
+    'Piiririba lõik 1', 
+    'Piiririba lõik 6'
+]
+
+siht1_veekogude_maa = [
+    'Võsa tn 7a', 
+    'Pirni tn 1a', 
+    'Põllu tn 4a'
+]
 
 def get_address_data(
     address_query: str, 
@@ -1565,6 +1698,83 @@ def add_t2navad_from_json_data(
             message = f"Lisatud KO: {kaardiobjekt}"
             logger.info(message)
 
+from django.db import models
+from django.contrib.postgres.search import TrigramSimilarity, TrigramWordSimilarity
+def object_trigram_word_similarity(
+    nimi: str,
+    qs: models.QuerySet
+) -> models.QuerySet:
+    # nimi = nimi.replace(' ', '')
+    qs = qs. \
+        annotate(similarity = TrigramWordSimilarity(nimi, "nimi")). \
+        filter(similarity__gt = 0.3). \
+        order_by("-similarity")
+    # for obj in qs[:10]:
+    #     print(obj.nimi, obj.similarity)
+    return qs
+
+def check_ky(
+    data_valgalinn: list
+) -> None:
+    kaart = Kaart.objects.get(aasta=2026)
+    viide = kaart.viited.first()
+    objektid_qs = Objekt.objects.exclude(gone=True).filter(hist_endyear__isnull=True)
+    objektid_t2navad = objektid_qs.filter(tyyp='T')
+    objektid_eiolet2navad = objektid_qs.exclude(tyyp='T')
+
+    for ky in data_valgalinn:
+        l_aadress = ky['properties']['l_aadress']
+        # Kontrollime, kas on transpordimaa
+        if ky['properties']['siht1'] == 'TRANSPORDIMAA':
+            continue
+        if l_aadress in (
+            siht1_uldkasutatav_maa + 
+            siht1_riigikaitsemaa + 
+            siht1_veekogude_maa
+        ):
+            message = f'{l_aadress} -> loome ainult kaardiobjekti'
+            print(message)
+            logger.info(message)
+            continue
+        
+        l_aadress_for_t2nav_search = [
+            ['J. ', 'Julius '],
+            ['E. ', 'Ernst '],
+            ['A. ', 'Alfred '],
+            ['tn', 'tänav'],
+            ['pst ', 'puiestee'],
+        ]
+        l_aadress_for_t2nav = l_aadress
+        for translation in l_aadress_for_t2nav_search:
+            l_aadress_for_t2nav.replace(translation[0], translation[1])
+
+        # l_aadress_for_objekt_search = [
+        #     ['J. ', 'Julius '],
+        #     ['E. ', 'Ernst '],
+        #     ['A. ', 'Alfred '],
+        #     ['tn ', ''],
+        #     ['pst ', ''],
+        # ]
+        # Otsime vasted wikist
+        t2nav = object_trigram_word_similarity(l_aadress_for_t2nav, objektid_t2navad).first()
+        objekt = object_trigram_word_similarity(l_aadress, objektid_eiolet2navad).first()
+        # Kontrollime otsingu täpsust ja vajadusel filtreerime valed välja
+        # Kesk 12 != Kesk 12a
+        # Lepa != Väike-Lepa
+        if objekt:
+            address_query_regex = r'(\s.+\s|\s)'.join(objekt.nimi.split())
+            pattern = re.compile(rf'(^|.+)(?<!-){address_query_regex}($|\s)')
+            if not pattern.match(l_aadress):
+                objekt = None
+
+        message = f'{l_aadress} -> T:{t2nav} -> O:{objekt}'
+        print(message)
+        if not t2nav or not objekt:
+            logger.warning(message)
+        else:
+            logger.info(message)
+
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
@@ -1575,7 +1785,7 @@ if __name__ == "__main__":
     # getFile_fromUrl(url)
     # test_queryset_timeit()
     data_valgalinn = read_valgalinn_from_ky_json()
-    data_valgalinn_t2navad = get_t2navad(data_valgalinn)
+    # data_valgalinn_t2navad = get_t2navad(data_valgalinn)
     # data_t2nav = get_t2nav(data_valgalinn_t2navad, "Sulevi tänav")
     # print(data_t2nav)
     # data_t2nav = get_t2nav(data_valgalinn_t2navad, "Sulevi tänav")
@@ -1586,6 +1796,7 @@ if __name__ == "__main__":
     #     print(new_coordinates)
     # upd_add_t2navad(t2navad_geoportaal_2026)
     # add_t2navad_from_json_data(t2navad_geoportaal_2026, data_valgalinn_t2navad)
+    check_ky(data_valgalinn)
     logger.info('Done.')
 
 # import importlib
