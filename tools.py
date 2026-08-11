@@ -3,6 +3,7 @@ import csv
 from datetime import date, datetime, timedelta, timezone
 import glob
 import json
+import logging
 import os
 from pathlib import Path, PurePath
 import shutil
@@ -16,6 +17,14 @@ if __name__ == "__main__":
     import django
     os.environ['DJANGO_SETTINGS_MODULE'] = 'kroonika.settings'
     django.setup()
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(
+        filename='tools_worker.log', 
+        level=logging.INFO,
+        format="%(asctime)s;%(levelname)s;%(message)s", 
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
+    logger.info('Started')
 
 from django.conf import settings
 
@@ -1563,6 +1572,474 @@ def add_2021_t2navad():
             objekt.save()
             objekt.viited.add(viide)
 
+from pyproj import Transformer
+
+def read_valgalinn_from_ky_json() -> list:
+    """Process the data from the address book for 1925"""
+    path = settings.BASE_DIR / 'wiki' / 'static' / 'wiki' / 'data'
+    with open(path /'Valga_vald_KATASTER_JSON.json', encoding = 'UTF-8') as jsonfile:
+        data_valgavald = json.load(jsonfile)
+        data_valgalinn = [
+            feature 
+            for feature 
+            in data_valgavald["features"] 
+            if feature["properties"]["ay_nimi"] == "Valga linn"
+        ]
+    return data_valgalinn
+
+def get_t2navad(data_valgalinn: list) -> list:
+    data_valgalinn_t2navad = [
+        feature
+        for feature 
+        in data_valgalinn
+        if feature["properties"]["siht1"] == "TRANSPORDIMAA"
+    ]
+    return data_valgalinn_t2navad
+
+def get_t2nav(
+    data_valgalinn_t2navad: list,
+    t2nava_nimi: str
+) -> list:
+    data_t2nav = [
+        feature
+        for feature 
+        in data_valgalinn_t2navad
+        if feature["properties"]["l_aadress"].find(t2nava_nimi) == 0
+    ]
+    return data_t2nav
+
+def transform2lonlat(coordinates: list) -> list:
+    """
+    Convert to Latitude/Longitude (WGS84)
+    Maa-amet L-EST (3301) -> standard GPS Lat/Lon (4326)
+    ex: [[[622543.1, 6406070.93]]] -> [[[26.05808628030382, 57.782056560299104]]]
+    """
+    transformer = Transformer.from_crs("EPSG:3301", "EPSG:4326", always_xy=True)
+    new_coordinate = lambda lonlat: list(transformer.transform(*lonlat))
+    new_coordinates = []
+    for feature in coordinates:
+        feature_coordinates = []
+        for coordinate in feature:
+            feature_coordinates.append(new_coordinate(coordinate))
+        new_coordinates.append(feature_coordinates)
+    return new_coordinates
+
+# Valga linna tänavate loetelu Eesti geoportaali andmetel 09.08.2026
+# https://aks.geoportaal.ee/aks-api/kaart/page/app/aksavalik
+t2navad_geoportaal_2026 = """
+Aasa tänav
+Aia tänav
+Alfred Neulandi tänav
+Allika tänav
+Andrese tänav
+Antsla tänav
+Astra tänav
+Edela tänav
+Eha tänav
+Energia tänav
+Ernst Enno tänav
+Haava tänav
+Haru tänav
+Heina tänav
+Herne tänav
+Hiie tänav
+Hommiku tänav
+Hämariku tänav
+Iirise tänav
+Ilmajaama tänav
+Jaama puiestee
+Jakobi tänav
+Julius Kuperjanovi tänav
+Järve tänav
+Jõe tänav
+Kadaka tänav
+Kaevu tänav
+Kagu tänav
+Kalda tänav
+Kalevi tänav
+Kanepi tänav
+Karja tänav
+Kase tänav
+Kesk tänav
+Kesva tänav
+Kevade tänav
+Kibuvitsa tänav
+Kirde tänav
+Kirsipuu tänav
+Koidu tänav
+Kolde tänav
+Kreegi tänav
+Kreegipuu tänav
+Kullerkupu tänav
+Kungla tänav
+Kuuse tänav
+Köie tänav
+Laatsi tänav
+Lai tänav
+Leiva tänav
+Lembitu tänav
+Lepa tänav
+Liiva tänav
+Lille tänav
+Loode tänav
+Luha tänav
+Lõuna tänav
+Lühike tänav
+Maasika tänav
+Maleva tänav
+Mee tänav
+Mesipuu tänav
+Metsa tänav
+Muru tänav
+Mädarõika tänav
+Mäe tänav
+Männi tänav
+Männiku põik
+Männiku tänav
+Männipuu tänav
+Märdi tänav
+Mööbli tänav
+Narva tänav
+Nelgi tänav
+Nurme tänav
+Odra tänav
+Oja tänav
+Ojaperve tänav
+Oru tänav
+Pagari tänav
+Paju tänav
+Palu põik
+Palu tänav
+Pargi tänav
+Pedeli tänav
+Perve tänav
+Petseri tänav
+Pihlaka tänav
+Piiri tänav
+Piirilinna tänav
+Pikk tänav
+Pipra tänav
+Pirni tänav
+Pirnipuu tänav
+Ploomi tänav
+Ploomipuu tänav
+Puiestee tänav
+Puu tänav
+Pärna puiestee
+Pärnu tänav
+Pääsusilma tänav
+Põhja tänav
+Põik tänav
+Põllu tänav
+Rahu tänav
+Raja tänav
+Raudtee tänav
+Ravila tänav
+Redise tänav
+Riia tänav
+Roheline tänav
+Roosi tänav
+Räni tänav
+Rükkeli tänav
+Saare tänav
+Sambla tänav
+Savi tänav
+Saviaugu tänav
+Sepa tänav
+Siguri tänav
+Sinepi tänav
+Sinilille tänav
+Sireli tänav
+Soo tänav
+Spordi tänav
+Sulevi tänav
+Suve tänav
+Sõpruse tänav
+Sügise tänav
+Talve tänav
+Tambre tee
+Tamme tänav
+Tartu tänav
+Tehase tänav
+Tehnika tänav
+Telliskivi tänav
+Tibina tee
+Tiigi tänav
+Tolli tänav
+Toogi põik
+Toogi tänav
+Toominga tänav
+Torni tänav
+Tulbi tänav
+Turu tänav
+Tuubi tänav
+Tuule tänav
+Tähe tänav
+Tõrva tänav
+Tööstuse tänav
+Umb tänav
+Uus tänav
+Uus-Koidu tänav
+Vaarika tänav
+Vabaduse tänav
+Vahe tänav
+Vahtra tänav
+Vaikne tänav
+Vainu tänav
+Valguse tänav
+Valli tänav
+Vana-Tambre tee
+Vee tänav
+Veski tänav
+Viadukti tänav
+Videviku tänav
+Viinamarja tänav
+Viljandi tänav
+Väike-Köie tänav
+Väike-Laatsi tänav
+Väike-Lepa tänav
+Väike-Nelgi tänav
+Välja tänav
+Võnnu tänav
+Võru tänav
+Võsa tänav
+Õhtu tänav
+Õunapuu tänav
+Ülase tänav
+"""
+
+def get_address_data(
+    address_query: str, 
+    etak_tyyp: str = '',
+    unik: str = '0', # kas üksusel peab olema unikaalne aadress
+    ky: str = '1',
+    poi: str = '1',
+    knr: str = '1',
+    appartments: str = '1', # kas näidatakse kortereid
+    results: int = 100, # kui palju vasteid max tagastatakse
+) -> list:
+    """
+    Otsingute tegemiseks geoportaalist
+    """
+    ETAK_TYYP = {
+        '': "EHAK,TANAV,EHITISHOONE,KATASTRIYKSUS", # kõik
+        'H': 'EHITISHOONE', # maja
+        'T': 'TANAV',
+        'E': 'EHITISHOONE', # sild, laululava,
+        'A': 'KATASTRIYKSUS', # plats, piirkond, asustusüksus
+        'M': 'EHAK,KATASTRIYKSUS', # sh looduslikud objektid
+    }
+
+    # Otsing ei tule toime tänavate täispikkade isikunimedega tänavanimetustega ja 
+    # tuleb kasutada lühendeid
+    if etak_tyyp == 'T':
+        for eesnimi in ['Alfred', 'Ernst', 'Julius']:
+            address_query = address_query.replace(eesnimi + ' ', '')
+        address_query = address_query.replace('tänav', 'tn').replace('puiestee', 'pst')
+
+    # API Request to Maa-amet ADS Gazetteer
+    url = "https://aks.geoportaal.ee/inaks/inaadress/gazetteer"
+    params = {
+        "address": address_query,
+        "features": ETAK_TYYP[etak_tyyp],
+        "ehak": "8918",
+        "iTappAsendus": "0",
+        "out": "json",
+        "unik": unik, #
+        "ky": ky,
+        "appartments": appartments,
+        "poi": poi,
+        "knr": knr,
+        "results": results
+    }
+
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+
+    data = response.json()
+
+    if not data.get("addresses"):
+        return None
+
+    # Kontrollime otsingu täpsust ja vajadusel filtreerime valed välja
+    # Kesk 12 != Kesk 12a
+    # Lepa != Väike-Lepa
+    address_query_regex = r'(\s.+\s|\s)'.join(address_query.split())
+    pattern = re.compile(rf'(^|.+)(?<!-){address_query_regex}($|\s)')
+    addresses = [
+        addr
+        for addr
+        in data["addresses"]
+        if pattern.match(addr["pikkaadress"])
+    ]
+    return addresses
+
+def check_t2navad_exists(t2navad_geoportaal_2026):
+    """
+    Kontrollime kas tänava nimetus on:
+    Objekt andmebaasis
+    Leitav kaardiportaalist õige vastega
+    """
+    t2navad_geoportaal_2026_list = [
+        t2nav.strip()
+        for t2nav
+        in t2navad_geoportaal_2026.strip().split('\n')
+    ]
+    for t2nav in t2navad_geoportaal_2026_list:
+        o = Objekt.objects.filter(tyyp='T', nimi__startswith=t2nav).first()
+        addresses = get_address_data(t2nav, 'T')
+        if o:
+            message = f'Olemas: {t2nav} -> {o}'
+            print(message, end=' ')
+            logger.info(message)
+        else:
+            message = f'Pole: {t2nav}'
+            print("Pole:", t2nav, end=' ')
+            logger.warning(message)
+        if addresses:
+            message = f'Geoportaalis: {len(addresses)}'
+            print(message)
+            if len(addresses) > 0:
+                print(addresses[0]['aadresstekst'])
+                message += f' -> {addresses[0]['aadresstekst']}'
+            logger.info(message)
+        else:
+            message = "Geoportaalis ei leitud"
+            print(message)
+            logger.warning(message)
+        time.sleep(1)
+
+def transform_address_bbox(
+        g_boundingbox: str
+) -> dict:
+    # Vahetab lat <-> lon koordinaadid Leafleti jaoks
+    address_bbox_coordinates = g_boundingbox.split()
+    coordinates = [
+        [
+            float(coord.split(',')[1]),
+            float(coord.split(',')[0])
+        ]
+        for coord
+        in address_bbox_coordinates
+    ]
+    return {
+      "type": "Polygon",
+      "coordinates": [coordinates]
+    }
+
+def upd_add_t2navad(
+    t2navad_geoportaal_2026: str
+) -> None:
+    """
+    Kontrollime kas tänava nimetus on:
+    Objekt andmebaasis
+    Leitav kaardiportaalist õige vastega
+    Kui pole, loome uue
+    Loome kaardiobjektid ja seome tänavaga
+    """
+
+    kaart = Kaart.objects.get(aasta=2026)
+    viide = kaart.viited.first()
+
+    t2navad_geoportaal_2026_list = [
+        t2nav.strip()
+        for t2nav
+        in t2navad_geoportaal_2026.strip().split('\n')
+    ]
+    for t2nav in t2navad_geoportaal_2026_list:
+        objekt = Objekt.objects.filter(tyyp='T', nimi__startswith=t2nav).first()
+
+        if objekt:
+            message = f'Olemas: {t2nav} -> {objekt}'
+            print(message, end=' ')
+            logger.info(message)
+        else:
+            message = f'Pole: {t2nav}'
+            print(message)
+            logger.warning(message)
+            objekt = Objekt(
+                nimi=t2nav,
+                tyyp='T',
+            )
+            objekt.save()
+            message = f'Lisatud: {objekt}'
+            print(message)
+            logger.info(message)
+
+        objekt.viited.add(viide)
+
+        # kaardiobjektid_geoportaalist = get_address_data(t2nav, 'T')
+        # if kaardiobjektid_geoportaalist:
+        #     message = f"Geoportaalis: {len(kaardiobjektid_geoportaalist)}"
+        #     print(message)
+        #     if len(kaardiobjektid_geoportaalist) > 0:
+        #         message = f'Kontroll: {kaardiobjektid_geoportaalist[0]['aadresstekst']}'
+        #         print(message)
+        #         logger.info(message)
+        #         for kaardiobjekt_geoportaalist in kaardiobjektid_geoportaalist:
+        #             kaardiobjekt = Kaardiobjekt(
+        #                 kaart=kaart,
+        #                 tn=kaardiobjekt_geoportaalist['aadresstekst'],
+        #                 tyyp='A',
+        #                 geometry=transform_address_bbox(
+        #                     kaardiobjekt_geoportaalist['g_boundingbox']
+        #                 ),
+        #                 lisainfo=json.dumps(
+        #                     kaardiobjekt_geoportaalist, 
+        #                     indent=2
+        #                 ),
+        #                 objekt=objekt,
+        #             )
+        #             kaardiobjekt.save()
+        #             objekt.kaardiobjektid.add(kaardiobjekt)
+        #             message = f"Lisatud KO: {kaardiobjekt}"
+        #             logger.info(message)
+        # else:
+        #     message = f"Geoportaalis ei leitud {t2nav}"
+        #     print(message)
+        #     logger.warning(message)
+        # time.sleep(1)
+
+def add_t2navad_from_json_data(
+    t2navad_geoportaal_2026: str,
+    data_valgalinn_t2navad: list
+) -> None:
+    kaart = Kaart.objects.get(aasta=2026)
+    viide = kaart.viited.first()
+
+    t2navad_geoportaal_2026_list = [
+        t2nav.strip()
+        for t2nav
+        in t2navad_geoportaal_2026.strip().split('\n')
+    ]
+
+    for t2nav in t2navad_geoportaal_2026_list:
+        objekt = Objekt.objects.filter(tyyp='T', nimi__startswith=t2nav).first()
+        data_t2nav = get_t2nav(data_valgalinn_t2navad, t2nav)
+        for part in data_t2nav:
+            print(part["properties"]["l_aadress"])
+            coordinates = part["geometry"]["coordinates"] # [[[622426.11, 6406338.99], [622440.76, 6406344.28], [622409.34, 6406398.81], [622391.59, 6406429.59], [622386.09, 6406439.99], [622357.56, 6406489.67], [622329.48, 6406539.36], [622321.08, 6406554.23], [622307.89, 6406546.23], [622335.95, 6406496.55], [622375.9, 6406426.46], [622387.02, 6406408.05], [622405.37, 6406375.24], [622426.11, 6406338.99]]]
+            wgs_coordinates = transform2lonlat(coordinates)
+            geometry = {
+                "type": "Polygon",
+                "coordinates": wgs_coordinates,
+            }
+            # print(new_coordinates)
+            kaardiobjekt = Kaardiobjekt(
+                kaart=kaart,
+                tn=part["properties"]["l_aadress"],
+                tyyp='A',
+                geometry=geometry,
+                lisainfo=json.dumps(
+                    part, 
+                    indent=2
+                ),
+                objekt=objekt,
+            )
+            kaardiobjekt.save()
+            objekt.kaardiobjektid.add(kaardiobjekt)
+            message = f"Lisatud KO: {kaardiobjekt}"
+            logger.info(message)
 
 if __name__ == "__main__":
     # get_vg_vilistlased()
@@ -1572,8 +2049,20 @@ if __name__ == "__main__":
     # massikanne_from_json()
     # url = 'http://opendata.muis.ee/dhmedia/2d69b089-d435-45a2-92f0-2f4f28784e58'
     # getFile_fromUrl(url)
-    test_queryset_timeit()
-    pass
+    # test_queryset_timeit()
+    data_valgalinn = read_valgalinn_from_ky_json()
+    data_valgalinn_t2navad = get_t2navad(data_valgalinn)
+    # data_t2nav = get_t2nav(data_valgalinn_t2navad, "Sulevi tänav")
+    # print(data_t2nav)
+    # data_t2nav = get_t2nav(data_valgalinn_t2navad, "Sulevi tänav")
+    # for t2nav in data_t2nav:
+    #     print(t2nav["properties"]["l_aadress"])
+    #     coordinates = t2nav["geometry"]["coordinates"] # [[[622426.11, 6406338.99], [622440.76, 6406344.28], [622409.34, 6406398.81], [622391.59, 6406429.59], [622386.09, 6406439.99], [622357.56, 6406489.67], [622329.48, 6406539.36], [622321.08, 6406554.23], [622307.89, 6406546.23], [622335.95, 6406496.55], [622375.9, 6406426.46], [622387.02, 6406408.05], [622405.37, 6406375.24], [622426.11, 6406338.99]]]
+    #     new_coordinates = transform2lonlat(coordinates)
+    #     print(new_coordinates)
+    # upd_add_t2navad(t2navad_geoportaal_2026)
+    add_t2navad_from_json_data(t2navad_geoportaal_2026, data_valgalinn_t2navad)
+    logger.info('Done.')
 
 # import importlib
 # importlib.reload(module)

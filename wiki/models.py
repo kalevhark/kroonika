@@ -1711,9 +1711,9 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
         blank=True,
         help_text='Maja number kaardikihil'
     )
-    lisainfo = models.CharField(
+    lisainfo = MarkdownxField(
         'Lisainfo',
-        max_length=80,
+        # max_length=80,
         blank=True,
         help_text='Lisainfo kaardikihil'
     )

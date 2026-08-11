@@ -813,8 +813,7 @@ def user_is_staff_check(user):
 def get_kaardiobjektid_for_objekt(objekt: Objekt) -> QuerySet:
     """Tagastab objekti kaardivaated"""
     seotud_kaardiobjektid = Kaardiobjekt.objects. \
-        filter(objekt__id=objekt.id). \
-        filter(tyyp=objekt.tyyp)
+        filter(objekt__id=objekt.id)
     return seotud_kaardiobjektid
 
 def get_seotud_aadressid_for_objekt(

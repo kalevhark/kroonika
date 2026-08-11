@@ -902,7 +902,7 @@ def get_vectorlayer_streets():
     )
 
 
-def get_big_maps_default(kaardid, obj, aasta):
+def get_big_maps_default(kaardid, obj, aasta: str):
     aasta = aasta or settings.DEFAULT_BIGMAP_AASTA # kui aastat pole valitud, siis n2itame vaikimisi kaarti
     feature_groups_kaardid = {} # erinevate aastate kaardid
 
@@ -918,10 +918,12 @@ def get_big_maps_default(kaardid, obj, aasta):
             show=kaart.aasta == aasta
         )
         # lisame kaardikihile rasterkihi
+        tms = True if kaart.aasta == '2026' else False
         tilelayer = folium.TileLayer(
             location=DEFAULT_CENTER,
             name=kaart.aasta,
             tiles=kaart.tiles,
+            tms=tms,
             zoom_start=DEFAULT_MAP_ZOOM_START,
             min_zoom=DEFAULT_MIN_ZOOM,
             attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
@@ -1080,8 +1082,8 @@ def make_objekt_leaflet_combo_add_tilelayer(kaart, is_objekt_missing_on_defaultm
     tile_kwargs['aasta'] = kaart.aasta
     # kui objekti kaasajal ei ole
     if kaart == DEFAULT_MAP and is_objekt_missing_on_defaultmap:
-        tiles = STAMEN_TONER_NEW['tiles']
-        attr = STAMEN_TONER_NEW['attr']
+        tiles = STAMEN_TONER_NEW.get('tiles')
+        attr = STAMEN_TONER_NEW.get('attr')
 
     return folium.TileLayer(
         # location=location,
@@ -1233,178 +1235,6 @@ def make_objekt_leaflet_combo(objekt=1):
         )
         return map_html
 
-
-# Konkreetse objekti erinevate aastate kaardid koos
-# def make_objekt_leaflet_combo_vana(objekt=1):
-#     obj = Objekt.objects.get(id=objekt)
-#     # Kõigi kaartide ids, kus objekt märgitud: tulemus: <QuerySet ['1', '2', '3']>
-#     kaardid_objektiga_ids = obj.kaardiobjekt_set.values_list('kaart__id', flat=True)
-#
-#     if kaardid_objektiga_ids:
-#         kaardid_objektiga = Kaart.objects.filter(id__in=kaardid_objektiga_ids)
-#         objekt_missing_on_defaultmap = DEFAULT_MAP not in kaardid_objektiga  # Objekti kaasajal pole?
-#         objekt_last_seen_on_map = max([kaart.aasta for kaart in kaardid_objektiga])
-#
-#         if objekt_missing_on_defaultmap:
-#             # Lisame vaate, millel näitame virtuaalset asukohta tänapäeval
-#             kaardid_objektiga = kaardid_objektiga | Kaart.objects.filter(id=DEFAULT_MAP.id)
-#
-#         feature_groups = {}
-#         zoom_start = DEFAULT_MAP_ZOOM_START
-#         location = DEFAULT_CENTER
-#
-#         for kaart in kaardid_objektiga:
-#             # aasta = kaart.aasta
-#             url = reverse('kaart')
-#
-#             feature_groups[kaart.aasta] = folium.FeatureGroup(
-#                 name=f'<span class="kaart-control-layers">{kaart.aasta}</span>',
-#                 overlay=False,
-#                 show=False
-#             )
-#
-#             tile_kwargs = {
-#                 'url': url,
-#                 'aasta': kaart.aasta,
-#                 'objektId': objekt
-#             }
-#             if kaart == DEFAULT_MAP and objekt_missing_on_defaultmap:
-#                 folium.TileLayer(
-#                     location=location,
-#                     name=kaart.aasta,
-#                     tiles=STAMEN_TONER_NEW['tiles'],
-#                     attr=STAMEN_TONER_NEW['attr'],
-#                     min_zoom=DEFAULT_MIN_ZOOM,
-#                     **tile_kwargs
-#                 ).add_to(feature_groups[kaart.aasta])
-#                 feature_groups[kaart.aasta].show=True
-#             else:
-#                 kaardiobjektid = obj.kaardiobjekt_set.filter(kaart=kaart)
-#                 if kaardiobjektid[0].geometry:
-#                     location = kaardiobjektid[0].centroid
-#                 folium.TileLayer(
-#                     location=location,
-#                     name=kaart.aasta,
-#                     tiles=kaart.tiles,
-#                     min_zoom=DEFAULT_MIN_ZOOM,
-#                     attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
-#                     **tile_kwargs
-#                 ).add_to(feature_groups[kaart.aasta])
-#
-#                 # lisame vektorkihid
-#                 for kaardiobjekt in kaardiobjektid:
-#                     geometry = kaardiobjekt.geometry
-#                     tyyp = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-#                     name = f'{kaardiobjekt.__str__()} ({dict(Kaardiobjekt.TYYP)[tyyp].lower()})'
-#                     feature_collection = {
-#                         "type": "FeatureCollection",
-#                         "name": name,
-#                         "features": [geometry]
-#                     }
-#                     if obj.gone:  # objekti kaasajal pole
-#                         tyyp_style = f'{kaardiobjekt.tyyp}H'  # 'HH'-hoonestus, 'AH'-ala, 'MH'-muu
-#                     else:  # objekt kaasajal olemas
-#                         tyyp_style = kaardiobjekt.tyyp  # 'H'-hoonestus, 'A'-ala, 'M'-muu
-#                     style = GEOJSON_STYLE[tyyp_style]
-#                     f = json.dumps(feature_collection)
-#                     folium.GeoJson(
-#                         f,
-#                         name=name,
-#                         style_function=lambda x: style
-#                     ).add_to(feature_groups[kaart.aasta])
-#                     if kaart.aasta == objekt_last_seen_on_map and objekt_missing_on_defaultmap:
-#                         folium.GeoJson(
-#                             f,
-#                             name=name,
-#                             style_function=lambda x: style
-#                         ).add_to(feature_groups[DEFAULT_MAP.aasta])
-#                     # Kui on antud zoomimise tase, siis kasutame seda
-#                     if kaardiobjekt.zoom and (zoom_start != kaardiobjekt.zoom):
-#                         zoom_start = kaardiobjekt.zoom
-#
-#         feature_groups[DEFAULT_MAP.aasta].show = True
-#
-#         # Loome aluskaardi
-#         kwargs = {  # vajalikud mobiilis kerimise h6lbustamiseks
-#             'dragging': '!L.Browser.mobile',
-#             'tap': '!L.Browser.mobile'
-#         }
-#         map = folium.Map(
-#             location=location,  # NB! tagurpidi: [lat, lon],
-#             zoom_start=zoom_start,
-#             min_zoom=DEFAULT_MIN_ZOOM,
-#             zoom_control=True,
-#             tiles=None,
-#             **kwargs
-#         )
-#
-#         map.default_css = LEAFLET_DEFAULT_CSS
-#         map.default_js = LEAFLET_DEFAULT_JS
-#         LEAFLET_DEFAULT_HEADER.add_to(map.get_root().header)
-#
-#         for aasta in feature_groups.keys():
-#             # Lisame kaardi leaflet combosse
-#             feature_groups[aasta].add_to(map)
-#
-#         # Piirid tänapäeval
-#         style1 = {'fill': None, 'color': '#00FFFF', 'weight': 5}
-#         with open(UTIL_DIR / 'geojson' / "piirid.geojson") as gf:
-#             src = json.load(gf)
-#             folium.GeoJson(
-#                 src,
-#                 name=f'<span class="kaart-control-layers">linnapiirid (2021)</span>',
-#                 style_function=lambda x: style1
-#             ).add_to(map)
-#
-#         # Tänavatevõrk tänapäeval
-#         style2 = {'fill': None, 'color': 'orange', 'weight': 2}
-#         with open(UTIL_DIR / 'geojson' / "teedev6rk_2021.geojson") as gf:
-#             src = json.load(gf)
-#             folium.GeoJson(
-#                 src,
-#                 name=f'<span class="kaart-control-layers">tänavad (2021)</span>',
-#                 style_function=lambda x: style2
-#             ).add_to(map)
-#
-#         # Lisame nupu kaardivaate avamiseks
-#         leafletJsButton(
-#             object="""
-#                 {
-#                     states:[
-#                         {
-#                             stateName: 'show-fullmap',
-#                             icon: 'glyphicon glyphicon-fullscreen',
-#                             title: 'Näita suurel kaardil',
-#                             onClick: function(btn, map) {
-#                                 map.eachLayer(function(layer) {
-#                                     if ( layer instanceof L.TileLayer ) {
-#                                         window.open(
-#                                           layer.options.url + layer.options.aasta + '?objekt=' + layer.options.objektId,
-#                                           '_blank' // <- This is what makes it open in a new window.
-#                                         );
-#                                     }
-#                                 });
-#                             }
-#                         }
-#                     ]
-#                 }
-#             """
-#         ).add_to(map)
-#
-#         # Lisame kihtide kontrolli
-#         folium.LayerControl().add_to(map)
-#
-#         map_html = map._repr_html_()
-#         # v2ike h2kk, mis muudab vertikaalset suurust
-#         map_html = map_html.replace(';padding-bottom:60%;', ';padding-bottom:100%;', 1)
-#         # v2ike h2kk, mis muudab vaikimis veateksti
-#         map_html = map_html.replace(
-#             '<span style="color:#565656">Make this Notebook Trusted to load map: File -> Trust Notebook</span>',
-#             '',
-#             1
-#         )
-#         return map_html
-
 # Konkreetse kaardiobjekti kaart
 def make_kaardiobjekt_leaflet(kaardiobjekt_id):
     try:
@@ -1422,9 +1252,9 @@ if __name__ == "__main__":
     # read_kaardiobjekt_csv_to_db('2021')
     # geometry = get_osm_data(street='Rigas', housenumber='9', admin_level='7', country='Latvija', city='Valka')
     # geometry = get_osm_data(street='Kesk', housenumber='12')
-    geometry = get_shp_data(kataster='79517:019:0003')
+    # geometry = get_shp_data(kataster='79517:019:0003')
     # geometry = get_osm_data(street='Kraavikalda', housenumber='19', admin_level='9', country='Eesti', city='Tartu linn')
-    print(geometry)
+    # print(geometry)
     # kaardiobjekt_match_db(20938)
     # read_shp_to_db(aasta='1912') # Loeb kaardikihi shp failist andmebaasi
     # write_db_to_shp(aasta='1800') # Kirjutab andmebaasist kaardikihi shp faili
