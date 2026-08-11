@@ -30,10 +30,9 @@ from django.conf import settings
 
 try:
     from ilm.utils import utils
+    MEDIA_DIR = settings.MEDIA_ROOT
 except:
     pass
-
-MEDIA_DIR = settings.MEDIA_ROOT
 
 from django.db.models import (
     Case, F, Q, Value, When,
