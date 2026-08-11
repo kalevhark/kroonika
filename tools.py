@@ -28,12 +28,6 @@ if __name__ == "__main__":
 
 from django.conf import settings
 
-try:
-    from ilm.utils import utils
-    MEDIA_DIR = settings.MEDIA_ROOT
-except:
-    pass
-
 from django.db.models import (
     Case, F, Q, Value, When,
     BooleanField, DateField, DateTimeField, DecimalField, IntegerField,
@@ -41,11 +35,14 @@ from django.db.models import (
 )
 from django.db.models.functions import Extract, Trunc, ExtractDay
 
+from ilm.utils import utils
 from wiki.models import (
     Aadress, Artikkel, Isik, Organisatsioon, Objekt, Pilt,
     Kaart, Kaardiobjekt,
     Viide, Allikas
 )
+
+MEDIA_DIR = settings.MEDIA_ROOT
 
 # Decimal andmeväljade teisendamiseks, mis võivad olla tühjad <NULL>
 def float_or_none(value):
@@ -55,98 +52,12 @@ def float_or_none(value):
         return None
 
 
-
-# ühekordne fn lähteandmete korjamiseks massikande jaoks ariklitest
-def get_data4massikanne():
-    ids = [5080, 5268, 5273, 5277, 5274, 5278, 5399, 5400, 5402, 5545, 5546, 5609]
-    with open(f'20200413_massikanne.txt', 'w', encoding = 'UTF-8') as f:
-        for id in ids:
-            art = Artikkel.objects.get(id=id)
-
-            f.write(f'{art.hist_searchdate.year} {art.kirjeldus}\n')
-            f.write(f'art {art.id}\n')
-            f.write(f'pil {[pilt.id for pilt in art.pilt_set.all()][0]}\n')
-            f.write(f'org {[org.id for org in art.organisatsioonid.all()][0]}\n')
-            f.write(f'vii {[viide.id for viide in art.viited.all()][0]}\n')
-            f.write('\n')
-
-
-# Isikukirjete tekitamiseks artikli juurde
-# import tools
-# tools.massikanne()
-def massikanne_from_dict(andmed):
-    # Millised isikud lisada artiklile
-    isik_str = andmed['isikud']
-    # Millise artikliga siduda isik
-    art_id = andmed['art']
-    art = Artikkel.objects.get(id=art_id)
-    print(art)
-    # Millise pildiga siduda isik
-    pilt_id = andmed['pil']
-    pilt = Pilt.objects.get(id=pilt_id)
-    print(pilt)
-    # Milline organisatsioon lisada isikule
-    org_id = andmed['org']
-    org = Organisatsioon.objects.get(id=org_id) # 33=tüt gümn, 85=poeg gymn, 2736=vene gymn, saksa eragymn
-    print(org)
-    # Milline viide lisada isikule
-    viited_ids = [int(viite_id.strip()) for viite_id in andmed['vii'].split(',')]
-    viited = Viide.objects.filter(id__in=viited_ids)
-    print(viited)
-    # Isiku kirjeldus
-    isik_kirjeldus = andmed['kir']
-    isikud = isik_str.split(',')
-    for isik in isikud:
-        # Loome uue isiku
-        isik_nimi = isik.strip().split(' ')
-        isik_eesnimi = ' '.join(isik_nimi[:-1]).strip()
-        isik_perenimi = isik_nimi[-1].strip()
-        if isik_eesnimi or isik_perenimi:
-            print(isik_eesnimi, isik_perenimi)
-            uus_isik = Isik(
-                perenimi = isik_perenimi,
-                eesnimi = isik_eesnimi,
-                kirjeldus = isik_kirjeldus
-            )
-            uus_isik.save()
-            print(uus_isik)
-            # Lisame isikule seotud organisatsiooni
-            uus_isik.organisatsioonid.add(org)
-            # Lisame isikule seotud viite(d)
-            for viide in viited:
-                uus_isik.viited.add(viide)
-            # Lisame isiku artiklile
-            art.isikud.add(uus_isik)
-            # Lisame isiku pildile
-            pilt.isikud.add(uus_isik)
-
-
-# Võtab andmed xml failist ja teeb isikute masskande ja sidumise artikli, organisatsiooni, pildi ja viitega
-# xml faili struktuur, mis asub samas kataloogis, kus tools.py
-# <data>
-# <kanne>
-# <kir></kir><isikud></isikud><pil></pil><org></org><vii></vii>
-# </kanne>
-# </data>
-def massikanne_from_xml():
-    f = '20200605_massikanne.xml'
-    import xml.etree.ElementTree as ET
-    tree = ET.parse(f)
-    root = tree.getroot()
-    # with open(f, 'r', encoding = 'UTF-8') as f:
-    #     data_as_string = f.read()
-    # root = ET.fromstring(data_as_string)
-    for kanne in root:
-        andmed = dict()
-        for el in kanne:
-            andmed[el.tag] = el.text.strip()
-        massikanne_from_dict(andmed)
-
-
-# Isikukirjete tekitamiseks artikli juurde
-# import tools
-# tools.massikanne_from_data()
 def massikanne_from_data():
+    """
+    Isikukirjete tekitamiseks artikli juurde
+    > import tools
+    > tools.massikanne_from_data()
+    """
     # Millised isikud lisada artiklile
     isik_str = """
 Olga Aas, Natalie Ammas, Leida Anderson, Hermine Hermann, Asne Kaplan, Villemine Korp, Linda Martinson, Marie Mõtsküla, Helene Sprenk, Salme Tamm, Jenny Teitelbaum, Eugenie Vaardt, Julie Vaher, Laine Vähi, Linda Ilves, Linda Kiima, Loreida Lääts, Erna Lepik, Aino Luik, Valve Niglas, Emmi Pettai, Rute Raska, Adele Tamm, Õie Salundi, Aita Värk, Leida Visnapuu, Aide Kivi, Klaudia Lainovool, Armanda Saretok, Loreida Johanson, Magda Lepik, Liine Till
@@ -321,145 +232,6 @@ def tvk():
             f.write('- - -\n')
 
 
-# Viidetele geni ja vikipeedia peatykinimed
-def update_peatykk_from_url():
-    # import requests
-    from django.db.models import Q
-    from urllib.request import Request, urlopen
-    from bs4 import BeautifulSoup
-    allikas = Allikas.objects.get(id=17) # geni
-    # div_id = ''
-    peatykita_viited = Viide.objects.filter(allikas=allikas, url__isnull=False).filter(Q(peatykk__isnull=True) | Q(peatykk__exact=''))
-    print(len(peatykita_viited))
-    for viide in peatykita_viited:
-        href = viide.url
-        # r = requests.get(href)
-        # print(href)
-        req = Request(href, headers={'User-Agent': 'Mozilla/5.0'})
-        webpage = urlopen(req).read()
-        # Struktueerime
-        soup = BeautifulSoup(webpage, 'html.parser')
-        # div = soup.find(id=div_id)
-        div = soup.find('h1')
-        print(href, end=' ')
-        if div:
-            text = div.text.replace('*', '')
-            print(text)
-            if text:
-                viide.peatykk = text
-                # viide.save()
-                pass
-        else:
-            print('-')
-
-# Kannab object andmed obj -> org
-# tools.obj2org(obj=xxx,[org=yyy])
-def obj2org(**kwargs):
-    src_obj = kwargs.get('obj', None)
-    if src_obj:
-        obj = Objekt.objects.get(id=src_obj)
-        dst_org = kwargs.get('org', None)
-        if dst_org:
-            org = Organisatsioon.objects.get(id=dst_org)
-        else:
-            org = Organisatsioon.objects.create(
-                nimi=obj.nimi,
-                hist_date=obj.hist_date,
-                hist_year=obj.hist_year,
-                hist_month=obj.hist_month,
-                hist_enddate=obj.hist_enddate,
-                hist_endyear=obj.hist_endyear,
-                gone=obj.gone,
-                kirjeldus=obj.kirjeldus
-            )
-            org.save()
-        print(f'{obj.id}:{obj}->{org.id}:{org}')
-        # Objektid
-        for objekt in obj.objektid.all():
-            print(f'obj{objekt.id}:{objekt}')
-            org.objektid.add(objekt)
-        # Viited
-        for viide in obj.viited.all():
-            print(f'vii{viide.id}:{viide}')
-            org.viited.add(viide)
-        # Artiklid
-        artiklid = Artikkel.objects.filter(objektid=obj)
-        for artikkel in artiklid:
-            print(f'art{artikkel.id}:{artikkel}')
-            artikkel.organisatsioonid.add(org)
-        # Pildid
-        pildid = Pilt.objects.filter(objektid=obj)
-        for pilt in pildid:
-            print(f'pilt{pilt.id}:{pilt}')
-            pilt.organisatsioonid.add(org)
-        # Profiilipildid
-        pildid = Pilt.objects.filter(profiilipilt_objektid=obj)
-        for pilt in pildid:
-            print(f'pilt{pilt.id}:{pilt}')
-            pilt.profiilipilt_organisatsioonid.add(org)
-        # Isikud
-        isikud = Isik.objects.filter(objektid=obj)
-        for isik in isikud:
-            print(f'isik{isik.id}:{isik}')
-            isik.organisatsioonid.add(org)
-
-def db_test():
-    for model in (Isik, Organisatsioon, Objekt):
-        print(model.__name__)
-        for i in range(1, 13):
-            time = datetime.now()
-            artikkel_qs = Artikkel.objects.filter(kroonika__isnull=True)
-            filtered_queryset = model.objects.filter(hist_date__month=i).filter(
-                Q(viited__isnull=False) |
-                Q(viited__isnull=True, artikkel__isnull=True) |
-                Q(artikkel__in=artikkel_qs)
-            ).distinct()
-            filtered_queryset = filtered_queryset.annotate(
-                dob=Case(
-                    When(hist_date__gt=date(1918, 1, 31), then=F('hist_date')),
-                    When(hist_date__gt=date(1900, 2, 28), then=F('hist_date') + timedelta(days=13)),
-                    When(hist_date__gt=date(1800, 2, 28), then=F('hist_date') + timedelta(days=12)),
-                    When(hist_date__gt=date(1700, 2, 28), then=F('hist_date') + timedelta(days=11)),
-                    When(hist_date__gt=date(1582, 10, 5), then=F('hist_date') + timedelta(days=10)),
-                    default=F('hist_date'),
-                    output_field=DateField()
-                ),
-                doe=Case(
-                    When(hist_enddate__gt=date(1918, 1, 31), then=F('hist_enddate')),
-                    When(hist_enddate__gt=date(1900, 2, 28), then=F('hist_enddate') + timedelta(days=13)),
-                    When(hist_enddate__gt=date(1800, 2, 28), then=F('hist_enddate') + timedelta(days=12)),
-                    When(hist_enddate__gt=date(1700, 2, 28), then=F('hist_enddate') + timedelta(days=11)),
-                    When(hist_enddate__gt=date(1582, 10, 5), then=F('hist_enddate') + timedelta(days=10)),
-                    default=F('hist_enddate'),
-                    output_field=DateField()
-                )
-            ).count()
-            print(
-                i,
-                filtered_queryset,
-                f'{(datetime.now() - time).seconds}.{(datetime.now() - time).microseconds}'
-            )
-
-def fix(id):
-    art_500 = Artikkel.objects.get(id=id)
-    fixed = False
-    print(art_500.inp_date, art_500.mod_date)
-
-    if art_500.inp_date.hour == 3 and art_500.inp_date.weekday() == 6 and art_500.inp_date.month in [3,10]:
-        fix_date = datetime(art_500.inp_date.year, art_500.inp_date.month, art_500.inp_date.day)
-        print('Fix:', fix_date)
-        art_500.inp_date = fix_date
-        fixed = True
-
-    if art_500.mod_date.hour == 3 and art_500.mod_date.weekday() == 6 and art_500.mod_date.month in [3,10]:
-        fix_date = datetime(art_500.mod_date.year, art_500.mod_date.month, art_500.mod_date.day)
-        print('Fix:', fix_date)
-        art_500.mod_date = fix_date
-        fixed = True
-
-    if fixed:
-        art_500.save()
-
 def objekt_to_csv():
     objs = Objekt.objects.all()
     with open('objekt.csv', 'w', newline='') as csvfile:
@@ -484,27 +256,6 @@ def update_objekt_from_csv():
                 obj = Objekt.objects.filter(id=row['id']).first()
                 if obj:
                     print(row['asukoht'], '->', obj.asukoht)
-
-def export_ilm_data():
-    from ilm.models import Ilm
-    from django.db.models import Sum, Count, Avg, Min, Max
-    qs_kuud = Ilm.objects \
-        .values('timestamp__year', 'timestamp__month') \
-        .annotate(Sum('precipitations'), Avg('airtemperature')) \
-        .order_by('timestamp__year', 'timestamp__month')
-    import csv
-
-    with open('ilm.csv', 'w', newline='') as csvfile:
-        fieldnames = ['month', 'avgtemp']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for kuu in qs_kuud:
-            writer.writerow(
-                {
-                    'month': f'{kuu["timestamp__year"]}-{kuu["timestamp__month"]}-01',
-                    'avgtemp': float(kuu["airtemperature__avg"])
-                }
-            )
 
 def import_ilm_maxmin_airtemperature():
     from ilm.models import Ilm
@@ -585,9 +336,8 @@ def ilm_maxmin():
             'days_above20': days_above20
         }
 
-def clean_ophan_images():
-    # remove ophan pictures
-
+def clean_orphan_images():
+    # remove orphan pictures
     # Returns a list of names in list files.
     print("Pildid:")
     files = glob.glob(str(MEDIA_DIR / 'pildid/**/*.*'), recursive=True)
@@ -678,7 +428,9 @@ def get_vg_vilistlased():
     # base_url = 'https://www.valgagym.ee/vilistlased/lopetanud/list/loetelu/'
     base_url = 'https://www.valgagym.ee/kool/vilistlased/lopetanud/list/loetelu/'
     data = {}
-    for aasta in range(1933, 2022):
+    start_aasta = 1933
+    stopp_aasta = 2022
+    for aasta in range(start_aasta, stopp_aasta):
         if aasta in [1939]:
             continue # selle aasta andmed puuduvad
         suffix = ''
@@ -717,7 +469,7 @@ def get_vg_vilistlased():
             data[aasta]['harud'][haru] = nimekiri[0].text.split('\n')
         print()
 
-    with open('vilistlased1933-2021.json', mode='w', encoding='utf8') as f:
+    with open(f'vilistlased{start_aasta}-{stopp_aasta-1}.json', mode='w', encoding='utf8') as f:
         json.dump(data, f)
 
 import time
@@ -870,23 +622,6 @@ def init_pilt_profiilipildid():
             for obj in pilt.objektid.all():
                 pilt.profiilipilt_objektid.add(obj)
 
-def ilmajama():
-    print('Nullist:')
-    print('datetime naive [datetime.now()]:', datetime.now())
-    dt_naive = datetime.now()
-    print('datetime UTC   [datetime.now(timezone.utc)]:', datetime.now(timezone.utc))
-    dt_utc = datetime.now(timezone.utc)
-    print('datetime Eesti [datetime.now(tz=ZoneInfo("Europe/Tallintoolsn")]:', datetime.now(tz=ZoneInfo('Europe/Tallinn')))
-    dt_eesti = datetime.now(tz=ZoneInfo('Europe/Tallinn'))
-    print('Teisendused:')
-    dt_utc_uus = dt_naive.astimezone(timezone.utc)
-    print(f'naive -> utc   [dt_naive.astimezone(timezone.utc)]: {dt_naive} -> {dt_utc_uus}')
-    dt_eesti_uus = dt_naive.astimezone(ZoneInfo("Europe/Tallinn"))
-    print(f'naive -> Eesti [dt_naive.astimezone(ZoneInfo("Europe/Tallinn"))]: {dt_naive} -> {dt_eesti_uus}')
-    dt_utc2eesti_uus = dt_utc.astimezone(ZoneInfo("Europe/Tallinn"))
-    print(f'UTC   -> Eesti [dt_utc.astimezone(ZoneInfo("Europe/Tallinn"))]: {dt_utc} -> {dt_utc2eesti_uus}')
-    print(f'{dt_eesti_uus} == {dt_utc_uus} -> {dt_eesti_uus == dt_utc_uus}')
-
 def check_profiilipildid_notin_pildid():
     for model in [Artikkel, Isik, Organisatsioon, Objekt]:
         objs = model.objects.all()
@@ -957,81 +692,6 @@ def lisa_artikkel_20230209():
         uus_art.organisatsioonid.add(org)
         print(uus_art.id)
 
-# Lisab artiklile lisatud pildile isikud ja objektid
-def task_art9754():
-    art = Artikkel.objects.get(id=9754)
-    print(art)
-    pil = Pilt.objects.get(id=6431)
-    for isik in art.isikud.all():
-        print(isik)
-        pil.isikud.add(isik)
-    # for obj in art.objektid.all():
-        # print(obj)
-        # pil.objektid.add(obj)
-
-# Lisab artikliga seotud isikutele artikliga seotud org ja viide
-def task_art11802():
-    art =  Artikkel.objects.get(id=11802)
-    isikud = art.isikud.all()
-    org = Organisatsioon.objects.get(id=3240)
-    # pilt = Pilt.objects.get(id=6561)
-    viide = Viide.objects.get(id=13803)
-
-    print(art, org, viide, isikud.count())
-
-    for isik in isikud:
-        print(f'isik{isik.id}:{isik}')
-        sep = '\n\n+++\n\n'
-        isik.kirjeldus = sep.join([isik.kirjeldus, 'Valga linnavolikogu liige 1879-'])
-        isik.save()
-        isik.organisatsioonid.add(org)
-        isik.viited.add(viide)
-        # pilt.isikud.add(isik)
-
-def task_transform_body_text2kirjeldus():
-    arts = Artikkel.objects.all()
-    for art in arts:
-        art.kirjeldus = art.body_text
-        art.save(update_fields=['kirjeldus'])
-
-import itertools
-def viited_uusformaat():
-    def replace_viite_tag(obj, string, logfile):
-        viited = obj.viited.all()
-        if viited:
-            logfile.write(f'{str(obj.__class__.__name__)} {obj.id}\n')
-            # Ajutine: asendame viited kujul [^n] viite koodiga kujul [viide_nnnn]
-            c = itertools.count(1)
-            translate_viited = {
-                f'[^{next(c)}]': f'[viide_{viide.id}]'
-                for viide
-                in viited
-            }
-            pattern = re.compile(r'(\[\^[0-9]*])')
-            tagid = re.finditer(pattern, string)
-            for tag in tagid:
-                logfile.write(f'{tag.groups()[0]}: {translate_viited.get(tag.groups()[0])}\n')
-
-            for translate_viide in translate_viited:
-                string = string.replace(translate_viide, translate_viited[translate_viide])
-        return string
-
-    with open('viited_renew.log', 'w') as f:
-        for model in [
-            Artikkel,
-            Isik,
-            Organisatsioon,
-            Objekt
-        ]:
-            pattern = r'(\[\^[0-9]*])'
-            if model == Artikkel:
-                for obj in model.objects.filter(kirjeldus__iregex=rf'{pattern}'):
-                    obj.kirjeldus = replace_viite_tag(obj, obj.kirjeldus, f)
-                    obj.save(update_fields=['kirjeldus'])
-            else:
-                for obj in model.objects.filter(kirjeldus__iregex=rf'{pattern}'):
-                    obj.kirjeldus = replace_viite_tag(obj, obj.kirjeldus, f)
-                    obj.save(update_fields=['kirjeldus'])
 
 def getFilename_fromCd(cd):
     """
@@ -1052,144 +712,6 @@ def getFile_fromUrl(url):
     print(filename, contentLength)
     open(filename, 'wb').write(r.content)
 
-# Indeksite kasutus andmebaasis
-def get_indexusestat(path=settings.BASE_DIR / 'ilm'):
-    """ query maxdate from the ilm_ilm table """
-    conn = None
-    try:
-        params = utils.config(path)
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        cur.execute(
-            """SELECT
-                idstat.relname AS TABLE_NAME,
-                indexrelname AS index_name,
-                idstat.idx_scan AS index_scans_count,
-                pg_size_pretty(pg_relation_size(indexrelid)) AS index_size,
-                tabstat.idx_scan AS table_reads_index_count,
-                tabstat.seq_scan AS table_reads_seq_count,
-                tabstat.seq_scan + tabstat.idx_scan AS table_reads_count,
-                n_tup_upd + n_tup_ins + n_tup_del AS table_writes_count,
-                pg_size_pretty(pg_relation_size(idstat.relid)) AS table_size
-            FROM
-                pg_stat_user_indexes AS idstat
-            JOIN
-                pg_indexes
-                ON
-                indexrelname = indexname
-                AND
-                idstat.schemaname = pg_indexes.schemaname
-            JOIN
-                pg_stat_user_tables AS tabstat
-                ON
-                idstat.relid = tabstat.relid
-            WHERE
-                indexdef !~* 'unique'
-            ORDER BY
-                idstat.idx_scan DESC,
-                pg_relation_size(indexrelid) DESC
-            """.strip()
-        )
-
-        row = cur.fetchone()
-        print([column.name for column in cur.description])
-
-        while row is not None:
-            print(row)
-            row = cur.fetchone()
-        cur.close()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-
-import timeit
-from django.db.models.functions import Cast, Coalesce, Concat, Extract, ExtractYear, ExtractMonth, ExtractDay, LPad
-from django.db.models import \
-    Count, Max, Min, \
-    Case, F, Func, Q, When, \
-    Value, CharField, IntegerField
-
-def test_default():
-    qs = Artikkel.objects.all()
-    q = [obj.pk for obj in qs]
-
-def test_daatumitega_old():
-    qs = Artikkel.objects.annotate(
-        search_year=Case(
-            When(hist_date__isnull=False, then=ExtractYear('hist_date')),
-            When(hist_year__isnull=False, then=F('hist_year')),
-            When(hist_year__isnull=True, then=0),
-        ),
-        search_month=Case(
-            When(hist_date__isnull=False, then=ExtractMonth('hist_date')),
-            When(hist_month__isnull=False, then=F('hist_month')),
-            When(hist_month__isnull=True, then=0),
-            output_field=IntegerField()
-        ),
-        search_day=Case(
-            When(hist_date__isnull=False, then=ExtractDay('hist_date')),
-            When(hist_date__isnull=True, then=0),
-            output_field=IntegerField()
-        ),
-    ).order_by('search_year', 'search_month', 'search_day', 'id')
-    q = [obj.pk for obj in qs]
-
-def test_daatumitega_new():
-    qs = Artikkel.objects.annotate(
-        search_index=Concat(
-            Case(
-                When(hist_date__isnull=False, then=Cast('hist_date__year', output_field=CharField())),
-                When(hist_year__isnull=False, then=Cast('hist_year', output_field=CharField())),
-                When(hist_year__isnull=True, then=Value("0000")),
-            ),
-            LPad(Case(
-                When(hist_date__isnull=False, then=Cast('hist_date__month', output_field=CharField())),
-                When(hist_month__isnull=False, then=Cast('hist_month', output_field=CharField())),
-                When(hist_month__isnull=True, then=Value("00")),
-            ), 2, fill_text=Value("0")),
-            LPad(Case(
-                When(hist_date__isnull=False, then=Cast('hist_date__day', output_field=CharField())),
-                When(hist_date__isnull=True, then=Value("00")),
-            ), 2, fill_text=Value("0")),
-            LPad(
-                Cast('id', output_field=CharField()),
-                7, fill_text=Value("0")
-            )
-        )
-    ).order_by('search_index')
-    q = [obj.pk for obj in qs]
-
-def test_daatumitega_new2():
-    qs = Artikkel.objects.annotate(
-        search_index=Concat(
-            LPad(
-                Cast(Coalesce('hist_date__year', 'hist_year', 0), output_field=CharField()),
-                4, fill_text=Value("0")
-            ),
-            LPad(
-                Cast(Coalesce('hist_date__month', 'hist_month', 0), output_field=CharField()),
-                2, fill_text=Value("0")
-            ),
-            LPad(
-                Cast(Coalesce('hist_date__day', 0), output_field=CharField()),
-                2, fill_text=Value("0")
-            ),
-            LPad(
-                Cast('id', output_field=CharField()),
-                7, fill_text=Value("0")
-            )
-        )
-    ).order_by('search_index')
-    q = [obj.pk for obj in qs]
-
-
-def test_queryset_timeit():
-    print(timeit.timeit("test_default()", setup="from __main__ import test_default", number=100))
-    print(timeit.timeit("test_daatumitega_old()", setup="from __main__ import test_daatumitega_old", number=100))
-    print(timeit.timeit("test_daatumitega_new()", setup="from __main__ import test_daatumitega_new", number=100))
-    print(timeit.timeit("test_daatumitega_new2()", setup="from __main__ import test_daatumitega_new2", number=100))
 
 from django.contrib.postgres.search import TrigramSimilarity
 def isik_trigram_word_similarity(nimi):
@@ -2062,8 +1584,8 @@ if __name__ == "__main__":
     #     coordinates = t2nav["geometry"]["coordinates"] # [[[622426.11, 6406338.99], [622440.76, 6406344.28], [622409.34, 6406398.81], [622391.59, 6406429.59], [622386.09, 6406439.99], [622357.56, 6406489.67], [622329.48, 6406539.36], [622321.08, 6406554.23], [622307.89, 6406546.23], [622335.95, 6406496.55], [622375.9, 6406426.46], [622387.02, 6406408.05], [622405.37, 6406375.24], [622426.11, 6406338.99]]]
     #     new_coordinates = transform2lonlat(coordinates)
     #     print(new_coordinates)
-    upd_add_t2navad(t2navad_geoportaal_2026)
-    add_t2navad_from_json_data(t2navad_geoportaal_2026, data_valgalinn_t2navad)
+    # upd_add_t2navad(t2navad_geoportaal_2026)
+    # add_t2navad_from_json_data(t2navad_geoportaal_2026, data_valgalinn_t2navad)
     logger.info('Done.')
 
 # import importlib

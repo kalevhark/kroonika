@@ -1775,6 +1775,7 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
             folium.TileLayer(
                 tiles=DEFAULT_MAP.tiles,
                 attr=f'{DEFAULT_MAP.__str__()}<br>{DEFAULT_MAP.viited.first()}',
+                tms=True if DEFAULT_MAP.aasta == '2026' else False,
             ).add_to(feature_group_default)
             feature_group_default.add_to(map)
 
@@ -1785,6 +1786,7 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
             folium.TileLayer(
                 tiles=self.kaart.tiles,
                 attr=f'{self.kaart.__str__()}<br>{self.kaart.viited.first()}',
+                tms=True if self.kaart.aasta == '2026' else False
             ).add_to(feature_group_kaardiobjekt)
             feature_group_kaardiobjekt.add_to(map)
 

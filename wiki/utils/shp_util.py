@@ -38,7 +38,7 @@ OVERPASS_URL = "http://overpass-api.de/api/interpreter"
 
 DEFAULT_CENTER = settings.DEFAULT_CENTER
 DEFAULT_MAP_AASTA = settings.DEFAULT_MAP_AASTA
-DEFAULT_MAP = Kaart.objects.get(aasta=settings.DEFAULT_MAP_AASTA) # Vaikimisi OpenStreetMap
+DEFAULT_MAP = Kaart.objects.get(aasta=settings.DEFAULT_MAP_AASTA)
 DEFAULT_MAP_ZOOM_START = settings.DEFAULT_MAP_ZOOM_START
 DEFAULT_MIN_ZOOM = settings.DEFAULT_MIN_ZOOM
 
@@ -1085,10 +1085,12 @@ def make_objekt_leaflet_combo_add_tilelayer(kaart, is_objekt_missing_on_defaultm
         tiles = STAMEN_TONER_NEW.get('tiles')
         attr = STAMEN_TONER_NEW.get('attr')
 
+    tms = True if kaart.aasta == '2026' else False
     return folium.TileLayer(
         # location=location,
         name=kaart.aasta,
         tiles=tiles,
+        tms=tms,
         attr=attr,
         min_zoom=DEFAULT_MIN_ZOOM,
         **tile_kwargs
