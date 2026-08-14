@@ -12,7 +12,7 @@
         <a style="text-decoration: none;" href="{% url 'wiki:wiki_kaardiobjekt_filter' %}">
           <i class="{% icon_object object %}"></i>
         </a>
-        {{ object }}
+        {{ object.kaart.aasta }}: {{ object }}
       </h4>
       {% if object.objekt %}
         Kaardiobjektiga seotud koht: <i class="{% icon_object object.objekt %}"></i>
@@ -74,7 +74,7 @@
                       class="hover-kaardiobjekt"
                       href="{% url 'wiki:wiki_kaardiobjekt_detail' pk=match.kaardiobjekt.pk %}"
               >
-                <strong>{{ match.kaardiobjekt }}</strong>
+                <strong>{{ match.kaardiobjekt.kaart.aasta }}: {{ match.kaardiobjekt }}</strong>
               </a> {{ match.kattuvus }}
               {% if match.kaardiobjekt.objekt %}
                 ->

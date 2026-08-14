@@ -1511,7 +1511,9 @@ def get_address_data(
     }
 
     response = requests.get(url, params=params)
-    response.raise_for_status()
+    # response.raise_for_status()
+    if response.status_code != 200:
+        return None
 
     data = response.json()
 
@@ -1713,6 +1715,47 @@ def object_trigram_word_similarity(
     #     print(obj.nimi, obj.similarity)
     return qs
 
+def get_building_geometry(search_string):
+    """
+    Fetches building shape from Maa-amet (ETAK) using the Building Register (EHR) code.
+    """
+    # WFS Service URL
+    wfs_url = "https://gsavalik.envir.ee/geoserver/etak/wfs"
+    # wfs_url = "https://gsavalik.envir.ee/geoserver/etak/wfs?request=GetFeature&service=WFS&version=1.1.0&outputFormat=json&typeName=etak:e_401_hoone_ka&cql_filter=ehr_gid=111015176&srsName=EPSG:4326"
+    # wfs_url = "https://gsavalik.envir.ee/geoserver/etak/wfs?request=GetFeature&service=WFS&version=1.1.0&outputFormat=application%2Fjson&typeName=etak:e_401_hoone_ka&cql_filter=ads_lahiaadress%3D%27Aasa%20tn%2012%27&srsName=EPSG:4326"
+
+    params = {
+        "request": "GetFeature",
+        "service": "WFS",
+        "version": "2.0.0",
+        "outputFormat": "json",
+        "typeName": "etak:e_401_hoone_ka",
+        # "typeName": "etak:e_403_muu_rajatis_ka",
+        "cql_filter": f"ads_lahiaadress='{search_string}'",
+        "srsName": "EPSG:4326",  # Standard Lat/Lon degrees
+    }
+
+    try:
+        response = requests.get(
+            wfs_url,
+            params=params,
+        )
+        response.raise_for_status()
+        data = json.loads(response.text)
+
+        if not data.get("features"):
+            return f"No geometry found for: {search_string}"
+
+        # Extracting the geometry and some properties
+        features = data["features"]
+        return features
+
+    except Exception as e:
+        return f"Error: {e}"
+
+
+from wiki.utils import shp_util
+
 def check_ky(
     data_valgalinn: list
 ) -> None:
@@ -1721,21 +1764,17 @@ def check_ky(
     objektid_qs = Objekt.objects.exclude(gone=True).filter(hist_endyear__isnull=True)
     objektid_t2navad = objektid_qs.filter(tyyp='T')
     objektid_eiolet2navad = objektid_qs.exclude(tyyp='T')
-
-    for ky in data_valgalinn:
-        l_aadress = ky['properties']['l_aadress']
+    for ky in data_valgalinn[:500]:
         # Kontrollime, kas on transpordimaa
         if ky['properties']['siht1'] == 'TRANSPORDIMAA':
             continue
-        if l_aadress in (
-            siht1_uldkasutatav_maa + 
-            siht1_riigikaitsemaa + 
-            siht1_veekogude_maa
-        ):
-            message = f'{l_aadress} -> loome ainult kaardiobjekti'
-            print(message)
-            logger.info(message)
-            continue
+        l_aadress = ky['properties']['l_aadress']
+        coordinates = ky["geometry"]["coordinates"] # [[[622426.11, 6406338.99], [622440.76, 6406344.28], [622409.34, 6406398.81], [622391.59, 6406429.59], [622386.09, 6406439.99], [622357.56, 6406489.67], [622329.48, 6406539.36], [622321.08, 6406554.23], [622307.89, 6406546.23], [622335.95, 6406496.55], [622375.9, 6406426.46], [622387.02, 6406408.05], [622405.37, 6406375.24], [622426.11, 6406338.99]]]
+        wgs_coordinates = transform2lonlat(coordinates)
+        geometry = {
+            "type": "Polygon",
+            "coordinates": wgs_coordinates,
+        }
         
         l_aadress_for_t2nav_search = [
             ['J. ', 'Julius '],
@@ -1748,13 +1787,6 @@ def check_ky(
         for translation in l_aadress_for_t2nav_search:
             l_aadress_for_t2nav.replace(translation[0], translation[1])
 
-        # l_aadress_for_objekt_search = [
-        #     ['J. ', 'Julius '],
-        #     ['E. ', 'Ernst '],
-        #     ['A. ', 'Alfred '],
-        #     ['tn ', ''],
-        #     ['pst ', ''],
-        # ]
         # Otsime vasted wikist
         t2nav = object_trigram_word_similarity(l_aadress_for_t2nav, objektid_t2navad).first()
         objekt = object_trigram_word_similarity(l_aadress, objektid_eiolet2navad).first()
@@ -1767,27 +1799,116 @@ def check_ky(
             if not pattern.match(l_aadress):
                 objekt = None
 
-        message = f'{l_aadress} -> T:{t2nav} -> O:{objekt}'
+        objektid_geoportaalist_addr = get_address_data(l_aadress, 'H')
+        if objektid_geoportaalist_addr:
+            ehitisi_aadr = len(objektid_geoportaalist_addr)
+        else:
+            ehitisi_aadr = None
+        objektid_geoportaalist_etak = get_building_geometry(l_aadress)
+        if objektid_geoportaalist_etak:
+            ehitisi_etak = 0
+            for feature in objektid_geoportaalist_etak:
+                if isinstance(feature, dict) and shp_util.check_polygon_contains_polygon(
+                    feature['geometry'],
+                ):
+                    ehitisi_etak += 1
+        else:
+            ehitisi_etak = None
+        # objektid_geoportaalist_etak = shp_util.get_shp_data_ehitis(l_aadress)
+        # ehitisi_etak = len(objektid_geoportaalist_etak)
+        # time.sleep(1)
+
+        message = f'{l_aadress} -> T: {t2nav} -> O: {objekt}: E ADR: {ehitisi_aadr} E ETAK: {ehitisi_etak}'
         print(message)
-        if not t2nav or not objekt:
+        if not t2nav or not objekt or not ehitisi_aadr or not ehitisi_etak:
             logger.warning(message)
         else:
             logger.info(message)
+
+        # ky -> loome kaardiobjekti ky-st
+        kaardiobjekt_ky = Kaardiobjekt(
+            kaart=kaart,
+            tn=ky["properties"]["l_aadress"],
+            tyyp='A',
+            geometry=geometry,
+            lisainfo=json.dumps(
+                ky, 
+                indent=2
+            ),
+            # objekt=objekt,
+        )
+        kaardiobjekt_ky.save()
+        message = f"Lisatud ky KO KY: {kaardiobjekt_ky.id} {kaardiobjekt_ky}"
+        logger.info(message)
+
+        if l_aadress in (
+            siht1_uldkasutatav_maa + 
+            siht1_riigikaitsemaa + 
+            siht1_veekogude_maa
+        ):
+            message = f'{l_aadress} -> loome ainult kaardiobjekti'
+            print(message)
+            logger.info(message)
+            continue
+        
+        if not isinstance(objekt, Objekt):
+            if ehitisi_etak > 0:
+                # loome objekti
+                objekt = Objekt(
+                    nimi=l_aadress,
+                    tyyp='H',
+                )
+                objekt.save()
+                if t2nav:
+                    # lisame objektile seose t2navaga
+                    objekt.objektid.add(t2nav)
+                message = f'Loodud OBJEKT {objekt.id} {objekt}'
+                print(message)
+                logger.info(message)
+            else:
+                continue # loome ainult kaardiobjekti
+
+        # lisame viite objektile
+        objekt.viited.add(viide)
+        # lisame ky kaardiobjektile seose objektiga
+        objekt.kaardiobjektid.add(kaardiobjekt_ky)
+
+        # lisame ETAK ehitiste andmed
+        if ehitisi_etak > 0:
+            for feature in objektid_geoportaalist_etak:
+                if isinstance(feature, dict) and shp_util.check_polygon_contains_polygon(
+                    feature['geometry'],
+                ):
+                    # lisame kaardiobjekti
+                    geometry = feature['geometry']
+                    tn = ky["properties"]["l_aadress"]
+                    kaardiobjekt_etak = Kaardiobjekt(
+                        kaart=kaart,
+                        tn=tn,
+                        tyyp='H',
+                        geometry=geometry,
+                        lisainfo=json.dumps(
+                            feature, 
+                            indent=2
+                        ),
+                        objekt=objekt,
+                    )
+                    kaardiobjekt_etak.save()
+                    # lisame kaardiobjektile seose objektiga
+                    # objekt.kaardiobjektid.add(kaardiobjekt_etak)
+                    message = f"Lisatud KO ETAK: {kaardiobjekt_etak.id} {kaardiobjekt_etak}"
+                    logger.info(message)
+            
 
 
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
     # muis_viited_inuse()
-    # ilmajama()
-    # massikanne_from_json()
     # url = 'http://opendata.muis.ee/dhmedia/2d69b089-d435-45a2-92f0-2f4f28784e58'
     # getFile_fromUrl(url)
-    # test_queryset_timeit()
     data_valgalinn = read_valgalinn_from_ky_json()
     # data_valgalinn_t2navad = get_t2navad(data_valgalinn)
-    # data_t2nav = get_t2nav(data_valgalinn_t2navad, "Sulevi tänav")
-    # print(data_t2nav)
     # data_t2nav = get_t2nav(data_valgalinn_t2navad, "Sulevi tänav")
     # for t2nav in data_t2nav:
     #     print(t2nav["properties"]["l_aadress"])
@@ -1797,6 +1918,10 @@ if __name__ == "__main__":
     # upd_add_t2navad(t2navad_geoportaal_2026)
     # add_t2navad_from_json_data(t2navad_geoportaal_2026, data_valgalinn_t2navad)
     check_ky(data_valgalinn)
+    # search_string = 'Sulevi tn 9a'
+    # features = get_building_geometry(search_string)
+    # for feature in features:
+    #     json.dumps(feature, indent=2)
     logger.info('Done.')
 
 # import importlib

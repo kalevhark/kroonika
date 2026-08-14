@@ -18,7 +18,7 @@
                 class="hover-artikkel"
                 href="{% url 'wiki:wiki_kaardiobjekt_detail' pk=obj.id %}"
               >
-              {{ obj }}
+              {{ obj.kaart.aasta }}: {{ obj }}
             </a>
           </li>
         {% endfor %}

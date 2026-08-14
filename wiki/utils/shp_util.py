@@ -1250,6 +1250,93 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id):
         map_html = kaardiobjekt.get_leaflet()
         return map_html
 
+from shapely.geometry import Polygon
+import geopandas as gpd
+
+def check_polygon_contains_polygon(
+    polygon_inner: dict,
+    polygon_outer: dict = None, 
+):
+
+    with open('wiki/utils/geojson/piirid.geojson', 'r') as f:
+        valgalinn_geometry = json.load(f)
+    polygon_outer = valgalinn_geometry['features'][0]['geometry']
+
+    # Coordinates must be in EPSG:4326 order: (longitude, latitude)
+    # polygon_outer = {
+    #     "coordinates": 
+    #      [
+    #         [
+    #             [26.0463111065187, 57.77114993244298], 
+    #             [26.04572254568796, 57.770964248746246], 
+    #             [26.045925830571992, 57.77078245292902], 
+    #             [26.046510389713223, 57.7709569727888], 
+    #             [26.0463111065187, 57.77114993244298]
+    #         ]
+    #     ]
+    # }
+
+    outer_poly = Polygon(polygon_outer["coordinates"][0][0])
+    inner_poly = Polygon(polygon_inner["coordinates"][0])
+
+    # Put polygons in GeoSeries with EPSG:4326
+    outer = gpd.GeoSeries([outer_poly], crs="EPSG:4326")
+    inner = gpd.GeoSeries([inner_poly], crs="EPSG:4326")
+
+    # Check if inner polygon is inside outer polygon
+    is_inside = inner.geometry.iloc[0].within(outer.geometry.iloc[0])
+
+    # print(is_inside)
+    return is_inside
+
+    # Same meaning, reversed:
+    is_inside = outer.geometry.iloc[0].contains(inner.geometry.iloc[0])
+
+    # Allows touching the boundary:
+    is_inside_or_touching = outer.geometry.iloc[0].covers(inner.geometry.iloc[0])
+
+    # Strictly inside, not touching boundary:
+    strictly_inside = (
+        inner.geometry.iloc[0].within(outer.geometry.iloc[0])
+        and not inner.geometry.iloc[0].boundary.intersects(outer.geometry.iloc[0].boundary)
+    )
+
+    print("Inside:", is_inside)
+    print("Inside or touching:", is_inside_or_touching)
+    print("Strictly inside:", strictly_inside)
+
+# katastriüksuse andmed aadressi v6i katastrinumbri järgi Maa-ameti andmetest
+def get_shp_data_ehitis(
+        asukoht: str
+    ):
+    # asukoht aadress 'Sulevi 9a'
+    # asukoht aadress 'Kraavikalda 19'
+    # kataster '79517:019:0003'
+
+    shp = "wiki/utils/ETAK_Eesti_SHP_ehitised/E_401_hoone_ka" # ainult Valga linn
+    with shapefile.Reader(shp, encoding="latin1") as sf:
+        # print(sf.fields)
+        features = []
+        for rec in sf.iterShapeRecords():
+            if asukoht:
+                street, housenumber = split_address(asukoht)
+                if street in rec.record.ads_lahiaa.split(' ') and housenumber in rec.record.ads_lahiaa.split(' '):
+                    points = rec.shape.points
+                    parts = rec.shape.parts
+                    # print(parts)
+                    nodes = [
+                        shp_crs_to_degree(el)
+                        for el
+                        in rec.shape.points
+                    ]
+                    geometry = {
+                        'type': 'Polygon',
+                        'coordinates': [nodes]
+                    }
+                    # print('E', rec.record.ads_lahiaa, rec.record.kov_id, json.dumps(geometry))
+                    if check_polygon_contains_polygon(geometry):
+                        features.append(geometry)
+        return features
 
 if __name__ == "__main__":
     # make_big_maps_leaflet(aasta=1824, objekt=970)
@@ -1267,6 +1354,7 @@ if __name__ == "__main__":
     # find_intersections()
     # update_objekt_from_csv()
     # shp_match_db()
+    get_shp_data_ehitis(asukoht="Sulevi 9a")
     pass
 
 
