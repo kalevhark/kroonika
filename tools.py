@@ -1764,7 +1764,7 @@ def check_ky(
     objektid_qs = Objekt.objects.exclude(gone=True).filter(hist_endyear__isnull=True)
     objektid_t2navad = objektid_qs.filter(tyyp='T')
     objektid_eiolet2navad = objektid_qs.exclude(tyyp='T')
-    for ky in data_valgalinn[2000:2500]:
+    for ky in data_valgalinn[2500:]:
         # Kontrollime, kas on transpordimaa
         if ky['properties']['siht1'] == 'TRANSPORDIMAA':
             continue
