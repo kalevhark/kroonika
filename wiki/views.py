@@ -35,7 +35,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import \
     Count, Max, Min, \
     Case, F, Func, Q, QuerySet, When, \
-    Value, IntegerField, \
+    Value, CharField, IntegerField, \
     ExpressionWrapper
 from django.db.models.functions import Concat, Extract, ExtractYear, ExtractMonth, ExtractDay
 from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse, QueryDict
@@ -2819,7 +2819,14 @@ class KaardiobjektFilter(django_filters.FilterSet): # TODO: ei tööta, JSONFiel
     def kaardiobjekt_sisaldab_filter(self, queryset, name, value):
         # päritud fraas nimes
         if self.data.get('kaardiobjekt_sisaldab'):
-            queryset = queryset.annotate(nimi_lisainfo=Concat('tn', Value(' '), 'nr', Value(' '), 'lisainfo'))
+            queryset = queryset.annotate(
+                nimi_lisainfo=Concat(
+                    'tn', Value(' '), 
+                    'nr', Value(' '), 
+                    'lisainfo',
+                    output_field = CharField()
+                )
+            )
             fraasid = self.data.get('kaardiobjekt_sisaldab', '').split(' ')
             for fraas in fraasid:
                 queryset = queryset.filter(
