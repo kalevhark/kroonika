@@ -1177,9 +1177,9 @@ class KaardiobjektAdmin(AjaxSelectAdmin):
         'kaart__aasta',
         'tyyp',
         '__str__',
-        'lisainfo',
+        'kirjeldus',
     )
-    list_filter = ['kaart', 'tyyp', AlphabetListFilter, 'tn']
+    list_filter = ['kaart', 'tyyp', AlphabetListFilter]
     search_fields = [
         'tn',
         'nr',

@@ -15,17 +15,29 @@
             href="{% url 'wiki:wiki_'|add:model_name|add:'_detail' pk=item.object.id %}"
           {% endwith %}
         >
-          <li class="li-seotud">
-            <div class="w3-tooltip">
-            <i class="{% icon_object item.object %}"></i> 
-            <span 
-              style="position:absolute;left:0;bottom:18px" 
-              class="w3-text w3-tag w3-round w3-white w3-border w3-border-grey w3-small w3-animate-opacity"
+          <li 
+            class="li-seotud tooltip-content" 
+            {% comment %} style="list-style-type: none; flex-grow: 0;" {% endcomment %}
+          >
+            {% comment %} <div class="w3-tooltip">
+              <i class="{% icon_object item.object %}"></i> 
+              <span 
+                style="position:absolute;left:0;bottom:18px" 
+                class="w3-text w3-tag w3-round w3-white w3-border w3-border-grey w3-small w3-animate-opacity"
+              >
+                {{ item.object.kirjeldus }}
+              </span>
+              {{ item.hist_year }}: {{ item.object }}
+            </div> {% endcomment %}
+            <i class="{% icon_object item.object %}"></i>
+            <span
+              title='{{ item.object }}'
+              data-model='{{ item.object|get_model_name }}'
+              data-id='{{ item.object.id }}'
+              id='{{ item.object|get_model_name }}_{{ item.object.id }}_{{ section }}'
             >
-              {{ item.object.kirjeldus }}
-            </span>
-            {{ item.hist_year }}: {{ item.object }}
-            </div>
+              {{ item.hist_year }}: {{ item.object }}
+            </span
           </li>
         </a>
       {% endfor %}

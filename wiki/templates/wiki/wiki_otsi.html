@@ -215,8 +215,9 @@
                           v-bind:title="result"
                           data-model='Objekt'
                           v-bind:data-id="result.id"
-                          v-bind:id="'Objekt_'+result.id">
-                    [[ result.nimi ]][[ result.asukoht ? ' (' + result.asukoht + ')' : '']] [[ result.hist_year ? result.hist_year : '']]
+                          v-bind:id="'Objekt_'+result.id"
+                  >
+                    [[ result.nimi ]] [[ result.asukoht ? ' (' + result.asukoht + ')' : '']] [[ result.hist_year ? result.hist_year : '']] <span style="color: red" v-if="result.gone">X</span>
                   </span>
                 </a>
               </li>

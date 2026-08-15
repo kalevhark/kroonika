@@ -141,7 +141,7 @@ class ObjektLookup(LookupChannel):
             exists_on_latest_map = ''
         if item.gone or item.hist_enddate or item.hist_endyear:
             color = settings.GONE_COLOR
-            objekt_gone = f'<span style="color: {color};">&chi;</span>'
+            objekt_gone = f'<span style="color: {color};">X</span>'
         else:
             objekt_gone = ''
         return f"{item} ({item.id}) {exists_on_latest_map}{objekt_gone}"

@@ -1,4 +1,4 @@
-/* ver 2026.08 */
+/* ver 2026.08.15 */
 html, body, p, h1, h2, h3, h4, h5, h6 {
   font-family: "Raleway", sans-serif;
 }
@@ -915,10 +915,11 @@ input:checked:focus + .switch-left + .switch-right {
 }
 
 .li-seotud {
-  flex-grow: 1;
+  flex-grow: 0;
   padding: 0 10px;
   text-align: left;
   border-right: 1px solid black;
+  list-style: none;
 }
 
 /* Pure CSS Book Loader by Aaron Iker https://codepen.io/aaroniker/pen/zYOewEP */

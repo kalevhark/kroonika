@@ -897,7 +897,7 @@ class Objekt(BaasObjectMixinModel):
         blank=True,
         help_text='Varasemad aadressikujud'
     )
-    gone = models.BooleanField(  # surnud teadmata ajal
+    gone = models.BooleanField(  # hävinud teadmata ajal
         'Hävinud/likvideeritud',
         default=False,
         help_text='Hävinud/likvideeritud'
@@ -1727,7 +1727,14 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
     
     @property
     def kirjeldus(self):
-        return self.lisainfo if self.lisainfo else self.objekt.nimi
+        if self.kaart.aasta == "2026":
+            try:
+                lisainfo = json.loads(self.lisainfo)
+                prop = 'l_aadress' if self.tyyp == 'A' else 'ads_lahiaadress'
+                return lisainfo['properties'][prop]
+            except:
+                pass
+        return self.lisainfo
 
     @property
     def centroid(self, *args, **kwargs):

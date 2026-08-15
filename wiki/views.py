@@ -2679,6 +2679,12 @@ def get_object_data4tooltip(request):
         else:
             heading = f'<strong>{dob}</strong>'
         content = f'<div>{heading}<p><small>{obj.formatted_markdown}</small><p></div>'
+    elif model == Kaardiobjekt:
+        heading = f'<strong>{obj.kaart}</strong>'
+        content = f'<div>{heading}<p><small>{obj.get_leaflet()}</small><p></div>'
+    elif model == Aadress:
+        heading = f'<strong>{obj.hist_year}: {obj.nimi}</strong>'
+        content = f'<div>{heading}<p><small>{obj.kirjeldus}<br>Allikas: {obj.viited.first()}</small><p></div>'
     return HttpResponse(content)
 
 def join_kaardiobjekt_with_objekt(request, kaardiobjekt_id, objekt_id):
