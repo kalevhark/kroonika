@@ -1,13 +1,12 @@
 {% load wiki_extras %}
-<div>
-  <ul class="ul-seotud">
-    <span style="margin: 0 -1px 0 10px;">
+  <ul class="w3-padding ul-seotud">
+    <span>
       {% if object.gone or object.hist_enddate or object.hist_endyear %}
       <span class="w3-text-red">Kaasajal pole olemas või on nime muudetud.&nbsp;</span>
       {% endif %}
     </span>
     {% if seotud_aadressid %}
-    Varasemad aadressi- või nimekujud:
+    Aadressi- või nimekujud:
       {% for item in seotud_aadressid|dictsortreversed:'hist_year' %}
         <a
           class="hover-artikkel"
@@ -43,4 +42,3 @@
       {% endfor %}
     {% endif %}
   </ul>
-</div>
