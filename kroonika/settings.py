@@ -419,7 +419,7 @@ GEOJSON_STYLE = {
 
 # https://python-visualization.github.io/folium/modules.html#module-folium.map
 LEAFLET_DEFAULT_CSS = [
-    ("leaflet_css", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"),
+    ("leaflet_css", "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"),
     ('bootstrap_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'),
     ('bootstrap_theme_css', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css'),
     ('awesome_markers_font_css', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'),
@@ -427,7 +427,7 @@ LEAFLET_DEFAULT_CSS = [
     ('awesome_rotate_css', 'https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css')
 ]
 LEAFLET_DEFAULT_JS = [
-    ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"),
+    ("leaflet", "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"),
     ('jquery', 'https://code.jquery.com/jquery-1.12.4.min.js'),
     ('bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'),
     ('awesome_markers', 'https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js')
