@@ -1194,6 +1194,7 @@ class AadressAdmin(AjaxSelectAdmin):
 
     form=AadressForm
 
+    readonly_fields = ['inp_date', 'mod_date', 'created_by', 'updated_by']
     list_display = (
         'colored_id',
         'hist_year',
@@ -1207,4 +1208,16 @@ class AadressAdmin(AjaxSelectAdmin):
         'hist_year'
     ]
 
+    # Admin moodulis lisamise/muutmise automaatsed väljatäited
+    def save_model(self, request, obj, form, change):
+        objekt = form.save(commit=False)
+        # Lisaja/muutja andmed
+        if not objekt.id:
+            objekt.created_by = request.user
+        else:
+            objekt.updated_by = request.user
+        objekt.save()
+        form.save_m2m()
+        return objekt 
+ 
 admin.site.register(Aadress, AadressAdmin)
