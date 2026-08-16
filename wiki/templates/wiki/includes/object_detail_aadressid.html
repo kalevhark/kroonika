@@ -9,25 +9,14 @@
     Aadressi- või nimekujud:
       {% for item in seotud_aadressid|dictsortreversed:'hist_year' %}
         <a
-          class="hover-artikkel"
+          class="hover-kaardiobjekt"
           {% with item.object|to_model_name_lower as model_name %}
             href="{% url 'wiki:wiki_'|add:model_name|add:'_detail' pk=item.object.id %}"
           {% endwith %}
         >
           <li 
             class="li-seotud tooltip-content" 
-            {% comment %} style="list-style-type: none; flex-grow: 0;" {% endcomment %}
           >
-            {% comment %} <div class="w3-tooltip">
-              <i class="{% icon_object item.object %}"></i> 
-              <span 
-                style="position:absolute;left:0;bottom:18px" 
-                class="w3-text w3-tag w3-round w3-white w3-border w3-border-grey w3-small w3-animate-opacity"
-              >
-                {{ item.object.kirjeldus }}
-              </span>
-              {{ item.hist_year }}: {{ item.object }}
-            </div> {% endcomment %}
             <i class="{% icon_object item.object %}"></i>
             <span
               title='{{ item.object }}'

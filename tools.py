@@ -693,37 +693,6 @@ def lisa_artikkel_20230209():
         print(uus_art.id)
 
 
-def getFilename_fromCd(cd):
-    """
-    Get filename from content-disposition
-    """
-    if not cd:
-        return None
-    fname = re.findall('filename=(.+)', cd)
-    if len(fname) == 0:
-        return None
-    return fname[0]
-
-def getFile_fromUrl(url):
-    # url = 'http://google.com/favicon.ico'
-    r = requests.get(url, allow_redirects=True)
-    filename = getFilename_fromCd(r.headers.get('content-disposition'))
-    contentLength = r.headers.get('content-length', None)
-    print(filename, contentLength)
-    open(filename, 'wb').write(r.content)
-
-
-from django.contrib.postgres.search import TrigramSimilarity
-def isik_trigram_word_similarity(nimi):
-    nimi = nimi.replace(' ', '')
-    isikud = Isik.objects.daatumitega(request=None). \
-        annotate(isikunimi = Concat('eesnimi', 'perenimi')). \
-        annotate(similarity = TrigramSimilarity("isikunimi", nimi)). \
-        filter(similarity__gt = 0.3). \
-        order_by("-similarity")
-    for isik in isikud[:10]:
-        print(isik.nimi(), isik.similarity)
-
 from PIL import Image, ImageOps, ImageDraw
 import qrcode
 import qrcode.image.svg

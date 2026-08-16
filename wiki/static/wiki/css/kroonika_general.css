@@ -922,6 +922,10 @@ input:checked:focus + .switch-left + .switch-right {
   list-style: none;
 }
 
+.li-seotud:last-child {
+  border-right: none;
+}
+
 /* Pure CSS Book Loader by Aaron Iker https://codepen.io/aaroniker/pen/zYOewEP */
 .book {
   --color: #00985F;
