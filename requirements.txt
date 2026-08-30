@@ -35,7 +35,7 @@ folium==0.20.0
 fonttools==4.61.1
 h11==0.16.0
 hyperlink==21.0.0
-idna==3.11
+idna==3.15
 Incremental==24.11.0
 Jinja2==3.1.6
 kiwisolver==1.4.9
