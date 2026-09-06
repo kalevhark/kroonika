@@ -1869,7 +1869,176 @@ def check_ky(
                     message = f"Lisatud KO ETAK: {kaardiobjekt_etak.id} {kaardiobjekt_etak}"
                     logger.info(message)
             
+# Valga LV atlas 2009 masskanne
+from django.db.models.functions import Upper
+from PIL import Image, ExifTags
 
+def read_csv2dict_objektid(filename='objektid'):
+    objektid = {}
+    t2navad = []
+    with open(f'media/atlas2009/{filename}.csv', 'r', newline='', encoding='utf8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            objektid[row['OBJEKTID']] = {
+                'nimi': row['OBJ_NIMI'],
+                'tn': row['TAN_NIMI'],
+                'nr': row['MAJ_NUMB'],
+                'maj_lisa': row['MAJ_LISA'],
+                'maj_taht': row['MAJ_TAHT'],
+                'kirjeldus': row['KIRJELDUS'],
+                'markused': row['MARKUSED'].replace('\r', '; '),
+                # 'staatus': row['STAATUS'],
+                'hr_toim': row['HR_TOIM'],
+                'omanik': row['OMANIK'],
+            }
+            t2navad.append(objektid[row['OBJEKTID']]['tn'])
+            # if len(row['MAJ_LISA']) > 0:
+            #     print(row)
+    # print(set(t2navad))
+    return objektid
+
+def read_csv2dict_fotod(filename='foto') -> dict:
+    fotod = {}
+    with open(f'media/atlas2009/{filename}.csv', 'r', newline='', encoding='utf8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            fotod[row['FILENAME']] = {
+                'foto_kp': row['FOTO_KP'],
+            }
+    return fotod
+
+def read_images2dict(fotod: dict) -> dict:
+    pildid = {}
+    pole_kuupaeva = 0
+    for file in glob.glob('media/atlas2009/??????_[0-9].JPG'):
+        # Loome seose objektide ja piltide vahel, kasutades VIIT väärtust (esimesed 6 tähte failinimest)
+        objekti_viit = PurePath(file).stem[:6]
+        foto_viit = PurePath(file).stem
+        if objekti_viit not in pildid.keys():
+            pildid[objekti_viit] = {}
+
+        # Loeme andmed pildifailist
+        im = Image.open(file)
+        image_exif = im._getexif()
+        # print(PurePath(files).stem, im.format, im.size, im.mode, datetime.strptime(exif['DateTime'], '%Y:%m:%d %H:%M:%S'))
+        try:
+            exif = {ExifTags.TAGS[k]: v for k, v in image_exif.items() if k in ExifTags.TAGS and type(v) is not bytes}
+            hist_date = datetime.strptime(exif['DateTime'], '%Y:%m:%d %H:%M:%S')
+        except:
+            hist_date = None
+
+        if hist_date is None:
+            # Kui EXIF andmeid pole, proovime andmed saada foto.csv failist
+            if foto_viit in fotod.keys():
+                foto_kp = fotod[foto_viit]['foto_kp']
+                if foto_kp is not None and re.match(r'^\d{4}-\d{2}-\d{2}$', foto_kp):
+                    year, month, day = foto_kp.split('-')
+                    hist_date = datetime(int(year), int(month), int(day))
+        if hist_date is None:
+            # Kui EXIF ja foto.csv andmeid pole, siis logime faili nime
+            # print(f"EXIF ja foto.csv andmetest ei leitud kuupäeva: {file}")
+            pole_kuupaeva += 1
+            hist_year = 1998
+        else:
+            hist_year = hist_date.year
+
+        pildid[objekti_viit][foto_viit] = {
+            'file_name': file,
+            'hist_date': hist_date,
+            'hist_year': hist_year,
+        }
+    print(f"Kuupäeva pole: {pole_kuupaeva}")
+    return pildid
+
+def pildid_vs_objektid(pildid, objektid):
+    print("Piltidega objekte:", len(pildid.keys()))
+    print("Objekte:", len(objektid.keys()))
+    n = 0
+    for pilt in pildid.keys():
+        if pilt not in objektid.keys():
+            n += 1
+            print(pildid[pilt])
+    print("Pilt on, aga objekti pole:", n)
+
+    n = 0
+    for objekt in objektid.keys():
+        if objekt not in pildid.keys():
+            n += 1
+            # print(objektid[objekt])
+    print("Objekt on, aga pilti ei ole:", n)
+
+def create_aadress(
+        # objekt: Objekt, 
+        aadress_kirje: dict, 
+        nimi_capitalized: str,
+        viide: Viide,
+) -> Aadress:
+    kirjeldus = json.dumps(
+        aadress_kirje,
+        indent=2
+    )
+    instance = Aadress(
+        nimi=nimi_capitalized,
+        kirjeldus=kirjeldus,
+        hist_year=2009
+    )
+    # instance.save()
+    # instance.viited.add(viide)
+    print(instance)
+    return instance
+
+from django.core.files.base import ContentFile
+def create_pilt(
+        objekt: Objekt, 
+        pilt_kirje: dict,
+        aadress_capitalized: str,
+        viide: Viide,
+) -> Pilt:
+    file_name = pilt_kirje['file_name']
+    hist_date = pilt_kirje['hist_date']
+    with open(file_name, "rb+") as f:
+        content_file = ContentFile(f, name=f.name)
+    instance = Pilt(
+        nimi=aadress_capitalized,
+        pilt=content_file,
+        tyyp='P',
+        hist_date=hist_date,
+    )
+    instance.save()
+    instance.viited.add(viide)
+
+def create_objekt(
+        nimi_capitalized: str
+) -> Objekt:
+    pass
+
+def atlas2009_to_db(
+        pildid: dict, 
+        objektid: dict,
+    ):
+    viide = Viide.objects.first() # TODO: õige viide lisada
+    objektid_andmebaasis = Objekt.objects.annotate(nimi_upper=Upper("nimi"))
+    for key, aadress_kirje in objektid.items():
+        nimi_capitalized = '. '.join(split.strip().capitalize() for split in aadress_kirje['nimi'].split('.'))
+        objekt = objektid_andmebaasis.filter(nimi__exact=nimi_capitalized).first()
+        # Salvestame aadresskirje
+        aadress = create_aadress(
+            # objekt, 
+            aadress_kirje, 
+            nimi_capitalized, 
+            viide
+        )
+        # obj = objektid_andmebaasis.filter(nimi_upper__exact=item['nimi']).first()
+        if key in pildid.keys():
+            if objekt: # Kui objekt olemas andmebaasis
+                pass
+            else:
+                objekt = create_objekt(nimi_capitalized)
+                # TODO: aadresskirje objekti juurde
+            pilt = create_pilt(objekt, pildid[key], nimi_capitalized, viide)
+        if objekt:
+            aadress.objekt = objekt
+            aadress.save()
 
 if __name__ == "__main__":
     # get_vg_vilistlased()
@@ -1877,7 +2046,7 @@ if __name__ == "__main__":
     # muis_viited_inuse()
     # url = 'http://opendata.muis.ee/dhmedia/2d69b089-d435-45a2-92f0-2f4f28784e58'
     # getFile_fromUrl(url)
-    data_valgalinn = read_valgalinn_from_ky_json()
+    # data_valgalinn = read_valgalinn_from_ky_json()
     # data_valgalinn_t2navad = get_t2navad(data_valgalinn)
     # data_t2nav = get_t2nav(data_valgalinn_t2navad, "Sulevi tänav")
     # for t2nav in data_t2nav:
@@ -1887,11 +2056,17 @@ if __name__ == "__main__":
     #     print(new_coordinates)
     # upd_add_t2navad(t2navad_geoportaal_2026)
     # add_t2navad_from_json_data(t2navad_geoportaal_2026, data_valgalinn_t2navad)
-    check_ky(data_valgalinn)
+    # check_ky(data_valgalinn)
     # search_string = 'Sulevi tn 9a'
     # features = get_building_geometry(search_string)
     # for feature in features:
     #     json.dumps(feature, indent=2)
+    objektid = read_csv2dict_objektid(filename='objektid')
+    fotod = read_csv2dict_fotod(filename='foto')
+    pildid = read_images2dict(fotod)
+    # atlas2009_to_db(pildid, objektid)
+    # pildid_vs_objektid(pildid, objektid)
+    print(objektid['AAAAAA'], pildid['AAAAAA'])
     logger.info('Done.')
 
 # import importlib
