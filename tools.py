@@ -1910,7 +1910,7 @@ def read_csv2dict_fotod(filename='foto') -> dict:
 def read_images2dict(fotod: dict) -> dict:
     pildid = {}
     pole_kuupaeva = 0
-    for file in glob.glob('media/atlas2009/??????_[0-9].JPG'):
+    for file in glob.glob('media/atlas2009/??????_[0-9].jpg'):
         # Loome seose objektide ja piltide vahel, kasutades VIIT väärtust (esimesed 6 tähte failinimest)
         objekti_viit = PurePath(file).stem[:6]
         foto_viit = PurePath(file).stem
