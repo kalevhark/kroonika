@@ -1967,13 +1967,19 @@ def pildid_vs_objektid(pildid, objektid):
             # print(objektid[objekt])
     print("Objekt on, aga pilti ei ole:", n)
 
+import pprint
+
 def create_aadress(
         # objekt: Objekt, 
         aadress_kirje: dict, 
         nimi_capitalized: str,
         viide: Viide,
 ) -> Aadress:
-    kirjeldus = json.dumps(
+    # kirjeldus = json.dumps(
+    #     aadress_kirje,
+    #     indent=2
+    # )
+    kirjeldus = pprint.pformat(
         aadress_kirje,
         indent=2
     )
@@ -1982,9 +1988,9 @@ def create_aadress(
         kirjeldus=kirjeldus,
         hist_year=2009
     )
-    # instance.save()
-    # instance.viited.add(viide)
-    print(instance)
+    instance.save()
+    instance.viited.add(viide)
+    logger.info(f'Lisatud aadress: {instance}')
     return instance
 
 from django.core.files.base import ContentFile
@@ -1996,77 +2002,118 @@ def create_pilt(
 ) -> Pilt:
     file_name = pilt_kirje['file_name']
     hist_date = pilt_kirje['hist_date']
+    hist_year = pilt_kirje['hist_year']
+    pildistamise_aeg = hist_date.strftime('%d.%m.%Y') if hist_date else hist_year
     with open(file_name, "rb+") as f:
-        content_file = ContentFile(f, name=f.name)
+        content_file = ContentFile(f.read(), name=f.name)
     instance = Pilt(
-        nimi=aadress_capitalized,
+        nimi=f"{aadress_capitalized} (pildistatud {pildistamise_aeg})",
         pilt=content_file,
         tyyp='P',
         hist_date=hist_date,
+        hist_year=hist_year,
     )
     instance.save()
     instance.viited.add(viide)
+    instance.objektid.add(objekt)
+    logger.info(f'Lisatud pilt: {instance}')
+    return instance
 
 def create_objekt(
-        nimi_capitalized: str
+        nimi_capitalized: str,
+        viide: Viide
 ) -> Objekt:
-    pass
+    objektid_qs = Objekt.objects.exclude(gone=True).filter(hist_endyear__isnull=True)
+    objektid_t2navad = objektid_qs.filter(tyyp='T')
+    t2nav = object_trigram_word_similarity(nimi_capitalized, objektid_t2navad).first()
+
+    instance = Objekt(
+        nimi=nimi_capitalized,
+        tyyp='H',
+    )
+    instance.save()
+    instance.viited.add(viide)
+    if t2nav:
+        instance.objektid.add(t2nav)
+    logger.info(f'Lisatud objekt: {instance} -> t2nav: {t2nav}')
+    return instance
 
 def atlas2009_to_db(
         pildid: dict, 
         objektid: dict,
     ):
-    viide = Viide.objects.first() # TODO: õige viide lisada
-    objektid_andmebaasis = Objekt.objects.annotate(nimi_upper=Upper("nimi"))
-    for key, aadress_kirje in objektid.items():
-        nimi_capitalized = '. '.join(split.strip().capitalize() for split in aadress_kirje['nimi'].split('.'))
-        objekt = objektid_andmebaasis.filter(nimi__exact=nimi_capitalized).first()
-        # Salvestame aadresskirje
-        aadress = create_aadress(
-            # objekt, 
-            aadress_kirje, 
-            nimi_capitalized, 
-            viide
-        )
-        # obj = objektid_andmebaasis.filter(nimi_upper__exact=item['nimi']).first()
+    viide = Viide.objects.get(id=16513)
+    objektid_qs = Objekt.objects.exclude(gone=True).filter(hist_endyear__isnull=True)
+    # objektid_t2navad = objektid_qs.filter(tyyp='T')
+    objektid_andmebaasis = objektid_qs.exclude(tyyp='T')
+    lisatud_aadressid = {}
+    
+    for key in list(objektid.keys()):
+        aadress_kirje = objektid[key]
+        print(f"{key}: {aadress_kirje['nimi']}")
+        if aadress_kirje['nimi'].strip() == '':
+            logger.warning(f"Objektil {key} pole nime")
+            continue
+        
+        # Muudame nime formaati, et oleks võimalik otsida andmebaasist
+        if aadress_kirje['nimi'].find('.') > -1:
+            nimi_capitalized = '. '.join(
+                split.strip().capitalize() 
+                for split 
+                in aadress_kirje['nimi'].split('.')
+            )
+        elif aadress_kirje['nimi'].find('-') > -1:
+            nimi_capitalized = '-'.join(
+                split.strip().capitalize() 
+                for split 
+                in aadress_kirje['nimi'].split('-')
+            )
+        else:
+            nimi_capitalized = aadress_kirje['nimi'].strip().capitalize()
+
+        if nimi_capitalized in lisatud_aadressid:
+            logger.warning(f"Aadress {nimi_capitalized} on juba lisatud")
+            aadress = lisatud_aadressid[nimi_capitalized]
+        else:
+            objekt = objektid_andmebaasis.filter(nimi__exact=nimi_capitalized).first()
+            # Loome aadresskirje
+            aadress = create_aadress(
+                # objekt, 
+                aadress_kirje, 
+                nimi_capitalized, 
+                viide
+            )
+            lisatud_aadressid[nimi_capitalized] = aadress
+
         if key in pildid.keys():
             if objekt: # Kui objekt olemas andmebaasis
                 pass
             else:
-                objekt = create_objekt(nimi_capitalized)
-                # TODO: aadresskirje objekti juurde
-            pilt = create_pilt(objekt, pildid[key], nimi_capitalized, viide)
+                objekt = create_objekt(
+                    nimi_capitalized,
+                    viide,
+                )
+            for pilt_key in pildid[key].keys():
+                pilt = create_pilt(objekt, pildid[key][pilt_key], nimi_capitalized, viide)
         if objekt:
             aadress.objekt = objekt
             aadress.save()
+        time.sleep(0.1) # et vältida liiga kiiret andmebaasi kirjutamist
+
 
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
     # muis_viited_inuse()
     # url = 'http://opendata.muis.ee/dhmedia/2d69b089-d435-45a2-92f0-2f4f28784e58'
-    # getFile_fromUrl(url)
-    # data_valgalinn = read_valgalinn_from_ky_json()
-    # data_valgalinn_t2navad = get_t2navad(data_valgalinn)
-    # data_t2nav = get_t2nav(data_valgalinn_t2navad, "Sulevi tänav")
-    # for t2nav in data_t2nav:
-    #     print(t2nav["properties"]["l_aadress"])
-    #     coordinates = t2nav["geometry"]["coordinates"] # [[[622426.11, 6406338.99], [622440.76, 6406344.28], [622409.34, 6406398.81], [622391.59, 6406429.59], [622386.09, 6406439.99], [622357.56, 6406489.67], [622329.48, 6406539.36], [622321.08, 6406554.23], [622307.89, 6406546.23], [622335.95, 6406496.55], [622375.9, 6406426.46], [622387.02, 6406408.05], [622405.37, 6406375.24], [622426.11, 6406338.99]]]
-    #     new_coordinates = transform2lonlat(coordinates)
-    #     print(new_coordinates)
-    # upd_add_t2navad(t2navad_geoportaal_2026)
-    # add_t2navad_from_json_data(t2navad_geoportaal_2026, data_valgalinn_t2navad)
-    # check_ky(data_valgalinn)
-    # search_string = 'Sulevi tn 9a'
-    # features = get_building_geometry(search_string)
-    # for feature in features:
-    #     json.dumps(feature, indent=2)
+    
     objektid = read_csv2dict_objektid(filename='objektid')
     fotod = read_csv2dict_fotod(filename='foto')
     pildid = read_images2dict(fotod)
-    # atlas2009_to_db(pildid, objektid)
     # pildid_vs_objektid(pildid, objektid)
+    atlas2009_to_db(pildid, objektid)
     print(objektid['AAAAAA'], pildid['AAAAAA'])
+
     logger.info('Done.')
 
 # import importlib
