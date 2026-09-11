@@ -34,7 +34,7 @@ from shapely.geometry.polygon import Polygon
 
 from wiki.models import Kaart, Kaardiobjekt, Objekt
 
-OVERPASS_URL = "http://overpass-api.de/api/interpreter"
+OVERPASS_URL = "https://overpass-api.de/api/interpreter"
 
 DEFAULT_CENTER = settings.DEFAULT_CENTER
 DEFAULT_MAP_AASTA = settings.DEFAULT_MAP_AASTA
@@ -183,8 +183,14 @@ def write_db_to_shp(aasta: str):
                     w.write(r.read())
 
 # Hoonestuse andmed OpenStreetMap kaardilt OverPass API abil
-def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9', city='Valga linn'):
-    if street and housenumber:
+def get_osm_data(
+    street=None, 
+    housenumber=None, 
+    country='Eesti', 
+    admin_level='9', 
+    city='Valga linn'
+):
+    if street:
         # query = """
         #         (
         #   way(id: 214327417, 228359022, 228899964);
@@ -192,11 +198,12 @@ def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9'
         # """ # Kesk 12 hooned
 
         # Päring aadressi kohta street='Sulevi', housenumber='9a'
+        housenumber_query = f"""["addr:housenumber"="{housenumber}"]""" if housenumber else ''
         query = f"""
         area['admin_level'='2']['name'='{country}']->.searchArea;
         area['admin_level'='{admin_level}']['name'='{city}'](area.searchArea)->.searchArea;
         (
-            nwr["building"]["addr:street"~"{street}"]["addr:housenumber"="{housenumber}"](area.searchArea);
+            nwr["building"]["addr:street"~"{street}"]{housenumber_query}(area.searchArea);
         );
         """
 
@@ -219,24 +226,25 @@ def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9'
         elements = None
 
         while attempts > 0:
-            response = requests.get(OVERPASS_URL, params={'data': overpass_query})
+            headers = {
+                'Content-type': 'application/json', 
+                'User-Agent': 'valgalinn.ee (info@valgalinn.ee)'
+            }
+            response = requests.get(
+                OVERPASS_URL, 
+                params={'data': overpass_query},
+                headers=headers
+            )
             try:
                 data = response.json()
                 elements = data['elements']
                 break
             except:
-                # print('viga!')
                 attempts -= 1
                 time.sleep(3)
-                # return # ei saadud korrektset vastust
 
         if elements:
             print(json.dumps(elements, indent=2))
-            # Kaardipildi keskkoha koordinaadid
-            # center = elements[0]['center']
-            # print(center)
-            # center = (center['lat'], center['lon'])
-            # print(json.dumps((center['lon'], center['lat'])))
 
             # Eristame kõik sama aadressiga hooned maaüksusel loendisse
             ways = [
@@ -248,7 +256,6 @@ def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9'
 
             # Loome sõnastiku kõigist käänupunktidest maaüksusel
             nodes = {
-                # el['id']: (el['lat'], el['lon'])
                 el['id']: (el['lon'], el['lat'])
                 for el
                 in elements
@@ -268,7 +275,7 @@ def get_osm_data(street=None, housenumber=None, country='Eesti', admin_level='9'
                 'coordinates': nodes_sets
             }
             print('H', json.dumps(geometry))
-            return geometry #, center
+            return geometry
 
 # Hoonestuse andmed OpenStreetMap kaardilt OverPass API abil
 def get_osm_data_quarter(quarter=None, country='Eesti', admin_level='9', city='Valga linn'):
@@ -304,7 +311,7 @@ def get_osm_data_quarter(quarter=None, country='Eesti', admin_level='9', city='V
             # return # ei saadud korrektset vastust
 
     if elements:
-        # print(json.dumps(elements, indent=2))
+        print(json.dumps(elements, indent=2))
         if quarter:
             # Kaardipildi keskkoha koordinaadid
             # center = elements[0]['center']
@@ -929,6 +936,7 @@ def get_big_maps_default(kaardid, obj, aasta: str):
             min_zoom=DEFAULT_MIN_ZOOM,
             attr=f'{kaart.__str__()}<br>{kaart.viited.first()}',
             id=f'tl{kaart.aasta}',
+            referrer_policy="strict-origin",
         )
 
         # Lisame kaardile kirjelduse tootipi
@@ -1096,6 +1104,7 @@ def make_objekt_leaflet_combo_add_tilelayer(kaart, is_objekt_missing_on_defaultm
         tms=tms,
         attr=attr,
         min_zoom=DEFAULT_MIN_ZOOM,
+        referrer_policy="strict-origin",
         **tile_kwargs
     )
 
@@ -1355,6 +1364,7 @@ if __name__ == "__main__":
     # update_objekt_from_csv()
     # shp_match_db()
     get_shp_data_ehitis(asukoht="Sulevi 9a")
+    get_osm_data_quarter(quarter='Transpordi')
     pass
 
 

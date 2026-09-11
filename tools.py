@@ -2107,13 +2107,17 @@ if __name__ == "__main__":
     # muis_viited_inuse()
     # url = 'http://opendata.muis.ee/dhmedia/2d69b089-d435-45a2-92f0-2f4f28784e58'
     
-    objektid = read_csv2dict_objektid(filename='objektid')
-    fotod = read_csv2dict_fotod(filename='foto')
-    pildid = read_images2dict(fotod)
-    pildid_vs_objektid(pildid, objektid)
-    atlas2009_to_db(pildid, objektid)
+    # objektid = read_csv2dict_objektid(filename='objektid')
+    # fotod = read_csv2dict_fotod(filename='foto')
+    # pildid = read_images2dict(fotod)
+    # pildid_vs_objektid(pildid, objektid)
+    # atlas2009_to_db(pildid, objektid)
     # print(objektid['AAAAAA'], pildid['AAAAAA'])
 
+    data_valgalinn = read_valgalinn_from_ky_json()
+    data_valgalinn_t2navad = get_t2navad(data_valgalinn=data_valgalinn)
+    t2nav = get_t2nav(data_valgalinn_t2navad=data_valgalinn_t2navad, t2nava_nimi='Transpordi tn')
+    print(t2nav)
     logger.info('Done.')
 
 # import importlib
