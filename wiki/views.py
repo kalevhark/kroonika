@@ -82,6 +82,7 @@ from wiki.utils.shp_util import (
 )
 
 TMP_ALGUSKUVA = Path(tempfile.gettempdir()) / '_valgalinn.ee_algus.tmp'
+DEFAULT_MAP = Kaart.objects.get(aasta=settings.DEFAULT_MAP_AASTA)
 
 def custom_500(request):
     """Error Handling Templates"""
@@ -626,11 +627,12 @@ def _get_algus_objektid_extra(request, p2ev, kuu, aasta):
 # Andmebaas Kaart andmed veebi
 def _get_algus_kaart(request):
     a = dict()
-    z, x, y = 15, 18753, 9907  # näitamiseks valitud kaarditükk
     qs = Kaart.objects \
-        .filter(tiles__contains='tiles') \
+        .exclude(id=DEFAULT_MAP.id) \
+        .filter(tiles__contains='tile') \
         .annotate(sample_tile=F('tiles')) \
         .order_by('aasta')
+    z, x, y = 15, 18753, 9907  # näitamiseks valitud kaarditükk
     qs = qs.annotate(
         sample_tile=Func(
             F('sample_tile'),
@@ -652,6 +654,10 @@ def _get_algus_kaart(request):
             function='replace',
         )
     )
+    # NB! Kui kaart on TMS formaadis, siis tuleb y koordinaat ümber arvutada
+    # y = (2 ** z) - y - 1
+    # qs = qs.annotate(sample_tile=Func(F('sample_tile'), Value('{y}'), Value(str(y)), function='replace'))
+    
     kirjeid = qs.count()
     a['kirjeid'] = kirjeid
     a['kaardid'] = qs

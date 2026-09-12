@@ -1656,7 +1656,7 @@ class Kaart(BaasAddUpdateInfoModel):
 
     class Meta:
         ordering = ['-aasta']
-        verbose_name_plural = "Kaardid"
+        verbose_name_plural = "Ajaloolised kaardid"
 
 
 class Kaardiobjekt(BaasAddUpdateInfoModel):
