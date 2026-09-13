@@ -872,6 +872,14 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         )
     colored_id.short_description = 'ID'
 
+def make_nimi_j2rjestamiseks(instance):
+        t2nav = instance.objektid.filter(tyyp='T').first()
+        if t2nav:
+            pattern = r"\b(\d+)([a-z]?)\b"
+            match = re.search(pattern, instance.nimi)
+            if match:
+                return f'{slugify(t2nav.nimi, allow_unicode=True)} {match.group(1):0>3}{match.group(2):0>1}'
+        return slugify(instance.nimi, allow_unicode=True)
 
 class Objekt(BaasObjectMixinModel):
     OBJEKTITYYP = (
@@ -953,7 +961,11 @@ class Objekt(BaasObjectMixinModel):
         if any([sy, su]):
             nimeosad.append(f'{sy}-{su}')
         return ' '.join(nimeosad)
-    
+
+    def save(self, *args, **kwargs):
+        self.nimi_j2rjestamiseks = make_nimi_j2rjestamiseks(self)
+        super().save(*args, **kwargs)
+        
     # Kui objectil puudub viide, siis punane
     def colored_nimi(self):
         latest_map = Kaart.objects.order_by('-aasta').first()
@@ -968,18 +980,8 @@ class Objekt(BaasObjectMixinModel):
         )
     colored_nimi.short_description = 'Kohanimi'
 
-    @property
-    def nr(self):
-        t2nav = self.objektid.filter(tyyp='T').first()
-        if t2nav:
-            pattern = r"\b(\d+)([a-z]?)\b"
-            match = re.search(pattern, self.nimi)
-            if match:
-                return f'{slugify(t2nav.nimi, allow_unicode=True)} {match.group(1):0>3}{match.group(2):0>1}'
-        return slugify(self.nimi, allow_unicode=True)
-
     class Meta:
-        ordering = ['slug'] # erimärkidega nimetuste välistamiseks
+        ordering = ['nimi_j2rjestamiseks'] # erimärkidega nimetuste välistamiseks
         verbose_name = 'objektid'
         verbose_name_plural = "Kohad" # kasutame eesti keeles suupärasemaks tegemiseks
 

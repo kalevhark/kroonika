@@ -754,6 +754,7 @@ class ObjektAdmin(AjaxSelectAdmin):
     readonly_fields = [
         'inp_date', 'created_by',
         'mod_date', 'updated_by',
+        'nimi_j2rjestamiseks',
     ]
     list_display = [
         # 'id',
@@ -793,7 +794,11 @@ class ObjektAdmin(AjaxSelectAdmin):
             }
          ),
         (None, {
-            'fields': [('created_by', 'inp_date', 'updated_by', 'mod_date')]
+            'fields': [
+                ('created_by', 'inp_date'), 
+                ('updated_by', 'mod_date'), 
+                ('nimi_j2rjestamiseks'),
+                ]
             }
          ),
     ]
