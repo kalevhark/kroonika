@@ -171,13 +171,13 @@ class KaardiobjektLookup(LookupChannel):
         splits = q.split(' ')
         queryset = self.model.objects.annotate(
             nimi_asukoht=Concat(
-                F('kaart__aasta'),
-                Value(' '),
+                # F('kaart__aasta'),
+                # Value(' '),
                 F('tn'),
                 Value(' '),
                 F('nr'),
-                Value(' '),
-                F('lisainfo'),
+                # Value(' '),
+                # F('lisainfo'),
                 output_field=CharField()
             )
         )
@@ -202,8 +202,8 @@ class AadressLookup(LookupChannel):
         splits = q.split(' ')
         queryset = self.model.objects.annotate(
             nimi_asukoht=Concat(
-                F('hist_year'),
-                Value(' '),
+                # F('hist_year'),
+                # Value(' '),
                 F('nimi'),
                 Value(' '),
                 F('korter'),
@@ -254,6 +254,7 @@ class ViideLookup(LookupChannel):
         copy_icon = f'<span class="ui-icon ui-icon-copy" id="copy_viide_{item.id}">X</span>'
         return f'{item} (viide_{item.id}) {copy_icon}'
 
+
 @ajax_select.register('allikad')
 class AllikasLookup(LookupChannel):
 
@@ -265,19 +266,6 @@ class AllikasLookup(LookupChannel):
         for split in splits:
             queryset = queryset.filter(nimi__icontains=split)
         return queryset[:20]
-
-
-# @ajax_select.register('kaardiobjektid')
-# class KaardiobjektLookup(LookupChannel):
-#
-#     model = Kaardiobjekt
-#
-#     def get_query(self, q, request):
-#         splits = q.split(' ')
-#         queryset = self.model.objects.annotate(nimi=Concat('tn', Value(' '), 'nr', Value(' '), 'lisainfo'))
-#         for split in splits:
-#             queryset = queryset.filter(nimi__icontains=split)
-#         return queryset[:50]
 
 
 @ajax_select.register('pildid')

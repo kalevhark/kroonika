@@ -886,6 +886,12 @@ class Objekt(BaasObjectMixinModel):
         max_length=200,
         help_text='Kohanimi/nimed'
     )
+    nimi_j2rjestamiseks = models.CharField( # Viljandi tn 27a -> viljandi-tänav 027a
+        'Kohanimi järjestamiseks',
+        max_length=200,
+        blank=True,
+        help_text='Kohanimi/nimed'
+    )
     slug = models.SlugField(
         default='',
         editable=False,
@@ -961,6 +967,16 @@ class Objekt(BaasObjectMixinModel):
             self.nimi
         )
     colored_nimi.short_description = 'Kohanimi'
+
+    @property
+    def nr(self):
+        t2nav = self.objektid.filter(tyyp='T').first()
+        if t2nav:
+            pattern = r"\b(\d+)([a-z]?)\b"
+            match = re.search(pattern, self.nimi)
+            if match:
+                return f'{slugify(t2nav.nimi, allow_unicode=True)} {match.group(1):0>3}{match.group(2):0>1}'
+        return slugify(self.nimi, allow_unicode=True)
 
     class Meta:
         ordering = ['slug'] # erimärkidega nimetuste välistamiseks
