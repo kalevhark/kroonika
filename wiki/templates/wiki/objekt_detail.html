@@ -4,6 +4,68 @@
 {% load wiki_extras %}
 
 {% block title %}{{ block.super }} - {{ object }}{% endblock %}
+{% block css %}{{ block.super }}
+  <style>
+    /* Style the buttons that are used to open and close the accordion panel */
+    .accordion,
+    .no-accordion {
+      /*background-color: #eee;*/
+      color: #444;
+      cursor: pointer;
+      padding: 4px;
+      width: 100%;
+      text-align: left;
+      border: none;
+      outline: none;
+      transition: 0.4s;
+    }
+
+    /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+    .active, .accordion:hover, .no-accordion:hover {
+      background-color: white;
+    }
+
+    /* Add a symbol to each button to indicate whether the collapsible content is open or closed: */
+    .accordion:after {
+      content: '\02795'; /* Unicode character for "plus" sign (+) */
+      font-size: 13px;
+      color: #777;
+      float: right;
+      margin-left: 5px;
+    }
+
+    .active:after {
+      content: "\2796"; /* Unicode character for "minus" sign (-) */
+    }
+
+    /* Style the accordion panel. Note: hidden by default */
+    .panel {
+      /* padding: 0 4px; */
+      /* background-color: white; */
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease-out;
+    }
+  </style>
+{% endblock %}
+{% block javascript %}{{ block.super }}
+  <script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.maxHeight) {
+          panel.style.maxHeight = null;
+        } else {
+          panel.style.maxHeight = panel.scrollHeight + "px";
+        }
+      });
+    }
+  </script>
+{% endblock %}
 
 {% block content %}
   <div class="w3-panel w3-card-4 w3-light-grey w3-round">
@@ -35,6 +97,7 @@
           {% include 'wiki/includes/vigane.html' %}
           <div class="w3-margin-right">
             {% inlineedit "object.kirjeldus" "formatted_markdown" template='inlineedit/default_formatted_markdown.html' %}
+            {% include 'wiki/includes/object_detail_objektid_sellel_t2naval.html' %}
             {% include 'wiki/includes/object_detail_viiteplokk.html' %}
           </div>
           {% include 'wiki/includes/seotud_special_links.html' %}

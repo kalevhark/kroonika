@@ -1,0 +1,16 @@
+{% if seotud_objektid_sellel_t2naval %}
+  <h6>Selle tänavaga seotud kohad:</h6>
+  {% for objekt_id, objekt_data in seotud_objektid_sellel_t2naval.items %}
+    {% comment %} {% if forloop.counter > 1 %}
+      <br>
+    {% endif %} {% endcomment %}
+    <button class="{% if objekt_data.seotud_aadressid %}accordion{% else %}no-accordion{% endif %}">
+      {% include 'wiki/algus/algus_objektid_objekt_pildita.html' with obj=objekt_data.objekt section='seotud_objektid_sellel_t2naval' %}
+    </button>
+    {% comment %} {% if objekt_data.seotud_aadressid %} {% endcomment %}
+      <div class="panel">
+        {% include 'wiki/includes/object_detail_aadressid.html' with seotud_aadressid=objekt_data.seotud_aadressid %}
+      </div>
+    {% comment %} {% endif %} {% endcomment %}
+  {% endfor %}
+{% endif %}

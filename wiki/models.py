@@ -698,6 +698,29 @@ def get_object_nimi(obj) -> str:
         return ' '.join(nimi for nimi in [obj.eesnimi, obj.perenimi] if nimi)
     return str(obj) # kui object nimi
 
+def make_nimi_j2rjestamiseks(
+        instance: models.Model
+) -> str:
+    """
+    Moodustame välja nimede järjestamiseks, et oleks võimalik sorteerida tänavate ja hoonete järgi. Kui objekt on seotud tänavaga, siis moodustame nime järgmiselt:
+    <tänava nimi> <hoone number>
+    Kui objekt ei ole seotud tänavaga, siis võtame lihtsalt objekti nime.
+    """
+    seotud_t2navad = instance.objektid.filter(tyyp='T')
+    # otsime seotud tänavad, mille nimed sisaldavad esimest sõna objektinimest
+    if seotud_t2navad and seotud_t2navad.filter(nimi__icontains=instance.nimi.split()[0]).exists():
+        t2nav = seotud_t2navad.filter(nimi__icontains=instance.nimi.split()[0]).first()
+    else:
+        t2nav = instance.objektid.filter(tyyp='T').first()
+
+    if t2nav:
+        # Leiame hoone numbri objektinimest, mis võib sisaldada ka tähti (nt 27a)
+        pattern = r"\b(\d+)([a-z]?)\b"
+        match = re.search(pattern, instance.nimi)
+        if match:
+            return f'{slugify(t2nav.nimi, allow_unicode=True)} {match.group(1):0>3}{match.group(2):0>1}'
+    return slugify(instance.nimi, allow_unicode=True)
+
 
 class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
     """
@@ -872,14 +895,6 @@ class BaasObjectMixinModel(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         )
     colored_id.short_description = 'ID'
 
-def make_nimi_j2rjestamiseks(instance):
-        t2nav = instance.objektid.filter(tyyp='T').first()
-        if t2nav:
-            pattern = r"\b(\d+)([a-z]?)\b"
-            match = re.search(pattern, instance.nimi)
-            if match:
-                return f'{slugify(t2nav.nimi, allow_unicode=True)} {match.group(1):0>3}{match.group(2):0>1}'
-        return slugify(instance.nimi, allow_unicode=True)
 
 class Objekt(BaasObjectMixinModel):
     OBJEKTITYYP = (

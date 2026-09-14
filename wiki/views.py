@@ -657,7 +657,7 @@ def _get_algus_kaart(request):
     # NB! Kui kaart on TMS formaadis, siis tuleb y koordinaat ümber arvutada
     # y = (2 ** z) - y - 1
     # qs = qs.annotate(sample_tile=Func(F('sample_tile'), Value('{y}'), Value(str(y)), function='replace'))
-    
+
     kirjeid = qs.count()
     a['kirjeid'] = kirjeid
     a['kaardid'] = qs
@@ -850,6 +850,22 @@ def get_seotud_aadressid_for_objekt(
                 }
             )
     return seotud_aadressid
+
+def get_seotud_objektid_sellel_t2naval(
+        objektid_sellel_t2naval: QuerySet
+) -> dict:
+    """Tagastab objekti seotud objektid sellel t2naval koos seotud kaardivaadete ja aadressidega"""
+    objektid_sellel_t2naval_dict = {}
+    for objekt in objektid_sellel_t2naval:
+        objektid_sellel_t2naval_dict[objekt.id] = {}
+        objektid_sellel_t2naval_dict[objekt.id]['objekt'] = objekt
+        # Kas objektil on kaardivaateid
+        seotud_kaardiobjektid = get_kaardiobjektid_for_objekt(objekt)
+        objektid_sellel_t2naval_dict[objekt.id]['seotud_kaardiobjektid'] = seotud_kaardiobjektid
+        # Kas objektil on seotud aadresse
+        seotud_aadressid = get_seotud_aadressid_for_objekt(objekt, seotud_kaardiobjektid)
+        objektid_sellel_t2naval_dict[objekt.id]['seotud_aadressid'] = seotud_aadressid
+    return objektid_sellel_t2naval_dict
 
 #
 # Objectide v6rdlemiseks
@@ -2626,9 +2642,15 @@ class ObjektDetailView(generic.DetailView):
         context['seotud_organisatsioonid'] = Organisatsioon.objects.\
             daatumitega(self.request).\
             filter(objektid=self.object)
-        context['seotud_objektid'] = Objekt.objects.\
+        seotud_objektid  = Objekt.objects.\
             daatumitega(self.request).\
             filter(objektid=self.object)
+        context['seotud_objektid'] = seotud_objektid
+        context['seotud_objektid_sellel_t2naval'] = (
+            get_seotud_objektid_sellel_t2naval(seotud_objektid)
+            if self.object.tyyp == 'T' 
+            else  {}
+        )
         context['seotud_pildid'] = Pilt.objects.sorted(). \
             exists()
         
