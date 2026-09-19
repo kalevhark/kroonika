@@ -628,8 +628,7 @@ def _get_algus_objektid_extra(request, p2ev, kuu, aasta):
 def _get_algus_kaart(request):
     a = dict()
     qs = Kaart.objects \
-        .exclude(id=DEFAULT_MAP.id) \
-        .filter(tiles__contains='tile') \
+        .exclude(aasta__in=[DEFAULT_MAP.aasta, "2021"]) \
         .annotate(sample_tile=F('tiles')) \
         .order_by('aasta')
     z, x, y = 15, 18753, 9907  # näitamiseks valitud kaarditükk

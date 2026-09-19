@@ -16,7 +16,12 @@ from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from wiki import views
-from wiki.models import PATTERN_VIIDE, add_markdownx_pildid, remove_markdown_tags
+from wiki.models import (
+    PATTERN_VIIDE, 
+    add_markdownx_pildid, 
+    remove_markdown_tags,
+    make_nimi_j2rjestamiseks,
+)
 from wiki.models import Artikkel, Isik, Organisatsioon, Objekt
 from wiki.tests import test_base
 
@@ -27,6 +32,20 @@ from django.urls import reverse
 PATTERN_OBJECTS = settings.KROONIKA['PATTERN_OBJECTS']
 PATTERN_PILT = settings.KROONIKA['PATTERN_PILT']
 PATTERN_VIIDE = settings.KROONIKA['PATTERN_VIIDE']
+
+class MarkNimiJ2rjestuseksUtilsTestCase(TestCase):
+    def setUp(self) -> None:
+        # GIVEN
+        self.test_objekts = Objekt.objects.all()[:50]
+
+    def test__models__make_nimi_j2rjestamiseks(self):
+        """Testib nime j2rjestamiseks tegemist."""
+        for obj in self.test_objekts:
+            # WHEN
+            nimi_j2rjestamiseks = make_nimi_j2rjestamiseks(obj)
+            # THEN
+            self.assertIsInstance(nimi_j2rjestamiseks, str)
+            self.assertTrue(len(nimi_j2rjestamiseks) > 0)
 
 class MarkDownUtilsTestCase(TestCase):
     def setUp(self) -> None:
