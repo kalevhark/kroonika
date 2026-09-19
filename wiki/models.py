@@ -978,6 +978,7 @@ class Objekt(BaasObjectMixinModel):
         return ' '.join(nimeosad)
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         self.nimi_j2rjestamiseks = make_nimi_j2rjestamiseks(self)
         super().save(*args, **kwargs)
         
