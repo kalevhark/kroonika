@@ -2140,13 +2140,27 @@ if __name__ == "__main__":
     # data_valgalinn_t2navad = get_t2navad(data_valgalinn=data_valgalinn)
     # t2nav = get_t2nav(data_valgalinn_t2navad=data_valgalinn_t2navad, t2nava_nimi='Transpordi tn')
     # print(t2nav)
-    result = get_objekt_with_similar_name()
-    print(len(result.keys()))
-    with open('data.json', 'w', encoding='utf-8') as f:
-        json.dump(result, f, ensure_ascii=False, indent=4)
+    # result = get_objekt_with_similar_name()
+    # print(len(result.keys()))
+    # with open('data.json', 'w', encoding='utf-8') as f:
+    #     json.dump(result, f, ensure_ascii=False, indent=4)
     with open('data.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
-    print(data)
+    # print(data)
+    from wiki.views import update_object_with_object as join
+    for key in list(data.keys())[10:20]:
+        if len(data[key]) == 2:
+            new = Objekt.objects.get(id=data[key][0][0])
+            old = Objekt.objects.get(id=data[key][1][0])
+            print('objekt', old.id, old, new.id, new)
+            new.nimi = old.nimi
+            new.save(update_fields=['nimi'])
+            join(
+                model_name='objekt', 
+                source_id=old.id,
+                dest_id=new.id, 
+                delete_source=True
+            )
     logger.info('Done.')
 
 # import importlib

@@ -946,16 +946,21 @@ def get_v6rdle_object(request):
 # from wiki.views import update_object_with_object as join
 # join('andmebaas', kirje_id_kust_kopeerida, kirje_id_kuhu_kopeerida)
 #
-def update_object_with_object(model_name='', source_id='', dest_id=''):
+def update_object_with_object(
+        model_name: str, 
+        source_id: str, 
+        dest_id: str,
+        delete_source: bool = False
+):
     model = apps.get_model('wiki', model_name)
 
     # Doonorobjekt
     old = model.objects.get(id=source_id)
-    print(f'Doonorobjekt: {old.id} {old}')
+    logger.info(f'Doonorobjekt: {old.id} {old}')
 
     # Sihtobjekt
     new = model.objects.get(id=dest_id)
-    print(f'Sihtobjekt: {new.id} {new}')
+    logger.info(f'Sihtobjekt: {new.id} {new}')
 
     # Kirjeldus
     sep = '\n\n+++\n\n'
@@ -990,16 +995,16 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
 
     # Seotud viited
     viited = old.viited.all()
-    print('Viited:')
+    logger.info('Viited:')
     for viide in viited:
-        print(viide.id, viide)
+        logger.info(f'{viide.id} {viide}')
         new.viited.add(viide)
 
     # Seotud eellased
     eellased = old.eellased.all()
-    print('Eellased:')
+    logger.info('Eellased:')
     for eellane in eellased:
-        print(eellane.id, eellane)
+        logger.info(f'{eellane.id} {eellane}')
         new.eellased.add(eellane)
 
     # Surnud/Likvideeritud
@@ -1010,109 +1015,113 @@ def update_object_with_object(model_name='', source_id='', dest_id=''):
     if model == Isik:
         if old.synd_koht:
             if not new.synd_koht:
-                print(old.synd_koht)
+                logger.info(f'Sünnikoht: {old.synd_koht}')
                 new.synd_koht = old.synd_koht
         if old.surm_koht:
             if not new.surm_koht:
-                print(old.surm_koht)
+                logger.info(f'Surma koht: {old.surm_koht}')
                 new.surm_koht = old.surm_koht
         if old.maetud:
             if not new.maetud:
-                print(old.maetud)
+                logger.info(f'Maetud: {old.maetud}')
                 new.maetud = old.maetud
 
-        print('Artiklid:')
+        logger.info('Artiklid:')
         artiklid = Artikkel.objects.filter(isikud=old)
         for art in artiklid:
-            print(art.id, art)
+            logger.info(f'{art.id} {art}')
             art.isikud.add(new)
             # art.isikud.remove(old)
-        print('Organisatsioonid:')
+        logger.info('Organisatsioonid:')
         organisatsioonid = old.organisatsioonid.all()
         for organisatsioon in organisatsioonid:
-            print(organisatsioon.id, organisatsioon)
+            logger.info(f'{organisatsioon.id} {organisatsioon}')
             new.organisatsioonid.add(organisatsioon)
-        print('Objektid:')
+        logger.info('Objektid:')
         objektid = old.objektid.all()
         for objekt in objektid:
-            print(objekt.id, objekt)
+            logger.info(f'{objekt.id} {objekt}')
             new.objektid.add(objekt)
-        print('Pildid:')
+        logger.info('Pildid:')
         pildid = Pilt.objects.filter(isikud=old)
         for pilt in pildid:
-            print(pilt.id, pilt)
+            logger.info(f'{pilt.id} {pilt}')
             pilt.isikud.add(new)
             # pilt.isikud.remove(old)
-        print('Profiilipildid:')
+        logger.info('Profiilipildid:')
         pildid = Pilt.objects.filter(profiilipilt_isikud=old)
         for pilt in pildid:
-            print(pilt.id, pilt)
+            logger.info(f'{pilt.id} {pilt}')
             pilt.profiilipilt_isikud.add(new)
     elif model == Organisatsioon:
-        print('Artiklid:')
+        logger.info('Artiklid:')
         artiklid = Artikkel.objects.filter(organisatsioonid=old)
         for art in artiklid:
-            print(art.id, art)
+            logger.info(f'{art.id} {art}')
             art.organisatsioonid.add(new)
-        print('Objektid:')
+        logger.info('Objektid:')
         objektid = old.objektid.all()
         for objekt in objektid:
-            print(objekt.id, objekt)
+            logger.info(f'{objekt.id} {objekt}')
             new.objektid.add(objekt)
-        print('Pildid:')
+        logger.info('Pildid:')
         pildid = Pilt.objects.filter(organisatsioonid=old)
         for pilt in pildid:
-            print(pilt.id, pilt)
+            logger.info(f'{pilt.id} {pilt}')
             pilt.organisatsioonid.add(new)
-        print('Profiilipildid:')
+        logger.info('Profiilipildid:')
         pildid = Pilt.objects.filter(profiilipilt_organisatsioonid=old)
         for pilt in pildid:
-            print(pilt.id, pilt)
+            logger.info(f'{pilt.id} {pilt}')
             pilt.profiilipilt_organisatsioonid.add(new)
     elif model == Objekt:
+        logger.info('Asukoht:')
         if old.asukoht:
-            print(old.asukoht)
+            logger.info(f'{old.asukoht}')
             if new.asukoht:
                 uus_asukoht = ' +++ '.join([new.asukoht, old.asukoht])
             else:
                 uus_asukoht = old.asukoht
             new.asukoht = uus_asukoht
-        print('Artiklid:')
+        logger.info('Artiklid:')
         artiklid = Artikkel.objects.filter(objektid=old)
         for art in artiklid:
-            print(art.id, art)
+            logger.info(f'{art.id} {art}')
             art.objektid.add(new)
-        print('Objektid:')
+        logger.info('Objektid:')
         objektid = old.objektid.all()
         for objekt in objektid:
             if objekt != old:
-                print(objekt.id, objekt)
+                logger.info(f'{objekt.id} {objekt}')
                 new.objektid.add(objekt)
-        print('Pildid:')
+        logger.info('Pildid:')
         pildid = Pilt.objects.filter(objektid=old)
         for pilt in pildid:
-            print(pilt.id, pilt)
+            logger.info(f'{pilt.id} {pilt}')
             pilt.objektid.add(new)
-        print('Profiilipildid:')
+        logger.info('Profiilipildid:')
         pildid = Pilt.objects.filter(profiilipilt_objektid=old)
         for pilt in pildid:
-            print(pilt.id, pilt)
+            logger.info(f'{pilt.id} {pilt}')
             pilt.profiilipilt_objektid.add(new)
-        print('Kaardiobjektid:')
+        logger.info('Kaardiobjektid:')
         kaardiobjektid = Kaardiobjekt.objects.filter(objekt=old)
         for kaardiobjekt in kaardiobjektid:
-            print(kaardiobjekt.id, kaardiobjekt)
+            logger.info(f'{kaardiobjekt.id} {kaardiobjekt}')
             kaardiobjekt.objekt = new
             kaardiobjekt.save(update_fields=['objekt'])
-        print('Aadressid:')
+        logger.info('Aadressid:')
         aadressid = Aadress.objects.filter(objekt=old)
         for aadress in aadressid:
-            print(aadress.id, aadress)
+            logger.info(f'{aadress.id} {aadress}')
             aadress.objekt = new
             aadress.save(update_fields=['objekt'])
     # Salvestame muudatused
     new.save()
-    print(f'Uuendati objecti: {new} (id={new.id})')
+    logger.info(f'Uuendati objecti: {model.__name__}: {new} (id={new.id})')
+    if delete_source:
+        logger.info(f'Kustutame doonorobjekti: {model.__name__}: {old} (id={old.id})')
+        old.delete()
     return new.id
 
 def get_update_object_with_object(request):
