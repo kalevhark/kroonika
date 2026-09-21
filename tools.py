@@ -12,6 +12,7 @@ from zoneinfo import ZoneInfo
 import psycopg2
 import requests
 from bs4 import BeautifulSoup
+from xyzservices import data
 
 if __name__ == "__main__":
     import django
@@ -29,7 +30,7 @@ if __name__ == "__main__":
 from django.conf import settings
 
 from django.db.models import (
-    Case, F, Q, Value, When,
+    Case, F, Q, Count, Value, When,
     BooleanField, DateField, DateTimeField, DecimalField, IntegerField,
     ExpressionWrapper
 )
@@ -2100,6 +2101,27 @@ def atlas2009_to_db(
             aadress.save()
         time.sleep(0.1) # et vältida liiga kiiret andmebaasi kirjutamist
 
+def get_objekt_with_similar_name() -> dict:
+    from django.db.models import Count
+    nimed_qs = Objekt.objects.exclude(gone=True) \
+        .filter(hist_endyear__isnull=True) \
+        .filter(tyyp='H') \
+        .values('nimi_j2rjestamiseks') \
+        .order_by('nimi_j2rjestamiseks') \
+        .annotate(count=Count('nimi_j2rjestamiseks')) \
+        .distinct() \
+        .filter(count=2)
+    result = {}
+    for nimi in nimed_qs:
+        objs = Objekt.objects.exclude(gone=True) \
+            .filter(hist_endyear__isnull=True) \
+            .filter(tyyp='H') \
+            .filter(nimi_j2rjestamiseks=nimi['nimi_j2rjestamiseks']) \
+            .order_by('id')
+        result[nimi['nimi_j2rjestamiseks']] = []
+        for obj in objs:
+            result[nimi['nimi_j2rjestamiseks']].append([obj.id, obj.nimi])
+    return result
 
 if __name__ == "__main__":
     # get_vg_vilistlased()
@@ -2114,10 +2136,17 @@ if __name__ == "__main__":
     # atlas2009_to_db(pildid, objektid)
     # print(objektid['AAAAAA'], pildid['AAAAAA'])
 
-    data_valgalinn = read_valgalinn_from_ky_json()
-    data_valgalinn_t2navad = get_t2navad(data_valgalinn=data_valgalinn)
-    t2nav = get_t2nav(data_valgalinn_t2navad=data_valgalinn_t2navad, t2nava_nimi='Transpordi tn')
-    print(t2nav)
+    # data_valgalinn = read_valgalinn_from_ky_json()
+    # data_valgalinn_t2navad = get_t2navad(data_valgalinn=data_valgalinn)
+    # t2nav = get_t2nav(data_valgalinn_t2navad=data_valgalinn_t2navad, t2nava_nimi='Transpordi tn')
+    # print(t2nav)
+    result = get_objekt_with_similar_name()
+    print(len(result.keys()))
+    with open('data.json', 'w', encoding='utf-8') as f:
+        json.dump(result, f, ensure_ascii=False, indent=4)
+    with open('data.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    print(data)
     logger.info('Done.')
 
 # import importlib

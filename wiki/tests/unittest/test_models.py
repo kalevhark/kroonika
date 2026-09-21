@@ -71,6 +71,43 @@ class MarkDownUtilsTestCase(TestCase):
         self.assertIsInstance(text_with_pildid, str)
 
 
+class ObjektModelTestCase(TestCase):
+    def setUp(self) -> None:
+        # GIVEN
+        self.uusobjekt = Objekt(
+            nimi='Kalevi 12',
+            asukoht='Vanalinn',
+            tyyp='H',
+            hist_date=date(1920, 1, 15),
+            hist_enddate=date(1945, 8, 20),
+        )
+        self.uusobjekt.save()
+
+    def tearDown(self):
+        self.uusobjekt.delete()
+
+    def test_objekt_str_includes_name_and_year_range(self):
+        objekt = self.uusobjekt
+        self.assertEqual(str(objekt), 'Kalevi 12 (Vanalinn) 1920-1945')
+
+    def test_objekt_has_slug_and_sort_name_on_existing_record(self):
+        objekt = self.uusobjekt
+        self.assertIsNotNone(objekt)
+        self.assertTrue(objekt.slug)
+        self.assertTrue(objekt.nimi_j2rjestamiseks)
+        self.assertIn(objekt.nimi.lower().split()[0], objekt.nimi_j2rjestamiseks.lower())
+
+    def test_objekt_str_uses_question_mark_for_unknown_end_year_when_gone(self):
+        objekt = Objekt(
+            nimi='Linnamägi',
+            tyyp='A',
+            hist_year=1800,
+            gone=True,
+        )
+        self.assertEqual(str(objekt), 'Linnamägi 1800-?')
+
+
+
 class SwitchCalendarSystemTestCase(TestCase):
     def setUp(self) -> None:
         # GIVEN
