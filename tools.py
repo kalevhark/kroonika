@@ -2148,7 +2148,7 @@ if __name__ == "__main__":
         data = json.load(f)
     # print(data)
     from wiki.views import update_object_with_object as join
-    for key in list(data.keys())[10:20]:
+    for key in list(data.keys())[:10]:
         if len(data[key]) == 2:
             new = Objekt.objects.get(id=data[key][0][0])
             old = Objekt.objects.get(id=data[key][1][0])
