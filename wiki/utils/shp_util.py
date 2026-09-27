@@ -1182,7 +1182,7 @@ def make_objekt_leaflet_combo(objekt=1):
 
         # Kaardi skaleerimine
         kaardiobjektide_shape = [
-            shapely.geometry.shape(kaardiobjekt.geometry) 
+            shapely.make_valid(shapely.geometry.shape(kaardiobjekt.geometry))
             for kaardiobjekt 
             in kaardiobjektid_objektiga 
             if kaardiobjekt.geometry
