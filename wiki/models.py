@@ -1771,13 +1771,24 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
         return self.lisainfo
 
     @property
+    def bounds(self, *args, **kwargs):
+        try:
+            return shape(self.geometry).bounds
+        except:
+            pass
+
+    @property
     def centroid(self, *args, **kwargs):
         try:
-            s = shape(self.geometry).bounds
             return [
-                (s[3]+s[1])/2,
-                (s[2]+s[0])/2
+                shape(self.geometry).centroid.y, 
+                shape(self.geometry).centroid.x
             ]
+            # s = shape(self.geometry).bounds
+            # return [
+            #     (s[3]+s[1])/2,
+            #     (s[2]+s[0])/2
+            # ]
         except:
             pass
 

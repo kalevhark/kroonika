@@ -1,3 +1,4 @@
+import itertools
 import json
 import os
 from pathlib import Path
@@ -26,11 +27,14 @@ from branca.element import CssLink, Element, Figure, JavascriptLink, MacroElemen
 import folium
 from folium.features import GeoJsonPopup, GeoJsonTooltip
 
+import geopandas as gpd
 import jinja2
 import pyproj
 import requests
 import shapefile
+import shapely
 from shapely.geometry.polygon import Polygon
+# from shapely.geometry import Polygon
 
 from wiki.models import Kaart, Kaardiobjekt, Objekt
 
@@ -1139,20 +1143,57 @@ def make_objekt_leaflet_combo(objekt=1):
 
         # Loome aluskaardi
         # zoom_start = DEFAULT_MAP_ZOOM_START
-        kaardiobjektide_zoomid = [kaardiobjekt.zoom for kaardiobjekt in kaardiobjektid_objektiga if kaardiobjekt.zoom]
-        zoom_start = min(kaardiobjektide_zoomid) if kaardiobjektide_zoomid else DEFAULT_MAP_ZOOM_START
-        location = DEFAULT_CENTER
+        # kaardiobjektide_zoomid = [
+        #     kaardiobjekt.zoom 
+        #     for kaardiobjekt 
+        #     in kaardiobjektid_objektiga 
+        #     if kaardiobjekt.zoom
+        # ]
+        # zoom_start = min(kaardiobjektide_zoomid) if kaardiobjektide_zoomid else DEFAULT_MAP_ZOOM_START
+
+        # Kaardi keskpunkti arvutamine
+        kaardiobjektide_centroidid = [
+            kaardiobjekt.centroid 
+            for kaardiobjekt 
+            in kaardiobjektid_objektiga 
+            if kaardiobjekt.centroid
+        ]
+        if kaardiobjektide_centroidid:
+            common_centroid = shapely.multipoints(kaardiobjektide_centroidid).centroid
+            location = [
+                common_centroid.y,
+                common_centroid.x,
+            ]
+        else:
+            location = DEFAULT_CENTER
+
         kwargs = {  # vajalikud mobiilis kerimise h6lbustamiseks
             'dragging': '!L.Browser.mobile',
             'tap': '!L.Browser.mobile'
         }
         map = folium.Map(
             location=location,  # NB! tagurpidi: [lat, lon],
-            zoom_start=zoom_start,
+            # zoom_start=zoom_start,
             min_zoom=DEFAULT_MIN_ZOOM,
             zoom_control=True,
             tiles=None,
             **kwargs
+        )
+
+        # Kaardi skaleerimine
+        kaardiobjektide_shape = [
+            shapely.geometry.shape(kaardiobjekt.geometry) 
+            for kaardiobjekt 
+            in kaardiobjektid_objektiga 
+            if kaardiobjekt.geometry
+        ]
+        bounds = shapely.union_all(kaardiobjektide_shape).bounds
+
+        map.fit_bounds(
+            [
+                [bounds[1], bounds[0]], 
+                [bounds[3], bounds[2]]
+            ]
         )
 
         map.default_css = LEAFLET_DEFAULT_CSS
@@ -1259,12 +1300,10 @@ def make_kaardiobjekt_leaflet(kaardiobjekt_id):
         map_html = kaardiobjekt.get_leaflet()
         return map_html
 
-from shapely.geometry import Polygon
-import geopandas as gpd
-
 def check_polygon_contains_polygon(
     polygon_inner: dict,
-    polygon_outer: dict = None, 
+    polygon_outer: dict = None,
+    verbose: bool = False 
 ):
 
     with open('wiki/utils/geojson/piirid.geojson', 'r') as f:
@@ -1295,57 +1334,167 @@ def check_polygon_contains_polygon(
     # Check if inner polygon is inside outer polygon
     is_inside = inner.geometry.iloc[0].within(outer.geometry.iloc[0])
 
-    # print(is_inside)
+    if verbose:
+        # Same meaning, reversed:
+        is_inside = outer.geometry.iloc[0].contains(inner.geometry.iloc[0])
+
+        # Allows touching the boundary:
+        is_inside_or_touching = outer.geometry.iloc[0].covers(inner.geometry.iloc[0])
+
+        # Strictly inside, not touching boundary:
+        strictly_inside = (
+            inner.geometry.iloc[0].within(outer.geometry.iloc[0])
+            and not inner.geometry.iloc[0].boundary.intersects(outer.geometry.iloc[0].boundary)
+        )
+
+        print("Inside:", is_inside)
+        print("Inside or touching:", is_inside_or_touching)
+        print("Strictly inside:", strictly_inside)
+
     return is_inside
 
-    # Same meaning, reversed:
-    is_inside = outer.geometry.iloc[0].contains(inner.geometry.iloc[0])
-
-    # Allows touching the boundary:
-    is_inside_or_touching = outer.geometry.iloc[0].covers(inner.geometry.iloc[0])
-
-    # Strictly inside, not touching boundary:
-    strictly_inside = (
-        inner.geometry.iloc[0].within(outer.geometry.iloc[0])
-        and not inner.geometry.iloc[0].boundary.intersects(outer.geometry.iloc[0].boundary)
-    )
-
-    print("Inside:", is_inside)
-    print("Inside or touching:", is_inside_or_touching)
-    print("Strictly inside:", strictly_inside)
-
 # katastriüksuse andmed aadressi v6i katastrinumbri järgi Maa-ameti andmetest
-def get_shp_data_ehitis(
-        asukoht: str
-    ):
-    # asukoht aadress 'Sulevi 9a'
-    # asukoht aadress 'Kraavikalda 19'
-    # kataster '79517:019:0003'
+# def get_shp_data_ehitis(
+#         asukoht: str
+#     ):
+#     # asukoht aadress 'Sulevi 9a'
+#     # asukoht aadress 'Kraavikalda 19'
+#     # kataster '79517:019:0003'
 
-    shp = "wiki/utils/ETAK_Eesti_SHP_ehitised/E_401_hoone_ka" # ainult Valga linn
-    with shapefile.Reader(shp, encoding="latin1") as sf:
-        # print(sf.fields)
-        features = []
-        for rec in sf.iterShapeRecords():
-            if asukoht:
-                street, housenumber = split_address(asukoht)
-                if street in rec.record.ads_lahiaa.split(' ') and housenumber in rec.record.ads_lahiaa.split(' '):
-                    points = rec.shape.points
-                    parts = rec.shape.parts
-                    # print(parts)
-                    nodes = [
-                        shp_crs_to_degree(el)
-                        for el
-                        in rec.shape.points
-                    ]
-                    geometry = {
-                        'type': 'Polygon',
-                        'coordinates': [nodes]
-                    }
-                    # print('E', rec.record.ads_lahiaa, rec.record.kov_id, json.dumps(geometry))
-                    if check_polygon_contains_polygon(geometry):
-                        features.append(geometry)
+#     shp = "wiki/utils/ETAK_Eesti_SHP_ehitised/E_401_hoone_ka" # ainult Valga linn
+#     with shapefile.Reader(shp, encoding="latin1") as sf:
+#         # print(sf.fields)
+#         features = []
+#         for rec in sf.iterShapeRecords():
+#             if asukoht:
+#                 street, housenumber = split_address(asukoht)
+#                 if street in rec.record.ads_lahiaa.split(' ') and housenumber in rec.record.ads_lahiaa.split(' '):
+#                     points = rec.shape.points
+#                     parts = rec.shape.parts
+#                     # print(parts)
+#                     nodes = [
+#                         shp_crs_to_degree(el)
+#                         for el
+#                         in rec.shape.points
+#                     ]
+#                     geometry = {
+#                         'type': 'Polygon',
+#                         'coordinates': [nodes]
+#                     }
+#                     # print('E', rec.record.ads_lahiaa, rec.record.kov_id, json.dumps(geometry))
+#                     if check_polygon_contains_polygon(geometry):
+#                         features.append(geometry)
+#         if features:
+#             return json.dumps({
+#                 'type': 'Polygon',
+#                 'coordinates': [
+#                     feature['coordinates'][0] 
+#                     for feature 
+#                     in features
+#                 ]
+#             })
+
+def get_building_geometry(
+        search_string: str
+    ) -> list:
+    """
+    Fetches building shape from Maa-amet (ETAK) using the Building Register (EHR) code.
+    Filters the results to include only buildings within the Valga city territory.
+    Returns a list of features (GeoJSON format) that match the search criteria.
+    """
+    # WFS Service URL
+    wfs_url = "https://gsavalik.envir.ee/geoserver/etak/wfs"
+    # wfs_url = "https://gsavalik.envir.ee/geoserver/etak/wfs?request=GetFeature&service=WFS&version=1.1.0&outputFormat=json&typeName=etak:e_401_hoone_ka&cql_filter=ehr_gid=111015176&srsName=EPSG:4326"
+    # wfs_url = "https://gsavalik.envir.ee/geoserver/etak/wfs?request=GetFeature&service=WFS&version=1.1.0&outputFormat=application%2Fjson&typeName=etak:e_401_hoone_ka&cql_filter=ads_lahiaadress%3D%27Aasa%20tn%2012%27&srsName=EPSG:4326"
+
+    params = {
+        "request": "GetFeature",
+        "service": "WFS",
+        "version": "2.0.0",
+        "outputFormat": "json",
+        "typeName": "etak:e_401_hoone_ka",
+        # "typeName": "etak:e_403_muu_rajatis_ka",
+        "cql_filter": f"ads_lahiaadress='{search_string}'",
+        "srsName": "EPSG:4326",  # Standard Lat/Lon degrees
+    }
+
+    try:
+        response = requests.get(
+            wfs_url,
+            params=params,
+        )
+        response.raise_for_status()
+        data = json.loads(response.text)
+
+        if not data.get("features"):
+            return f"No geometry found for: {search_string}"
+
+        # Extracting the geometry and some properties
+        features = data["features"]
+        return [
+            feature
+            for feature 
+            in features 
+            if check_polygon_contains_polygon(feature.get('geometry')) # Valga linna territooriumil olevad hooned
+        ]
+
+    except Exception as e:
+        return f"Error: {e}"
+
+def get_etak_geometry(
+        search_string: str
+    ) -> list:
+    """
+    Fetches building shape from Maa-amet (ETAK) using the Building Register (EHR) code.
+    Filters the results to include only buildings within the Valga city territory.
+    Returns a list of features (GeoJSON format) that match the search criteria.
+    """
+    # WFS Service URL
+    wfs_url = "https://gsavalik.envir.ee/geoserver/etak_tuletis/wfs"
+
+    params = {
+        "request": "GetFeature",
+        "service": "WFS",
+        "version": "1.1.0",
+        "outputFormat": "json",
+        "typeName": "etak_tuletis:etak_ehr_hooned",
+        # "typeName": "etak:e_403_muu_rajatis_ka",
+        "cql_filter": f"ads_lahiaadress='{search_string}'",
+        "srsName": "EPSG:4326",  # Standard Lat/Lon degrees
+    }
+
+    try:
+        response = requests.get(
+            wfs_url,
+            params=params,
+        )
+        response.raise_for_status()
+        data = json.loads(response.text)
+
+        if not data.get("features"):
+            return f"No geometry found for: {search_string}"
+
+        # Extracting the geometry and some properties
+        features = data["features"]
+        return [
+            feature
+            for feature 
+            in features 
+            if check_polygon_contains_polygon(feature.get('geometry')) # Valga linna territooriumil olevad hooned
+        ]
         return features
+
+    except Exception as e:
+        return f"Error: {e}"
+
+
+# seisuveekogud
+# https://gsavalik.envir.ee/geoserver/etak_tuletis/wfs?request=GetFeature&service=WFS&version=1.1.0&outputFormat=json&typeName=etak_tuletis:eelis_tervikseisuveed&srsName=EPSG:4326
+# vooluveekogud
+# https://gsavalik.envir.ee/geoserver/etak_tuletis/wfs?request=GetFeature&service=WFS&version=1.1.0&outputFormat=json&typeName=etak_tuletis:eelis_tervikvooluveed_pohiteljed&srsName=EPSG:4326
+# hooned
+# https://gsavalik.envir.ee/geoserver/etak_tuletis/wfs?request=GetFeature&service=WFS&version=1.1.0&outputFormat=json&typeName=etak_tuletis:etak_ehr_hooned&srsName=EPSG:4326
+
 
 if __name__ == "__main__":
     # make_big_maps_leaflet(aasta=1824, objekt=970)
@@ -1363,8 +1512,8 @@ if __name__ == "__main__":
     # find_intersections()
     # update_objekt_from_csv()
     # shp_match_db()
-    get_shp_data_ehitis(asukoht="Sulevi 9a")
-    get_osm_data_quarter(quarter='Transpordi')
+    # get_shp_data_ehitis(asukoht="Sulevi 9a")
+    # get_osm_data_quarter(quarter='Transpordi')
     pass
 
 
