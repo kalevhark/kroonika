@@ -1807,11 +1807,11 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
     def get_leaflet(self):
         if self.geometry:
             DEFAULT_MAP = Kaart.objects.filter(aasta=settings.DEFAULT_MAP_AASTA).first()
-            zoom_start = self.zoom if self.zoom else settings.DEFAULT_MAP_ZOOM_START
+            # zoom_start = self.zoom if self.zoom else settings.DEFAULT_MAP_ZOOM_START
             # Loome aluskaardi
             map = folium.Map(
                 location=self.centroid, # kaardiobjekt.centroid,  # NB! tagurpidi: [lat, lon],
-                zoom_start=zoom_start,
+                # zoom_start=zoom_start,
                 min_zoom=settings.DEFAULT_MIN_ZOOM,
                 zoom_control=True,
                 tiles=None,
@@ -1820,6 +1820,14 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
             map.default_css = settings.LEAFLET_DEFAULT_CSS
             map.default_js = settings.LEAFLET_DEFAULT_JS
 
+            bounds = self.bounds
+            map.fit_bounds(
+                [
+                    [bounds[1], bounds[0]], 
+                    [bounds[3], bounds[2]]
+                ]
+            )
+            
             feature_group_default = folium.FeatureGroup(
                 name=f'<span class="kaart-control-layers">{DEFAULT_MAP.aasta}</span>',
                 overlay=False
