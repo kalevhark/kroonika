@@ -36,10 +36,25 @@ class AddArtikkelForm(TestCase):
                 "hist_date": dt.now(),
             }
         )
-        self.assertTrue(form.is_valid())
         self.assertEqual(
             form.errors.get("kirjeldus"), None
         )
+        self.assertFalse(form.is_valid())
+
+    def test__forms__with_kirjeldus_and_histdate(self):
+            """
+            Testib kirjeldusega vormi valideerimist, kus hist_date on täidetud.
+            """
+            form = ArtikkelForm(
+                data={
+                    "kirjeldus": "kirjeldus",
+                    "hist_date": dt.now(),
+                }
+            )
+            self.assertEqual(
+                form.errors.get("kirjeldus"), "kirjeldus"
+            )
+            self.assertTrue(form.is_valid())
 
     def test__forms__hist_month_with_empty_histyear_error(self):
         """
@@ -47,6 +62,7 @@ class AddArtikkelForm(TestCase):
         """
         form = ArtikkelForm(
             data={
+                "kirjeldus": "kirjeldus",
                 "hist_month": 5,
             }
         )
@@ -59,6 +75,7 @@ class AddArtikkelForm(TestCase):
         """
         form = ArtikkelForm(
             data={
+                "kirjeldus": "kirjeldus",
                 "hist_month": 5,
                 "hist_year": 1990,
             }
@@ -72,6 +89,7 @@ class AddArtikkelForm(TestCase):
         """
         form = ArtikkelForm(
             data={
+                "kirjeldus": "kirjeldus",
                 "hist_date": dt.now(),
                 "hist_endmonth": 5,
             }
@@ -85,6 +103,7 @@ class AddArtikkelForm(TestCase):
         """
         form = ArtikkelForm(
             data={
+                "kirjeldus": "kirjeldus",
                 "hist_date": dt.now(),
                 "hist_endmonth": 5,
                 "hist_endyear": 2000,

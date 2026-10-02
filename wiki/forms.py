@@ -123,8 +123,15 @@ class ArtikkelForm(BaasObjectForm):
 
     def clean(self, *args, **kwargs):
         # Kontrollime, et loo algusaeg on märgitud
-        if not any([self.cleaned_data.get('hist_date'), self.cleaned_data.get('hist_year')]):
+        if not any(
+            [
+                self.cleaned_data.get('hist_date'), 
+                self.cleaned_data.get('hist_year')
+            ]
+        ):
             raise ValidationError("Alguskuupäev või -aasta peab olema")
+        if len(self.cleaned_data.get('kirjeldus').strip()) == 0: # slugi ei saa moodustada
+            raise ValidationError("Sisu peab olema")
         super().clean(*args, **kwargs)
         return self.cleaned_data
     
