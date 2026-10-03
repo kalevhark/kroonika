@@ -73,7 +73,11 @@
     {% endif %}
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
-    {% include 'wiki/algus/algus_isikud_isik_pildiga.html' with section='sel_kuul' %}
+    {% if obj.vanus and obj.vanus|divisibleby:"5" %}
+      {% include 'wiki/algus/algus_isikud_isik_pildiga.html' with section='sel_kuul' %}
+    {% else %}
+      {% include 'wiki/algus/algus_isikud_isik_pildita.html' with section='sel_kuul' %}
+    {% endif %}
   {% endfor %}
 {% endif %}
 {% comment %} {% if andmed.isik.juubilarid %}

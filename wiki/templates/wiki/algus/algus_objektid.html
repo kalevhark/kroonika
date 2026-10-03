@@ -47,26 +47,11 @@
     {% endif %}
     <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
     &nbsp;
-    {% include 'wiki/algus/algus_objektid_objekt_pildita.html' with section='sel_kuul' %}
+    {% if obj.vanus and obj.vanus|divisibleby:"5" %}
+      {% include 'wiki/algus/algus_objektid_objekt_pildiga.html' with section='sel_kuul' %}
+    {% else %}
+      {% include 'wiki/algus/algus_objektid_objekt_pildita.html' with section='sel_kuul' %}
+    {% endif %}
   {% endfor %}
 {% endif %}
-{% comment %} {% if andmed.objekt.juubilarid %}
-  <h5>
-    <a
-        class="hover-objekt"
-        href="{% url 'wiki:artikkel_year_archive' year=aasta %}#bookmark_objektid"
-        title="Kõik {% now "Y" %} juubilarid"
-    >
-      {% now "Y" %} juubilarid <span class="w3-badge background-objekt">{{ andmed.objekt.juubilarid.count }}</span>
-    </a>
-  </h5>
-  {% for obj in andmed.objekt.juubilarid %}
-    {% if forloop.counter > 1 %}
-      <br>
-    {% endif %}
-    <strong>{% include 'wiki/includes/date_dob.html' with obj=obj %}</strong>
-    &nbsp;
-    {% include 'wiki/algus/algus_objektid_objekt_pildiga.html' with section='juubilarid' %}
-  {% endfor %}
-{% endif %} {% endcomment %}
 <div id="extra_content_objektid">{% include 'wiki/includes/div_loader_book.html' with n='extra_content_objektid' %}</div>
