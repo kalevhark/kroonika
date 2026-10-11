@@ -451,6 +451,9 @@ def shp_match_db():
 # Loeb kaardiobjekti andmed ja leiab kas on kattuvusi teiste kaartide kaardiobjektidega
 def kaardiobjekt_match_db(kaardiobjekt_id):
     kaardiobjekt = Kaardiobjekt.objects.get(id=kaardiobjekt_id)
+    if kaardiobjekt.geometry['type'] != 'Polygon':
+        print('Ei ole Polygon:', kaardiobjekt)
+        return
     shape = kaardiobjekt.geometry['coordinates'][0]
     polygon = Polygon(shape)
     ignore_maps = ['1683', kaardiobjekt.kaart.aasta]
@@ -475,6 +478,7 @@ def kaardiobjekt_match_db(kaardiobjekt_id):
         return kaardiobjekt_match
     else:
         print('Vigane my:', kaardiobjekt)
+        return
 
 # Salvestame andmebaasi värsked andmed OpenStreetMapist ja Maa-ameti andmefailist
 def save_current_data(asukoht):

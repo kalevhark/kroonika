@@ -2123,44 +2123,32 @@ def get_objekt_with_similar_name() -> dict:
             result[nimi['nimi_j2rjestamiseks']].append([obj.id, obj.nimi])
     return result
 
+def pildiandmed(id: int) -> dict:
+    pilt = Pilt.objects.get(id=id)
+    data = {
+        'id': pilt.id,
+        'nimi': pilt.nimi,
+        'tyyp': pilt.tyyp,
+        'pilt': pilt.pilt if pilt.pilt else None,
+        'hist_date': pilt.hist_date,
+        'hist_year': pilt.hist_year,
+        'viited': [v.id for v in pilt.viited.all()],
+        'objektid': [o.id for o in pilt.objektid.all()],
+    }
+    return data
+
 if __name__ == "__main__":
     # get_vg_vilistlased()
     # get_muis_vamf()
     # muis_viited_inuse()
-    # url = 'http://opendata.muis.ee/dhmedia/2d69b089-d435-45a2-92f0-2f4f28784e58'
-    
-    # objektid = read_csv2dict_objektid(filename='objektid')
-    # fotod = read_csv2dict_fotod(filename='foto')
-    # pildid = read_images2dict(fotod)
-    # pildid_vs_objektid(pildid, objektid)
-    # atlas2009_to_db(pildid, objektid)
-    # print(objektid['AAAAAA'], pildid['AAAAAA'])
-
-    # data_valgalinn = read_valgalinn_from_ky_json()
-    # data_valgalinn_t2navad = get_t2navad(data_valgalinn=data_valgalinn)
-    # t2nav = get_t2nav(data_valgalinn_t2navad=data_valgalinn_t2navad, t2nava_nimi='Transpordi tn')
-    # print(t2nav)
-    result = get_objekt_with_similar_name()
-    print(len(result.keys()))
-    with open('data.json', 'w', encoding='utf-8') as f:
-        json.dump(result, f, ensure_ascii=False, indent=4)
-    # with open('data.json', 'r', encoding='utf-8') as f:
-    #     data = json.load(f)
-    # # print(data)
-    # from wiki.views import update_object_with_object as join
-    # for key in list(data.keys())[10:]:
-    #     if len(data[key]) == 2:
-    #         new = Objekt.objects.get(id=data[key][0][0])
-    #         old = Objekt.objects.get(id=data[key][1][0])
-    #         print('objekt', old.id, old, new.id, new)
-    #         new.nimi = old.nimi
-    #         new.save(update_fields=['nimi'])
-    #         join(
-    #             model_name='objekt', 
-    #             source_id=old.id,
-    #             dest_id=new.id, 
-    #             delete_source=True
-    #         )
+    # result = get_objekt_with_similar_name()
+    # print(len(result.keys()))
+    # with open('data.json', 'w', encoding='utf-8') as f:
+    #     json.dump(result, f, ensure_ascii=False, indent=4)
+    data = pildiandmed(1000)
+    print(data)
+    image = Image.open(data['pilt'])
+    print(data['pilt'], image.format, f"{image.size}x{image.mode}")
     logger.info('Done.')
 
 # import importlib
