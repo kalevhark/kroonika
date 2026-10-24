@@ -665,8 +665,8 @@ def get_ilmateenistus_forecast(asukoht="valgalinn") -> Optional[dict]:
         "Accept": "application/json"
     }
 
-    # url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?coordinates={lat}%3B{lon}"
-    url = f"https://ilmmicroservice.envir.ee/api/forecasts/modelForecastByLocation?locationId=784&lang=et&coordinates={lat}%3B{lon}"
+    url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?coordinates={lat}%3B{lon}"
+    # url = f"https://ilmmicroservice.envir.ee/api/forecasts/modelForecastByLocation?locationId=784&lang=et&coordinates={lat}%3B{lon}"
     response = requests.get(
         url,
         headers=headers
