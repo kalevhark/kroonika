@@ -665,7 +665,8 @@ def get_ilmateenistus_forecast(asukoht="valgalinn") -> Optional[dict]:
         "Accept": "application/json"
     }
 
-    url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?coordinates={lat}%3B{lon}"
+    # url = f"https://www.ilmateenistus.ee/wp-content/themes/ilm2020/meteogram.php/?coordinates={lat}%3B{lon}"
+    url = f"https://ilmmicroservice.envir.ee/api/forecasts/modelForecastByLocation?locationId=784&lang=et&coordinates={lat}%3B{lon}"
     response = requests.get(
         url,
         headers=headers
@@ -1046,15 +1047,16 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
         i_icon = ''
         if i and 'forecast' in i:
             i_data = i['forecast'].get(str(ref_dt), None)
-            i_temp = float_or_none(i_data['temperature'])
-            i_phenomen = i_data['phenomen']
-            i_prec = i_data['precipitation']
-            i_prec_color = i_data['precipitation_color']
-            i_pres = float_or_none(i_data['pressure'])
-            i_windspeed = i_data['windSpeed']
-            i_winddirection = i_data['windDirection']
-            i_winddirection_icon = int(float(i_winddirection.get('deg', 0)) // 10 * 10)
-            i_icon = i_data['symbol']
+            if i_data:
+                i_temp = float_or_none(i_data['temperature'])
+                i_phenomen = i_data['phenomen']
+                i_prec = i_data['precipitation']
+                i_prec_color = i_data['precipitation_color']
+                i_pres = float_or_none(i_data['pressure'])
+                i_windspeed = i_data['windSpeed']
+                i_winddirection = i_data['windDirection']
+                i_winddirection_icon = int(float(i_winddirection.get('deg', 0)) // 10 * 10)
+                i_icon = i_data['symbol']
 
         forecast[str(ref_dt)] = {
             'y_temp': y_temp,
