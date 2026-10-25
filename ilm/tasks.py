@@ -856,8 +856,8 @@ if __name__ == '__main__':
         logging.info(f"Uuendatud puudulikke kirjeid: {rows_updated}")
         rows_missing = update_missing_observations(path, days=days, verbose=verbose)
         logging.info(f"Uuendatud puuduvaid kirjeid: {rows_missing}")
-        update_lasthours(path, verbose, hours=72)
-        logging.info(f"Viimase 72 tunni andmete kontroll ja uuendamine lõpetatud")
+        # update_lasthours(path, verbose, hours=72)
+        # logging.info(f"Viimase 72 tunni andmete kontroll ja uuendamine lõpetatud")
 
         # Tabelid mahukate arvutuste jaoks
         update_maxmin_rolling(path)
