@@ -389,10 +389,10 @@ def update_missing_observations(path='', days=30, verbose=False):
                 ilm_observation_veebist = utils.ilmaandmed_apist(observation_time)
                 if ilm_observation_veebist and (ilm_observation_veebist['airtemperature'] != None):
                     id = insert_new_observations(ilm_observation_veebist, path)
-                    print(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
+                    logging.info(f'{ilm_observation_veebist["timestamp"]} lisatud {id}')
                     rows_updated += 1
                 else:
-                    print(f'{observation_time} uuendamine ebaõnnestus')
+                    logging.info(f'{observation_time} uuendamine ebaõnnestus')
 
         # Commit the changes to the database
         conn.commit()
@@ -865,7 +865,7 @@ if __name__ == '__main__':
     #     # Kustutame duplikaatread
     #     rows_deleted = delete_duplicate_observations(path, verbose)
 
-    if now.minute == 30: # iga tunni 20. minutil
+    if now.minute == 35: # iga tunni 20. minutil
         # print(f'{datetime.now()}: Alustame ilmaennustuste logi ja kvaliteedi arvutustega')
         logging.info(f"Alustame ilmaennustuste logi ja kvaliteedi arvutustega.")
         # Kustutame duplikaatread
@@ -874,8 +874,8 @@ if __name__ == '__main__':
         # Täiendame puudulikke kirjeid
         rows_updated = update_uncomplete_observations(path, days=days, verbose=verbose)
         logging.info(f"Uuendatud puudulikke kirjeid: {rows_updated}")
-        # rows_missing = update_missing_observations(path, days=days, verbose=verbose)
-        # logging.info(f"Uuendatud puuduvaid kirjeid: {rows_missing}")
+        rows_missing = update_missing_observations(path, days=days, verbose=verbose)
+        logging.info(f"Uuendatud puuduvaid kirjeid: {rows_missing}")
         update_lasthours(path, verbose, hours=72)
         logging.info(f"Viimase 72 tunni andmete kontroll ja uuendamine lõpetatud")
 
