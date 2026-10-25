@@ -865,7 +865,7 @@ if __name__ == '__main__':
     #     # Kustutame duplikaatread
     #     rows_deleted = delete_duplicate_observations(path, verbose)
 
-    if now.minute == 35: # iga tunni 20. minutil
+    if now.minute == 20: # iga tunni 20. minutil
         # print(f'{datetime.now()}: Alustame ilmaennustuste logi ja kvaliteedi arvutustega')
         logging.info(f"Alustame ilmaennustuste logi ja kvaliteedi arvutustega.")
         # Kustutame duplikaatread
