@@ -845,7 +845,7 @@ if __name__ == '__main__':
     #     # Kustutame duplikaatread
     #     rows_deleted = delete_duplicate_observations(path, verbose)
 
-    if now.minute == 20: # iga tunni 20. minutil
+    if now.minute == 30: # iga tunni 20. minutil
         # print(f'{datetime.now()}: Alustame ilmaennustuste logi ja kvaliteedi arvutustega')
         logging.info(f"Alustame ilmaennustuste logi ja kvaliteedi arvutustega.")
         # Kustutame duplikaatread
@@ -854,10 +854,10 @@ if __name__ == '__main__':
         # Täiendame puudulikke kirjeid
         rows_updated = update_uncomplete_observations(path, days=days, verbose=verbose)
         logging.info(f"Uuendatud puudulikke kirjeid: {rows_updated}")
-        rows_missing = update_missing_observations(path, days=days, verbose=verbose)
-        logging.info(f"Uuendatud puuduvaid kirjeid: {rows_missing}")
-        # update_lasthours(path, verbose, hours=72)
-        # logging.info(f"Viimase 72 tunni andmete kontroll ja uuendamine lõpetatud")
+        # rows_missing = update_missing_observations(path, days=days, verbose=verbose)
+        # logging.info(f"Uuendatud puuduvaid kirjeid: {rows_missing}")
+        update_lasthours(path, verbose, hours=72)
+        logging.info(f"Viimase 72 tunni andmete kontroll ja uuendamine lõpetatud")
 
         # Tabelid mahukate arvutuste jaoks
         update_maxmin_rolling(path)
