@@ -348,23 +348,43 @@ def update_missing_observations(path='', days=30, verbose=False):
         conn = psycopg2.connect(**params)
         # create a new cursor
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        # leiame kõik kuupäevaread köesoleval aastal
-        cur.execute(
-            "SELECT timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) ORDER BY timestamp ASC;"
+        # leiame kõik kuupäevaread käesoleval aastal
+        # cur.execute(
+        #     "SELECT timestamp FROM ilm_ilm WHERE date_part('year', timestamp) = date_part('year', CURRENT_DATE) ORDER BY timestamp ASC;"
+        # )
+        # timestamp_all_records = [record['timestamp'] for record in cur]
+        # for n in range(0, len(timestamp_all_records)-1):
+        #     if (timestamp_all_records[n+1] - timestamp_all_records[n]) > timedelta(seconds=3600):
+        #         d = timestamp_all_records[n] + timedelta(hours=1)
+        #         while d not in timestamp_all_records:
+        #             if d != utils.last_sunday(d.year, 10): # oktoobri viimane pühapäev
+        #                 timestamp_missing_records.append(d)
+        #             d += timedelta(hours=1)
+        query = f"""
+            WITH ilmaandmed_last{days}days AS (
+            SELECT 
+                timestamp, 
+                timestamp - LAG(timestamp) OVER (ORDER by timestamp ASC) AS lag
+            FROM ilm_ilm 
+            WHERE date_part('day', CURRENT_DATE - timestamp) <= {days}
         )
-        timestamp_all_records = [record['timestamp'] for record in cur]
-        for n in range(0, len(timestamp_all_records)-1):
-            if (timestamp_all_records[n+1] - timestamp_all_records[n]) > timedelta(seconds=3600):
-                d = timestamp_all_records[n] + timedelta(hours=1)
-                while d not in timestamp_all_records:
-                    if d != utils.last_sunday(d.year, 10): # oktoobri viimane pühapäev
-                        timestamp_missing_records.append(d)
-                    d += timedelta(hours=1)
+        SELECT 
+            timestamp, 
+            lag, 
+            date_part('day', lag) * 24 + date_part('hour', lag) AS hours
+        FROM ilmaandmed_last{days}days
+        WHERE lag > '01:00:00';
+        """
+        cur.execute(query)
+        timestamp_missing_records = {
+            record['timestamp']: record['lag'] 
+            for record 
+            in cur
+        }
 
-        for timestamp in timestamp_missing_records:
-            observation_time = timestamp
-            timegap = now - datetime(observation_time.year, observation_time.month, observation_time.day)
-            if timegap < timedelta(days=days): # kui vigased andmed on viimase kuu jooksul
+        for timestamp, hours in timestamp_missing_records.items():
+            for n in range(1, int(hours)):
+                observation_time = timestamp + timedelta(hours=n)
                 print(observation_time, 'puuduvad andmed')
                 ilm_observation_veebist = utils.ilmaandmed_apist(observation_time)
                 if ilm_observation_veebist and (ilm_observation_veebist['airtemperature'] != None):
