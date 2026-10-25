@@ -1047,16 +1047,15 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
         i_icon = ''
         if i and 'forecast' in i:
             i_data = i['forecast'].get(str(ref_dt), None)
-            if i_data:
-                i_temp = float_or_none(i_data['temperature'])
-                i_phenomen = i_data['phenomen']
-                i_prec = i_data['precipitation']
-                i_prec_color = i_data['precipitation_color']
-                i_pres = float_or_none(i_data['pressure'])
-                i_windspeed = i_data['windSpeed']
-                i_winddirection = i_data['windDirection']
-                i_winddirection_icon = int(float(i_winddirection.get('deg', 0)) // 10 * 10)
-                i_icon = i_data['symbol']
+            i_temp = float_or_none(i_data['temperature']) if i_data else None
+            i_phenomen = i_data['phenomen'] if i_data else None
+            i_prec = i_data['precipitation'] if i_data else None
+            i_prec_color = i_data['precipitation_color'] if i_data else ''
+            i_pres = float_or_none(i_data['pressure']) if i_data else None
+            i_windspeed = i_data['windSpeed'] if i_data else None
+            i_winddirection = i_data['windDirection'] if i_data else None
+            i_winddirection_icon = int(float(i_winddirection.get('deg', 0)) // 10 * 10) if i_data else None
+            i_icon = i_data['symbol'] if i_data else ''
 
         forecast[str(ref_dt)] = {
             'y_temp': y_temp,
