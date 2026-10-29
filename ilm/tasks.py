@@ -872,10 +872,13 @@ if __name__ == '__main__':
         rows_deleted = delete_duplicate_observations(path, verbose)
         logging.info(f"Duplikaatide kustutamine lõpetatud, kustutatud kirjeid: {rows_deleted}")
         # Täiendame puudulikke kirjeid
+        print(f'{datetime.now()}: Täiendame puudulikkekirjeid')
         rows_updated = update_uncomplete_observations(path, days=days, verbose=verbose)
         logging.info(f"Uuendatud puudulikke kirjeid: {rows_updated}")
+        print(f'{datetime.now()}: Täiendame puuduvaid kirjeid')
         rows_missing = update_missing_observations(path, days=days, verbose=verbose)
         logging.info(f"Uuendatud puuduvaid kirjeid: {rows_missing}")
+        print(f'{datetime.now()}: Viimase 72 tunni andmete kontroll ja uuendamine')
         update_lasthours(path, verbose, hours=72)
         logging.info(f"Viimase 72 tunni andmete kontroll ja uuendamine lõpetatud")
 
@@ -883,12 +886,15 @@ if __name__ == '__main__':
         update_maxmin_rolling(path)
         logging.info(f"Mahukate arvutuste tabelid uuendatud")
         # Ilmaennustuste logi
+        print(f'{datetime.now()}: Ilmaennustuste logid uuendamine')
         update_forecast_logs(path, verbose)
         logging.info(f"Ilmaennustuste logid uuendatud")
 
         # Viimase täistunnimõõtmise logimine faili
+        print(f'{datetime.now()}: Viimase täistunnimõõtmise logimine faili')
         make_observations_log(path) # uus variant
         logging.info(f"Viimase täistunnimõõtmise logimine faili lõpetatud")
         # Moodustame uue ilmaennustuste kvaliteedi arvutuste faili
+        print(f'{datetime.now()}: Moodustame uue ilmaennustuste kvaliteedi arvutuste faili')
         update_forecast_log_analyze()
         logging.info(f"Ilmaennustuste kvaliteedi arvutuste faili moodustamine lõpetatud")

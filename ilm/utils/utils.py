@@ -1019,7 +1019,10 @@ def get_forecasts(hours=48, asukoht="valgalinn"):
     forecast = dict()
 
     for forecast_hour in range(1, hours):
-        fore_dt = datetime(now.year, now.month, now.day, now.hour) + timedelta(hours=forecast_hour)
+        fore_dt = (
+            datetime(now.year, now.month, now.day, now.hour) + 
+            timedelta(hours=forecast_hour)
+        )
         ref_dt = int(datetime.timestamp(fore_dt))
 
         # yr.no
