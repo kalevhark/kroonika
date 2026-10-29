@@ -377,13 +377,13 @@ def update_missing_observations(path='', days=30, verbose=False):
         """
         cur.execute(query)
         timestamp_missing_records = {
-            record['timestamp']: record['lag'] 
+            record['timestamp']: record['hours']
             for record 
             in cur
         }
 
         for timestamp, hours in timestamp_missing_records.items():
-            for n in range(1, int(hours)):
+            for n in range(1, hours):
                 observation_time = timestamp + timedelta(hours=n)
                 print(observation_time, 'puuduvad andmed')
                 ilm_observation_veebist = utils.ilmaandmed_apist(observation_time)
