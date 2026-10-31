@@ -67,10 +67,15 @@ LEAFLET_DEFAULT_HEADER = Element(
 )
 
 # Asendus stamen_toner kaartidele
+# STAMEN_TONER_NEW = {
+#     'tiles': 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+#     'tms': False,
+#     'attr': 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+# }
 STAMEN_TONER_NEW = {
-    'tiles': 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-    'tms': False,
-    'attr': 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+    'tiles': 'https://tiles.maaamet.ee/tm/tms/1.0.0/hybriid@GMC/{z}/{x}/{y}.png&ASUTUS=valgalinn.ee',
+    'tms': True,
+    'attr': '<a  href="http://www.maaamet.ee/">Maa-amet</a>'
 }
 
 # crs to degree converter init
@@ -1199,7 +1204,6 @@ def make_objekt_leaflet_combo(objekt=1):
                 [bounds[3], bounds[2]]
             ]
         )
-
         map.default_css = LEAFLET_DEFAULT_CSS
         map.default_js = LEAFLET_DEFAULT_JS
         LEAFLET_DEFAULT_HEADER.add_to(map.get_root().header)
@@ -1211,7 +1215,10 @@ def make_objekt_leaflet_combo(objekt=1):
         vectorlayer_streets = get_vectorlayer_streets()
         vectorlayer_streets.add_to(map)
 
-        is_objekt_missing_on_defaultmap = DEFAULT_MAP.aasta not in kaardid_objektiga_aastad  # Objekti kaasajal pole?
+        is_objekt_missing_on_defaultmap = (
+            DEFAULT_MAP.aasta 
+            not in kaardid_objektiga_aastad  # Objekti kaasajal pole?
+        )
         objekt_last_seen_on_map = max([aasta for aasta in kaardid_objektiga_aastad])
         kaardid_objektiga = \
             Kaart.objects.filter(aasta__in=kaardid_objektiga_aastad) | \
