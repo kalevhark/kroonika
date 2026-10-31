@@ -53,8 +53,12 @@
                 class="infoimage"
                 onclick="markdownTagCopy(this)"
         >
-          <i class="fa fa-info"></i>
-          <span id="markdown-tag">id</span>
+          <i class="fa fa-copy"></i>
+          <span 
+            id="markdown-tag"
+            data-pilt-id="id"
+          >
+          </span>
         </a>
         {% if pildid.count > 1 %}
           <a class="previmage" onclick="plusSlides(-1)">&#10094;</a>
@@ -112,7 +116,8 @@
         }
         slides[slideIndex-1].style.display = "block";
         captionText.innerHTML = pildirida[slideIndex-1].alt;
-        markdownTag.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-markdown-tag");
+        // markdownTag.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-markdown-tag");
+        markdownTag.setAttribute("data-pilt-id", pildirida[slideIndex-1].getAttribute("data-pilt-markdown-tag"));
         if (slides.length > 1) {
           var numberText = document.getElementById("numbertext");
           numberText.innerHTML = pildirida[slideIndex-1].getAttribute("data-pilt-itemnr") + " / " + slides.length;
@@ -152,7 +157,8 @@
       // button onclick="markdownTagCopy(this)"
       function markdownTagCopy(btn) {
         var markdownTag = document.getElementById("markdown-tag");
-        navigator.clipboard.writeText(markdownTag.innerText);
+        // navigator.clipboard.writeText(markdownTag.innerText);
+        navigator.clipboard.writeText(markdownTag.getAttribute("data-pilt-id"));
         markdownTag.parentElement.classList.add("w3-pale-green");
         setTimeout(function () {
           markdownTag.parentElement.classList.remove("w3-pale-green");

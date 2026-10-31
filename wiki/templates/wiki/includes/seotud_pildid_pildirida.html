@@ -43,13 +43,16 @@
             />
           </div>
         {% endfor %}
-
         <a
-                class="infoimage"
-                onclick="markdownTagCopy(this)"
+            class="infoimage"
+            onclick="markdownTagCopy(this)"
         >
-          <i class="fa fa-info"></i>
-          <span id="markdown-tag">id</span>
+          <i 
+              class="fa fa-copy"
+              id="markdown-tag"
+              data-pilt-id="id"
+          >
+          </i>
         </a>
         {% if pildid.count > 1 %}
           <span class="numbertext" id="numbertext"></span>
