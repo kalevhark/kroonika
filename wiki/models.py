@@ -1745,6 +1745,11 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
         blank=True,
         help_text='Maja number kaardikihil'
     )
+    slug = models.SlugField(
+        default='',
+        editable=False,
+        max_length=200,
+    )
     lisainfo = MarkdownxField(
         'Lisainfo',
         # max_length=80,
@@ -1754,7 +1759,13 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
 
     def __str__(self):
         return ' '.join([self.tn, self.nr])
-    
+
+    def save(self, *args, **kwargs):
+        # Loome slugi
+        value = ' '.join(filter(None, [self.tn, self.nr]))
+        self.slug = slugify(value, allow_unicode=True)
+        super().save(*args, **kwargs)
+        
     @property
     def nimi(self):
         return ' '.join([self.tn, self.nr])
@@ -1902,6 +1913,11 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         max_length=200,
         help_text='Aadressi kohanimi (nt "Sulevi 9a")'
     )
+    slug = models.SlugField(
+        default='',
+        editable=False,
+        max_length=200,
+    )
     korter = models.CharField(
         'Korterinumber',
         max_length=80,
@@ -1963,6 +1979,9 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         if self.hist_enddate:
             self.hist_endyear = self.hist_enddate.year
             self.hist_endmonth = self.hist_enddate.month
+
+        # Loome slugi
+        self.slug = slugify(self.nimi, allow_unicode=True)
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
