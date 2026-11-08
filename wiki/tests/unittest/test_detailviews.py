@@ -997,13 +997,23 @@ class KaardiobjektViewTests(TestCase):
         self.assertEqual(Kaardiobjekt.objects.filter(id=self.test_object_id).count(), 1)
         obj = Kaardiobjekt.objects.get(id=self.test_object_id)
         url = urllib.parse.unquote(obj.get_absolute_url())
-        self.assertEqual(url, f'/wiki/kaardiobjekt/{obj.id}/')
+        self.assertEqual(url, f'/wiki/kaardiobjekt/{obj.id}-{obj.slug}/')
 
     def test_view_url_exists_at_desired_location(self):
         obj = Kaardiobjekt.objects.get(id=self.test_object_id)
-        url = f'/wiki/kaardiobjekt/{obj.id}/'
+        url = f'/wiki/kaardiobjekt/{obj.id}-{obj.slug}/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    def test_view_HTTP404_for_wrong_query(self):
+        # Valel kujul otsingud
+        urls = [
+            f'/wiki/kaardiobjekt/{self.test_object_id}/',
+            f'/wiki/kaardiobjekt/{self.test_object_id}-mingi-suvanimi',
+        ]
+        for url in urls:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 404)
 
 
 class AadressViewTests(TestCase):
@@ -1023,10 +1033,20 @@ class AadressViewTests(TestCase):
         self.assertEqual(Aadress.objects.filter(id=self.test_object_id).count(), 1)
         obj = Aadress.objects.get(id=self.test_object_id)
         url = urllib.parse.unquote(obj.get_absolute_url())
-        self.assertEqual(url, f'/wiki/aadress/{obj.id}/')
+        self.assertEqual(url, f'/wiki/aadress/{obj.id}-{obj.slug}/')
 
     def test_view_url_exists_at_desired_location(self):
         obj = Aadress.objects.get(id=self.test_object_id)
-        url = f'/wiki/aadress/{obj.id}/'
+        url = f'/wiki/aadress/{obj.id}-{obj.slug}/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    def test_view_HTTP404_for_wrong_query(self):
+        # Valel kujul otsingud
+        urls = [
+            f'/wiki/aadress/{self.test_object_id}/',
+            f'/wiki/aadress/{self.test_object_id}-mingi-suvanimi',
+        ]
+        for url in urls:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 404, f'URL: {url} status_code: {response.status_code}')

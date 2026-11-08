@@ -1762,7 +1762,7 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
 
     def save(self, *args, **kwargs):
         # Loome slugi
-        value = ' '.join(filter(None, [self.tn, self.nr]))
+        value = ' '.join(filter(None, [self.kaart.aasta, self.tn, self.nr]))
         self.slug = slugify(value, allow_unicode=True)
         super().save(*args, **kwargs)
         
@@ -1896,6 +1896,7 @@ class Kaardiobjekt(BaasAddUpdateInfoModel):
         model = self.__class__.__name__.lower()
         kwargs = {
             'pk': self.id,
+            'slug': self.slug
         }
         return reverse(f'wiki:wiki_{model}_detail', kwargs=kwargs)
 
@@ -1988,6 +1989,7 @@ class Aadress(BaasObjectDatesModel, BaasAddUpdateInfoModel):
         model = self.__class__.__name__.lower()
         kwargs = {
             'pk': self.id,
+            'slug': self.slug
         }
         return reverse(f'wiki:wiki_{model}_detail', kwargs=kwargs)
     

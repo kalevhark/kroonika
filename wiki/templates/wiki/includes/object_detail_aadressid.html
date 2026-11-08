@@ -11,7 +11,7 @@
         <a
           class="hover-kaardiobjekt"
           {% with item.object|to_model_name_lower as model_name %}
-            href="{% url 'wiki:wiki_'|add:model_name|add:'_detail' pk=item.object.id %}"
+            href="{% url 'wiki:wiki_'|add:model_name|add:'_detail' pk=item.object.id  slug=item.object.slug %}"
           {% endwith %}
         >
           <li 

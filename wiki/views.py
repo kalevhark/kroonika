@@ -2929,6 +2929,7 @@ class KaardiobjektFilterView(FilterView):
 class KaardiobjektDetailView(generic.DetailView):
 
     model = Kaardiobjekt
+    query_pk_and_slug = True
 
     def get_queryset(self):
         return Kaardiobjekt.objects.all()
@@ -3012,6 +3013,7 @@ class AadressFilterView(FilterView):
 class AadressDetailView(generic.DetailView):
 
     model = Aadress
+    query_pk_and_slug = True
 
     def get_queryset(self):
         return Aadress.objects.all()
