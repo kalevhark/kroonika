@@ -33,7 +33,10 @@
           <div class="w3-row">
             Aadressiga seotud koht:&nbsp;
             <i class="{% icon_object object.objekt %}"></i>&nbsp;
-            <a style="text-decoration: none;" href="{% url 'wiki:wiki_objekt_detail' pk=object.objekt.pk slug=object.objekt.slug  %}">
+            <a 
+                style="text-decoration: none;" 
+                href="{% url 'wiki:wiki_objekt_detail' pk=object.objekt.pk slug=object.objekt.slug  %}"
+            >
               <strong>{{ object.objekt }}</strong>
             </a>
             {% if seotud_aadressid_objekti_kaudu %}
@@ -44,7 +47,7 @@
                     <li>
                       <a
                           class="hover-artikkel"
-                          href="{% url 'wiki:wiki_aadress_detail' pk=obj.id %}"
+                          href="{% url 'wiki:wiki_aadress_detail' pk=obj.id slug=obj.slug %}"
                         >
                         <i class="{% icon_object obj %}"></i> {{ obj.hist_year }}: {{ obj }}
                       </a>
