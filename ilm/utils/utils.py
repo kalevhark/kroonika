@@ -673,11 +673,11 @@ def get_ilmateenistus_forecast(asukoht="valgalinn") -> Optional[dict]:
     )
     
     if response.status_code == requests.codes.ok:
-        data = json.loads(response.text)
         try:
+            data = json.loads(response.text)
             hours = [hour for hour in data['forecast']['tabular']['time']]
         except Exception as e:
-            logger.error(f'ilmaennustuse andmed vigased: {url} -> {response.text}')
+            logger.error(f'Ilmateenistuse ennustuse andmed vigased: {url} -> {response.text}')
             return None
         
         forecast = dict()
